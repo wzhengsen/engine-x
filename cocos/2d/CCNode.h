@@ -178,8 +178,7 @@ public:
     * Sets the arrival order when this node has a same ZOrder with other children.
     *
     * A node which called addChild subsequently will take a larger arrival order,
-    * If two children have the same Z order, the child with larger arrival order will be
-     n later.
+    * If two children have the same Z order, the child with larger arrival order will be drawn later.
     *
     * @warning This method is used internally for localZOrder sorting, don't change this manually
     *
@@ -360,6 +359,8 @@ public:
      * @endcode
      */
     virtual const Vec2& getPosition() const;
+
+    virtual const Vec2& getPositionXY() const { return getPosition(); };
 
     /** Returns the normalized position.
      * 
@@ -561,6 +562,10 @@ public:
      */
     virtual const Size& getContentSize() const;
 
+    virtual float getContentWidth() const noexcept;
+    virtual float getContentHeight() const noexcept;
+    virtual void setContentWidth(float w);
+    virtual void setContentHeight(float h);
 
     /**
      * Sets whether the node is visible.
