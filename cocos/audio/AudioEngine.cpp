@@ -298,6 +298,44 @@ void AudioEngine::pauseAll()
     }
 }
 
+void AudioEngine::BlockAll()
+{
+	auto itEnd = _audioIDInfoMap.end();
+	for (auto it = _audioIDInfoMap.begin(); it != itEnd; ++it)
+	{
+		auto& info = it->second;
+		const auto state = it->second.state;
+		if ((state == AudioState::PLAYING ||
+			state == AudioState::PAUSED) &&
+			!info.block)
+		{
+			info.block = true;
+			if (state == AudioState::PLAYING) {
+				_audioEngineImpl->pause(it->first);
+			}
+		}
+	}
+}
+
+void AudioEngine::UnblockAll()
+{
+	auto itEnd = _audioIDInfoMap.end();
+	for (auto it = _audioIDInfoMap.begin(); it != itEnd; ++it)
+	{
+		auto& info = it->second;
+		const auto state = it->second.state;
+		if ((state == AudioState::PLAYING ||
+			state == AudioState::PAUSED) &&
+			info.block)
+		{
+			info.block = false;
+			if (state == AudioState::PLAYING) {
+				_audioEngineImpl->resume(it->first);
+			}
+		}
+	}
+}
+
 void AudioEngine::resume(AUDIO_ID audioID)
 {
     auto it = _audioIDInfoMap.find(audioID);
