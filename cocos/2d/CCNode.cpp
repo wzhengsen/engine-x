@@ -623,6 +623,14 @@ const Size& Node::getContentSize() const
     return _contentSize;
 }
 
+float Node::getContentWidth() const noexcept {
+    return _contentSize.width;
+}
+
+float Node::getContentHeight() const noexcept {
+    return _contentSize.height;
+}
+
 void Node::setContentSize(const Size & size)
 {
     if (! size.equals(_contentSize))
@@ -632,6 +640,14 @@ void Node::setContentSize(const Size & size)
         _anchorPointInPoints.set(_contentSize.width * _anchorPoint.x, _contentSize.height * _anchorPoint.y);
         _transformUpdated = _transformDirty = _inverseDirty = _contentSizeDirty = true;
     }
+}
+
+void Node::setContentWidth(float w) {
+    setContentSize(Size(w,_contentSize.height));
+}
+
+void Node::setContentHeight(float h) {
+    setContentSize(Size(_contentSize.width, h));
 }
 
 // isRunning getter
