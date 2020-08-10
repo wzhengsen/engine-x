@@ -12,7 +12,7 @@ endif()
  #LINUX      =   Linux
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     set(WINDOWS TRUE)
-    set(PLATFORM_FOLDER win32)
+    set(PLATFORM_FOLDER windows)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Android")
     set(PLATFORM_FOLDER android)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -45,17 +45,12 @@ elseif(CMAKE_GENERATOR MATCHES Visual)
 endif()
 message(STATUS "CMAKE_GENERATOR: ${CMAKE_GENERATOR}")
 
-# custom target property for lua/js link
-define_property(TARGET
-    PROPERTY CC_JS_DEPEND
-    BRIEF_DOCS "cocos2d js depend libs"
-    FULL_DOCS "use to save depend libs of cocos2d js project"
-) 
+# custom target property for lua link
 define_property(TARGET
     PROPERTY CC_LUA_DEPEND
     BRIEF_DOCS "cocos2d lua depend libs"
     FULL_DOCS "use to save depend libs of cocos2d lua project"
-) 
+)
 
 # check c++ standard
 set(CMAKE_C_STANDARD 11)
@@ -98,7 +93,7 @@ endif()
         target_compile_definitions(${target} PUBLIC ANDROID)
         target_compile_definitions(${target} PUBLIC USE_FILE32API)
     elseif(WINDOWS)
-        target_compile_definitions(${target} 
+        target_compile_definitions(${target}
             PUBLIC WIN32
             PUBLIC _WIN32
             PUBLIC _WINDOWS
@@ -109,7 +104,7 @@ endif()
             PUBLIC GLAD_GLAPI_EXPORT
         )
         if(BUILD_SHARED_LIBS)
-            target_compile_definitions(${target} 
+            target_compile_definitions(${target}
                 PUBLIC _USRDLL
                 PUBLIC _EXPORT_DLL_
                 PUBLIC _USEGUIDLL
