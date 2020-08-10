@@ -118,7 +118,7 @@ void cocos2d::Terrain::setLightDir(const Vec3& lightDir)
 bool Terrain::initProperties()
 {
     auto* program = backend::Program::getBuiltinProgram(backend::ProgramType::TERRAIN_3D);
-    attachProgramState(new backend::ProgramState(program));
+    _programState = new backend::ProgramState(program);
 
     _stateBlock.depthWrite = true;
     _stateBlock.depthTest = true;
@@ -788,6 +788,14 @@ void Terrain::setSkirtHeightRatio(float ratio)
 
 void Terrain::onEnter()
 {
+#if CC_ENABLE_SCRIPT_BINDING
+    if (_scriptType == kScriptTypeJavascript)
+    {
+        if (ScriptEngineManager::sendNodeEventToJSExtended(this, kNodeOnEnter))
+            return;
+    }
+#endif
+
     Node::onEnter();
     _terrainModelMatrix = getNodeToWorldTransform();
     _quadRoot->preCalculateAABB(_terrainModelMatrix);
