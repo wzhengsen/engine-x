@@ -174,6 +174,15 @@ public:
     /** Pause all playing audio instances. */
     static void pauseAll();
 
+	/** 全部阻断
+		用于进入前台后台时阻断声音与解开阻断，类似暂停，
+		但可以避免在c++和lua混合使用resumeAll和pauseAll引起的冲突
+	*/
+	static void BlockAll();
+
+	/** 全部解开阻断 */
+	static void UnblockAll();
+
     /** 
      * Resume an audio instance.
      *
@@ -335,6 +344,10 @@ protected:
         bool loop;
         float duration;
         AudioState state;
+
+		// 这一项布尔值与PAUSED类似，起到暂停作用
+		// 为了解决进入前台后台时使用pauseAll和resumeAll引起的冲突
+		bool block = false;
 
         AudioInfo();
         ~AudioInfo();
