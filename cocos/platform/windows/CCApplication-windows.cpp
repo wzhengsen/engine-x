@@ -29,16 +29,98 @@ THE SOFTWARE.
 #include "platform/CCFileUtils.h"
 #include <shellapi.h>
 #include <WinVer.h>
+#include "2d/resource.h"
+#include "platform/windows/CCUtils-windows.h"
+#include <VersionHelpers.h>
+
 /**
 @brief    This function change the PVRFrame show/hide setting in register.
 @param  bEnable If true show the PVRFrame window, otherwise hide.
 */
 static void PVRFrameEnableControlWindow(bool bEnable);
 
+static HMODULE GetSelfModuleHandle();
+
 NS_CC_BEGIN
 
 // sharedApplication pointer
-Application * Application::sm_pSharedApplication = nullptr;
+Application* Application::sm_pSharedApplication = nullptr;
+std::vector<Application::DialogWrapper> Application::VecDlgWrapper = std::vector<Application::DialogWrapper>();
+std::map<uint16_t, Application::NotifyWrapper> Application::MapNotifyWrapper = std::map<uint16_t, Application::NotifyWrapper>();
+uint16_t Application::NotifyID = 0;
+
+INT_PTR CALLBACK Application::DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+    switch (message) {
+    case WM_INITDIALOG:
+        PeekMessage(nullptr, nullptr, 0, 0, PM_REMOVE);
+        return TRUE;
+
+    case WM_COMMAND: {
+        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
+            PeekMessage(nullptr, nullptr, 0, 0, PM_REMOVE);
+            if (VecDlgWrapper.size() > 0) {
+                const auto& bw = VecDlgWrapper.back();
+                if (bw.dlgWnd == hWnd) {
+                    if (LOWORD(wParam) == IDOK && bw.okCallback) {
+                        bw.okCallback();
+                    }
+                    else if (LOWORD(wParam) == IDCANCEL && bw.cancelCallback) {
+                        bw.cancelCallback();
+                    }
+                    DestroyWindow(hWnd);
+                    VecDlgWrapper.pop_back();
+                }
+            }
+            return TRUE;
+        }
+        break;
+    }
+    default:
+        break;
+    }
+    return FALSE;
+}
+
+void Application::NotifyProc(WPARAM wParam, LPARAM lParam) {
+    const auto msg = LOWORD(lParam);
+    if (msg >= WM_MOUSEFIRST && msg <= WM_MOUSELAST) {
+        return;
+    }
+    UINT uID = 0;
+    if (IsWindows10OrGreater()) {
+        uID = LOWORD(wParam);
+    }
+    else {
+        uID = HIWORD(lParam);
+    }
+    const auto it = MapNotifyWrapper.find(uID);
+    if (it == MapNotifyWrapper.cend()) {
+        return;
+    }
+    switch (msg) {
+    case NIN_BALLOONUSERCLICK:
+    case NIN_BALLOONTIMEOUT:
+    {
+        NOTIFYICONDATA nd = NOTIFYICONDATA();
+        HWND hwnd = cocos2d::Director::getInstance()->getOpenGLView()->getWin32Window();
+
+        nd.cbSize = sizeof(NOTIFYICONDATA);;
+        nd.hWnd = hwnd;
+        nd.uID = uID;
+
+        Shell_NotifyIcon(NIM_DELETE, &nd);
+
+        if (msg == NIN_BALLOONUSERCLICK && (*it).second.clickCallback) {
+            (*it).second.clickCallback();
+        }
+        if (msg == NIN_BALLOONTIMEOUT && (*it).second.closeCallback) {
+            (*it).second.closeCallback();
+        }
+        MapNotifyWrapper.erase(uID);
+    }
+        break;
+    }
+}
 
 Application::Application()
 : _instance(nullptr)
@@ -56,6 +138,94 @@ Application::~Application()
     sm_pSharedApplication = nullptr;
 }
 
+void Application::Dialog(
+    const std::string& title,
+    const std::string& content,
+    std::function<void()> okCallback,
+    std::function<void()> cancelCallback
+) {
+    HWND hwnd = cocos2d::Director::getInstance()->getOpenGLView()->getWin32Window();
+    // 创建对话框。
+    HWND dlgWnd = CreateDialog(
+        GetSelfModuleHandle(),
+        MAKEINTRESOURCE(IDD_COCOS_DIALOG),
+        hwnd,
+        DialogProc);
+
+    if (dlgWnd) {
+        const std::wstring wstrT = cocos2d::StringUtf8ToWideChar(title.c_str());
+        const std::wstring wstrC = cocos2d::StringUtf8ToWideChar(content.c_str());
+
+        // 标题与内容。
+        SetWindowText(dlgWnd, wstrT.c_str());
+        SetWindowText(GetDlgItem(dlgWnd, IDC_STATIC1), wstrC.c_str());
+
+        if (!cancelCallback) {
+            // 此情况下隐藏取消按钮，并将确定移动到取消处。
+            HWND ok = GetDlgItem(dlgWnd, IDOK);
+            HWND cancel = GetDlgItem(dlgWnd, IDCANCEL);
+
+            ShowWindow(cancel, SW_HIDE);
+            RECT rect = {};
+
+            if (GetWindowRect(cancel, &rect)) {
+                POINT pt = {
+                    rect.left,
+                    rect.top
+                };
+                ScreenToClient(dlgWnd, &pt);
+                MoveWindow(ok, pt.x, pt.y, rect.right - rect.left, rect.bottom - rect.top, true);
+            }
+        }
+
+        UpdateWindow(dlgWnd);
+        VecDlgWrapper.emplace_back(dlgWnd, okCallback, cancelCallback);
+    }
+}
+
+void Application::DialogMessageFilter() noexcept {
+    static MSG msg = {};
+    if (PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE) && VecDlgWrapper.size() > 0){
+        for (auto& wrapper : VecDlgWrapper) {
+            if (IsDialogMessage(wrapper.dlgWnd, &msg)) {
+                return;
+            }
+        }
+    }
+}
+
+void Application::Notify(
+    uint16_t icon,
+    const std::string& title,
+    const std::string& content,
+    std::function<void()> clickCallback,
+    std::function<void()> closeCallback
+) {
+    const std::wstring wstrT = cocos2d::StringUtf8ToWideChar(title.c_str());
+    const std::wstring wstrC = cocos2d::StringUtf8ToWideChar(content.c_str());
+    HWND hwnd = cocos2d::Director::getInstance()->getOpenGLView()->getWin32Window();
+    NOTIFYICONDATA nd = NOTIFYICONDATA();
+
+    nd.cbSize = sizeof(NOTIFYICONDATA);
+    nd.hWnd = hwnd;
+    nd.uID = NotifyID;
+    nd.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_INFO;
+    nd.uCallbackMessage = WM_USER + NotifyMsgID;
+    wcscpy_s(nd.szTip, wstrT.c_str());
+    wcscpy_s(nd.szInfo, wstrC.c_str());
+    wcscpy_s(nd.szInfoTitle, wstrT.c_str());
+    nd.hIcon = LoadIcon(_instance, MAKEINTRESOURCE(icon));
+    nd.hBalloonIcon = LoadIcon(_instance, MAKEINTRESOURCE(icon));
+    nd.dwInfoFlags = NIIF_USER | NIIF_LARGE_ICON;
+    nd.uVersion = NOTIFYICON_VERSION_4;
+
+    Shell_NotifyIcon(NIM_ADD,&nd);
+    Shell_NotifyIcon(NIM_SETVERSION, &nd);
+
+    MapNotifyWrapper.emplace(NotifyID, NotifyWrapper{ clickCallback,closeCallback });
+    NotifyID++;
+}
+
 int Application::run()
 {
     PVRFrameEnableControlWindow(false);
@@ -63,8 +233,8 @@ int Application::run()
     ///////////////////////////////////////////////////////////////////////////
     /////////////// changing timer resolution
     ///////////////////////////////////////////////////////////////////////////
-    UINT TARGET_RESOLUTION = 1; // 1 millisecond target resolution
-    TIMECAPS tc;
+    constexpr UINT TARGET_RESOLUTION = 1; // 1 millisecond target resolution
+    TIMECAPS tc = {};
     UINT wTimerRes = 0;
     if (TIMERR_NOERROR == timeGetDevCaps(&tc, sizeof(TIMECAPS)))
     {
@@ -105,6 +275,7 @@ int Application::run()
         if (interval >= _animationInterval.QuadPart)
         {
             nLast.QuadPart = nNow.QuadPart;
+            DialogMessageFilter();
             director->mainLoop();
             glview->pollEvents();
         }
@@ -286,6 +457,35 @@ std::string Application::getVersion()
     return verString;
 }
 
+int64_t Application::GetCompileVersion() {
+    char verString[256] = { 0 };
+    TCHAR szVersionFile[MAX_PATH];
+    GetModuleFileName(NULL, szVersionFile, MAX_PATH);
+    DWORD  verHandle = NULL;
+    UINT   size = 0;
+    LPBYTE lpBuffer = NULL;
+    DWORD  verSize = GetFileVersionInfoSize(szVersionFile, &verHandle);
+    int64_t compileVer = 0;
+
+    if (verSize != NULL) {
+        LPSTR verData = new char[verSize];
+
+        if (GetFileVersionInfo(szVersionFile, verHandle, verSize, verData)) {
+            if (VerQueryValue(verData, L"\\", (VOID FAR * FAR*) & lpBuffer, &size)) {
+                if (size) {
+                    VS_FIXEDFILEINFO* verInfo = (VS_FIXEDFILEINFO*)lpBuffer;
+                    if (verInfo->dwSignature == 0xfeef04bd) {
+                        // 使用dwProductVersionMS作为高32位，dwProductVersionLS作为低32位，用来表示编译版本。
+                        compileVer = ((int64_t)(verInfo->dwProductVersionMS) << 32) + verInfo->dwProductVersionLS;
+                    }
+                }
+            }
+        }
+        delete[] verData;
+    }
+    return compileVer;
+}
+
 bool Application::openURL(const std::string &url)
 {
     WCHAR *temp = new WCHAR[url.size() + 1];
@@ -357,4 +557,11 @@ static void PVRFrameEnableControlWindow(bool bEnable)
     }
 
     RegCloseKey(hKey);
+}
+
+static HMODULE GetSelfModuleHandle() {
+    MEMORY_BASIC_INFORMATION mbi;
+
+    return ((::VirtualQuery(GetSelfModuleHandle, &mbi, sizeof(mbi)) != 0)
+        ? (HMODULE)mbi.AllocationBase : NULL);
 }

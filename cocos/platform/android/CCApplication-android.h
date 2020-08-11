@@ -86,6 +86,11 @@ public:
     virtual std::string getVersion() override;
 
     /**
+    @brief 获取应用的编译版本
+    */
+    virtual int64_t GetCompileVersion() override;
+
+    /**
      @brief Open url in default browser
      @param String with url to open.
      @return true if the resource located by the URL was successfully opened; otherwise false.
@@ -98,6 +103,27 @@ public:
     @param new height
     */
     virtual void applicationScreenSizeChanged(int newWidth, int newHeight);
+
+    /*
+     @brief 创建一个非模式对话框。
+            提供0-2个回调，即有1-2个按钮，最少有一个“确定”按钮。
+    */
+    void Dialog(
+        const std::string& title,
+        const std::string& content,
+        std::function<void()> okCallback = nullptr,
+        std::function<void()> cancelCallback = nullptr
+    ) override;
+
+    /*
+     @brief 创建一个通知。
+    */
+    void Notify(
+        const std::string& title,
+        const std::string& content,
+        std::function<void()> clickCallback = nullptr,
+        std::function<void()> closeCallback = nullptr
+    ) override;
 
 protected:
     static Application * sm_pSharedApplication;
