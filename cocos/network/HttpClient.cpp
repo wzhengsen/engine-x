@@ -249,6 +249,16 @@ public:
         if (!configureCURL(client, _curl, errorBuffer))
             return false;
 
+		// 这里使用HttpRequest的毫秒超时时间覆盖原默认超时时间
+		auto code = curl_easy_setopt(_curl, CURLOPT_CONNECTTIMEOUT_MS, request->GetTimeout());
+		if (code != CURLE_OK) {
+			return false;
+		}
+        code = curl_easy_setopt(_curl, CURLOPT_TIMEOUT_MS, request->GetTimeout());
+        if (code != CURLE_OK) {
+            return false;
+        }
+
         /* get custom header data (if set) */
         std::vector<std::string> headers=request->getHeaders();
         if(!headers.empty())
@@ -285,7 +295,7 @@ public:
             return false;
         CURLcode code = curl_easy_getinfo(_curl, CURLINFO_RESPONSE_CODE, responseCode);
         if (code != CURLE_OK || !(*responseCode >= 200 && *responseCode < 300)) {
-            CCLOGERROR("Curl curl_easy_getinfo failed: %s", curl_easy_strerror(code));
+            CCLOGWARN("Curl curl_easy_getinfo failed: %s", curl_easy_strerror(code));
             return false;
         }
         // Get some mor data.
@@ -469,8 +479,13 @@ void HttpClient::sendImmediate(HttpRequest* request)
     // Create a HttpResponse object, the default setting is http access failed
     HttpResponse *response = new (std::nothrow) HttpResponse(request);
 
-    auto t = std::thread(&HttpClient::networkThreadAlone, this, request, response);
-    t.detach();
+	if (request->IsAsync()) {
+		auto t = std::thread(&HttpClient::networkThreadAlone, this, request, response);
+		t.detach();
+	}
+	else {
+		networkThreadAlone(request, response);
+	}
 }
 
 // Poll and notify main thread if responses exists in queue
