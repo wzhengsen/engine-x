@@ -128,7 +128,11 @@ LuaStack *LuaStack::attach(lua_State *L)
 
 bool LuaStack::init()
 {
-    _state = lua_open();
+#if LUA_VERSION_NUM == 501
+	_state = lua_open();
+#else
+	_state = luaL_newstate();
+#endif
     luaL_openlibs(_state);
     toluafix_open(_state);
 
@@ -197,8 +201,12 @@ void LuaStack::addLuaLoader(lua_CFunction func)
     // stack content after the invoking of the function
     // get loader table
     lua_getglobal(_state, "package");                                  /* L: package */
-    lua_getfield(_state, -1, "loaders");                               /* L: package, loaders */
-
+#if LUA_VERSION_NUM == 501 || LUA_COMPAT_5_1
+	static constexpr char* loadersField = "loaders";                               /* L: package, loaders */
+#elif LUA_VERSION_NUM == 503
+	static constexpr char* loadersField = "searchers";
+#endif
+	lua_getfield(_state, -1, loadersField);
     // insert loader into index 2
     lua_pushcfunction(_state, func);                                   /* L: package, loaders, func */
     for (int i = (int)(lua_objlen(_state, -2) + 1); i > 2; --i)
@@ -210,7 +218,7 @@ void LuaStack::addLuaLoader(lua_CFunction func)
     lua_rawseti(_state, -2, 2);                                        /* L: package, loaders */
 
     // set loaders into package
-    lua_setfield(_state, -2, "loaders");                               /* L: package */
+    lua_setfield(_state, -2, loadersField);                               /* L: package */
 
     lua_pop(_state, 1);
 }
@@ -295,7 +303,7 @@ int LuaStack::executeGlobalFunction(const char* functionName)
     lua_getglobal(_state, functionName);       /* query function by name, stack: function */
     if (!lua_isfunction(_state, -1))
     {
-        CCLOG("[LUA ERROR] name '%s' does not represent a Lua function", functionName);
+        CCLOGERROR("[LUA ERROR] name '%s' does not represent a Lua function", functionName);
         lua_pop(_state, 1);
         return 0;
     }
@@ -408,7 +416,7 @@ bool LuaStack::pushFunctionByHandler(int nHandler)
     toluafix_get_function_by_refid(_state, nHandler);                  /* L: ... func */
     if (!lua_isfunction(_state, -1))
     {
-        CCLOG("[LUA ERROR] function refid '%d' does not reference a Lua function", nHandler);
+        CCLOGERROR("[LUA ERROR] function refid '%d' does not reference a Lua function", nHandler);
         lua_pop(_state, 1);
         return false;
     }
@@ -445,7 +453,7 @@ int LuaStack::executeFunction(int numArgs)
     {
         if (traceback == 0)
         {
-            CCLOG("[LUA ERROR] %s", lua_tostring(_state, - 1));        /* L: ... error */
+            CCLOGERROR("[LUA ERROR] %s", lua_tostring(_state, - 1));        /* L: ... error */
             lua_pop(_state, 1); // remove error message from stack
         }
         else                                                            /* L: ... G error */
@@ -558,7 +566,7 @@ int LuaStack::executeFunctionReturnArray(int handler,int numArgs,int numResults,
         {
             if (traceback == 0)
             {
-                CCLOG("[LUA ERROR] %s", lua_tostring(_state, - 1));        /* L: ... error */
+                CCLOGERROR("[LUA ERROR] %s", lua_tostring(_state, - 1));        /* L: ... error */
                 lua_pop(_state, 1); // remove error message from stack
             }
             else                                                            /* L: ... G error */
@@ -650,7 +658,7 @@ int LuaStack::executeFunction(int handler, int numArgs, int numResults, const st
         {
             if (traceCallback == 0)
             {
-                CCLOG("[LUA ERROR] %s", lua_tostring(_state, - 1));        /* L: ... error */
+                CCLOGERROR("[LUA ERROR] %s", lua_tostring(_state, - 1));        /* L: ... error */
                 lua_pop(_state, 1);                                        // remove error message from stack
             }
             else                                                           /* L: ... G error */
@@ -808,32 +816,27 @@ void skipBOM(const char*& chunk, int& chunkSize)
 
 } // end anonymous namespace
 
-int LuaStack::luaLoadBuffer(lua_State *L, const char *chunk, int chunkSize, const char *chunkName)
-{
-    int r = 0;
-
+int LuaStack::luaLoadBuffer(lua_State *L, const char *chunk, int chunkSize, const char *chunkName) {
     skipBOM(chunk, chunkSize);
-    r = luaL_loadbuffer(L, chunk, chunkSize, chunkName);
+    int r = luaL_loadbuffer(L, chunk, chunkSize, chunkName);
 
 #if defined(COCOS2D_DEBUG) && COCOS2D_DEBUG > 0
-    if (r)
-    {
-        switch (r)
-        {
-            case LUA_ERRSYNTAX:
-                CCLOG("[LUA ERROR] load \"%s\", error: syntax error during pre-compilation.", chunkName);
-                break;
+    if (r) {
+        switch (r) {
+        case LUA_ERRSYNTAX:
+            CCLOGERROR("[LUA ERROR] load \"%s\", error: syntax error during pre-compilation.", chunkName);
+            break;
 
-            case LUA_ERRMEM:
-                CCLOG("[LUA ERROR] load \"%s\", error: memory allocation error.", chunkName);
-                break;
+        case LUA_ERRMEM:
+            CCLOGERROR("[LUA ERROR] load \"%s\", error: memory allocation error.", chunkName);
+            break;
 
-            case LUA_ERRFILE:
-                CCLOG("[LUA ERROR] load \"%s\", error: cannot open/read file.", chunkName);
-                break;
+        case LUA_ERRFILE:
+            CCLOGERROR("[LUA ERROR] load \"%s\", error: cannot open/read file.", chunkName);
+            break;
 
-            default:
-                CCLOG("[LUA ERROR] load \"%s\", error: unknown.", chunkName);
+        default:
+            CCLOGERROR("[LUA ERROR] load \"%s\", error: unknown.", chunkName);
         }
     }
 #endif

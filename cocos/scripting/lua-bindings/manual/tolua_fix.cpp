@@ -30,8 +30,6 @@
 
 using namespace cocos2d;
 
-static int s_function_ref_id = 0;
-
 TOLUA_API void toluafix_open(lua_State* L)
 {
     lua_pushstring(L, TOLUA_REFID_PTR_MAPPING);
@@ -126,7 +124,7 @@ TOLUA_API int toluafix_remove_ccobject_by_refid(lua_State* L, int refid)
     if (lua_isnil(L, -1))
     {
         lua_pop(L, 2);
-        printf("[LUA ERROR] remove CCObject with NULL type, refid: %d, ptr: %p\n", refid, ptr);
+        CCLOGERROR("[LUA ERROR] remove CCObject with NULL type, refid: %d, ptr: %p\n", refid, ptr);
         return -1;
     }
 
@@ -167,13 +165,17 @@ TOLUA_API int toluafix_remove_ccobject_by_refid(lua_State* L, int refid)
 
     // cleanup peertable
     lua_pushvalue(L, LUA_REGISTRYINDEX);
-    lua_setfenv(L, -2);
+#if LUA_VERSION_NUM == 501
+	lua_setfenv(L, -2);
+#else
+	lua_setuservalue(L, -2);
+#endif
 
     ud = (void**)lua_touserdata(L, -1);
     lua_pop(L, 1);                                                  /* stack: mt ubox */
     if (ud == NULL)
     {
-        printf("[LUA ERROR] remove CCObject with NULL userdata, refid: %d, ptr: %p, type: %s\n", refid, ptr, type);
+        CCLOGERROR("[LUA ERROR] remove CCObject with NULL userdata, refid: %d, ptr: %p, type: %s\n", refid, ptr, type);
         lua_pop(L, 2);
         return -1;
     }
@@ -195,28 +197,19 @@ TOLUA_API int toluafix_ref_function(lua_State* L, int lo, int def)
     // function at lo
     if (!lua_isfunction(L, lo)) return 0;
 
-    s_function_ref_id++;
-
-    lua_pushstring(L, TOLUA_REFID_FUNCTION_MAPPING);
+    lua_pushstring(L, TOLUA_REFID_FUNCTION_MAPPING);            /* stack: fun ... string */
     lua_rawget(L, LUA_REGISTRYINDEX);                           /* stack: fun ... refid_fun */
-    lua_pushinteger(L, s_function_ref_id);                      /* stack: fun ... refid_fun refid */
-    lua_pushvalue(L, lo);                                       /* stack: fun ... refid_fun refid fun */
-
-    lua_rawset(L, -3);                  /* refid_fun[refid] = fun, stack: fun ... refid_ptr */
+    lua_pushvalue(L, lo);                                       /* stack: fun ... refid_fun fun */
+    const auto ref = luaL_ref(L, -2);                           /* stack: fun ... refid_fun */
     lua_pop(L, 1);                                              /* stack: fun ... */
-
-    return s_function_ref_id;
-
-    // lua_pushvalue(L, lo);                                           /* stack: ... func */
-    // return luaL_ref(L, LUA_REGISTRYINDEX);
+    return ref;
 }
 
 TOLUA_API void toluafix_get_function_by_refid(lua_State* L, int refid)
 {
     lua_pushstring(L, TOLUA_REFID_FUNCTION_MAPPING);
     lua_rawget(L, LUA_REGISTRYINDEX);                           /* stack: ... refid_fun */
-    lua_pushinteger(L, refid);                                  /* stack: ... refid_fun refid */
-    lua_rawget(L, -2);                                          /* stack: ... refid_fun fun */
+    lua_rawgeti(L, -1, refid);                                  /* stack: ... refid_fun fun */
     lua_remove(L, -2);                                          /* stack: ... fun */
 }
 
@@ -224,12 +217,8 @@ TOLUA_API void toluafix_remove_function_by_refid(lua_State* L, int refid)
 {
     lua_pushstring(L, TOLUA_REFID_FUNCTION_MAPPING);
     lua_rawget(L, LUA_REGISTRYINDEX);                           /* stack: ... refid_fun */
-    lua_pushinteger(L, refid);                                  /* stack: ... refid_fun refid */
-    lua_pushnil(L);                                             /* stack: ... refid_fun refid nil */
-    lua_rawset(L, -3);                  /* refid_fun[refid] = fun, stack: ... refid_ptr */
+    luaL_unref(L, -1, refid);                                   /* stack: ... refid_fun */
     lua_pop(L, 1);                                              /* stack: ... */
-
-    // luaL_unref(L, LUA_REGISTRYINDEX, refid);
 }
 
 // check lua value is function
