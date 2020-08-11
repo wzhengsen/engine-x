@@ -70,14 +70,17 @@ public:
     
     const static std::string VERSION_ID;
     const static std::string MANIFEST_ID;
+
+    static constexpr uint32_t DEFAULT_CONNECTION_TIMEOUT_MS = 5000;
     
     /** @brief Create function for creating a new AssetsManagerEx
      @param manifestUrl   The url for the local manifest file
      @param storagePath   The storage path for downloaded assets
+     @param timeout       超时时间，以毫秒计。
      @warning   The cached manifest in your storage path have higher priority and will be searched first,
                 only if it doesn't exist, AssetsManagerEx will use the given manifestUrl.
      */
-    static AssetsManagerEx* create(const std::string &manifestUrl, const std::string &storagePath);
+    static AssetsManagerEx* create(const std::string &manifestUrl, const std::string &storagePath, uint32_t timeout = DEFAULT_CONNECTION_TIMEOUT_MS);
     
     /** @brief  Check out if there is a new version of manifest.
      *          You may use this method before updating, then let user determine whether
@@ -129,7 +132,7 @@ public:
     
 CC_CONSTRUCTOR_ACCESS:
     
-    AssetsManagerEx(const std::string& manifestUrl, const std::string& storagePath);
+    AssetsManagerEx(const std::string& manifestUrl, const std::string& storagePath, uint32_t timeout = DEFAULT_CONNECTION_TIMEOUT_MS);
     
     virtual ~AssetsManagerEx();
     
@@ -254,6 +257,9 @@ private:
     
     //! The path of local manifest file
     std::string _manifestUrl;
+
+    //! The path of local manifest file path
+    std::string _manifestPath;
     
     //! Local manifest
     Manifest *_localManifest = nullptr;

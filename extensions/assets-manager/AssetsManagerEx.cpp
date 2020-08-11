@@ -38,25 +38,43 @@
 
 NS_CC_EXT_BEGIN
 
-#define TEMP_FOLDERNAME         "_temp"
-#define VERSION_FILENAME        "version.manifest"
-#define TEMP_MANIFEST_FILENAME  "project.manifest.temp"
-#define MANIFEST_FILENAME       "project.manifest"
+#define TEMP_PACKAGE_SUFFIX     "_temp"
+#define VERSION_FILENAME        "version.manifest.json"
+#define TEMP_MANIFEST_FILENAME  "project.manifest.json.temp"
+#define MANIFEST_FILENAME       "project.manifest.json"
 
 #define BUFFER_SIZE    8192
 #define MAX_FILENAME   512
 
-#define DEFAULT_CONNECTION_TIMEOUT 45
-
-#define SAVE_POINT_INTERVAL 0.1
+#define SAVE_POINT_INTERVAL 0.1f
 
 const std::string AssetsManagerEx::VERSION_ID = "@version";
 const std::string AssetsManagerEx::MANIFEST_ID = "@manifest";
 
 // Implementation of AssetsManagerEx
 
-AssetsManagerEx::AssetsManagerEx(const std::string& manifestUrl, const std::string& storagePath)
-: _manifestUrl(manifestUrl)
+AssetsManagerEx::AssetsManagerEx(const std::string& manifestUrl, const std::string& storagePath, uint32_t timeout)
+: _updateState(State::UNCHECKED)
+, _assets(nullptr)
+, _storagePath("")
+, _tempVersionPath("")
+, _cacheManifestPath("")
+, _tempManifestPath("")
+, _manifestUrl(manifestUrl)
+, _localManifest(nullptr)
+, _tempManifest(nullptr)
+, _remoteManifest(nullptr)
+, _updateEntry(UpdateEntry::NONE)
+, _percent(0)
+, _percentByFile(0)
+, _totalToDownload(0)
+, _totalWaitToDownload(0)
+, _nextSavePoint(0.0)
+, _maxConcurrentTask(32)
+, _currConcurrentTask(0)
+, _versionCompareHandle(nullptr)
+, _verifyCallback(nullptr)
+, _inited(false)
 {
     // Init variables
     _eventDispatcher = Director::getInstance()->getEventDispatcher();
@@ -67,22 +85,40 @@ AssetsManagerEx::AssetsManagerEx(const std::string& manifestUrl, const std::stri
     network::DownloaderHints hints =
     {
         static_cast<uint32_t>(_maxConcurrentTask),
-        DEFAULT_CONNECTION_TIMEOUT,
+        timeout,
         ".tmp"
     };
     _downloader = std::shared_ptr<network::Downloader>(new network::Downloader(hints));
     _downloader->onTaskError = std::bind(&AssetsManagerEx::onError, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
-    _downloader->onTaskProgress = [this](const network::DownloadTask& task)
+    _downloader->onTaskProgress = [this](const network::DownloadTask& task,
+                                         int64_t /*bytesReceived*/,
+                                         int64_t totalBytesReceived,
+                                         int64_t totalBytesExpected)
     {
-        this->onProgress(task.progressInfo.totalBytesExpected, task.progressInfo.totalBytesReceived, task.requestURL, task.identifier);
+        this->onProgress(totalBytesExpected, totalBytesReceived, task.requestURL, task.identifier);
     };
     _downloader->onFileTaskSuccess = [this](const network::DownloadTask& task)
     {
         this->onSuccess(task.requestURL, task.storagePath, task.identifier);
     };
+    
+    _manifestPath = manifestUrl;
+    for (size_t i = 0; i < _manifestPath.length(); ++i) {
+        if (_manifestPath[i] == '\\') {
+            _manifestPath[i] = '/';
+        }
+    }
+    const auto idx = _manifestPath.find_last_of('/');
+    if (idx == std::string::npos) {
+        _manifestPath = "";
+    }
+    else {
+        _manifestPath = _manifestPath.substr(0, idx + 1);
+    }
+
     setStoragePath(storagePath);
     _tempVersionPath = _tempStoragePath + VERSION_FILENAME;
-    _cacheManifestPath = _storagePath + MANIFEST_FILENAME;
+    _cacheManifestPath = _storagePath + _manifestPath + MANIFEST_FILENAME;
     _tempManifestPath = _tempStoragePath + TEMP_MANIFEST_FILENAME;
 
     initManifests(manifestUrl);
@@ -100,9 +136,9 @@ AssetsManagerEx::~AssetsManagerEx()
     CC_SAFE_RELEASE(_remoteManifest);
 }
 
-AssetsManagerEx* AssetsManagerEx::create(const std::string& manifestUrl, const std::string& storagePath)
+AssetsManagerEx* AssetsManagerEx::create(const std::string& manifestUrl, const std::string& storagePath, uint32_t timeout)
 {
-    AssetsManagerEx* ret = new (std::nothrow) AssetsManagerEx(manifestUrl, storagePath);
+    AssetsManagerEx* ret = new (std::nothrow) AssetsManagerEx(manifestUrl, storagePath, timeout);
     if (ret)
     {
         ret->autorelease();
@@ -290,9 +326,8 @@ void AssetsManagerEx::setStoragePath(const std::string& storagePath)
     adjustPath(_storagePath);
     _fileUtils->createDirectory(_storagePath);
     
-    _tempStoragePath = _storagePath;
-    _tempStoragePath.append(TEMP_FOLDERNAME);
-    adjustPath(_tempStoragePath);
+    _tempStoragePath = _storagePath + _manifestPath;
+    _tempStoragePath.insert(_tempStoragePath.size() - 1, TEMP_PACKAGE_SUFFIX);
     _fileUtils->createDirectory(_tempStoragePath);
 }
 
@@ -740,8 +775,21 @@ void AssetsManagerEx::updateSucceed()
         std::string relativePath, dstPath;
         for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it)
         {
+            size_t idx = (*it).find(VERSION_FILENAME);
+            if (idx != std::string::npos && idx + sizeof(VERSION_FILENAME) - 1 == (*it).length()) {
+                _fileUtils->removeFile(*it);
+                continue;
+            }
+
             relativePath.assign((*it).substr(baseOffset));
-            dstPath.assign(_storagePath + relativePath);
+
+            idx = (*it).find(MANIFEST_FILENAME);
+            if (idx != std::string::npos && idx + sizeof(MANIFEST_FILENAME) - 1 == (*it).length()) {
+                dstPath.assign(_storagePath + _manifestPath +  relativePath);
+            }
+            else {
+                dstPath.assign(_storagePath + relativePath);
+            }
             // Create directory
             if (relativePath.back() == '/')
             {
@@ -763,7 +811,7 @@ void AssetsManagerEx::updateSucceed()
     // 3. swap the localManifest
     CC_SAFE_RELEASE(_localManifest);
     _localManifest = _remoteManifest;
-    _localManifest->setManifestRoot(_storagePath);
+    _localManifest->setManifestRoot(_storagePath + _manifestPath);
     _remoteManifest = nullptr;
     // 4. make local manifest take effect
     prepareLocalManifest();
@@ -1085,7 +1133,7 @@ void AssetsManagerEx::onSuccess(const std::string &/*srcUrl*/, const std::string
         
         if (ok)
         {
-            bool compressed = assetIt != assets.end() ? assetIt->second.compressed : false;
+            bool compressed = assetIt != assets.end() ? assetIt->second.compressed : customId == _remoteManifest->_allZipFileName;
             if (compressed)
             {
                 decompressDownloadedZip(customId, storagePath);
@@ -1102,8 +1150,10 @@ void AssetsManagerEx::onSuccess(const std::string &/*srcUrl*/, const std::string
     }
 }
 
-void AssetsManagerEx::destroyDownloadedVersion()
-{
+void AssetsManagerEx::destroyDownloadedVersion() {
+    // todo
+    // 现在可以热更多个实例，虽然manifest文件按模块分开存放，
+    // 但热更资源文件有可能被存放到同一目录， 此时可能全部被删除。
     _fileUtils->removeDirectory(_storagePath);
     _fileUtils->removeDirectory(_tempStoragePath);
 }
