@@ -199,10 +199,10 @@ THE SOFTWARE.
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
-    #include "platform/win32/CCApplication-win32.h"
+    #include "platform/windows/CCApplication-windows.h"
     #include "platform/desktop/CCGLViewImpl-desktop.h"
-    #include "platform/win32/CCGL-win32.h"
-    #include "platform/win32/CCStdC-win32.h"
+    #include "platform/windows/CCGL-windows.h"
+    #include "platform/windows/CCStdC-windows.h"
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
