@@ -50,8 +50,8 @@ struct DownloadUnit
 struct ManifestAsset {
     std::string md5;
     std::string path;
-    bool compressed;
-    float size;
+    bool compressed = false;
+    uint64_t size = 0;
     int downloadState;
 };
 
@@ -216,6 +216,12 @@ private:
     
     //! The remote package url
     std::string _packageUrl;
+
+    // 模块名
+    std::string _moduleName = std::string();
+
+    // 整包更新文件名
+    std::string _allZipFileName = std::string();
     
     //! The remote path of manifest file
     std::string _remoteManifestUrl;
@@ -240,6 +246,26 @@ private:
     
     //! All search paths
     std::vector<std::string> _searchPaths;
+
+    // 是否打开条件过滤下载。
+    bool _openFilter = false;
+
+    // 条件过滤方式。
+    // 0-使用||逻辑
+    // 1-使用&&逻辑
+    int _filterType = 0;
+
+    // 是否打开下载数量过滤。
+    bool _openFilterNum = false;
+
+    // 是否打开下载容量过滤。
+    bool _openFilterSize = false;
+
+    // 下载数量限制。
+    uint32_t _filterNum = 0;
+
+    // 下载容量限制（字节）。
+    uint64_t _filterSize = 0;
     
     rapidjson::Document _json;
 };

@@ -39,6 +39,14 @@
 #define KEY_ASSETS              "assets"
 #define KEY_COMPRESSED_FILES    "compressedFiles"
 #define KEY_SEARCH_PATHS        "searchPaths"
+constexpr char* KeyModuleName       = "moduleName";
+constexpr char* KeyOpenFilter       = "openFilter";
+constexpr char* KeyFilterType       = "filterType";
+constexpr char* KeyOpenFilterNum    = "openFilterNum";
+constexpr char* KeyFilterNum        = "filterNum";
+constexpr char* KeyOpenFilterSize   = "openFilterSize";
+constexpr char* KeyFilterSize       = "filterSize";
+constexpr char* KeyAllZipFileName   = "allZipFileName";
 
 #define KEY_PATH                "path"
 #define KEY_MD5                 "md5"
@@ -204,6 +212,8 @@ std::unordered_map<std::string, Manifest::AssetDiff> Manifest::genDiff(const Man
     std::string key;
     Asset valueA;
     Asset valueB;
+    uint32_t fileCount = 0;
+    uint64_t fileSize = 0;
     
     std::unordered_map<std::string, Asset>::const_iterator valueIt, it;
     for (it = _assets.begin(); it != _assets.end(); ++it)
@@ -228,6 +238,9 @@ std::unordered_map<std::string, Manifest::AssetDiff> Manifest::genDiff(const Man
             diff.asset = valueB;
             diff.type = DiffType::MODIFIED;
             diff_map.emplace(key, diff);
+
+            fileCount++;
+            fileSize += valueB.size;
         }
     }
     
@@ -243,6 +256,36 @@ std::unordered_map<std::string, Manifest::AssetDiff> Manifest::genDiff(const Man
             diff.asset = valueB;
             diff.type = DiffType::ADDED;
             diff_map.emplace(key, diff);
+
+            fileCount++;
+            fileSize += valueB.size;
+        }
+    }
+
+    // 在此处过滤下载的文件，当满足过滤条件，将只下载整包。
+    if (b->_openFilter) {
+        const bool fNumSuc = fileCount > b->_filterNum;
+        const bool fSizeSuc = fileSize > b->_filterSize;
+        bool fSuc = false;
+        if (b->_filterType == 0) {
+            fSuc = (b->_openFilterNum && fNumSuc) || (b->_openFilterSize && fSizeSuc);
+        }
+        else if (b->_filterType == 1) {
+            fSuc = (b->_openFilterNum && fNumSuc) && (b->_openFilterSize && fSizeSuc);
+        }
+        if (fSuc) {
+            diff_map.clear();
+
+            diff_map.emplace(b->_allZipFileName, AssetDiff{
+                {
+                    "",
+                    b->_allZipFileName,
+                    true,
+                    0,
+                    3
+                },
+                DiffType::MODIFIED
+            });
         }
     }
     
@@ -429,9 +472,9 @@ Manifest::Asset Manifest::parseAsset(const std::string &path, const rapidjson::V
     }
     else asset.compressed = false;
     
-    if ( json.HasMember(KEY_SIZE) && json[KEY_SIZE].IsInt() )
+    if ( json.HasMember(KEY_SIZE) && json[KEY_SIZE].IsUint64() )
     {
-        asset.size = json[KEY_SIZE].GetInt();
+        asset.size = json[KEY_SIZE].GetUint64();
     }
     else asset.size = 0;
     
@@ -506,6 +549,18 @@ void Manifest::loadManifest(const rapidjson::Document &json)
         {
             _packageUrl.push_back('/');
         }
+        if (json.HasMember(KeyModuleName) && json[KeyModuleName].IsString()) {
+            _moduleName = json[KeyModuleName].GetString();
+            _packageUrl.append(_moduleName);
+            // Append automatically "/"
+            if (!_packageUrl.empty() && _packageUrl[_packageUrl.size() - 1] != '/') {
+                _packageUrl.push_back('/');
+            }
+        }
+    }
+
+    if (json.HasMember(KeyAllZipFileName) && json[KeyAllZipFileName].IsString()) {
+        _allZipFileName = json[KeyAllZipFileName].GetString();
     }
     
     // Retrieve all assets
@@ -537,7 +592,31 @@ void Manifest::loadManifest(const rapidjson::Document &json)
             }
         }
     }
-    
+
+    if (json.HasMember(KeyOpenFilter) && json[KeyOpenFilter].IsBool()) {
+        _openFilter = json[KeyOpenFilter].GetBool();
+    }
+
+    if (json.HasMember(KeyFilterType) && json[KeyFilterType].IsInt()) {
+        _filterType = json[KeyFilterType].GetInt();
+    }
+
+    if (json.HasMember(KeyOpenFilterNum) && json[KeyOpenFilterNum].IsBool()) {
+        _openFilterNum = json[KeyOpenFilterNum].GetBool();
+    }
+
+    if (json.HasMember(KeyOpenFilterSize) && json[KeyOpenFilterSize].IsBool()) {
+        _openFilterSize = json[KeyOpenFilterSize].GetBool();
+    }
+
+    if (json.HasMember(KeyFilterNum) && json[KeyFilterNum].IsUint()) {
+        _filterNum = json[KeyFilterNum].GetUint();
+    }
+
+    if (json.HasMember(KeyFilterSize) && json[KeyFilterSize].IsUint64()) {
+        _filterSize = json[KeyFilterSize].GetUint64();
+    }
+
     _loaded = true;
 }
 
