@@ -176,6 +176,20 @@ void ScriptEngineManager::sendNodeEventToLua(Node* node, int action)
     }
 }
 
+void ScriptEngineManager::SendRefEventToLua(Ref* ref, int action)
+{
+    auto scriptEngine = getInstance()->getScriptEngine();
+
+    if (!scriptEngine) {
+        return;
+    }
+
+    BasicScriptData data(ref, &action);
+    ScriptEvent scriptEvent(kRefEvent, &data);
+
+    scriptEngine->sendEvent(&scriptEvent);
+}
+
 int ScriptEngineManager::sendEventToLua(const ScriptEvent& event)
 {
     auto scriptEngine = getInstance()->getScriptEngine();

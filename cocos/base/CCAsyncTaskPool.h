@@ -155,7 +155,9 @@ protected:
                     _taskCallBacks.pop();
             }
             _condition.notify_all();
-            _thread.join();
+            if (_thread.joinable()) {
+                _thread.join();
+            }
         }
         void clear()
         {

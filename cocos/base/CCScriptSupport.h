@@ -882,6 +882,17 @@ public:
     static void sendNodeEventToLua(Node* node, int action);
 
     /**
+	 * Call the Lua function when the event of ref is triggered.
+	 *
+	 * @param ref the nativeobject triggers the event.
+	 * @param action the specific type.
+	 *
+	 * @lua NA
+	 * @js NA
+	 */
+	static void SendRefEventToLua(Ref* ref, int action);
+
+    /**
     * Send a event to lua script
     *
     * @param event: the script event
