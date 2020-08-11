@@ -90,7 +90,6 @@ bool EditBoxImplCommon::initWithSize(const Size& size)
 
 void EditBoxImplCommon::initInactiveLabels(const Size& size)
 {
-    const char* pDefaultFontName = this->getNativeDefaultFontName();
 
     _label = Label::create();
     _label->setAnchorPoint(Vec2(0.0f,1.0f));
@@ -99,18 +98,20 @@ void EditBoxImplCommon::initInactiveLabels(const Size& size)
     _editBox->addChild(_label, kLabelZOrder);
 
     _labelPlaceHolder = Label::create();
-    _labelPlaceHolder->setAnchorPoint(Vec2(0.0f, 1.0f));
+    _labelPlaceHolder->setAnchorPoint(Vec2(0, 1.0f));
+    _labelPlaceHolder->setOverflow(Label::Overflow::CLAMP);
     _labelPlaceHolder->setTextColor(Color4B::GRAY);
     _labelPlaceHolder->enableWrap(false);
     _editBox->addChild(_labelPlaceHolder, kLabelZOrder);
 
-    setFont(pDefaultFontName, size.height*2/3);
-    setPlaceholderFont(pDefaultFontName, size.height*2/3);
+    setFont(_fontName.c_str(), size.height*2/3);
+    setPlaceholderFont(_placeholderFontName.c_str(), size.height*2/3);
 }
 
 void EditBoxImplCommon::placeInactiveLabels(const Size& size)
 {
     _label->setDimensions(size.width, size.height);
+    _labelPlaceHolder->setDimensions(size.width, size.height);
 
     auto placeholderSize = _labelPlaceHolder->getContentSize();
 
@@ -160,14 +161,10 @@ void EditBoxImplCommon::setFont(const char* pFontName, int fontSize)
 {
     _fontName = pFontName;
     _fontSize = fontSize;
-    this->setNativeFont(pFontName, fontSize * _label->getNodeToWorldAffineTransform().a);
-    if (!_fontName.empty())
+    this->setNativeFont(getNativeDefaultFontName(), fontSize * _label->getNodeToWorldAffineTransform().a);
+    if (!_fontName.empty() && fontSize > 0)
     {
-        _label->setSystemFontName(pFontName);
-    }
-    if (fontSize > 0)
-    {
-        _label->setSystemFontSize(fontSize);
+        _label->setTTFConfig(TTFConfig(pFontName, fontSize));
     }
 }
 
@@ -182,14 +179,10 @@ void EditBoxImplCommon::setPlaceholderFont(const char* pFontName, int fontSize)
 {
     _placeholderFontName = pFontName;
     _placeholderFontSize = fontSize;
-    this->setNativePlaceholderFont(pFontName, fontSize * _labelPlaceHolder->getNodeToWorldAffineTransform().a);
-    if (!_placeholderFontName.empty())
+    this->setNativePlaceholderFont(getNativeDefaultFontName(), fontSize * _labelPlaceHolder->getNodeToWorldAffineTransform().a);
+    if (!_placeholderFontName.empty() && fontSize > 0)
     {
-        _labelPlaceHolder->setSystemFontName(pFontName);
-    }
-    if (fontSize > 0)
-    {
-        _labelPlaceHolder->setSystemFontSize(fontSize);
+        _labelPlaceHolder->setTTFConfig(TTFConfig(pFontName, fontSize));
     }
 }
 
@@ -287,7 +280,6 @@ void EditBoxImplCommon::setVisible(bool visible)
 void EditBoxImplCommon::setContentSize(const Size& size)
 {
     _contentSize = applyPadding(size);
-    CCLOG("[Edit text] content size = (%f, %f)", _contentSize.width, _contentSize.height);
     placeInactiveLabels(_contentSize);
 }
 

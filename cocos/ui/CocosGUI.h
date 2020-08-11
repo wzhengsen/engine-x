@@ -47,15 +47,14 @@ THE SOFTWARE.
 #include "ui/UIHBox.h"
 #include "ui/UIVBox.h"
 #include "ui/UIRelativeBox.h"
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-#include "ui/UIVideoPlayer.h"
+#include "ui/UIVideoPlayer/UIVideoPlayer.h"
 #include "ui/UIWebView/UIWebView.h"
-#endif
 #include "ui/GUIExport.h"
 #include "ui/UIScale9Sprite.h"
 #include "ui/UIEditBox/UIEditBox.h"
 #include "ui/UILayoutComponent.h"
 #include "ui/UITabControl.h"
+#include "ui/UIQrCode/UIQrCode.h"
 
 /**
  * @addtogroup ui

@@ -1,9 +1,12 @@
 if(WINDOWS)
     set(COCOS_UI_SPECIFIC_HEADER
-        ui/UIEditBox/UIEditBoxImpl-win32.h
+        ui/UIEditBox/UIEditBoxImpl-windows.h
+        ui/UIWebView/UIWebViewImpl-windows.h
         )
     set(COCOS_UI_SPECIFIC_SRC
-        ui/UIEditBox/UIEditBoxImpl-win32.cpp
+        ui/UIEditBox/UIEditBoxImpl-windows.cpp
+        ui/UIVideoPlayer/UIVideoPlayer-windows.cpp
+        ui/UIWebView/UIWebViewImpl-windows.cpp
         )
 elseif(APPLE)
     if(MACOSX)
@@ -26,8 +29,6 @@ elseif(APPLE)
             )
     elseif(IOS)
         set(COCOS_UI_SPECIFIC_HEADER
-            ui/UIWebView/UIWebView.h
-            ui/UIVideoPlayer.h
             ui/UIWebView/UIWebViewImpl-ios.h
             ui/UIEditBox/UIEditBoxImpl-ios.h
             ui/UIEditBox/iOS/CCUIEditBoxIOS.h
@@ -38,8 +39,8 @@ elseif(APPLE)
             ui/UIEditBox/iOS/CCUISingleLineTextField.h
             )
         set(COCOS_UI_SPECIFIC_SRC
-            ui/UIWebView/UIWebView.mm
-            ui/UIVideoPlayer-ios.mm
+            ui/UIVideoPlayer/UIVideoPlayer-ios.mm
+            ui/UIWebView/UIWebView-ios.mm
             ui/UIWebView/UIWebViewImpl-ios.mm
             ui/UIEditBox/UIEditBoxImpl-ios.mm
             ui/UIEditBox/iOS/CCUIEditBoxIOS.mm
@@ -58,17 +59,14 @@ elseif(LINUX)
         )
 elseif(ANDROID)
     set(COCOS_UI_SPECIFIC_HEADER
-        ui/UIWebView/UIWebView.h
-        ui/UIVideoPlayer.h
         ui/UIWebView/UIWebViewImpl-android.h
         ui/UIEditBox/UIEditBoxImpl-android.h
         )
     set(COCOS_UI_SPECIFIC_SRC
         ui/UIEditBox/UIEditBoxImpl-android.cpp
-        ui/UIVideoPlayer-android.cpp
+        ui/UIVideoPlayer/UIVideoPlayer-android.cpp
         ui/UIWebView/UIWebViewImpl-android.cpp
-        # it's special for android, not a common file
-        ui/UIWebView/UIWebView.cpp
+        ui/UIWebView/UIWebView-android.cpp
         )
 endif()
 
@@ -106,6 +104,17 @@ set(COCOS_UI_HEADER
     ui/UITextField.h
     ui/UIVBox.h
     ui/UIWidget.h
+    ui/UIQrCode/UIQrCode.h
+    ui/UIQrCode/QrEncode/bitstream.h
+    ui/UIQrCode/QrEncode/mask.h
+    ui/UIQrCode/QrEncode/qrencode.h
+    ui/UIQrCode/QrEncode/qrinput.h
+    ui/UIQrCode/QrEncode/qrspec.h
+    ui/UIQrCode/QrEncode/rscode.h
+    ui/UIQrCode/QrEncode/split.h
+    ui/UIVideoPlayer/UIVideoPlayer.h
+    ui/UIWebView/UIWebView.h
+    ui/UIWebView/UIWebView-inl.h
     )
 
 set(COCOS_UI_SRC
@@ -138,9 +147,17 @@ set(COCOS_UI_SRC
     ui/UITextField.cpp
     ui/UIVBox.cpp
     ui/UIWidget.cpp
-    ui/UIEditBox/UIEditBox.cpp
     ui/UILayoutComponent.cpp
-    ui/UIEditBox/UIEditBoxImpl-common.cpp
     ui/UITabControl.cpp
-    ui/UITextFieldEx.cpp
+    ui/UIEditBox/UIEditBox.cpp
+    ui/UIEditBox/UIEditBoxImpl-common.cpp
+    ui/UIWebView/UIWebView.cpp
+    ui/UIQrCode/UIQrCode.cpp
+    ui/UIQrCode/QrEncode/bitstream.cpp
+    ui/UIQrCode/QrEncode/mask.cpp
+    ui/UIQrCode/QrEncode/qrencode.cpp
+    ui/UIQrCode/QrEncode/qrinput.cpp
+    ui/UIQrCode/QrEncode/qrspec.cpp
+    ui/UIQrCode/QrEncode/rscode.cpp
+    ui/UIQrCode/QrEncode/split.cpp
     )

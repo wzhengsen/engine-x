@@ -22,21 +22,5 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-#include "platform/CCPlatformConfig.h"
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-
 #include "ui/UIWebView/UIWebViewImpl-android.h"
 #include "ui/UIWebView/UIWebView-inl.h"
-
-#elif (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
-
-#include "ui/UIWebView/UIWebViewImpl-windows.h"
-#include "ui/UIWebView/UIWebView-inl.h"
-
-#elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-
-#include "ui/UIWebView/UIWebViewImpl-ios.h"
-#include "ui/UIWebView/UIWebView-inl.h"
-
-#endif
