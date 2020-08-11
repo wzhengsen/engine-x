@@ -10,7 +10,7 @@ elseif(ANDROID)
         )
 elseif(LINUX OR WINDOWS)
     set(COCOS_BASE_SPECIFIC_SRC
-        base/CCController-linux-win32.cpp
+        base/CCController-linux-windows.cpp
         )
 endif()
 

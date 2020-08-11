@@ -38,7 +38,9 @@ THE SOFTWARE.
  */
 NS_CC_BEGIN
 
-
+enum {
+	kRefOnDestroy
+};
 class Ref;
 
 /** 

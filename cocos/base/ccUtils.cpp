@@ -721,6 +721,210 @@ std::string bin2hex(const std::string& binary /*charstring also regard as binary
     return result;
 }
 
+
+// 多字节编码转为UTF8编码
+bool MBToUTF8(std::string& pu8, const char* pmb, int mLen) {
+    std::vector<char> vec = std::vector<char>();
+    if (MBToUTF8(vec, pmb, mLen)) {
+        pu8.assign(vec.data(), vec.size());
+        return true;
+    }
+    return false;
+}
+
+bool MBToUTF8(std::vector<char>& pu8, const char* pmb, int mLen)
+{
+	// convert an MBCS string to widechar   
+	int nLen = MultiByteToWideChar(CP_ACP, 0, pmb, mLen, NULL, 0);
+
+	WCHAR* lpszW = new WCHAR[nLen];
+
+	int nRtn = MultiByteToWideChar(CP_ACP, 0, pmb, mLen, lpszW, nLen);
+
+	if (nRtn != nLen)
+	{
+		delete[] lpszW;
+		return false;
+	}
+	// convert an widechar string to utf8  
+	int utf8Len = WideCharToMultiByte(CP_UTF8, 0, lpszW, nLen, NULL, 0, NULL, NULL);
+	if (utf8Len <= 0)
+	{
+		return false;
+	}
+	pu8.resize(utf8Len);
+	nRtn = WideCharToMultiByte(CP_UTF8, 0, lpszW, nLen, &*pu8.begin(), utf8Len, NULL, NULL);
+	delete[] lpszW;
+
+	if (nRtn != utf8Len)
+	{
+		pu8.clear();
+		return false;
+	}
+	return true;
+}
+
+// UTF8编码转为多字节编码  
+bool UTF8ToMB(std::string& pmb, const char* pu8, int utf8Len) {
+    std::vector<char> vec = std::vector<char>();
+    if (UTF8ToMB(vec, pu8, utf8Len)) {
+        pmb.assign(vec.data(), vec.size());
+        return true;
+    }
+    return false;
+}
+bool UTF8ToMB(std::vector<char>& pmb, const char* pu8, int utf8Len)
+{
+	// convert an UTF8 string to widechar   
+	int nLen = MultiByteToWideChar(CP_UTF8, 0, pu8, utf8Len, NULL, 0);
+
+	WCHAR* lpszW = new WCHAR[nLen];
+
+	int nRtn = MultiByteToWideChar(CP_UTF8, 0, pu8, utf8Len, lpszW, nLen);
+
+	if (nRtn != nLen)
+	{
+		delete[] lpszW;
+		return false;
+	}
+
+	// convert an widechar string to Multibyte   
+	int MBLen = WideCharToMultiByte(CP_ACP, 0, lpszW, nLen, NULL, 0, NULL, NULL);
+	if (MBLen <= 0)
+	{
+		return false;
+	}
+	pmb.resize(MBLen);
+	nRtn = WideCharToMultiByte(CP_ACP, 0, lpszW, nLen, &*pmb.begin(), MBLen, NULL, NULL);
+	delete[] lpszW;
+
+	if (nRtn != MBLen)
+	{
+		pmb.clear();
+		return false;
+	}
+	return true;
+}
+
+// 多字节编码转为Unicode编码  
+bool MBToUnicode(std::vector<wchar_t>& pun, const char* pmb, int mLen)
+{
+	// convert an MBCS string to widechar   
+	int uLen = MultiByteToWideChar(CP_ACP, 0, pmb, mLen, NULL, 0);
+
+	if (uLen <= 0)
+	{
+		return false;
+	}
+	pun.resize(uLen);
+
+	int nRtn = MultiByteToWideChar(CP_ACP, 0, pmb, mLen, &*pun.begin(), uLen);
+
+	if (nRtn != uLen)
+	{
+		pun.clear();
+		return false;
+	}
+	return true;
+}
+
+//Unicode编码转为多字节编码  
+bool UnicodeToMB(std::vector<char>& pmb, const wchar_t* pun, int uLen)
+{
+	// convert an widechar string to Multibyte   
+	int MBLen = WideCharToMultiByte(CP_ACP, 0, pun, uLen, NULL, 0, NULL, NULL);
+	if (MBLen <= 0)
+	{
+		return false;
+	}
+	pmb.resize(MBLen);
+	int nRtn = WideCharToMultiByte(CP_ACP, 0, pun, uLen, &*pmb.begin(), MBLen, NULL, NULL);
+
+	if (nRtn != MBLen)
+	{
+		pmb.clear();
+		return false;
+	}
+	return true;
+}
+
+// UTF8编码转为Unicode  
+bool UTF8ToUnicode(std::vector<wchar_t>& pun, const char* pu8, int utf8Len)
+{
+	// convert an UTF8 string to widechar   
+	int nLen = MultiByteToWideChar(CP_UTF8, 0, pu8, utf8Len, NULL, 0);
+	if (nLen <= 0)
+	{
+		return false;
+	}
+	pun.resize(nLen);
+	int nRtn = MultiByteToWideChar(CP_UTF8, 0, pu8, utf8Len, &*pun.begin(), nLen);
+
+	if (nRtn != nLen)
+	{
+		pun.clear();
+		return false;
+	}
+
+	return true;
+}
+
+// Unicode编码转为UTF8  
+bool UnicodeToUTF8(std::vector<char>& pu8, const wchar_t* pun, int uLen)
+{
+	// convert an widechar string to utf8  
+	int utf8Len = WideCharToMultiByte(CP_UTF8, 0, pun, uLen, NULL, 0, NULL, NULL);
+	if (utf8Len <= 0)
+	{
+		return false;
+	}
+	pu8.resize(utf8Len);
+	int nRtn = WideCharToMultiByte(CP_UTF8, 0, pun, uLen, &*pu8.begin(), utf8Len, NULL, NULL);
+
+	if (nRtn != utf8Len)
+	{
+		pu8.clear();
+		return false;
+	}
+	return true;
+}
+
+static int invalid_date(const struct tm* ptm) {
+#define datevalue_in_range(min, max, value) ((min) <= (value) && (value) <= (max))
+    return (!datevalue_in_range(0, 207, ptm->tm_year) ||
+        !datevalue_in_range(0, 11, ptm->tm_mon) ||
+        !datevalue_in_range(1, 31, ptm->tm_mday) ||
+        !datevalue_in_range(0, 23, ptm->tm_hour) ||
+        !datevalue_in_range(0, 59, ptm->tm_min) ||
+        !datevalue_in_range(0, 59, ptm->tm_sec));
+#undef datevalue_in_range
+}
+
+uint32_t Time2DosDate(const struct tm* ptm) {
+    struct tm fixed_tm;
+
+    /* Years supported:
+    * [00, 79]      (assumed to be between 2000 and 2079)
+    * [80, 207]     (assumed to be between 1980 and 2107, typical output of old
+                     software that does 'year-1900' to get a double digit year)
+    * [1980, 2107]  (due to the date format limitations, only years between 1980 and 2107 can be stored.)
+    */
+
+    memcpy(&fixed_tm, ptm, sizeof(struct tm));
+    if (fixed_tm.tm_year >= 1980) /* range [1980, 2107] */
+        fixed_tm.tm_year -= 1980;
+    else if (fixed_tm.tm_year >= 80) /* range [80, 99] */
+        fixed_tm.tm_year -= 80;
+    else /* range [00, 79] */
+        fixed_tm.tm_year += 20;
+
+    if (invalid_date(ptm))
+        return 0;
+
+    return (uint32_t)(((fixed_tm.tm_mday) + (32 * (fixed_tm.tm_mon + 1)) + (512 * fixed_tm.tm_year)) << 16) |
+        ((fixed_tm.tm_sec / 2) + (32 * fixed_tm.tm_min) + (2048 * (uint32_t)fixed_tm.tm_hour));
+}
+
 }
 
 NS_CC_END

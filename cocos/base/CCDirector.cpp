@@ -712,17 +712,17 @@ Vec2 Director::convertToUI(const Vec2& glPoint)
     Vec4 glCoord(glPoint.x, glPoint.y, 0.0, 1);
     transform.transformVector(glCoord, &clipCoord);
 
-	/*
-	BUG-FIX #5506
+    /*
+    BUG-FIX #5506
 
-	a = (Vx, Vy, Vz, 1)
-	b = (a×M)T
-	Out = 1 ⁄ bw(bx, by, bz)
-	*/
+    a = (Vx, Vy, Vz, 1)
+    b = (a x M)T
+    Out = 1 / bw(bx, by, bz)
+    */
 	
-	clipCoord.x = clipCoord.x / clipCoord.w;
-	clipCoord.y = clipCoord.y / clipCoord.w;
-	clipCoord.z = clipCoord.z / clipCoord.w;
+    clipCoord.x = clipCoord.x / clipCoord.w;
+    clipCoord.y = clipCoord.y / clipCoord.w;
+    clipCoord.z = clipCoord.z / clipCoord.w;
 
     Size glSize = _openGLView->getDesignResolutionSize();
     float factor = 1.0f / glCoord.w;
@@ -1062,6 +1062,9 @@ void Director::restartDirector()
 
     // Restart animation
     startAnimation();
+
+	// Restart Lua engine
+	Application::getInstance()->RestartLuaEngine();
     
     // Real restart in script level
 #if CC_ENABLE_SCRIPT_BINDING

@@ -68,6 +68,7 @@ Ref::~Ref()
     if (pEngine != nullptr && _luaID)
     {
         // if the object is referenced by Lua engine, remove it
+		ScriptEngineManager::SendRefEventToLua(this, kRefOnDestroy);
         pEngine->removeScriptObjectByObject(this);
     }
 #endif // CC_ENABLE_SCRIPT_BINDING

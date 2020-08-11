@@ -224,6 +224,31 @@ namespace utils
     * @lua NA
     */
     CC_DLL std::string bin2hex(const std::string& binary /*charstring also regard as binary in C/C++*/, int delim = -1, bool prefix = false);
+
+
+	// 多字节编码转为UTF8编码  
+	CC_DLL bool MBToUTF8(std::vector<char>& pu8, const char* pmb, int mLen);
+
+    CC_DLL bool MBToUTF8(std::string& pu8, const char* pmb, int mLen);
+
+	// UTF8编码转为多字节编码  
+	CC_DLL bool UTF8ToMB(std::vector<char>& pmb, const char* pu8, int utf8Len);
+
+    CC_DLL bool UTF8ToMB(std::string& pmb, const char* pu8, int utf8Len);
+
+	// 多字节编码转为Unicode编码  
+	CC_DLL bool MBToUnicode(std::vector<wchar_t>& pun, const char* pmb, int mLen);
+
+	//Unicode编码转为多字节编码  
+	CC_DLL bool UnicodeToMB(std::vector<char>& pmb, const wchar_t* pun, int uLen);
+
+	// UTF8编码转为Unicode  
+	CC_DLL bool UTF8ToUnicode(std::vector<wchar_t>& pun, const char* pu8, int utf8Len);
+
+	// Unicode编码转为UTF8  
+	CC_DLL bool UnicodeToUTF8(std::vector<char>& pu8, const wchar_t* pun, int uLen);
+
+    CC_DLL uint32_t Time2DosDate(const struct tm* ptm);
 }
 
 NS_CC_END

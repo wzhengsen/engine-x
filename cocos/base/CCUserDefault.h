@@ -193,6 +193,12 @@ public:
     * @js NA
     */
     virtual void deleteValueForKey(const char* key);
+
+	/**
+	* 清空实例指向的文件
+	* @js NA
+	*/
+	virtual void Clear() noexcept;
     
     /** Returns the singleton.
      * @js NA

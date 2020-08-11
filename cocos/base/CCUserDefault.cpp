@@ -465,4 +465,10 @@ void UserDefault::deleteValueForKey(const char* key)
         flush();
 }
 
+void UserDefault::Clear()
+{
+    this->_values.clear();
+    flush();
+}
+
 NS_CC_END
