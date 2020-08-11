@@ -118,6 +118,12 @@ public:
      * @see `setCapInsets(const Rect&)`
      */
     const Rect& getCapInsets()const;
+
+    /**
+     * Get ImageView's renderer.
+     * @return image renderer
+     */
+    Scale9Sprite* getRenderer()const { return _imageRenderer; };
     
     /**
      * Sets the source blending function.

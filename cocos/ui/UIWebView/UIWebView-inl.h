@@ -80,7 +80,11 @@ namespace ui{
 
     void WebView::loadURL(const std::string& url, bool cleanCachedData)
     {
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+        _impl->loadURL(url);
+#else
         _impl->loadURL(url, cleanCachedData);
+#endif
     }
 
     void WebView::loadFile(const std::string &fileName)
@@ -144,16 +148,29 @@ namespace ui{
     }
     
     void WebView::setOpacityWebView(float opacity){
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+        CCLOGWARN("%s", "This function is not implemented on Windows.");
+#else
         _impl->setOpacityWebView(opacity);
+#endif
     }
     
     float WebView::getOpacityWebView() const{
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+        CCLOGWARN("%s", "This function is not implemented on Windows.");
+        return 1.0f;
+#else
         return _impl->getOpacityWebView();
+#endif
     }
     
     void WebView::setBackgroundTransparent()
     {
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+        CCLOGWARN("%s", "This function is not implemented on Windows.");
+#else
         _impl->setBackgroundTransparent();
+#endif
     };
 
     void WebView::onEnter()

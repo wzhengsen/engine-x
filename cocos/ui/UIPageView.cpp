@@ -473,7 +473,6 @@ void PageView::setIndicatorIndexNodesTexture(const std::string& texName,Widget::
 
 void PageView::remedyLayoutParameter(Widget *item)
 {
-    item->setContentSize(this->getContentSize());
     ListView::remedyLayoutParameter(item);
 }
 
