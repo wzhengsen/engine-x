@@ -151,7 +151,7 @@ static int tolua_cocos2d_ScrollView_registerScriptHandler(lua_State* tolua_S)
         }
 #endif
         LUA_FUNCTION handler = (  toluafix_ref_function(tolua_S,2,0));
-        ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType) ((int)tolua_tonumber(tolua_S,3,0) + (int)ScriptHandlerMgr::HandlerType::SCROLLVIEW_SCROLL);
+        ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType) ((int)tolua_tointeger(tolua_S,3,0));
         
         ScriptHandlerMgr::getInstance()->addObjectHandler((void*)self, handler, handlerType);
         return 0;
@@ -197,7 +197,7 @@ static int tolua_cocos2d_ScrollView_unregisterScriptHandler(lua_State* tolua_S)
         if (!tolua_isnumber(tolua_S, 2, 0, &tolua_err))
             goto tolua_lerror;
 #endif
-        ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType) ((int)tolua_tonumber(tolua_S,2,0) + (int)ScriptHandlerMgr::HandlerType::SCROLLVIEW_SCROLL);
+        ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType) ((int)tolua_tointeger(tolua_S,2,0));
         ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)self, handlerType);
         return 0;
     }
@@ -446,7 +446,7 @@ static int lua_cocos2dx_AssetsManager_setDelegate(lua_State* L)
         }
         
         LUA_FUNCTION handler = toluafix_ref_function(L, 2, 0);
-        ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType) ((int)tolua_tonumber(L,3,0) + (int)ScriptHandlerMgr::HandlerType::ASSETSMANAGER_PROGRESS);
+        ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType) ((int)tolua_tointeger(L,3,0));
             
         ScriptHandlerMgr::getInstance()->addObjectHandler((void*)delegate, handler, handlerType);
         return 0;
@@ -864,7 +864,7 @@ static int lua_cocos2d_TableView_registerScriptHandler(lua_State* L)
         }
 #endif
         LUA_FUNCTION handler = (  toluafix_ref_function(L,2,0));
-        ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType) ((int)tolua_tonumber(L,3,0) + (int)ScriptHandlerMgr::HandlerType::SCROLLVIEW_SCROLL);
+        ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType) ((int)tolua_tointeger(L,3,0));
         
         ScriptHandlerMgr::getInstance()->addObjectHandler((void*)self, handler, handlerType);
         return 0;
@@ -910,7 +910,7 @@ static int lua_cocos2d_TableView_unregisterScriptHandler(lua_State* L)
         if (!tolua_isnumber(L, 2, 0, &tolua_err))
             goto tolua_lerror;
 #endif
-        ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType) ((int)tolua_tonumber(L,2,0) + (int)ScriptHandlerMgr::HandlerType::SCROLLVIEW_SCROLL);
+        ScriptHandlerMgr::HandlerType handlerType = (ScriptHandlerMgr::HandlerType) ((int)tolua_tointeger(L,2,0));
         ScriptHandlerMgr::getInstance()->removeObjectHandler((void*)self, handlerType);
         return 0;
     }
@@ -979,7 +979,8 @@ static int lua_cocos2dx_Extension_EventListenerAssetsManagerEx_create(lua_State*
             toluafix_pushusertype_ccobject(L, id, luaID, (void*)event,"cc.EventAssetsManagerEx");
             LuaEngine::getInstance()->getLuaStack()->executeFunctionByHandler(handler, 1);
         });
-        
+        ScriptHandlerMgr::getInstance()->addCustomHandler((void*)ret, handler);
+
         int  id = (ret) ? (int)ret->_ID : -1;
         int* luaID = (ret) ? &ret->_luaID : nullptr;
         toluafix_pushusertype_ccobject(L, id, luaID, (void*)ret,"cc.EventListenerAssetsManagerEx");

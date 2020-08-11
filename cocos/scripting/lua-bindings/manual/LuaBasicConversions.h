@@ -835,7 +835,31 @@ extern bool luaval_to_std_vector_vec3(lua_State* L, int lo, std::vector<cocos2d:
 
 extern bool luaval_to_std_map_string_string(lua_State* L, int lo, std::map<std::string, std::string>* ret, const char* funcName);
 
-/**@}**/
+/**
+ * Get a Viewport object value from the given acceptable index of stack.
+ * If the value at the given acceptable index of stack is a table it returns true, otherwise returns false.
+ * If the table has the `bottom`, 'height','left','width' keys and the corresponding values are not nil, this function would assign the values to the corresponding members of outValue. Otherwise, the value of members of outValue would be 0.
+ *
+ * @param L the current lua_State.
+ * @param lo the given acceptable index of stack.
+ * @param outValue the pointer to a Viewport object which stores the values from the Lua table.
+ * @param funcName the name of calling function, it is used for error output in the debug model.
+ * @return Return true if the value at the given acceptable index of stack is a table, otherwise return false.
+ */
+extern bool luaval_to_viewport(lua_State* L, int lo, Viewport* outValue, const char* funcName = "");
+
+/**
+ * Get a ResourceData object value from the given acceptable index of stack.
+ * If the value at the given acceptable index of stack is a table it returns true, otherwise returns false.
+ * If the table has the `file`, 'plist','type' keys and the corresponding values are not nil, this function would assign the values to the corresponding members of outValue. Otherwise, the value of members of outValue would be 0.
+ *
+ * @param L the current lua_State.
+ * @param lo the given acceptable index of stack.
+ * @param outValue the pointer to a ResourceData object which stores the values from the Lua table.
+ * @param funcName the name of calling function, it is used for error output in the debug model.
+ * @return Return true if the value at the given acceptable index of stack is a table, otherwise return false.
+ */
+extern bool luaval_to_resourcedata(lua_State* L, int lo, cocos2d::ResourceData* outValue, const char* funcName = "");
 
 // from native
 
@@ -1305,6 +1329,30 @@ CC_LUA_DLL void uniformLocation_to_luaval(lua_State* L, const cocos2d::backend::
 
 CC_LUA_DLL void program_activeattrs_to_luaval(lua_State *L , const std::unordered_map<std::string, cocos2d::backend::AttributeBindInfo> &map);
 
+/**
+ * Push a table converted from a Viewport object into the Lua stack.
+ * The format of table as follows:
+    {bottom=numberValue1,
+    height=numberValue2,
+    left=numberValue3,
+    width=numberValue4}
+ *
+ * @param L the current lua_State.
+ * @param vp  a Viewport object.
+ */
+extern void viewport_to_luaval(lua_State* L, const Viewport& vp);
+
+/**
+ * Push a table converted from a cocos2d::ResourceData object into the Lua stack.
+ * The format of table as follows:
+    {file=stringValue1,
+    plist=stringValue2,
+    type=numberValue3}
+ *
+ * @param L the current lua_State.
+ * @param rd  a cocos2d::ResourceData object.
+ */
+extern void resourcedata_to_luaval(lua_State* L, const cocos2d::ResourceData& rd);
 
 // end group
 /// @}

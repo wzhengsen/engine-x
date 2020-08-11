@@ -1845,7 +1845,7 @@ static int tolua_cocos2d_Scheduler_scheduleScriptFunc(lua_State* tolua_S)
         float interval = (float)  tolua_tonumber(tolua_S,3,0);
         bool  paused   = (bool)  tolua_toboolean(tolua_S,4,0);
         unsigned int tolua_ret = (unsigned int)  self->scheduleScriptFunc(handler,interval,paused);
-        tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+        tolua_pushinteger(tolua_S,tolua_ret);
         return 1;
     }
 
@@ -1891,7 +1891,7 @@ static int tolua_cocos2d_Scheduler_unscheduleScriptEntry(lua_State* tolua_S)
         }
 #endif
 
-        unsigned int scheduleScriptEntryID = ((unsigned int)  tolua_tonumber(tolua_S,2,0));
+        unsigned int scheduleScriptEntryID = ((unsigned int)  tolua_tointeger(tolua_S,2,0));
         self->unscheduleScriptEntry(scheduleScriptEntryID);
         return 0;
     }
@@ -3194,7 +3194,7 @@ static int tolua_cocos2dx_DrawNode_drawPolygon(lua_State* tolua_S)
             goto tolua_lerror;
         }
 #endif
-        int size = lua_tointeger(tolua_S, 3);
+        size_t size = lua_tonumber(tolua_S, 3);
         if ( size > 0 )
         {
             cocos2d::Vec2* points = new (std::nothrow) cocos2d::Vec2[size];
@@ -3287,7 +3287,7 @@ int tolua_cocos2dx_DrawNode_drawSolidPoly(lua_State* tolua_S)
             if (NULL == points)
                 return 0;
 
-            for (unsigned int i = 0; i < size; i++)
+            for (uint32_t i = 0; i < size; i++)
             {
                 lua_pushnumber(tolua_S,i + 1);
                 lua_gettable(tolua_S,2);
@@ -3366,7 +3366,7 @@ int tolua_cocos2dx_DrawNode_drawPoly(lua_State* tolua_S)
             if (NULL == points)
                 return 0;
 
-            for (unsigned int i = 0; i < size; i++)
+            for (uint32_t i = 0; i < size; i++)
             {
                 lua_pushnumber(tolua_S,i + 1);
                 lua_gettable(tolua_S,2);
@@ -3574,7 +3574,7 @@ int tolua_cocos2dx_DrawNode_drawPoints(lua_State* tolua_S)
             if (NULL == points)
                 return 0;
 
-            for (unsigned int i = 0; i < size; i++)
+            for (uint32_t i = 0; i < size; i++)
             {
                 lua_pushnumber(tolua_S,i + 1);
                 lua_gettable(tolua_S,2);
@@ -3614,7 +3614,7 @@ int tolua_cocos2dx_DrawNode_drawPoints(lua_State* tolua_S)
             if (nullptr == points)
                 return 0;
 
-            for (unsigned int i = 0; i < size; i++)
+            for (uint32_t i = 0; i < size; i++)
             {
                 lua_pushnumber(tolua_S,i + 1);
                 lua_gettable(tolua_S,2);
@@ -6002,7 +6002,7 @@ static void extendLabel(lua_State* tolua_S)
     lua_rawget(tolua_S, LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        tolua_function(tolua_S, "createWithTTF", lua_cocos2dx_Label_createWithTTF00);
+        tolua_function(tolua_S, "createWithTTFConfig", lua_cocos2dx_Label_createWithTTF00);
         tolua_function(tolua_S, "createWithTTF", lua_cocos2dx_Label_createWithTTF01);
     }
     lua_pop(tolua_S, 1);
@@ -7579,6 +7579,111 @@ static int tolua_cocos2d_utils_findChild(lua_State* tolua_S)
 #endif
 }
 
+struct LuaCustomEventListener {
+    LuaCustomEventListener(lua_State* state, int index) : L(state), ref(LUA_NOREF) {
+        luaL_checktype(L, index, LUA_TFUNCTION);
+        lua_pushvalue(L, index);
+        ref = luaL_ref(L, LUA_REGISTRYINDEX);
+    }
+    ~LuaCustomEventListener() {
+        unref();
+    }
+
+    void operator()(cocos2d::EventCustom* e) {
+        lua_rawgeti(L, LUA_REGISTRYINDEX, ref);
+
+        object_to_luaval<cocos2d::EventCustom>(L, "cc.EventCustom", e);
+        lua_call(L, 1, 0);
+    }
+
+    LuaCustomEventListener(const LuaCustomEventListener& other) : L(nullptr), ref(LUA_NOREF) {
+        *this = other;
+    }
+    LuaCustomEventListener& operator=(const LuaCustomEventListener& rhs) {
+        if (this != &rhs) {
+            unref();
+            L = rhs.L;
+            lua_rawgeti(L, LUA_REGISTRYINDEX, rhs.ref);
+            ref = luaL_ref(L, LUA_REGISTRYINDEX);
+        }
+        return *this;
+    }
+
+    LuaCustomEventListener(LuaCustomEventListener&& other) : L(nullptr), ref(LUA_NOREF) {
+        *this = std::move(other);
+    }
+
+    LuaCustomEventListener& operator=(LuaCustomEventListener&& rhs) {
+        if (this != &rhs) {
+            unref();
+
+            L = rhs.L;
+            ref = rhs.ref;
+
+            rhs.L = nullptr;
+            rhs.ref = LUA_NOREF;
+        }
+        return *this;
+    }
+private:
+    inline void unref() {
+        if (L && ref != LUA_NOREF && ref != LUA_REFNIL)
+            luaL_unref(L, LUA_REGISTRYINDEX, ref);
+    }
+
+    lua_State* L;
+    int ref;
+};
+
+int lua_cocos2dx_EventDispatcher_addCustomEventListener(lua_State* tolua_S) {
+    int argc = 0;
+    cocos2d::EventDispatcher* cobj = nullptr;
+    bool ok = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S, 1, "cc.EventDispatcher", 0, &tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::EventDispatcher*)tolua_tousertype(tolua_S, 1, 0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) {
+        tolua_error(tolua_S, "invalid 'cobj' in function 'lua_cocos2dx_EventDispatcher_addCustomEventListener'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S) - 1;
+    if (argc == 2) {
+        std::string arg0;
+
+        ok &= luaval_to_std_string(tolua_S, 2, &arg0, "cc.EventDispatcher:addCustomEventListener");
+        auto callback = LuaCustomEventListener(tolua_S, 3);
+
+        if (!ok) {
+            tolua_error(tolua_S, "invalid arguments in function 'lua_cocos2dx_EventDispatcher_addCustomEventListener'", nullptr);
+            return 0;
+        }
+        cocos2d::EventListenerCustom* ret = cobj->addCustomEventListener(arg0, std::function<void(cocos2d::EventCustom*)>(std::move(callback)));
+        object_to_luaval<cocos2d::EventListenerCustom>(tolua_S, "cc.EventListenerCustom", (cocos2d::EventListenerCustom*)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.EventDispatcher:addCustomEventListener", argc, 2);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S, "#ferror in function 'lua_cocos2dx_EventDispatcher_addCustomEventListener'.", &tolua_err);
+#endif
+
+    return 0;
+}
+
 int register_all_cocos2dx_module_manual(lua_State* tolua_S)
 {
     if (nullptr == tolua_S)
@@ -7592,6 +7697,11 @@ int register_all_cocos2dx_module_manual(lua_State* tolua_S)
             tolua_function(tolua_S, "captureScreen", tolua_cocos2d_utils_captureScreen);
             tolua_function(tolua_S, "findChildren", tolua_cocos2d_utils_findChildren);
 	    tolua_function(tolua_S, "findChild", tolua_cocos2d_utils_findChild);
+        tolua_endmodule(tolua_S);
+
+        tolua_module(tolua_S, "EventDispatcher", 0);
+        tolua_beginmodule(tolua_S, "EventDispatcher");
+            tolua_function(tolua_S, "addCustomEventListener", lua_cocos2dx_EventDispatcher_addCustomEventListener);
         tolua_endmodule(tolua_S);
     tolua_endmodule(tolua_S);
 

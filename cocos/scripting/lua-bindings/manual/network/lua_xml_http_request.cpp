@@ -28,6 +28,7 @@
 #include "scripting/lua-bindings/manual/CCLuaValue.h"
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
 #include "scripting/lua-bindings/manual/cocos2d/LuaScriptHandlerMgr.h"
+#include "scripting/lua-bindings/manual/LuaBasicConversions.h"
 
 #include "network/HttpClient.h"
 
@@ -65,7 +66,12 @@ public:
     inline void setWithCredentialsValue(bool value) { _withCredentialsValue = value; }
     inline bool getWithCredentialsValue() const { return _withCredentialsValue; }
 
-    inline void setTimeout(unsigned timeOut) {_timeout = timeOut; }
+    inline void setTimeout(unsigned timeOut) {
+		_timeout = timeOut;
+		if (_httpRequest) {
+			_httpRequest->SetTimeout(timeOut);
+		}
+	}
     inline unsigned getTimeout() const { return _timeout;}
 
     inline void setReadyState(int readyState) { _readyState = readyState; }
@@ -83,7 +89,12 @@ public:
     inline const std::string& getMethod() const { return _meth;}
     inline void setMethod(const std::string& meth) { _meth = meth ; }
 
-    inline void setAsync(bool isAsync) { _isAsync = isAsync; }
+    inline void setAsync(bool isAsync) {
+		_isAsync = isAsync;
+		if (_httpRequest) {
+			_httpRequest->SetAsync(isAsync);
+		}
+	}
     inline void setIsNetWork(bool isNetWork) {_isNetwork = isNetWork; }
 
     void _setHttpRequestHeader();
@@ -117,8 +128,8 @@ private:
     int                                  _status;
     std::string                          _statusText;
     ResponseType                         _responseType;
-    unsigned                             _timeout;
-    bool                                 _isAsync;
+    unsigned                             _timeout = cocos2d::network::HttpRequest::DefaultTimeoutMillisecond;
+    bool                                 _isAsync = true;
     cocos2d::network::HttpRequest*       _httpRequest;
     bool                                 _isNetwork;
     bool                                 _withCredentialsValue;
@@ -138,8 +149,6 @@ _readyState(UNSENT),
 _status(0),
 _statusText(""),
 _responseType(ResponseType::STRING),
-_timeout(0),
-_isAsync(false),
 _isNetwork(true),
 _withCredentialsValue(true),
 _errorFlag(false),
@@ -278,8 +287,10 @@ void LuaMinXmlHttpRequest::_setHttpRequestHeader()
 void LuaMinXmlHttpRequest::_sendRequest()
 {
     _httpRequest->setResponseCallback([this](cocos2d::network::HttpClient* sender, cocos2d::network::HttpResponse* response){
-        if (_isAborted)
-            return ;
+        if (_isAborted) {
+            release();
+            return;
+        }
         
         if (0 != strlen(response->getHttpRequest()->getTag()))
         {
@@ -297,17 +308,6 @@ void LuaMinXmlHttpRequest::_sendRequest()
                 _status    = 0;
                 _statusText.clear();
             }
-            // TODO: call back lua function
-            int handler = cocos2d::ScriptHandlerMgr::getInstance()->getObjectHandler((void*)this, cocos2d::ScriptHandlerMgr::HandlerType::XMLHTTPREQUEST_READY_STATE_CHANGE );
-            
-            if (0 != handler)
-            {
-                CCLOG("come in handler, handler is %d", handler);
-                cocos2d::CommonScriptData data(handler,"");
-                cocos2d::ScriptEvent event(cocos2d::ScriptEventType::kCommonEvent,(void*)&data);
-                cocos2d::ScriptEngineManager::sendEventToLua(event);
-            }
-            return;
         }
         
         // set header
@@ -322,26 +322,20 @@ void LuaMinXmlHttpRequest::_sendRequest()
         
         /** get the response data **/
         std::vector<char> *buffer = response->getResponseData();
-        
-        if (statusCode == 200)
-        {
-            //Succeeded
-            _status = 200;
-            _readyState = DONE;
-            _data.assign(buffer->begin(), buffer->end());
-            _dataSize = buffer->size();
-        }
-        else
-        {
-            _status = 0;
-        }
-        
-        // TODO: call back lua function
+        _data.assign(buffer->begin(), buffer->end());
+        _dataSize = buffer->size();
+
+		if (statusCode >= 200 && statusCode < 207) {
+			//Succeeded
+			_readyState = DONE;
+		}
+        _status = statusCode;
+
         int handler = cocos2d::ScriptHandlerMgr::getInstance()->getObjectHandler((void*)this, cocos2d::ScriptHandlerMgr::HandlerType::XMLHTTPREQUEST_READY_STATE_CHANGE );
         
         if (0 != handler)
         {
-            cocos2d::CommonScriptData data(handler,"");
+			cocos2d::CommonScriptData data(handler, "", this, "cc.XMLHttpRequest");
             cocos2d::ScriptEvent event(cocos2d::ScriptEventType::kCommonEvent,(void*)&data);
             cocos2d::ScriptEngineManager::sendEventToLua(event);
         }
@@ -373,20 +367,19 @@ static int lua_cocos2dx_XMLHttpRequest_constructor(lua_State* L)
 {
     int argc = 0;
     LuaMinXmlHttpRequest* self = nullptr;
-    
+	argc = lua_gettop(L) - 1;
+
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
+	if (argc < 0) goto tolua_lerror;
 #endif
     
-    argc = lua_gettop(L)-1;
     if (argc == 0)
     {
         self = new (std::nothrow) LuaMinXmlHttpRequest();
-#if COCOS2D_DEBUG >= 1
-        if (self == nullptr) goto tolua_lerror;
-#endif
-        tolua_pushusertype(L, (void*)self, "cc.XMLHttpRequest");
-        tolua_register_gc(L, lua_gettop(L));
+        object_to_luaval(L, "cc.XMLHttpRequest", self);
+        //tolua_pushusertype(L, (void*)self, "cc.XMLHttpRequest");
+        //tolua_register_gc(L, lua_gettop(L));
         return 1;
     }
     
@@ -418,7 +411,7 @@ static int lua_get_XMLHttpRequest_responseType(lua_State* L)
     }
 #endif
     
-    tolua_pushnumber(L, (lua_Number)self->getResponseType());
+    tolua_pushinteger(L, (lua_Integer)self->getResponseType());
     return 1;
     
 #if COCOS2D_DEBUG >= 1
@@ -455,7 +448,7 @@ static int lua_set_XMLHttpRequest_responseType(lua_State* L)
         if (!tolua_isnumber(L, 2, 0, &tolua_err))
             goto tolua_lerror;
 #endif
-        int responseType = (int)tolua_tonumber(L,2,0);
+        int responseType = (int)tolua_tointeger(L,2,0);
         
         self->setResponseType((LuaMinXmlHttpRequest::ResponseType)responseType);
         
@@ -559,7 +552,7 @@ static int lua_get_XMLHttpRequest_timeout(lua_State* L)
     }
 #endif
     
-    tolua_pushnumber(L, (lua_Number)self->getTimeout());
+    tolua_pushinteger(L, (lua_Integer)self->getTimeout());
     return 1;
     
 #if COCOS2D_DEBUG >= 1
@@ -596,7 +589,7 @@ static int lua_set_XMLHttpRequest_timeout(lua_State* L)
         if (!tolua_isnumber(L, 2, 0, &tolua_err))
             goto tolua_lerror;
 #endif
-        self->setTimeout((unsigned)tolua_tonumber(L, 2, 0));
+        self->setTimeout((unsigned int)tolua_tointeger(L, 2, 0));
         return 0;
     }
     
@@ -1246,5 +1239,8 @@ TOLUA_API int register_xml_http_request(lua_State* L)
         tolua_function(L, "unregisterScriptHandler", lua_cocos2dx_XMLHttpRequest_unregisterScriptHandler);
       tolua_endmodule(L);
     tolua_endmodule(L);
+    std::string typeName = typeid(LuaMinXmlHttpRequest).name();
+    g_luaType[typeName] = "cc.XMLHttpRequest";
+    g_typeCast["XMLHttpRequest"] = "cc.XMLHttpRequest";
     return 1;
 }

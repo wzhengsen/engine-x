@@ -9,12 +9,13 @@ set(lua_bindings_manual_headers
     manual/CCLuaBridge.h
     manual/extension/lua_cocos2dx_extension_manual.h
     manual/LuaBasicConversions.h
-    manual/spine/LuaSkeletonAnimation.h
+    #manual/spine/LuaSkeletonAnimation.h
     manual/platform/ios/CCLuaObjcBridge.h
     manual/network/lua_cocos2dx_network_manual.h
     manual/network/lua_xml_http_request.h
+    manual/network/Lua_web_socket.h
     manual/network/lua_extensions.h
-    manual/network/lua_downloader.h
+    #manual/network/lua_downloader.h
     manual/audioengine/lua_cocos2dx_audioengine_manual.h
     manual/Lua-BindingsExport.h
     manual/tolua_fix.h
@@ -30,6 +31,8 @@ set(lua_bindings_manual_headers
     manual/cocostudio/CustomGUIReader.h
     manual/ui/lua_cocos2dx_ui_manual.hpp
     manual/controller/lua_cocos2dx_controller_manual.hpp
+    manual/ui/lua_cocos2dx_webview_manual.hpp
+    manual/ui/lua_cocos2dx_video_manual.hpp
     )
 
 set(lua_bindings_manual_files
@@ -55,15 +58,18 @@ set(lua_bindings_manual_files
     manual/extension/lua_cocos2dx_extension_manual.cpp
     manual/network/lua_extensions.c
     manual/network/lua_cocos2dx_network_manual.cpp
+    manual/network/Lua_web_socket.cpp
     manual/network/lua_xml_http_request.cpp
-    manual/network/lua_downloader.cpp
-    manual/spine/lua_cocos2dx_spine_manual.cpp
-    manual/spine/LuaSkeletonAnimation.cpp
+    #manual/network/lua_downloader.cpp
+    #manual/spine/lua_cocos2dx_spine_manual.cpp
+    #manual/spine/LuaSkeletonAnimation.cpp
     manual/ui/lua_cocos2dx_ui_manual.cpp
     manual/audioengine/lua_cocos2dx_audioengine_manual.cpp
     manual/physics3d/lua_cocos2dx_physics3d_manual.cpp
     manual/navmesh/lua_cocos2dx_navmesh_conversions.cpp
     manual/navmesh/lua_cocos2dx_navmesh_manual.cpp
+    manual/ui/lua_cocos2dx_webview_manual.cpp
+    manual/ui/lua_cocos2dx_video_manual.cpp
     )
 
 set(lua_bindings_auto_headers
@@ -80,6 +86,8 @@ set(lua_bindings_auto_headers
     auto/lua_cocos2dx_physics_auto.hpp
     auto/lua_cocos2dx_extension_auto.hpp
     auto/lua_cocos2dx_backend_auto.hpp
+    auto/lua_cocos2dx_webview_auto.hpp
+    auto/lua_cocos2dx_video_auto.hpp
     )
 
 set(lua_bindings_auto_files
@@ -88,7 +96,7 @@ set(lua_bindings_auto_files
     auto/lua_cocos2dx_controller_auto.cpp
     auto/lua_cocos2dx_extension_auto.cpp
     auto/lua_cocos2dx_physics_auto.cpp
-    auto/lua_cocos2dx_spine_auto.cpp
+    #auto/lua_cocos2dx_spine_auto.cpp
     auto/lua_cocos2dx_studio_auto.cpp
     auto/lua_cocos2dx_csloader_auto.cpp
     auto/lua_cocos2dx_ui_auto.cpp
@@ -96,6 +104,8 @@ set(lua_bindings_auto_files
     auto/lua_cocos2dx_physics3d_auto.cpp
     auto/lua_cocos2dx_navmesh_auto.cpp
     auto/lua_cocos2dx_backend_auto.cpp
+    auto/lua_cocos2dx_webview_auto.cpp
+    auto/lua_cocos2dx_video_auto.cpp
     )
 
 if(APPLE)
@@ -108,37 +118,37 @@ if(APPLE)
         ${lua_bindings_manual_files}
         manual/platform/ios/CCLuaObjcBridge.mm
         )
-    if(IOS)
-        set(lua_bindings_manual_headers
-            ${lua_bindings_manual_headers}
-            manual/ui/lua_cocos2dx_webview_manual.hpp
-            auto/lua_cocos2dx_webview_auto.hpp
-            auto/lua_cocos2dx_video_auto.hpp
-            manual/ui/lua_cocos2dx_video_manual.hpp
-            )
-        set(lua_bindings_manual_files
-            ${lua_bindings_manual_files}
-            manual/ui/lua_cocos2dx_webview_manual.cpp
-            auto/lua_cocos2dx_webview_auto.cpp
-            manual/ui/lua_cocos2dx_video_manual.cpp
-            auto/lua_cocos2dx_video_auto.cpp
-            )
-    endif()
+    # if(IOS)
+    #     set(lua_bindings_manual_headers
+    #         ${lua_bindings_manual_headers}
+    #         manual/ui/lua_cocos2dx_webview_manual.hpp
+    #         auto/lua_cocos2dx_webview_auto.hpp
+    #         auto/lua_cocos2dx_video_auto.hpp
+    #         manual/ui/lua_cocos2dx_video_manual.hpp
+    #         )
+    #     set(lua_bindings_manual_files
+    #         ${lua_bindings_manual_files}
+    #         manual/ui/lua_cocos2dx_webview_manual.cpp
+    #         auto/lua_cocos2dx_webview_auto.cpp
+    #         manual/ui/lua_cocos2dx_video_manual.cpp
+    #         auto/lua_cocos2dx_video_auto.cpp
+    #         )
+    # endif()
 elseif(ANDROID)
-    set(lua_bindings_manual_headers
-        ${lua_bindings_manual_headers}
-        manual/ui/lua_cocos2dx_webview_manual.hpp
-        auto/lua_cocos2dx_webview_auto.hpp
-        auto/lua_cocos2dx_video_auto.hpp
-        manual/ui/lua_cocos2dx_video_manual.hpp
-        )
-    set(lua_bindings_manual_files
-        ${lua_bindings_manual_files}
-        manual/ui/lua_cocos2dx_webview_manual.cpp
-        auto/lua_cocos2dx_webview_auto.cpp
-        manual/ui/lua_cocos2dx_video_manual.cpp
-        auto/lua_cocos2dx_video_auto.cpp
-        )
+    # set(lua_bindings_manual_headers
+    #     ${lua_bindings_manual_headers}
+    #     manual/ui/lua_cocos2dx_webview_manual.hpp
+    #     auto/lua_cocos2dx_webview_auto.hpp
+    #     auto/lua_cocos2dx_video_auto.hpp
+    #     manual/ui/lua_cocos2dx_video_manual.hpp
+    #     )
+    # set(lua_bindings_manual_files
+    #     ${lua_bindings_manual_files}
+    #     manual/ui/lua_cocos2dx_webview_manual.cpp
+    #     auto/lua_cocos2dx_webview_auto.cpp
+    #     manual/ui/lua_cocos2dx_video_manual.cpp
+    #     auto/lua_cocos2dx_video_auto.cpp
+    #     )
 endif()
 
 include(../deprecated/CMakeLists.txt)
@@ -185,4 +195,3 @@ set_target_properties(luacocos2d
 if(XCODE OR VS)
     cocos_mark_code_files("luacocos2d")
 endif()
-

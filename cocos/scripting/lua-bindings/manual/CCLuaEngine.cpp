@@ -191,7 +191,7 @@ bool LuaEngine::parseConfig(ConfigType type, const std::string& str)
     lua_getglobal(_stack->getLuaState(), "__onParseConfig");
     if (!lua_isfunction(_stack->getLuaState(), -1))
     {
-        CCLOG("[LUA ERROR] name '%s' does not represent a Lua function", "__onParseConfig");
+        CCLOGERROR("[LUA ERROR] name '%s' does not represent a Lua function", "__onParseConfig");
         lua_pop(_stack->getLuaState(), 1);
         return false;
     }
@@ -226,10 +226,44 @@ int LuaEngine::sendEvent(const ScriptEvent& evt)
             return handleCommonEvent(evt.data);
         case kControlEvent:
             return handlerControlEvent(evt.data);
+        case kRefEvent:
+            return HandleRefEvent(evt.data);
         default: ;
     }
     
     return 0;
+}
+
+int LuaEngine::HandleRefEvent(void* data) noexcept {
+	if (nullptr == data)
+		return 0;
+
+	auto basicScriptData = reinterpret_cast<BasicScriptData*>(data);
+	if (!basicScriptData) {
+		return 0;
+	}
+
+	if (nullptr == basicScriptData->nativeObject || nullptr == basicScriptData->value)
+		return 0;
+
+	const int handler = ScriptHandlerMgr::getInstance()->getObjectHandler(basicScriptData->nativeObject, ScriptHandlerMgr::HandlerType::REF);
+
+	if (0 == handler)
+		return 0;
+
+	const int action = *((int*)(basicScriptData->value));
+	switch (action)
+	{
+	case kRefOnDestroy:
+		_stack->pushString("dtor");
+		break;
+	default:
+		return 0;
+	}
+	const int ret = _stack->executeFunctionByHandler(handler, 1);
+	_stack->clean();
+	return ret;
+
 }
 
 int LuaEngine::handleNodeEvent(void* data)
