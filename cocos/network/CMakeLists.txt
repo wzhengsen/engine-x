@@ -2,7 +2,9 @@ set(COCOS_NETWORK_HEADER
     network/CCDownloader-curl.h
     network/CCIDownloaderImpl.h
     network/CCDownloader.h
+    network/WebSocket.h
     network/Uri.h
+    network/SocketIO.h
     network/HttpClient.h
     network/HttpResponse.h
     network/HttpRequest.h
@@ -10,6 +12,8 @@ set(COCOS_NETWORK_HEADER
     )
 
 set(COCOS_NETWORK_SRC
+    network/SocketIO.cpp
+    network/WebSocket.cpp
     network/HttpClient.cpp
     network/CCDownloader.cpp
     network/CCDownloader-curl.cpp
