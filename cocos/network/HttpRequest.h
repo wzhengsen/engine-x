@@ -320,6 +320,38 @@ public:
         return _headers;
     }
 
+	/*
+		设置超时时间，毫秒
+	*/
+	void SetTimeout(uint32_t timeout) noexcept {
+		_timeout = timeout;
+	}
+
+	/*
+		获取超时时间，毫秒
+	*/
+	uint32_t GetTimeout() const noexcept {
+		return _timeout;
+	}
+
+	/*
+		设置是否异步
+	*/
+	void SetAsync(bool isAsync) noexcept {
+		_isAsync = isAsync;
+
+	}
+
+	/*
+		设置是否异步
+	*/
+	bool IsAsync() const noexcept {
+		return _isAsync;
+	}
+
+	// 默认毫秒超时
+	static constexpr uint32_t			 DefaultTimeoutMillisecond = 30000;
+
 private:
     void doSetResponseCallback(Ref* pTarget, SEL_HttpResponse pSelector)
     {
@@ -347,6 +379,8 @@ protected:
     ccHttpRequestCallback       _pCallback;      /// C++11 style callbacks
     void*                       _pUserData;      /// You can add your customed data here
     std::vector<std::string>    _headers;        /// custom http headers
+	uint32_t					_timeout = DefaultTimeoutMillisecond;		 /// Connect Timeout,millisecond
+	bool						_isAsync = true;
 };
 
 }
