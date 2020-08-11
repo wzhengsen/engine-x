@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "platform/CCCommon.h"
 #include "platform/CCApplicationProtocol.h"
 #include <string>
+#include <vector>
 
 NS_CC_BEGIN
 
@@ -74,6 +75,11 @@ public:
     virtual std::string getVersion() override;
 
     /**
+    @brief 获取应用的编译版本
+    */
+    virtual int64_t GetCompileVersion() override;
+
+    /**
      @brief Open url in default browser
      @param String with url to open.
      @return true if the resource located by the URL was successfully opened; otherwise false.
@@ -99,12 +105,64 @@ public:
         return _startupScriptFilename;
     }
 
+    /*
+     @brief 创建一个非模式对话框。
+            提供0-2个回调，即有1-2个按钮，最少有一个“确定”按钮。
+    */
+    void Dialog(
+        const std::string& title,
+        const std::string& content,
+        std::function<void()> okCallback = nullptr,
+        std::function<void()> cancelCallback = nullptr
+    ) override;
+
+    /*
+     @brief 创建一个通知。
+    */
+    void Notify(
+        uint16_t icon,
+        const std::string& title,
+        const std::string& content,
+        std::function<void()> clickCallback = nullptr,
+        std::function<void()> closeCallback = nullptr
+    ) override;
+
+    static const uint32_t NotifyMsgID = 99;
+    static void NotifyProc(WPARAM wParam, LPARAM lParam);
 protected:
     HINSTANCE           _instance;
     HACCEL              _accelTable;
     LARGE_INTEGER       _animationInterval;
     std::string         _resourceRootPath;
     std::string         _startupScriptFilename;
+
+    struct DialogWrapper {
+        DialogWrapper(HWND dlgWnd, const std::function<void()>& okCallback, const std::function<void()>& cancelCallback) :
+            dlgWnd(dlgWnd),
+            okCallback(okCallback),
+            cancelCallback(cancelCallback){}
+        HWND dlgWnd = nullptr;
+        std::function<void()> okCallback = nullptr;
+        std::function<void()> cancelCallback = nullptr;
+    };
+    struct NotifyWrapper {
+        NotifyWrapper(const std::function<void()>& clickCallback, const std::function<void()>& closeCallback) :
+            clickCallback(clickCallback),
+            closeCallback(closeCallback) {}
+        std::function<void()> clickCallback = nullptr;
+        std::function<void()> closeCallback = nullptr;
+    };
+
+    // 用于存放非模式对话框句柄。
+    static std::vector<DialogWrapper> VecDlgWrapper;
+    // 判断MSG是否应是对话框处理。
+    void DialogMessageFilter() noexcept;
+    static INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+    // 用于临时存放通知信息。
+    static std::map<uint16_t,NotifyWrapper> MapNotifyWrapper;
+    // 通知ID
+    static uint16_t NotifyID;
 
     static Application * sm_pSharedApplication;
 };

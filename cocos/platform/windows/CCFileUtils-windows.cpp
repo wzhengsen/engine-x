@@ -23,23 +23,31 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#include "platform/win32/CCFileUtils-win32.h"
+#include "platform/windows/CCFileUtils-windows.h"
 #include "platform/CCCommon.h"
 #include "tinydir/tinydir.h"
+#include "external/xxtea/xxtea.h"
+#include "cryptopp/aes.h"
+#include "cryptopp/modes.h"
+#include "cryptopp/filters.h"
 #include <Shlobj.h>
 #include <cstdlib>
 #include <regex>
 #include <sstream>
 
-#include <sys/types.h>  
-#include <sys/stat.h>  
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #define NTCVT_CP_DEFAULT CP_UTF8
 #include "win32-specific/ntcvt/ntcvt.hpp"
 
 using namespace std;
+using namespace CryptoPP;
 
 #define DECLARE_GUARD (void)0 // std::lock_guard<std::recursive_mutex> mutexGuard(_mutex)
+
+// 直接使用当前路径作为可写路径
+#define USE_MODULE_WRITABLE_PATH
 
 NS_CC_BEGIN
 
@@ -171,9 +179,38 @@ FileUtils::Status FileUtilsWin32::getContents(const std::string& filename, Resiz
         return FileUtils::Status::OK;
     }
 
+    // 验证文件头是否符合自定义加密。
+    static char preSignBuffer[EncryptSignLen + 1] = { 0 };
+    ::memset(preSignBuffer, 0, EncryptSignLen + 1);
+
+    bool isXXTea = false;
+    bool isAes = false;
+    DWORD _ = 0;
+    BOOL successed = ::ReadFile(fileHandle, preSignBuffer, EncryptSignLen, &_, nullptr);
+    if (!successed) {
+        CCLOG("Get data from file(%s) failed, error code is %s", filename.data(), std::to_string(::GetLastError()).data());
+        ::CloseHandle(fileHandle);
+        return FileUtils::Status::ReadFailed;
+    }
+
+    if (::memcmp(preSignBuffer, XXTEA_Sign, EncryptSignLen) == 0) {
+        size -= EncryptSignLen;
+        isXXTea = true;
+    }
+    else if (::memcmp(preSignBuffer, AES_Sign, EncryptSignLen) == 0) {
+        size -= EncryptSignLen;
+        isAes = true;
+    }
+    else {
+        if (::SetFilePointer(fileHandle, 0, 0, FILE_BEGIN) == HFILE_ERROR) {
+            ::CloseHandle(fileHandle);
+            return Status::ReadFailed;
+        }
+    }
+
     buffer->resize(size);
     DWORD sizeRead = 0;
-    BOOL successed = ::ReadFile(fileHandle, buffer->buffer(), size, &sizeRead, nullptr);
+    successed = ::ReadFile(fileHandle, buffer->buffer(), size, &sizeRead, nullptr);
     ::CloseHandle(fileHandle);
 
     if (!successed) {
@@ -181,6 +218,41 @@ FileUtils::Status FileUtilsWin32::getContents(const std::string& filename, Resiz
 		buffer->resize(sizeRead);
 		return FileUtils::Status::ReadFailed;
     }
+
+    if (isXXTea) {
+        xxtea_long len = 0;
+        unsigned char* result = xxtea_decrypt(static_cast<unsigned char*>(buffer->buffer()),
+            size,
+            (unsigned char*)XXTEA_SignPassword,
+            ::strlen(XXTEA_SignPassword),
+            &len);
+        buffer->resize(len);
+        ::memcpy(buffer->buffer(), result, len);
+        ::free(result);
+    }
+    else if (isAes) {
+        static const byte iv[AES::BLOCKSIZE] = { 0 };
+        auto outStr = std::string();
+        try {
+            SecByteBlock key(0x00, AES::DEFAULT_KEYLENGTH);
+            ::memcpy(key.begin(), AES_SignPassword, std::min<size_t>(key.size(), ::strlen(AES_SignPassword)));
+            CBC_Mode<AES>::Decryption cbc;
+            cbc.SetKeyWithIV(key, key.size(), iv, AES::BLOCKSIZE);
+
+            StringSource ss(static_cast<byte*>(buffer->buffer()), size, true,
+                new StreamTransformationFilter(cbc,
+                    new StringSink(outStr)
+                )
+            );
+        }
+        catch (Exception e){
+            return FileUtils::Status::ReadFailed;
+        }
+
+        buffer->resize(outStr.size());
+        ::memcpy(buffer->buffer(), outStr.data(), outStr.size());
+    }
+
     return FileUtils::Status::OK;
 }
 
@@ -312,8 +384,9 @@ string FileUtilsWin32::getWritablePath() const
 
     // Get full path of executable, e.g. c:\Program Files (x86)\My Game Folder\MyGame.exe
     WCHAR full_path[CC_MAX_PATH + 1] = { 0 };
-    ::GetModuleFileNameW(nullptr, full_path, CC_MAX_PATH + 1);
+    ::GetModuleFileName(nullptr, full_path, CC_MAX_PATH + 1);
 
+#ifndef USE_MODULE_WRITABLE_PATH
     // Debug app uses executable directory; Non-debug app uses local app data directory
 //#ifndef _DEBUG
     // Get filename of executable only, e.g. MyGame.exe
@@ -324,7 +397,7 @@ string FileUtilsWin32::getWritablePath() const
         WCHAR app_data_path[CC_MAX_PATH + 1];
 
         // Get local app data directory, e.g. C:\Documents and Settings\username\Local Settings\Application Data
-        if (SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_LOCAL_APPDATA, nullptr, SHGFP_TYPE_CURRENT, app_data_path)))
+        if (SUCCEEDED(SHGetFolderPath(nullptr, CSIDL_LOCAL_APPDATA, nullptr, SHGFP_TYPE_CURRENT, app_data_path)))
         {
             wstring ret(app_data_path);
 
@@ -337,7 +410,7 @@ string FileUtilsWin32::getWritablePath() const
             ret += L"\\";
 
             // Create directory
-            if (SUCCEEDED(SHCreateDirectoryExW(nullptr, ret.c_str(), nullptr)))
+            if (SUCCEEDED(SHCreateDirectoryEx(nullptr, ret.c_str(), nullptr)))
             {
                 retPath = ret;
             }
@@ -352,6 +425,10 @@ string FileUtilsWin32::getWritablePath() const
         // remove xxx.exe
         retPath = retPath.substr(0, retPath.rfind(L"\\") + 1);
     }
+#else
+	wstring retPath = full_path;
+	retPath = retPath.substr(0, retPath.rfind(L"\\") + 1);
+#endif
 
     return convertPathFormatToUnixStyle(ntcvt::from_chars(retPath));
 }
@@ -371,9 +448,27 @@ bool FileUtilsWin32::renameFile(const std::string &oldfullpath, const std::strin
             CCLOGERROR("Fail to delete file %s !Error code is 0x%x", newfullpath.c_str(), GetLastError());
         }
     }
+    std::string path = "";
+    const size_t idx = newfullpath.find_last_of(R"(\/)");
+    if (idx != std::string::npos) {
+        path = newfullpath.substr(0, idx + 1);
+    }
+    if (!path.empty() && !isDirectoryExist(path)) {
+        createDirectory(path);
+    }
 
-    if (MoveFileW(_wOld.c_str(), _wNew.c_str()))
+    if (MoveFile(_wOld.c_str(), _wNew.c_str()))
     {
+		if (!isAbsolutePath(oldfullpath))
+		{
+			// Already Cached ?
+			DECLARE_GUARD;
+			auto cacheIter = _fullPathCache.find(oldfullpath);
+			if (cacheIter != _fullPathCache.end())
+			{
+				_fullPathCache.erase(cacheIter);
+			}
+		}
         return true;
     }
     else
@@ -431,7 +526,7 @@ bool FileUtilsWin32::createDirectory(const std::string& dirPath) const
         }
     }
 
-    if ((GetFileAttributesW(path.c_str())) == INVALID_FILE_ATTRIBUTES)
+    if ((GetFileAttributes(path.c_str())) == INVALID_FILE_ATTRIBUTES)
     {
         subpath = L"";
         for (unsigned int i = 0, size = dirs.size(); i < size; ++i)
@@ -441,7 +536,7 @@ bool FileUtilsWin32::createDirectory(const std::string& dirPath) const
             std::string utf8Path = ntcvt::from_chars(subpath);
             if (!isDirectoryExist(utf8Path))
             {
-                BOOL ret = CreateDirectoryW(subpath.c_str(), NULL);
+                BOOL ret = CreateDirectory(subpath.c_str(), NULL);
                 if (!ret && ERROR_ALREADY_EXISTS != GetLastError())
                 {
                     CCLOGERROR("Fail create directory %s !Error code is 0x%x", utf8Path.c_str(), GetLastError());
@@ -460,6 +555,16 @@ bool FileUtilsWin32::removeFile(const std::string &filepath) const
 
     if (DeleteFileW(ntcvt::from_chars(win32path).c_str()))
     {
+		if (!isAbsolutePath(filepath))
+		{
+			// Already Cached ?
+			DECLARE_GUARD;
+			auto cacheIter = _fullPathCache.find(filepath);
+			if (cacheIter != _fullPathCache.end())
+			{
+				_fullPathCache.erase(cacheIter);
+			}
+		}
         return true;
     }
     else
@@ -498,15 +603,15 @@ bool FileUtilsWin32::removeDirectory(const std::string& dirPath) const
                 }
                 else
                 {
-                    SetFileAttributesW(temp.c_str(), FILE_ATTRIBUTE_NORMAL);
-                    ret = ret && DeleteFileW(temp.c_str());
+                    SetFileAttributes(temp.c_str(), FILE_ATTRIBUTE_NORMAL);
+                    ret = ret && DeleteFile(temp.c_str());
                 }
             }
             find = FindNextFile(search, &wfd);
         }
         FindClose(search);
     }
-    if (ret && RemoveDirectoryW(wpath.c_str()))
+    if (ret && RemoveDirectory(wpath.c_str()))
     {
         return true;
     }

@@ -27,6 +27,8 @@ THE SOFTWARE.
 #include "platform/CCFileUtils.h"
 #include "platform/CCStdC.h"
 
+#include <thread>
+
 NS_CC_BEGIN
 
 int Device::getDPI()
@@ -547,9 +549,35 @@ void Device::setKeepScreenOn(bool value)
     CC_UNUSED_PARAM(value);
 }
 
+/* 在windows下以窗口震动实现。 */
 void Device::vibrate(float duration)
 {
-    CC_UNUSED_PARAM(duration);
+    uint64_t time = duration * 1000;
+    static volatile bool inVibrate = false;
+    if (inVibrate || !time) {
+        return;
+    }
+
+    HWND hwnd = cocos2d::Director::getInstance()->getOpenGLView()->getWin32Window();
+    RECT rect = {};
+
+    if (GetWindowRect(hwnd, &rect)) {
+        inVibrate = true;
+        const int vTime = time / 10 + 1;
+        const auto startClock = clock();
+        std::thread([rect, vTime, hwnd, startClock, time]() noexcept {
+            int _vTime = vTime;
+            inVibrate = true;
+            const RECT originRect = rect;
+            while (static_cast<uint64_t>(clock() - startClock) <= time) {
+                MoveWindow(hwnd, rect.left + (_vTime & 1 ? 2 : -2), rect.top, rect.right - rect.left, rect.bottom - rect.top, true);
+                Sleep(10);
+                _vTime--;
+            }
+            MoveWindow(hwnd, originRect.left, originRect.top, originRect.right - originRect.left, originRect.bottom - originRect.top, true);
+            inVibrate = false;
+            }).detach();
+    }
 }
 
 NS_CC_END
