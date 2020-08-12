@@ -261,7 +261,8 @@ enum ScriptEventType
     kCommonEvent,
     kComponentEvent,
     kRestartGame,
-    kScriptActionEvent
+    kScriptActionEvent,
+    kRefEvent
 };
 
 /**

@@ -3,6 +3,8 @@
 #include "cocostudio/WidgetReader/TextFieldReader/TextFieldReader.h"
 
 #include "ui/UITextField.h"
+#include "ui/UIEditBox/UIEditBox.h"
+#include "ui/UIScale9Sprite.h"
 #include "platform/CCFileUtils.h"
 #include "cocostudio/CocoLoader.h"
 #include "cocostudio/CSParseBinary_generated.h"
@@ -287,11 +289,10 @@ namespace cocostudio
     
     void TextFieldReader::setPropsWithFlatBuffers(cocos2d::Node *node, const flatbuffers::Table *textFieldOptions)
     {
-        TextField* textField = static_cast<TextField*>(node);
+        EditBox* textField = static_cast<EditBox*>(node);
         auto options = (TextFieldOptions*)textFieldOptions;
         
-        std::string placeholder = options->placeHolder()->c_str();
-        textField->setPlaceHolder(placeholder);
+        textField->setPlaceHolder(options->placeHolder()->c_str());
         
         std::string text = options->text()->c_str();
         bool isLocalized = options->isLocalized() != 0;
@@ -299,36 +300,30 @@ namespace cocostudio
         {
             ILocalizationManager* lm = LocalizationHelper::getCurrentManager();
             std::string localizedTxt = lm->getLocalizationString(text);
-            std::string::size_type newlineIndex = localizedTxt.find("\n");
+            std::string::size_type newlineIndex = localizedTxt.find('\n');
             if (newlineIndex != std::string::npos)
                 localizedTxt = localizedTxt.substr(0, newlineIndex);
-            textField->setString(localizedTxt);
+            textField->setText(localizedTxt.c_str());
         }
         else
         {
-            textField->setString(text);
+            textField->setText(text.c_str());
         }
         
         int fontSize = options->fontSize();
         textField->setFontSize(fontSize);
-        
-        std::string fontName = options->fontName()->c_str();
-        textField->setFontName(fontName);
+        textField->setPlaceholderFontSize(fontSize);
         
         bool maxLengthEnabled = options->maxLengthEnabled() != 0;
-        textField->setMaxLengthEnabled(maxLengthEnabled);
-        
         if (maxLengthEnabled)
         {
             int maxLength = options->maxLength();
             textField->setMaxLength(maxLength);
         }
         bool passwordEnabled = options->passwordEnabled() != 0;
-        textField->setPasswordEnabled(passwordEnabled);
         if (passwordEnabled)
         {
-            std::string passwordStyleText = options->passwordStyleText()->c_str();
-            textField->setPasswordStyleText(passwordStyleText.c_str());
+            textField->setInputFlag(EditBox::InputFlag::PASSWORD);
         }
         
         
@@ -349,7 +344,8 @@ namespace cocostudio
             }
             if (fileExist)
             {
-                textField->setFontName(path);
+                textField->setFontName(path.c_str());
+                textField->setPlaceholderFontName(path.c_str());
             }
         }
         
@@ -362,7 +358,6 @@ namespace cocostudio
         auto widgetOptions = options->widgetOptions();
         if (!textField->isIgnoreContentAdaptWithSize())
         {
-            ((Label*)(textField->getVirtualRenderer()))->setLineBreakWithoutSpace(true);
             Size contentSize(widgetOptions->size()->width(), widgetOptions->size()->height());
             textField->setContentSize(contentSize);
         }
@@ -372,7 +367,7 @@ namespace cocostudio
     
     Node* TextFieldReader::createNodeWithFlatBuffers(const flatbuffers::Table *textFieldOptions)
     {
-        TextField* textField = TextField::create();
+        EditBox* textField = EditBox::create(Size(0,0),cocos2d::ui::Scale9Sprite::create());
         
         setPropsWithFlatBuffers(textField, (Table*)textFieldOptions);
         

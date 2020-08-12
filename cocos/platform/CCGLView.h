@@ -173,6 +173,7 @@ public:
      * @param height The height of the fram size.
      */
     virtual void setFrameSize(float width, float height);
+    virtual void setFrameSize(const Size& size) { setFrameSize(size.width, size.height); };
 
     /** Set zoom factor for frame. This methods are for
      * debugging big resolution (e.g.new ipad) app on desktop.

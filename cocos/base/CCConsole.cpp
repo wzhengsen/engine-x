@@ -42,7 +42,7 @@
 #include <WS2tcpip.h>
 #include <Winsock2.h>
 #if defined(__MINGW32__)
-#include "platform/win32/inet_pton_mingw.h"
+#include "platform/windows/inet_pton_mingw.h"
 #endif
 #define bzero(a, b) memset(a, 0, b);
 #else
@@ -67,7 +67,7 @@
 #include "base/ccUTF8.h"
 #ifdef _WIN32
 #define NTCVT_CP_DEFAULT CP_UTF8
-#include "win32-specific/ntcvt/ntcvt.hpp"
+#include "windows-specific/ntcvt/ntcvt.hpp"
 #endif
 
 // !FIXME: the previous version of cocos2d::log not thread safe

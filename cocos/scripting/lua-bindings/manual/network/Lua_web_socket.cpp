@@ -86,7 +86,7 @@ void LuaWebSocket::onOpen(WebSocket* ws)
         if (0 != nHandler) {
             CommonScriptData data(nHandler,"");
             ScriptEvent event(kCommonEvent,(void*)&data);
-            ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&event);
+            ScriptEngineManager::sendEventToLua(event);
         }
     }
 }
@@ -126,7 +126,7 @@ void LuaWebSocket::onClose(WebSocket* ws)
         {
             CommonScriptData data(nHandler,"");
             ScriptEvent event(kCommonEvent,(void*)&data);
-            ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&event);
+            ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(event);
         }
     }
 }
@@ -140,7 +140,7 @@ void LuaWebSocket::onError(WebSocket* ws, const WebSocket::ErrorCode& error)
         {
             CommonScriptData data(nHandler,"");
             ScriptEvent event(kCommonEvent,(void*)&data);
-            ScriptEngineManager::getInstance()->getScriptEngine()->sendEvent(&event);
+            ScriptEngineManager::sendEventToLua(event);
         }
     }
 }

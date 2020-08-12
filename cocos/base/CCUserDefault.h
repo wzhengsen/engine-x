@@ -198,7 +198,7 @@ public:
 	* 清空实例指向的文件
 	* @js NA
 	*/
-	virtual void Clear() noexcept;
+	virtual void Clear();
     
     /** Returns the singleton.
      * @js NA

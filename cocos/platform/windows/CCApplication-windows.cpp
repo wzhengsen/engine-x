@@ -30,8 +30,9 @@ THE SOFTWARE.
 #include <shellapi.h>
 #include <WinVer.h>
 #include "2d/resource.h"
-#include "platform/windows/CCUtils-windows.h"
 #include <VersionHelpers.h>
+#define NTCVT_CP_DEFAULT CP_UTF8
+#include "windows-specific/ntcvt/ntcvt.hpp"
 
 /**
 @brief    This function change the PVRFrame show/hide setting in register.
@@ -153,8 +154,8 @@ void Application::Dialog(
         DialogProc);
 
     if (dlgWnd) {
-        const std::wstring wstrT = cocos2d::StringUtf8ToWideChar(title.c_str());
-        const std::wstring wstrC = cocos2d::StringUtf8ToWideChar(content.c_str());
+        const std::wstring wstrT = ntcvt::from_chars(title);
+        const std::wstring wstrC = ntcvt::from_chars(content);
 
         // 标题与内容。
         SetWindowText(dlgWnd, wstrT.c_str());
@@ -201,8 +202,8 @@ void Application::Notify(
     std::function<void()> clickCallback,
     std::function<void()> closeCallback
 ) {
-    const std::wstring wstrT = cocos2d::StringUtf8ToWideChar(title.c_str());
-    const std::wstring wstrC = cocos2d::StringUtf8ToWideChar(content.c_str());
+    const std::wstring wstrT = ntcvt::from_chars(title);
+    const std::wstring wstrC = ntcvt::from_chars(content);
     HWND hwnd = cocos2d::Director::getInstance()->getOpenGLView()->getWin32Window();
     NOTIFYICONDATA nd = NOTIFYICONDATA();
 
