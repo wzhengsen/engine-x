@@ -187,7 +187,7 @@ void ScriptEngineManager::SendRefEventToLua(Ref* ref, int action)
     BasicScriptData data(ref, &action);
     ScriptEvent scriptEvent(kRefEvent, &data);
 
-    scriptEngine->sendEvent(&scriptEvent);
+    scriptEngine->sendEvent(scriptEvent);
 }
 
 int ScriptEngineManager::sendEventToLua(const ScriptEvent& event)

@@ -3,6 +3,7 @@
 #include "cocostudio/WidgetReader/ListViewReader/ListViewReader.h"
 
 #include "ui/UIListView.h"
+#include "ui/UIPageView.h"
 #include "platform/CCFileUtils.h"
 #include "2d/CCSpriteFrameCache.h"
 #include "cocostudio/CocoLoader.h"
@@ -577,7 +578,15 @@ namespace cocostudio
     
     Node* ListViewReader::createNodeWithFlatBuffers(const flatbuffers::Table *listViewOptions)
     {
-        ListView* listView = ListView::create();
+        auto widgetOptions = ((ListViewOptions*)listViewOptions)->widgetOptions();
+        ListView* listView = nullptr;
+        if (std::string(widgetOptions->customProperty()->c_str()) == "PageView") {
+            listView = PageView::create();
+        }
+        else {
+            listView = ListView::create();
+        }
+         
         
         setPropsWithFlatBuffers(listView, (Table*)listViewOptions);
         

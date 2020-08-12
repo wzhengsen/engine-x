@@ -140,6 +140,11 @@ public:
      * @lua NA
      */
     virtual std::string getVersion() = 0;
+
+    /**
+     @brief 获取应用的编译版本.
+     */
+    virtual int64_t GetCompileVersion() = 0;
     
     /**
      @brief Open url in default browser.
@@ -149,6 +154,44 @@ public:
      * @lua NA
      */
     virtual bool openURL(const std::string &url) = 0;
+
+    /**
+     @brief Restart Lua engine.
+     */
+    virtual bool RestartLuaEngine() = 0;
+
+    /*
+     @brief 创建一个非模式对话框。
+            提供0-2个回调，即有1-2个按钮，最少有一个“确定”按钮。
+     @param title           标题
+            content         内容
+            okCallback      确认回调
+            cancelCallback  取消回调
+    */
+    virtual void Dialog(
+        const std::string& title,
+        const std::string& cotent,
+        std::function<void()> okCallback = nullptr,
+        std::function<void()> cancelCallback = nullptr
+    ) = 0;
+
+    /*
+     @brief 创建一个通知。
+     @param title           标题
+            content         内容
+            clickCallback   确认回调
+            closeCallback   取消回调
+    */
+    virtual void Notify(
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+        // 只有win32才需要提供icon
+        uint16_t icon,
+#endif
+        const std::string& title,
+        const std::string& cotent,
+        std::function<void()> clickCallback = nullptr,
+        std::function<void()> closeCallback = nullptr
+    ) = 0;
 };
 
 // end of platform group

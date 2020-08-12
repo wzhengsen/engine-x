@@ -37,7 +37,7 @@ THE SOFTWARE.
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 #include "platform/android/CCApplication-android.h"
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-#include "platform/win32/CCApplication-win32.h"
+#include "platform/windows/CCApplication-windows.h"
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 #include "platform/linux/CCApplication-linux.h"
 #endif

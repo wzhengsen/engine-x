@@ -523,16 +523,6 @@ namespace cocostudio
         bool bounceEnabled = options->bounceEnabled() != 0;
         scrollView->setBounceEnabled(bounceEnabled);
 
-        bool scrollbarEnabled = options->scrollbarEnabeld() != 0;
-        scrollView->setScrollBarEnabled(scrollbarEnabled);
-        if (scrollbarEnabled)
-        {
-            bool scrollbarAutoHide = options->scrollbarAutoHide() != 0;
-            scrollView->setScrollBarAutoHideEnabled(scrollbarAutoHide);
-            float barAutoHideTime = options->scrollbarAutoHideTime();
-            scrollView->setScrollBarAutoHideTime(barAutoHideTime);
-        }
-
         auto widgetReader = WidgetReader::getInstance();
         widgetReader->setPropsWithFlatBuffers(node, (Table*)options->widgetOptions());
 

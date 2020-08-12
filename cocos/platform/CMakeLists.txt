@@ -33,22 +33,22 @@ if(ANDROID)
     )
 elseif(WINDOWS)
     set(COCOS_PLATFORM_SPECIFIC_HEADER
-        platform/win32/compat/stdint.h
-        platform/win32/CCApplication-win32.h
-        platform/win32/inet_pton_mingw.h
-        platform/win32/CCGL-win32.h
-        platform/win32/CCFileUtils-win32.h
-        platform/win32/CCStdC-win32.h
-        platform/win32/CCPlatformDefine-win32.h
+        platform/windows/compat/stdint.h
+        platform/windows/CCApplication-windows.h
+        platform/windows/inet_pton_mingw.h
+        platform/windows/CCGL-windows.h
+        platform/windows/CCFileUtils-windows.h
+        platform/windows/CCStdC-windows.h
+        platform/windows/CCPlatformDefine-windows.h
         platform/desktop/CCGLViewImpl-desktop.h
         )
     set(COCOS_PLATFORM_SPECIFIC_SRC
-        platform/win32/CCStdC-win32.cpp
-        platform/win32/CCFileUtils-win32.cpp
-        platform/win32/CCCommon-win32.cpp
-        platform/win32/CCApplication-win32.cpp
-        platform/win32/CCDevice-win32.cpp
-        platform/win32/inet_pton_mingw.cpp
+        platform/windows/CCStdC-windows.cpp
+        platform/windows/CCFileUtils-windows.cpp
+        platform/windows/CCCommon-windows.cpp
+        platform/windows/CCApplication-windows.cpp
+        platform/windows/CCDevice-windows.cpp
+        platform/windows/inet_pton_mingw.cpp
         platform/desktop/CCGLViewImpl-desktop.cpp
         )
 
@@ -144,7 +144,6 @@ set(COCOS_PLATFORM_HEADER
     platform/CCPlatformMacros.h
     platform/CCSAXParser.h
     platform/CCStdC.h
-    platform/PXFileStream.h
     )
 
 set(COCOS_PLATFORM_SRC
@@ -153,5 +152,4 @@ set(COCOS_PLATFORM_SRC
     platform/CCGLView.cpp
     platform/CCFileUtils.cpp
     platform/CCImage.cpp
-    platform/PXFileStream.cpp
     )

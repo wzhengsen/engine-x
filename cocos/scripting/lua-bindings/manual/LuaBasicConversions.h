@@ -49,6 +49,7 @@ extern "C" {
 #include "physics/CCPhysicsWorld.h"
 #include "renderer/backend/Types.h"
 #include "renderer/backend/VertexLayout.h"
+#include "ui/GUIDefine.h"
 
 using namespace cocos2d;
 

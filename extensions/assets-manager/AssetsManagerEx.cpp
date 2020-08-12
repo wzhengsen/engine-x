@@ -90,12 +90,9 @@ AssetsManagerEx::AssetsManagerEx(const std::string& manifestUrl, const std::stri
     };
     _downloader = std::shared_ptr<network::Downloader>(new network::Downloader(hints));
     _downloader->onTaskError = std::bind(&AssetsManagerEx::onError, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
-    _downloader->onTaskProgress = [this](const network::DownloadTask& task,
-                                         int64_t /*bytesReceived*/,
-                                         int64_t totalBytesReceived,
-                                         int64_t totalBytesExpected)
+    _downloader->onTaskProgress = [this](const network::DownloadTask& task)
     {
-        this->onProgress(totalBytesExpected, totalBytesReceived, task.requestURL, task.identifier);
+        this->onProgress(task.progressInfo.totalBytesExpected, task.progressInfo.totalBytesReceived, task.requestURL, task.identifier);
     };
     _downloader->onFileTaskSuccess = [this](const network::DownloadTask& task)
     {

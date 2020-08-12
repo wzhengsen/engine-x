@@ -166,12 +166,12 @@ function(cocos_copy_target_dll cocos_target)
         )
     endforeach()
 
-    # Copy win32 angle binaries
+    # Copy windows angle binaries
     add_custom_command(TARGET ${cocos_target}
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/win32/libGLESv2.dll
-                ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/win32/libEGL.dll
-                ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/win32/d3dcompiler_47.dll
+                ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/windows/libGLESv2.dll
+                ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/windows/libEGL.dll
+                ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/windows/d3dcompiler_47.dll
                 $<TARGET_FILE_DIR:${cocos_target}>
             )
 endfunction()

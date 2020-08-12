@@ -32,6 +32,10 @@ THE SOFTWARE.
 #include "base/ccMacros.h"
 #include "base/CCDirector.h"
 #include "platform/CCSAXParser.h"
+#include "external/xxtea/xxtea.h"
+#include "cryptopp/aes.h"
+#include "cryptopp/modes.h"
+#include "cryptopp/filters.h"
 //#include "base/ccUtils.h"
 
 #ifdef MINIZIP_FROM_SYSTEM
@@ -43,6 +47,8 @@ THE SOFTWARE.
 
 #include "pugixml/pugixml_imp.hpp"
 #define DECLARE_GUARD (void)0
+
+using namespace CryptoPP;
 
 NS_CC_BEGIN
 
@@ -458,9 +464,42 @@ void FileUtils::setDelegate(FileUtils *delegate)
     s_sharedFileUtils = delegate;
 }
 
+char* FileUtils::XXTEA_SignPassword = (char*)malloc(16);
+char* FileUtils::AES_SignPassword = (char*)malloc(16);
+
 FileUtils::FileUtils()
-    : _writablePath("")
-{
+    : _writablePath("") {
+    ::memset(XXTEA_SignPassword, 0, 16);
+    ::memset(AES_SignPassword, 0, 16);
+    // 此处不使用静态值，而只用堆分配的动态空间，避免被反编译直接看见密码。
+
+    // testpassword
+    XXTEA_SignPassword[0] = 't';
+    XXTEA_SignPassword[1] = 'e';
+    XXTEA_SignPassword[2] = 's';
+    XXTEA_SignPassword[3] = 't';
+    XXTEA_SignPassword[4] = 'p';
+    XXTEA_SignPassword[5] = 'a';
+    XXTEA_SignPassword[6] = 's';
+    XXTEA_SignPassword[7] = 's';
+    XXTEA_SignPassword[8] = 'w';
+    XXTEA_SignPassword[9] = 'o';
+    XXTEA_SignPassword[10] = 'r';
+    XXTEA_SignPassword[11] = 'd';
+
+    // testpassword
+    AES_SignPassword[0] = 't';
+    AES_SignPassword[1] = 'e';
+    AES_SignPassword[2] = 's';
+    AES_SignPassword[3] = 't';
+    AES_SignPassword[4] = 'p';
+    AES_SignPassword[5] = 'a';
+    AES_SignPassword[6] = 's';
+    AES_SignPassword[7] = 's';
+    AES_SignPassword[8] = 'w';
+    AES_SignPassword[9] = 'o';
+    AES_SignPassword[10] = 'r';
+    AES_SignPassword[11] = 'd';
 }
 
 FileUtils::~FileUtils()
@@ -592,14 +631,72 @@ FileUtils::Status FileUtils::getContents(const std::string& filename, ResizableB
         return Status::NotRegularFileType;
 
     size_t size = statBuf.st_size;
+    static char preSignBuffer[EncryptSignLen + 1] = { 0 };
+    ::memset(preSignBuffer, 0, EncryptSignLen + 1);
+
+    bool isXXTea = false;
+    bool isAes = false;
+    ::fread(preSignBuffer, 1, EncryptSignLen, fp);
+    if (::memcmp(preSignBuffer, XXTEA_Sign, EncryptSignLen) == 0) {
+        size -= EncryptSignLen;
+        isXXTea = true;
+    }
+    else if(::memcmp(preSignBuffer, AES_Sign, EncryptSignLen) == 0) {
+        size -= EncryptSignLen;
+        isAes = true;
+    }
+    else {
+        if (::fseek(fp, 0, SEEK_SET) != 0) {
+            ::fclose(fp);
+            return Status::ReadFailed;
+        }
+    }
 
     buffer->resize(size);
-    size_t readsize = fread(buffer->buffer(), 1, statBuf.st_size, fp);
+    const size_t readsize = ::fread(buffer->buffer(), 1, size, fp);
+    ::fclose(fp);
 
     if (readsize < size) {
         buffer->resize(readsize);
         return Status::ReadFailed;
     }
+
+    if (isXXTea) {
+        xxtea_long len = 0;
+        unsigned char* result = xxtea_decrypt((unsigned char*)buffer->buffer(),
+            size,
+            (unsigned char*)XXTEA_SignPassword,
+            ::strlen(XXTEA_SignPassword),
+            &len);
+        buffer->resize(len);
+        ::memcpy(buffer->buffer(), result, len);
+        ::free(result);
+    }
+    else if (isAes) {
+        static const byte iv[AES::BLOCKSIZE] = { 0 };
+
+        auto outStr = std::string();
+        try {
+            SecByteBlock key(0x00, AES::DEFAULT_KEYLENGTH);
+            ::memcpy(key.begin(), AES_SignPassword, std::min<size_t>(key.size(), ::strlen(AES_SignPassword)));
+
+            CBC_Mode<AES>::Decryption cbc;
+            cbc.SetKeyWithIV(key, key.size(), iv, AES::BLOCKSIZE);
+
+            StringSource ss(static_cast<byte*>(buffer->buffer()), size, true,
+                new StreamTransformationFilter(cbc,
+                    new StringSink(outStr)
+                )
+            );
+        }
+        catch (Exception e) {
+            return Status::ReadFailed;
+        }
+
+        buffer->resize(outStr.size());
+        ::memcpy(buffer->buffer(), outStr.data(), outStr.size());
+    }
+
 
     return Status::OK;
 }
@@ -968,6 +1065,11 @@ void FileUtils::addSearchPath(const std::string &searchpath,const bool front)
         path += "/";
     }
 
+	auto findPath = std::find(_searchPathArray.cbegin(), _searchPathArray.cend(), path);
+	if (findPath != _searchPathArray.cend()) {
+		_searchPathArray.erase(findPath);
+	}
+
     if (front) {
         _originalSearchPaths.insert(_originalSearchPaths.begin(), searchpath);
         _searchPathArray.insert(_searchPathArray.begin(), path);
@@ -1318,6 +1420,16 @@ bool FileUtils::removeDirectory(const std::string& path) const
 bool FileUtils::removeFile(const std::string &path) const
 {
     if (remove(path.c_str())) {
+		if (!isAbsolutePath(path))
+		{
+			// Already Cached ?
+			DECLARE_GUARD;
+			auto cacheIter = _fullPathCache.find(path);
+			if (cacheIter != _fullPathCache.end())
+			{
+				_fullPathCache.erase(cacheIter);
+			}
+		}
         return false;
     } else {
         return true;
@@ -1329,6 +1441,15 @@ bool FileUtils::renameFile(const std::string &oldfullpath, const std::string &ne
     CCASSERT(!oldfullpath.empty(), "Invalid path");
     CCASSERT(!newfullpath.empty(), "Invalid path");
 
+    std::string path = "";
+    const size_t idx = newfullpath.find_last_of(R"(\/)");
+    if (idx != std::string::npos) {
+        path = newfullpath.substr(0, idx + 1);
+    }
+    if (!path.empty() && !isDirectoryExist(path)) {
+        createDirectory(path);
+    }
+
     int errorCode = rename(oldfullpath.c_str(), newfullpath.c_str());
 
     if (0 != errorCode)
@@ -1336,6 +1457,16 @@ bool FileUtils::renameFile(const std::string &oldfullpath, const std::string &ne
         CCLOGERROR("Fail to rename file %s to %s !Error code is %d", oldfullpath.c_str(), newfullpath.c_str(), errorCode);
         return false;
     }
+	if (!isAbsolutePath(oldfullpath))
+	{
+		// Already Cached ?
+		DECLARE_GUARD;
+		auto cacheIter = _fullPathCache.find(oldfullpath);
+		if (cacheIter != _fullPathCache.end())
+		{
+			_fullPathCache.erase(cacheIter);
+		}
+	}
     return true;
 }
 
@@ -1466,7 +1597,7 @@ void FileUtils::listFilesRecursively(const std::string& dirPath, std::vector<std
 //////////////////////////////////////////////////////////////////////////
 // Notification support when getFileData from invalid file path.
 //////////////////////////////////////////////////////////////////////////
-static bool s_popupNotify = true;
+static bool s_popupNotify = false;
 
 void FileUtils::setPopupNotify(bool notify)
 {

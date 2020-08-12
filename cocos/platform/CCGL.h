@@ -33,7 +33,7 @@ THE SOFTWARE.
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 #include "platform/android/CCGL-android.h"
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-#include "platform/win32/CCGL-win32.h"
+#include "platform/windows/CCGL-windows.h"
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 #include "platform/linux/CCGL-linux.h"
 #endif

@@ -40,10 +40,10 @@
 #include "network/WebSocket.h"
 #include "network/HttpClient.h"
 
-#include "json/rapidjson.h"
-#include "json/document-wrapper.h"
-#include "json/stringbuffer.h"
-#include "json/writer.h"
+#include "rapidjson/rapidjson.h"
+#include "rapidjson/document-wrapper.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/writer.h"
 
 NS_CC_BEGIN
 

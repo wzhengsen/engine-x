@@ -206,8 +206,16 @@ private: varType varName; public: virtual inline varType get##funName() const { 
 #define CC_SAFE_RETAIN(p)           do { if(p) { (p)->retain(); } } while(0)
 #define CC_BREAK_IF(cond)           if(cond) break
 
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
 #define __CCLOGWITHFUNCTION(s, ...) \
-    cocos2d::log("%s : %s",__FUNCTION__, cocos2d::StringUtils::format(s, ##__VA_ARGS__).c_str())
+	do {\
+		::SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN); \
+		cocos2d::log("%s : %s", __FUNCTION__, cocos2d::StringUtils::format(s, ##__VA_ARGS__).c_str()); \
+		::SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); \
+	}while(0)
+#else
+#define __CCLOGWITHFUNCTION(s, ...) cocos2d::log("%s : %s", __FUNCTION__, cocos2d::StringUtils::format(s, ##__VA_ARGS__).c_str())
+#endif
 
 /// @name Cocos2d debug
 /// @{
@@ -219,7 +227,16 @@ private: varType varName; public: virtual inline varType get##funName() const { 
 
 #elif COCOS2D_DEBUG == 1
 #define CCLOG(format, ...)      cocos2d::log(format, ##__VA_ARGS__)
-#define CCLOGERROR(format,...)  cocos2d::log(format, ##__VA_ARGS__)
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+#define CCLOGERROR(format,...) \
+	do {\
+		::SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_RED); \
+		cocos2d::log(format, ##__VA_ARGS__); \
+		::SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); \
+	}while(0)
+#else
+#define CCLOGERROR(format, ...)      cocos2d::log(format, ##__VA_ARGS__)
+#endif
 #define CCLOGINFO(format,...)   do {} while (0)
 #define CCLOGWARN(...) __CCLOGWITHFUNCTION(__VA_ARGS__)
 
