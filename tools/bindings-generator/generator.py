@@ -16,6 +16,7 @@ try:
     import Cheetah
 except ModuleNotFoundError:
     os.system("pip3 install -U Cheetah3 --ignore-installed Cheetah3")
+    import Cheetah
 finally:
     from Cheetah.Template import Template
 
@@ -1273,7 +1274,7 @@ class Generator(object):
     def __init__(self, opts):
         self.index = cindex.Index.create()
         self.outdir = opts['outdir']
-        self.search_path = opts['search_path']
+        self.search_path = opts['search_path'].split(' ')
         self.prefix = opts['prefix']
         self.headers = opts['headers'].split(' ')
         self.classes = opts['classes']
@@ -1363,6 +1364,9 @@ class Generator(object):
             for replace in list_of_replace_headers:
                 header, replaced_header = replace.split("::")
                 self.replace_headers[header] = replaced_header
+
+        for i,sp in enumerate(self.search_path):
+            self.search_path[i] = sp.replace(r"-I",r"",1)
 
 
     def should_rename_function(self, class_name, method_name):
@@ -1860,7 +1864,7 @@ def main():
                 'clang_args': (config.get(s, 'extra_arguments', raw = False, vars = dict(userconfig.items('DEFAULT'))) or "").split(" "),
                 'target': os.path.join(workingdir, "targets", t),
                 'outdir': outdir,
-                'search_path': os.path.abspath(os.path.join(userconfig.get('DEFAULT', 'cocosdir'), 'cocos')),
+                'search_path': (config.get(s, 'cocos_headers'        , raw = False, vars = dict(userconfig.items('DEFAULT')))),
                 'remove_prefix': config.get(s, 'remove_prefix'),
                 'target_ns': config.get(s, 'target_namespace'),
                 'cpp_ns': config.get(s, 'cpp_namespace').split(' ') if config.has_option(s, 'cpp_namespace') else None,

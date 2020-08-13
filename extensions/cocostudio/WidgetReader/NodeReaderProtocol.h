@@ -29,7 +29,7 @@
 #include "cocostudio/CocosStudioExport.h"
 #include "cocostudio/CocosStudioExtension.h"
 
-#include "pugixml/pugixml_imp.hpp"
+#include "pugixml/pugixml.hpp"
 #include "pugixml/pugiext.hpp"
 
 namespace flatbuffers

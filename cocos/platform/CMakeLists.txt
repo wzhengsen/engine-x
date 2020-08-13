@@ -152,4 +152,5 @@ set(COCOS_PLATFORM_SRC
     platform/CCGLView.cpp
     platform/CCFileUtils.cpp
     platform/CCImage.cpp
+    platform/PXFileStream.cpp
     )
