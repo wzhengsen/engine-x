@@ -30,5 +30,4 @@ int register_all_cocos2dx_webview(lua_State* tolua_S);
 
 
 
-
 #endif // __cocos2dx_webview_h__

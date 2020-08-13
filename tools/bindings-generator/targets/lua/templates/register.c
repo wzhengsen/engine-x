@@ -1,8 +1,3 @@
-#set has_constructor = False
-#if 'constructor' in $current_class.methods.keys()
-#set has_constructor = True
-${current_class.methods.constructor.generate_code($current_class)}
-#end if
 #
 #set generator = $current_class.generator
 #set methods = $current_class.methods_clean()
@@ -56,9 +51,6 @@ int lua_register_${generator.prefix}_${current_class.class_name}(lua_State* tolu
     #end if
 
     tolua_beginmodule(tolua_S,"${current_class.class_name}");
-    #if has_constructor
-        tolua_function(tolua_S,"new",lua_${generator.prefix}_${current_class.class_name}_constructor);
-    #end if
     #for m in methods
         #set fn = m['impl']
         tolua_function(tolua_S,"${m['name']}",${fn.signature_name});
