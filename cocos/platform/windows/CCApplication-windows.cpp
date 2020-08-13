@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include "platform/CCFileUtils.h"
 #include <shellapi.h>
 #include <WinVer.h>
-#include "2d/resource.h"
+#include "resource.h"
 #include <VersionHelpers.h>
 #define NTCVT_CP_DEFAULT CP_UTF8
 #include "windows-specific/ntcvt/ntcvt.hpp"

@@ -87,6 +87,10 @@ set(COCOS_SRC cocos2d.cpp
 
 list(APPEND COCOS_SRC ${COCOS_HEADER})
 
+if(MSVC)
+list(APPEND COCOS_SRC cocos.rc resource.h)
+endif()
+
 add_library(cocos2d ${COCOS_SRC})
 
 # use external libs
