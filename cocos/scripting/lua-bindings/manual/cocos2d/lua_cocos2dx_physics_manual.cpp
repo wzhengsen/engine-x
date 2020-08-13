@@ -970,7 +970,7 @@ int lua_cocos2dx_physics_PhysicsShapePolygon_create(lua_State* tolua_S)
         object_to_luaval<cocos2d::PhysicsShapePolygon>(tolua_S, "cc.PhysicsShapePolygon",(cocos2d::PhysicsShapePolygon*)ret);
         return 1;
     }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "create",argc, 2);
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "new",argc, 2);
     return 0;
 #if COCOS2D_DEBUG >= 1
 tolua_lerror:
@@ -1402,7 +1402,7 @@ int lua_cocos2dx_physics_PhysicsShapeEdgePolygon_create(lua_State* tolua_S)
         object_to_luaval<cocos2d::PhysicsShapeEdgePolygon>(tolua_S, "cc.PhysicsShapeEdgePolygon",(cocos2d::PhysicsShapeEdgePolygon*)ret);
         return 1;
     }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "create",argc, 2);
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "new",argc, 2);
     return 0;
 #if COCOS2D_DEBUG >= 1
 tolua_lerror:
@@ -1489,7 +1489,7 @@ int lua_cocos2dx_physics_PhysicsShapeEdgeChain_create(lua_State* tolua_S)
         object_to_luaval<cocos2d::PhysicsShapeEdgeChain>(tolua_S, "cc.PhysicsShapeEdgeChain",(cocos2d::PhysicsShapeEdgeChain*)ret);
         return 1;
     }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "create",argc, 2);
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "new",argc, 2);
     return 0;
 #if COCOS2D_DEBUG >= 1
 tolua_lerror:
@@ -1562,7 +1562,7 @@ int register_all_cocos2dx_physics_manual(lua_State* tolua_S)
         lua_pushstring(tolua_S,"getPoints");
         lua_pushcfunction(tolua_S,lua_cocos2dx_physics_PhysicsShapePolygon_getPoints );
         lua_rawset(tolua_S,-3);
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,lua_cocos2dx_physics_PhysicsShapePolygon_create );
         lua_rawset(tolua_S,-3);
         lua_pushstring(tolua_S,"calculateArea");
@@ -1581,7 +1581,7 @@ int register_all_cocos2dx_physics_manual(lua_State* tolua_S)
         lua_pushstring(tolua_S,"getPoints");
         lua_pushcfunction(tolua_S,lua_cocos2dx_physics_PhysicsShapeEdgePolygon_getPoints );
         lua_rawset(tolua_S,-3);
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,lua_cocos2dx_physics_PhysicsShapeEdgePolygon_create);
         lua_rawset(tolua_S,-3);
     }
@@ -1594,7 +1594,7 @@ int register_all_cocos2dx_physics_manual(lua_State* tolua_S)
         lua_pushstring(tolua_S,"getPoints");
         lua_pushcfunction(tolua_S,lua_cocos2dx_physics_PhysicsShapeEdgeChain_getPoints);
         lua_rawset(tolua_S,-3);
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,lua_cocos2dx_physics_PhysicsShapeEdgeChain_create);
         lua_rawset(tolua_S,-3);
     }

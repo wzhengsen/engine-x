@@ -188,7 +188,7 @@ TOLUA_API int tolua_luanode_open(lua_State* tolua_S)
     tolua_beginmodule(tolua_S, "cc");
       tolua_cclass(tolua_S, "LuaNode", "cc.LuaNode", "cc.Node", tolua_collect_LuaNode);
         tolua_beginmodule(tolua_S, "LuaNode");
-            tolua_function(tolua_S, "create", tolua_Cocos2d_LuaNode_create00);
+            tolua_function(tolua_S, "new", tolua_Cocos2d_LuaNode_create00);
         tolua_endmodule(tolua_S);
     tolua_endmodule(tolua_S);
     return 1;
@@ -4083,7 +4083,7 @@ static void extendMenuItemImage(lua_State* tolua_S)
     lua_rawget(tolua_S,LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,tolua_cocos2d_MenuItemImage_create);
         lua_rawset(tolua_S,-3);
     }
@@ -4096,7 +4096,7 @@ static void extendMenuItemLabel(lua_State* tolua_S)
     lua_rawget(tolua_S,LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,tolua_cocos2d_MenuItemLabel_create);
         lua_rawset(tolua_S,-3);
     }
@@ -4109,7 +4109,7 @@ static void extendMenuItemFont(lua_State* tolua_S)
     lua_rawget(tolua_S,LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,tolua_cocos2d_MenuItemFont_create);
         lua_rawset(tolua_S,-3);
     }
@@ -4122,7 +4122,7 @@ static void extendMenuItemSprite(lua_State* tolua_S)
     lua_rawget(tolua_S,LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,tolua_cocos2d_MenuItemSprite_create);
         lua_rawset(tolua_S,-3);
     }
@@ -4135,7 +4135,7 @@ static void extendMenuItemToggle(lua_State* tolua_S)
     lua_rawget(tolua_S,LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,tolua_cocos2d_MenuItemToggle_create);
         lua_rawset(tolua_S,-3);
     }
@@ -4148,7 +4148,7 @@ static void extendMenu(lua_State* tolua_S)
     lua_rawget(tolua_S, LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S, -1))
     {
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,tolua_cocos2d_Menu_create);
         lua_rawset(tolua_S,-3);
         lua_pushstring(tolua_S,"alignItemsInRows");
@@ -4277,7 +4277,7 @@ static void extendSequence(lua_State* tolua_S)
     lua_rawget(tolua_S,LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,tolua_cocos2d_Sequence_create);
         lua_rawset(tolua_S,-3);
     }
@@ -4290,7 +4290,7 @@ static void extendCallFunc(lua_State* tolua_S)
     lua_rawget(tolua_S,LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,tolua_cocos2d_CallFunc_create);
         lua_rawset(tolua_S,-3);
     }
@@ -4303,7 +4303,7 @@ static void extendSpawn(lua_State* tolua_S)
     lua_rawget(tolua_S,LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,tolua_cocos2d_Spawn_create);
         lua_rawset(tolua_S,-3);
     }
@@ -4316,7 +4316,7 @@ static void extendCardinalSplineBy(lua_State* tolua_S)
     lua_rawget(tolua_S,LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,lua_cocos2d_CardinalSplineBy_create);
         lua_rawset(tolua_S,-3);
     }
@@ -4329,7 +4329,7 @@ static void extendCatmullRomBy(lua_State* tolua_S)
     lua_rawget(tolua_S,LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,tolua_cocos2d_CatmullRomBy_create);
         lua_rawset(tolua_S,-3);
     }
@@ -4342,7 +4342,7 @@ static void extendCatmullRomTo(lua_State* tolua_S)
     lua_rawget(tolua_S,LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,tolua_cocos2d_CatmullRomTo_create);
         lua_rawset(tolua_S,-3);
     }
@@ -4355,7 +4355,7 @@ static void extendBezierBy(lua_State* tolua_S)
     lua_rawget(tolua_S,LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,tolua_cocos2d_BezierBy_create);
         lua_rawset(tolua_S,-3);
     }
@@ -4368,7 +4368,7 @@ static void extendBezierTo(lua_State* tolua_S)
     lua_rawget(tolua_S,LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,tolua_cocos2d_BezierTo_create);
         lua_rawset(tolua_S,-3);
     }
@@ -4591,7 +4591,7 @@ static void extendSprite(lua_State* tolua_S)
     {
         tolua_function(tolua_S, "initWithPolygon", lua_cocos2dx_Sprite_initWithPolygon);
         tolua_function(tolua_S, "setPolygonInfo", lua_cocos2dx_Sprite_setPolygonInfo);
-        tolua_function(tolua_S, "create", lua_cocos2dx_Sprite_create);
+        tolua_function(tolua_S, "new", lua_cocos2dx_Sprite_create);
     }
     lua_pop(tolua_S, 1);
 }
@@ -4602,7 +4602,7 @@ static void extendLayerMultiplex(lua_State* tolua_S)
     lua_rawget(tolua_S,LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        lua_pushstring(tolua_S,"create");
+        lua_pushstring(tolua_S,"new");
         lua_pushcfunction(tolua_S,tolua_cocos2dx_LayerMultiplex_create);
         lua_rawset(tolua_S,-3);
     }
@@ -4772,7 +4772,7 @@ static void extendEventListenerCustom(lua_State* tolua_S)
     lua_rawget(tolua_S, LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        tolua_function(tolua_S, "create",tolua_cocos2d_LuaEventListenerCustom_create);
+        tolua_function(tolua_S, "new",tolua_cocos2d_LuaEventListenerCustom_create);
     }
     lua_pop(tolua_S, 1);
 }
@@ -4783,7 +4783,7 @@ static void extendEventListenerAcceleration(lua_State* tolua_S)
     lua_rawget(tolua_S, LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        tolua_function(tolua_S, "create",tolua_cocos2dx_LuaEventListenerAcceleration_create);
+        tolua_function(tolua_S, "new",tolua_cocos2dx_LuaEventListenerAcceleration_create);
     }
     lua_pop(tolua_S, 1);
 }
@@ -4986,7 +4986,7 @@ static void extendEventListenerKeyboard(lua_State* tolua_S)
     lua_rawget(tolua_S, LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        tolua_function(tolua_S, "create",tolua_cocos2dx_EventListenerKeyboard_create);
+        tolua_function(tolua_S, "new",tolua_cocos2dx_EventListenerKeyboard_create);
         tolua_function(tolua_S, "registerScriptHandler", tolua_cocos2dx_EventListenerKeyboard_registerScriptHandler);
         tolua_function(tolua_S, "clone", tolua_cocos2dx_EventListenerKeyboard_clone);
     }
@@ -5235,7 +5235,7 @@ static void extendEventListenerTouchOneByOne(lua_State* tolua_S)
     lua_rawget(tolua_S, LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        tolua_function(tolua_S, "create", tolua_cocos2dx_EventListenerTouchOneByOne_create);
+        tolua_function(tolua_S, "new", tolua_cocos2dx_EventListenerTouchOneByOne_create);
         tolua_function(tolua_S, "registerScriptHandler", tolua_cocos2dx_EventListenerTouchOneByOne_registerScriptHandler);
         tolua_function(tolua_S, "clone", tolua_cocos2dx_EventListenerTouchOneByOne_clone);
     }
@@ -5483,7 +5483,7 @@ static void extendEventListenerTouchAllAtOnce(lua_State* tolua_S)
     lua_rawget(tolua_S, LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        tolua_function(tolua_S, "create", tolua_cocos2dx_EventListenerTouchAllAtOnce_create);
+        tolua_function(tolua_S, "new", tolua_cocos2dx_EventListenerTouchAllAtOnce_create);
         tolua_function(tolua_S, "registerScriptHandler", tolua_cocos2dx_EventListenerTouchAllAtOnce_registerScriptHandler);
         tolua_function(tolua_S, "clone", tolua_cocos2dx_EventListenerTouchAllAtOnce_clone);
     }
@@ -5733,7 +5733,7 @@ static void extendEventListenerMouse(lua_State* tolua_S)
     lua_rawget(tolua_S, LUA_REGISTRYINDEX);
     if (lua_istable(tolua_S,-1))
     {
-        tolua_function(tolua_S, "create", tolua_cocos2dx_EventListenerMouse_create);
+        tolua_function(tolua_S, "new", tolua_cocos2dx_EventListenerMouse_create);
         tolua_function(tolua_S, "registerScriptHandler", tolua_cocos2dx_EventListenerMouse_registerScriptHandler);
         tolua_function(tolua_S, "clone", tolua_cocos2dx_EventListenerMouse_clone);
     }

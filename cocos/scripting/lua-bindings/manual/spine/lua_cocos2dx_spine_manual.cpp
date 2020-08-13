@@ -449,7 +449,7 @@ static void extendCCSkeletonAnimation(lua_State* L)
     lua_rawget(L, LUA_REGISTRYINDEX);
     if (lua_istable(L,-1))
     {
-        tolua_function(L, "create", lua_cocos2dx_CCSkeletonAnimation_createWithFile);
+        tolua_function(L, "new", lua_cocos2dx_CCSkeletonAnimation_createWithFile);
         tolua_function(L, "registerSpineEventHandler", tolua_Cocos2d_CCSkeletonAnimation_registerSpineEventHandler00);
         tolua_function(L, "unregisterSpineEventHandler", tolua_Cocos2d_CCSkeletonAnimation_unregisterSpineEventHandler00);
         tolua_function(L, "addAnimation", lua_cocos2dx_spine_SkeletonAnimation_addAnimation);

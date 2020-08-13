@@ -535,7 +535,7 @@ static void extendTerrain(lua_State* L)
     lua_rawget(L, LUA_REGISTRYINDEX);
     if (lua_istable(L,-1))
     {
-        tolua_function(L, "create", lua_cocos2dx_3d_Terrain_create);
+        tolua_function(L, "new", lua_cocos2dx_3d_Terrain_create);
         tolua_function(L, "getHeight", lua_cocos2dx_3d_Terrain_getHeight);
         tolua_function(L, "getIntersectionPoint", lua_cocos2dx_3d_Terrain_getIntersectionPoint);
     }

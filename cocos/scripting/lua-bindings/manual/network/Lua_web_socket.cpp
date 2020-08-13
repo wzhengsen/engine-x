@@ -479,7 +479,7 @@ TOLUA_API int tolua_web_socket_open(lua_State* tolua_S){
       tolua_cclass(tolua_S,"WebSocket","cc.WebSocket","",NULL);
       #endif
       tolua_beginmodule(tolua_S,"WebSocket");
-        tolua_function(tolua_S, "create", tolua_Cocos2d_WebSocket_create00);
+        tolua_function(tolua_S, "new", tolua_Cocos2d_WebSocket_create00);
         tolua_function(tolua_S, "createByAProtocol", tolua_Cocos2d_WebSocket_createByAProtocol00);
         tolua_function(tolua_S, "createByProtocolArray", tolua_Cocos2d_WebSocket_createByProtocolArray00);
         tolua_function(tolua_S, "getReadyState", tolua_Cocos2d_WebSocket_getReadyState00);

@@ -261,7 +261,7 @@ void extendPhysicsSprite3D(lua_State* L)
     lua_rawget(L, LUA_REGISTRYINDEX);
     if (lua_istable(L,-1))
     {
-        tolua_function(L, "create", lua_cocos2dx_physics3d_PhysicsSprite3D_create);
+        tolua_function(L, "new", lua_cocos2dx_physics3d_PhysicsSprite3D_create);
     }
     lua_pop(L, 1);
 }
@@ -309,7 +309,7 @@ void extendPhysics3DRigidBody(lua_State* L)
     lua_rawget(L, LUA_REGISTRYINDEX);
     if (lua_istable(L,-1))
     {
-        tolua_function(L, "create", lua_cocos2dx_physics3d_Physics3DRigidBody_create);
+        tolua_function(L, "new", lua_cocos2dx_physics3d_Physics3DRigidBody_create);
     }
     lua_pop(L, 1);
 }
@@ -401,7 +401,7 @@ void extendPhysics3DComponent(lua_State* L)
     lua_rawget(L, LUA_REGISTRYINDEX);
     if (lua_istable(L,-1))
     {
-        tolua_function(L, "create", lua_cocos2dx_physics3d_Physics3DComponent_create);
+        tolua_function(L, "new", lua_cocos2dx_physics3d_Physics3DComponent_create);
     }
     lua_pop(L, 1);
 }

@@ -586,7 +586,7 @@ int lua_register_cocos2dx_coco_studio_CustomGUIReader(lua_State* L)
     tolua_cclass(L,"CustomGUIReader","ccs.CustomGUIReader","cc.Ref",nullptr);
 
     tolua_beginmodule(L,"CustomGUIReader");
-        tolua_function(L,"create",lua_cocos2dx_CustomGUIReader_create);
+        tolua_function(L,"new",lua_cocos2dx_CustomGUIReader_create);
     tolua_endmodule(L);
     std::string typeName = typeid(cocostudio::CustomGUIReader).name();
     g_luaType[typeName] = "ccs.CustomGUIReader";

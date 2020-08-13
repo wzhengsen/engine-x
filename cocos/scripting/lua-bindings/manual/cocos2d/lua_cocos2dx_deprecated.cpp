@@ -1409,7 +1409,7 @@ static int register_cocos2dx_deprecated_Array(lua_State* tolua_S)
 
     tolua_cclass(tolua_S,"CCArray","CCArray","CCObject",NULL);
     tolua_beginmodule(tolua_S,"CCArray");
-        tolua_function(tolua_S,"create",tolua_Cocos2d_CCArray_create00);
+        tolua_function(tolua_S,"new",tolua_Cocos2d_CCArray_create00);
         tolua_function(tolua_S,"createWithObject",tolua_Cocos2d_CCArray_createWithObject00);
         tolua_function(tolua_S,"createWithArray",tolua_Cocos2d_CCArray_createWithArray00);
         tolua_function(tolua_S,"createWithCapacity",tolua_Cocos2d_CCArray_createWithCapacity00);
@@ -1961,7 +1961,7 @@ static int register_cocos2dx_deprecated_String(lua_State* tolua_S)
         tolua_function(tolua_S,"length",tolua_Cocos2d_CCString_length00);
         tolua_function(tolua_S,"compare",tolua_Cocos2d_CCString_compare00);
         tolua_function(tolua_S,"isEqual",tolua_Cocos2d_CCString_isEqual00);
-        tolua_function(tolua_S,"create",tolua_Cocos2d_CCString_create00);
+        tolua_function(tolua_S,"new",tolua_Cocos2d_CCString_create00);
         tolua_function(tolua_S,"createWithData",tolua_Cocos2d_CCString_createWithData00);
         tolua_function(tolua_S,"createWithContentsOfFile",tolua_Cocos2d_CCString_createWithContentsOfFile00);
     tolua_endmodule(tolua_S);
@@ -2121,7 +2121,7 @@ static int extendSequenceDeprecated(lua_State* tolua_S)
     if (lua_istable(tolua_S,-1))
     {
         tolua_function(tolua_S, "createWithTwoActions",tolua_cocos2d_Sequence_createWithTwoActions);
-        tolua_function(tolua_S, "create", tolua_Cocos2d_Sequence_create_deprecated00);
+        tolua_function(tolua_S, "new", tolua_Cocos2d_Sequence_create_deprecated00);
     }
     lua_pop(tolua_S, 1);
 
