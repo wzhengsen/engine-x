@@ -639,7 +639,7 @@ int lua_register_cocos2dx_extension_Control(lua_State* tolua_S)
         tolua_function(tolua_S,"getTouchLocation",lua_cocos2dx_extension_Control_getTouchLocation);
         tolua_function(tolua_S,"isTouchInside",lua_cocos2dx_extension_Control_isTouchInside);
         tolua_function(tolua_S,"getState",lua_cocos2dx_extension_Control_getState);
-        tolua_function(tolua_S,"create", lua_cocos2dx_extension_Control_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_extension_Control_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::extension::Control).name();
     g_luaType[typeName] = "cc.Control";
@@ -2695,7 +2695,7 @@ int lua_register_cocos2dx_extension_ControlButton(lua_State* tolua_S)
         tolua_function(tolua_S,"setLabelAnchorPoint",lua_cocos2dx_extension_ControlButton_setLabelAnchorPoint);
         tolua_function(tolua_S,"getVerticalMargin",lua_cocos2dx_extension_ControlButton_getVerticalMargin);
         tolua_function(tolua_S,"getHorizontalOrigin",lua_cocos2dx_extension_ControlButton_getHorizontalOrigin);
-        tolua_function(tolua_S,"create", lua_cocos2dx_extension_ControlButton_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_extension_ControlButton_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::extension::ControlButton).name();
     g_luaType[typeName] = "cc.ControlButton";
@@ -3247,7 +3247,7 @@ int lua_register_cocos2dx_extension_ControlHuePicker(lua_State* tolua_S)
         tolua_function(tolua_S,"getSlider",lua_cocos2dx_extension_ControlHuePicker_getSlider);
         tolua_function(tolua_S,"setSlider",lua_cocos2dx_extension_ControlHuePicker_setSlider);
         tolua_function(tolua_S,"getStartPos",lua_cocos2dx_extension_ControlHuePicker_getStartPos);
-        tolua_function(tolua_S,"create", lua_cocos2dx_extension_ControlHuePicker_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_extension_ControlHuePicker_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::extension::ControlHuePicker).name();
     g_luaType[typeName] = "cc.ControlHuePicker";
@@ -3691,7 +3691,7 @@ int lua_register_cocos2dx_extension_ControlSaturationBrightnessPicker(lua_State*
         tolua_function(tolua_S,"getSlider",lua_cocos2dx_extension_ControlSaturationBrightnessPicker_getSlider);
         tolua_function(tolua_S,"getStartPos",lua_cocos2dx_extension_ControlSaturationBrightnessPicker_getStartPos);
         tolua_function(tolua_S,"initWithTargetAndPos",lua_cocos2dx_extension_ControlSaturationBrightnessPicker_initWithTargetAndPos);
-        tolua_function(tolua_S,"create", lua_cocos2dx_extension_ControlSaturationBrightnessPicker_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_extension_ControlSaturationBrightnessPicker_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::extension::ControlSaturationBrightnessPicker).name();
     g_luaType[typeName] = "cc.ControlSaturationBrightnessPicker";
@@ -4146,7 +4146,7 @@ int lua_register_cocos2dx_extension_ControlColourPicker(lua_State* tolua_S)
         tolua_function(tolua_S,"setHuePicker",lua_cocos2dx_extension_ControlColourPicker_setHuePicker);
         tolua_function(tolua_S,"getBackground",lua_cocos2dx_extension_ControlColourPicker_getBackground);
         tolua_function(tolua_S,"setBackground",lua_cocos2dx_extension_ControlColourPicker_setBackground);
-        tolua_function(tolua_S,"create", lua_cocos2dx_extension_ControlColourPicker_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_extension_ControlColourPicker_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::extension::ControlColourPicker).name();
     g_luaType[typeName] = "cc.ControlColourPicker";
@@ -5120,7 +5120,7 @@ int lua_register_cocos2dx_extension_ControlPotentiometer(lua_State* tolua_S)
         tolua_function(tolua_S,"setProgressTimer",lua_cocos2dx_extension_ControlPotentiometer_setProgressTimer);
         tolua_function(tolua_S,"getPreviousLocation",lua_cocos2dx_extension_ControlPotentiometer_getPreviousLocation);
         tolua_function(tolua_S,"setPreviousLocation",lua_cocos2dx_extension_ControlPotentiometer_setPreviousLocation);
-        tolua_function(tolua_S,"create", lua_cocos2dx_extension_ControlPotentiometer_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_extension_ControlPotentiometer_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::extension::ControlPotentiometer).name();
     g_luaType[typeName] = "cc.ControlPotentiometer";
@@ -6258,7 +6258,7 @@ int lua_register_cocos2dx_extension_ControlSlider(lua_State* tolua_S)
         tolua_function(tolua_S,"setProgressSprite",lua_cocos2dx_extension_ControlSlider_setProgressSprite);
         tolua_function(tolua_S,"getBackgroundSprite",lua_cocos2dx_extension_ControlSlider_getBackgroundSprite);
         tolua_function(tolua_S,"setBackgroundSprite",lua_cocos2dx_extension_ControlSlider_setBackgroundSprite);
-        tolua_function(tolua_S,"create", lua_cocos2dx_extension_ControlSlider_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_extension_ControlSlider_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::extension::ControlSlider).name();
     g_luaType[typeName] = "cc.ControlSlider";
@@ -7314,7 +7314,7 @@ int lua_register_cocos2dx_extension_ControlStepper(lua_State* tolua_S)
         tolua_function(tolua_S,"setMinusLabel",lua_cocos2dx_extension_ControlStepper_setMinusLabel);
         tolua_function(tolua_S,"getPlusLabel",lua_cocos2dx_extension_ControlStepper_getPlusLabel);
         tolua_function(tolua_S,"setPlusLabel",lua_cocos2dx_extension_ControlStepper_setPlusLabel);
-        tolua_function(tolua_S,"create", lua_cocos2dx_extension_ControlStepper_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_extension_ControlStepper_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::extension::ControlStepper).name();
     g_luaType[typeName] = "cc.ControlStepper";
@@ -7697,7 +7697,7 @@ int lua_register_cocos2dx_extension_ControlSwitch(lua_State* tolua_S)
         tolua_function(tolua_S,"isOn",lua_cocos2dx_extension_ControlSwitch_isOn);
         tolua_function(tolua_S,"hasMoved",lua_cocos2dx_extension_ControlSwitch_hasMoved);
         tolua_function(tolua_S,"locationFromTouch",lua_cocos2dx_extension_ControlSwitch_locationFromTouch);
-        tolua_function(tolua_S,"create", lua_cocos2dx_extension_ControlSwitch_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_extension_ControlSwitch_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::extension::ControlSwitch).name();
     g_luaType[typeName] = "cc.ControlSwitch";
@@ -9464,7 +9464,7 @@ int lua_register_cocos2dx_extension_ScrollView(lua_State* tolua_S)
         tolua_function(tolua_S,"setClippingToBounds",lua_cocos2dx_extension_ScrollView_setClippingToBounds);
         tolua_function(tolua_S,"updateTweenAction",lua_cocos2dx_extension_ScrollView_updateTweenAction);
         tolua_function(tolua_S,"hasVisibleParents",lua_cocos2dx_extension_ScrollView_hasVisibleParents);
-        tolua_function(tolua_S,"create", lua_cocos2dx_extension_ScrollView_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_extension_ScrollView_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::extension::ScrollView).name();
     g_luaType[typeName] = "cc.ScrollView";
@@ -9661,7 +9661,7 @@ int lua_register_cocos2dx_extension_TableViewCell(lua_State* tolua_S)
         tolua_function(tolua_S,"getIdx",lua_cocos2dx_extension_TableViewCell_getIdx);
         tolua_function(tolua_S,"setIdx",lua_cocos2dx_extension_TableViewCell_setIdx);
         tolua_function(tolua_S,"reset",lua_cocos2dx_extension_TableViewCell_reset);
-        tolua_function(tolua_S,"create", lua_cocos2dx_extension_TableViewCell_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_extension_TableViewCell_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::extension::TableViewCell).name();
     g_luaType[typeName] = "cc.TableViewCell";
@@ -10959,7 +10959,7 @@ int lua_register_cocos2dx_extension_AssetsManager(lua_State* tolua_S)
         tolua_function(tolua_S,"setStoragePath",lua_cocos2dx_extension_AssetsManager_setStoragePath);
         tolua_function(tolua_S,"setConnectionTimeout",lua_cocos2dx_extension_AssetsManager_setConnectionTimeout);
         tolua_function(tolua_S,"getConnectionTimeout",lua_cocos2dx_extension_AssetsManager_getConnectionTimeout);
-        tolua_function(tolua_S,"create", lua_cocos2dx_extension_AssetsManager_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_extension_AssetsManager_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::extension::AssetsManager).name();
     g_luaType[typeName] = "cc.AssetsManager";
@@ -12333,7 +12333,7 @@ int lua_register_cocos2dx_extension_AssetsManagerEx(lua_State* tolua_S)
         tolua_function(tolua_S,"setMaxConcurrentTask",lua_cocos2dx_extension_AssetsManagerEx_setMaxConcurrentTask);
         tolua_function(tolua_S,"setVersionCompareHandle",lua_cocos2dx_extension_AssetsManagerEx_setVersionCompareHandle);
         tolua_function(tolua_S,"setVerifyCallback",lua_cocos2dx_extension_AssetsManagerEx_setVerifyCallback);
-        tolua_function(tolua_S,"create", lua_cocos2dx_extension_AssetsManagerEx_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_extension_AssetsManagerEx_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::extension::AssetsManagerEx).name();
     g_luaType[typeName] = "cc.AssetsManagerEx";
@@ -15579,7 +15579,7 @@ int lua_register_cocos2dx_extension_PUParticleSystem3D(lua_State* tolua_S)
         tolua_function(tolua_S,"initSystem",lua_cocos2dx_extension_PUParticleSystem3D_initSystem);
         tolua_function(tolua_S,"initWithFilePath",lua_cocos2dx_extension_PUParticleSystem3D_initWithFilePath);
         tolua_function(tolua_S,"initWithFilePathAndMaterialPath",lua_cocos2dx_extension_PUParticleSystem3D_initWithFilePathAndMaterialPath);
-        tolua_function(tolua_S,"create", lua_cocos2dx_extension_PUParticleSystem3D_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_extension_PUParticleSystem3D_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::PUParticleSystem3D).name();
     g_luaType[typeName] = "cc.PUParticleSystem3D";

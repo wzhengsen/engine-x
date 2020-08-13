@@ -5774,7 +5774,7 @@ int lua_register_cocos2dx_physics3d_Physics3DPointToPointConstraint(lua_State* t
         tolua_function(tolua_S,"getPivotPointInA",lua_cocos2dx_physics3d_Physics3DPointToPointConstraint_getPivotPointInA);
         tolua_function(tolua_S,"getPivotPointInB",lua_cocos2dx_physics3d_Physics3DPointToPointConstraint_getPivotPointInB);
         tolua_function(tolua_S,"init",lua_cocos2dx_physics3d_Physics3DPointToPointConstraint_init);
-        tolua_function(tolua_S,"create", lua_cocos2dx_physics3d_Physics3DPointToPointConstraint_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_physics3d_Physics3DPointToPointConstraint_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::Physics3DPointToPointConstraint).name();
     g_luaType[typeName] = "cc.Physics3DPointToPointConstraint";
@@ -7067,7 +7067,7 @@ int lua_register_cocos2dx_physics3d_Physics3DHingeConstraint(lua_State* tolua_S)
         tolua_function(tolua_S,"getMaxMotorImpulse",lua_cocos2dx_physics3d_Physics3DHingeConstraint_getMaxMotorImpulse);
         tolua_function(tolua_S,"getUseFrameOffset",lua_cocos2dx_physics3d_Physics3DHingeConstraint_getUseFrameOffset);
         tolua_function(tolua_S,"setUseFrameOffset",lua_cocos2dx_physics3d_Physics3DHingeConstraint_setUseFrameOffset);
-        tolua_function(tolua_S,"create", lua_cocos2dx_physics3d_Physics3DHingeConstraint_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_physics3d_Physics3DHingeConstraint_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::Physics3DHingeConstraint).name();
     g_luaType[typeName] = "cc.Physics3DHingeConstraint";
@@ -10292,7 +10292,7 @@ int lua_register_cocos2dx_physics3d_Physics3DSliderConstraint(lua_State* tolua_S
         tolua_function(tolua_S,"getUseFrameOffset",lua_cocos2dx_physics3d_Physics3DSliderConstraint_getUseFrameOffset);
         tolua_function(tolua_S,"setUseFrameOffset",lua_cocos2dx_physics3d_Physics3DSliderConstraint_setUseFrameOffset);
         tolua_function(tolua_S,"setFrames",lua_cocos2dx_physics3d_Physics3DSliderConstraint_setFrames);
-        tolua_function(tolua_S,"create", lua_cocos2dx_physics3d_Physics3DSliderConstraint_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_physics3d_Physics3DSliderConstraint_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::Physics3DSliderConstraint).name();
     g_luaType[typeName] = "cc.Physics3DSliderConstraint";
@@ -11298,7 +11298,7 @@ int lua_register_cocos2dx_physics3d_Physics3DConeTwistConstraint(lua_State* tolu
         tolua_function(tolua_S,"setFrames",lua_cocos2dx_physics3d_Physics3DConeTwistConstraint_setFrames);
         tolua_function(tolua_S,"getFrameOffsetA",lua_cocos2dx_physics3d_Physics3DConeTwistConstraint_getFrameOffsetA);
         tolua_function(tolua_S,"getFrameOffsetB",lua_cocos2dx_physics3d_Physics3DConeTwistConstraint_getFrameOffsetB);
-        tolua_function(tolua_S,"create", lua_cocos2dx_physics3d_Physics3DConeTwistConstraint_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_physics3d_Physics3DConeTwistConstraint_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::Physics3DConeTwistConstraint).name();
     g_luaType[typeName] = "cc.Physics3DConeTwistConstraint";
@@ -11926,7 +11926,7 @@ int lua_register_cocos2dx_physics3d_Physics3D6DofConstraint(lua_State* tolua_S)
         tolua_function(tolua_S,"isLimited",lua_cocos2dx_physics3d_Physics3D6DofConstraint_isLimited);
         tolua_function(tolua_S,"getUseFrameOffset",lua_cocos2dx_physics3d_Physics3D6DofConstraint_getUseFrameOffset);
         tolua_function(tolua_S,"setUseFrameOffset",lua_cocos2dx_physics3d_Physics3D6DofConstraint_setUseFrameOffset);
-        tolua_function(tolua_S,"create", lua_cocos2dx_physics3d_Physics3D6DofConstraint_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_physics3d_Physics3D6DofConstraint_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::Physics3D6DofConstraint).name();
     g_luaType[typeName] = "cc.Physics3D6DofConstraint";

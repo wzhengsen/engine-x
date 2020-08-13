@@ -803,7 +803,7 @@ int lua_register_cocos2dx_controller_EventListenerController(lua_State* tolua_S)
     tolua_cclass(tolua_S,"EventListenerController","cc.EventListenerController","cc.EventListener",nullptr);
 
     tolua_beginmodule(tolua_S,"EventListenerController");
-        tolua_function(tolua_S,"create", lua_cocos2dx_controller_EventListenerController_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_controller_EventListenerController_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::EventListenerController).name();
     g_luaType[typeName] = "cc.EventListenerController";

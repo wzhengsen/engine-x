@@ -936,7 +936,7 @@ int lua_register_cocos2dx_video_VideoPlayer(lua_State* tolua_S)
         tolua_function(tolua_S,"setFullScreenEnabled",lua_cocos2dx_video_VideoPlayer_setFullScreenEnabled);
         tolua_function(tolua_S,"isFullScreenEnabled",lua_cocos2dx_video_VideoPlayer_isFullScreenEnabled);
         tolua_function(tolua_S,"onPlayEvent",lua_cocos2dx_video_VideoPlayer_onPlayEvent);
-        tolua_function(tolua_S,"create", lua_cocos2dx_video_VideoPlayer_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_video_VideoPlayer_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::ui::VideoPlayer).name();
     g_luaType[typeName] = "ccui.VideoPlayer";
