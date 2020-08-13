@@ -1505,7 +1505,7 @@ int lua_register_cocos2dx_navmesh_NavMeshAgent(lua_State* tolua_S)
         tolua_function(tolua_S,"syncToAgent",lua_cocos2dx_navmesh_NavMeshAgent_syncToAgent);
         tolua_function(tolua_S,"syncToNode",lua_cocos2dx_navmesh_NavMeshAgent_syncToNode);
         tolua_function(tolua_S,"getVelocity",lua_cocos2dx_navmesh_NavMeshAgent_getVelocity);
-        tolua_function(tolua_S,"create", lua_cocos2dx_navmesh_NavMeshAgent_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_navmesh_NavMeshAgent_create);
         tolua_function(tolua_S,"getNavMeshAgentComponentName", lua_cocos2dx_navmesh_NavMeshAgent_getNavMeshAgentComponentName);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::NavMeshAgent).name();
@@ -1935,7 +1935,7 @@ int lua_register_cocos2dx_navmesh_NavMeshObstacle(lua_State* tolua_S)
         tolua_function(tolua_S,"syncToObstacle",lua_cocos2dx_navmesh_NavMeshObstacle_syncToObstacle);
         tolua_function(tolua_S,"syncToNode",lua_cocos2dx_navmesh_NavMeshObstacle_syncToNode);
         tolua_function(tolua_S,"initWith",lua_cocos2dx_navmesh_NavMeshObstacle_initWith);
-        tolua_function(tolua_S,"create", lua_cocos2dx_navmesh_NavMeshObstacle_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_navmesh_NavMeshObstacle_create);
         tolua_function(tolua_S,"getNavMeshObstacleComponentName", lua_cocos2dx_navmesh_NavMeshObstacle_getNavMeshObstacleComponentName);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::NavMeshObstacle).name();
@@ -2395,7 +2395,7 @@ int lua_register_cocos2dx_navmesh_NavMesh(lua_State* tolua_S)
         tolua_function(tolua_S,"removeNavMeshAgent",lua_cocos2dx_navmesh_NavMesh_removeNavMeshAgent);
         tolua_function(tolua_S,"addNavMeshObstacle",lua_cocos2dx_navmesh_NavMesh_addNavMeshObstacle);
         tolua_function(tolua_S,"removeNavMeshObstacle",lua_cocos2dx_navmesh_NavMesh_removeNavMeshObstacle);
-        tolua_function(tolua_S,"create", lua_cocos2dx_navmesh_NavMesh_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_navmesh_NavMesh_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::NavMesh).name();
     g_luaType[typeName] = "cc.NavMesh";

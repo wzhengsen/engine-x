@@ -1370,8 +1370,12 @@ class Generator(object):
 
 
     def should_rename_function(self, class_name, method_name):
+        for key,val in self.rename_functions.items():
+            if key == "*" or re.match("^" + key + "$", class_name):
+                if method_name in val:
+                    return val[method_name]
+
         if class_name in self.rename_functions.keys() and method_name in self.rename_functions[class_name].keys():
-            # print >> sys.stderr, "will rename %s to %s" % (method_name, self.rename_functions[class_name][method_name])
             return self.rename_functions[class_name][method_name]
         return None
 
@@ -1398,7 +1402,7 @@ class Generator(object):
                         return True
                     if method_name != None:
                         for func in self.skip_classes[key]:
-                            if re.match(func, method_name):
+                            if re.match("^" + func + "$", method_name):
                                 if verbose:
                                     print("%s will skip method %s" % (class_name, method_name))
                                 return True

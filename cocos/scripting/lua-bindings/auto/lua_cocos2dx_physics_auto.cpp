@@ -1757,7 +1757,7 @@ int lua_register_cocos2dx_physics_PhysicsShapeCircle(lua_State* tolua_S)
 
     tolua_beginmodule(tolua_S,"PhysicsShapeCircle");
         tolua_function(tolua_S,"getRadius",lua_cocos2dx_physics_PhysicsShapeCircle_getRadius);
-        tolua_function(tolua_S,"create", lua_cocos2dx_physics_PhysicsShapeCircle_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_physics_PhysicsShapeCircle_create);
         tolua_function(tolua_S,"calculateArea", lua_cocos2dx_physics_PhysicsShapeCircle_calculateArea);
         tolua_function(tolua_S,"calculateMoment", lua_cocos2dx_physics_PhysicsShapeCircle_calculateMoment);
     tolua_endmodule(tolua_S);
@@ -2028,7 +2028,7 @@ int lua_register_cocos2dx_physics_PhysicsShapeBox(lua_State* tolua_S)
 
     tolua_beginmodule(tolua_S,"PhysicsShapeBox");
         tolua_function(tolua_S,"getSize",lua_cocos2dx_physics_PhysicsShapeBox_getSize);
-        tolua_function(tolua_S,"create", lua_cocos2dx_physics_PhysicsShapeBox_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_physics_PhysicsShapeBox_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::PhysicsShapeBox).name();
     g_luaType[typeName] = "cc.PhysicsShapeBox";
@@ -2214,7 +2214,7 @@ int lua_register_cocos2dx_physics_PhysicsShapeEdgeSegment(lua_State* tolua_S)
     tolua_beginmodule(tolua_S,"PhysicsShapeEdgeSegment");
         tolua_function(tolua_S,"getPointA",lua_cocos2dx_physics_PhysicsShapeEdgeSegment_getPointA);
         tolua_function(tolua_S,"getPointB",lua_cocos2dx_physics_PhysicsShapeEdgeSegment_getPointB);
-        tolua_function(tolua_S,"create", lua_cocos2dx_physics_PhysicsShapeEdgeSegment_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_physics_PhysicsShapeEdgeSegment_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::PhysicsShapeEdgeSegment).name();
     g_luaType[typeName] = "cc.PhysicsShapeEdgeSegment";
@@ -2384,7 +2384,7 @@ int lua_register_cocos2dx_physics_PhysicsShapeEdgeBox(lua_State* tolua_S)
     tolua_cclass(tolua_S,"PhysicsShapeEdgeBox","cc.PhysicsShapeEdgeBox","cc.PhysicsShapeEdgePolygon",nullptr);
 
     tolua_beginmodule(tolua_S,"PhysicsShapeEdgeBox");
-        tolua_function(tolua_S,"create", lua_cocos2dx_physics_PhysicsShapeEdgeBox_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_physics_PhysicsShapeEdgeBox_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::PhysicsShapeEdgeBox).name();
     g_luaType[typeName] = "cc.PhysicsShapeEdgeBox";
@@ -5884,7 +5884,7 @@ int lua_register_cocos2dx_physics_PhysicsBody(lua_State* tolua_S)
         tolua_function(tolua_S,"world2Local",lua_cocos2dx_physics_PhysicsBody_world2Local);
         tolua_function(tolua_S,"local2World",lua_cocos2dx_physics_PhysicsBody_local2World);
         tolua_function(tolua_S,"getCPBody",lua_cocos2dx_physics_PhysicsBody_getCPBody);
-        tolua_function(tolua_S,"create", lua_cocos2dx_physics_PhysicsBody_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_physics_PhysicsBody_create);
         tolua_function(tolua_S,"createCircle", lua_cocos2dx_physics_PhysicsBody_createCircle);
         tolua_function(tolua_S,"createBox", lua_cocos2dx_physics_PhysicsBody_createBox);
         tolua_function(tolua_S,"createEdgeSegment", lua_cocos2dx_physics_PhysicsBody_createEdgeSegment);
@@ -6628,7 +6628,7 @@ int lua_register_cocos2dx_physics_EventListenerPhysicsContact(lua_State* tolua_S
     tolua_cclass(tolua_S,"EventListenerPhysicsContact","cc.EventListenerPhysicsContact","cc.EventListenerCustom",nullptr);
 
     tolua_beginmodule(tolua_S,"EventListenerPhysicsContact");
-        tolua_function(tolua_S,"create", lua_cocos2dx_physics_EventListenerPhysicsContact_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_physics_EventListenerPhysicsContact_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::EventListenerPhysicsContact).name();
     g_luaType[typeName] = "cc.EventListenerPhysicsContact";
@@ -6736,7 +6736,7 @@ int lua_register_cocos2dx_physics_EventListenerPhysicsContactWithBodies(lua_Stat
 
     tolua_beginmodule(tolua_S,"EventListenerPhysicsContactWithBodies");
         tolua_function(tolua_S,"hitTest",lua_cocos2dx_physics_EventListenerPhysicsContactWithBodies_hitTest);
-        tolua_function(tolua_S,"create", lua_cocos2dx_physics_EventListenerPhysicsContactWithBodies_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_physics_EventListenerPhysicsContactWithBodies_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::EventListenerPhysicsContactWithBodies).name();
     g_luaType[typeName] = "cc.EventListenerPhysicsContactWithBodies";
@@ -6844,7 +6844,7 @@ int lua_register_cocos2dx_physics_EventListenerPhysicsContactWithShapes(lua_Stat
 
     tolua_beginmodule(tolua_S,"EventListenerPhysicsContactWithShapes");
         tolua_function(tolua_S,"hitTest",lua_cocos2dx_physics_EventListenerPhysicsContactWithShapes_hitTest);
-        tolua_function(tolua_S,"create", lua_cocos2dx_physics_EventListenerPhysicsContactWithShapes_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_physics_EventListenerPhysicsContactWithShapes_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::EventListenerPhysicsContactWithShapes).name();
     g_luaType[typeName] = "cc.EventListenerPhysicsContactWithShapes";
@@ -6950,7 +6950,7 @@ int lua_register_cocos2dx_physics_EventListenerPhysicsContactWithGroup(lua_State
 
     tolua_beginmodule(tolua_S,"EventListenerPhysicsContactWithGroup");
         tolua_function(tolua_S,"hitTest",lua_cocos2dx_physics_EventListenerPhysicsContactWithGroup_hitTest);
-        tolua_function(tolua_S,"create", lua_cocos2dx_physics_EventListenerPhysicsContactWithGroup_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_physics_EventListenerPhysicsContactWithGroup_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::EventListenerPhysicsContactWithGroup).name();
     g_luaType[typeName] = "cc.EventListenerPhysicsContactWithGroup";

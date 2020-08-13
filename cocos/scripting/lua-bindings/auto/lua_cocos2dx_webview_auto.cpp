@@ -863,7 +863,7 @@ int lua_register_cocos2dx_webview_WebView(lua_State* tolua_S)
         tolua_function(tolua_S,"setOpacityWebView",lua_cocos2dx_webview_WebView_setOpacityWebView);
         tolua_function(tolua_S,"getOpacityWebView",lua_cocos2dx_webview_WebView_getOpacityWebView);
         tolua_function(tolua_S,"setBackgroundTransparent",lua_cocos2dx_webview_WebView_setBackgroundTransparent);
-        tolua_function(tolua_S,"create", lua_cocos2dx_webview_WebView_create);
+        tolua_function(tolua_S,"new", lua_cocos2dx_webview_WebView_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::ui::WebView).name();
     g_luaType[typeName] = "ccui.WebView";
