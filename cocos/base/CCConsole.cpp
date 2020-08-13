@@ -155,7 +155,7 @@ void log(const char * format, ...)
     // print to debugger output window
     std::wstring wbuf = ntcvt::from_chars(buf);
 
-    OutputDebugStringW(wbuf.c_str());
+    wprintf(L"%s",wbuf.c_str());
 
 #if CC_OUTPUT_LOG_TO_CONSOLE
     // print to console if possible

@@ -933,7 +933,7 @@ static void extendTableView(lua_State* L)
     {
         tolua_function(L, "setDelegate", lua_cocos2dx_TableView_setDelegate);
         tolua_function(L, "setDataSource", lua_cocos2dx_TableView_setDataSource);
-        tolua_function(L, "create", lua_cocos2dx_TableView_create);
+        tolua_function(L, "new", lua_cocos2dx_TableView_create);
         tolua_function(L, "registerScriptHandler", lua_cocos2d_TableView_registerScriptHandler);
         tolua_function(L, "unregisterScriptHandler", lua_cocos2d_TableView_unregisterScriptHandler);
     }
@@ -1003,7 +1003,7 @@ static void extendEventListenerAssetsManagerEx(lua_State* L)
     lua_rawget(L, LUA_REGISTRYINDEX);
     if (lua_istable(L,-1))
     {
-        tolua_function(L, "create", lua_cocos2dx_Extension_EventListenerAssetsManagerEx_create);
+        tolua_function(L, "new", lua_cocos2dx_Extension_EventListenerAssetsManagerEx_create);
     }
     lua_pop(L, 1);
 }

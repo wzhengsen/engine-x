@@ -1166,7 +1166,7 @@ static void extendEventListenerFocusEvent(lua_State* L)
     lua_rawget(L, LUA_REGISTRYINDEX);
     if (lua_istable(L,-1))
     {
-        tolua_function(L, "create", tolua_cocos2dx_EventListenerFocus_create);
+        tolua_function(L, "new", tolua_cocos2dx_EventListenerFocus_create);
         tolua_function(L, "registerScriptHandler", tolua_cocos2dx_EventListenerFocus_registerScriptHandler);
         tolua_function(L, "clone", tolua_cocos2dx_EventListenerFocus_clone);
     }

@@ -367,11 +367,10 @@ static int lua_cocos2dx_XMLHttpRequest_constructor(lua_State* L)
 {
     int argc = 0;
     LuaMinXmlHttpRequest* self = nullptr;
-	argc = lua_gettop(L) - 1;
+	argc = lua_gettop(L);
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-	if (argc < 0) goto tolua_lerror;
 #endif
     
     if (argc == 0)
