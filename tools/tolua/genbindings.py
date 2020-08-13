@@ -1,13 +1,15 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # This script is used to generate luabinding glue codes.
-# Android ndk version must be ndk-r9b.
-
 
 import sys
 import os, os.path
 import shutil
-import ConfigParser
+try:
+    import yaml
+except ModuleNotFoundError:
+    os.system("pip3 install -U pyyaml --ignore-installed pyyaml")
+import configparser
 import subprocess
 import re
 from contextlib import contextmanager
@@ -20,22 +22,10 @@ def _check_ndk_root_env():
     try:
         NDK_ROOT = os.environ['NDK_ROOT']
     except Exception:
-        print "NDK_ROOT not defined. Please define NDK_ROOT in your environment."
+        print("NDK_ROOT not defined. Please define NDK_ROOT in your environment.")
         sys.exit(1)
 
     return NDK_ROOT
-
-def _check_python_bin_env():
-    ''' Checking the environment PYTHON_BIN, which will be used for building
-    '''
-
-    try:
-        PYTHON_BIN = os.environ['PYTHON_BIN']
-    except Exception:
-        print "PYTHON_BIN not defined, use current python."
-        PYTHON_BIN = sys.executable
-
-    return PYTHON_BIN
 
 def _find_first_file_in_dir(dir, fn):
     if os.path.isfile(dir):
@@ -49,7 +39,7 @@ def _find_first_file_in_dir(dir, fn):
           if searchPath is not None:
               return searchPath
     else:
-        return None          
+        return None
 
 def _find_all_files_match(dir, cond, all):
     if cond(dir):
@@ -83,7 +73,7 @@ def _find_llvm_include_path():
     includeDir = _find_first_file_in_dir(versionDir, "stdarg.h")
     llvmIncludePath = os.path.dirname(includeDir)
     return "-I"+llvmIncludePath
-  
+
 
 def _defaultIncludePath():
     '''default include path for libclang, llvm & gcc include path
@@ -118,7 +108,6 @@ def main():
     ndk_root = _check_ndk_root_env()
     # del the " in the path
     ndk_root = re.sub(r"\"", "", ndk_root)
-    python_bin = _check_python_bin_env()
 
     platform = sys.platform
     if platform == 'win32':
@@ -128,7 +117,7 @@ def main():
     elif 'linux' in platform:
         cur_platform = 'linux'
     else:
-        print 'Your platform is not supported!'
+        print('Your platform is not supported!')
         sys.exit(1)
 
     x86_llvm_path = ""
@@ -143,8 +132,8 @@ def main():
     elif os.path.isdir(x86_llvm_path):
         llvm_path = x86_llvm_path
     else:
-        print 'llvm toolchain not found!'
-        print 'path: %s or path: %s are not valid! ' % (x86_llvm_path, x64_llvm_path)
+        print('llvm toolchain not found!')
+        print('path: %s or path: %s are not valid! ' % (x86_llvm_path, x64_llvm_path))
         sys.exit(1)
 
     x86_gcc_toolchain_path = ""
@@ -159,8 +148,8 @@ def main():
     elif os.path.isdir(x86_gcc_toolchain_path):
         gcc_toolchain_path = x86_gcc_toolchain_path
     else:
-        print 'gcc toolchain not found!'
-        print 'path: %s or path: %s are not valid! ' % (x64_gcc_toolchain_path, x86_gcc_toolchain_path)
+        print('gcc toolchain not found!')
+        print('path: %s or path: %s are not valid! ' % (x64_gcc_toolchain_path, x86_gcc_toolchain_path))
         sys.exit(1)
 
 
@@ -170,7 +159,7 @@ def main():
 
     extraFlags = _defaultIncludePath()
     # save config to file
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     config.set('DEFAULT', 'androidndkdir', ndk_root)
     config.set('DEFAULT', 'clangllvmdir', llvm_path)
     config.set('DEFAULT', 'gcc_toolchain_dir', gcc_toolchain_path)
@@ -180,7 +169,7 @@ def main():
 
     conf_ini_file = os.path.abspath(os.path.join(os.path.dirname(__file__), 'userconf.ini'))
 
-    print 'generating userconf.ini...'
+    print('generating userconf.ini...')
     with open(conf_ini_file, 'w') as configfile:
       config.write(configfile)
 
@@ -220,20 +209,19 @@ def main():
         for key in cmd_args.keys():
             args = cmd_args[key]
             cfg = '%s/%s' % (tolua_root, key)
-            print 'Generating bindings for %s...' % (key[:-4])
-            command = '%s %s %s -s %s -t %s -o %s -n %s' % (python_bin, generator_py, cfg, args[0], target, output_dir, args[1])
-            print command
+            print('Generating bindings for %s...' % (key[:-4]))
+            command = '%s %s %s -s %s -t %s -o %s -n %s' % ('python3', generator_py, cfg, args[0], target, output_dir, args[1])
             _run_cmd(command)
 
-        print '---------------------------------'
-        print 'Generating lua bindings succeeds.'
-        print '---------------------------------'
+        print('---------------------------------')
+        print('Generating lua bindings succeeds.')
+        print('---------------------------------')
 
     except Exception as e:
         if e.__class__.__name__ == 'CmdError':
-            print '---------------------------------'
-            print 'Generating lua bindings fails.'
-            print '---------------------------------'
+            print('---------------------------------')
+            print('Generating lua bindings fails.')
+            print('---------------------------------')
             sys.exit(1)
         else:
             raise
