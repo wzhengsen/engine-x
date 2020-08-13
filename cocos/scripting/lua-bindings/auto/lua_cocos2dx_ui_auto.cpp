@@ -203,11 +203,7 @@ int lua_cocos2dx_ui_LayoutParameter_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.LayoutParameter",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -228,43 +224,6 @@ int lua_cocos2dx_ui_LayoutParameter_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_LayoutParameter_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::LayoutParameter* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_LayoutParameter_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::LayoutParameter();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.LayoutParameter");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.LayoutParameter:LayoutParameter",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_LayoutParameter_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_LayoutParameter_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (LayoutParameter)");
@@ -277,7 +236,6 @@ int lua_register_cocos2dx_ui_LayoutParameter(lua_State* tolua_S)
     tolua_cclass(tolua_S,"LayoutParameter","ccui.LayoutParameter","cc.Ref",nullptr);
 
     tolua_beginmodule(tolua_S,"LayoutParameter");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_LayoutParameter_constructor);
         tolua_function(tolua_S,"getLayoutType",lua_cocos2dx_ui_LayoutParameter_getLayoutType);
         tolua_function(tolua_S,"clone",lua_cocos2dx_ui_LayoutParameter_clone);
         tolua_function(tolua_S,"createCloneInstance",lua_cocos2dx_ui_LayoutParameter_createCloneInstance);
@@ -396,11 +354,7 @@ int lua_cocos2dx_ui_LinearLayoutParameter_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.LinearLayoutParameter",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -421,43 +375,6 @@ int lua_cocos2dx_ui_LinearLayoutParameter_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_LinearLayoutParameter_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::LinearLayoutParameter* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_LinearLayoutParameter_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::LinearLayoutParameter();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.LinearLayoutParameter");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.LinearLayoutParameter:LinearLayoutParameter",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_LinearLayoutParameter_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_LinearLayoutParameter_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (LinearLayoutParameter)");
@@ -470,7 +387,6 @@ int lua_register_cocos2dx_ui_LinearLayoutParameter(lua_State* tolua_S)
     tolua_cclass(tolua_S,"LinearLayoutParameter","ccui.LinearLayoutParameter","ccui.LayoutParameter",nullptr);
 
     tolua_beginmodule(tolua_S,"LinearLayoutParameter");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_LinearLayoutParameter_constructor);
         tolua_function(tolua_S,"setGravity",lua_cocos2dx_ui_LinearLayoutParameter_setGravity);
         tolua_function(tolua_S,"getGravity",lua_cocos2dx_ui_LinearLayoutParameter_getGravity);
         tolua_function(tolua_S,"create", lua_cocos2dx_ui_LinearLayoutParameter_create);
@@ -781,11 +697,7 @@ int lua_cocos2dx_ui_RelativeLayoutParameter_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.RelativeLayoutParameter",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -806,43 +718,6 @@ int lua_cocos2dx_ui_RelativeLayoutParameter_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_RelativeLayoutParameter_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::RelativeLayoutParameter* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RelativeLayoutParameter_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::RelativeLayoutParameter();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.RelativeLayoutParameter");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.RelativeLayoutParameter:RelativeLayoutParameter",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_RelativeLayoutParameter_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_RelativeLayoutParameter_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (RelativeLayoutParameter)");
@@ -855,7 +730,6 @@ int lua_register_cocos2dx_ui_RelativeLayoutParameter(lua_State* tolua_S)
     tolua_cclass(tolua_S,"RelativeLayoutParameter","ccui.RelativeLayoutParameter","ccui.LayoutParameter",nullptr);
 
     tolua_beginmodule(tolua_S,"RelativeLayoutParameter");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_RelativeLayoutParameter_constructor);
         tolua_function(tolua_S,"setAlign",lua_cocos2dx_ui_RelativeLayoutParameter_setAlign);
         tolua_function(tolua_S,"getAlign",lua_cocos2dx_ui_RelativeLayoutParameter_getAlign);
         tolua_function(tolua_S,"setRelativeToWidgetName",lua_cocos2dx_ui_RelativeLayoutParameter_setRelativeToWidgetName);
@@ -4052,11 +3926,7 @@ int lua_cocos2dx_ui_Widget_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Widget",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -4086,11 +3956,7 @@ int lua_cocos2dx_ui_Widget_getCurrentFocusedWidget(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Widget",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -4120,24 +3986,20 @@ int lua_cocos2dx_ui_Widget_enableDpadNavigation(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Widget",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
         bool arg0;
-        ok &= luaval_to_boolean(tolua_S, 2,&arg0, "ccui.Widget:enableDpadNavigation");
+        ok &= luaval_to_boolean(tolua_S, 1,&arg0, "ccui.Widget:enableDpadNavigation");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_Widget_enableDpadNavigation'", nullptr);
             return 0;
         }
         cocos2d::ui::Widget::enableDpadNavigation(arg0);
-        lua_settop(tolua_S, 1);
-        return 1;
+        lua_settop(tolua_S, 0);
+        return 0;
     }
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "ccui.Widget:enableDpadNavigation",argc, 1);
     return 0;
@@ -4147,43 +4009,6 @@ int lua_cocos2dx_ui_Widget_enableDpadNavigation(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_Widget_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::Widget* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_Widget_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::Widget();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.Widget");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.Widget:Widget",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_Widget_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_Widget_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (Widget)");
@@ -4196,7 +4021,6 @@ int lua_register_cocos2dx_ui_Widget(lua_State* tolua_S)
     tolua_cclass(tolua_S,"Widget","ccui.Widget","cc.ProtectedNode",nullptr);
 
     tolua_beginmodule(tolua_S,"Widget");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_Widget_constructor);
         tolua_function(tolua_S,"setEnabled",lua_cocos2dx_ui_Widget_setEnabled);
         tolua_function(tolua_S,"isEnabled",lua_cocos2dx_ui_Widget_isEnabled);
         tolua_function(tolua_S,"setBright",lua_cocos2dx_ui_Widget_setBright);
@@ -5947,11 +5771,7 @@ int lua_cocos2dx_ui_Layout_createInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Layout",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -5981,11 +5801,7 @@ int lua_cocos2dx_ui_Layout_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Layout",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -6006,43 +5822,6 @@ int lua_cocos2dx_ui_Layout_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_Layout_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::Layout* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_Layout_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::Layout();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.Layout");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.Layout:Layout",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_Layout_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_Layout_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (Layout)");
@@ -6055,7 +5834,6 @@ int lua_register_cocos2dx_ui_Layout(lua_State* tolua_S)
     tolua_cclass(tolua_S,"Layout","ccui.Layout","ccui.Widget",nullptr);
 
     tolua_beginmodule(tolua_S,"Layout");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_Layout_constructor);
         tolua_function(tolua_S,"setBackGroundImage",lua_cocos2dx_ui_Layout_setBackGroundImage);
         tolua_function(tolua_S,"setBackGroundImageCapInsets",lua_cocos2dx_ui_Layout_setBackGroundImageCapInsets);
         tolua_function(tolua_S,"getBackGroundImageCapInsets",lua_cocos2dx_ui_Layout_getBackGroundImageCapInsets);
@@ -8161,11 +7939,7 @@ int lua_cocos2dx_ui_Button_createInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Button",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -8194,18 +7968,14 @@ int lua_cocos2dx_ui_Button_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Button",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 1)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.Button:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.Button:create");
             if (!ok) { break; }
             cocos2d::ui::Button* ret = cocos2d::ui::Button::create(arg0);
             object_to_luaval<cocos2d::ui::Button>(tolua_S, "ccui.Button",(cocos2d::ui::Button*)ret);
@@ -8213,15 +7983,15 @@ int lua_cocos2dx_ui_Button_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.Button:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.Button:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.Button:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.Button:create");
             if (!ok) { break; }
             cocos2d::ui::Button* ret = cocos2d::ui::Button::create(arg0, arg1);
             object_to_luaval<cocos2d::ui::Button>(tolua_S, "ccui.Button",(cocos2d::ui::Button*)ret);
@@ -8229,18 +7999,18 @@ int lua_cocos2dx_ui_Button_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 3)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.Button:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.Button:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.Button:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.Button:create");
             if (!ok) { break; }
             std::string arg2;
-            ok &= luaval_to_std_string(tolua_S, 4,&arg2, "ccui.Button:create");
+            ok &= luaval_to_std_string(tolua_S, 3,&arg2, "ccui.Button:create");
             if (!ok) { break; }
             cocos2d::ui::Button* ret = cocos2d::ui::Button::create(arg0, arg1, arg2);
             object_to_luaval<cocos2d::ui::Button>(tolua_S, "ccui.Button",(cocos2d::ui::Button*)ret);
@@ -8248,21 +8018,21 @@ int lua_cocos2dx_ui_Button_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 4)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.Button:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.Button:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.Button:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.Button:create");
             if (!ok) { break; }
             std::string arg2;
-            ok &= luaval_to_std_string(tolua_S, 4,&arg2, "ccui.Button:create");
+            ok &= luaval_to_std_string(tolua_S, 3,&arg2, "ccui.Button:create");
             if (!ok) { break; }
             cocos2d::ui::Widget::TextureResType arg3;
-            ok &= luaval_to_int32(tolua_S, 5,(int *)&arg3, "ccui.Button:create");
+            ok &= luaval_to_int32(tolua_S, 4,(int *)&arg3, "ccui.Button:create");
             if (!ok) { break; }
             cocos2d::ui::Button* ret = cocos2d::ui::Button::create(arg0, arg1, arg2, arg3);
             object_to_luaval<cocos2d::ui::Button>(tolua_S, "ccui.Button",(cocos2d::ui::Button*)ret);
@@ -8270,7 +8040,7 @@ int lua_cocos2dx_ui_Button_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -8288,43 +8058,6 @@ int lua_cocos2dx_ui_Button_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_Button_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::Button* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_Button_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::Button();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.Button");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.Button:Button",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_Button_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_Button_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (Button)");
@@ -8337,7 +8070,6 @@ int lua_register_cocos2dx_ui_Button(lua_State* tolua_S)
     tolua_cclass(tolua_S,"Button","ccui.Button","ccui.Widget",nullptr);
 
     tolua_beginmodule(tolua_S,"Button");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_Button_constructor);
         tolua_function(tolua_S,"loadTextures",lua_cocos2dx_ui_Button_loadTextures);
         tolua_function(tolua_S,"loadTextureNormal",lua_cocos2dx_ui_Button_loadTextureNormal);
         tolua_function(tolua_S,"loadTexturePressed",lua_cocos2dx_ui_Button_loadTexturePressed);
@@ -9670,11 +9402,7 @@ int lua_cocos2dx_ui_CheckBox_createInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.CheckBox",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -9703,30 +9431,26 @@ int lua_cocos2dx_ui_CheckBox_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.CheckBox",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 5)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.CheckBox:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.CheckBox:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.CheckBox:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.CheckBox:create");
             if (!ok) { break; }
             std::string arg2;
-            ok &= luaval_to_std_string(tolua_S, 4,&arg2, "ccui.CheckBox:create");
+            ok &= luaval_to_std_string(tolua_S, 3,&arg2, "ccui.CheckBox:create");
             if (!ok) { break; }
             std::string arg3;
-            ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.CheckBox:create");
+            ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.CheckBox:create");
             if (!ok) { break; }
             std::string arg4;
-            ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.CheckBox:create");
+            ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.CheckBox:create");
             if (!ok) { break; }
             cocos2d::ui::CheckBox* ret = cocos2d::ui::CheckBox::create(arg0, arg1, arg2, arg3, arg4);
             object_to_luaval<cocos2d::ui::CheckBox>(tolua_S, "ccui.CheckBox",(cocos2d::ui::CheckBox*)ret);
@@ -9734,27 +9458,27 @@ int lua_cocos2dx_ui_CheckBox_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 6)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.CheckBox:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.CheckBox:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.CheckBox:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.CheckBox:create");
             if (!ok) { break; }
             std::string arg2;
-            ok &= luaval_to_std_string(tolua_S, 4,&arg2, "ccui.CheckBox:create");
+            ok &= luaval_to_std_string(tolua_S, 3,&arg2, "ccui.CheckBox:create");
             if (!ok) { break; }
             std::string arg3;
-            ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.CheckBox:create");
+            ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.CheckBox:create");
             if (!ok) { break; }
             std::string arg4;
-            ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.CheckBox:create");
+            ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.CheckBox:create");
             if (!ok) { break; }
             cocos2d::ui::Widget::TextureResType arg5;
-            ok &= luaval_to_int32(tolua_S, 7,(int *)&arg5, "ccui.CheckBox:create");
+            ok &= luaval_to_int32(tolua_S, 6,(int *)&arg5, "ccui.CheckBox:create");
             if (!ok) { break; }
             cocos2d::ui::CheckBox* ret = cocos2d::ui::CheckBox::create(arg0, arg1, arg2, arg3, arg4, arg5);
             object_to_luaval<cocos2d::ui::CheckBox>(tolua_S, "ccui.CheckBox",(cocos2d::ui::CheckBox*)ret);
@@ -9762,7 +9486,7 @@ int lua_cocos2dx_ui_CheckBox_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -9772,15 +9496,15 @@ int lua_cocos2dx_ui_CheckBox_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.CheckBox:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.CheckBox:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.CheckBox:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.CheckBox:create");
             if (!ok) { break; }
             cocos2d::ui::CheckBox* ret = cocos2d::ui::CheckBox::create(arg0, arg1);
             object_to_luaval<cocos2d::ui::CheckBox>(tolua_S, "ccui.CheckBox",(cocos2d::ui::CheckBox*)ret);
@@ -9788,18 +9512,18 @@ int lua_cocos2dx_ui_CheckBox_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 3)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.CheckBox:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.CheckBox:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.CheckBox:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.CheckBox:create");
             if (!ok) { break; }
             cocos2d::ui::Widget::TextureResType arg2;
-            ok &= luaval_to_int32(tolua_S, 4,(int *)&arg2, "ccui.CheckBox:create");
+            ok &= luaval_to_int32(tolua_S, 3,(int *)&arg2, "ccui.CheckBox:create");
             if (!ok) { break; }
             cocos2d::ui::CheckBox* ret = cocos2d::ui::CheckBox::create(arg0, arg1, arg2);
             object_to_luaval<cocos2d::ui::CheckBox>(tolua_S, "ccui.CheckBox",(cocos2d::ui::CheckBox*)ret);
@@ -9815,43 +9539,6 @@ int lua_cocos2dx_ui_CheckBox_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_CheckBox_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::CheckBox* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_CheckBox_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::CheckBox();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.CheckBox");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.CheckBox:CheckBox",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_CheckBox_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_CheckBox_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (CheckBox)");
@@ -9864,7 +9551,6 @@ int lua_register_cocos2dx_ui_CheckBox(lua_State* tolua_S)
     tolua_cclass(tolua_S,"CheckBox","ccui.CheckBox","ccui.AbstractCheckButton",nullptr);
 
     tolua_beginmodule(tolua_S,"CheckBox");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_CheckBox_constructor);
         tolua_function(tolua_S,"addEventListener",lua_cocos2dx_ui_CheckBox_addEventListener);
         tolua_function(tolua_S,"createInstance", lua_cocos2dx_ui_CheckBox_createInstance);
         tolua_function(tolua_S,"create", lua_cocos2dx_ui_CheckBox_create);
@@ -9938,11 +9624,7 @@ int lua_cocos2dx_ui_RadioButton_createInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.RadioButton",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -9971,30 +9653,26 @@ int lua_cocos2dx_ui_RadioButton_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.RadioButton",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 5)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.RadioButton:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.RadioButton:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.RadioButton:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.RadioButton:create");
             if (!ok) { break; }
             std::string arg2;
-            ok &= luaval_to_std_string(tolua_S, 4,&arg2, "ccui.RadioButton:create");
+            ok &= luaval_to_std_string(tolua_S, 3,&arg2, "ccui.RadioButton:create");
             if (!ok) { break; }
             std::string arg3;
-            ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.RadioButton:create");
+            ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.RadioButton:create");
             if (!ok) { break; }
             std::string arg4;
-            ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.RadioButton:create");
+            ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.RadioButton:create");
             if (!ok) { break; }
             cocos2d::ui::RadioButton* ret = cocos2d::ui::RadioButton::create(arg0, arg1, arg2, arg3, arg4);
             object_to_luaval<cocos2d::ui::RadioButton>(tolua_S, "ccui.RadioButton",(cocos2d::ui::RadioButton*)ret);
@@ -10002,27 +9680,27 @@ int lua_cocos2dx_ui_RadioButton_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 6)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.RadioButton:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.RadioButton:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.RadioButton:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.RadioButton:create");
             if (!ok) { break; }
             std::string arg2;
-            ok &= luaval_to_std_string(tolua_S, 4,&arg2, "ccui.RadioButton:create");
+            ok &= luaval_to_std_string(tolua_S, 3,&arg2, "ccui.RadioButton:create");
             if (!ok) { break; }
             std::string arg3;
-            ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.RadioButton:create");
+            ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.RadioButton:create");
             if (!ok) { break; }
             std::string arg4;
-            ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.RadioButton:create");
+            ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.RadioButton:create");
             if (!ok) { break; }
             cocos2d::ui::Widget::TextureResType arg5;
-            ok &= luaval_to_int32(tolua_S, 7,(int *)&arg5, "ccui.RadioButton:create");
+            ok &= luaval_to_int32(tolua_S, 6,(int *)&arg5, "ccui.RadioButton:create");
             if (!ok) { break; }
             cocos2d::ui::RadioButton* ret = cocos2d::ui::RadioButton::create(arg0, arg1, arg2, arg3, arg4, arg5);
             object_to_luaval<cocos2d::ui::RadioButton>(tolua_S, "ccui.RadioButton",(cocos2d::ui::RadioButton*)ret);
@@ -10030,7 +9708,7 @@ int lua_cocos2dx_ui_RadioButton_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -10040,15 +9718,15 @@ int lua_cocos2dx_ui_RadioButton_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.RadioButton:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.RadioButton:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.RadioButton:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.RadioButton:create");
             if (!ok) { break; }
             cocos2d::ui::RadioButton* ret = cocos2d::ui::RadioButton::create(arg0, arg1);
             object_to_luaval<cocos2d::ui::RadioButton>(tolua_S, "ccui.RadioButton",(cocos2d::ui::RadioButton*)ret);
@@ -10056,18 +9734,18 @@ int lua_cocos2dx_ui_RadioButton_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 3)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.RadioButton:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.RadioButton:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.RadioButton:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.RadioButton:create");
             if (!ok) { break; }
             cocos2d::ui::Widget::TextureResType arg2;
-            ok &= luaval_to_int32(tolua_S, 4,(int *)&arg2, "ccui.RadioButton:create");
+            ok &= luaval_to_int32(tolua_S, 3,(int *)&arg2, "ccui.RadioButton:create");
             if (!ok) { break; }
             cocos2d::ui::RadioButton* ret = cocos2d::ui::RadioButton::create(arg0, arg1, arg2);
             object_to_luaval<cocos2d::ui::RadioButton>(tolua_S, "ccui.RadioButton",(cocos2d::ui::RadioButton*)ret);
@@ -10083,43 +9761,6 @@ int lua_cocos2dx_ui_RadioButton_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_RadioButton_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::RadioButton* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RadioButton_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::RadioButton();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.RadioButton");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.RadioButton:RadioButton",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_RadioButton_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_RadioButton_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (RadioButton)");
@@ -10132,7 +9773,6 @@ int lua_register_cocos2dx_ui_RadioButton(lua_State* tolua_S)
     tolua_cclass(tolua_S,"RadioButton","ccui.RadioButton","ccui.AbstractCheckButton",nullptr);
 
     tolua_beginmodule(tolua_S,"RadioButton");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_RadioButton_constructor);
         tolua_function(tolua_S,"addEventListener",lua_cocos2dx_ui_RadioButton_addEventListener);
         tolua_function(tolua_S,"createInstance", lua_cocos2dx_ui_RadioButton_createInstance);
         tolua_function(tolua_S,"create", lua_cocos2dx_ui_RadioButton_create);
@@ -10704,11 +10344,7 @@ int lua_cocos2dx_ui_RadioButtonGroup_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.RadioButtonGroup",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -10729,43 +10365,6 @@ int lua_cocos2dx_ui_RadioButtonGroup_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_RadioButtonGroup_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::RadioButtonGroup* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RadioButtonGroup_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::RadioButtonGroup();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.RadioButtonGroup");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.RadioButtonGroup:RadioButtonGroup",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_RadioButtonGroup_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_RadioButtonGroup_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (RadioButtonGroup)");
@@ -10778,7 +10377,6 @@ int lua_register_cocos2dx_ui_RadioButtonGroup(lua_State* tolua_S)
     tolua_cclass(tolua_S,"RadioButtonGroup","ccui.RadioButtonGroup","ccui.Widget",nullptr);
 
     tolua_beginmodule(tolua_S,"RadioButtonGroup");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_RadioButtonGroup_constructor);
         tolua_function(tolua_S,"addEventListener",lua_cocos2dx_ui_RadioButtonGroup_addEventListener);
         tolua_function(tolua_S,"getSelectedButtonIndex",lua_cocos2dx_ui_RadioButtonGroup_getSelectedButtonIndex);
         tolua_function(tolua_S,"setSelectedButton",lua_cocos2dx_ui_RadioButtonGroup_setSelectedButton);
@@ -11376,11 +10974,7 @@ int lua_cocos2dx_ui_ImageView_createInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.ImageView",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -11409,18 +11003,14 @@ int lua_cocos2dx_ui_ImageView_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.ImageView",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 1)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.ImageView:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.ImageView:create");
             if (!ok) { break; }
             cocos2d::ui::ImageView* ret = cocos2d::ui::ImageView::create(arg0);
             object_to_luaval<cocos2d::ui::ImageView>(tolua_S, "ccui.ImageView",(cocos2d::ui::ImageView*)ret);
@@ -11428,15 +11018,15 @@ int lua_cocos2dx_ui_ImageView_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.ImageView:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.ImageView:create");
             if (!ok) { break; }
             cocos2d::ui::Widget::TextureResType arg1;
-            ok &= luaval_to_int32(tolua_S, 3,(int *)&arg1, "ccui.ImageView:create");
+            ok &= luaval_to_int32(tolua_S, 2,(int *)&arg1, "ccui.ImageView:create");
             if (!ok) { break; }
             cocos2d::ui::ImageView* ret = cocos2d::ui::ImageView::create(arg0, arg1);
             object_to_luaval<cocos2d::ui::ImageView>(tolua_S, "ccui.ImageView",(cocos2d::ui::ImageView*)ret);
@@ -11444,7 +11034,7 @@ int lua_cocos2dx_ui_ImageView_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -11462,43 +11052,6 @@ int lua_cocos2dx_ui_ImageView_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_ImageView_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::ImageView* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_ImageView_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::ImageView();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.ImageView");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.ImageView:ImageView",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_ImageView_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_ImageView_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (ImageView)");
@@ -11511,7 +11064,6 @@ int lua_register_cocos2dx_ui_ImageView(lua_State* tolua_S)
     tolua_cclass(tolua_S,"ImageView","ccui.ImageView","ccui.Widget",nullptr);
 
     tolua_beginmodule(tolua_S,"ImageView");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_ImageView_constructor);
         tolua_function(tolua_S,"loadTexture",lua_cocos2dx_ui_ImageView_loadTexture);
         tolua_function(tolua_S,"setTextureRect",lua_cocos2dx_ui_ImageView_setTextureRect);
         tolua_function(tolua_S,"setScale9Enabled",lua_cocos2dx_ui_ImageView_setScale9Enabled);
@@ -13256,11 +12808,7 @@ int lua_cocos2dx_ui_Text_createInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Text",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -13289,24 +12837,20 @@ int lua_cocos2dx_ui_Text_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Text",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 3)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.Text:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.Text:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.Text:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.Text:create");
             if (!ok) { break; }
             double arg2;
-            ok &= luaval_to_number(tolua_S, 4,&arg2, "ccui.Text:create");
+            ok &= luaval_to_number(tolua_S, 3,&arg2, "ccui.Text:create");
             if (!ok) { break; }
             cocos2d::ui::Text* ret = cocos2d::ui::Text::create(arg0, arg1, arg2);
             object_to_luaval<cocos2d::ui::Text>(tolua_S, "ccui.Text",(cocos2d::ui::Text*)ret);
@@ -13314,7 +12858,7 @@ int lua_cocos2dx_ui_Text_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -13332,43 +12876,6 @@ int lua_cocos2dx_ui_Text_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_Text_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::Text* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_Text_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::Text();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.Text");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.Text:Text",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_Text_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_Text_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (Text)");
@@ -13381,7 +12888,6 @@ int lua_register_cocos2dx_ui_Text(lua_State* tolua_S)
     tolua_cclass(tolua_S,"Text","ccui.Text","ccui.Widget",nullptr);
 
     tolua_beginmodule(tolua_S,"Text");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_Text_constructor);
         tolua_function(tolua_S,"setString",lua_cocos2dx_ui_Text_setString);
         tolua_function(tolua_S,"getString",lua_cocos2dx_ui_Text_getString);
         tolua_function(tolua_S,"getStringLength",lua_cocos2dx_ui_Text_getStringLength);
@@ -13734,11 +13240,7 @@ int lua_cocos2dx_ui_TextAtlas_createInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.TextAtlas",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -13767,30 +13269,26 @@ int lua_cocos2dx_ui_TextAtlas_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.TextAtlas",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 5)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.TextAtlas:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.TextAtlas:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.TextAtlas:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.TextAtlas:create");
             if (!ok) { break; }
             int arg2;
-            ok &= luaval_to_int32(tolua_S, 4,(int *)&arg2, "ccui.TextAtlas:create");
+            ok &= luaval_to_int32(tolua_S, 3,(int *)&arg2, "ccui.TextAtlas:create");
             if (!ok) { break; }
             int arg3;
-            ok &= luaval_to_int32(tolua_S, 5,(int *)&arg3, "ccui.TextAtlas:create");
+            ok &= luaval_to_int32(tolua_S, 4,(int *)&arg3, "ccui.TextAtlas:create");
             if (!ok) { break; }
             std::string arg4;
-            ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.TextAtlas:create");
+            ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.TextAtlas:create");
             if (!ok) { break; }
             cocos2d::ui::TextAtlas* ret = cocos2d::ui::TextAtlas::create(arg0, arg1, arg2, arg3, arg4);
             object_to_luaval<cocos2d::ui::TextAtlas>(tolua_S, "ccui.TextAtlas",(cocos2d::ui::TextAtlas*)ret);
@@ -13798,7 +13296,7 @@ int lua_cocos2dx_ui_TextAtlas_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -13816,43 +13314,6 @@ int lua_cocos2dx_ui_TextAtlas_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_TextAtlas_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::TextAtlas* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_TextAtlas_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::TextAtlas();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.TextAtlas");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.TextAtlas:TextAtlas",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_TextAtlas_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_TextAtlas_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (TextAtlas)");
@@ -13865,7 +13326,6 @@ int lua_register_cocos2dx_ui_TextAtlas(lua_State* tolua_S)
     tolua_cclass(tolua_S,"TextAtlas","ccui.TextAtlas","ccui.Widget",nullptr);
 
     tolua_beginmodule(tolua_S,"TextAtlas");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_TextAtlas_constructor);
         tolua_function(tolua_S,"setProperty",lua_cocos2dx_ui_TextAtlas_setProperty);
         tolua_function(tolua_S,"setString",lua_cocos2dx_ui_TextAtlas_setString);
         tolua_function(tolua_S,"getString",lua_cocos2dx_ui_TextAtlas_getString);
@@ -14392,11 +13852,7 @@ int lua_cocos2dx_ui_LoadingBar_createInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.LoadingBar",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -14425,18 +13881,14 @@ int lua_cocos2dx_ui_LoadingBar_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.LoadingBar",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 1)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.LoadingBar:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.LoadingBar:create");
             if (!ok) { break; }
             cocos2d::ui::LoadingBar* ret = cocos2d::ui::LoadingBar::create(arg0);
             object_to_luaval<cocos2d::ui::LoadingBar>(tolua_S, "ccui.LoadingBar",(cocos2d::ui::LoadingBar*)ret);
@@ -14444,15 +13896,15 @@ int lua_cocos2dx_ui_LoadingBar_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.LoadingBar:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.LoadingBar:create");
             if (!ok) { break; }
             double arg1;
-            ok &= luaval_to_number(tolua_S, 3,&arg1, "ccui.LoadingBar:create");
+            ok &= luaval_to_number(tolua_S, 2,&arg1, "ccui.LoadingBar:create");
             if (!ok) { break; }
             cocos2d::ui::LoadingBar* ret = cocos2d::ui::LoadingBar::create(arg0, arg1);
             object_to_luaval<cocos2d::ui::LoadingBar>(tolua_S, "ccui.LoadingBar",(cocos2d::ui::LoadingBar*)ret);
@@ -14460,7 +13912,7 @@ int lua_cocos2dx_ui_LoadingBar_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -14470,15 +13922,15 @@ int lua_cocos2dx_ui_LoadingBar_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.LoadingBar:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.LoadingBar:create");
             if (!ok) { break; }
             cocos2d::ui::Widget::TextureResType arg1;
-            ok &= luaval_to_int32(tolua_S, 3,(int *)&arg1, "ccui.LoadingBar:create");
+            ok &= luaval_to_int32(tolua_S, 2,(int *)&arg1, "ccui.LoadingBar:create");
             if (!ok) { break; }
             cocos2d::ui::LoadingBar* ret = cocos2d::ui::LoadingBar::create(arg0, arg1);
             object_to_luaval<cocos2d::ui::LoadingBar>(tolua_S, "ccui.LoadingBar",(cocos2d::ui::LoadingBar*)ret);
@@ -14486,18 +13938,18 @@ int lua_cocos2dx_ui_LoadingBar_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 3)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.LoadingBar:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.LoadingBar:create");
             if (!ok) { break; }
             cocos2d::ui::Widget::TextureResType arg1;
-            ok &= luaval_to_int32(tolua_S, 3,(int *)&arg1, "ccui.LoadingBar:create");
+            ok &= luaval_to_int32(tolua_S, 2,(int *)&arg1, "ccui.LoadingBar:create");
             if (!ok) { break; }
             double arg2;
-            ok &= luaval_to_number(tolua_S, 4,&arg2, "ccui.LoadingBar:create");
+            ok &= luaval_to_number(tolua_S, 3,&arg2, "ccui.LoadingBar:create");
             if (!ok) { break; }
             cocos2d::ui::LoadingBar* ret = cocos2d::ui::LoadingBar::create(arg0, arg1, arg2);
             object_to_luaval<cocos2d::ui::LoadingBar>(tolua_S, "ccui.LoadingBar",(cocos2d::ui::LoadingBar*)ret);
@@ -14513,43 +13965,6 @@ int lua_cocos2dx_ui_LoadingBar_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_LoadingBar_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::LoadingBar* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_LoadingBar_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::LoadingBar();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.LoadingBar");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.LoadingBar:LoadingBar",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_LoadingBar_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_LoadingBar_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (LoadingBar)");
@@ -14562,7 +13977,6 @@ int lua_register_cocos2dx_ui_LoadingBar(lua_State* tolua_S)
     tolua_cclass(tolua_S,"LoadingBar","ccui.LoadingBar","ccui.Widget",nullptr);
 
     tolua_beginmodule(tolua_S,"LoadingBar");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_LoadingBar_constructor);
         tolua_function(tolua_S,"setDirection",lua_cocos2dx_ui_LoadingBar_setDirection);
         tolua_function(tolua_S,"getDirection",lua_cocos2dx_ui_LoadingBar_getDirection);
         tolua_function(tolua_S,"loadTexture",lua_cocos2dx_ui_LoadingBar_loadTexture);
@@ -17594,11 +17008,7 @@ int lua_cocos2dx_ui_ScrollView_createInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.ScrollView",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -17628,11 +17038,7 @@ int lua_cocos2dx_ui_ScrollView_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.ScrollView",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -17653,43 +17059,6 @@ int lua_cocos2dx_ui_ScrollView_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_ScrollView_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::ScrollView* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_ScrollView_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::ScrollView();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.ScrollView");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.ScrollView:ScrollView",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_ScrollView_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_ScrollView_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (ScrollView)");
@@ -17702,7 +17071,6 @@ int lua_register_cocos2dx_ui_ScrollView(lua_State* tolua_S)
     tolua_cclass(tolua_S,"ScrollView","ccui.ScrollView","ccui.Layout",nullptr);
 
     tolua_beginmodule(tolua_S,"ScrollView");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_ScrollView_constructor);
         tolua_function(tolua_S,"setDirection",lua_cocos2dx_ui_ScrollView_setDirection);
         tolua_function(tolua_S,"getDirection",lua_cocos2dx_ui_ScrollView_getDirection);
         tolua_function(tolua_S,"getInnerContainer",lua_cocos2dx_ui_ScrollView_getInnerContainer);
@@ -19878,11 +19246,7 @@ int lua_cocos2dx_ui_ListView_createInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.ListView",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -19912,11 +19276,7 @@ int lua_cocos2dx_ui_ListView_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.ListView",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -19937,43 +19297,6 @@ int lua_cocos2dx_ui_ListView_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_ListView_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::ListView* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_ListView_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::ListView();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.ListView");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.ListView:ListView",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_ListView_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_ListView_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (ListView)");
@@ -19986,7 +19309,6 @@ int lua_register_cocos2dx_ui_ListView(lua_State* tolua_S)
     tolua_cclass(tolua_S,"ListView","ccui.ListView","ccui.ScrollView",nullptr);
 
     tolua_beginmodule(tolua_S,"ListView");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_ListView_constructor);
         tolua_function(tolua_S,"setItemModel",lua_cocos2dx_ui_ListView_setItemModel);
         tolua_function(tolua_S,"pushBackDefaultItem",lua_cocos2dx_ui_ListView_pushBackDefaultItem);
         tolua_function(tolua_S,"insertDefaultItem",lua_cocos2dx_ui_ListView_insertDefaultItem);
@@ -21648,11 +20970,7 @@ int lua_cocos2dx_ui_Slider_createInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Slider",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -21681,21 +20999,17 @@ int lua_cocos2dx_ui_Slider_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Slider",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.Slider:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.Slider:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.Slider:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.Slider:create");
             if (!ok) { break; }
             cocos2d::ui::Slider* ret = cocos2d::ui::Slider::create(arg0, arg1);
             object_to_luaval<cocos2d::ui::Slider>(tolua_S, "ccui.Slider",(cocos2d::ui::Slider*)ret);
@@ -21703,18 +21017,18 @@ int lua_cocos2dx_ui_Slider_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 3)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.Slider:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.Slider:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.Slider:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.Slider:create");
             if (!ok) { break; }
             cocos2d::ui::Widget::TextureResType arg2;
-            ok &= luaval_to_int32(tolua_S, 4,(int *)&arg2, "ccui.Slider:create");
+            ok &= luaval_to_int32(tolua_S, 3,(int *)&arg2, "ccui.Slider:create");
             if (!ok) { break; }
             cocos2d::ui::Slider* ret = cocos2d::ui::Slider::create(arg0, arg1, arg2);
             object_to_luaval<cocos2d::ui::Slider>(tolua_S, "ccui.Slider",(cocos2d::ui::Slider*)ret);
@@ -21722,7 +21036,7 @@ int lua_cocos2dx_ui_Slider_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -21740,43 +21054,6 @@ int lua_cocos2dx_ui_Slider_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_Slider_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::Slider* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_Slider_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::Slider();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.Slider");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.Slider:Slider",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_Slider_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_Slider_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (Slider)");
@@ -21789,7 +21066,6 @@ int lua_register_cocos2dx_ui_Slider(lua_State* tolua_S)
     tolua_cclass(tolua_S,"Slider","ccui.Slider","ccui.Widget",nullptr);
 
     tolua_beginmodule(tolua_S,"Slider");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_Slider_constructor);
         tolua_function(tolua_S,"loadBarTexture",lua_cocos2dx_ui_Slider_loadBarTexture);
         tolua_function(tolua_S,"setScale9Enabled",lua_cocos2dx_ui_Slider_setScale9Enabled);
         tolua_function(tolua_S,"isScale9Enabled",lua_cocos2dx_ui_Slider_isScale9Enabled);
@@ -24037,11 +23313,7 @@ int lua_cocos2dx_ui_TextField_createInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.TextField",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -24070,24 +23342,20 @@ int lua_cocos2dx_ui_TextField_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.TextField",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 3)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.TextField:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.TextField:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.TextField:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.TextField:create");
             if (!ok) { break; }
             int arg2;
-            ok &= luaval_to_int32(tolua_S, 4,(int *)&arg2, "ccui.TextField:create");
+            ok &= luaval_to_int32(tolua_S, 3,(int *)&arg2, "ccui.TextField:create");
             if (!ok) { break; }
             cocos2d::ui::TextField* ret = cocos2d::ui::TextField::create(arg0, arg1, arg2);
             object_to_luaval<cocos2d::ui::TextField>(tolua_S, "ccui.TextField",(cocos2d::ui::TextField*)ret);
@@ -24095,7 +23363,7 @@ int lua_cocos2dx_ui_TextField_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -24113,43 +23381,6 @@ int lua_cocos2dx_ui_TextField_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_TextField_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::TextField* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_TextField_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::TextField();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.TextField");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.TextField:TextField",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_TextField_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_TextField_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (TextField)");
@@ -24162,7 +23393,6 @@ int lua_register_cocos2dx_ui_TextField(lua_State* tolua_S)
     tolua_cclass(tolua_S,"TextField","ccui.TextField","ccui.Widget",nullptr);
 
     tolua_beginmodule(tolua_S,"TextField");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_TextField_constructor);
         tolua_function(tolua_S,"setTouchSize",lua_cocos2dx_ui_TextField_setTouchSize);
         tolua_function(tolua_S,"getTouchSize",lua_cocos2dx_ui_TextField_getTouchSize);
         tolua_function(tolua_S,"setTouchAreaEnabled",lua_cocos2dx_ui_TextField_setTouchAreaEnabled);
@@ -24514,11 +23744,7 @@ int lua_cocos2dx_ui_TextBMFont_createInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.TextBMFont",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -24547,21 +23773,17 @@ int lua_cocos2dx_ui_TextBMFont_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.TextBMFont",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.TextBMFont:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.TextBMFont:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.TextBMFont:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.TextBMFont:create");
             if (!ok) { break; }
             cocos2d::ui::TextBMFont* ret = cocos2d::ui::TextBMFont::create(arg0, arg1);
             object_to_luaval<cocos2d::ui::TextBMFont>(tolua_S, "ccui.TextBMFont",(cocos2d::ui::TextBMFont*)ret);
@@ -24569,7 +23791,7 @@ int lua_cocos2dx_ui_TextBMFont_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -24587,43 +23809,6 @@ int lua_cocos2dx_ui_TextBMFont_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_TextBMFont_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::TextBMFont* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_TextBMFont_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::TextBMFont();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.TextBMFont");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.TextBMFont:TextBMFont",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_TextBMFont_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_TextBMFont_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (TextBMFont)");
@@ -24636,7 +23821,6 @@ int lua_register_cocos2dx_ui_TextBMFont(lua_State* tolua_S)
     tolua_cclass(tolua_S,"TextBMFont","ccui.TextBMFont","ccui.Widget",nullptr);
 
     tolua_beginmodule(tolua_S,"TextBMFont");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_TextBMFont_constructor);
         tolua_function(tolua_S,"setFntFile",lua_cocos2dx_ui_TextBMFont_setFntFile);
         tolua_function(tolua_S,"setString",lua_cocos2dx_ui_TextBMFont_setString);
         tolua_function(tolua_S,"getString",lua_cocos2dx_ui_TextBMFont_getString);
@@ -26170,11 +25354,7 @@ int lua_cocos2dx_ui_PageView_createInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.PageView",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -26204,11 +25384,7 @@ int lua_cocos2dx_ui_PageView_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.PageView",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -26229,43 +25405,6 @@ int lua_cocos2dx_ui_PageView_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_PageView_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::PageView* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_PageView_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::PageView();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.PageView");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.PageView:PageView",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_PageView_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_PageView_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (PageView)");
@@ -26278,7 +25417,6 @@ int lua_register_cocos2dx_ui_PageView(lua_State* tolua_S)
     tolua_cclass(tolua_S,"PageView","ccui.PageView","ccui.ListView",nullptr);
 
     tolua_beginmodule(tolua_S,"PageView");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_PageView_constructor);
         tolua_function(tolua_S,"addPage",lua_cocos2dx_ui_PageView_addPage);
         tolua_function(tolua_S,"insertPage",lua_cocos2dx_ui_PageView_insertPage);
         tolua_function(tolua_S,"removePage",lua_cocos2dx_ui_PageView_removePage);
@@ -26327,18 +25465,14 @@ int lua_cocos2dx_ui_Helper_seekWidgetByTag(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Helper",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
         cocos2d::ui::Widget* arg0;
         int arg1;
-        ok &= luaval_to_object<cocos2d::ui::Widget>(tolua_S, 2, "ccui.Widget",&arg0, "ccui.Helper:seekWidgetByTag");
-        ok &= luaval_to_int32(tolua_S, 3,(int *)&arg1, "ccui.Helper:seekWidgetByTag");
+        ok &= luaval_to_object<cocos2d::ui::Widget>(tolua_S, 1, "ccui.Widget",&arg0, "ccui.Helper:seekWidgetByTag");
+        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg1, "ccui.Helper:seekWidgetByTag");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_Helper_seekWidgetByTag'", nullptr);
@@ -26365,18 +25499,14 @@ int lua_cocos2dx_ui_Helper_seekWidgetByName(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Helper",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
         cocos2d::ui::Widget* arg0;
         std::string arg1;
-        ok &= luaval_to_object<cocos2d::ui::Widget>(tolua_S, 2, "ccui.Widget",&arg0, "ccui.Helper:seekWidgetByName");
-        ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.Helper:seekWidgetByName");
+        ok &= luaval_to_object<cocos2d::ui::Widget>(tolua_S, 1, "ccui.Widget",&arg0, "ccui.Helper:seekWidgetByName");
+        ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.Helper:seekWidgetByName");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_Helper_seekWidgetByName'", nullptr);
@@ -26403,18 +25533,14 @@ int lua_cocos2dx_ui_Helper_seekActionWidgetByActionTag(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Helper",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
         cocos2d::ui::Widget* arg0;
         int arg1;
-        ok &= luaval_to_object<cocos2d::ui::Widget>(tolua_S, 2, "ccui.Widget",&arg0, "ccui.Helper:seekActionWidgetByActionTag");
-        ok &= luaval_to_int32(tolua_S, 3,(int *)&arg1, "ccui.Helper:seekActionWidgetByActionTag");
+        ok &= luaval_to_object<cocos2d::ui::Widget>(tolua_S, 1, "ccui.Widget",&arg0, "ccui.Helper:seekActionWidgetByActionTag");
+        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg1, "ccui.Helper:seekActionWidgetByActionTag");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_Helper_seekActionWidgetByActionTag'", nullptr);
@@ -26441,20 +25567,16 @@ int lua_cocos2dx_ui_Helper_getSubStringOfUTF8String(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Helper",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 3)
     {
         std::string arg0;
         unsigned int arg1;
         unsigned int arg2;
-        ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.Helper:getSubStringOfUTF8String");
-        ok &= luaval_to_uint32(tolua_S, 3,&arg1, "ccui.Helper:getSubStringOfUTF8String");
-        ok &= luaval_to_uint32(tolua_S, 4,&arg2, "ccui.Helper:getSubStringOfUTF8String");
+        ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.Helper:getSubStringOfUTF8String");
+        ok &= luaval_to_uint32(tolua_S, 2,&arg1, "ccui.Helper:getSubStringOfUTF8String");
+        ok &= luaval_to_uint32(tolua_S, 3,&arg2, "ccui.Helper:getSubStringOfUTF8String");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_Helper_getSubStringOfUTF8String'", nullptr);
@@ -26481,24 +25603,20 @@ int lua_cocos2dx_ui_Helper_doLayout(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Helper",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
         cocos2d::Node* arg0;
-        ok &= luaval_to_object<cocos2d::Node>(tolua_S, 2, "cc.Node",&arg0, "ccui.Helper:doLayout");
+        ok &= luaval_to_object<cocos2d::Node>(tolua_S, 1, "cc.Node",&arg0, "ccui.Helper:doLayout");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_Helper_doLayout'", nullptr);
             return 0;
         }
         cocos2d::ui::Helper::doLayout(arg0);
-        lua_settop(tolua_S, 1);
-        return 1;
+        lua_settop(tolua_S, 0);
+        return 0;
     }
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "ccui.Helper:doLayout",argc, 1);
     return 0;
@@ -26517,24 +25635,20 @@ int lua_cocos2dx_ui_Helper_changeLayoutSystemActiveState(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Helper",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
         bool arg0;
-        ok &= luaval_to_boolean(tolua_S, 2,&arg0, "ccui.Helper:changeLayoutSystemActiveState");
+        ok &= luaval_to_boolean(tolua_S, 1,&arg0, "ccui.Helper:changeLayoutSystemActiveState");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_Helper_changeLayoutSystemActiveState'", nullptr);
             return 0;
         }
         cocos2d::ui::Helper::changeLayoutSystemActiveState(arg0);
-        lua_settop(tolua_S, 1);
-        return 1;
+        lua_settop(tolua_S, 0);
+        return 0;
     }
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "ccui.Helper:changeLayoutSystemActiveState",argc, 1);
     return 0;
@@ -26553,18 +25667,14 @@ int lua_cocos2dx_ui_Helper_restrictCapInsetRect(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Helper",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
         cocos2d::Rect arg0;
         cocos2d::Size arg1;
-        ok &= luaval_to_rect(tolua_S, 2, &arg0, "ccui.Helper:restrictCapInsetRect");
-        ok &= luaval_to_size(tolua_S, 3, &arg1, "ccui.Helper:restrictCapInsetRect");
+        ok &= luaval_to_rect(tolua_S, 1, &arg0, "ccui.Helper:restrictCapInsetRect");
+        ok &= luaval_to_size(tolua_S, 2, &arg1, "ccui.Helper:restrictCapInsetRect");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_Helper_restrictCapInsetRect'", nullptr);
@@ -26591,16 +25701,12 @@ int lua_cocos2dx_ui_Helper_convertBoundingBoxToScreen(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Helper",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
         cocos2d::Node* arg0;
-        ok &= luaval_to_object<cocos2d::Node>(tolua_S, 2, "cc.Node",&arg0, "ccui.Helper:convertBoundingBoxToScreen");
+        ok &= luaval_to_object<cocos2d::Node>(tolua_S, 1, "cc.Node",&arg0, "ccui.Helper:convertBoundingBoxToScreen");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_Helper_convertBoundingBoxToScreen'", nullptr);
@@ -26801,43 +25907,6 @@ int lua_cocos2dx_ui_RichElement_setColor(lua_State* tolua_S)
 
     return 0;
 }
-int lua_cocos2dx_ui_RichElement_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::RichElement* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElement_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::RichElement();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.RichElement");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.RichElement:RichElement",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_RichElement_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_RichElement_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (RichElement)");
@@ -26850,7 +25919,6 @@ int lua_register_cocos2dx_ui_RichElement(lua_State* tolua_S)
     tolua_cclass(tolua_S,"RichElement","ccui.RichElement","cc.Ref",nullptr);
 
     tolua_beginmodule(tolua_S,"RichElement");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_RichElement_constructor);
         tolua_function(tolua_S,"init",lua_cocos2dx_ui_RichElement_init);
         tolua_function(tolua_S,"equalType",lua_cocos2dx_ui_RichElement_equalType);
         tolua_function(tolua_S,"setColor",lua_cocos2dx_ui_RichElement_setColor);
@@ -27214,11 +26282,7 @@ int lua_cocos2dx_ui_RichElementText_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.RichElementText",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 6)
     {
@@ -27228,12 +26292,12 @@ int lua_cocos2dx_ui_RichElementText_create(lua_State* tolua_S)
         std::string arg3;
         std::string arg4;
         double arg5;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 3, &arg1, "ccui.RichElementText:create");
-        ok &= luaval_to_uint16(tolua_S, 4,&arg2, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.RichElementText:create");
-        ok &= luaval_to_number(tolua_S, 7,&arg5, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 2, &arg1, "ccui.RichElementText:create");
+        ok &= luaval_to_uint16(tolua_S, 3,&arg2, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.RichElementText:create");
+        ok &= luaval_to_number(tolua_S, 6,&arg5, "ccui.RichElementText:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementText_create'", nullptr);
@@ -27252,13 +26316,13 @@ int lua_cocos2dx_ui_RichElementText_create(lua_State* tolua_S)
         std::string arg4;
         double arg5;
         unsigned int arg6;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 3, &arg1, "ccui.RichElementText:create");
-        ok &= luaval_to_uint16(tolua_S, 4,&arg2, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.RichElementText:create");
-        ok &= luaval_to_number(tolua_S, 7,&arg5, "ccui.RichElementText:create");
-        ok &= luaval_to_uint32(tolua_S, 8,&arg6, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 2, &arg1, "ccui.RichElementText:create");
+        ok &= luaval_to_uint16(tolua_S, 3,&arg2, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.RichElementText:create");
+        ok &= luaval_to_number(tolua_S, 6,&arg5, "ccui.RichElementText:create");
+        ok &= luaval_to_uint32(tolua_S, 7,&arg6, "ccui.RichElementText:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementText_create'", nullptr);
@@ -27278,14 +26342,14 @@ int lua_cocos2dx_ui_RichElementText_create(lua_State* tolua_S)
         double arg5;
         unsigned int arg6;
         std::string arg7;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 3, &arg1, "ccui.RichElementText:create");
-        ok &= luaval_to_uint16(tolua_S, 4,&arg2, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.RichElementText:create");
-        ok &= luaval_to_number(tolua_S, 7,&arg5, "ccui.RichElementText:create");
-        ok &= luaval_to_uint32(tolua_S, 8,&arg6, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 9,&arg7, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 2, &arg1, "ccui.RichElementText:create");
+        ok &= luaval_to_uint16(tolua_S, 3,&arg2, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.RichElementText:create");
+        ok &= luaval_to_number(tolua_S, 6,&arg5, "ccui.RichElementText:create");
+        ok &= luaval_to_uint32(tolua_S, 7,&arg6, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 8,&arg7, "ccui.RichElementText:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementText_create'", nullptr);
@@ -27306,15 +26370,15 @@ int lua_cocos2dx_ui_RichElementText_create(lua_State* tolua_S)
         unsigned int arg6;
         std::string arg7;
         cocos2d::Color3B arg8;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 3, &arg1, "ccui.RichElementText:create");
-        ok &= luaval_to_uint16(tolua_S, 4,&arg2, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.RichElementText:create");
-        ok &= luaval_to_number(tolua_S, 7,&arg5, "ccui.RichElementText:create");
-        ok &= luaval_to_uint32(tolua_S, 8,&arg6, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 9,&arg7, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 10, &arg8, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 2, &arg1, "ccui.RichElementText:create");
+        ok &= luaval_to_uint16(tolua_S, 3,&arg2, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.RichElementText:create");
+        ok &= luaval_to_number(tolua_S, 6,&arg5, "ccui.RichElementText:create");
+        ok &= luaval_to_uint32(tolua_S, 7,&arg6, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 8,&arg7, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 9, &arg8, "ccui.RichElementText:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementText_create'", nullptr);
@@ -27336,16 +26400,16 @@ int lua_cocos2dx_ui_RichElementText_create(lua_State* tolua_S)
         std::string arg7;
         cocos2d::Color3B arg8;
         int arg9;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 3, &arg1, "ccui.RichElementText:create");
-        ok &= luaval_to_uint16(tolua_S, 4,&arg2, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.RichElementText:create");
-        ok &= luaval_to_number(tolua_S, 7,&arg5, "ccui.RichElementText:create");
-        ok &= luaval_to_uint32(tolua_S, 8,&arg6, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 9,&arg7, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 10, &arg8, "ccui.RichElementText:create");
-        ok &= luaval_to_int32(tolua_S, 11,(int *)&arg9, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 2, &arg1, "ccui.RichElementText:create");
+        ok &= luaval_to_uint16(tolua_S, 3,&arg2, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.RichElementText:create");
+        ok &= luaval_to_number(tolua_S, 6,&arg5, "ccui.RichElementText:create");
+        ok &= luaval_to_uint32(tolua_S, 7,&arg6, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 8,&arg7, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 9, &arg8, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 10,(int *)&arg9, "ccui.RichElementText:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementText_create'", nullptr);
@@ -27368,17 +26432,17 @@ int lua_cocos2dx_ui_RichElementText_create(lua_State* tolua_S)
         cocos2d::Color3B arg8;
         int arg9;
         cocos2d::Color3B arg10;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 3, &arg1, "ccui.RichElementText:create");
-        ok &= luaval_to_uint16(tolua_S, 4,&arg2, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.RichElementText:create");
-        ok &= luaval_to_number(tolua_S, 7,&arg5, "ccui.RichElementText:create");
-        ok &= luaval_to_uint32(tolua_S, 8,&arg6, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 9,&arg7, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 10, &arg8, "ccui.RichElementText:create");
-        ok &= luaval_to_int32(tolua_S, 11,(int *)&arg9, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 12, &arg10, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 2, &arg1, "ccui.RichElementText:create");
+        ok &= luaval_to_uint16(tolua_S, 3,&arg2, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.RichElementText:create");
+        ok &= luaval_to_number(tolua_S, 6,&arg5, "ccui.RichElementText:create");
+        ok &= luaval_to_uint32(tolua_S, 7,&arg6, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 8,&arg7, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 9, &arg8, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 10,(int *)&arg9, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 11, &arg10, "ccui.RichElementText:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementText_create'", nullptr);
@@ -27402,18 +26466,18 @@ int lua_cocos2dx_ui_RichElementText_create(lua_State* tolua_S)
         int arg9;
         cocos2d::Color3B arg10;
         cocos2d::Size arg11;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 3, &arg1, "ccui.RichElementText:create");
-        ok &= luaval_to_uint16(tolua_S, 4,&arg2, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.RichElementText:create");
-        ok &= luaval_to_number(tolua_S, 7,&arg5, "ccui.RichElementText:create");
-        ok &= luaval_to_uint32(tolua_S, 8,&arg6, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 9,&arg7, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 10, &arg8, "ccui.RichElementText:create");
-        ok &= luaval_to_int32(tolua_S, 11,(int *)&arg9, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 12, &arg10, "ccui.RichElementText:create");
-        ok &= luaval_to_size(tolua_S, 13, &arg11, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 2, &arg1, "ccui.RichElementText:create");
+        ok &= luaval_to_uint16(tolua_S, 3,&arg2, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.RichElementText:create");
+        ok &= luaval_to_number(tolua_S, 6,&arg5, "ccui.RichElementText:create");
+        ok &= luaval_to_uint32(tolua_S, 7,&arg6, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 8,&arg7, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 9, &arg8, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 10,(int *)&arg9, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 11, &arg10, "ccui.RichElementText:create");
+        ok &= luaval_to_size(tolua_S, 12, &arg11, "ccui.RichElementText:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementText_create'", nullptr);
@@ -27438,19 +26502,19 @@ int lua_cocos2dx_ui_RichElementText_create(lua_State* tolua_S)
         cocos2d::Color3B arg10;
         cocos2d::Size arg11;
         int arg12;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 3, &arg1, "ccui.RichElementText:create");
-        ok &= luaval_to_uint16(tolua_S, 4,&arg2, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.RichElementText:create");
-        ok &= luaval_to_number(tolua_S, 7,&arg5, "ccui.RichElementText:create");
-        ok &= luaval_to_uint32(tolua_S, 8,&arg6, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 9,&arg7, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 10, &arg8, "ccui.RichElementText:create");
-        ok &= luaval_to_int32(tolua_S, 11,(int *)&arg9, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 12, &arg10, "ccui.RichElementText:create");
-        ok &= luaval_to_size(tolua_S, 13, &arg11, "ccui.RichElementText:create");
-        ok &= luaval_to_int32(tolua_S, 14,(int *)&arg12, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 2, &arg1, "ccui.RichElementText:create");
+        ok &= luaval_to_uint16(tolua_S, 3,&arg2, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.RichElementText:create");
+        ok &= luaval_to_number(tolua_S, 6,&arg5, "ccui.RichElementText:create");
+        ok &= luaval_to_uint32(tolua_S, 7,&arg6, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 8,&arg7, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 9, &arg8, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 10,(int *)&arg9, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 11, &arg10, "ccui.RichElementText:create");
+        ok &= luaval_to_size(tolua_S, 12, &arg11, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 13,(int *)&arg12, "ccui.RichElementText:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementText_create'", nullptr);
@@ -27476,20 +26540,20 @@ int lua_cocos2dx_ui_RichElementText_create(lua_State* tolua_S)
         cocos2d::Size arg11;
         int arg12;
         cocos2d::Color3B arg13;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 3, &arg1, "ccui.RichElementText:create");
-        ok &= luaval_to_uint16(tolua_S, 4,&arg2, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.RichElementText:create");
-        ok &= luaval_to_number(tolua_S, 7,&arg5, "ccui.RichElementText:create");
-        ok &= luaval_to_uint32(tolua_S, 8,&arg6, "ccui.RichElementText:create");
-        ok &= luaval_to_std_string(tolua_S, 9,&arg7, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 10, &arg8, "ccui.RichElementText:create");
-        ok &= luaval_to_int32(tolua_S, 11,(int *)&arg9, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 12, &arg10, "ccui.RichElementText:create");
-        ok &= luaval_to_size(tolua_S, 13, &arg11, "ccui.RichElementText:create");
-        ok &= luaval_to_int32(tolua_S, 14,(int *)&arg12, "ccui.RichElementText:create");
-        ok &= luaval_to_color3b(tolua_S, 15, &arg13, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 2, &arg1, "ccui.RichElementText:create");
+        ok &= luaval_to_uint16(tolua_S, 3,&arg2, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.RichElementText:create");
+        ok &= luaval_to_number(tolua_S, 6,&arg5, "ccui.RichElementText:create");
+        ok &= luaval_to_uint32(tolua_S, 7,&arg6, "ccui.RichElementText:create");
+        ok &= luaval_to_std_string(tolua_S, 8,&arg7, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 9, &arg8, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 10,(int *)&arg9, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 11, &arg10, "ccui.RichElementText:create");
+        ok &= luaval_to_size(tolua_S, 12, &arg11, "ccui.RichElementText:create");
+        ok &= luaval_to_int32(tolua_S, 13,(int *)&arg12, "ccui.RichElementText:create");
+        ok &= luaval_to_color3b(tolua_S, 14, &arg13, "ccui.RichElementText:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementText_create'", nullptr);
@@ -27507,43 +26571,6 @@ int lua_cocos2dx_ui_RichElementText_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_RichElementText_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::RichElementText* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementText_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::RichElementText();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.RichElementText");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.RichElementText:RichElementText",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_RichElementText_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_RichElementText_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (RichElementText)");
@@ -27556,7 +26583,6 @@ int lua_register_cocos2dx_ui_RichElementText(lua_State* tolua_S)
     tolua_cclass(tolua_S,"RichElementText","ccui.RichElementText","ccui.RichElement",nullptr);
 
     tolua_beginmodule(tolua_S,"RichElementText");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_RichElementText_constructor);
         tolua_function(tolua_S,"init",lua_cocos2dx_ui_RichElementText_init);
         tolua_function(tolua_S,"create", lua_cocos2dx_ui_RichElementText_create);
     tolua_endmodule(tolua_S);
@@ -27839,11 +26865,7 @@ int lua_cocos2dx_ui_RichElementImage_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.RichElementImage",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 4)
     {
@@ -27851,10 +26873,10 @@ int lua_cocos2dx_ui_RichElementImage_create(lua_State* tolua_S)
         cocos2d::Color3B arg1;
         uint16_t arg2;
         std::string arg3;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccui.RichElementImage:create");
-        ok &= luaval_to_color3b(tolua_S, 3, &arg1, "ccui.RichElementImage:create");
-        ok &= luaval_to_uint16(tolua_S, 4,&arg2, "ccui.RichElementImage:create");
-        ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.RichElementImage:create");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "ccui.RichElementImage:create");
+        ok &= luaval_to_color3b(tolua_S, 2, &arg1, "ccui.RichElementImage:create");
+        ok &= luaval_to_uint16(tolua_S, 3,&arg2, "ccui.RichElementImage:create");
+        ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.RichElementImage:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementImage_create'", nullptr);
@@ -27871,11 +26893,11 @@ int lua_cocos2dx_ui_RichElementImage_create(lua_State* tolua_S)
         uint16_t arg2;
         std::string arg3;
         std::string arg4;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccui.RichElementImage:create");
-        ok &= luaval_to_color3b(tolua_S, 3, &arg1, "ccui.RichElementImage:create");
-        ok &= luaval_to_uint16(tolua_S, 4,&arg2, "ccui.RichElementImage:create");
-        ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.RichElementImage:create");
-        ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.RichElementImage:create");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "ccui.RichElementImage:create");
+        ok &= luaval_to_color3b(tolua_S, 2, &arg1, "ccui.RichElementImage:create");
+        ok &= luaval_to_uint16(tolua_S, 3,&arg2, "ccui.RichElementImage:create");
+        ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.RichElementImage:create");
+        ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.RichElementImage:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementImage_create'", nullptr);
@@ -27893,12 +26915,12 @@ int lua_cocos2dx_ui_RichElementImage_create(lua_State* tolua_S)
         std::string arg3;
         std::string arg4;
         cocos2d::ui::Widget::TextureResType arg5;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccui.RichElementImage:create");
-        ok &= luaval_to_color3b(tolua_S, 3, &arg1, "ccui.RichElementImage:create");
-        ok &= luaval_to_uint16(tolua_S, 4,&arg2, "ccui.RichElementImage:create");
-        ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.RichElementImage:create");
-        ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.RichElementImage:create");
-        ok &= luaval_to_int32(tolua_S, 7,(int *)&arg5, "ccui.RichElementImage:create");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "ccui.RichElementImage:create");
+        ok &= luaval_to_color3b(tolua_S, 2, &arg1, "ccui.RichElementImage:create");
+        ok &= luaval_to_uint16(tolua_S, 3,&arg2, "ccui.RichElementImage:create");
+        ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.RichElementImage:create");
+        ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.RichElementImage:create");
+        ok &= luaval_to_int32(tolua_S, 6,(int *)&arg5, "ccui.RichElementImage:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementImage_create'", nullptr);
@@ -27916,43 +26938,6 @@ int lua_cocos2dx_ui_RichElementImage_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_RichElementImage_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::RichElementImage* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementImage_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::RichElementImage();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.RichElementImage");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.RichElementImage:RichElementImage",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_RichElementImage_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_RichElementImage_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (RichElementImage)");
@@ -27965,7 +26950,6 @@ int lua_register_cocos2dx_ui_RichElementImage(lua_State* tolua_S)
     tolua_cclass(tolua_S,"RichElementImage","ccui.RichElementImage","ccui.RichElement",nullptr);
 
     tolua_beginmodule(tolua_S,"RichElementImage");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_RichElementImage_constructor);
         tolua_function(tolua_S,"init",lua_cocos2dx_ui_RichElementImage_init);
         tolua_function(tolua_S,"setWidth",lua_cocos2dx_ui_RichElementImage_setWidth);
         tolua_function(tolua_S,"setHeight",lua_cocos2dx_ui_RichElementImage_setHeight);
@@ -28046,11 +27030,7 @@ int lua_cocos2dx_ui_RichElementCustomNode_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.RichElementCustomNode",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 4)
     {
@@ -28058,10 +27038,10 @@ int lua_cocos2dx_ui_RichElementCustomNode_create(lua_State* tolua_S)
         cocos2d::Color3B arg1;
         uint16_t arg2;
         cocos2d::Node* arg3;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccui.RichElementCustomNode:create");
-        ok &= luaval_to_color3b(tolua_S, 3, &arg1, "ccui.RichElementCustomNode:create");
-        ok &= luaval_to_uint16(tolua_S, 4,&arg2, "ccui.RichElementCustomNode:create");
-        ok &= luaval_to_object<cocos2d::Node>(tolua_S, 5, "cc.Node",&arg3, "ccui.RichElementCustomNode:create");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "ccui.RichElementCustomNode:create");
+        ok &= luaval_to_color3b(tolua_S, 2, &arg1, "ccui.RichElementCustomNode:create");
+        ok &= luaval_to_uint16(tolua_S, 3,&arg2, "ccui.RichElementCustomNode:create");
+        ok &= luaval_to_object<cocos2d::Node>(tolua_S, 4, "cc.Node",&arg3, "ccui.RichElementCustomNode:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementCustomNode_create'", nullptr);
@@ -28079,43 +27059,6 @@ int lua_cocos2dx_ui_RichElementCustomNode_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_RichElementCustomNode_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::RichElementCustomNode* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementCustomNode_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::RichElementCustomNode();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.RichElementCustomNode");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.RichElementCustomNode:RichElementCustomNode",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_RichElementCustomNode_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_RichElementCustomNode_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (RichElementCustomNode)");
@@ -28128,7 +27071,6 @@ int lua_register_cocos2dx_ui_RichElementCustomNode(lua_State* tolua_S)
     tolua_cclass(tolua_S,"RichElementCustomNode","ccui.RichElementCustomNode","ccui.RichElement",nullptr);
 
     tolua_beginmodule(tolua_S,"RichElementCustomNode");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_RichElementCustomNode_constructor);
         tolua_function(tolua_S,"init",lua_cocos2dx_ui_RichElementCustomNode_init);
         tolua_function(tolua_S,"create", lua_cocos2dx_ui_RichElementCustomNode_create);
     tolua_endmodule(tolua_S);
@@ -28147,20 +27089,16 @@ int lua_cocos2dx_ui_RichElementNewLine_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.RichElementNewLine",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 3)
     {
         int arg0;
         cocos2d::Color3B arg1;
         uint16_t arg2;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccui.RichElementNewLine:create");
-        ok &= luaval_to_color3b(tolua_S, 3, &arg1, "ccui.RichElementNewLine:create");
-        ok &= luaval_to_uint16(tolua_S, 4,&arg2, "ccui.RichElementNewLine:create");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "ccui.RichElementNewLine:create");
+        ok &= luaval_to_color3b(tolua_S, 2, &arg1, "ccui.RichElementNewLine:create");
+        ok &= luaval_to_uint16(tolua_S, 3,&arg2, "ccui.RichElementNewLine:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementNewLine_create'", nullptr);
@@ -28178,43 +27116,6 @@ int lua_cocos2dx_ui_RichElementNewLine_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_RichElementNewLine_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::RichElementNewLine* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichElementNewLine_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::RichElementNewLine();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.RichElementNewLine");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.RichElementNewLine:RichElementNewLine",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_RichElementNewLine_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_RichElementNewLine_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (RichElementNewLine)");
@@ -28227,7 +27128,6 @@ int lua_register_cocos2dx_ui_RichElementNewLine(lua_State* tolua_S)
     tolua_cclass(tolua_S,"RichElementNewLine","ccui.RichElementNewLine","ccui.RichElement",nullptr);
 
     tolua_beginmodule(tolua_S,"RichElementNewLine");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_RichElementNewLine_constructor);
         tolua_function(tolua_S,"create", lua_cocos2dx_ui_RichElementNewLine_create);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::ui::RichElementNewLine).name();
@@ -30625,11 +29525,7 @@ int lua_cocos2dx_ui_RichText_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.RichText",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -30659,18 +29555,14 @@ int lua_cocos2dx_ui_RichText_createWithXML(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.RichText",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
         std::string arg0;
         cocos2d::ValueMap arg1;
-        ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.RichText:createWithXML");
-        ok &= luaval_to_ccvaluemap(tolua_S, 3, &arg1, "ccui.RichText:createWithXML");
+        ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.RichText:createWithXML");
+        ok &= luaval_to_ccvaluemap(tolua_S, 2, &arg1, "ccui.RichText:createWithXML");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichText_createWithXML'", nullptr);
@@ -30685,8 +29577,8 @@ int lua_cocos2dx_ui_RichText_createWithXML(lua_State* tolua_S)
         std::string arg0;
         cocos2d::ValueMap arg1;
         std::function<void (const std::string&)> arg2;
-        ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.RichText:createWithXML");
-        ok &= luaval_to_ccvaluemap(tolua_S, 3, &arg1, "ccui.RichText:createWithXML");
+        ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.RichText:createWithXML");
+        ok &= luaval_to_ccvaluemap(tolua_S, 2, &arg1, "ccui.RichText:createWithXML");
         do {
 			// Lambda binding for lua is not supported.
 			assert(false);
@@ -30709,43 +29601,6 @@ int lua_cocos2dx_ui_RichText_createWithXML(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_RichText_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::RichText* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RichText_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::RichText();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.RichText");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.RichText:RichText",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_RichText_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_RichText_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (RichText)");
@@ -30758,7 +29613,6 @@ int lua_register_cocos2dx_ui_RichText(lua_State* tolua_S)
     tolua_cclass(tolua_S,"RichText","ccui.RichText","ccui.Widget",nullptr);
 
     tolua_beginmodule(tolua_S,"RichText");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_RichText_constructor);
         tolua_function(tolua_S,"insertElement",lua_cocos2dx_ui_RichText_insertElement);
         tolua_function(tolua_S,"pushBackElement",lua_cocos2dx_ui_RichText_pushBackElement);
         tolua_function(tolua_S,"removeElement",lua_cocos2dx_ui_RichText_removeElement);
@@ -30872,18 +29726,14 @@ int lua_cocos2dx_ui_HBox_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.HBox",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 1)
         {
             cocos2d::Size arg0;
-            ok &= luaval_to_size(tolua_S, 2, &arg0, "ccui.HBox:create");
+            ok &= luaval_to_size(tolua_S, 1, &arg0, "ccui.HBox:create");
             if (!ok) { break; }
             cocos2d::ui::HBox* ret = cocos2d::ui::HBox::create(arg0);
             object_to_luaval<cocos2d::ui::HBox>(tolua_S, "ccui.HBox",(cocos2d::ui::HBox*)ret);
@@ -30891,7 +29741,7 @@ int lua_cocos2dx_ui_HBox_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -30909,43 +29759,6 @@ int lua_cocos2dx_ui_HBox_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_HBox_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::HBox* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_HBox_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::HBox();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.HBox");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.HBox:HBox",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_HBox_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_HBox_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (HBox)");
@@ -30958,7 +29771,6 @@ int lua_register_cocos2dx_ui_HBox(lua_State* tolua_S)
     tolua_cclass(tolua_S,"HBox","ccui.HBox","ccui.Layout",nullptr);
 
     tolua_beginmodule(tolua_S,"HBox");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_HBox_constructor);
         tolua_function(tolua_S,"initWithSize",lua_cocos2dx_ui_HBox_initWithSize);
         tolua_function(tolua_S,"create", lua_cocos2dx_ui_HBox_create);
     tolua_endmodule(tolua_S);
@@ -31026,18 +29838,14 @@ int lua_cocos2dx_ui_VBox_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.VBox",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 1)
         {
             cocos2d::Size arg0;
-            ok &= luaval_to_size(tolua_S, 2, &arg0, "ccui.VBox:create");
+            ok &= luaval_to_size(tolua_S, 1, &arg0, "ccui.VBox:create");
             if (!ok) { break; }
             cocos2d::ui::VBox* ret = cocos2d::ui::VBox::create(arg0);
             object_to_luaval<cocos2d::ui::VBox>(tolua_S, "ccui.VBox",(cocos2d::ui::VBox*)ret);
@@ -31045,7 +29853,7 @@ int lua_cocos2dx_ui_VBox_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -31063,43 +29871,6 @@ int lua_cocos2dx_ui_VBox_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_VBox_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::VBox* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_VBox_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::VBox();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.VBox");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.VBox:VBox",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_VBox_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_VBox_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (VBox)");
@@ -31112,7 +29883,6 @@ int lua_register_cocos2dx_ui_VBox(lua_State* tolua_S)
     tolua_cclass(tolua_S,"VBox","ccui.VBox","ccui.Layout",nullptr);
 
     tolua_beginmodule(tolua_S,"VBox");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_VBox_constructor);
         tolua_function(tolua_S,"initWithSize",lua_cocos2dx_ui_VBox_initWithSize);
         tolua_function(tolua_S,"create", lua_cocos2dx_ui_VBox_create);
     tolua_endmodule(tolua_S);
@@ -31180,18 +29950,14 @@ int lua_cocos2dx_ui_RelativeBox_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.RelativeBox",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 1)
         {
             cocos2d::Size arg0;
-            ok &= luaval_to_size(tolua_S, 2, &arg0, "ccui.RelativeBox:create");
+            ok &= luaval_to_size(tolua_S, 1, &arg0, "ccui.RelativeBox:create");
             if (!ok) { break; }
             cocos2d::ui::RelativeBox* ret = cocos2d::ui::RelativeBox::create(arg0);
             object_to_luaval<cocos2d::ui::RelativeBox>(tolua_S, "ccui.RelativeBox",(cocos2d::ui::RelativeBox*)ret);
@@ -31199,7 +29965,7 @@ int lua_cocos2dx_ui_RelativeBox_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -31217,43 +29983,6 @@ int lua_cocos2dx_ui_RelativeBox_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_RelativeBox_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::RelativeBox* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_RelativeBox_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::RelativeBox();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.RelativeBox");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.RelativeBox:RelativeBox",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_RelativeBox_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_RelativeBox_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (RelativeBox)");
@@ -31266,7 +29995,6 @@ int lua_register_cocos2dx_ui_RelativeBox(lua_State* tolua_S)
     tolua_cclass(tolua_S,"RelativeBox","ccui.RelativeBox","ccui.Layout",nullptr);
 
     tolua_beginmodule(tolua_S,"RelativeBox");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_RelativeBox_constructor);
         tolua_function(tolua_S,"initWithSize",lua_cocos2dx_ui_RelativeBox_initWithSize);
         tolua_function(tolua_S,"create", lua_cocos2dx_ui_RelativeBox_create);
     tolua_endmodule(tolua_S);
@@ -32818,24 +31546,20 @@ int lua_cocos2dx_ui_Scale9Sprite_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Scale9Sprite",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 3)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.Scale9Sprite:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.Scale9Sprite:create");
             if (!ok) { break; }
             cocos2d::Rect arg1;
-            ok &= luaval_to_rect(tolua_S, 3, &arg1, "ccui.Scale9Sprite:create");
+            ok &= luaval_to_rect(tolua_S, 2, &arg1, "ccui.Scale9Sprite:create");
             if (!ok) { break; }
             cocos2d::Rect arg2;
-            ok &= luaval_to_rect(tolua_S, 4, &arg2, "ccui.Scale9Sprite:create");
+            ok &= luaval_to_rect(tolua_S, 3, &arg2, "ccui.Scale9Sprite:create");
             if (!ok) { break; }
             cocos2d::ui::Scale9Sprite* ret = cocos2d::ui::Scale9Sprite::create(arg0, arg1, arg2);
             object_to_luaval<cocos2d::ui::Scale9Sprite>(tolua_S, "ccui.Scale9Sprite",(cocos2d::ui::Scale9Sprite*)ret);
@@ -32843,7 +31567,7 @@ int lua_cocos2dx_ui_Scale9Sprite_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -32853,15 +31577,15 @@ int lua_cocos2dx_ui_Scale9Sprite_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 2)
         {
             cocos2d::Rect arg0;
-            ok &= luaval_to_rect(tolua_S, 2, &arg0, "ccui.Scale9Sprite:create");
+            ok &= luaval_to_rect(tolua_S, 1, &arg0, "ccui.Scale9Sprite:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.Scale9Sprite:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.Scale9Sprite:create");
             if (!ok) { break; }
             cocos2d::ui::Scale9Sprite* ret = cocos2d::ui::Scale9Sprite::create(arg0, arg1);
             object_to_luaval<cocos2d::ui::Scale9Sprite>(tolua_S, "ccui.Scale9Sprite",(cocos2d::ui::Scale9Sprite*)ret);
@@ -32869,15 +31593,15 @@ int lua_cocos2dx_ui_Scale9Sprite_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.Scale9Sprite:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.Scale9Sprite:create");
             if (!ok) { break; }
             cocos2d::Rect arg1;
-            ok &= luaval_to_rect(tolua_S, 3, &arg1, "ccui.Scale9Sprite:create");
+            ok &= luaval_to_rect(tolua_S, 2, &arg1, "ccui.Scale9Sprite:create");
             if (!ok) { break; }
             cocos2d::ui::Scale9Sprite* ret = cocos2d::ui::Scale9Sprite::create(arg0, arg1);
             object_to_luaval<cocos2d::ui::Scale9Sprite>(tolua_S, "ccui.Scale9Sprite",(cocos2d::ui::Scale9Sprite*)ret);
@@ -32885,12 +31609,12 @@ int lua_cocos2dx_ui_Scale9Sprite_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 1)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.Scale9Sprite:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.Scale9Sprite:create");
             if (!ok) { break; }
             cocos2d::ui::Scale9Sprite* ret = cocos2d::ui::Scale9Sprite::create(arg0);
             object_to_luaval<cocos2d::ui::Scale9Sprite>(tolua_S, "ccui.Scale9Sprite",(cocos2d::ui::Scale9Sprite*)ret);
@@ -32914,21 +31638,17 @@ int lua_cocos2dx_ui_Scale9Sprite_createWithSpriteFrame(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Scale9Sprite",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 2)
         {
             cocos2d::SpriteFrame* arg0;
-            ok &= luaval_to_object<cocos2d::SpriteFrame>(tolua_S, 2, "cc.SpriteFrame",&arg0, "ccui.Scale9Sprite:createWithSpriteFrame");
+            ok &= luaval_to_object<cocos2d::SpriteFrame>(tolua_S, 1, "cc.SpriteFrame",&arg0, "ccui.Scale9Sprite:createWithSpriteFrame");
             if (!ok) { break; }
             cocos2d::Rect arg1;
-            ok &= luaval_to_rect(tolua_S, 3, &arg1, "ccui.Scale9Sprite:createWithSpriteFrame");
+            ok &= luaval_to_rect(tolua_S, 2, &arg1, "ccui.Scale9Sprite:createWithSpriteFrame");
             if (!ok) { break; }
             cocos2d::ui::Scale9Sprite* ret = cocos2d::ui::Scale9Sprite::createWithSpriteFrame(arg0, arg1);
             object_to_luaval<cocos2d::ui::Scale9Sprite>(tolua_S, "ccui.Scale9Sprite",(cocos2d::ui::Scale9Sprite*)ret);
@@ -32936,12 +31656,12 @@ int lua_cocos2dx_ui_Scale9Sprite_createWithSpriteFrame(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 1)
         {
             cocos2d::SpriteFrame* arg0;
-            ok &= luaval_to_object<cocos2d::SpriteFrame>(tolua_S, 2, "cc.SpriteFrame",&arg0, "ccui.Scale9Sprite:createWithSpriteFrame");
+            ok &= luaval_to_object<cocos2d::SpriteFrame>(tolua_S, 1, "cc.SpriteFrame",&arg0, "ccui.Scale9Sprite:createWithSpriteFrame");
             if (!ok) { break; }
             cocos2d::ui::Scale9Sprite* ret = cocos2d::ui::Scale9Sprite::createWithSpriteFrame(arg0);
             object_to_luaval<cocos2d::ui::Scale9Sprite>(tolua_S, "ccui.Scale9Sprite",(cocos2d::ui::Scale9Sprite*)ret);
@@ -32965,21 +31685,17 @@ int lua_cocos2dx_ui_Scale9Sprite_createWithSpriteFrameName(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.Scale9Sprite",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.Scale9Sprite:createWithSpriteFrameName");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.Scale9Sprite:createWithSpriteFrameName");
             if (!ok) { break; }
             cocos2d::Rect arg1;
-            ok &= luaval_to_rect(tolua_S, 3, &arg1, "ccui.Scale9Sprite:createWithSpriteFrameName");
+            ok &= luaval_to_rect(tolua_S, 2, &arg1, "ccui.Scale9Sprite:createWithSpriteFrameName");
             if (!ok) { break; }
             cocos2d::ui::Scale9Sprite* ret = cocos2d::ui::Scale9Sprite::createWithSpriteFrameName(arg0, arg1);
             object_to_luaval<cocos2d::ui::Scale9Sprite>(tolua_S, "ccui.Scale9Sprite",(cocos2d::ui::Scale9Sprite*)ret);
@@ -32987,12 +31703,12 @@ int lua_cocos2dx_ui_Scale9Sprite_createWithSpriteFrameName(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 1)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.Scale9Sprite:createWithSpriteFrameName");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.Scale9Sprite:createWithSpriteFrameName");
             if (!ok) { break; }
             cocos2d::ui::Scale9Sprite* ret = cocos2d::ui::Scale9Sprite::createWithSpriteFrameName(arg0);
             object_to_luaval<cocos2d::ui::Scale9Sprite>(tolua_S, "ccui.Scale9Sprite",(cocos2d::ui::Scale9Sprite*)ret);
@@ -33008,43 +31724,6 @@ int lua_cocos2dx_ui_Scale9Sprite_createWithSpriteFrameName(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_Scale9Sprite_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::Scale9Sprite* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_Scale9Sprite_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::Scale9Sprite();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.Scale9Sprite");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.Scale9Sprite:Scale9Sprite",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_Scale9Sprite_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_Scale9Sprite_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (Scale9Sprite)");
@@ -33057,7 +31736,6 @@ int lua_register_cocos2dx_ui_Scale9Sprite(lua_State* tolua_S)
     tolua_cclass(tolua_S,"Scale9Sprite","ccui.Scale9Sprite","cc.Sprite",nullptr);
 
     tolua_beginmodule(tolua_S,"Scale9Sprite");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_Scale9Sprite_constructor);
         tolua_function(tolua_S,"initWithFile",lua_cocos2dx_ui_Scale9Sprite_initWithFile);
         tolua_function(tolua_S,"initWithSpriteFrame",lua_cocos2dx_ui_Scale9Sprite_initWithSpriteFrame);
         tolua_function(tolua_S,"initWithSpriteFrameName",lua_cocos2dx_ui_Scale9Sprite_initWithSpriteFrameName);
@@ -35744,24 +34422,20 @@ int lua_cocos2dx_ui_EditBox_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.EditBox",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 3)
         {
             cocos2d::Size arg0;
-            ok &= luaval_to_size(tolua_S, 2, &arg0, "ccui.EditBox:create");
+            ok &= luaval_to_size(tolua_S, 1, &arg0, "ccui.EditBox:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.EditBox:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::Widget::TextureResType arg2;
-            ok &= luaval_to_int32(tolua_S, 4,(int *)&arg2, "ccui.EditBox:create");
+            ok &= luaval_to_int32(tolua_S, 3,(int *)&arg2, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::EditBox* ret = cocos2d::ui::EditBox::create(arg0, arg1, arg2);
             object_to_luaval<cocos2d::ui::EditBox>(tolua_S, "ccui.EditBox",(cocos2d::ui::EditBox*)ret);
@@ -35769,15 +34443,15 @@ int lua_cocos2dx_ui_EditBox_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 2)
         {
             cocos2d::Size arg0;
-            ok &= luaval_to_size(tolua_S, 2, &arg0, "ccui.EditBox:create");
+            ok &= luaval_to_size(tolua_S, 1, &arg0, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::Scale9Sprite* arg1;
-            ok &= luaval_to_object<cocos2d::ui::Scale9Sprite>(tolua_S, 3, "ccui.Scale9Sprite",&arg1, "ccui.EditBox:create");
+            ok &= luaval_to_object<cocos2d::ui::Scale9Sprite>(tolua_S, 2, "ccui.Scale9Sprite",&arg1, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::EditBox* ret = cocos2d::ui::EditBox::create(arg0, arg1);
             object_to_luaval<cocos2d::ui::EditBox>(tolua_S, "ccui.EditBox",(cocos2d::ui::EditBox*)ret);
@@ -35785,18 +34459,18 @@ int lua_cocos2dx_ui_EditBox_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 3)
         {
             cocos2d::Size arg0;
-            ok &= luaval_to_size(tolua_S, 2, &arg0, "ccui.EditBox:create");
+            ok &= luaval_to_size(tolua_S, 1, &arg0, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::Scale9Sprite* arg1;
-            ok &= luaval_to_object<cocos2d::ui::Scale9Sprite>(tolua_S, 3, "ccui.Scale9Sprite",&arg1, "ccui.EditBox:create");
+            ok &= luaval_to_object<cocos2d::ui::Scale9Sprite>(tolua_S, 2, "ccui.Scale9Sprite",&arg1, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::Scale9Sprite* arg2;
-            ok &= luaval_to_object<cocos2d::ui::Scale9Sprite>(tolua_S, 4, "ccui.Scale9Sprite",&arg2, "ccui.EditBox:create");
+            ok &= luaval_to_object<cocos2d::ui::Scale9Sprite>(tolua_S, 3, "ccui.Scale9Sprite",&arg2, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::EditBox* ret = cocos2d::ui::EditBox::create(arg0, arg1, arg2);
             object_to_luaval<cocos2d::ui::EditBox>(tolua_S, "ccui.EditBox",(cocos2d::ui::EditBox*)ret);
@@ -35804,21 +34478,21 @@ int lua_cocos2dx_ui_EditBox_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 4)
         {
             cocos2d::Size arg0;
-            ok &= luaval_to_size(tolua_S, 2, &arg0, "ccui.EditBox:create");
+            ok &= luaval_to_size(tolua_S, 1, &arg0, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::Scale9Sprite* arg1;
-            ok &= luaval_to_object<cocos2d::ui::Scale9Sprite>(tolua_S, 3, "ccui.Scale9Sprite",&arg1, "ccui.EditBox:create");
+            ok &= luaval_to_object<cocos2d::ui::Scale9Sprite>(tolua_S, 2, "ccui.Scale9Sprite",&arg1, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::Scale9Sprite* arg2;
-            ok &= luaval_to_object<cocos2d::ui::Scale9Sprite>(tolua_S, 4, "ccui.Scale9Sprite",&arg2, "ccui.EditBox:create");
+            ok &= luaval_to_object<cocos2d::ui::Scale9Sprite>(tolua_S, 3, "ccui.Scale9Sprite",&arg2, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::Scale9Sprite* arg3;
-            ok &= luaval_to_object<cocos2d::ui::Scale9Sprite>(tolua_S, 5, "ccui.Scale9Sprite",&arg3, "ccui.EditBox:create");
+            ok &= luaval_to_object<cocos2d::ui::Scale9Sprite>(tolua_S, 4, "ccui.Scale9Sprite",&arg3, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::EditBox* ret = cocos2d::ui::EditBox::create(arg0, arg1, arg2, arg3);
             object_to_luaval<cocos2d::ui::EditBox>(tolua_S, "ccui.EditBox",(cocos2d::ui::EditBox*)ret);
@@ -35826,15 +34500,15 @@ int lua_cocos2dx_ui_EditBox_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 2)
         {
             cocos2d::Size arg0;
-            ok &= luaval_to_size(tolua_S, 2, &arg0, "ccui.EditBox:create");
+            ok &= luaval_to_size(tolua_S, 1, &arg0, "ccui.EditBox:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.EditBox:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::EditBox* ret = cocos2d::ui::EditBox::create(arg0, arg1);
             object_to_luaval<cocos2d::ui::EditBox>(tolua_S, "ccui.EditBox",(cocos2d::ui::EditBox*)ret);
@@ -35842,18 +34516,18 @@ int lua_cocos2dx_ui_EditBox_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 3)
         {
             cocos2d::Size arg0;
-            ok &= luaval_to_size(tolua_S, 2, &arg0, "ccui.EditBox:create");
+            ok &= luaval_to_size(tolua_S, 1, &arg0, "ccui.EditBox:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.EditBox:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.EditBox:create");
             if (!ok) { break; }
             std::string arg2;
-            ok &= luaval_to_std_string(tolua_S, 4,&arg2, "ccui.EditBox:create");
+            ok &= luaval_to_std_string(tolua_S, 3,&arg2, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::EditBox* ret = cocos2d::ui::EditBox::create(arg0, arg1, arg2);
             object_to_luaval<cocos2d::ui::EditBox>(tolua_S, "ccui.EditBox",(cocos2d::ui::EditBox*)ret);
@@ -35861,21 +34535,21 @@ int lua_cocos2dx_ui_EditBox_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 4)
         {
             cocos2d::Size arg0;
-            ok &= luaval_to_size(tolua_S, 2, &arg0, "ccui.EditBox:create");
+            ok &= luaval_to_size(tolua_S, 1, &arg0, "ccui.EditBox:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.EditBox:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.EditBox:create");
             if (!ok) { break; }
             std::string arg2;
-            ok &= luaval_to_std_string(tolua_S, 4,&arg2, "ccui.EditBox:create");
+            ok &= luaval_to_std_string(tolua_S, 3,&arg2, "ccui.EditBox:create");
             if (!ok) { break; }
             std::string arg3;
-            ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.EditBox:create");
+            ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::EditBox* ret = cocos2d::ui::EditBox::create(arg0, arg1, arg2, arg3);
             object_to_luaval<cocos2d::ui::EditBox>(tolua_S, "ccui.EditBox",(cocos2d::ui::EditBox*)ret);
@@ -35883,24 +34557,24 @@ int lua_cocos2dx_ui_EditBox_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 5)
         {
             cocos2d::Size arg0;
-            ok &= luaval_to_size(tolua_S, 2, &arg0, "ccui.EditBox:create");
+            ok &= luaval_to_size(tolua_S, 1, &arg0, "ccui.EditBox:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.EditBox:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.EditBox:create");
             if (!ok) { break; }
             std::string arg2;
-            ok &= luaval_to_std_string(tolua_S, 4,&arg2, "ccui.EditBox:create");
+            ok &= luaval_to_std_string(tolua_S, 3,&arg2, "ccui.EditBox:create");
             if (!ok) { break; }
             std::string arg3;
-            ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.EditBox:create");
+            ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::Widget::TextureResType arg4;
-            ok &= luaval_to_int32(tolua_S, 6,(int *)&arg4, "ccui.EditBox:create");
+            ok &= luaval_to_int32(tolua_S, 5,(int *)&arg4, "ccui.EditBox:create");
             if (!ok) { break; }
             cocos2d::ui::EditBox* ret = cocos2d::ui::EditBox::create(arg0, arg1, arg2, arg3, arg4);
             object_to_luaval<cocos2d::ui::EditBox>(tolua_S, "ccui.EditBox",(cocos2d::ui::EditBox*)ret);
@@ -35916,43 +34590,6 @@ int lua_cocos2dx_ui_EditBox_create(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_EditBox_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::EditBox* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_EditBox_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::EditBox();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.EditBox");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.EditBox:EditBox",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_EditBox_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_EditBox_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (EditBox)");
@@ -35965,7 +34602,6 @@ int lua_register_cocos2dx_ui_EditBox(lua_State* tolua_S)
     tolua_cclass(tolua_S,"EditBox","ccui.EditBox","ccui.Widget",nullptr);
 
     tolua_beginmodule(tolua_S,"EditBox");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_EditBox_constructor);
         tolua_function(tolua_S,"initWithSizeAndBackgroundSprite",lua_cocos2dx_ui_EditBox_initWithSizeAndBackgroundSprite);
         tolua_function(tolua_S,"initWithSizeAndTexture",lua_cocos2dx_ui_EditBox_initWithSizeAndTexture);
         tolua_function(tolua_S,"loadTextures",lua_cocos2dx_ui_EditBox_loadTextures);
@@ -38410,11 +37046,7 @@ int lua_cocos2dx_ui_LayoutComponent_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.LayoutComponent",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -38444,16 +37076,12 @@ int lua_cocos2dx_ui_LayoutComponent_bindLayoutComponent(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.LayoutComponent",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
         cocos2d::Node* arg0;
-        ok &= luaval_to_object<cocos2d::Node>(tolua_S, 2, "cc.Node",&arg0, "ccui.LayoutComponent:bindLayoutComponent");
+        ok &= luaval_to_object<cocos2d::Node>(tolua_S, 1, "cc.Node",&arg0, "ccui.LayoutComponent:bindLayoutComponent");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_LayoutComponent_bindLayoutComponent'", nullptr);
@@ -38471,43 +37099,6 @@ int lua_cocos2dx_ui_LayoutComponent_bindLayoutComponent(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_ui_LayoutComponent_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::ui::LayoutComponent* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_ui_LayoutComponent_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::ui::LayoutComponent();
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccui.LayoutComponent");
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccui.LayoutComponent:LayoutComponent",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_ui_LayoutComponent_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_ui_LayoutComponent_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (LayoutComponent)");
@@ -38520,7 +37111,6 @@ int lua_register_cocos2dx_ui_LayoutComponent(lua_State* tolua_S)
     tolua_cclass(tolua_S,"LayoutComponent","ccui.LayoutComponent","cc.Component",nullptr);
 
     tolua_beginmodule(tolua_S,"LayoutComponent");
-        tolua_function(tolua_S,"new",lua_cocos2dx_ui_LayoutComponent_constructor);
         tolua_function(tolua_S,"setUsingPercentContentSize",lua_cocos2dx_ui_LayoutComponent_setUsingPercentContentSize);
         tolua_function(tolua_S,"getUsingPercentContentSize",lua_cocos2dx_ui_LayoutComponent_getUsingPercentContentSize);
         tolua_function(tolua_S,"setPercentContentSize",lua_cocos2dx_ui_LayoutComponent_setPercentContentSize);
@@ -39069,24 +37659,20 @@ int lua_cocos2dx_ui_TabHeader_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.TabHeader",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 3)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.TabHeader:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.TabHeader:create");
             if (!ok) { break; }
             std::string arg2;
-            ok &= luaval_to_std_string(tolua_S, 4,&arg2, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 3,&arg2, "ccui.TabHeader:create");
             if (!ok) { break; }
             cocos2d::ui::TabHeader* ret = cocos2d::ui::TabHeader::create(arg0, arg1, arg2);
             object_to_luaval<cocos2d::ui::TabHeader>(tolua_S, "ccui.TabHeader",(cocos2d::ui::TabHeader*)ret);
@@ -39094,21 +37680,21 @@ int lua_cocos2dx_ui_TabHeader_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 4)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.TabHeader:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.TabHeader:create");
             if (!ok) { break; }
             std::string arg2;
-            ok &= luaval_to_std_string(tolua_S, 4,&arg2, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 3,&arg2, "ccui.TabHeader:create");
             if (!ok) { break; }
             cocos2d::ui::Widget::TextureResType arg3;
-            ok &= luaval_to_int32(tolua_S, 5,(int *)&arg3, "ccui.TabHeader:create");
+            ok &= luaval_to_int32(tolua_S, 4,(int *)&arg3, "ccui.TabHeader:create");
             if (!ok) { break; }
             cocos2d::ui::TabHeader* ret = cocos2d::ui::TabHeader::create(arg0, arg1, arg2, arg3);
             object_to_luaval<cocos2d::ui::TabHeader>(tolua_S, "ccui.TabHeader",(cocos2d::ui::TabHeader*)ret);
@@ -39116,7 +37702,7 @@ int lua_cocos2dx_ui_TabHeader_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -39126,27 +37712,27 @@ int lua_cocos2dx_ui_TabHeader_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 6)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.TabHeader:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.TabHeader:create");
             if (!ok) { break; }
             std::string arg2;
-            ok &= luaval_to_std_string(tolua_S, 4,&arg2, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 3,&arg2, "ccui.TabHeader:create");
             if (!ok) { break; }
             std::string arg3;
-            ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.TabHeader:create");
             if (!ok) { break; }
             std::string arg4;
-            ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.TabHeader:create");
             if (!ok) { break; }
             std::string arg5;
-            ok &= luaval_to_std_string(tolua_S, 7,&arg5, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 6,&arg5, "ccui.TabHeader:create");
             if (!ok) { break; }
             cocos2d::ui::TabHeader* ret = cocos2d::ui::TabHeader::create(arg0, arg1, arg2, arg3, arg4, arg5);
             object_to_luaval<cocos2d::ui::TabHeader>(tolua_S, "ccui.TabHeader",(cocos2d::ui::TabHeader*)ret);
@@ -39154,30 +37740,30 @@ int lua_cocos2dx_ui_TabHeader_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 7)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.TabHeader:create");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "ccui.TabHeader:create");
             if (!ok) { break; }
             std::string arg2;
-            ok &= luaval_to_std_string(tolua_S, 4,&arg2, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 3,&arg2, "ccui.TabHeader:create");
             if (!ok) { break; }
             std::string arg3;
-            ok &= luaval_to_std_string(tolua_S, 5,&arg3, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 4,&arg3, "ccui.TabHeader:create");
             if (!ok) { break; }
             std::string arg4;
-            ok &= luaval_to_std_string(tolua_S, 6,&arg4, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 5,&arg4, "ccui.TabHeader:create");
             if (!ok) { break; }
             std::string arg5;
-            ok &= luaval_to_std_string(tolua_S, 7,&arg5, "ccui.TabHeader:create");
+            ok &= luaval_to_std_string(tolua_S, 6,&arg5, "ccui.TabHeader:create");
             if (!ok) { break; }
             cocos2d::ui::Widget::TextureResType arg6;
-            ok &= luaval_to_int32(tolua_S, 8,(int *)&arg6, "ccui.TabHeader:create");
+            ok &= luaval_to_int32(tolua_S, 7,(int *)&arg6, "ccui.TabHeader:create");
             if (!ok) { break; }
             cocos2d::ui::TabHeader* ret = cocos2d::ui::TabHeader::create(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
             object_to_luaval<cocos2d::ui::TabHeader>(tolua_S, "ccui.TabHeader",(cocos2d::ui::TabHeader*)ret);
@@ -40176,11 +38762,7 @@ int lua_cocos2dx_ui_TabControl_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.TabControl",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -40345,13 +38927,9 @@ int lua_cocos2dx_ui_QrCode_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccui.QrCode",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -40361,12 +38939,12 @@ int lua_cocos2dx_ui_QrCode_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 1)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccui.QrCode:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "ccui.QrCode:create");
             if (!ok) { break; }
             cocos2d::ui::QrCode* ret = cocos2d::ui::QrCode::create(arg0);
             object_to_luaval<cocos2d::ui::QrCode>(tolua_S, "ccui.QrCode",(cocos2d::ui::QrCode*)ret);

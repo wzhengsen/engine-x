@@ -1467,11 +1467,7 @@ int lua_cocos2dx_spine_SkeletonRenderer_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"sp.SkeletonRenderer",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -1501,16 +1497,12 @@ int lua_cocos2dx_spine_SkeletonRenderer_createWithSkeleton(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"sp.SkeletonRenderer",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
         spine::Skeleton* arg0;
-        ok &= luaval_to_object<spine::Skeleton>(tolua_S, 2, "sp.Skeleton",&arg0, "sp.SkeletonRenderer:createWithSkeleton");
+        ok &= luaval_to_object<spine::Skeleton>(tolua_S, 1, "sp.Skeleton",&arg0, "sp.SkeletonRenderer:createWithSkeleton");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_spine_SkeletonRenderer_createWithSkeleton'", nullptr);
@@ -1524,8 +1516,8 @@ int lua_cocos2dx_spine_SkeletonRenderer_createWithSkeleton(lua_State* tolua_S)
     {
         spine::Skeleton* arg0;
         bool arg1;
-        ok &= luaval_to_object<spine::Skeleton>(tolua_S, 2, "sp.Skeleton",&arg0, "sp.SkeletonRenderer:createWithSkeleton");
-        ok &= luaval_to_boolean(tolua_S, 3,&arg1, "sp.SkeletonRenderer:createWithSkeleton");
+        ok &= luaval_to_object<spine::Skeleton>(tolua_S, 1, "sp.Skeleton",&arg0, "sp.SkeletonRenderer:createWithSkeleton");
+        ok &= luaval_to_boolean(tolua_S, 2,&arg1, "sp.SkeletonRenderer:createWithSkeleton");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_spine_SkeletonRenderer_createWithSkeleton'", nullptr);
@@ -1540,9 +1532,9 @@ int lua_cocos2dx_spine_SkeletonRenderer_createWithSkeleton(lua_State* tolua_S)
         spine::Skeleton* arg0;
         bool arg1;
         bool arg2;
-        ok &= luaval_to_object<spine::Skeleton>(tolua_S, 2, "sp.Skeleton",&arg0, "sp.SkeletonRenderer:createWithSkeleton");
-        ok &= luaval_to_boolean(tolua_S, 3,&arg1, "sp.SkeletonRenderer:createWithSkeleton");
-        ok &= luaval_to_boolean(tolua_S, 4,&arg2, "sp.SkeletonRenderer:createWithSkeleton");
+        ok &= luaval_to_object<spine::Skeleton>(tolua_S, 1, "sp.Skeleton",&arg0, "sp.SkeletonRenderer:createWithSkeleton");
+        ok &= luaval_to_boolean(tolua_S, 2,&arg1, "sp.SkeletonRenderer:createWithSkeleton");
+        ok &= luaval_to_boolean(tolua_S, 3,&arg2, "sp.SkeletonRenderer:createWithSkeleton");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_spine_SkeletonRenderer_createWithSkeleton'", nullptr);
@@ -1568,21 +1560,17 @@ int lua_cocos2dx_spine_SkeletonRenderer_createWithFile(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"sp.SkeletonRenderer",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonRenderer:createWithFile");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "sp.SkeletonRenderer:createWithFile");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "sp.SkeletonRenderer:createWithFile");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "sp.SkeletonRenderer:createWithFile");
             if (!ok) { break; }
             spine::SkeletonRenderer* ret = spine::SkeletonRenderer::createWithFile(arg0, arg1);
             object_to_luaval<spine::SkeletonRenderer>(tolua_S, "sp.SkeletonRenderer",(spine::SkeletonRenderer*)ret);
@@ -1590,18 +1578,18 @@ int lua_cocos2dx_spine_SkeletonRenderer_createWithFile(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 3)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonRenderer:createWithFile");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "sp.SkeletonRenderer:createWithFile");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "sp.SkeletonRenderer:createWithFile");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "sp.SkeletonRenderer:createWithFile");
             if (!ok) { break; }
             double arg2;
-            ok &= luaval_to_number(tolua_S, 4,&arg2, "sp.SkeletonRenderer:createWithFile");
+            ok &= luaval_to_number(tolua_S, 3,&arg2, "sp.SkeletonRenderer:createWithFile");
             if (!ok) { break; }
             spine::SkeletonRenderer* ret = spine::SkeletonRenderer::createWithFile(arg0, arg1, arg2);
             object_to_luaval<spine::SkeletonRenderer>(tolua_S, "sp.SkeletonRenderer",(spine::SkeletonRenderer*)ret);
@@ -1609,15 +1597,15 @@ int lua_cocos2dx_spine_SkeletonRenderer_createWithFile(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonRenderer:createWithFile");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "sp.SkeletonRenderer:createWithFile");
             if (!ok) { break; }
             spine::Atlas* arg1;
-            ok &= luaval_to_object<spine::Atlas>(tolua_S, 3, "sp.Atlas",&arg1, "sp.SkeletonRenderer:createWithFile");
+            ok &= luaval_to_object<spine::Atlas>(tolua_S, 2, "sp.Atlas",&arg1, "sp.SkeletonRenderer:createWithFile");
             if (!ok) { break; }
             spine::SkeletonRenderer* ret = spine::SkeletonRenderer::createWithFile(arg0, arg1);
             object_to_luaval<spine::SkeletonRenderer>(tolua_S, "sp.SkeletonRenderer",(spine::SkeletonRenderer*)ret);
@@ -1625,18 +1613,18 @@ int lua_cocos2dx_spine_SkeletonRenderer_createWithFile(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 3)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonRenderer:createWithFile");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "sp.SkeletonRenderer:createWithFile");
             if (!ok) { break; }
             spine::Atlas* arg1;
-            ok &= luaval_to_object<spine::Atlas>(tolua_S, 3, "sp.Atlas",&arg1, "sp.SkeletonRenderer:createWithFile");
+            ok &= luaval_to_object<spine::Atlas>(tolua_S, 2, "sp.Atlas",&arg1, "sp.SkeletonRenderer:createWithFile");
             if (!ok) { break; }
             double arg2;
-            ok &= luaval_to_number(tolua_S, 4,&arg2, "sp.SkeletonRenderer:createWithFile");
+            ok &= luaval_to_number(tolua_S, 3,&arg2, "sp.SkeletonRenderer:createWithFile");
             if (!ok) { break; }
             spine::SkeletonRenderer* ret = spine::SkeletonRenderer::createWithFile(arg0, arg1, arg2);
             object_to_luaval<spine::SkeletonRenderer>(tolua_S, "sp.SkeletonRenderer",(spine::SkeletonRenderer*)ret);
@@ -1652,239 +1640,6 @@ int lua_cocos2dx_spine_SkeletonRenderer_createWithFile(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_spine_SkeletonRenderer_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    spine::SkeletonRenderer* cobj = nullptr;
-    bool ok  = true;
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    do{
-        if (argc == 1) {
-            spine::Skeleton* arg0;
-            ok &= luaval_to_object<spine::Skeleton>(tolua_S, 2, "sp.Skeleton",&arg0, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            cobj = new spine::SkeletonRenderer(arg0);
-            cobj->autorelease();
-            int ID =  (int)cobj->_ID ;
-            int* luaID =  &cobj->_luaID ;
-            toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"sp.SkeletonRenderer");
-            return 1;
-        }
-    }while(0);
-    ok  = true;
-    do{
-        if (argc == 2) {
-            spine::Skeleton* arg0;
-            ok &= luaval_to_object<spine::Skeleton>(tolua_S, 2, "sp.Skeleton",&arg0, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            bool arg1;
-            ok &= luaval_to_boolean(tolua_S, 3,&arg1, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            cobj = new spine::SkeletonRenderer(arg0, arg1);
-            cobj->autorelease();
-            int ID =  (int)cobj->_ID ;
-            int* luaID =  &cobj->_luaID ;
-            toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"sp.SkeletonRenderer");
-            return 1;
-        }
-    }while(0);
-    ok  = true;
-    do{
-        if (argc == 3) {
-            spine::Skeleton* arg0;
-            ok &= luaval_to_object<spine::Skeleton>(tolua_S, 2, "sp.Skeleton",&arg0, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            bool arg1;
-            ok &= luaval_to_boolean(tolua_S, 3,&arg1, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            bool arg2;
-            ok &= luaval_to_boolean(tolua_S, 4,&arg2, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            cobj = new spine::SkeletonRenderer(arg0, arg1, arg2);
-            cobj->autorelease();
-            int ID =  (int)cobj->_ID ;
-            int* luaID =  &cobj->_luaID ;
-            toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"sp.SkeletonRenderer");
-            return 1;
-        }
-    }while(0);
-    ok  = true;
-    do{
-        if (argc == 4) {
-            spine::Skeleton* arg0;
-            ok &= luaval_to_object<spine::Skeleton>(tolua_S, 2, "sp.Skeleton",&arg0, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            bool arg1;
-            ok &= luaval_to_boolean(tolua_S, 3,&arg1, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            bool arg2;
-            ok &= luaval_to_boolean(tolua_S, 4,&arg2, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            bool arg3;
-            ok &= luaval_to_boolean(tolua_S, 5,&arg3, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            cobj = new spine::SkeletonRenderer(arg0, arg1, arg2, arg3);
-            cobj->autorelease();
-            int ID =  (int)cobj->_ID ;
-            int* luaID =  &cobj->_luaID ;
-            toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"sp.SkeletonRenderer");
-            return 1;
-        }
-    }while(0);
-    ok  = true;
-    do{
-        if (argc == 0) {
-            cobj = new spine::SkeletonRenderer();
-            cobj->autorelease();
-            int ID =  (int)cobj->_ID ;
-            int* luaID =  &cobj->_luaID ;
-            toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"sp.SkeletonRenderer");
-            return 1;
-        }
-    }while(0);
-    ok  = true;
-    do{
-        if (argc == 1) {
-            spine::SkeletonData* arg0;
-            ok &= luaval_to_object<spine::SkeletonData>(tolua_S, 2, "sp.SkeletonData",&arg0, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            cobj = new spine::SkeletonRenderer(arg0);
-            cobj->autorelease();
-            int ID =  (int)cobj->_ID ;
-            int* luaID =  &cobj->_luaID ;
-            toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"sp.SkeletonRenderer");
-            return 1;
-        }
-    }while(0);
-    ok  = true;
-    do{
-        if (argc == 2) {
-            spine::SkeletonData* arg0;
-            ok &= luaval_to_object<spine::SkeletonData>(tolua_S, 2, "sp.SkeletonData",&arg0, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            bool arg1;
-            ok &= luaval_to_boolean(tolua_S, 3,&arg1, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            cobj = new spine::SkeletonRenderer(arg0, arg1);
-            cobj->autorelease();
-            int ID =  (int)cobj->_ID ;
-            int* luaID =  &cobj->_luaID ;
-            toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"sp.SkeletonRenderer");
-            return 1;
-        }
-    }while(0);
-    ok  = true;
-    do{
-        if (argc == 2) {
-            std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            spine::Atlas* arg1;
-            ok &= luaval_to_object<spine::Atlas>(tolua_S, 3, "sp.Atlas",&arg1, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            cobj = new spine::SkeletonRenderer(arg0, arg1);
-            cobj->autorelease();
-            int ID =  (int)cobj->_ID ;
-            int* luaID =  &cobj->_luaID ;
-            toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"sp.SkeletonRenderer");
-            return 1;
-        }
-    }while(0);
-    ok  = true;
-    do{
-        if (argc == 3) {
-            std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            spine::Atlas* arg1;
-            ok &= luaval_to_object<spine::Atlas>(tolua_S, 3, "sp.Atlas",&arg1, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            double arg2;
-            ok &= luaval_to_number(tolua_S, 4,&arg2, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            cobj = new spine::SkeletonRenderer(arg0, arg1, arg2);
-            cobj->autorelease();
-            int ID =  (int)cobj->_ID ;
-            int* luaID =  &cobj->_luaID ;
-            toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"sp.SkeletonRenderer");
-            return 1;
-        }
-    }while(0);
-    ok  = true;
-    do{
-        if (argc == 2) {
-            std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            cobj = new spine::SkeletonRenderer(arg0, arg1);
-            cobj->autorelease();
-            int ID =  (int)cobj->_ID ;
-            int* luaID =  &cobj->_luaID ;
-            toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"sp.SkeletonRenderer");
-            return 1;
-        }
-    }while(0);
-    ok  = true;
-    do{
-        if (argc == 3) {
-            std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            double arg2;
-            ok &= luaval_to_number(tolua_S, 4,&arg2, "sp.SkeletonRenderer:SkeletonRenderer");
-
-            if (!ok) { break; }
-            cobj = new spine::SkeletonRenderer(arg0, arg1, arg2);
-            cobj->autorelease();
-            int ID =  (int)cobj->_ID ;
-            int* luaID =  &cobj->_luaID ;
-            toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"sp.SkeletonRenderer");
-            return 1;
-        }
-    }while(0);
-    ok  = true;
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n",  "sp.SkeletonRenderer:SkeletonRenderer",argc, 2);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_spine_SkeletonRenderer_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_spine_SkeletonRenderer_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (SkeletonRenderer)");
@@ -1897,7 +1652,6 @@ int lua_register_cocos2dx_spine_SkeletonRenderer(lua_State* tolua_S)
     tolua_cclass(tolua_S,"SkeletonRenderer","sp.SkeletonRenderer","cc.Node",nullptr);
 
     tolua_beginmodule(tolua_S,"SkeletonRenderer");
-        tolua_function(tolua_S,"new",lua_cocos2dx_spine_SkeletonRenderer_constructor);
         tolua_function(tolua_S,"getSkeleton",lua_cocos2dx_spine_SkeletonRenderer_getSkeleton);
         tolua_function(tolua_S,"setTimeScale",lua_cocos2dx_spine_SkeletonRenderer_setTimeScale);
         tolua_function(tolua_S,"getTimeScale",lua_cocos2dx_spine_SkeletonRenderer_getTimeScale);
@@ -3157,11 +2911,7 @@ int lua_cocos2dx_spine_SkeletonAnimation_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"sp.SkeletonAnimation",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -3190,21 +2940,17 @@ int lua_cocos2dx_spine_SkeletonAnimation_createWithJsonFile(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"sp.SkeletonAnimation",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonAnimation:createWithJsonFile");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "sp.SkeletonAnimation:createWithJsonFile");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "sp.SkeletonAnimation:createWithJsonFile");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "sp.SkeletonAnimation:createWithJsonFile");
             if (!ok) { break; }
             spine::SkeletonAnimation* ret = spine::SkeletonAnimation::createWithJsonFile(arg0, arg1);
             object_to_luaval<spine::SkeletonAnimation>(tolua_S, "sp.SkeletonAnimation",(spine::SkeletonAnimation*)ret);
@@ -3212,18 +2958,18 @@ int lua_cocos2dx_spine_SkeletonAnimation_createWithJsonFile(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 3)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonAnimation:createWithJsonFile");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "sp.SkeletonAnimation:createWithJsonFile");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "sp.SkeletonAnimation:createWithJsonFile");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "sp.SkeletonAnimation:createWithJsonFile");
             if (!ok) { break; }
             double arg2;
-            ok &= luaval_to_number(tolua_S, 4,&arg2, "sp.SkeletonAnimation:createWithJsonFile");
+            ok &= luaval_to_number(tolua_S, 3,&arg2, "sp.SkeletonAnimation:createWithJsonFile");
             if (!ok) { break; }
             spine::SkeletonAnimation* ret = spine::SkeletonAnimation::createWithJsonFile(arg0, arg1, arg2);
             object_to_luaval<spine::SkeletonAnimation>(tolua_S, "sp.SkeletonAnimation",(spine::SkeletonAnimation*)ret);
@@ -3231,15 +2977,15 @@ int lua_cocos2dx_spine_SkeletonAnimation_createWithJsonFile(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonAnimation:createWithJsonFile");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "sp.SkeletonAnimation:createWithJsonFile");
             if (!ok) { break; }
             spine::Atlas* arg1;
-            ok &= luaval_to_object<spine::Atlas>(tolua_S, 3, "sp.Atlas",&arg1, "sp.SkeletonAnimation:createWithJsonFile");
+            ok &= luaval_to_object<spine::Atlas>(tolua_S, 2, "sp.Atlas",&arg1, "sp.SkeletonAnimation:createWithJsonFile");
             if (!ok) { break; }
             spine::SkeletonAnimation* ret = spine::SkeletonAnimation::createWithJsonFile(arg0, arg1);
             object_to_luaval<spine::SkeletonAnimation>(tolua_S, "sp.SkeletonAnimation",(spine::SkeletonAnimation*)ret);
@@ -3247,18 +2993,18 @@ int lua_cocos2dx_spine_SkeletonAnimation_createWithJsonFile(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 3)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonAnimation:createWithJsonFile");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "sp.SkeletonAnimation:createWithJsonFile");
             if (!ok) { break; }
             spine::Atlas* arg1;
-            ok &= luaval_to_object<spine::Atlas>(tolua_S, 3, "sp.Atlas",&arg1, "sp.SkeletonAnimation:createWithJsonFile");
+            ok &= luaval_to_object<spine::Atlas>(tolua_S, 2, "sp.Atlas",&arg1, "sp.SkeletonAnimation:createWithJsonFile");
             if (!ok) { break; }
             double arg2;
-            ok &= luaval_to_number(tolua_S, 4,&arg2, "sp.SkeletonAnimation:createWithJsonFile");
+            ok &= luaval_to_number(tolua_S, 3,&arg2, "sp.SkeletonAnimation:createWithJsonFile");
             if (!ok) { break; }
             spine::SkeletonAnimation* ret = spine::SkeletonAnimation::createWithJsonFile(arg0, arg1, arg2);
             object_to_luaval<spine::SkeletonAnimation>(tolua_S, "sp.SkeletonAnimation",(spine::SkeletonAnimation*)ret);
@@ -3282,21 +3028,17 @@ int lua_cocos2dx_spine_SkeletonAnimation_createWithBinaryFile(lua_State* tolua_S
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"sp.SkeletonAnimation",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonAnimation:createWithBinaryFile");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "sp.SkeletonAnimation:createWithBinaryFile");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "sp.SkeletonAnimation:createWithBinaryFile");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "sp.SkeletonAnimation:createWithBinaryFile");
             if (!ok) { break; }
             spine::SkeletonAnimation* ret = spine::SkeletonAnimation::createWithBinaryFile(arg0, arg1);
             object_to_luaval<spine::SkeletonAnimation>(tolua_S, "sp.SkeletonAnimation",(spine::SkeletonAnimation*)ret);
@@ -3304,18 +3046,18 @@ int lua_cocos2dx_spine_SkeletonAnimation_createWithBinaryFile(lua_State* tolua_S
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 3)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonAnimation:createWithBinaryFile");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "sp.SkeletonAnimation:createWithBinaryFile");
             if (!ok) { break; }
             std::string arg1;
-            ok &= luaval_to_std_string(tolua_S, 3,&arg1, "sp.SkeletonAnimation:createWithBinaryFile");
+            ok &= luaval_to_std_string(tolua_S, 2,&arg1, "sp.SkeletonAnimation:createWithBinaryFile");
             if (!ok) { break; }
             double arg2;
-            ok &= luaval_to_number(tolua_S, 4,&arg2, "sp.SkeletonAnimation:createWithBinaryFile");
+            ok &= luaval_to_number(tolua_S, 3,&arg2, "sp.SkeletonAnimation:createWithBinaryFile");
             if (!ok) { break; }
             spine::SkeletonAnimation* ret = spine::SkeletonAnimation::createWithBinaryFile(arg0, arg1, arg2);
             object_to_luaval<spine::SkeletonAnimation>(tolua_S, "sp.SkeletonAnimation",(spine::SkeletonAnimation*)ret);
@@ -3323,15 +3065,15 @@ int lua_cocos2dx_spine_SkeletonAnimation_createWithBinaryFile(lua_State* tolua_S
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonAnimation:createWithBinaryFile");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "sp.SkeletonAnimation:createWithBinaryFile");
             if (!ok) { break; }
             spine::Atlas* arg1;
-            ok &= luaval_to_object<spine::Atlas>(tolua_S, 3, "sp.Atlas",&arg1, "sp.SkeletonAnimation:createWithBinaryFile");
+            ok &= luaval_to_object<spine::Atlas>(tolua_S, 2, "sp.Atlas",&arg1, "sp.SkeletonAnimation:createWithBinaryFile");
             if (!ok) { break; }
             spine::SkeletonAnimation* ret = spine::SkeletonAnimation::createWithBinaryFile(arg0, arg1);
             object_to_luaval<spine::SkeletonAnimation>(tolua_S, "sp.SkeletonAnimation",(spine::SkeletonAnimation*)ret);
@@ -3339,18 +3081,18 @@ int lua_cocos2dx_spine_SkeletonAnimation_createWithBinaryFile(lua_State* tolua_S
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 3)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "sp.SkeletonAnimation:createWithBinaryFile");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "sp.SkeletonAnimation:createWithBinaryFile");
             if (!ok) { break; }
             spine::Atlas* arg1;
-            ok &= luaval_to_object<spine::Atlas>(tolua_S, 3, "sp.Atlas",&arg1, "sp.SkeletonAnimation:createWithBinaryFile");
+            ok &= luaval_to_object<spine::Atlas>(tolua_S, 2, "sp.Atlas",&arg1, "sp.SkeletonAnimation:createWithBinaryFile");
             if (!ok) { break; }
             double arg2;
-            ok &= luaval_to_number(tolua_S, 4,&arg2, "sp.SkeletonAnimation:createWithBinaryFile");
+            ok &= luaval_to_number(tolua_S, 3,&arg2, "sp.SkeletonAnimation:createWithBinaryFile");
             if (!ok) { break; }
             spine::SkeletonAnimation* ret = spine::SkeletonAnimation::createWithBinaryFile(arg0, arg1, arg2);
             object_to_luaval<spine::SkeletonAnimation>(tolua_S, "sp.SkeletonAnimation",(spine::SkeletonAnimation*)ret);

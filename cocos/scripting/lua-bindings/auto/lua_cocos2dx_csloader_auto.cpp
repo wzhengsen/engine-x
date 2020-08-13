@@ -562,11 +562,7 @@ int lua_cocos2dx_csloader_CSLoader_getInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.CSLoader",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -596,11 +592,7 @@ int lua_cocos2dx_csloader_CSLoader_destroyInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.CSLoader",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -610,8 +602,8 @@ int lua_cocos2dx_csloader_CSLoader_destroyInstance(lua_State* tolua_S)
             return 0;
         }
         cocos2d::CSLoader::destroyInstance();
-        lua_settop(tolua_S, 1);
-        return 1;
+        lua_settop(tolua_S, 0);
+        return 0;
     }
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "cc.CSLoader:destroyInstance",argc, 0);
     return 0;
@@ -629,18 +621,14 @@ int lua_cocos2dx_csloader_CSLoader_createNodeWithVisibleSize(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.CSLoader",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "cc.CSLoader:createNodeWithVisibleSize");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "cc.CSLoader:createNodeWithVisibleSize");
             if (!ok) { break; }
             std::function<void (cocos2d::Ref *)> arg1;
             do {
@@ -655,12 +643,12 @@ int lua_cocos2dx_csloader_CSLoader_createNodeWithVisibleSize(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 1)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "cc.CSLoader:createNodeWithVisibleSize");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "cc.CSLoader:createNodeWithVisibleSize");
             if (!ok) { break; }
             cocos2d::Node* ret = cocos2d::CSLoader::createNodeWithVisibleSize(arg0);
             object_to_luaval<cocos2d::Node>(tolua_S, "cc.Node",(cocos2d::Node*)ret);
@@ -676,41 +664,6 @@ int lua_cocos2dx_csloader_CSLoader_createNodeWithVisibleSize(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_csloader_CSLoader_constructor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::CSLoader* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_csloader_CSLoader_constructor'", nullptr);
-            return 0;
-        }
-        cobj = new cocos2d::CSLoader();
-        tolua_pushusertype(tolua_S,(void*)cobj,"cc.CSLoader");
-        tolua_register_gc(tolua_S,lua_gettop(tolua_S));
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.CSLoader:CSLoader",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_csloader_CSLoader_constructor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-
 static int lua_cocos2dx_csloader_CSLoader_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (CSLoader)");
@@ -723,7 +676,6 @@ int lua_register_cocos2dx_csloader_CSLoader(lua_State* tolua_S)
     tolua_cclass(tolua_S,"CSLoader","cc.CSLoader","",nullptr);
 
     tolua_beginmodule(tolua_S,"CSLoader");
-        tolua_function(tolua_S,"new",lua_cocos2dx_csloader_CSLoader_constructor);
         tolua_function(tolua_S,"init",lua_cocos2dx_csloader_CSLoader_init);
         tolua_function(tolua_S,"createNodeFromJson",lua_cocos2dx_csloader_CSLoader_createNodeFromJson);
         tolua_function(tolua_S,"loadNodeWithFile",lua_cocos2dx_csloader_CSLoader_loadNodeWithFile);

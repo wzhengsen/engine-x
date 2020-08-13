@@ -3801,37 +3801,6 @@ tolua_lerror:
 #endif
 }
 
-static int tolua_cocos2dx_UserDefault_getInstance(lua_State* tolua_S)
-{
-    if (nullptr == tolua_S)
-        return 0;
-
-    int argc = 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-    if (!tolua_isusertable(tolua_S,1,"cc.UserDefault",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
-
-    if(0 == argc)
-    {
-        UserDefault* tolua_ret = (UserDefault*)  UserDefault::getInstance();
-        tolua_pushusertype(tolua_S,(void*)tolua_ret,"cc.UserDefault");
-        return 1;
-    }
-
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n", "cc.UserDefault:getInstance",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'tolua_cocos2dx_UserDefault_getInstance'.",&tolua_err);
-    return 0;
-#endif
-}
-
 static int tolua_cocos2dx_Texture2D_setTexParameters(lua_State* tolua_S)
 {
     if (nullptr == tolua_S)
@@ -4657,19 +4626,6 @@ static void extendFileUtils(lua_State* tolua_S)
     lua_pop(tolua_S, 1);
 }
 
-static void extendUserDefault(lua_State* tolua_S)
-{
-    lua_pushstring(tolua_S, "cc.UserDefault");
-    lua_rawget(tolua_S, LUA_REGISTRYINDEX);
-    if (lua_istable(tolua_S,-1))
-    {
-        lua_pushstring(tolua_S,"getInstance");
-        lua_pushcfunction(tolua_S,tolua_cocos2dx_UserDefault_getInstance );
-        lua_rawset(tolua_S,-3);
-    }
-    lua_pop(tolua_S, 1);
-}
-
 static void extendSpriteBatchNode(lua_State* tolua_S)
 {
     lua_pushstring(tolua_S, "cc.SpriteBatchNode");
@@ -4840,10 +4796,9 @@ static int tolua_cocos2dx_EventListenerKeyboard_create(lua_State* tolua_S)
     int argc = 0;
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(tolua_S, 1, "cc.EventListenerKeyboard", 0, &tolua_err))  goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -5901,19 +5856,18 @@ static int lua_cocos2dx_Label_createWithTTF00(lua_State* L)
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(L,1,"cc.Label",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(L) - 1;
+    argc = lua_gettop(L);
 
     if (argc >= 2 && argc <= 4)
     {
 
 #if COCOS2D_DEBUG >= 1
-        if (!tolua_istable(L, 2, 0, &tolua_err)  ||
-            !tolua_isstring(L, 3, 0, &tolua_err) ||
-            !tolua_isnumber(L, 4, 1, &tolua_err) ||
-            !tolua_isnumber(L, 5, 1, &tolua_err) )
+        if (!tolua_istable(L, 1, 0, &tolua_err)  ||
+            !tolua_isstring(L, 2, 0, &tolua_err) ||
+            !tolua_isnumber(L, 3, 1, &tolua_err) ||
+            !tolua_isnumber(L, 4, 1, &tolua_err) )
         {
             goto tolua_lerror;
         }
@@ -5921,17 +5875,17 @@ static int lua_cocos2dx_Label_createWithTTF00(lua_State* L)
         TTFConfig ttfConfig("");
         std::string text = "";
 
-        ok &= luaval_to_ttfconfig(L, 2, &ttfConfig, "cc.Label:createWithTTF");
+        ok &= luaval_to_ttfconfig(L, 1, &ttfConfig, "cc.Label:createWithTTF");
         if (!ok)
             return 0;
 
-        ok &= luaval_to_std_string(L, 3, &text,  "cc.Label:createWithTTF");
+        ok &= luaval_to_std_string(L, 2, &text,  "cc.Label:createWithTTF");
         if (!ok)
             return 0;
 
 
-        int alignment = (int)tolua_tonumber(L, 4, 1);
-        int lineSize  = (int)tolua_tonumber(L, 5, 0);
+        int alignment = (int)tolua_tonumber(L, 3, 1);
+        int lineSize  = (int)tolua_tonumber(L, 4, 0);
         cocos2d::Label* ret = cocos2d::Label::createWithTTF(ttfConfig, text, static_cast<TextHAlignment>(alignment), lineSize);
         int ID = ret ? (int)(ret->_ID) : -1;
         int* luaID = ret ? &(ret->_luaID) : nullptr;
@@ -5955,33 +5909,32 @@ static int lua_cocos2dx_Label_createWithTTF01(lua_State* L)
     int argc = 0;
 
     tolua_Error tolua_err;
-    if (!tolua_isusertable(L,1,"cc.Label",0,&tolua_err)) goto tolua_lerror;
 
-    argc = lua_gettop(L) - 1;
+    argc = lua_gettop(L);
 
     if (argc >= 3 && argc <= 6)
     {
-        if (!tolua_isstring(L, 2, 0, &tolua_err)  ||
-            !tolua_isstring(L, 3, 0, &tolua_err)  ||
-            !tolua_isnumber(L, 4, 0, &tolua_err)  ||
-            !tolua_istable(L, 5, 1, &tolua_err)   ||
-            !tolua_isnumber(L, 6, 1, &tolua_err)  ||
-            !tolua_isnumber(L, 7, 1, &tolua_err) )
+        if (!tolua_isstring(L, 1, 0, &tolua_err)  ||
+            !tolua_isstring(L, 2, 0, &tolua_err)  ||
+            !tolua_isnumber(L, 3, 0, &tolua_err)  ||
+            !tolua_istable(L, 4, 1, &tolua_err)   ||
+            !tolua_isnumber(L, 5, 1, &tolua_err)  ||
+            !tolua_isnumber(L, 6, 1, &tolua_err) )
         {
             goto tolua_lerror;
         }
         else
         {
-            std::string text = tolua_tostring(L, 2, "");
-            std::string fontFile = tolua_tostring(L, 3, "");
-            float fontSize   = (float)tolua_tonumber(L, 4, 0);
+            std::string text = tolua_tostring(L, 1, "");
+            std::string fontFile = tolua_tostring(L, 2, "");
+            float fontSize   = (float)tolua_tonumber(L, 3, 0);
             cocos2d::Size dimensions = cocos2d::Size::ZERO;
-            if (lua_istable(L, 5))
+            if (lua_istable(L, 4))
             {
-                luaval_to_size(L, 5, &dimensions,  "cc.Label:createWithTTF");
+                luaval_to_size(L, 4, &dimensions,  "cc.Label:createWithTTF");
             }
-            TextHAlignment hAlignment = static_cast<TextHAlignment>((int)tolua_tonumber(L, 6, 0));
-            TextVAlignment vAlignment = static_cast<TextVAlignment>((int)tolua_tonumber(L, 7, 0));
+            TextHAlignment hAlignment = static_cast<TextHAlignment>((int)tolua_tonumber(L, 5, 0));
+            TextVAlignment vAlignment = static_cast<TextVAlignment>((int)tolua_tonumber(L, 6, 0));
 
             cocos2d::Label* ret = cocos2d::Label::createWithTTF(text, fontFile, fontSize, dimensions, hAlignment, vAlignment);
 
@@ -7453,7 +7406,6 @@ int register_all_cocos2dx_manual(lua_State* tolua_S)
     extendSprite(tolua_S);
     extendLayerMultiplex(tolua_S);
     extendFileUtils(tolua_S);
-    extendUserDefault(tolua_S);
     extendTexture2D(tolua_S);
     extendSpriteBatchNode(tolua_S);
     extendEventListenerKeyboard(tolua_S);

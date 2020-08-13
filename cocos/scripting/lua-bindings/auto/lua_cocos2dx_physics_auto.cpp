@@ -1606,16 +1606,12 @@ int lua_cocos2dx_physics_PhysicsShapeCircle_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsShapeCircle",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
         double arg0;
-        ok &= luaval_to_number(tolua_S, 2,&arg0, "cc.PhysicsShapeCircle:create");
+        ok &= luaval_to_number(tolua_S, 1,&arg0, "cc.PhysicsShapeCircle:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeCircle_create'", nullptr);
@@ -1629,8 +1625,8 @@ int lua_cocos2dx_physics_PhysicsShapeCircle_create(lua_State* tolua_S)
     {
         double arg0;
         cocos2d::PhysicsMaterial arg1;
-        ok &= luaval_to_number(tolua_S, 2,&arg0, "cc.PhysicsShapeCircle:create");
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1, "cc.PhysicsShapeCircle:create");
+        ok &= luaval_to_number(tolua_S, 1,&arg0, "cc.PhysicsShapeCircle:create");
+        ok &= luaval_to_physics_material(tolua_S, 2, &arg1, "cc.PhysicsShapeCircle:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeCircle_create'", nullptr);
@@ -1645,9 +1641,9 @@ int lua_cocos2dx_physics_PhysicsShapeCircle_create(lua_State* tolua_S)
         double arg0;
         cocos2d::PhysicsMaterial arg1;
         cocos2d::Vec2 arg2;
-        ok &= luaval_to_number(tolua_S, 2,&arg0, "cc.PhysicsShapeCircle:create");
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1, "cc.PhysicsShapeCircle:create");
-        ok &= luaval_to_vec2(tolua_S, 4, &arg2, "cc.PhysicsShapeCircle:create");
+        ok &= luaval_to_number(tolua_S, 1,&arg0, "cc.PhysicsShapeCircle:create");
+        ok &= luaval_to_physics_material(tolua_S, 2, &arg1, "cc.PhysicsShapeCircle:create");
+        ok &= luaval_to_vec2(tolua_S, 3, &arg2, "cc.PhysicsShapeCircle:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeCircle_create'", nullptr);
@@ -1674,16 +1670,12 @@ int lua_cocos2dx_physics_PhysicsShapeCircle_calculateArea(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsShapeCircle",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
         double arg0;
-        ok &= luaval_to_number(tolua_S, 2,&arg0, "cc.PhysicsShapeCircle:calculateArea");
+        ok &= luaval_to_number(tolua_S, 1,&arg0, "cc.PhysicsShapeCircle:calculateArea");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeCircle_calculateArea'", nullptr);
@@ -1710,18 +1702,14 @@ int lua_cocos2dx_physics_PhysicsShapeCircle_calculateMoment(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsShapeCircle",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
         double arg0;
         double arg1;
-        ok &= luaval_to_number(tolua_S, 2,&arg0, "cc.PhysicsShapeCircle:calculateMoment");
-        ok &= luaval_to_number(tolua_S, 3,&arg1, "cc.PhysicsShapeCircle:calculateMoment");
+        ok &= luaval_to_number(tolua_S, 1,&arg0, "cc.PhysicsShapeCircle:calculateMoment");
+        ok &= luaval_to_number(tolua_S, 2,&arg1, "cc.PhysicsShapeCircle:calculateMoment");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeCircle_calculateMoment'", nullptr);
@@ -1736,9 +1724,9 @@ int lua_cocos2dx_physics_PhysicsShapeCircle_calculateMoment(lua_State* tolua_S)
         double arg0;
         double arg1;
         cocos2d::Vec2 arg2;
-        ok &= luaval_to_number(tolua_S, 2,&arg0, "cc.PhysicsShapeCircle:calculateMoment");
-        ok &= luaval_to_number(tolua_S, 3,&arg1, "cc.PhysicsShapeCircle:calculateMoment");
-        ok &= luaval_to_vec2(tolua_S, 4, &arg2, "cc.PhysicsShapeCircle:calculateMoment");
+        ok &= luaval_to_number(tolua_S, 1,&arg0, "cc.PhysicsShapeCircle:calculateMoment");
+        ok &= luaval_to_number(tolua_S, 2,&arg1, "cc.PhysicsShapeCircle:calculateMoment");
+        ok &= luaval_to_vec2(tolua_S, 3, &arg2, "cc.PhysicsShapeCircle:calculateMoment");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeCircle_calculateMoment'", nullptr);
@@ -1953,16 +1941,12 @@ int lua_cocos2dx_physics_PhysicsShapeBox_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsShapeBox",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
         cocos2d::Size arg0;
-        ok &= luaval_to_size(tolua_S, 2, &arg0, "cc.PhysicsShapeBox:create");
+        ok &= luaval_to_size(tolua_S, 1, &arg0, "cc.PhysicsShapeBox:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeBox_create'", nullptr);
@@ -1976,8 +1960,8 @@ int lua_cocos2dx_physics_PhysicsShapeBox_create(lua_State* tolua_S)
     {
         cocos2d::Size arg0;
         cocos2d::PhysicsMaterial arg1;
-        ok &= luaval_to_size(tolua_S, 2, &arg0, "cc.PhysicsShapeBox:create");
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1, "cc.PhysicsShapeBox:create");
+        ok &= luaval_to_size(tolua_S, 1, &arg0, "cc.PhysicsShapeBox:create");
+        ok &= luaval_to_physics_material(tolua_S, 2, &arg1, "cc.PhysicsShapeBox:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeBox_create'", nullptr);
@@ -1992,9 +1976,9 @@ int lua_cocos2dx_physics_PhysicsShapeBox_create(lua_State* tolua_S)
         cocos2d::Size arg0;
         cocos2d::PhysicsMaterial arg1;
         cocos2d::Vec2 arg2;
-        ok &= luaval_to_size(tolua_S, 2, &arg0, "cc.PhysicsShapeBox:create");
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1, "cc.PhysicsShapeBox:create");
-        ok &= luaval_to_vec2(tolua_S, 4, &arg2, "cc.PhysicsShapeBox:create");
+        ok &= luaval_to_size(tolua_S, 1, &arg0, "cc.PhysicsShapeBox:create");
+        ok &= luaval_to_physics_material(tolua_S, 2, &arg1, "cc.PhysicsShapeBox:create");
+        ok &= luaval_to_vec2(tolua_S, 3, &arg2, "cc.PhysicsShapeBox:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeBox_create'", nullptr);
@@ -2010,10 +1994,10 @@ int lua_cocos2dx_physics_PhysicsShapeBox_create(lua_State* tolua_S)
         cocos2d::PhysicsMaterial arg1;
         cocos2d::Vec2 arg2;
         double arg3;
-        ok &= luaval_to_size(tolua_S, 2, &arg0, "cc.PhysicsShapeBox:create");
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1, "cc.PhysicsShapeBox:create");
-        ok &= luaval_to_vec2(tolua_S, 4, &arg2, "cc.PhysicsShapeBox:create");
-        ok &= luaval_to_number(tolua_S, 5,&arg3, "cc.PhysicsShapeBox:create");
+        ok &= luaval_to_size(tolua_S, 1, &arg0, "cc.PhysicsShapeBox:create");
+        ok &= luaval_to_physics_material(tolua_S, 2, &arg1, "cc.PhysicsShapeBox:create");
+        ok &= luaval_to_vec2(tolua_S, 3, &arg2, "cc.PhysicsShapeBox:create");
+        ok &= luaval_to_number(tolua_S, 4,&arg3, "cc.PhysicsShapeBox:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeBox_create'", nullptr);
@@ -2155,18 +2139,14 @@ int lua_cocos2dx_physics_PhysicsShapeEdgeSegment_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsShapeEdgeSegment",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
         cocos2d::Vec2 arg0;
         cocos2d::Vec2 arg1;
-        ok &= luaval_to_vec2(tolua_S, 2, &arg0, "cc.PhysicsShapeEdgeSegment:create");
-        ok &= luaval_to_vec2(tolua_S, 3, &arg1, "cc.PhysicsShapeEdgeSegment:create");
+        ok &= luaval_to_vec2(tolua_S, 1, &arg0, "cc.PhysicsShapeEdgeSegment:create");
+        ok &= luaval_to_vec2(tolua_S, 2, &arg1, "cc.PhysicsShapeEdgeSegment:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeEdgeSegment_create'", nullptr);
@@ -2181,9 +2161,9 @@ int lua_cocos2dx_physics_PhysicsShapeEdgeSegment_create(lua_State* tolua_S)
         cocos2d::Vec2 arg0;
         cocos2d::Vec2 arg1;
         cocos2d::PhysicsMaterial arg2;
-        ok &= luaval_to_vec2(tolua_S, 2, &arg0, "cc.PhysicsShapeEdgeSegment:create");
-        ok &= luaval_to_vec2(tolua_S, 3, &arg1, "cc.PhysicsShapeEdgeSegment:create");
-        ok &= luaval_to_physics_material(tolua_S, 4, &arg2, "cc.PhysicsShapeEdgeSegment:create");
+        ok &= luaval_to_vec2(tolua_S, 1, &arg0, "cc.PhysicsShapeEdgeSegment:create");
+        ok &= luaval_to_vec2(tolua_S, 2, &arg1, "cc.PhysicsShapeEdgeSegment:create");
+        ok &= luaval_to_physics_material(tolua_S, 3, &arg2, "cc.PhysicsShapeEdgeSegment:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeEdgeSegment_create'", nullptr);
@@ -2199,10 +2179,10 @@ int lua_cocos2dx_physics_PhysicsShapeEdgeSegment_create(lua_State* tolua_S)
         cocos2d::Vec2 arg1;
         cocos2d::PhysicsMaterial arg2;
         double arg3;
-        ok &= luaval_to_vec2(tolua_S, 2, &arg0, "cc.PhysicsShapeEdgeSegment:create");
-        ok &= luaval_to_vec2(tolua_S, 3, &arg1, "cc.PhysicsShapeEdgeSegment:create");
-        ok &= luaval_to_physics_material(tolua_S, 4, &arg2, "cc.PhysicsShapeEdgeSegment:create");
-        ok &= luaval_to_number(tolua_S, 5,&arg3, "cc.PhysicsShapeEdgeSegment:create");
+        ok &= luaval_to_vec2(tolua_S, 1, &arg0, "cc.PhysicsShapeEdgeSegment:create");
+        ok &= luaval_to_vec2(tolua_S, 2, &arg1, "cc.PhysicsShapeEdgeSegment:create");
+        ok &= luaval_to_physics_material(tolua_S, 3, &arg2, "cc.PhysicsShapeEdgeSegment:create");
+        ok &= luaval_to_number(tolua_S, 4,&arg3, "cc.PhysicsShapeEdgeSegment:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeEdgeSegment_create'", nullptr);
@@ -2318,16 +2298,12 @@ int lua_cocos2dx_physics_PhysicsShapeEdgeBox_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsShapeEdgeBox",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
         cocos2d::Size arg0;
-        ok &= luaval_to_size(tolua_S, 2, &arg0, "cc.PhysicsShapeEdgeBox:create");
+        ok &= luaval_to_size(tolua_S, 1, &arg0, "cc.PhysicsShapeEdgeBox:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeEdgeBox_create'", nullptr);
@@ -2341,8 +2317,8 @@ int lua_cocos2dx_physics_PhysicsShapeEdgeBox_create(lua_State* tolua_S)
     {
         cocos2d::Size arg0;
         cocos2d::PhysicsMaterial arg1;
-        ok &= luaval_to_size(tolua_S, 2, &arg0, "cc.PhysicsShapeEdgeBox:create");
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1, "cc.PhysicsShapeEdgeBox:create");
+        ok &= luaval_to_size(tolua_S, 1, &arg0, "cc.PhysicsShapeEdgeBox:create");
+        ok &= luaval_to_physics_material(tolua_S, 2, &arg1, "cc.PhysicsShapeEdgeBox:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeEdgeBox_create'", nullptr);
@@ -2357,9 +2333,9 @@ int lua_cocos2dx_physics_PhysicsShapeEdgeBox_create(lua_State* tolua_S)
         cocos2d::Size arg0;
         cocos2d::PhysicsMaterial arg1;
         double arg2;
-        ok &= luaval_to_size(tolua_S, 2, &arg0, "cc.PhysicsShapeEdgeBox:create");
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1, "cc.PhysicsShapeEdgeBox:create");
-        ok &= luaval_to_number(tolua_S, 4,&arg2, "cc.PhysicsShapeEdgeBox:create");
+        ok &= luaval_to_size(tolua_S, 1, &arg0, "cc.PhysicsShapeEdgeBox:create");
+        ok &= luaval_to_physics_material(tolua_S, 2, &arg1, "cc.PhysicsShapeEdgeBox:create");
+        ok &= luaval_to_number(tolua_S, 3,&arg2, "cc.PhysicsShapeEdgeBox:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeEdgeBox_create'", nullptr);
@@ -2375,10 +2351,10 @@ int lua_cocos2dx_physics_PhysicsShapeEdgeBox_create(lua_State* tolua_S)
         cocos2d::PhysicsMaterial arg1;
         double arg2;
         cocos2d::Vec2 arg3;
-        ok &= luaval_to_size(tolua_S, 2, &arg0, "cc.PhysicsShapeEdgeBox:create");
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1, "cc.PhysicsShapeEdgeBox:create");
-        ok &= luaval_to_number(tolua_S, 4,&arg2, "cc.PhysicsShapeEdgeBox:create");
-        ok &= luaval_to_vec2(tolua_S, 5, &arg3, "cc.PhysicsShapeEdgeBox:create");
+        ok &= luaval_to_size(tolua_S, 1, &arg0, "cc.PhysicsShapeEdgeBox:create");
+        ok &= luaval_to_physics_material(tolua_S, 2, &arg1, "cc.PhysicsShapeEdgeBox:create");
+        ok &= luaval_to_number(tolua_S, 3,&arg2, "cc.PhysicsShapeEdgeBox:create");
+        ok &= luaval_to_vec2(tolua_S, 4, &arg3, "cc.PhysicsShapeEdgeBox:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsShapeEdgeBox_create'", nullptr);
@@ -5506,18 +5482,14 @@ int lua_cocos2dx_physics_PhysicsBody_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsBody",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 1)
         {
             double arg0;
-            ok &= luaval_to_number(tolua_S, 2,&arg0, "cc.PhysicsBody:create");
+            ok &= luaval_to_number(tolua_S, 1,&arg0, "cc.PhysicsBody:create");
             if (!ok) { break; }
             cocos2d::PhysicsBody* ret = cocos2d::PhysicsBody::create(arg0);
             object_to_luaval<cocos2d::PhysicsBody>(tolua_S, "cc.PhysicsBody",(cocos2d::PhysicsBody*)ret);
@@ -5525,7 +5497,7 @@ int lua_cocos2dx_physics_PhysicsBody_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 0)
         {
@@ -5535,15 +5507,15 @@ int lua_cocos2dx_physics_PhysicsBody_create(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 2)
         {
             double arg0;
-            ok &= luaval_to_number(tolua_S, 2,&arg0, "cc.PhysicsBody:create");
+            ok &= luaval_to_number(tolua_S, 1,&arg0, "cc.PhysicsBody:create");
             if (!ok) { break; }
             double arg1;
-            ok &= luaval_to_number(tolua_S, 3,&arg1, "cc.PhysicsBody:create");
+            ok &= luaval_to_number(tolua_S, 2,&arg1, "cc.PhysicsBody:create");
             if (!ok) { break; }
             cocos2d::PhysicsBody* ret = cocos2d::PhysicsBody::create(arg0, arg1);
             object_to_luaval<cocos2d::PhysicsBody>(tolua_S, "cc.PhysicsBody",(cocos2d::PhysicsBody*)ret);
@@ -5568,16 +5540,12 @@ int lua_cocos2dx_physics_PhysicsBody_createCircle(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsBody",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
         double arg0;
-        ok &= luaval_to_number(tolua_S, 2,&arg0, "cc.PhysicsBody:createCircle");
+        ok &= luaval_to_number(tolua_S, 1,&arg0, "cc.PhysicsBody:createCircle");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsBody_createCircle'", nullptr);
@@ -5591,8 +5559,8 @@ int lua_cocos2dx_physics_PhysicsBody_createCircle(lua_State* tolua_S)
     {
         double arg0;
         cocos2d::PhysicsMaterial arg1;
-        ok &= luaval_to_number(tolua_S, 2,&arg0, "cc.PhysicsBody:createCircle");
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1, "cc.PhysicsBody:createCircle");
+        ok &= luaval_to_number(tolua_S, 1,&arg0, "cc.PhysicsBody:createCircle");
+        ok &= luaval_to_physics_material(tolua_S, 2, &arg1, "cc.PhysicsBody:createCircle");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsBody_createCircle'", nullptr);
@@ -5607,9 +5575,9 @@ int lua_cocos2dx_physics_PhysicsBody_createCircle(lua_State* tolua_S)
         double arg0;
         cocos2d::PhysicsMaterial arg1;
         cocos2d::Vec2 arg2;
-        ok &= luaval_to_number(tolua_S, 2,&arg0, "cc.PhysicsBody:createCircle");
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1, "cc.PhysicsBody:createCircle");
-        ok &= luaval_to_vec2(tolua_S, 4, &arg2, "cc.PhysicsBody:createCircle");
+        ok &= luaval_to_number(tolua_S, 1,&arg0, "cc.PhysicsBody:createCircle");
+        ok &= luaval_to_physics_material(tolua_S, 2, &arg1, "cc.PhysicsBody:createCircle");
+        ok &= luaval_to_vec2(tolua_S, 3, &arg2, "cc.PhysicsBody:createCircle");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsBody_createCircle'", nullptr);
@@ -5636,16 +5604,12 @@ int lua_cocos2dx_physics_PhysicsBody_createBox(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsBody",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
         cocos2d::Size arg0;
-        ok &= luaval_to_size(tolua_S, 2, &arg0, "cc.PhysicsBody:createBox");
+        ok &= luaval_to_size(tolua_S, 1, &arg0, "cc.PhysicsBody:createBox");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsBody_createBox'", nullptr);
@@ -5659,8 +5623,8 @@ int lua_cocos2dx_physics_PhysicsBody_createBox(lua_State* tolua_S)
     {
         cocos2d::Size arg0;
         cocos2d::PhysicsMaterial arg1;
-        ok &= luaval_to_size(tolua_S, 2, &arg0, "cc.PhysicsBody:createBox");
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1, "cc.PhysicsBody:createBox");
+        ok &= luaval_to_size(tolua_S, 1, &arg0, "cc.PhysicsBody:createBox");
+        ok &= luaval_to_physics_material(tolua_S, 2, &arg1, "cc.PhysicsBody:createBox");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsBody_createBox'", nullptr);
@@ -5675,9 +5639,9 @@ int lua_cocos2dx_physics_PhysicsBody_createBox(lua_State* tolua_S)
         cocos2d::Size arg0;
         cocos2d::PhysicsMaterial arg1;
         cocos2d::Vec2 arg2;
-        ok &= luaval_to_size(tolua_S, 2, &arg0, "cc.PhysicsBody:createBox");
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1, "cc.PhysicsBody:createBox");
-        ok &= luaval_to_vec2(tolua_S, 4, &arg2, "cc.PhysicsBody:createBox");
+        ok &= luaval_to_size(tolua_S, 1, &arg0, "cc.PhysicsBody:createBox");
+        ok &= luaval_to_physics_material(tolua_S, 2, &arg1, "cc.PhysicsBody:createBox");
+        ok &= luaval_to_vec2(tolua_S, 3, &arg2, "cc.PhysicsBody:createBox");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsBody_createBox'", nullptr);
@@ -5704,18 +5668,14 @@ int lua_cocos2dx_physics_PhysicsBody_createEdgeSegment(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsBody",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
         cocos2d::Vec2 arg0;
         cocos2d::Vec2 arg1;
-        ok &= luaval_to_vec2(tolua_S, 2, &arg0, "cc.PhysicsBody:createEdgeSegment");
-        ok &= luaval_to_vec2(tolua_S, 3, &arg1, "cc.PhysicsBody:createEdgeSegment");
+        ok &= luaval_to_vec2(tolua_S, 1, &arg0, "cc.PhysicsBody:createEdgeSegment");
+        ok &= luaval_to_vec2(tolua_S, 2, &arg1, "cc.PhysicsBody:createEdgeSegment");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsBody_createEdgeSegment'", nullptr);
@@ -5730,9 +5690,9 @@ int lua_cocos2dx_physics_PhysicsBody_createEdgeSegment(lua_State* tolua_S)
         cocos2d::Vec2 arg0;
         cocos2d::Vec2 arg1;
         cocos2d::PhysicsMaterial arg2;
-        ok &= luaval_to_vec2(tolua_S, 2, &arg0, "cc.PhysicsBody:createEdgeSegment");
-        ok &= luaval_to_vec2(tolua_S, 3, &arg1, "cc.PhysicsBody:createEdgeSegment");
-        ok &= luaval_to_physics_material(tolua_S, 4, &arg2, "cc.PhysicsBody:createEdgeSegment");
+        ok &= luaval_to_vec2(tolua_S, 1, &arg0, "cc.PhysicsBody:createEdgeSegment");
+        ok &= luaval_to_vec2(tolua_S, 2, &arg1, "cc.PhysicsBody:createEdgeSegment");
+        ok &= luaval_to_physics_material(tolua_S, 3, &arg2, "cc.PhysicsBody:createEdgeSegment");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsBody_createEdgeSegment'", nullptr);
@@ -5748,10 +5708,10 @@ int lua_cocos2dx_physics_PhysicsBody_createEdgeSegment(lua_State* tolua_S)
         cocos2d::Vec2 arg1;
         cocos2d::PhysicsMaterial arg2;
         double arg3;
-        ok &= luaval_to_vec2(tolua_S, 2, &arg0, "cc.PhysicsBody:createEdgeSegment");
-        ok &= luaval_to_vec2(tolua_S, 3, &arg1, "cc.PhysicsBody:createEdgeSegment");
-        ok &= luaval_to_physics_material(tolua_S, 4, &arg2, "cc.PhysicsBody:createEdgeSegment");
-        ok &= luaval_to_number(tolua_S, 5,&arg3, "cc.PhysicsBody:createEdgeSegment");
+        ok &= luaval_to_vec2(tolua_S, 1, &arg0, "cc.PhysicsBody:createEdgeSegment");
+        ok &= luaval_to_vec2(tolua_S, 2, &arg1, "cc.PhysicsBody:createEdgeSegment");
+        ok &= luaval_to_physics_material(tolua_S, 3, &arg2, "cc.PhysicsBody:createEdgeSegment");
+        ok &= luaval_to_number(tolua_S, 4,&arg3, "cc.PhysicsBody:createEdgeSegment");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsBody_createEdgeSegment'", nullptr);
@@ -5778,16 +5738,12 @@ int lua_cocos2dx_physics_PhysicsBody_createEdgeBox(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsBody",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
         cocos2d::Size arg0;
-        ok &= luaval_to_size(tolua_S, 2, &arg0, "cc.PhysicsBody:createEdgeBox");
+        ok &= luaval_to_size(tolua_S, 1, &arg0, "cc.PhysicsBody:createEdgeBox");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsBody_createEdgeBox'", nullptr);
@@ -5801,8 +5757,8 @@ int lua_cocos2dx_physics_PhysicsBody_createEdgeBox(lua_State* tolua_S)
     {
         cocos2d::Size arg0;
         cocos2d::PhysicsMaterial arg1;
-        ok &= luaval_to_size(tolua_S, 2, &arg0, "cc.PhysicsBody:createEdgeBox");
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1, "cc.PhysicsBody:createEdgeBox");
+        ok &= luaval_to_size(tolua_S, 1, &arg0, "cc.PhysicsBody:createEdgeBox");
+        ok &= luaval_to_physics_material(tolua_S, 2, &arg1, "cc.PhysicsBody:createEdgeBox");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsBody_createEdgeBox'", nullptr);
@@ -5817,9 +5773,9 @@ int lua_cocos2dx_physics_PhysicsBody_createEdgeBox(lua_State* tolua_S)
         cocos2d::Size arg0;
         cocos2d::PhysicsMaterial arg1;
         double arg2;
-        ok &= luaval_to_size(tolua_S, 2, &arg0, "cc.PhysicsBody:createEdgeBox");
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1, "cc.PhysicsBody:createEdgeBox");
-        ok &= luaval_to_number(tolua_S, 4,&arg2, "cc.PhysicsBody:createEdgeBox");
+        ok &= luaval_to_size(tolua_S, 1, &arg0, "cc.PhysicsBody:createEdgeBox");
+        ok &= luaval_to_physics_material(tolua_S, 2, &arg1, "cc.PhysicsBody:createEdgeBox");
+        ok &= luaval_to_number(tolua_S, 3,&arg2, "cc.PhysicsBody:createEdgeBox");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsBody_createEdgeBox'", nullptr);
@@ -5835,10 +5791,10 @@ int lua_cocos2dx_physics_PhysicsBody_createEdgeBox(lua_State* tolua_S)
         cocos2d::PhysicsMaterial arg1;
         double arg2;
         cocos2d::Vec2 arg3;
-        ok &= luaval_to_size(tolua_S, 2, &arg0, "cc.PhysicsBody:createEdgeBox");
-        ok &= luaval_to_physics_material(tolua_S, 3, &arg1, "cc.PhysicsBody:createEdgeBox");
-        ok &= luaval_to_number(tolua_S, 4,&arg2, "cc.PhysicsBody:createEdgeBox");
-        ok &= luaval_to_vec2(tolua_S, 5, &arg3, "cc.PhysicsBody:createEdgeBox");
+        ok &= luaval_to_size(tolua_S, 1, &arg0, "cc.PhysicsBody:createEdgeBox");
+        ok &= luaval_to_physics_material(tolua_S, 2, &arg1, "cc.PhysicsBody:createEdgeBox");
+        ok &= luaval_to_number(tolua_S, 3,&arg2, "cc.PhysicsBody:createEdgeBox");
+        ok &= luaval_to_vec2(tolua_S, 4, &arg3, "cc.PhysicsBody:createEdgeBox");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsBody_createEdgeBox'", nullptr);
@@ -6639,11 +6595,7 @@ int lua_cocos2dx_physics_EventListenerPhysicsContact_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.EventListenerPhysicsContact",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -6746,18 +6698,14 @@ int lua_cocos2dx_physics_EventListenerPhysicsContactWithBodies_create(lua_State*
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.EventListenerPhysicsContactWithBodies",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
         cocos2d::PhysicsBody* arg0;
         cocos2d::PhysicsBody* arg1;
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg0, "cc.EventListenerPhysicsContactWithBodies:create");
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 3, "cc.PhysicsBody",&arg1, "cc.EventListenerPhysicsContactWithBodies:create");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 1, "cc.PhysicsBody",&arg0, "cc.EventListenerPhysicsContactWithBodies:create");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg1, "cc.EventListenerPhysicsContactWithBodies:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_EventListenerPhysicsContactWithBodies_create'", nullptr);
@@ -6858,18 +6806,14 @@ int lua_cocos2dx_physics_EventListenerPhysicsContactWithShapes_create(lua_State*
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.EventListenerPhysicsContactWithShapes",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
         cocos2d::PhysicsShape* arg0;
         cocos2d::PhysicsShape* arg1;
-        ok &= luaval_to_object<cocos2d::PhysicsShape>(tolua_S, 2, "cc.PhysicsShape",&arg0, "cc.EventListenerPhysicsContactWithShapes:create");
-        ok &= luaval_to_object<cocos2d::PhysicsShape>(tolua_S, 3, "cc.PhysicsShape",&arg1, "cc.EventListenerPhysicsContactWithShapes:create");
+        ok &= luaval_to_object<cocos2d::PhysicsShape>(tolua_S, 1, "cc.PhysicsShape",&arg0, "cc.EventListenerPhysicsContactWithShapes:create");
+        ok &= luaval_to_object<cocos2d::PhysicsShape>(tolua_S, 2, "cc.PhysicsShape",&arg1, "cc.EventListenerPhysicsContactWithShapes:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_EventListenerPhysicsContactWithShapes_create'", nullptr);
@@ -6970,16 +6914,12 @@ int lua_cocos2dx_physics_EventListenerPhysicsContactWithGroup_create(lua_State* 
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.EventListenerPhysicsContactWithGroup",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
         int arg0;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "cc.EventListenerPhysicsContactWithGroup:create");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "cc.EventListenerPhysicsContactWithGroup:create");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_EventListenerPhysicsContactWithGroup_create'", nullptr);
@@ -7681,20 +7621,16 @@ int lua_cocos2dx_physics_PhysicsJointFixed_construct(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsJointFixed",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 3)
     {
         cocos2d::PhysicsBody* arg0;
         cocos2d::PhysicsBody* arg1;
         cocos2d::Vec2 arg2;
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg0, "cc.PhysicsJointFixed:construct");
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 3, "cc.PhysicsBody",&arg1, "cc.PhysicsJointFixed:construct");
-        ok &= luaval_to_vec2(tolua_S, 4, &arg2, "cc.PhysicsJointFixed:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 1, "cc.PhysicsBody",&arg0, "cc.PhysicsJointFixed:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg1, "cc.PhysicsJointFixed:construct");
+        ok &= luaval_to_vec2(tolua_S, 3, &arg2, "cc.PhysicsJointFixed:construct");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsJointFixed_construct'", nullptr);
@@ -8176,33 +8112,29 @@ int lua_cocos2dx_physics_PhysicsJointLimit_construct(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsJointLimit",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 6)
         {
             cocos2d::PhysicsBody* arg0;
-            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg0, "cc.PhysicsJointLimit:construct");
+            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 1, "cc.PhysicsBody",&arg0, "cc.PhysicsJointLimit:construct");
             if (!ok) { break; }
             cocos2d::PhysicsBody* arg1;
-            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 3, "cc.PhysicsBody",&arg1, "cc.PhysicsJointLimit:construct");
+            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg1, "cc.PhysicsJointLimit:construct");
             if (!ok) { break; }
             cocos2d::Vec2 arg2;
-            ok &= luaval_to_vec2(tolua_S, 4, &arg2, "cc.PhysicsJointLimit:construct");
+            ok &= luaval_to_vec2(tolua_S, 3, &arg2, "cc.PhysicsJointLimit:construct");
             if (!ok) { break; }
             cocos2d::Vec2 arg3;
-            ok &= luaval_to_vec2(tolua_S, 5, &arg3, "cc.PhysicsJointLimit:construct");
+            ok &= luaval_to_vec2(tolua_S, 4, &arg3, "cc.PhysicsJointLimit:construct");
             if (!ok) { break; }
             double arg4;
-            ok &= luaval_to_number(tolua_S, 6,&arg4, "cc.PhysicsJointLimit:construct");
+            ok &= luaval_to_number(tolua_S, 5,&arg4, "cc.PhysicsJointLimit:construct");
             if (!ok) { break; }
             double arg5;
-            ok &= luaval_to_number(tolua_S, 7,&arg5, "cc.PhysicsJointLimit:construct");
+            ok &= luaval_to_number(tolua_S, 6,&arg5, "cc.PhysicsJointLimit:construct");
             if (!ok) { break; }
             cocos2d::PhysicsJointLimit* ret = cocos2d::PhysicsJointLimit::construct(arg0, arg1, arg2, arg3, arg4, arg5);
             object_to_luaval<cocos2d::PhysicsJointLimit>(tolua_S, "cc.PhysicsJointLimit",(cocos2d::PhysicsJointLimit*)ret);
@@ -8210,21 +8142,21 @@ int lua_cocos2dx_physics_PhysicsJointLimit_construct(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 4)
         {
             cocos2d::PhysicsBody* arg0;
-            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg0, "cc.PhysicsJointLimit:construct");
+            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 1, "cc.PhysicsBody",&arg0, "cc.PhysicsJointLimit:construct");
             if (!ok) { break; }
             cocos2d::PhysicsBody* arg1;
-            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 3, "cc.PhysicsBody",&arg1, "cc.PhysicsJointLimit:construct");
+            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg1, "cc.PhysicsJointLimit:construct");
             if (!ok) { break; }
             cocos2d::Vec2 arg2;
-            ok &= luaval_to_vec2(tolua_S, 4, &arg2, "cc.PhysicsJointLimit:construct");
+            ok &= luaval_to_vec2(tolua_S, 3, &arg2, "cc.PhysicsJointLimit:construct");
             if (!ok) { break; }
             cocos2d::Vec2 arg3;
-            ok &= luaval_to_vec2(tolua_S, 5, &arg3, "cc.PhysicsJointLimit:construct");
+            ok &= luaval_to_vec2(tolua_S, 4, &arg3, "cc.PhysicsJointLimit:construct");
             if (!ok) { break; }
             cocos2d::PhysicsJointLimit* ret = cocos2d::PhysicsJointLimit::construct(arg0, arg1, arg2, arg3);
             object_to_luaval<cocos2d::PhysicsJointLimit>(tolua_S, "cc.PhysicsJointLimit",(cocos2d::PhysicsJointLimit*)ret);
@@ -8324,27 +8256,23 @@ int lua_cocos2dx_physics_PhysicsJointPin_construct(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsJointPin",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 4)
         {
             cocos2d::PhysicsBody* arg0;
-            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg0, "cc.PhysicsJointPin:construct");
+            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 1, "cc.PhysicsBody",&arg0, "cc.PhysicsJointPin:construct");
             if (!ok) { break; }
             cocos2d::PhysicsBody* arg1;
-            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 3, "cc.PhysicsBody",&arg1, "cc.PhysicsJointPin:construct");
+            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg1, "cc.PhysicsJointPin:construct");
             if (!ok) { break; }
             cocos2d::Vec2 arg2;
-            ok &= luaval_to_vec2(tolua_S, 4, &arg2, "cc.PhysicsJointPin:construct");
+            ok &= luaval_to_vec2(tolua_S, 3, &arg2, "cc.PhysicsJointPin:construct");
             if (!ok) { break; }
             cocos2d::Vec2 arg3;
-            ok &= luaval_to_vec2(tolua_S, 5, &arg3, "cc.PhysicsJointPin:construct");
+            ok &= luaval_to_vec2(tolua_S, 4, &arg3, "cc.PhysicsJointPin:construct");
             if (!ok) { break; }
             cocos2d::PhysicsJointPin* ret = cocos2d::PhysicsJointPin::construct(arg0, arg1, arg2, arg3);
             object_to_luaval<cocos2d::PhysicsJointPin>(tolua_S, "cc.PhysicsJointPin",(cocos2d::PhysicsJointPin*)ret);
@@ -8352,18 +8280,18 @@ int lua_cocos2dx_physics_PhysicsJointPin_construct(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 3)
         {
             cocos2d::PhysicsBody* arg0;
-            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg0, "cc.PhysicsJointPin:construct");
+            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 1, "cc.PhysicsBody",&arg0, "cc.PhysicsJointPin:construct");
             if (!ok) { break; }
             cocos2d::PhysicsBody* arg1;
-            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 3, "cc.PhysicsBody",&arg1, "cc.PhysicsJointPin:construct");
+            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg1, "cc.PhysicsJointPin:construct");
             if (!ok) { break; }
             cocos2d::Vec2 arg2;
-            ok &= luaval_to_vec2(tolua_S, 4, &arg2, "cc.PhysicsJointPin:construct");
+            ok &= luaval_to_vec2(tolua_S, 3, &arg2, "cc.PhysicsJointPin:construct");
             if (!ok) { break; }
             cocos2d::PhysicsJointPin* ret = cocos2d::PhysicsJointPin::construct(arg0, arg1, arg2);
             object_to_luaval<cocos2d::PhysicsJointPin>(tolua_S, "cc.PhysicsJointPin",(cocos2d::PhysicsJointPin*)ret);
@@ -8553,11 +8481,7 @@ int lua_cocos2dx_physics_PhysicsJointDistance_construct(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsJointDistance",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 4)
     {
@@ -8565,10 +8489,10 @@ int lua_cocos2dx_physics_PhysicsJointDistance_construct(lua_State* tolua_S)
         cocos2d::PhysicsBody* arg1;
         cocos2d::Vec2 arg2;
         cocos2d::Vec2 arg3;
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg0, "cc.PhysicsJointDistance:construct");
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 3, "cc.PhysicsBody",&arg1, "cc.PhysicsJointDistance:construct");
-        ok &= luaval_to_vec2(tolua_S, 4, &arg2, "cc.PhysicsJointDistance:construct");
-        ok &= luaval_to_vec2(tolua_S, 5, &arg3, "cc.PhysicsJointDistance:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 1, "cc.PhysicsBody",&arg0, "cc.PhysicsJointDistance:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg1, "cc.PhysicsJointDistance:construct");
+        ok &= luaval_to_vec2(tolua_S, 3, &arg2, "cc.PhysicsJointDistance:construct");
+        ok &= luaval_to_vec2(tolua_S, 4, &arg3, "cc.PhysicsJointDistance:construct");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsJointDistance_construct'", nullptr);
@@ -9150,11 +9074,7 @@ int lua_cocos2dx_physics_PhysicsJointSpring_construct(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsJointSpring",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 6)
     {
@@ -9164,12 +9084,12 @@ int lua_cocos2dx_physics_PhysicsJointSpring_construct(lua_State* tolua_S)
         cocos2d::Vec2 arg3;
         double arg4;
         double arg5;
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg0, "cc.PhysicsJointSpring:construct");
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 3, "cc.PhysicsBody",&arg1, "cc.PhysicsJointSpring:construct");
-        ok &= luaval_to_vec2(tolua_S, 4, &arg2, "cc.PhysicsJointSpring:construct");
-        ok &= luaval_to_vec2(tolua_S, 5, &arg3, "cc.PhysicsJointSpring:construct");
-        ok &= luaval_to_number(tolua_S, 6,&arg4, "cc.PhysicsJointSpring:construct");
-        ok &= luaval_to_number(tolua_S, 7,&arg5, "cc.PhysicsJointSpring:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 1, "cc.PhysicsBody",&arg0, "cc.PhysicsJointSpring:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg1, "cc.PhysicsJointSpring:construct");
+        ok &= luaval_to_vec2(tolua_S, 3, &arg2, "cc.PhysicsJointSpring:construct");
+        ok &= luaval_to_vec2(tolua_S, 4, &arg3, "cc.PhysicsJointSpring:construct");
+        ok &= luaval_to_number(tolua_S, 5,&arg4, "cc.PhysicsJointSpring:construct");
+        ok &= luaval_to_number(tolua_S, 6,&arg5, "cc.PhysicsJointSpring:construct");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsJointSpring_construct'", nullptr);
@@ -9565,11 +9485,7 @@ int lua_cocos2dx_physics_PhysicsJointGroove_construct(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsJointGroove",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 5)
     {
@@ -9578,11 +9494,11 @@ int lua_cocos2dx_physics_PhysicsJointGroove_construct(lua_State* tolua_S)
         cocos2d::Vec2 arg2;
         cocos2d::Vec2 arg3;
         cocos2d::Vec2 arg4;
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg0, "cc.PhysicsJointGroove:construct");
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 3, "cc.PhysicsBody",&arg1, "cc.PhysicsJointGroove:construct");
-        ok &= luaval_to_vec2(tolua_S, 4, &arg2, "cc.PhysicsJointGroove:construct");
-        ok &= luaval_to_vec2(tolua_S, 5, &arg3, "cc.PhysicsJointGroove:construct");
-        ok &= luaval_to_vec2(tolua_S, 6, &arg4, "cc.PhysicsJointGroove:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 1, "cc.PhysicsBody",&arg0, "cc.PhysicsJointGroove:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg1, "cc.PhysicsJointGroove:construct");
+        ok &= luaval_to_vec2(tolua_S, 3, &arg2, "cc.PhysicsJointGroove:construct");
+        ok &= luaval_to_vec2(tolua_S, 4, &arg3, "cc.PhysicsJointGroove:construct");
+        ok &= luaval_to_vec2(tolua_S, 5, &arg4, "cc.PhysicsJointGroove:construct");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsJointGroove_construct'", nullptr);
@@ -9974,11 +9890,7 @@ int lua_cocos2dx_physics_PhysicsJointRotarySpring_construct(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsJointRotarySpring",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 4)
     {
@@ -9986,10 +9898,10 @@ int lua_cocos2dx_physics_PhysicsJointRotarySpring_construct(lua_State* tolua_S)
         cocos2d::PhysicsBody* arg1;
         double arg2;
         double arg3;
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg0, "cc.PhysicsJointRotarySpring:construct");
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 3, "cc.PhysicsBody",&arg1, "cc.PhysicsJointRotarySpring:construct");
-        ok &= luaval_to_number(tolua_S, 4,&arg2, "cc.PhysicsJointRotarySpring:construct");
-        ok &= luaval_to_number(tolua_S, 5,&arg3, "cc.PhysicsJointRotarySpring:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 1, "cc.PhysicsBody",&arg0, "cc.PhysicsJointRotarySpring:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg1, "cc.PhysicsJointRotarySpring:construct");
+        ok &= luaval_to_number(tolua_S, 3,&arg2, "cc.PhysicsJointRotarySpring:construct");
+        ok &= luaval_to_number(tolua_S, 4,&arg3, "cc.PhysicsJointRotarySpring:construct");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsJointRotarySpring_construct'", nullptr);
@@ -10283,21 +10195,17 @@ int lua_cocos2dx_physics_PhysicsJointRotaryLimit_construct(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsJointRotaryLimit",0,&tolua_err)) goto tolua_lerror;
-#endif
+    argc = lua_gettop(tolua_S);
 
-    argc = lua_gettop(tolua_S)-1;
-
-    do 
+    do
     {
         if (argc == 2)
         {
             cocos2d::PhysicsBody* arg0;
-            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg0, "cc.PhysicsJointRotaryLimit:construct");
+            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 1, "cc.PhysicsBody",&arg0, "cc.PhysicsJointRotaryLimit:construct");
             if (!ok) { break; }
             cocos2d::PhysicsBody* arg1;
-            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 3, "cc.PhysicsBody",&arg1, "cc.PhysicsJointRotaryLimit:construct");
+            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg1, "cc.PhysicsJointRotaryLimit:construct");
             if (!ok) { break; }
             cocos2d::PhysicsJointRotaryLimit* ret = cocos2d::PhysicsJointRotaryLimit::construct(arg0, arg1);
             object_to_luaval<cocos2d::PhysicsJointRotaryLimit>(tolua_S, "cc.PhysicsJointRotaryLimit",(cocos2d::PhysicsJointRotaryLimit*)ret);
@@ -10305,21 +10213,21 @@ int lua_cocos2dx_physics_PhysicsJointRotaryLimit_construct(lua_State* tolua_S)
         }
     } while (0);
     ok  = true;
-    do 
+    do
     {
         if (argc == 4)
         {
             cocos2d::PhysicsBody* arg0;
-            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg0, "cc.PhysicsJointRotaryLimit:construct");
+            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 1, "cc.PhysicsBody",&arg0, "cc.PhysicsJointRotaryLimit:construct");
             if (!ok) { break; }
             cocos2d::PhysicsBody* arg1;
-            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 3, "cc.PhysicsBody",&arg1, "cc.PhysicsJointRotaryLimit:construct");
+            ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg1, "cc.PhysicsJointRotaryLimit:construct");
             if (!ok) { break; }
             double arg2;
-            ok &= luaval_to_number(tolua_S, 4,&arg2, "cc.PhysicsJointRotaryLimit:construct");
+            ok &= luaval_to_number(tolua_S, 3,&arg2, "cc.PhysicsJointRotaryLimit:construct");
             if (!ok) { break; }
             double arg3;
-            ok &= luaval_to_number(tolua_S, 5,&arg3, "cc.PhysicsJointRotaryLimit:construct");
+            ok &= luaval_to_number(tolua_S, 4,&arg3, "cc.PhysicsJointRotaryLimit:construct");
             if (!ok) { break; }
             cocos2d::PhysicsJointRotaryLimit* ret = cocos2d::PhysicsJointRotaryLimit::construct(arg0, arg1, arg2, arg3);
             object_to_luaval<cocos2d::PhysicsJointRotaryLimit>(tolua_S, "cc.PhysicsJointRotaryLimit",(cocos2d::PhysicsJointRotaryLimit*)ret);
@@ -10707,11 +10615,7 @@ int lua_cocos2dx_physics_PhysicsJointRatchet_construct(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsJointRatchet",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 4)
     {
@@ -10719,10 +10623,10 @@ int lua_cocos2dx_physics_PhysicsJointRatchet_construct(lua_State* tolua_S)
         cocos2d::PhysicsBody* arg1;
         double arg2;
         double arg3;
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg0, "cc.PhysicsJointRatchet:construct");
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 3, "cc.PhysicsBody",&arg1, "cc.PhysicsJointRatchet:construct");
-        ok &= luaval_to_number(tolua_S, 4,&arg2, "cc.PhysicsJointRatchet:construct");
-        ok &= luaval_to_number(tolua_S, 5,&arg3, "cc.PhysicsJointRatchet:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 1, "cc.PhysicsBody",&arg0, "cc.PhysicsJointRatchet:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg1, "cc.PhysicsJointRatchet:construct");
+        ok &= luaval_to_number(tolua_S, 3,&arg2, "cc.PhysicsJointRatchet:construct");
+        ok &= luaval_to_number(tolua_S, 4,&arg3, "cc.PhysicsJointRatchet:construct");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsJointRatchet_construct'", nullptr);
@@ -11017,11 +10921,7 @@ int lua_cocos2dx_physics_PhysicsJointGear_construct(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsJointGear",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 4)
     {
@@ -11029,10 +10929,10 @@ int lua_cocos2dx_physics_PhysicsJointGear_construct(lua_State* tolua_S)
         cocos2d::PhysicsBody* arg1;
         double arg2;
         double arg3;
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg0, "cc.PhysicsJointGear:construct");
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 3, "cc.PhysicsBody",&arg1, "cc.PhysicsJointGear:construct");
-        ok &= luaval_to_number(tolua_S, 4,&arg2, "cc.PhysicsJointGear:construct");
-        ok &= luaval_to_number(tolua_S, 5,&arg3, "cc.PhysicsJointGear:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 1, "cc.PhysicsBody",&arg0, "cc.PhysicsJointGear:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg1, "cc.PhysicsJointGear:construct");
+        ok &= luaval_to_number(tolua_S, 3,&arg2, "cc.PhysicsJointGear:construct");
+        ok &= luaval_to_number(tolua_S, 4,&arg3, "cc.PhysicsJointGear:construct");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsJointGear_construct'", nullptr);
@@ -11228,20 +11128,16 @@ int lua_cocos2dx_physics_PhysicsJointMotor_construct(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.PhysicsJointMotor",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 3)
     {
         cocos2d::PhysicsBody* arg0;
         cocos2d::PhysicsBody* arg1;
         double arg2;
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg0, "cc.PhysicsJointMotor:construct");
-        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 3, "cc.PhysicsBody",&arg1, "cc.PhysicsJointMotor:construct");
-        ok &= luaval_to_number(tolua_S, 4,&arg2, "cc.PhysicsJointMotor:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 1, "cc.PhysicsBody",&arg0, "cc.PhysicsJointMotor:construct");
+        ok &= luaval_to_object<cocos2d::PhysicsBody>(tolua_S, 2, "cc.PhysicsBody",&arg1, "cc.PhysicsJointMotor:construct");
+        ok &= luaval_to_number(tolua_S, 3,&arg2, "cc.PhysicsJointMotor:construct");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsJointMotor_construct'", nullptr);

@@ -8,11 +8,7 @@ int ${signature_name}(lua_State* tolua_S)
     tolua_Error tolua_err;
 \#endif
 
-\#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"${generator.scriptname_from_native($namespaced_class_name, $namespace_name)}",0,&tolua_err)) goto tolua_lerror;
-\#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
 #if len($arguments) >= $min_args
     #set arg_count = len($arguments)
@@ -34,7 +30,7 @@ int ${signature_name}(lua_State* tolua_S)
         ${arg.to_native({"generator": $generator,
                          "in_value": "argv[" + str(count) + "]",
                          "out_value": "arg" + str(count),
-                         "arg_idx": $count+2,
+                         "arg_idx": $count+1,
                          "class_name": $class_name,
                          "lua_namespaced_class_name": $generator.scriptname_from_native($namespaced_class_name, $namespace_name),
                          "func_name": $func_name,
@@ -70,8 +66,8 @@ int ${signature_name}(lua_State* tolua_S)
         return 1;
         #else
         ${namespaced_class_name}::${func_name}($arg_list);
-        lua_settop(tolua_S, 1);
-        return 1;
+        lua_settop(tolua_S, 0);
+        return 0;
         #end if
     }
         #set $arg_idx = $arg_idx + 1
