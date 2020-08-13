@@ -45,7 +45,7 @@ THE SOFTWARE.
 #endif
 #include <sys/stat.h>
 
-#include "pugixml/pugixml_imp.hpp"
+#include "pugixml/pugixml.hpp"
 #define DECLARE_GUARD (void)0
 
 using namespace CryptoPP;

@@ -102,6 +102,7 @@ set(COCOS_UI_HEADER
     ui/UITextAtlas.h
     ui/UITextBMFont.h
     ui/UITextField.h
+    ui/UITextFieldEx.h
     ui/UIVBox.h
     ui/UIWidget.h
     ui/UIQrCode/UIQrCode.h
@@ -145,6 +146,7 @@ set(COCOS_UI_SRC
     ui/UITextAtlas.cpp
     ui/UITextBMFont.cpp
     ui/UITextField.cpp
+    ui/UITextFieldEx.cpp
     ui/UIVBox.cpp
     ui/UIWidget.cpp
     ui/UILayoutComponent.cpp

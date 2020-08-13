@@ -3,7 +3,6 @@
 #define __QRCODE_H__
 
 #include "ui/UIWidget.h"
-#include "cocos2d.h"
 
 NS_CC_BEGIN
 namespace ui {
