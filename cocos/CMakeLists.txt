@@ -116,6 +116,10 @@ set(COCOS_SRC cocos2d.cpp
 
 list(APPEND COCOS_SRC ${COCOS_HEADER})
 
+if(MSVC)
+list(APPEND COCOS_SRC cocos.rc resource.h)
+endif()
+
 add_library(${EGNX_CORE_LIB} ${COCOS_SRC})
 
 # if (NOT APPLE)
