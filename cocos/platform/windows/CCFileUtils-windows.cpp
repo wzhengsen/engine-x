@@ -26,10 +26,7 @@ THE SOFTWARE.
 #include "platform/windows/CCFileUtils-windows.h"
 #include "platform/CCCommon.h"
 #include "tinydir/tinydir.h"
-#include "external/xxtea/xxtea.h"
-#include "cryptopp/aes.h"
-#include "cryptopp/modes.h"
-#include "cryptopp/filters.h"
+#include "openssl/aes.h"
 #include <Shlobj.h>
 #include <cstdlib>
 #include <regex>
@@ -42,7 +39,6 @@ THE SOFTWARE.
 #include "windows-specific/ntcvt/ntcvt.hpp"
 
 using namespace std;
-using namespace CryptoPP;
 
 #define DECLARE_GUARD (void)0 // std::lock_guard<std::recursive_mutex> mutexGuard(_mutex)
 
@@ -183,7 +179,6 @@ FileUtils::Status FileUtilsWin32::getContents(const std::string& filename, Resiz
     static char preSignBuffer[EncryptSignLen + 1] = { 0 };
     ::memset(preSignBuffer, 0, EncryptSignLen + 1);
 
-    bool isXXTea = false;
     bool isAes = false;
     DWORD _ = 0;
     BOOL successed = ::ReadFile(fileHandle, preSignBuffer, EncryptSignLen, &_, nullptr);
@@ -193,11 +188,7 @@ FileUtils::Status FileUtilsWin32::getContents(const std::string& filename, Resiz
         return FileUtils::Status::ReadFailed;
     }
 
-    if (::memcmp(preSignBuffer, XXTEA_Sign, EncryptSignLen) == 0) {
-        size -= EncryptSignLen;
-        isXXTea = true;
-    }
-    else if (::memcmp(preSignBuffer, AES_Sign, EncryptSignLen) == 0) {
+    if (::memcmp(preSignBuffer, AES_Sign, EncryptSignLen) == 0) {
         size -= EncryptSignLen;
         isAes = true;
     }
@@ -219,38 +210,12 @@ FileUtils::Status FileUtilsWin32::getContents(const std::string& filename, Resiz
 		return FileUtils::Status::ReadFailed;
     }
 
-    if (isXXTea) {
-        xxtea_long len = 0;
-        unsigned char* result = xxtea_decrypt(static_cast<unsigned char*>(buffer->buffer()),
-            size,
-            (unsigned char*)XXTEA_SignPassword,
-            ::strlen(XXTEA_SignPassword),
-            &len);
-        buffer->resize(len);
-        ::memcpy(buffer->buffer(), result, len);
-        ::free(result);
-    }
-    else if (isAes) {
-        static const byte iv[AES::BLOCKSIZE] = { 0 };
-        auto outStr = std::string();
-        try {
-            SecByteBlock key(0x00, AES::DEFAULT_KEYLENGTH);
-            ::memcpy(key.begin(), AES_SignPassword, std::min<size_t>(key.size(), ::strlen(AES_SignPassword)));
-            CBC_Mode<AES>::Decryption cbc;
-            cbc.SetKeyWithIV(key, key.size(), iv, AES::BLOCKSIZE);
-
-            StringSource ss(static_cast<byte*>(buffer->buffer()), size, true,
-                new StreamTransformationFilter(cbc,
-                    new StringSink(outStr)
-                )
-            );
-        }
-        catch (Exception e){
-            return FileUtils::Status::ReadFailed;
-        }
-
-        buffer->resize(outStr.size());
-        ::memcpy(buffer->buffer(), outStr.data(), outStr.size());
+    if (isAes) {
+        uint8_t iv[16] = { 0 };
+        AES_KEY aeskey = { 0 };
+        int num = 0;
+        AES_set_encrypt_key(reinterpret_cast<uint8_t*>(AES_SignPassword), 128, &aeskey);
+        AES_cfb128_encrypt(reinterpret_cast<uint8_t*>(buffer->buffer()), reinterpret_cast<uint8_t*>(buffer->buffer()), size, & aeskey, iv, &num, AES_DECRYPT);
     }
 
     return FileUtils::Status::OK;

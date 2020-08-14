@@ -35,13 +35,11 @@ THE SOFTWARE.
 #include <sys/stat.h>
 
 #include "openssl/aes.h"
-#include "openssl/modes.h"
 
 #include "base/CCUserDefault.h"
 #include "platform/CCCommon.h"
 #include "platform/CCFileUtils.h"
 #include "pugixml/pugixml.hpp"
-#include "base/base64.h"
 #include "base/ccUtils.h"
 
 #include "yasio/ibstream.hpp"
@@ -105,7 +103,7 @@ static void ud_setkey(std::string& lhs, const cxx17::string_view& rhs) {
         lhs.assign(keyLen, '\0');
 }
 
-static void ud_write_v_s(yasio::obstream& obs, const cxx17::string_view value) 
+static void ud_write_v_s(yasio::obstream& obs, const cxx17::string_view value)
 {
     size_t valpos = obs.length();
     obs.write_v(value);
@@ -196,7 +194,7 @@ float UserDefault::getFloatForKey(const char* pKey)
 float UserDefault::getFloatForKey(const char* pKey, float defaultValue)
 {
     float ret = (float)getDoubleForKey(pKey, (double)defaultValue);
- 
+
     return ret;
 }
 
@@ -406,7 +404,7 @@ void UserDefault::init()
 #endif
 
         _initialized = true;
-    }    
+    }
 }
 
 void UserDefault::flush()

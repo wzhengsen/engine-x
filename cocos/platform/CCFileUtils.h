@@ -998,10 +998,7 @@ protected:
     }
 
     static constexpr size_t EncryptSignLen = 16;
-    // 当前有XXTEA和AES两种加密方式。
-    static constexpr char XXTEA_Sign[EncryptSignLen + 1]   = ")(@XXTEA_Sign_@_";
     static constexpr char AES_Sign[EncryptSignLen + 1]     = ")(@%%AES_Sign_@_";
-    static char* XXTEA_SignPassword;
     static char* AES_SignPassword;
 };
 

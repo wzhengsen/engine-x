@@ -297,7 +297,6 @@ public:
     
     /**
      * Loads a buffer as a Lua chunk.This function uses lua_load to load the Lua chunk in the buffer pointed to by chunk with size chunkSize.
-     * If it supports xxtea encryption algorithm, the chunk and the chunkSize would be processed by calling xxtea_decrypt to the real buffer and buffer size.
      *
      * @param L the current lua_State.
      * @param chunk the buffer pointer.
