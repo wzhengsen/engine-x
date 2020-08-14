@@ -468,7 +468,7 @@ public:
         }
 
         _data.resize(LWS_PRE + len);
-        
+
         if (len > 0)
         {
             std::copy(buf, buf + len, _data.begin() + LWS_PRE);
@@ -532,7 +532,7 @@ WebSocket::WebSocket()
     }
 
     __websocketInstances->push_back(this);
-    
+
     std::shared_ptr<std::atomic<bool>> isDestroyed = _isDestroyed;
     _resetDirectorListener = Director::getInstance()->getEventDispatcher()->addCustomEventListener(Director::EVENT_RESET, [this, isDestroyed](EventCustom*){
         if (*isDestroyed)
@@ -544,7 +544,7 @@ WebSocket::WebSocket()
 WebSocket::~WebSocket()
 {
     LOGD("In the destructor of WebSocket (%p)\n", this);
-    
+
     std::lock_guard<std::mutex> lk(__instanceMutex);
 
     if (__websocketInstances != nullptr)
@@ -574,9 +574,9 @@ WebSocket::~WebSocket()
         free(name);
     }
     free(_lwsProtocols);
-    
+
     Director::getInstance()->getEventDispatcher()->removeEventListener(_resetDirectorListener);
-    
+
     *_isDestroyed = true;
 }
 
@@ -718,8 +718,12 @@ void WebSocket::close()
             // If readState is closed, it means that onConnectionClosed was invoked in websocket thread,
             // but the callback of performInCocosThread has not been triggered. We need to invoke
             // onClose to release the websocket instance.
+            // ^^^^^^^ ^^ ^^^^^^^
+            //         ||
+            //        Why?
+            //  Comment onClose()
             _readyStateMutex.unlock();
-            _delegate->onClose(this);
+            //_delegate->onClose(this);
             return;
         }
 
