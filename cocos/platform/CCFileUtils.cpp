@@ -32,11 +32,7 @@ THE SOFTWARE.
 #include "base/ccMacros.h"
 #include "base/CCDirector.h"
 #include "platform/CCSAXParser.h"
-#include "external/xxtea/xxtea.h"
-#include "cryptopp/aes.h"
-#include "cryptopp/modes.h"
-#include "cryptopp/filters.h"
-//#include "base/ccUtils.h"
+#include "openssl/aes.h"
 
 #ifdef MINIZIP_FROM_SYSTEM
 #include <minizip/unzip.h>
@@ -48,7 +44,6 @@ THE SOFTWARE.
 #include "pugixml/pugixml.hpp"
 #define DECLARE_GUARD (void)0
 
-using namespace CryptoPP;
 
 NS_CC_BEGIN
 
@@ -464,29 +459,12 @@ void FileUtils::setDelegate(FileUtils *delegate)
     s_sharedFileUtils = delegate;
 }
 
-char* FileUtils::XXTEA_SignPassword = (char*)malloc(16);
 char* FileUtils::AES_SignPassword = (char*)malloc(16);
 
 FileUtils::FileUtils()
     : _writablePath("") {
-    ::memset(XXTEA_SignPassword, 0, 16);
     ::memset(AES_SignPassword, 0, 16);
     // 此处不使用静态值，而只用堆分配的动态空间，避免被反编译直接看见密码。
-
-    // testpassword
-    XXTEA_SignPassword[0] = 't';
-    XXTEA_SignPassword[1] = 'e';
-    XXTEA_SignPassword[2] = 's';
-    XXTEA_SignPassword[3] = 't';
-    XXTEA_SignPassword[4] = 'p';
-    XXTEA_SignPassword[5] = 'a';
-    XXTEA_SignPassword[6] = 's';
-    XXTEA_SignPassword[7] = 's';
-    XXTEA_SignPassword[8] = 'w';
-    XXTEA_SignPassword[9] = 'o';
-    XXTEA_SignPassword[10] = 'r';
-    XXTEA_SignPassword[11] = 'd';
-
     // testpassword
     AES_SignPassword[0] = 't';
     AES_SignPassword[1] = 'e';
@@ -634,14 +612,9 @@ FileUtils::Status FileUtils::getContents(const std::string& filename, ResizableB
     static char preSignBuffer[EncryptSignLen + 1] = { 0 };
     ::memset(preSignBuffer, 0, EncryptSignLen + 1);
 
-    bool isXXTea = false;
     bool isAes = false;
     ::fread(preSignBuffer, 1, EncryptSignLen, fp);
-    if (::memcmp(preSignBuffer, XXTEA_Sign, EncryptSignLen) == 0) {
-        size -= EncryptSignLen;
-        isXXTea = true;
-    }
-    else if(::memcmp(preSignBuffer, AES_Sign, EncryptSignLen) == 0) {
+    if(::memcmp(preSignBuffer, AES_Sign, EncryptSignLen) == 0) {
         size -= EncryptSignLen;
         isAes = true;
     }
@@ -661,40 +634,12 @@ FileUtils::Status FileUtils::getContents(const std::string& filename, ResizableB
         return Status::ReadFailed;
     }
 
-    if (isXXTea) {
-        xxtea_long len = 0;
-        unsigned char* result = xxtea_decrypt((unsigned char*)buffer->buffer(),
-            size,
-            (unsigned char*)XXTEA_SignPassword,
-            ::strlen(XXTEA_SignPassword),
-            &len);
-        buffer->resize(len);
-        ::memcpy(buffer->buffer(), result, len);
-        ::free(result);
-    }
-    else if (isAes) {
-        static const byte iv[AES::BLOCKSIZE] = { 0 };
-
-        auto outStr = std::string();
-        try {
-            SecByteBlock key(0x00, AES::DEFAULT_KEYLENGTH);
-            ::memcpy(key.begin(), AES_SignPassword, std::min<size_t>(key.size(), ::strlen(AES_SignPassword)));
-
-            CBC_Mode<AES>::Decryption cbc;
-            cbc.SetKeyWithIV(key, key.size(), iv, AES::BLOCKSIZE);
-
-            StringSource ss(static_cast<byte*>(buffer->buffer()), size, true,
-                new StreamTransformationFilter(cbc,
-                    new StringSink(outStr)
-                )
-            );
-        }
-        catch (Exception e) {
-            return Status::ReadFailed;
-        }
-
-        buffer->resize(outStr.size());
-        ::memcpy(buffer->buffer(), outStr.data(), outStr.size());
+    if (isAes) {
+        uint8_t iv[16] = { 0 };
+        AES_KEY aeskey = { 0 };
+        int num = 0;
+        AES_set_encrypt_key(reinterpret_cast<uint8_t*>(AES_SignPassword), 128, &aeskey);
+        AES_cfb128_encrypt(reinterpret_cast<uint8_t*>(buffer->buffer()), reinterpret_cast<uint8_t*>(buffer->buffer()), size, &aeskey, iv, &num, AES_DECRYPT);
     }
 
 
