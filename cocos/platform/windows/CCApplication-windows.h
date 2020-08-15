@@ -127,8 +127,7 @@ public:
         std::function<void()> closeCallback = nullptr
     ) override;
 
-    static const uint32_t NotifyMsgID = 99;
-    static void NotifyProc(WPARAM wParam, LPARAM lParam);
+    
 protected:
     HINSTANCE           _instance;
     HACCEL              _accelTable;
@@ -153,11 +152,15 @@ protected:
         std::function<void()> closeCallback = nullptr;
     };
 
+    static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     // 用于存放非模式对话框句柄。
     static std::vector<DialogWrapper> VecDlgWrapper;
     // 判断MSG是否应是对话框处理。
     void DialogMessageFilter() noexcept;
     static INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+    static const uint32_t NotifyMsgID = 99;
+    static void NotifyProc(HWND hwnd, WPARAM wParam, LPARAM lParam);
 
     // 用于临时存放通知信息。
     static std::map<uint16_t,NotifyWrapper> MapNotifyWrapper;
