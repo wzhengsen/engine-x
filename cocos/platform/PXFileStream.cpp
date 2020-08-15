@@ -17,6 +17,7 @@
 #define posix_lseek ::_lseek
 #define posix_read ::_read
 #define posix_write ::_write
+#include "iconv.h"
 #else
 #define O_READ_FLAGS O_RDONLY, S_IRUSR
 #define O_WRITE_FLAGS O_CREAT | O_RDWR, S_IRWXU
@@ -114,7 +115,26 @@ PXFileStream::~PXFileStream()
 bool PXFileStream::open(const std::string& path, int mode)
 {
 #if CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID
-    return pfs_posix_open(path, mode, _handle) != -1;
+    std::string _path = path;
+#ifdef _WIN32
+    auto i = iconv_open("gb2312//TRANSLIT", "utf-8");
+    if (i != (iconv_t)-1 && !path.empty()) {
+        size_t inLen = path.length();
+        size_t outLen = inLen;
+        size_t cvtLen = outLen;
+        char* inBuffer = const_cast<char*>(path.c_str());
+        char* outBuffer = new char[outLen];
+
+        const auto cvCount = iconv(i, const_cast<char**>(&inBuffer), &inLen, &outBuffer, &cvtLen);
+        iconv_close(i);
+        if (cvCount != static_cast<size_t>(-1)) {
+            _path = std::string(outBuffer, outLen - cvtLen);
+        }
+        delete[] outBuffer;
+    }
+
+#endif
+    return pfs_posix_open(_path, mode, _handle) != -1;
 #else // Android
     if (path[0] != '/') { // from package, always readonly
         std::string relativePath;
