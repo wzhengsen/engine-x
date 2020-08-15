@@ -129,7 +129,7 @@ bool PXFileStream::open(const std::string& path, int mode)
         const auto cvCount = iconv(i, const_cast<char**>(&inBuffer), &inLen, &outBuffer, &cvtLen);
         iconv_close(i);
         if (cvCount != static_cast<size_t>(-1)) {
-            _path = std::string(outBuffer, outLen - cvtLen);
+            _path = std::string(oriBuffer, outLen - cvtLen);
         }
         delete[] oriBuffer;
     }
