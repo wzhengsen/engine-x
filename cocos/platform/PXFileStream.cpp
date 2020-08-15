@@ -124,13 +124,14 @@ bool PXFileStream::open(const std::string& path, int mode)
         size_t cvtLen = outLen;
         char* inBuffer = const_cast<char*>(path.c_str());
         char* outBuffer = new char[outLen];
+        char* oriBuffer = outBuffer;
 
         const auto cvCount = iconv(i, const_cast<char**>(&inBuffer), &inLen, &outBuffer, &cvtLen);
         iconv_close(i);
         if (cvCount != static_cast<size_t>(-1)) {
             _path = std::string(outBuffer, outLen - cvtLen);
         }
-        delete[] outBuffer;
+        delete[] oriBuffer;
     }
 
 #endif
