@@ -29,7 +29,7 @@ THE SOFTWARE.
 #include "platform/CCFileUtils.h"
 #include <shellapi.h>
 #include <WinVer.h>
-#include "resource.h"
+#include "cocos/resource.h"
 #include <VersionHelpers.h>
 #define NTCVT_CP_DEFAULT CP_UTF8
 #include "windows-specific/ntcvt/ntcvt.hpp"
@@ -42,6 +42,8 @@ static void PVRFrameEnableControlWindow(bool bEnable);
 
 static HMODULE GetSelfModuleHandle();
 
+static WNDPROC g_oldWindowProc = nullptr;
+
 NS_CC_BEGIN
 
 // sharedApplication pointer
@@ -49,6 +51,15 @@ Application* Application::sm_pSharedApplication = nullptr;
 std::vector<Application::DialogWrapper> Application::VecDlgWrapper = std::vector<Application::DialogWrapper>();
 std::map<uint16_t, Application::NotifyWrapper> Application::MapNotifyWrapper = std::map<uint16_t, Application::NotifyWrapper>();
 uint16_t Application::NotifyID = 0;
+
+LRESULT CALLBACK Application::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    switch (uMsg) {
+    case WM_USER + NotifyMsgID:
+        NotifyProc(hWnd, wParam, lParam);
+        break;
+    }
+    return g_oldWindowProc(hWnd, uMsg, wParam, lParam);
+}
 
 INT_PTR CALLBACK Application::DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch (message) {
@@ -82,7 +93,7 @@ INT_PTR CALLBACK Application::DialogProc(HWND hWnd, UINT message, WPARAM wParam,
     return FALSE;
 }
 
-void Application::NotifyProc(WPARAM wParam, LPARAM lParam) {
+void Application::NotifyProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
     const auto msg = LOWORD(lParam);
     if (msg >= WM_MOUSEFIRST && msg <= WM_MOUSELAST) {
         return;
@@ -103,8 +114,6 @@ void Application::NotifyProc(WPARAM wParam, LPARAM lParam) {
     case NIN_BALLOONTIMEOUT:
     {
         NOTIFYICONDATA nd = NOTIFYICONDATA();
-        HWND hwnd = cocos2d::Director::getInstance()->getOpenGLView()->getWin32Window();
-
         nd.cbSize = sizeof(NOTIFYICONDATA);;
         nd.hWnd = hwnd;
         nd.uID = uID;
@@ -268,6 +277,8 @@ int Application::run()
 
     LARGE_INTEGER freq;
     QueryPerformanceFrequency(&freq);
+
+    g_oldWindowProc = (WNDPROC)SetWindowLongPtr(glview->getWin32Window(), GWLP_WNDPROC, (LONG_PTR)WindowProc);
 
     while(!glview->windowShouldClose())
     {
