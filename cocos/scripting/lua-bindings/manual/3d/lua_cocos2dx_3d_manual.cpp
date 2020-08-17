@@ -209,7 +209,7 @@ bool luaval_to_terraindata(lua_State* L, int lo, cocos2d::Terrain::TerrainData* 
         lua_gettable(L,lo);
         if (lua_istable(L, -1))
         {
-            size_t len = lua_objlen(L, -1);
+            size_t len = lua_rawlen(L, -1);
             for (size_t i = 0; i < len; i++)
             {
                 lua_pushnumber(L,i + 1);
@@ -1847,7 +1847,7 @@ int lua_cocos2dx_3d_OBB_getCorners(lua_State* L)
             goto tolua_lerror;
 #endif
 
-        size_t len = lua_objlen(L, 2);
+        size_t len = lua_rawlen(L, 2);
         if (len == 0 )
         {
             luaL_error(L, "Table's len equal 0");

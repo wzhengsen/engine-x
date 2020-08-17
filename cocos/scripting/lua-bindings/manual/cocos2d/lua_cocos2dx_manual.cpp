@@ -6358,7 +6358,7 @@ int lua_cocos2dx_TMXLayer_setTiles(lua_State* tolua_S)
             goto tolua_lerror;
 #endif
 
-        size_t len = lua_objlen(tolua_S, 2);
+        size_t len = lua_rawlen(tolua_S, 2);
         if (len == 0 )
         {
             luaL_error(tolua_S, "Table's len equal 0");
@@ -7213,7 +7213,7 @@ static int lua_cocos2dx_ProgramState_setUniform(lua_State *tolua_S)
 
         if (ok & lua_istable(tolua_S, 3))
         {
-            int len = lua_objlen(tolua_S, 3);
+            int len = lua_rawlen(tolua_S, 3);
             std::vector<uint8_t> buffer(len);
 
             for (int i = 0; i < len; i++)
@@ -8680,7 +8680,7 @@ static int tolua_cocos2d_bytearray_intv(lua_State *L)
         else
 #endif
         {
-            int size = lua_objlen(L, 1);
+            int size = lua_rawlen(L, 1);
             std::vector<uint8_t> arg(size * sizeof(int));
 
             int e;
@@ -8727,7 +8727,7 @@ static int tolua_cocos2d_bytearray_floatv(lua_State *L)
         else
 #endif
         {
-            int size = lua_objlen(L, 1);
+            int size = lua_rawlen(L, 1);
             std::vector<uint8_t> arg(size * sizeof(float));
             
             float e;

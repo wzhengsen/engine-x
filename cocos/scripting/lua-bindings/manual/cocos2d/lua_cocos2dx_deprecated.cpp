@@ -1527,7 +1527,7 @@ static int tolua_cocos2d_kmGLLoadMatrix00(lua_State* tolua_S)
 #endif
     {
         Mat4 mat4;
-        size_t len = lua_objlen(tolua_S, 1);
+        size_t len = lua_rawlen(tolua_S, 1);
         for (int i = 0; i < len; i++)
         {
             lua_pushnumber(tolua_S,i + 1);

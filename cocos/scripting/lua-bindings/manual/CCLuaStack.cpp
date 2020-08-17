@@ -72,8 +72,8 @@ namespace {
             size_t sz;
             s = lua_tolstring(L, -1, &sz);  /* get result */
             if (s == NULL)
-                return luaL_error(L, LUA_QL("tostring") " must return a string to "
-                                  LUA_QL("print"));
+                return luaL_error(L, "'""tostring""'" " must return a string to "
+                    "'""print""'");
             if (i>1) out->append("\t");
             out->append(s, sz);
             lua_pop(L, 1);  /* pop result */
@@ -142,7 +142,8 @@ bool LuaStack::init()
         {"release_print",lua_release_print},
         {nullptr, nullptr}
     };
-    luaL_register(_state, "_G", global_functions);
+    lua_getglobal(_state, "_G");
+    luaL_setfuncs(_state, global_functions, 0);
 
     g_luaType.clear();
     register_all_cocos2dx(_state);
@@ -201,15 +202,15 @@ void LuaStack::addLuaLoader(lua_CFunction func)
     // stack content after the invoking of the function
     // get loader table
     lua_getglobal(_state, "package");                                  /* L: package */
-#if LUA_VERSION_NUM == 501 || LUA_COMPAT_5_1
-	static constexpr char* loadersField = "loaders";                               /* L: package, loaders */
-#elif LUA_VERSION_NUM == 503
+//#if LUA_VERSION_NUM == 501 || LUA_COMPAT_5_1
+	//static constexpr char* loadersField = "loaders";                               /* L: package, loaders */
+//#elif LUA_VERSION_NUM >= 503
 	static constexpr char* loadersField = "searchers";
-#endif
+//#endif
 	lua_getfield(_state, -1, loadersField);
     // insert loader into index 2
     lua_pushcfunction(_state, func);                                   /* L: package, loaders, func */
-    for (int i = (int)(lua_objlen(_state, -2) + 1); i > 2; --i)
+    for (int i = (int)(lua_rawlen(_state, -2) + 1); i > 2; --i)
     {
         lua_rawgeti(_state, -2, i - 1);                                /* L: package, loaders, func, function */
         // we call lua_rawgeti, so the loader table now is at -3
