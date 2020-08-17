@@ -54,9 +54,9 @@ namespace cocos2d { namespace network
         std::function<int64_t(void*, int64_t)> _transferDataToBuffer;
 
         // scheduler for update processing and finished task in main schedule
-        void _onDownloadProgress();
-
-		void _onDownloadFinished(TaskWrapper&& task, int checkState = 0);
+        void _onSchedule(float);
+        std::string             _schedulerKey;
+        Scheduler* _scheduler;
     };
 
 }}  // namespace cocos2d::network
