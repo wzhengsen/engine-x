@@ -541,7 +541,7 @@ bool luaval_to_ccvector(lua_State* L, int lo , cocos2d::Vector<T>* ret, const ch
 
     if (ok)
     {
-        size_t len = lua_objlen(L, lo);
+        size_t len = lua_rawlen(L, lo);
         for (size_t i = 0; i < len; i++)
         {
             lua_pushnumber(L, i + 1);

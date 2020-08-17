@@ -622,7 +622,7 @@ int lua_cocos2dx_physics3d_Physics3DShape_createCompoundShape(lua_State* L)
         
         if (ok)
         {
-            size_t len = lua_objlen(L, 2);
+            size_t len = lua_rawlen(L, 2);
             cocos2d::Physics3DShape* shape = nullptr;
             cocos2d::Mat4 mat;
             for (size_t i = 0; i < len; i++)

@@ -1060,7 +1060,7 @@ bool luaval_to_mat4(lua_State* L, int lo, cocos2d::Mat4* outValue , const char* 
     {
         do
         {
-            size_t len = lua_objlen(L, lo);
+            size_t len = lua_rawlen(L, lo);
             if (len != 16) {
                 ok = false;
                 break;
@@ -1103,7 +1103,7 @@ bool luaval_to_array(lua_State* L,int lo, __Array** outValue, const char* funcNa
 
     if (ok)
     {
-        size_t len = lua_objlen(L, lo);
+        size_t len = lua_rawlen(L, lo);
         if (len > 0)
         {
             __Array* arr =  __Array::createWithCapacity(len);
@@ -1318,7 +1318,7 @@ bool luaval_to_array_of_vec2(lua_State* L,int lo,cocos2d::Vec2 **points, int *nu
 
     if (ok)
     {
-        size_t len = lua_objlen(L, lo);
+        size_t len = lua_rawlen(L, lo);
         if (len > 0)
         {
             cocos2d::Vec2* array = (cocos2d::Vec2*) new Vec2[len];
@@ -1712,7 +1712,7 @@ bool luaval_to_ccvaluevector(lua_State* L, int lo, cocos2d::ValueVector* ret, co
 
     if (ok)
     {
-        size_t len = lua_objlen(L, lo);
+        size_t len = lua_rawlen(L, lo);
         for (size_t i = 0; i < len; i++)
         {
             lua_pushinteger(L, (lua_Integer)i + 1);
@@ -1794,7 +1794,7 @@ bool luaval_to_std_vector_string(lua_State* L, int lo, std::vector<std::string>*
 
     if (ok)
     {
-        size_t len = lua_objlen(L, lo);
+        size_t len = lua_rawlen(L, lo);
         std::string value = "";
         for (size_t i = 0; i < len; i++)
         {
@@ -1835,7 +1835,7 @@ bool luaval_to_std_vector_int(lua_State* L, int lo, std::vector<int>* ret, const
 
     if (ok)
     {
-        size_t len = lua_objlen(L, lo);
+        size_t len = lua_rawlen(L, lo);
         for (size_t i = 0; i < len; i++)
         {
             lua_pushinteger(L, (lua_Integer)i + 1);
@@ -1909,7 +1909,7 @@ bool luaval_to_std_vector_float(lua_State* L, int lo, std::vector<float>* ret, c
 
     if (ok)
     {
-        size_t len = lua_objlen(L, lo);
+        size_t len = lua_rawlen(L, lo);
         for (size_t i = 0; i < len; i++)
         {
             lua_pushinteger(L, (lua_Integer)i + 1);
@@ -1949,7 +1949,7 @@ bool luaval_to_std_vector_ushort(lua_State* L, int lo, std::vector<unsigned shor
 
     if (ok)
     {
-        size_t len = lua_objlen(L, lo);
+        size_t len = lua_rawlen(L, lo);
         for (size_t i = 0; i < len; i++)
         {
             lua_pushinteger(L, (lua_Integer)i + 1);
@@ -2172,7 +2172,7 @@ bool luaval_to_std_vector_vec2(lua_State* L, int lo, std::vector<cocos2d::Vec2>*
 
     if (ok)
     {
-        size_t len = lua_objlen(L, lo);
+        size_t len = lua_rawlen(L, lo);
         cocos2d::Vec2 value;
         for (size_t i = 0; i < len; i++)
         {
@@ -2215,7 +2215,7 @@ bool luaval_to_std_vector_vec3(lua_State* L, int lo, std::vector<cocos2d::Vec3>*
 
     if (ok)
     {
-        size_t len = lua_objlen(L, lo);
+        size_t len = lua_rawlen(L, lo);
         cocos2d::Vec3 value;
         for (size_t i = 0; i < len; i++)
         {
@@ -2258,7 +2258,7 @@ bool luaval_to_std_vector_v3f_c4b_t2f(lua_State* L, int lo, std::vector<cocos2d:
 
     if (ok)
     {
-        size_t len = lua_objlen(L, lo);
+        size_t len = lua_rawlen(L, lo);
         cocos2d::V3F_C4B_T2F value;
         for (size_t i = 0; i < len; i++)
         {
@@ -3363,7 +3363,7 @@ bool luaval_to_uniformLocation(lua_State* L, int pos, cocos2d::backend::UniformL
     if (lua_isnil(L, -1)) {
         CCASSERT(false, "invalidate UniformLocation value");
     }
-    int len = lua_objlen(L, -1);
+    int len = lua_rawlen(L, -1);
     for (int i=0;i<len;i++)
     {
         lua_rawgeti(L, -1, i + 1);
