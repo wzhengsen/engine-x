@@ -11723,7 +11723,7 @@ int lua_cocos2dx_Node_setProgramStateWithRegistry(lua_State* tolua_S)
         cocos2d::backend::ProgramType arg0;
         cocos2d::Texture2D* arg1;
 
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "cc.Node:setProgramStateWithRegistry");
+        ok &= luaval_to_long_long(tolua_S, 2,(long long*)(&arg0), "cc.Node:setProgramStateWithRegistry");
 
         ok &= luaval_to_object<cocos2d::Texture2D>(tolua_S, 3, "cc.Texture2D",&arg1, "cc.Node:setProgramStateWithRegistry");
         if(!ok)
@@ -76863,7 +76863,7 @@ int lua_cocos2dx_Sprite_setProgramState(lua_State* tolua_S)
     {
         cocos2d::backend::ProgramType arg0;
 
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "cc.Sprite:setProgramState");
+        ok &= luaval_to_long_long(tolua_S, 2,(long long*)(&arg0), "cc.Sprite:setProgramState");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_Sprite_setProgramState'", nullptr);
