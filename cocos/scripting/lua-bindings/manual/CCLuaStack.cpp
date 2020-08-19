@@ -153,7 +153,7 @@ bool LuaStack::init()
     register_all_cocos2dx_math_manual(_state);
     register_all_cocos2dx_shaders_manual(_state);
     register_all_cocos2dx_bytearray_manual(_state);
-    
+
     tolua_luanode_open(_state);
     register_luanode_manual(_state);
 #if CC_USE_PHYSICS
@@ -168,8 +168,6 @@ bool LuaStack::init()
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
     LuaJavaBridge::luaopen_luaj(_state);
 #endif
-    register_all_cocos2dx_deprecated(_state);
-    register_all_cocos2dx_manual_deprecated(_state);
 
     tolua_script_handler_mgr_open(_state);
 
