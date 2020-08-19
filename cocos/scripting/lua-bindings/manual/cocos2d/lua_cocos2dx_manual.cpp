@@ -8341,9 +8341,12 @@ int register_all_cocos2dx_math_manual(lua_State* tolua_S)
     if (nullptr == tolua_S)
         return 0;
 
-
-    tolua_module(tolua_S, nullptr, 0);
-    tolua_beginmodule(tolua_S, nullptr);
+    tolua_open(tolua_S);
+    tolua_module(tolua_S, "cc", 0);
+    tolua_beginmodule(tolua_S, "cc");
+        lua_createtable(tolua_S, 0, 10);
+        lua_pushvalue(tolua_S, -1);
+        lua_setfield(tolua_S, -3, "Math");
         tolua_function(tolua_S, "mat4_getInversed", tolua_cocos2d_Mat4_getInversed);
         tolua_function(tolua_S, "mat4_transformVector", tolua_cocos2d_Mat4_transformVector);
         tolua_function(tolua_S, "mat4_decompose", tolua_cocos2d_Mat4_decompose);
@@ -8354,6 +8357,7 @@ int register_all_cocos2dx_math_manual(lua_State* tolua_S)
         tolua_function(tolua_S, "mat4_createTranslation", tolua_cocos2d_Mat4_createTranslation);
         tolua_function(tolua_S, "mat4_createRotation", tolua_cocos2d_Mat4_createRotation);
         tolua_function(tolua_S, "vec3_cross", tolua_cocos2d_Vec3_cross);
+        lua_pop(tolua_S, 1);
     tolua_endmodule(tolua_S);
     return 0;
 }
@@ -8372,6 +8376,9 @@ int register_all_cocos2dx_shaders_manual(lua_State *tolua_S)
     tolua_open(tolua_S);
     tolua_module(tolua_S, "cc", 0);
     tolua_beginmodule(tolua_S, "cc");
+        lua_createtable(tolua_S, 0, 8421 - 8380 + 1);
+        lua_pushvalue(tolua_S, -1);
+        lua_setfield(tolua_S, -3, "Shaders");
         set_lua_field(positionColor_vert);
         set_lua_field(positionColor_frag);
         set_lua_field(positionTexture_vert);
@@ -8414,6 +8421,7 @@ int register_all_cocos2dx_shaders_manual(lua_State *tolua_S)
         set_lua_field(CC3D_skybox_vert);
         set_lua_field(CC3D_terrain_frag);
         set_lua_field(CC3D_terrain_vert);
+        lua_pop(tolua_S, 1);
     tolua_endmodule(tolua_S);
     return 0;
 }
