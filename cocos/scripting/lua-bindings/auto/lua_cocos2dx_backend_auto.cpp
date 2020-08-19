@@ -827,7 +827,7 @@ int lua_cocos2dx_backend_Program_getBuiltinProgram(lua_State* tolua_S)
     if (argc == 1)
     {
         cocos2d::backend::ProgramType arg0;
-        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "ccb.Program:getBuiltinProgram");
+        ok &= luaval_to_long_long(tolua_S, 1,(long long*)(&arg0), "ccb.Program:getBuiltinProgram");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Program_getBuiltinProgram'", nullptr);
