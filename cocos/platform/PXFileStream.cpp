@@ -115,25 +115,11 @@ PXFileStream::~PXFileStream()
 bool PXFileStream::open(const std::string& path, int mode)
 {
 #if CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID
-    std::string _path = path;
+    
 #ifdef _WIN32
-    auto i = iconv_open("gb2312//TRANSLIT", "utf-8");
-    if (i != (iconv_t)-1 && !path.empty()) {
-        size_t inLen = path.length();
-        size_t outLen = inLen;
-        size_t cvtLen = outLen;
-        char* inBuffer = const_cast<char*>(path.c_str());
-        char* outBuffer = new char[outLen];
-        char* oriBuffer = outBuffer;
-
-        const auto cvCount = iconv(i, const_cast<char**>(&inBuffer), &inLen, &outBuffer, &cvtLen);
-        iconv_close(i);
-        if (cvCount != static_cast<size_t>(-1)) {
-            _path = std::string(oriBuffer, outLen - cvtLen);
-        }
-        delete[] oriBuffer;
-    }
-
+    std::string _path = utils::UTF8ToGB2312(path);
+#else
+    std::string _path = path;
 #endif
     return pfs_posix_open(_path, mode, _handle) != -1;
 #else // Android
