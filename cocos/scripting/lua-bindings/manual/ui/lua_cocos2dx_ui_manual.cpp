@@ -1005,10 +1005,9 @@ static int tolua_cocos2dx_EventListenerFocus_create(lua_State* L)
     int argc = 0;
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(L, 1, "cc.EventListenerFocus", 0, &tolua_err))  goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(L) - 1;
+    argc = lua_gettop(L);
 
     if (argc == 0)
     {
