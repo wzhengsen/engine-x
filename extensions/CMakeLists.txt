@@ -21,6 +21,8 @@ else()
   set(BUILD_EXTENSION_IMGUIEXT OFF)
 endif()
 
+set(BUILD_EXTENSION_FAIRYGUI OFF)
+
 function(setup_cocos_extension_config target_name)
   if(ANDROID)
     target_link_libraries(${target_name} INTERFACE cocos2d)
@@ -30,7 +32,7 @@ function(setup_cocos_extension_config target_name)
   else()
     target_link_libraries(${target_name} cocos2d)
   endif()
-  
+
   set_target_properties(${target_name}
       PROPERTIES
       ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
