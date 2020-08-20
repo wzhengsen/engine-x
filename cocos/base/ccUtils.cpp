@@ -55,6 +55,11 @@ THE SOFTWARE.
 #include "platform/CCFileUtils.h"
 #include "2d/CCSprite.h"
 #include "2d/CCRenderTexture.h"
+#if _WIN32
+#include "iconv.h"
+#else
+#include <iconv.h>
+#endif
 
 NS_CC_BEGIN
 
@@ -690,171 +695,45 @@ void killCurrentProcess()
 #endif
 }
 
-// 多字节编码转为UTF8编码
-bool MBToUTF8(std::string& pu8, const char* pmb, int mLen) {
-    std::vector<char> vec = std::vector<char>();
-    if (MBToUTF8(vec, pmb, mLen)) {
-        pu8.assign(vec.data(), vec.size());
-        return true;
+static std::string IconvTo(const char* to, const char* from, uint8_t sizeRate, const char* c, size_t len, bool* fullSuc = nullptr) {
+    const iconv_t i = iconv_open(to, from);
+
+    if (i != (iconv_t)-1 && len) {
+        std::string outStr = std::string(len * sizeRate, '\0');
+        size_t inLen = len;
+        size_t cvtLen = outStr.length();
+
+        char* inBuffer = const_cast<char*>(c);
+        char* outBuffer = &outStr.front();
+
+        const auto cvCount = iconv(i, const_cast<char**>(&inBuffer), &inLen, &outBuffer, &cvtLen);
+        if (fullSuc) {
+            *fullSuc = cvCount == 0;
+        }
+        if (cvCount != static_cast<size_t>(-1)) {
+            outStr.resize(outStr.length() - cvtLen);
+        }
+        iconv_close(i);
+        return outStr;
     }
-    return false;
+    return std::string();
 }
 
-bool MBToUTF8(std::vector<char>& pu8, const char* pmb, int mLen)
-{
-	// convert an MBCS string to widechar   
-	int nLen = MultiByteToWideChar(CP_ACP, 0, pmb, mLen, NULL, 0);
 
-	WCHAR* lpszW = new WCHAR[nLen];
-
-	int nRtn = MultiByteToWideChar(CP_ACP, 0, pmb, mLen, lpszW, nLen);
-
-	if (nRtn != nLen)
-	{
-		delete[] lpszW;
-		return false;
-	}
-	// convert an widechar string to utf8  
-	int utf8Len = WideCharToMultiByte(CP_UTF8, 0, lpszW, nLen, NULL, 0, NULL, NULL);
-	if (utf8Len <= 0)
-	{
-		return false;
-	}
-	pu8.resize(utf8Len);
-	nRtn = WideCharToMultiByte(CP_UTF8, 0, lpszW, nLen, &*pu8.begin(), utf8Len, NULL, NULL);
-	delete[] lpszW;
-
-	if (nRtn != utf8Len)
-	{
-		pu8.clear();
-		return false;
-	}
-	return true;
+CC_DLL std::string UTF8ToGB2312(const char* c, size_t len, bool* fullSuc) {
+    return IconvTo("gb2312//TRANSLIT", "utf-8", 1, c, len, fullSuc);
 }
 
-// UTF8编码转为多字节编码  
-bool UTF8ToMB(std::string& pmb, const char* pu8, int utf8Len) {
-    std::vector<char> vec = std::vector<char>();
-    if (UTF8ToMB(vec, pu8, utf8Len)) {
-        pmb.assign(vec.data(), vec.size());
-        return true;
-    }
-    return false;
-}
-bool UTF8ToMB(std::vector<char>& pmb, const char* pu8, int utf8Len)
-{
-	// convert an UTF8 string to widechar   
-	int nLen = MultiByteToWideChar(CP_UTF8, 0, pu8, utf8Len, NULL, 0);
-
-	WCHAR* lpszW = new WCHAR[nLen];
-
-	int nRtn = MultiByteToWideChar(CP_UTF8, 0, pu8, utf8Len, lpszW, nLen);
-
-	if (nRtn != nLen)
-	{
-		delete[] lpszW;
-		return false;
-	}
-
-	// convert an widechar string to Multibyte   
-	int MBLen = WideCharToMultiByte(CP_ACP, 0, lpszW, nLen, NULL, 0, NULL, NULL);
-	if (MBLen <= 0)
-	{
-		return false;
-	}
-	pmb.resize(MBLen);
-	nRtn = WideCharToMultiByte(CP_ACP, 0, lpszW, nLen, &*pmb.begin(), MBLen, NULL, NULL);
-	delete[] lpszW;
-
-	if (nRtn != MBLen)
-	{
-		pmb.clear();
-		return false;
-	}
-	return true;
+CC_DLL std::string UTF8ToGB2312(const std::string& str, bool* fullSuc) {
+    return UTF8ToGB2312(str.c_str(), str.length(), fullSuc);
 }
 
-// 多字节编码转为Unicode编码  
-bool MBToUnicode(std::vector<wchar_t>& pun, const char* pmb, int mLen)
-{
-	// convert an MBCS string to widechar   
-	int uLen = MultiByteToWideChar(CP_ACP, 0, pmb, mLen, NULL, 0);
-
-	if (uLen <= 0)
-	{
-		return false;
-	}
-	pun.resize(uLen);
-
-	int nRtn = MultiByteToWideChar(CP_ACP, 0, pmb, mLen, &*pun.begin(), uLen);
-
-	if (nRtn != uLen)
-	{
-		pun.clear();
-		return false;
-	}
-	return true;
+CC_DLL std::string GB2312ToUTF8(const char* c, size_t len, bool* fullSuc) {
+    return IconvTo("utf-8//TRANSLIT", "gb2312", 2, c, len, fullSuc);
 }
 
-//Unicode编码转为多字节编码  
-bool UnicodeToMB(std::vector<char>& pmb, const wchar_t* pun, int uLen)
-{
-	// convert an widechar string to Multibyte   
-	int MBLen = WideCharToMultiByte(CP_ACP, 0, pun, uLen, NULL, 0, NULL, NULL);
-	if (MBLen <= 0)
-	{
-		return false;
-	}
-	pmb.resize(MBLen);
-	int nRtn = WideCharToMultiByte(CP_ACP, 0, pun, uLen, &*pmb.begin(), MBLen, NULL, NULL);
-
-	if (nRtn != MBLen)
-	{
-		pmb.clear();
-		return false;
-	}
-	return true;
-}
-
-// UTF8编码转为Unicode  
-bool UTF8ToUnicode(std::vector<wchar_t>& pun, const char* pu8, int utf8Len)
-{
-	// convert an UTF8 string to widechar   
-	int nLen = MultiByteToWideChar(CP_UTF8, 0, pu8, utf8Len, NULL, 0);
-	if (nLen <= 0)
-	{
-		return false;
-	}
-	pun.resize(nLen);
-	int nRtn = MultiByteToWideChar(CP_UTF8, 0, pu8, utf8Len, &*pun.begin(), nLen);
-
-	if (nRtn != nLen)
-	{
-		pun.clear();
-		return false;
-	}
-
-	return true;
-}
-
-// Unicode编码转为UTF8  
-bool UnicodeToUTF8(std::vector<char>& pu8, const wchar_t* pun, int uLen)
-{
-	// convert an widechar string to utf8  
-	int utf8Len = WideCharToMultiByte(CP_UTF8, 0, pun, uLen, NULL, 0, NULL, NULL);
-	if (utf8Len <= 0)
-	{
-		return false;
-	}
-	pu8.resize(utf8Len);
-	int nRtn = WideCharToMultiByte(CP_UTF8, 0, pun, uLen, &*pu8.begin(), utf8Len, NULL, NULL);
-
-	if (nRtn != utf8Len)
-	{
-		pu8.clear();
-		return false;
-	}
-	return true;
+CC_DLL std::string GB2312ToUTF8(const std::string& str, bool* fullSuc) {
+    return GB2312ToUTF8(str.c_str(), str.length(), fullSuc);
 }
 
 static int invalid_date(const struct tm* ptm) {
