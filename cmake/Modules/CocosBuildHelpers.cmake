@@ -174,6 +174,13 @@ function(cocos_copy_target_dll cocos_target)
                 ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/windows/d3dcompiler_47.dll
                 $<TARGET_FILE_DIR:${cocos_target}>
             )
+
+    add_custom_command(
+        TARGET ${cocos_target} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E
+        copy_directory ${COCOS2DX_ROOT_PATH}/external/vlc/prebuilt/windows/plugins
+        "$<TARGET_FILE_DIR:${cocos_target}>/plugins"
+    )
 endfunction()
 
 # mark `FILES` as resources, files will be put into sub-dir tree depend on its absolute path
