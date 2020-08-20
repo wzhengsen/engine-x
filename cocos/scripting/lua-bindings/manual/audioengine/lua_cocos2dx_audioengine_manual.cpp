@@ -242,25 +242,21 @@ int lua_cocos2dx_audioengine_AudioEngine_setFinishCallback(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.AudioEngine",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
         int arg0;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "cc.AudioEngine:setFinishCallback");
+        ok &= luaval_to_int32(tolua_S, 1,(int *)&arg0, "cc.AudioEngine:setFinishCallback");
 
 #if COCOS2D_DEBUG >= 1
-        if (!toluafix_isfunction(tolua_S,3,"LUA_FUNCTION",0,&tolua_err))
+        if (!toluafix_isfunction(tolua_S,2,"LUA_FUNCTION",0,&tolua_err))
         {
             goto tolua_lerror;
         }
 #endif
 
-        LUA_FUNCTION handler = (  toluafix_ref_function(tolua_S,3,0));
+        LUA_FUNCTION handler = (  toluafix_ref_function(tolua_S,2,0));
 
         cocos2d::AudioEngine::setFinishCallback(arg0, [handler](int audioID, std::string filePath){
             LuaStack* stack = LuaEngine::getInstance()->getLuaStack();
@@ -292,27 +288,23 @@ int lua_cocos2dx_audioengine_AudioEngine_preload(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S, 1, "cc.AudioEngine", 0, &tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     do
     {
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2, &arg0, "cc.AudioEngine:preload");
+            ok &= luaval_to_std_string(tolua_S, 1, &arg0, "cc.AudioEngine:preload");
             if (!ok) { break; }
 
 #if COCOS2D_DEBUG >= 1
-            if (!toluafix_isfunction(tolua_S, 3, "LUA_FUNCTION", 0, &tolua_err))
+            if (!toluafix_isfunction(tolua_S, 2, "LUA_FUNCTION", 0, &tolua_err))
             {
                 goto tolua_lerror;
             }
 #endif
-            const LUA_FUNCTION handler = (toluafix_ref_function(tolua_S, 3, 0));
+            const LUA_FUNCTION handler = (toluafix_ref_function(tolua_S, 2, 0));
 
             cocos2d::AudioEngine::preload(arg0, [handler](bool suc) {
                 LuaStack* stack = LuaEngine::getInstance()->getLuaStack();
@@ -333,7 +325,7 @@ int lua_cocos2dx_audioengine_AudioEngine_preload(lua_State* tolua_S)
         if (argc == 1)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2, &arg0, "cc.AudioEngine:preload");
+            ok &= luaval_to_std_string(tolua_S, 1, &arg0, "cc.AudioEngine:preload");
             if (!ok) { break; }
             cocos2d::AudioEngine::preload(arg0);
             lua_settop(tolua_S, 1);
