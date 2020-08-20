@@ -60,6 +60,7 @@ THE SOFTWARE.
 #include "base/ObjectFactory.h"
 #include "platform/CCApplication.h"
 #include "renderer/backend/ProgramCache.h"
+#include "audio/include/AudioEngine.h"
 
 #if CC_ENABLE_SCRIPT_BINDING
 #include "base/CCScriptSupport.h"
@@ -159,6 +160,8 @@ bool Director::init()
 Director::~Director()
 {
     CCLOGINFO("deallocing Director: %p", this);
+
+    AudioEngine::end();
 
     CC_SAFE_RELEASE(_FPSLabel);
     CC_SAFE_RELEASE(_drawnVerticesLabel);
