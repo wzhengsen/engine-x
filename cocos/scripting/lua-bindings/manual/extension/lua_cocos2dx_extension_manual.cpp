@@ -661,16 +661,15 @@ static int lua_cocos2dx_TableView_create(lua_State* L)
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(L,1,"cc.TableView",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(L) - 1;
+    argc = lua_gettop(L);
 
     if (2 == argc || 1 == argc)
     {
         LUA_TableViewDataSource* dataSource = new (std::nothrow) LUA_TableViewDataSource();
         Size size;
-        ok &= luaval_to_size(L, 2, &size, "cc.TableView:create");
+        ok &= luaval_to_size(L, 1, &size, "cc.TableView:create");
 
         TableView* ret = nullptr;
 
@@ -681,9 +680,9 @@ static int lua_cocos2dx_TableView_create(lua_State* L)
         else
         {
 #if COCOS2D_DEBUG >= 1
-            if (!tolua_isusertype(L,3,"cc.Node",0,&tolua_err)) goto tolua_lerror;
+            if (!tolua_isusertype(L,2,"cc.Node",0,&tolua_err)) goto tolua_lerror;
 #endif
-            Node* node = static_cast<Node*>(tolua_tousertype(L, 3, nullptr));
+            Node* node = static_cast<Node*>(tolua_tousertype(L, 2, nullptr));
             ret = TableView::create(dataSource, size, node);
         }
 
@@ -840,22 +839,21 @@ static int lua_cocos2dx_Extension_EventListenerAssetsManagerEx_create(lua_State*
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(L,1,"cc.EventListenerAssetsManagerEx",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(L)-1;
+    argc = lua_gettop(L);
 
     if (argc == 2)
     {
 
 #if COCOS2D_DEBUG >= 1
-        if (!tolua_isusertype(L, 2, "cc.AssetsManagerEx", 0, &tolua_err) ||
-            !toluafix_isfunction(L,3,"LUA_FUNCTION",0,&tolua_err))
+        if (!tolua_isusertype(L, 1, "cc.AssetsManagerEx", 0, &tolua_err) ||
+            !toluafix_isfunction(L,2,"LUA_FUNCTION",0,&tolua_err))
             goto tolua_lerror;
 #endif
-        cocos2d::extension::AssetsManagerEx* assetManager =  static_cast<cocos2d::extension::AssetsManagerEx*>(tolua_tousertype(L,2,nullptr));
+        cocos2d::extension::AssetsManagerEx* assetManager =  static_cast<cocos2d::extension::AssetsManagerEx*>(tolua_tousertype(L,1,nullptr));
 
-        LUA_FUNCTION handler = toluafix_ref_function(L,3,0);
+        LUA_FUNCTION handler = toluafix_ref_function(L,2,0);
 
         cocos2d::extension::EventListenerAssetsManagerEx* ret = cocos2d::extension::EventListenerAssetsManagerEx::create(assetManager, [=](EventAssetsManagerEx* event){
             int id = event? (int)event->_ID : -1;

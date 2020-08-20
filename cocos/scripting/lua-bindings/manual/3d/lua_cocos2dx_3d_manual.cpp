@@ -326,16 +326,12 @@ int lua_cocos2dx_3d_Terrain_create(lua_State* L)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(L,1,"cc.Terrain",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(L) - 1;
+    argc = lua_gettop(L);
 
     if (argc == 1)
     {
         cocos2d::Terrain::TerrainData arg0;
-        ok &= luaval_to_terraindata(L, 2, &arg0);
+        ok &= luaval_to_terraindata(L, 1, &arg0);
         if(!ok)
         {
             tolua_error(L,"invalid arguments in function 'lua_cocos2dx_3d_Terrain_create'", nullptr);
@@ -350,8 +346,8 @@ int lua_cocos2dx_3d_Terrain_create(lua_State* L)
         cocos2d::Terrain::TerrainData arg0;
         cocos2d::Terrain::CrackFixedType arg1;
 
-        ok &= luaval_to_terraindata(L, 2, &arg0);
-        ok &= luaval_to_int32(L, 3,(int *)&arg1, "cc.Terrain:create");
+        ok &= luaval_to_terraindata(L, 1, &arg0);
+        ok &= luaval_to_int32(L, 2,(int *)&arg1, "cc.Terrain:create");
         if(!ok)
         {
             tolua_error(L,"invalid arguments in function 'lua_cocos2dx_3d_Terrain_create'", nullptr);
@@ -981,15 +977,15 @@ int lua_cocos2dx_3d_AABB_constructor(lua_State* L)
     tolua_Error tolua_err;
 #endif
 
-    argc = lua_gettop(L)-1;
+    argc = lua_gettop(L);
     do{
         if (argc == 2) {
             cocos2d::Vec3 arg0;
-            ok &= luaval_to_vec3(L, 2, &arg0, "cc.AABB:AABB");
+            ok &= luaval_to_vec3(L, 1, &arg0, "cc.AABB:AABB");
 
             if (!ok) { break; }
             cocos2d::Vec3 arg1;
-            ok &= luaval_to_vec3(L, 3, &arg1, "cc.AABB:AABB");
+            ok &= luaval_to_vec3(L, 2, &arg1, "cc.AABB:AABB");
 
             if (!ok) { break; }
             cobj = new (std::nothrow) cocos2d::AABB(arg0, arg1);
@@ -1389,11 +1385,11 @@ int lua_cocos2dx_3d_OBB_constructor(lua_State* L)
     tolua_Error tolua_err;
 #endif
 
-    argc = lua_gettop(L)-1;
+    argc = lua_gettop(L);
     do{
         if (argc == 1) {
             cocos2d::AABB* arg0;
-            ok &= luaval_to_object<cocos2d::AABB>(L, 2, "cc.AABB",&arg0, "cc.OBB:OBB");
+            ok &= luaval_to_object<cocos2d::AABB>(L, 1, "cc.AABB",&arg0, "cc.OBB:OBB");
 
             if (!ok) { break; }
             cobj = new (std::nothrow) cocos2d::OBB(*arg0);
@@ -1415,11 +1411,11 @@ int lua_cocos2dx_3d_OBB_constructor(lua_State* L)
     do{
         if (argc == 2) {
             const cocos2d::Vec3* arg0;
-            ok &= luaval_to_object<const cocos2d::Vec3>(L, 2, "cc.Vec3",&arg0, "cc.OBB:OBB");
+            ok &= luaval_to_object<const cocos2d::Vec3>(L, 1, "cc.Vec3",&arg0, "cc.OBB:OBB");
 
             if (!ok) { break; }
             int arg1;
-            ok &= luaval_to_int32(L, 3,(int *)&arg1, "cc.OBB:OBB");
+            ok &= luaval_to_int32(L, 2,(int *)&arg1, "cc.OBB:OBB");
 
             if (!ok) { break; }
             cobj = new (std::nothrow) cocos2d::OBB(arg0, arg1);
@@ -2081,15 +2077,15 @@ int lua_cocos2dx_3d_Ray_constructor(lua_State* L)
     tolua_Error tolua_err;
 #endif
 
-    argc = lua_gettop(L)-1;
+    argc = lua_gettop(L);
     do{
         if (argc == 2) {
             cocos2d::Vec3 arg0;
-            ok &= luaval_to_vec3(L, 2, &arg0, "cc.Ray:Ray");
+            ok &= luaval_to_vec3(L, 1, &arg0, "cc.Ray:Ray");
 
             if (!ok) { break; }
             cocos2d::Vec3 arg1;
-            ok &= luaval_to_vec3(L, 3, &arg1, "cc.Ray:Ray");
+            ok &= luaval_to_vec3(L, 2, &arg1, "cc.Ray:Ray");
 
             if (!ok) { break; }
             cobj = new (std::nothrow) cocos2d::Ray(arg0, arg1);

@@ -107,10 +107,7 @@ static int tolua_Cocos2d_LuaNode_create00(lua_State* tolua_S)
 {
 #ifndef TOLUA_RELEASE
     tolua_Error tolua_err;
-    if (
-        !tolua_isusertable(tolua_S, 1, "cc.LuaNode", 0, &tolua_err) ||
-        !tolua_isnoobj(tolua_S, 2, &tolua_err)
-        )
+    if (!tolua_isnoobj(tolua_S, 1, &tolua_err))
         goto tolua_lerror;
     else
 #endif
@@ -226,10 +223,9 @@ static int tolua_cocos2d_MenuItemImage_create(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
 	tolua_Error tolua_err;
-	if (!tolua_isusertable(tolua_S,1,"cc.MenuItemImage",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
     do {
         if (argc == 0)
         {
@@ -245,8 +241,8 @@ static int tolua_cocos2d_MenuItemImage_create(lua_State* tolua_S)
         if (argc == 2)
         {
 #if COCOS2D_DEBUG >= 1
-            if (!tolua_isstring(tolua_S,2,0,&tolua_err) ||
-                !tolua_isstring(tolua_S,3,0,&tolua_err))
+            if (!tolua_isstring(tolua_S,1,0,&tolua_err) ||
+                !tolua_isstring(tolua_S,2,0,&tolua_err))
             {
                 ok = false;
             }
@@ -256,8 +252,8 @@ static int tolua_cocos2d_MenuItemImage_create(lua_State* tolua_S)
                 ok = true;
                 break;
             }
-            const std::string normalImage = ((const std::string)  tolua_tocppstring(tolua_S,2,0));
-            const std::string selectedImage = ((const std::string)  tolua_tocppstring(tolua_S,3,0));
+            const std::string normalImage = ((const std::string)  tolua_tocppstring(tolua_S,1,0));
+            const std::string selectedImage = ((const std::string)  tolua_tocppstring(tolua_S,2,0));
             MenuItemImage* tolua_ret = (MenuItemImage*)  MenuItemImage::create(normalImage,selectedImage);
             int nID = (tolua_ret) ? (int)tolua_ret->_ID : -1;
             int* pLuaID = (tolua_ret) ? &tolua_ret->_luaID : NULL;
@@ -269,17 +265,17 @@ static int tolua_cocos2d_MenuItemImage_create(lua_State* tolua_S)
         if (argc == 3)
         {
 #if COCOS2D_DEBUG >= 1
-            if (!tolua_isstring(tolua_S,2,0,&tolua_err) ||
-                !tolua_isstring(tolua_S,3,0,&tolua_err) ||
-                !tolua_isstring(tolua_S,4,0,&tolua_err) )
+            if (!tolua_isstring(tolua_S,1,0,&tolua_err) ||
+                !tolua_isstring(tolua_S,2,0,&tolua_err) ||
+                !tolua_isstring(tolua_S,3,0,&tolua_err) )
             {
                 goto tolua_lerror;
                 break;
             }
 #endif
-            const std::string normalImage = ((const std::string)  tolua_tocppstring(tolua_S,2,0));
-            const std::string selectedImage = ((const std::string)  tolua_tocppstring(tolua_S,3,0));
-            const std::string disabledImage = ((const std::string)  tolua_tocppstring(tolua_S,4,0));
+            const std::string normalImage = ((const std::string)  tolua_tocppstring(tolua_S,1,0));
+            const std::string selectedImage = ((const std::string)  tolua_tocppstring(tolua_S,2,0));
+            const std::string disabledImage = ((const std::string)  tolua_tocppstring(tolua_S,3,0));
 
             MenuItemImage* tolua_ret = (MenuItemImage*)  MenuItemImage::create(normalImage,selectedImage,disabledImage);
             int nID = (tolua_ret) ? (int)tolua_ret->_ID : -1;
@@ -309,20 +305,19 @@ static int tolua_cocos2d_MenuItemLabel_create(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
 	tolua_Error tolua_err;
-	if (!tolua_isusertable(tolua_S,1,"cc.MenuItemLabel",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
     if(1 == argc)
     {
 
 #if COCOS2D_DEBUG >= 1
-        if (!tolua_isusertype(tolua_S,2,"cc.Node",0,&tolua_err) )
+        if (!tolua_isusertype(tolua_S,1,"cc.Node",0,&tolua_err) )
         {
             goto tolua_lerror;
         }
 #endif
-        Node* label = ((Node*)  tolua_tousertype(tolua_S,2,0));
+        Node* label = ((Node*)  tolua_tousertype(tolua_S,1,0));
         MenuItemLabel* tolua_ret = (MenuItemLabel*)  MenuItemLabel::create(label);
         int nID = (tolua_ret) ? (int)tolua_ret->_ID : -1;
         int* pLuaID = (tolua_ret) ? &tolua_ret->_luaID : NULL;
@@ -349,20 +344,19 @@ static int tolua_cocos2d_MenuItemFont_create(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
 	tolua_Error tolua_err;
-	if (!tolua_isusertable(tolua_S,1,"cc.MenuItemFont",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
     if(1 == argc)
     {
 
 #if COCOS2D_DEBUG >= 1
-        if (!tolua_isstring(tolua_S, 2, 0, &tolua_err))
+        if (!tolua_isstring(tolua_S, 1, 0, &tolua_err))
         {
             goto tolua_lerror;
         }
 #endif
-        const std::string value = ((const std::string)  tolua_tocppstring(tolua_S,2,0));
+        const std::string value = ((const std::string)  tolua_tocppstring(tolua_S,1,0));
         MenuItemFont* tolua_ret = (MenuItemFont*)  MenuItemFont::create(value);
         int nID = (tolua_ret) ? (int)tolua_ret->_ID : -1;
         int* pLuaID = (tolua_ret) ? &tolua_ret->_luaID : NULL;
@@ -389,33 +383,32 @@ static int tolua_cocos2d_MenuItemSprite_create(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
 	tolua_Error tolua_err;
-	if (!tolua_isusertable(tolua_S,1,"cc.MenuItemSprite",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if(argc >= 2 && argc <= 3)
     {
 
 #if COCOS2D_DEBUG >= 1
-        if (!tolua_isusertype(tolua_S,2,"cc.Node",0,&tolua_err) ||
-            !tolua_isusertype(tolua_S,3,"cc.Node",0,&tolua_err) )
+        if (!tolua_isusertype(tolua_S,1,"cc.Node",0,&tolua_err) ||
+            !tolua_isusertype(tolua_S,2,"cc.Node",0,&tolua_err) )
         {
             goto tolua_lerror;
         }
 
-        if (3 == argc && !tolua_isusertype(tolua_S,4,"cc.Node",0,&tolua_err))
+        if (3 == argc && !tolua_isusertype(tolua_S,3,"cc.Node",0,&tolua_err))
         {
             goto tolua_lerror;
         }
 #endif
 
-        Node* normalSprite = ((Node*)  tolua_tousertype(tolua_S,2,0));
-        Node* selectedSprite = ((Node*)  tolua_tousertype(tolua_S,3,0));
+        Node* normalSprite = ((Node*)  tolua_tousertype(tolua_S,1,0));
+        Node* selectedSprite = ((Node*)  tolua_tousertype(tolua_S,2,0));
         Node* disabledSprite = NULL;
         if (3 == argc)
         {
-            disabledSprite = (Node*)  tolua_tousertype(tolua_S,4,0);
+            disabledSprite = (Node*)  tolua_tousertype(tolua_S,3,0);
         }
         MenuItemSprite* tolua_ret = (MenuItemSprite*)  MenuItemSprite::create(normalSprite,selectedSprite,disabledSprite);
         int nID = (tolua_ret) ? (int)tolua_ret->_ID : -1;
@@ -443,10 +436,9 @@ static int tolua_cocos2d_Menu_create(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
 	tolua_Error tolua_err;
-	if (!tolua_isusertable(tolua_S,1,"cc.Menu",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
     if (argc > 0 )
     {
         Vector<MenuItem*> items;
@@ -454,11 +446,11 @@ static int tolua_cocos2d_Menu_create(lua_State* tolua_S)
         while (i <= argc)
         {
 #if COCOS2D_DEBUG >= 1
-            if (!tolua_isusertype(tolua_S, 1 + i, "cc.MenuItem", 0, &tolua_err))
+            if (!tolua_isusertype(tolua_S, i, "cc.MenuItem", 0, &tolua_err))
                 goto tolua_lerror;
 #endif
 
-            cocos2d::MenuItem* item = static_cast<cocos2d::MenuItem*>(tolua_tousertype(tolua_S, 1 + i, NULL));
+            cocos2d::MenuItem* item = static_cast<cocos2d::MenuItem*>(tolua_tousertype(tolua_S, i, NULL));
             if (NULL != item)
             {
                 items.pushBack(item);
@@ -588,10 +580,9 @@ static int tolua_cocos2d_MenuItemToggle_create(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
 	tolua_Error tolua_err;
-	if (!tolua_isusertable(tolua_S,1,"cc.MenuItemToggle",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
     if(argc >= 1)
     {
         MenuItemToggle* tolua_ret = MenuItemToggle::create();
@@ -603,12 +594,12 @@ static int tolua_cocos2d_MenuItemToggle_create(lua_State* tolua_S)
         for (int i = 0; i < argc; ++i)
         {
 #if COCOS2D_DEBUG >= 1
-            if (!tolua_isusertype(tolua_S, i + 2,"cc.MenuItem",0,&tolua_err) )
+            if (!tolua_isusertype(tolua_S, i + 1,"cc.MenuItem",0,&tolua_err) )
             {
                 goto tolua_lerror;
             }
 #endif
-            MenuItem* item = static_cast<MenuItem*>(tolua_tousertype(tolua_S, i + 2,0));
+            MenuItem* item = static_cast<MenuItem*>(tolua_tousertype(tolua_S, i + 1,0));
             tolua_ret->addSubItem(item);
         }
         tolua_ret->setSelectedIndex(0);
@@ -1913,18 +1904,18 @@ static int tolua_cocos2d_RenderTexture_newImage(lua_State* tolua_S)
     int argc = 0;
     cocos2d::RenderTexture* cobj = nullptr;
     bool ok  = true;
-    
+
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
 #endif
-    
-    
+
+
 #if COCOS2D_DEBUG >= 1
     if (!tolua_isusertype(tolua_S,1,"cc.RenderTexture",0,&tolua_err)) goto tolua_lerror;
 #endif
-    
+
     cobj = (cocos2d::RenderTexture*)tolua_tousertype(tolua_S,1,0);
-    
+
 #if COCOS2D_DEBUG >= 1
     if (!cobj)
     {
@@ -1932,7 +1923,7 @@ static int tolua_cocos2d_RenderTexture_newImage(lua_State* tolua_S)
         return 0;
     }
 #endif
-    
+
     argc = lua_gettop(tolua_S)-1;
     if (argc == 1 || argc == 2)
     {
@@ -1950,7 +1941,7 @@ static int tolua_cocos2d_RenderTexture_newImage(lua_State* tolua_S)
             stack->pushObject(image, "cc.Image");
             stack->executeFunctionByHandler(handler, 1);
         };
-        
+
         if(argc == 2)
         {
             bool flipImage;
@@ -1963,15 +1954,15 @@ static int tolua_cocos2d_RenderTexture_newImage(lua_State* tolua_S)
         }
         return 0;
     }
-    
+
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.RenderTexture:newImage",argc, 2);
     return 0;
-    
+
 #if COCOS2D_DEBUG >= 1
 tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'tolua_cocos2d_RenderTexture_newImage'.",&tolua_err);
 #endif
-    
+
     return 0;
 }
 
@@ -1984,18 +1975,14 @@ int tolua_cocos2d_Sequence_create(lua_State* tolua_S)
 
     tolua_Error tolua_err;
 
-#if COCOS2D_DEBUG >= 1
-	if (!tolua_isusertable(tolua_S,1,"cc.Sequence",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
     if(argc > 0)
     {
         Vector<FiniteTimeAction*> array;
 
-        if (1 == argc && tolua_istable(tolua_S, 2, 0, &tolua_err))
+        if (1 == argc && tolua_istable(tolua_S, 1, 0, &tolua_err))
         {
-            luaval_to_ccvector(tolua_S, 2, &array, "cc.Sequence:create");
+            luaval_to_ccvector(tolua_S, 1, &array, "cc.Sequence:create");
         }
         else
         {
@@ -2003,11 +1990,11 @@ int tolua_cocos2d_Sequence_create(lua_State* tolua_S)
             while (i <= argc)
             {
 #if COCOS2D_DEBUG >= 1
-                if (!tolua_isusertype(tolua_S, 1 + i, "cc.FiniteTimeAction", 0, &tolua_err))
+                if (!tolua_isusertype(tolua_S, i, "cc.FiniteTimeAction", 0, &tolua_err))
                     goto tolua_lerror;
 #endif
 
-                cocos2d::FiniteTimeAction* item = static_cast<cocos2d::FiniteTimeAction*>(tolua_tousertype(tolua_S, 1 + i, nullptr));
+                cocos2d::FiniteTimeAction* item = static_cast<cocos2d::FiniteTimeAction*>(tolua_tousertype(tolua_S, i, nullptr));
                 if (nullptr != item)
                 {
                     array.pushBack(item);
@@ -2042,29 +2029,28 @@ static int tolua_cocos2d_CallFunc_create(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
 	tolua_Error tolua_err;
-	if (!tolua_isusertable(tolua_S,1,"cc.CallFunc",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1 || argc == 2)
     {
 #if COCOS2D_DEBUG >= 1
-        if(!toluafix_isfunction(tolua_S,2,"LUA_FUNCTION",0,&tolua_err))
+        if(!toluafix_isfunction(tolua_S,1,"LUA_FUNCTION",0,&tolua_err))
             goto tolua_lerror;
 #endif
 
-        LUA_FUNCTION handler =  toluafix_ref_function(tolua_S,2,0);
+        LUA_FUNCTION handler =  toluafix_ref_function(tolua_S,1,0);
 
         bool hasExtraData = false;
         int  ref  = 0;
         if (argc == 2)
         {
 #if COCOS2D_DEBUG >= 1
-            if(!tolua_istable(tolua_S, 3, 0, &tolua_err))
+            if(!tolua_istable(tolua_S, 2, 0, &tolua_err))
                 goto tolua_lerror;
 #endif
-            lua_pushvalue(tolua_S, 3);
+            lua_pushvalue(tolua_S, 2);
             ref = luaL_ref(tolua_S, LUA_REGISTRYINDEX);
             hasExtraData = true;
         }
@@ -2795,27 +2781,27 @@ static int tolua_cocos2d_Spawn_create(lua_State* tolua_S)
     if (!tolua_isusertable(tolua_S,1,"cc.Spawn",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc > 0)
     {
         Vector<FiniteTimeAction*> array;
         int i = 1;
 
-        if (1 == argc && tolua_istable(tolua_S, 2, 0, &tolua_err))
+        if (1 == argc && tolua_istable(tolua_S, 1, 0, &tolua_err))
         {
-            luaval_to_ccvector(tolua_S, 2, &array, "cc.Spawn:create");
+            luaval_to_ccvector(tolua_S, 1, &array, "cc.Spawn:create");
         }
         else
         {
             while (i <= argc)
             {
 #if COCOS2D_DEBUG >= 1
-                if (!tolua_isusertype(tolua_S, 1 + i, "cc.FiniteTimeAction", 0, &tolua_err))
+                if (!tolua_isusertype(tolua_S, i, "cc.FiniteTimeAction", 0, &tolua_err))
                     goto tolua_lerror;
 #endif
 
-                cocos2d::FiniteTimeAction* item = static_cast<cocos2d::FiniteTimeAction*>(tolua_tousertype(tolua_S, 1 + i, NULL));
+                cocos2d::FiniteTimeAction* item = static_cast<cocos2d::FiniteTimeAction*>(tolua_tousertype(tolua_S, i, NULL));
                 if (NULL != item)
                 {
                     array.pushBack(item);
@@ -2851,26 +2837,25 @@ int lua_cocos2d_CardinalSplineBy_create(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(tolua_S,1,"cc.CardinalSplineBy",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 3)
     {
         double dur = 0.0;
-        ok &= luaval_to_number(tolua_S, 2, &dur, "cc.CardinalSplineBy:create");
+        ok &= luaval_to_number(tolua_S, 1, &dur, "cc.CardinalSplineBy:create");
         if (!ok)
             return 0;
 
         int num = 0;
         cocos2d::Vec2 *arr = NULL;
-        ok &= luaval_to_array_of_vec2(tolua_S, 3, &arr, &num, "cc.CardinalSplineBy:create");
+        ok &= luaval_to_array_of_vec2(tolua_S, 2, &arr, &num, "cc.CardinalSplineBy:create");
         if (!ok)
             return 0;
 
         double ten = 0.0;
-        ok &= luaval_to_number(tolua_S, 4, &ten, "cc.CardinalSplineBy:create");
+        ok &= luaval_to_number(tolua_S, 3, &ten, "cc.CardinalSplineBy:create");
         if (!ok)
         {
             CC_SAFE_DELETE_ARRAY(arr);
@@ -2923,21 +2908,20 @@ int tolua_cocos2d_CatmullRomBy_create(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(tolua_S,1,"cc.CatmullRomBy",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
         double dur = 0.0;
-        ok &= luaval_to_number(tolua_S, 2, &dur, "cc.CatmullRomBy:create");
+        ok &= luaval_to_number(tolua_S, 1, &dur, "cc.CatmullRomBy:create");
         if (!ok)
             return 0;
 
         int num = 0;
         cocos2d::Vec2 *arr = NULL;
-        ok &= luaval_to_array_of_vec2(tolua_S, 3, &arr, &num, "cc.CatmullRomBy:create");
+        ok &= luaval_to_array_of_vec2(tolua_S, 2, &arr, &num, "cc.CatmullRomBy:create");
         if (!ok)
             return 0;
 
@@ -2987,21 +2971,20 @@ int tolua_cocos2d_CatmullRomTo_create(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(tolua_S,1,"cc.CatmullRomTo",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
         double dur = 0.0;
-        ok &= luaval_to_number(tolua_S, 2, &dur, "cc.CatmullRomTo:create");
+        ok &= luaval_to_number(tolua_S, 1, &dur, "cc.CatmullRomTo:create");
         if (!ok)
             return 0;
 
         int num = 0;
         cocos2d::Vec2 *arr = NULL;
-        ok &= luaval_to_array_of_vec2(tolua_S, 3, &arr, &num, "cc.CatmullRomTo:create");
+        ok &= luaval_to_array_of_vec2(tolua_S, 2, &arr, &num, "cc.CatmullRomTo:create");
         if (!ok)
             return 0;
 
@@ -3051,21 +3034,20 @@ int tolua_cocos2d_BezierBy_create(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(tolua_S,1,"cc.BezierBy",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
         double t = 0.0;
-        ok &= luaval_to_number(tolua_S, 2, &t, "cc.BezierBy:create");
+        ok &= luaval_to_number(tolua_S, 1, &t, "cc.BezierBy:create");
         if (!ok)
             return 0;
 
         int num = 0;
         cocos2d::Vec2 *arr = NULL;
-        ok &= luaval_to_array_of_vec2(tolua_S, 3, &arr, &num, "cc.BezierBy:create");
+        ok &= luaval_to_array_of_vec2(tolua_S, 2, &arr, &num, "cc.BezierBy:create");
         if (!ok)
             return 0;
 
@@ -3111,21 +3093,20 @@ int tolua_cocos2d_BezierTo_create(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(tolua_S,1,"cc.BezierTo",0,&tolua_err)) goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
         double t = 0.0;
-        ok &= luaval_to_number(tolua_S, 2, &t, "cc.BezierTo:create");
+        ok &= luaval_to_number(tolua_S, 1, &t, "cc.BezierTo:create");
         if (!ok)
             return 0;
 
         int num = 0;
         cocos2d::Vec2 *arr = NULL;
-        ok &= luaval_to_array_of_vec2(tolua_S, 3, &arr, &num, "cc.BezierTo:create");
+        ok &= luaval_to_array_of_vec2(tolua_S, 2, &arr, &num, "cc.BezierTo:create");
         if (!ok)
             return 0;
 
@@ -3668,10 +3649,9 @@ static int tolua_cocos2dx_LayerMultiplex_create(lua_State* tolua_S)
 
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(tolua_S, 1, "cc.LayerMultiplex", 0, &tolua_err))  goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc > 0)
     {
@@ -3692,12 +3672,6 @@ static int tolua_cocos2dx_LayerMultiplex_create(lua_State* tolua_S)
 
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n", "cc.LayerMultiplex:create", argc, 1);
     return 0;
-
-#if COCOS2D_DEBUG >= 1
-tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'tolua_cocos2dx_LayerMultiplex_create'.",&tolua_err);
-    return 0;
-#endif
 }
 
 static int tolua_cocos2dx_FileUtils_getStringFromFile(lua_State* tolua_S)
@@ -4518,18 +4492,14 @@ int lua_cocos2dx_Sprite_create(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"cc.Sprite",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
+    argc = lua_gettop(tolua_S);
 
     do
     {
         if (argc == 1)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "cc.Sprite:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "cc.Sprite:create");
             if (!ok) { break; }
             cocos2d::Sprite* ret = cocos2d::Sprite::create(arg0);
             object_to_luaval<cocos2d::Sprite>(tolua_S, "cc.Sprite",(cocos2d::Sprite*)ret);
@@ -4552,7 +4522,7 @@ int lua_cocos2dx_Sprite_create(lua_State* tolua_S)
         if (argc == 1)
         {
             cocos2d::PolygonInfo* arg0;
-            ok &= luaval_to_object<cocos2d::PolygonInfo>(tolua_S, 2, "cc.PolygonInfo",&arg0, "cc.Sprite:create");
+            ok &= luaval_to_object<cocos2d::PolygonInfo>(tolua_S, 1, "cc.PolygonInfo",&arg0, "cc.Sprite:create");
             if (!ok) { break; }
             cocos2d::Sprite* ret = cocos2d::Sprite::create(*arg0);
             object_to_luaval<cocos2d::Sprite>(tolua_S, "cc.Sprite",(cocos2d::Sprite*)ret);
@@ -4565,10 +4535,10 @@ int lua_cocos2dx_Sprite_create(lua_State* tolua_S)
         if (argc == 2)
         {
             std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "cc.Sprite:create");
+            ok &= luaval_to_std_string(tolua_S, 1,&arg0, "cc.Sprite:create");
             if (!ok) { break; }
             cocos2d::Rect arg1;
-            ok &= luaval_to_rect(tolua_S, 3, &arg1, "cc.Sprite:create");
+            ok &= luaval_to_rect(tolua_S, 2, &arg1, "cc.Sprite:create");
             if (!ok) { break; }
             cocos2d::Sprite* ret = cocos2d::Sprite::create(arg0, arg1);
             object_to_luaval<cocos2d::Sprite>(tolua_S, "cc.Sprite",(cocos2d::Sprite*)ret);
@@ -4692,19 +4662,18 @@ static int tolua_cocos2dx_LuaEventListenerAcceleration_create(lua_State* tolua_S
     int argc = 0;
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(tolua_S, 1, "cc.EventListenerAcceleration", 0, &tolua_err))  goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
 #if COCOS2D_DEBUG >= 1
-        if (!toluafix_isfunction(tolua_S,2,"LUA_FUNCTION",0,&tolua_err)) {
+        if (!toluafix_isfunction(tolua_S,1,"LUA_FUNCTION",0,&tolua_err)) {
             goto tolua_lerror;
         }
 #endif
-        LUA_FUNCTION handler = toluafix_ref_function(tolua_S,2,0);
+        LUA_FUNCTION handler = toluafix_ref_function(tolua_S,1,0);
         cocos2d::EventListenerAcceleration* tolua_ret = cocos2d::LuaEventListenerAcceleration::create();
         ScriptHandlerMgr::getInstance()->addObjectHandler((void*)tolua_ret, handler, ScriptHandlerMgr::HandlerType::EVENT_ACC);
         int ID = (tolua_ret) ? (int)tolua_ret->_ID : -1;
@@ -4732,22 +4701,21 @@ static int tolua_cocos2d_LuaEventListenerCustom_create(lua_State* tolua_S)
     int argc = 0;
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(tolua_S, 1, "cc.EventListenerCustom", 0, &tolua_err))  goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 2)
     {
 #if COCOS2D_DEBUG >= 1
-        if (!tolua_isstring(tolua_S,2,0,&tolua_err) ||
-            !toluafix_isfunction(tolua_S,3,"LUA_FUNCTION",0,&tolua_err))
+        if (!tolua_isstring(tolua_S,1,0,&tolua_err) ||
+            !toluafix_isfunction(tolua_S,2,"LUA_FUNCTION",0,&tolua_err))
         {
             goto tolua_lerror;
         }
 #endif
-        const std::string eventName = ((const std::string)  tolua_tocppstring(tolua_S,2,0));
-        LUA_FUNCTION handler = toluafix_ref_function(tolua_S,3,0);
+        const std::string eventName = ((const std::string)  tolua_tocppstring(tolua_S,1,0));
+        LUA_FUNCTION handler = toluafix_ref_function(tolua_S,2,0);
         cocos2d::EventListenerCustom* tolua_ret = LuaEventListenerCustom::create(eventName);
         ScriptHandlerMgr::getInstance()->addObjectHandler((void*)tolua_ret, handler, ScriptHandlerMgr::HandlerType::EVENT_CUSTIOM);
 
@@ -4817,12 +4785,6 @@ static int tolua_cocos2dx_EventListenerKeyboard_create(lua_State* tolua_S)
 
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n", "cc.EventListenerKeyboard:create", argc, 1);
     return 0;
-
-#if COCOS2D_DEBUG >= 1
-tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'tolua_cocos2dx_EventListenerKeyboard_create'.",&tolua_err);
-    return 0;
-#endif
 }
 
 static void cloneKeyboardHandler(const EventListenerKeyboard* src,EventListenerKeyboard* dst,  ScriptHandlerMgr::HandlerType type)
@@ -5003,10 +4965,9 @@ static int tolua_cocos2dx_EventListenerTouchOneByOne_create(lua_State* tolua_S)
     int argc = 0;
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(tolua_S, 1, "cc.EventListenerTouchOneByOne", 0, &tolua_err))  goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -5252,10 +5213,9 @@ static int tolua_cocos2dx_EventListenerTouchAllAtOnce_create(lua_State* tolua_S)
     int argc = 0;
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(tolua_S, 1, "cc.EventListenerTouchAllAtOnce", 0, &tolua_err))  goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -5500,10 +5460,9 @@ static int tolua_cocos2dx_EventListenerMouse_create(lua_State* tolua_S)
     int argc = 0;
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
-    if (!tolua_isusertable(tolua_S, 1, "cc.EventListenerMouse", 0, &tolua_err))  goto tolua_lerror;
 #endif
 
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -7151,7 +7110,7 @@ static int lua_cocos2dx_backend_ProgramState_getUniformLocation(lua_State* tolua
 
                 if (!ok) { break; }
                 cocos2d::backend::UniformLocation ret = cobj->getUniformLocation(arg0);
-                uniformLocation_to_luaval(tolua_S, ret); 
+                uniformLocation_to_luaval(tolua_S, ret);
                 return 1;
             }
             else if (lua_isnumber(tolua_S, -1))
@@ -7166,7 +7125,7 @@ static int lua_cocos2dx_backend_ProgramState_getUniformLocation(lua_State* tolua
             }
         }
     } while (0);
-    
+
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.ProgramState:getUniformLocation", argc, 1);
     return 0;
 
@@ -7203,11 +7162,11 @@ static int lua_cocos2dx_ProgramState_setUniform(lua_State *tolua_S)
     if (2 == argc)
     {
         cocos2d::backend::UniformLocation location;
-        
+
         if (lua_isstring(tolua_S, 2))
         {
             location = self->getUniformLocation(lua_tostring(tolua_S, 2));
-        } 
+        }
         else if (lua_istable(tolua_S, 2))
         {
             ok &= luaval_to_uniformLocation(tolua_S, 2, location, "ccb.ProgramState:setUniform");
@@ -7230,7 +7189,7 @@ static int lua_cocos2dx_ProgramState_setUniform(lua_State *tolua_S)
         else
         {
             luaL_error(tolua_S, "`lua_cocos2dx_ProgramState_setUniform` argument invalidate");
-            
+
         }
         return 0;
     }
@@ -7249,7 +7208,7 @@ static void extendProgramState(lua_State *tolua_S)
 {
     //lua_pushstring(tolua_S, "ccb.ProgramState");
     //lua_rawget(tolua_S, LUA_REGISTRYINDEX);
-    
+
     tolua_beginmodule(tolua_S, "ccb");
     tolua_beginmodule(tolua_S, "ProgramState");
     if (lua_istable(tolua_S, -1))
@@ -8365,7 +8324,7 @@ int register_all_cocos2dx_math_manual(lua_State* tolua_S)
 }
 
 
-int register_all_cocos2dx_shaders_manual(lua_State *tolua_S) 
+int register_all_cocos2dx_shaders_manual(lua_State *tolua_S)
 {
     if (nullptr == tolua_S)
         return 0;
@@ -8432,14 +8391,14 @@ static int tolua_cocos2d_bytearray_vec2(lua_State *L)
 {
     bool ok = true;
     int argc = lua_gettop(L);
-    
+
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
 #endif
     if (argc == 1)
     {
 #if COCOS2D_DEBUG >= 1
-        
+
         if (!tolua_istable(L, 1, 0, &tolua_err))
             goto tolua_lerror;
         else
@@ -8449,7 +8408,7 @@ static int tolua_cocos2d_bytearray_vec2(lua_State *L)
             ok &= luaval_to_vec2(L, 1, &arg, "tolua_cocos2d_bytearray_template");
             if (!ok)
                 return 0;
-            
+
             lua_pop(L, 1);
             lua_newtable(L);
             uint8_t *bytes = (uint8_t*)&arg;
@@ -8473,14 +8432,14 @@ static int tolua_cocos2d_bytearray_vec3(lua_State *L)
 {
     bool ok = true;
     int argc = lua_gettop(L);
-    
+
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
 #endif
     if (argc == 1)
     {
 #if COCOS2D_DEBUG >= 1
-        
+
         if (!tolua_istable(L, 1, 0, &tolua_err))
             goto tolua_lerror;
         else
@@ -8490,7 +8449,7 @@ static int tolua_cocos2d_bytearray_vec3(lua_State *L)
             ok &= luaval_to_vec3(L, 1, &arg, "tolua_cocos2d_bytearray_template");
             if (!ok)
                 return 0;
-            
+
             lua_pop(L, 1);
             lua_newtable(L);
             uint8_t *bytes = (uint8_t*)&arg;
@@ -8514,14 +8473,14 @@ static int tolua_cocos2d_bytearray_vec4(lua_State *L)
 {
     bool ok = true;
     int argc = lua_gettop(L);
-    
+
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
 #endif
     if (argc == 1)
     {
 #if COCOS2D_DEBUG >= 1
-        
+
         if (!tolua_istable(L, 1, 0, &tolua_err))
             goto tolua_lerror;
         else
@@ -8531,7 +8490,7 @@ static int tolua_cocos2d_bytearray_vec4(lua_State *L)
             ok &= luaval_to_vec4(L, 1, &arg, "tolua_cocos2d_bytearray_template");
             if (!ok)
                 return 0;
-            
+
             lua_pop(L, 1);
             lua_newtable(L);
             uint8_t *bytes = (uint8_t*)&arg;
@@ -8555,14 +8514,14 @@ static int tolua_cocos2d_bytearray_mat4(lua_State *L)
 {
     bool ok = true;
     int argc = lua_gettop(L);
-    
+
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
 #endif
     if (argc == 1)
     {
 #if COCOS2D_DEBUG >= 1
-        
+
         if (!tolua_istable(L, 1, 0, &tolua_err))
             goto tolua_lerror;
         else
@@ -8572,7 +8531,7 @@ static int tolua_cocos2d_bytearray_mat4(lua_State *L)
             ok &= luaval_to_mat4(L, 1, &arg, "tolua_cocos2d_bytearray_template");
             if (!ok)
                 return 0;
-            
+
             lua_pop(L, 1);
             lua_newtable(L);
             uint8_t *bytes = (uint8_t*)&arg;
@@ -8596,14 +8555,14 @@ static int tolua_cocos2d_bytearray_int(lua_State *L)
 {
     bool ok = true;
     int argc = lua_gettop(L);
-    
+
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
 #endif
     if (argc == 1)
     {
 #if COCOS2D_DEBUG >= 1
-        
+
         if (!tolua_isnumber(L, 1, 0, &tolua_err))
             goto tolua_lerror;
         else
@@ -8613,7 +8572,7 @@ static int tolua_cocos2d_bytearray_int(lua_State *L)
             ok &= luaval_to_int32(L, 1, &arg, "tolua_cocos2d_bytearray_template");
             if (!ok)
                 return 0;
-            
+
             lua_pop(L, 1);
             lua_newtable(L);
             uint8_t *bytes = (uint8_t*)&arg;
@@ -8637,14 +8596,14 @@ static int tolua_cocos2d_bytearray_float(lua_State *L)
 {
     bool ok = true;
     int argc = lua_gettop(L);
-    
+
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
 #endif
     if (argc == 1)
     {
 #if COCOS2D_DEBUG >= 1
-        
+
         if (!tolua_isnumber(L, 1, 0, &tolua_err))
             goto tolua_lerror;
         else
@@ -8654,7 +8613,7 @@ static int tolua_cocos2d_bytearray_float(lua_State *L)
             ok &= luaval_to_float(L, 1, &arg, "tolua_cocos2d_bytearray_template");
             if (!ok)
                 return 0;
-            
+
             lua_pop(L, 1);
             lua_newtable(L);
             uint8_t *bytes = (uint8_t*)&arg;
@@ -8724,14 +8683,14 @@ static int tolua_cocos2d_bytearray_intv(lua_State *L)
 static int tolua_cocos2d_bytearray_floatv(lua_State *L)
 {
     int argc = lua_gettop(L);
-    
+
 #if COCOS2D_DEBUG >= 1
     tolua_Error tolua_err;
 #endif
     if (argc == 1)
     {
 #if COCOS2D_DEBUG >= 1
-        
+
         if (!tolua_istable(L, 1, 0, &tolua_err))
             goto tolua_lerror;
         else
@@ -8739,10 +8698,10 @@ static int tolua_cocos2d_bytearray_floatv(lua_State *L)
         {
             int size = lua_rawlen(L, 1);
             std::vector<uint8_t> arg(size * sizeof(float));
-            
+
             float e;
             float *p = (float*)arg.data();
-            
+
             for (auto idx = 0; idx < size; idx++)
             {
                 lua_rawgeti(L, 1, idx + 1);
