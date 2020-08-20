@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.14)
 
 # need to whole-archive this lib
 set(target_name cpp_android_spec)
@@ -23,5 +23,4 @@ add_library(${target_name} STATIC
 target_include_directories(${target_name}
   PRIVATE ..
   PRIVATE ../..
-)  
-
+)
