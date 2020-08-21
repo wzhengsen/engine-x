@@ -26,6 +26,7 @@
 #include "CCEventListenerAssetsManagerEx.h"
 #include "base/ccUTF8.h"
 #include "base/CCDirector.h"
+#include "base/ccUtils.h"
 
 #include <stdio.h>
 
@@ -386,7 +387,8 @@ bool AssetsManagerEx::decompress(const std::string &zip)
             unzClose(zipfile);
             return false;
         }
-        const std::string fullPath = rootPath + fileName;
+        const auto gb2312FullPath = utils::UTF8ToGB2312(rootPath) + fileName;
+        const std::string fullPath = rootPath + utils::GB2312ToUTF8(fileName,::strlen(fileName));
         
         // Check if this entry is a directory or a file.
         const size_t filenameLength = strlen(fileName);
@@ -397,7 +399,7 @@ bool AssetsManagerEx::decompress(const std::string &zip)
             if ( !_fileUtils->createDirectory(basename(fullPath)) )
             {
                 // Failed to create directory
-                CCLOG("AssetsManagerEx : can not create directory %s\n", fullPath.c_str());
+                CCLOG("AssetsManagerEx : can not create directory %s\n", gb2312FullPath.c_str());
                 unzClose(zipfile);
                 return false;
             }
@@ -409,7 +411,7 @@ bool AssetsManagerEx::decompress(const std::string &zip)
             if (!_fileUtils->isDirectoryExist(dir)) {
                 if (!_fileUtils->createDirectory(dir)) {
                     // Failed to create directory
-                    CCLOG("AssetsManagerEx : can not create directory %s\n", fullPath.c_str());
+                    CCLOG("AssetsManagerEx : can not create directory %s\n", gb2312FullPath.c_str());
                     unzClose(zipfile);
                     return false;
                 }
@@ -424,10 +426,10 @@ bool AssetsManagerEx::decompress(const std::string &zip)
             }
             
             // Create a file to store current file.
-            FILE *out = fopen(fullPath.c_str(), "wb");
+            FILE *out = fopen(gb2312FullPath.c_str(), "wb");
             if (!out)
             {
-                CCLOG("AssetsManagerEx : can not create decompress destination file %s (errno: %d)\n", fullPath.c_str(), errno);
+                CCLOG("AssetsManagerEx : can not create decompress destination file %s (errno: %d)\n", gb2312FullPath.c_str(), errno);
                 unzCloseCurrentFile(zipfile);
                 unzClose(zipfile);
                 return false;
