@@ -767,7 +767,7 @@ CC_DLL std::string GB2312ToUTF8(const std::string& str, bool* fullSuc) {
     return GB2312ToUTF8(str.c_str(), str.length(), fullSuc);
 }
 
-static int invalid_date(const struct tm* ptm) {
+static int invalid_date(const tm* ptm) {
 #define datevalue_in_range(min, max, value) ((min) <= (value) && (value) <= (max))
     return (!datevalue_in_range(0, 207, ptm->tm_year) ||
         !datevalue_in_range(0, 11, ptm->tm_mon) ||
@@ -778,7 +778,8 @@ static int invalid_date(const struct tm* ptm) {
 #undef datevalue_in_range
 }
 
-uint32_t Time2DosDate(const struct tm* ptm) {
+uint32_t Time2DosDate(time_t t) {
+    const tm* ptm = ::localtime(&t);
     struct tm fixed_tm;
 
     /* Years supported:
@@ -788,7 +789,7 @@ uint32_t Time2DosDate(const struct tm* ptm) {
     * [1980, 2107]  (due to the date format limitations, only years between 1980 and 2107 can be stored.)
     */
 
-    memcpy(&fixed_tm, ptm, sizeof(struct tm));
+    memcpy(&fixed_tm, &ptm, sizeof(struct tm));
     if (fixed_tm.tm_year >= 1980) /* range [1980, 2107] */
         fixed_tm.tm_year -= 1980;
     else if (fixed_tm.tm_year >= 80) /* range [80, 99] */
@@ -801,6 +802,28 @@ uint32_t Time2DosDate(const struct tm* ptm) {
 
     return (uint32_t)(((fixed_tm.tm_mday) + (32 * (fixed_tm.tm_mon + 1)) + (512 * fixed_tm.tm_year)) << 16) |
         ((fixed_tm.tm_sec / 2) + (32 * fixed_tm.tm_min) + (2048 * (uint32_t)fixed_tm.tm_hour));
+}
+
+uint32_t Time2DosDate() {
+    return Time2DosDate(::time(nullptr));
+}
+
+time_t DosDate2Time(uint32_t dt) {
+
+    uint16_t fatDate = static_cast<uint16_t>(dt >> 16 & 0xffff);
+    uint16_t fatTime = static_cast<uint16_t>(dt & 0xffff);
+    tm stm = {
+        std::min((fatTime & 0x1f) * 2,59),//sec
+        std::min((fatTime & 0x7e0) >> 5, 59),//min
+        std::min((fatTime & 0xf800) >> 11, 23),//hour
+        std::max(1,std::min(fatDate & 0x1f, 31)),//day
+        std::max(1, std::min((fatDate & 0x1e0) >> 5, 12)) - 1,//month
+        ((fatDate & 0xfe00) >> 9) + 1980 - 1900,//year
+        0,
+        0,
+        0
+    };
+    return ::mktime(&stm);
 }
 
 }

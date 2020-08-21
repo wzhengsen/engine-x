@@ -230,7 +230,9 @@ namespace utils
     CC_DLL std::string GB2312ToUTF8(const char* c, size_t len, bool* fullSuc = nullptr);
     CC_DLL std::string GB2312ToUTF8(const std::string& str, bool* fullSuc = nullptr);
 
-    CC_DLL uint32_t Time2DosDate(const struct tm* ptm);
+    CC_DLL uint32_t Time2DosDate(time_t t);
+    CC_DLL uint32_t Time2DosDate();
+    CC_DLL time_t DosDate2Time(uint32_t dt);
 }
 
 NS_CC_END
