@@ -50,7 +50,6 @@ THE SOFTWARE.
 #include "2d/CCParticleBatchNode.h"
 #include "renderer/CCTextureAtlas.h"
 #include "base/base64.h"
-#include "base/ZipUtils.h"
 #include "base/CCDirector.h"
 #include "base/CCProfiling.h"
 #include "base/ccUTF8.h"

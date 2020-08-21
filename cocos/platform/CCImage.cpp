@@ -121,7 +121,6 @@ extern "C"
 #include "platform/CCFileUtils.h"
 #include "base/CCConfiguration.h"
 #include "base/ccUtils.h"
-#include "base/ZipUtils.h"
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
 #include "platform/android/CCFileUtils-android.h"
 #include "platform/CCGL.h"
