@@ -31,7 +31,6 @@ THE SOFTWARE.
 #include <unordered_map>
 #include <sstream>
 #include "2d/CCTMXTiledMap.h"
-#include "base/ZipUtils.h"
 #include "base/base64.h"
 #include "base/CCDirector.h"
 #include "platform/CCFileUtils.h"
