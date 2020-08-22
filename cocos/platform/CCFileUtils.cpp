@@ -369,7 +369,7 @@ bool FileUtils::writeValueMapToFile(const ValueMap& dict, const std::string& ful
 <plist />)", pugi::parse_full);
 
 	auto rootEle = doc.document_element();
-	
+
     generateElementForDict(dict, rootEle);
 
 	return doc.save_file(fullPath.c_str());
@@ -635,8 +635,8 @@ FileUtils::Status FileUtils::getContents(const std::string& filename, ResizableB
     }
 
     if (isAes) {
-        uint8_t iv[16] = { 0 };
-        AES_KEY aeskey = { 0 };
+        uint8_t iv[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        AES_KEY aeskey = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
         int num = 0;
         AES_set_encrypt_key(reinterpret_cast<uint8_t*>(AES_SignPassword), 128, &aeskey);
         AES_cfb128_encrypt(reinterpret_cast<uint8_t*>(buffer->buffer()), reinterpret_cast<uint8_t*>(buffer->buffer()), size, &aeskey, iv, &num, AES_DECRYPT);
@@ -690,7 +690,7 @@ unsigned char* FileUtils::getFileDataFromZip(const std::string& zipFilePath, con
 
 void FileUtils::writeValueMapToFile(ValueMap dict, const std::string& fullPath, std::function<void(bool)> callback) const
 {
-    
+
     performOperationOffthread([fullPath](const ValueMap& dictIn) -> bool {
         return FileUtils::getInstance()->writeValueMapToFile(dictIn, fullPath);
     }, std::move(callback), std::move(dict));
@@ -706,7 +706,7 @@ void FileUtils::writeValueVectorToFile(ValueVector vecData, const std::string& f
 std::string FileUtils::getNewFilename(const std::string &filename) const
 {
     std::string newFileName;
-    
+
     DECLARE_GUARD;
 
     // in Lookup Filename dictionary ?
@@ -751,7 +751,7 @@ std::string FileUtils::getPathForDirectory(const std::string &dir, const std::st
 
 std::string FileUtils::fullPathForFilename(const std::string &filename) const
 {
-    
+
     DECLARE_GUARD;
 
     if (filename.empty())
@@ -830,7 +830,7 @@ std::string FileUtils::fullPathForDirectory(const std::string &dir) const
     }
 
     const std::string newdirname( getNewFilename(longdir) );
-    
+
     for (const auto& searchIt : _searchPathArray)
     {
         for (const auto& resolutionIt : _searchResolutionsOrderArray)
@@ -897,7 +897,7 @@ void FileUtils::setSearchResolutionsOrder(const std::vector<std::string>& search
 
 void FileUtils::addSearchResolutionsOrder(const std::string &order,const bool front)
 {
-    
+
     DECLARE_GUARD;
 
     std::string resOrder = order;
@@ -1099,7 +1099,7 @@ bool FileUtils::isAbsolutePath(const std::string& path) const
 bool FileUtils::isDirectoryExist(const std::string& dirPath) const
 {
     CCASSERT(!dirPath.empty(), "Invalid path");
-    
+
     DECLARE_GUARD;
 
     if (isAbsolutePath(dirPath))
@@ -1146,7 +1146,7 @@ void FileUtils::renameFile(const std::string &path, const std::string &oldname, 
     performOperationOffthread([path, oldname, name]() -> bool {
         return FileUtils::getInstance()->renameFile(path, oldname, name);
     }, std::move(callback));
-                                
+
 }
 
 void FileUtils::renameFile(const std::string &oldfullpath, const std::string &newfullpath, std::function<void(bool)> callback) const
@@ -1329,10 +1329,10 @@ namespace
     int unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
     {
         int rv = remove(fpath);
-        
+
         if (rv)
             perror(fpath);
-        
+
         return rv;
     }
 #endif
