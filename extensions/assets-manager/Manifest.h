@@ -247,9 +247,6 @@ private:
     //! All search paths
     std::vector<std::string> _searchPaths;
 
-    // 是否打开条件过滤下载。
-    bool _openFilter = false;
-
     // 条件过滤方式。
     // 0-使用||逻辑
     // 1-使用&&逻辑
