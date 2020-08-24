@@ -40,7 +40,6 @@
 #define KEY_COMPRESSED_FILES    "compressedFiles"
 #define KEY_SEARCH_PATHS        "searchPaths"
 constexpr char* KeyModuleName       = "moduleName";
-constexpr char* KeyOpenFilter       = "openFilter";
 constexpr char* KeyFilterType       = "filterType";
 constexpr char* KeyOpenFilterNum    = "openFilterNum";
 constexpr char* KeyFilterNum        = "filterNum";
@@ -263,7 +262,7 @@ std::unordered_map<std::string, Manifest::AssetDiff> Manifest::genDiff(const Man
     }
 
     // 在此处过滤下载的文件，当满足过滤条件，将只下载整包。
-    if (b->_openFilter) {
+    if (b->_openFilterNum || b->_openFilterSize) {
         const bool fNumSuc = fileCount > b->_filterNum;
         const bool fSizeSuc = fileSize > b->_filterSize;
         bool fSuc = false;
@@ -591,10 +590,6 @@ void Manifest::loadManifest(const rapidjson::Document &json)
                 }
             }
         }
-    }
-
-    if (json.HasMember(KeyOpenFilter) && json[KeyOpenFilter].IsBool()) {
-        _openFilter = json[KeyOpenFilter].GetBool();
     }
 
     if (json.HasMember(KeyFilterType) && json[KeyFilterType].IsInt()) {
