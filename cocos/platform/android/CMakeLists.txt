@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.12)
 
 # need to whole-archive this lib
 set(target_name cpp_android_spec)
