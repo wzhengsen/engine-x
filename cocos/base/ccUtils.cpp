@@ -28,7 +28,7 @@ THE SOFTWARE.
 #include "base/ccUtils.h"
 
 #include <cmath>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include <signal.h>
 #if !defined(_WIN32)
