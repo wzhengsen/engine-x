@@ -56,6 +56,7 @@ THE SOFTWARE.
 #include "base/ccUtils.h"
 #include "renderer/CCTextureCache.h"
 #include "platform/CCFileUtils.h"
+#include "base/ZipUtils.h"
 
 using namespace std;
 

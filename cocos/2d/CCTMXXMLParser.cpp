@@ -34,6 +34,7 @@ THE SOFTWARE.
 #include "base/base64.h"
 #include "base/CCDirector.h"
 #include "platform/CCFileUtils.h"
+#include "base/ZipUtils.h"
 
 using namespace std;
 

@@ -27,7 +27,7 @@ THE SOFTWARE.
 #include "base/ccUtils.h"
 
 #include <cmath>
-#include <stdlib.h>
+#include <cstdlib>
 #include "md5/md5.h"
 
 #include "base/CCDirector.h"

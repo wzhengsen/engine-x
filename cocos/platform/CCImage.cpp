@@ -28,9 +28,10 @@ THE SOFTWARE.
 #include "platform/CCImage.h"
 
 #include <string>
-#include <ctype.h>
+#include <cctype>
 
 #include "base/ccConfig.h" // CC_USE_JPEG, CC_USE_WEBP
+#include "base/ZipUtils.h"
 
 #define STBI_NO_JPEG
 #define STBI_NO_PNG
