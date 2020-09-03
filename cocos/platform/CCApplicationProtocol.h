@@ -118,7 +118,7 @@ public:
     * @lua NA
     */
     virtual LanguageType getCurrentLanguage() = 0;
-    
+
     /**
      @brief Get current language iso 639-1 code.
      @return Current language iso 639-1 code.
@@ -126,14 +126,14 @@ public:
      * @lua NA
      */
     virtual const char * getCurrentLanguageCode() = 0;
-    
+
     /**
      @brief Get target platform.
      * @js NA
      * @lua NA
      */
     virtual Platform getTargetPlatform() = 0;
-    
+
     /**
      @brief Get application version.
      * @js NA
@@ -145,7 +145,7 @@ public:
      @brief 获取应用的编译版本.
      */
     virtual int64_t GetCompileVersion() = 0;
-    
+
     /**
      @brief Open url in default browser.
      @param String with url to open.
@@ -170,9 +170,9 @@ public:
     */
     virtual void Dialog(
         const std::string& title,
-        const std::string& cotent,
-        std::function<void()> okCallback = nullptr,
-        std::function<void()> cancelCallback = nullptr
+        const std::string& content,
+        const std::function<void()>& okCallback = nullptr,
+        const std::function<void()>& cancelCallback = nullptr
     ) = 0;
 
     /*
@@ -188,9 +188,9 @@ public:
         uint16_t icon,
 #endif
         const std::string& title,
-        const std::string& cotent,
-        std::function<void()> clickCallback = nullptr,
-        std::function<void()> closeCallback = nullptr
+        const std::string& content,
+        const std::function<void()>& clickCallback = nullptr,
+        const std::function<void()>& closeCallback = nullptr
     ) = 0;
 };
 

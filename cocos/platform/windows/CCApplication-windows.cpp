@@ -151,8 +151,8 @@ Application::~Application()
 void Application::Dialog(
     const std::string& title,
     const std::string& content,
-    std::function<void()> okCallback,
-    std::function<void()> cancelCallback
+    const std::function<void()>& okCallback,
+    const std::function<void()>& cancelCallback
 ) {
     HWND hwnd = cocos2d::Director::getInstance()->getOpenGLView()->getWin32Window();
     // 创建对话框。
@@ -208,8 +208,8 @@ void Application::Notify(
     uint16_t icon,
     const std::string& title,
     const std::string& content,
-    std::function<void()> clickCallback,
-    std::function<void()> closeCallback
+    const std::function<void()>& clickCallback,
+    const std::function<void()>& closeCallback
 ) {
     const std::wstring wstrT = ntcvt::from_chars(title);
     const std::wstring wstrC = ntcvt::from_chars(content);
@@ -342,10 +342,10 @@ Application* Application::getInstance()
 LanguageType Application::getCurrentLanguage()
 {
     LanguageType ret = LanguageType::ENGLISH;
-    
+
     LCID localeID = GetUserDefaultLCID();
     unsigned short primaryLanguageID = localeID & 0xFF;
-    
+
     switch (primaryLanguageID)
     {
         case LANG_CHINESE:
@@ -409,7 +409,7 @@ LanguageType Application::getCurrentLanguage()
             ret = LanguageType::BELARUSIAN;
             break;
     }
-    
+
     return ret;
 }
 
@@ -437,11 +437,11 @@ std::string Application::getVersion()
     UINT   size = 0;
     LPBYTE lpBuffer = NULL;
     DWORD  verSize = GetFileVersionInfoSize(szVersionFile, &verHandle);
-    
+
     if (verSize != NULL)
     {
         LPSTR verData = new char[verSize];
-        
+
         if (GetFileVersionInfo(szVersionFile, verHandle, verSize, verData))
         {
             if (VerQueryValue(verData, L"\\", (VOID FAR* FAR*)&lpBuffer, &size))
@@ -451,7 +451,7 @@ std::string Application::getVersion()
                     VS_FIXEDFILEINFO *verInfo = (VS_FIXEDFILEINFO *)lpBuffer;
                     if (verInfo->dwSignature == 0xfeef04bd)
                     {
-                        
+
                         // Doesn't matter if you are on 32 bit or 64 bit,
                         // DWORD is always 32 bits, so first two revision numbers
                         // come from dwFileVersionMS, last two come from dwFileVersionLS

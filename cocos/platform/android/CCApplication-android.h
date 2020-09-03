@@ -111,8 +111,8 @@ public:
     void Dialog(
         const std::string& title,
         const std::string& content,
-        std::function<void()> okCallback = nullptr,
-        std::function<void()> cancelCallback = nullptr
+        const std::function<void()>& okCallback = nullptr,
+        const std::function<void()>& cancelCallback = nullptr
     ) override;
 
     /*
@@ -121,8 +121,8 @@ public:
     void Notify(
         const std::string& title,
         const std::string& content,
-        std::function<void()> clickCallback = nullptr,
-        std::function<void()> closeCallback = nullptr
+        const std::function<void()>& clickCallback = nullptr,
+        const std::function<void()>& closeCallback = nullptr
     ) override;
 
 protected:

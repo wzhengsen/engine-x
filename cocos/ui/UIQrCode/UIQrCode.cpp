@@ -1,4 +1,4 @@
-#include "ui/UIQrCode/UIQRCode.h"
+#include "ui/UIQrCode/UIQrCode.h"
 #include "QrEncode/qrencode.h"
 #include "QrEncode/qrspec.h"
 

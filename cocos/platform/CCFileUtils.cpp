@@ -460,6 +460,7 @@ void FileUtils::setDelegate(FileUtils *delegate)
 }
 
 char* FileUtils::AES_SignPassword = (char*)malloc(16);
+constexpr char FileUtils::AES_Sign[EncryptSignLen + 1];
 
 FileUtils::FileUtils()
     : _writablePath("") {

@@ -2,7 +2,9 @@
 #ifndef __QRCODE_H__
 #define __QRCODE_H__
 
+#include "2d/CCSprite.h"
 #include "ui/UIWidget.h"
+#include "ui/GUIExport.h"
 
 NS_CC_BEGIN
 namespace ui {
@@ -26,7 +28,7 @@ namespace ui {
         
     protected:
         static constexpr int CodeRendererZOrder = -1;
-        Sprite* codeRenderer = nullptr;
+        cocos2d::Sprite* codeRenderer = nullptr;
         bool codeRendererAdaptDirty = false;
         int originSize = 0;
     };
