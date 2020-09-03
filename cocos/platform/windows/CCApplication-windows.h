@@ -56,19 +56,19 @@ public:
     @return Current application instance pointer.
     */
     static Application* getInstance();
-    
+
     /* override functions */
     virtual void setAnimationInterval(float interval) override;
 
     virtual LanguageType getCurrentLanguage();
 
     virtual const char * getCurrentLanguageCode();
-    
+
     /**
      @brief Get target platform
      */
     virtual Platform getTargetPlatform();
-    
+
     /**
     @brief Get application version
     */
@@ -92,9 +92,9 @@ public:
      */
     CC_DEPRECATED_ATTRIBUTE void setResourceRootPath(const std::string& rootResDir);
 
-    /** 
+    /**
      *  Gets the Resource root path.
-     *  @deprecated Please use FileUtils::getInstance()->getSearchPaths() instead. 
+     *  @deprecated Please use FileUtils::getInstance()->getSearchPaths() instead.
      */
     CC_DEPRECATED_ATTRIBUTE const std::string& getResourceRootPath();
 
@@ -112,8 +112,8 @@ public:
     void Dialog(
         const std::string& title,
         const std::string& content,
-        std::function<void()> okCallback = nullptr,
-        std::function<void()> cancelCallback = nullptr
+        const std::function<void()>& okCallback = nullptr,
+        const std::function<void()>& cancelCallback = nullptr
     ) override;
 
     /*
@@ -123,11 +123,11 @@ public:
         uint16_t icon,
         const std::string& title,
         const std::string& content,
-        std::function<void()> clickCallback = nullptr,
-        std::function<void()> closeCallback = nullptr
+        const std::function<void()>& clickCallback = nullptr,
+        const std::function<void()>& closeCallback = nullptr
     ) override;
 
-    
+
 protected:
     HINSTANCE           _instance;
     HACCEL              _accelTable;

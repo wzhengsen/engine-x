@@ -68,9 +68,17 @@ bool LuaJavaBridge::CallInfo::execute()
             m_retjs = (jstring)m_env->CallStaticObjectMethod(m_classID, m_methodID);
             bool bValidStr = true;
             std::string strValue = cocos2d::StringUtils::getStringUTFCharsJNI(m_env, m_retjs, &bValidStr);
-            m_ret.stringValue = (false == bValidStr) ? nullptr : new string(strValue);
+            m_ret.stringValue = !bValidStr ? nullptr : new string(strValue);
            break;
         }
+
+        case TypeDouble:
+            m_ret.doubleValue = m_env->CallStaticDoubleMethod(m_classID, m_methodID);
+            break;
+
+        case TypeLong:
+            m_ret.longValue = m_env->CallStaticLongMethod(m_classID, m_methodID);
+            break;
 
         default:
             m_error = LUAJ_ERR_TYPE_NOT_SUPPORT;
@@ -114,10 +122,18 @@ bool LuaJavaBridge::CallInfo::executeWithArgs(jvalue *args)
         {
        		m_retjs = (jstring)m_env->CallStaticObjectMethodA(m_classID, m_methodID, args);
         	bool bValidStr = true;
-            	std::string strValue = cocos2d::StringUtils::getStringUTFCharsJNI(m_env, m_retjs, &bValidStr);
-            	m_ret.stringValue = (false == bValidStr) ? nullptr : new string(strValue);
+            std::string strValue = cocos2d::StringUtils::getStringUTFCharsJNI(m_env, m_retjs, &bValidStr);
+            m_ret.stringValue = !bValidStr ? nullptr : new string(strValue);
             break;
         }
+
+         case TypeDouble:
+             m_ret.doubleValue = m_env->CallStaticDoubleMethodA(m_classID, m_methodID, args);
+             break;
+
+         case TypeLong:
+             m_ret.longValue = m_env->CallStaticLongMethodA(m_classID, m_methodID, args);
+             break;
 
         default:
             m_error = LUAJ_ERR_TYPE_NOT_SUPPORT;
@@ -162,6 +178,11 @@ int LuaJavaBridge::CallInfo::pushReturnValue(lua_State *L)
 				lua_pushstring(L, m_ret.stringValue->c_str());
 			}
 			return 1;
+	    case TypeDouble:
+	        lua_pushnumber(L, m_ret.doubleValue);
+	        return 1;
+	    case TypeLong:
+	        lua_pushinteger(L, m_ret.longValue);
         default:
             break;
 	}
@@ -213,6 +234,10 @@ LuaJavaBridge::ValueType LuaJavaBridge::CallInfo::checkType(const string& sig, s
             return TypeBoolean;
         case 'V':
         	return TypeVoid;
+        case 'D':
+            return TypeDouble;
+        case 'J':
+            return TypeLong;
         case 'L':
             size_t pos2 = sig.find_first_of(';', *pos + 1);
             if (pos2 == string::npos)
@@ -222,12 +247,12 @@ LuaJavaBridge::ValueType LuaJavaBridge::CallInfo::checkType(const string& sig, s
             }
 
             const string t = sig.substr(*pos, pos2 - *pos + 1);
-            if (t.compare("Ljava/lang/String;") == 0)
+            if (t == "Ljava/lang/String;")
             {
             	*pos = pos2;
                 return TypeString;
             }
-            else if (t.compare("Ljava/util/Vector;") == 0)
+            else if (t == "Ljava/util/Vector;")
             {
             	*pos = pos2;
                 return TypeVector;
@@ -246,8 +271,8 @@ LuaJavaBridge::ValueType LuaJavaBridge::CallInfo::checkType(const string& sig, s
 
 bool LuaJavaBridge::CallInfo::getMethodInfo()
 {
-    m_methodID = 0;
-    m_env = 0;
+    m_methodID = nullptr;
+    m_env = nullptr;
 
     JavaVM* jvm = cocos2d::JniHelper::getJavaVM();
     jint ret = jvm->GetEnv((void**)&m_env, JNI_VERSION_1_4);
@@ -256,7 +281,7 @@ bool LuaJavaBridge::CallInfo::getMethodInfo()
             break;
 
         case JNI_EDETACHED :
-            if (jvm->AttachCurrentThread(&m_env, NULL) < 0)
+            if (jvm->AttachCurrentThread(&m_env, nullptr) < 0)
             {
                 LOGD("%s", "Failed to get the environment using AttachCurrentThread()");
                 m_error = LUAJ_ERR_VM_THREAD_DETACHED;
@@ -275,7 +300,7 @@ bool LuaJavaBridge::CallInfo::getMethodInfo()
                                                    cocos2d::JniHelper::loadclassMethod_methodID,
                                                    _jstrClassName);
 
-    if (NULL == m_classID) {
+    if (nullptr == m_classID) {
         LOGD("Classloader failed to find class of %s", m_className.c_str());
     }
 
@@ -297,7 +322,7 @@ bool LuaJavaBridge::CallInfo::getMethodInfo()
 
 /* ---------------------------------------- */
 
-lua_State *LuaJavaBridge::s_luaState = NULL;
+lua_State *LuaJavaBridge::s_luaState = nullptr;
 int LuaJavaBridge::s_newFunctionId = 0;
 
 void LuaJavaBridge::luaopen_luaj(lua_State *L)
@@ -337,7 +362,7 @@ int LuaJavaBridge::callJavaStaticMethod(lua_State *L)
     // check args
     lua_pop(L, 1);													/* L: args */
     int count = fetchArrayElements(L, -1);                      	/* L: args e1 e2 e3 e4 ... */
-    jvalue *args = NULL;
+    jvalue *args = nullptr;
     if (count > 0)
     {
 	    args = new jvalue[count];
@@ -349,11 +374,11 @@ int LuaJavaBridge::callJavaStaticMethod(lua_State *L)
 	            case TypeInteger:
 	            	if (lua_isfunction(L, index))
 	            	{
-	                    args[i].i = retainLuaFunction(L, index, NULL);
+	                    args[i].i = retainLuaFunction(L, index, nullptr);
 	            	}
 	            	else
 	            	{
-	            		args[i].i = (int)lua_tonumber(L, index);
+	            		args[i].i = (int)lua_tointeger(L, index);
 	            	}
 	                break;
 
@@ -364,6 +389,14 @@ int LuaJavaBridge::callJavaStaticMethod(lua_State *L)
 	            case TypeBoolean:
 	                args[i].z = lua_toboolean(L, index) != 0 ? JNI_TRUE : JNI_FALSE;
 	                break;
+
+                case TypeDouble:
+                    args[i].d = lua_tonumber(L, index);
+                    break;
+
+                case TypeLong:
+                    args[i].j = lua_tointeger(L, index);
+                    break;
 
 	            case TypeString:
 	            default:
@@ -543,6 +576,46 @@ int LuaJavaBridge::callLuaFunctionById(int functionId, const char *arg)
     return -1;
 }
 
+int LuaJavaBridge::callLuaFunctionById(int functionId)
+{
+    lua_State *L = s_luaState;
+    int top = lua_gettop(L);
+    /* L: */
+    lua_pushstring(L, LUAJ_REGISTRY_FUNCTION);                  /* L: key */
+    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f_id */
+    if (!lua_istable(L, -1))
+    {
+        lua_pop(L, 1);
+        return -1;
+    }
+
+    lua_pushnil(L);                                             /* L: f_id nil */
+    while (lua_next(L, -2) != 0)                                /* L: f_id f id */
+    {
+        int value = lua_tonumber(L, -1);
+        lua_pop(L, 1);                                          /* L: f_id f */
+        if (value == functionId)
+        {
+            int ok = lua_pcall(L, 0, 1, 0);                     /* L: f_id ret|err */
+            int ret;
+            if (ok == 0)
+            {
+                ret = lua_tonumber(L, -1);
+            }
+            else
+            {
+                ret = -ok;
+            }
+
+            lua_settop(L, top);
+            return ret;
+        }
+    }                                                           /* L: f_id */
+
+    lua_settop(L, top);
+    return -1;
+}
+
 // call lua global function
 int LuaJavaBridge::callLuaGlobalFunction(const char *functionName, const char *arg)
 {
@@ -658,6 +731,6 @@ int LuaJavaBridge::fetchArrayElements(lua_State *L, int index)
             break;
         }
         ++count;
-    } while (1);
+    } while (true);
     return count;
 }

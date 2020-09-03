@@ -3,12 +3,12 @@ macro(cocos2dx_depend)
     set(PLATFORM_SPECIFIC_LIBS)
 
     if(WINDOWS)
-        list(APPEND PLATFORM_SPECIFIC_LIBS ws2_32 userenv psapi winmm Version Iphlpapi opengl32)
+        list(APPEND PLATFORM_SPECIFIC_LIBS ws2_32 userenv psapi winmm Version Iphlpapi opengl32 Crypt32)
     elseif(LINUX)
         # need review those libs: X11 Xi Xrandr Xxf86vm Xinerama Xcursor rt m
         list(APPEND PLATFORM_SPECIFIC_LIBS dl X11 Xi Xrandr Xxf86vm Xinerama Xcursor rt m)
         # use older cmake style on below linux libs
-        cocos_find_package(Fontconfig FONTCONFIG REQUIRED)	
+        cocos_find_package(Fontconfig FONTCONFIG REQUIRED)
         cocos_find_package(GTK3 GTK3 REQUIRED)
         cocos_find_package(ZLIB ZLIB REQUIRED)
         cocos_find_package(PNG PNG REQUIRED)
@@ -16,8 +16,8 @@ macro(cocos2dx_depend)
         cocos_find_package(OpenGL OPENGL REQUIRED)
         cocos_find_package(CURL CURL REQUIRED)
         cocos_find_package(SQLite3 SQLITE3 REQUIRED)
-        set(CMAKE_THREAD_PREFER_PTHREAD TRUE)	
-        find_package(Threads REQUIRED)	
+        set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+        find_package(Threads REQUIRED)
         set(THREADS_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
     elseif(ANDROID)
         list(APPEND PLATFORM_SPECIFIC_LIBS GLESv2 EGL log android OpenSLES)
@@ -39,12 +39,12 @@ macro(cocos2dx_depend)
 
         if(NOT CC_USE_ALSOFT_ON_APPLE)
             find_library(OPENAL_LIBRARY OpenAL)
-            set(COCOS_APPLE_LIBS 
+            set(COCOS_APPLE_LIBS
             ${OPENAL_LIBRARY}
             ${COCOS_APPLE_LIBS}
             )
         endif()
-            
+
         if(MACOSX)
             list(APPEND PREBUILT_SPECIFIC_LIBS GLFW3)
 
@@ -112,4 +112,3 @@ macro(use_cocos2dx_libs_depend target)
         cocos_use_pkg(${target} SQLITE3)
     endif()
 endmacro()
-

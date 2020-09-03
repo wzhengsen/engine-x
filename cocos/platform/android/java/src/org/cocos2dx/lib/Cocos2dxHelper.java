@@ -26,7 +26,17 @@ THE SOFTWARE.
 package org.cocos2dx.lib;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.media.AudioManager;
 import android.app.Activity;
@@ -44,6 +54,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
+import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager.OnActivityResultListener;
 import android.util.DisplayMetrics;
@@ -67,6 +78,7 @@ import java.io.FilenameFilter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -313,13 +325,149 @@ public class Cocos2dxHelper {
     }
 
     public static void vibrate(float duration) {
-        sVibrateService.vibrate((long)(duration * 1000));
+        sVibrateService.vibrate(VibrationEffect.createOneShot((long)(duration * 1000),VibrationEffect.DEFAULT_AMPLITUDE));
+    }
+
+    public static String GetClipboard() {
+        final String[] retStr = {""};
+        try {
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    ClipboardManager clipboard = (ClipboardManager)sActivity.getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clipData = clipboard.getPrimaryClip();
+                    if (clipData != null && clipData.getItemCount() > 0) {
+                        CharSequence text = clipData.getItemAt(0).getText();
+                        retStr[0] = text.toString();
+                    }
+                }
+            };
+            sActivity.runOnUiThread(r);
+            r.wait();
+        } catch (Exception e) {
+            Log.e(TAG, "getFromClipboard error");
+            retStr[0] = "";
+        }
+        return retStr[0];
+    }
+
+    public static void SetClipboard(final String str) {
+        try {
+            Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    ClipboardManager clipboard = (ClipboardManager)sActivity.getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clipData = ClipData.newPlainText("text", str);
+                    clipboard.setPrimaryClip(clipData);
+                }
+            };
+            sActivity.runOnUiThread(r);
+            r.wait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public long GetCompileVersion(){
+        try {
+            return sActivity.getPackageManager().getPackageInfo(sActivity.getPackageName(), 0).getLongVersionCode();
+        } catch(Exception e) {
+            return 0;
+        }
+    }
+
+    public void Dialog(String title,String content,final int ok,final int cancel){
+        AlertDialog.Builder builder = new AlertDialog.Builder(sActivity)
+                .setTitle(title)
+                .setMessage(content);
+        if (ok != -1) {
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Cocos2dxLuaJavaBridge.callLuaFunction(ok);
+                    Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
+                    Cocos2dxLuaJavaBridge.releaseLuaFunction(cancel);
+                    dialogInterface.dismiss();
+                }
+            });
+        }
+        if (cancel != -1) {
+            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Cocos2dxLuaJavaBridge.callLuaFunction(cancel);
+                    Cocos2dxLuaJavaBridge.releaseLuaFunction(cancel);
+                    Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
+                    dialogInterface.dismiss();
+                }
+            });
+        }
+        builder.create().show();
+    }
+
+    public void Dialog(String title,String content,final int ok) {
+        Dialog(title,title,ok,-1);
+    }
+
+    private static class LuaNotifyBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //用这个方法实现点击notification后的事件  不知为何不能自动清掉已点击的notification  故自己手动清就ok了
+//            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+//            notificationManager.cancel(intent.getIntExtra("notificationId", -1));
+
+            Intent toMainActivityIntent = new Intent(context, Cocos2dxActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            context.startActivity(toMainActivityIntent);
+
+            int okFunc = intent.getIntExtra("okFunc",-1);
+            if (-1 == okFunc) {
+                return;
+            }
+            Cocos2dxLuaJavaBridge.callLuaFunction(okFunc);
+            Cocos2dxLuaJavaBridge.releaseLuaFunction(okFunc);
+        }
+    }
+    static String nChannel = "";
+    public void Notify(String title,String content,final int ok) {
+        NotificationManager nm = (NotificationManager)sActivity.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (!nm.areNotificationsEnabled()) {
+            Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
+            return;
+        }
+
+        if (nChannel.equals("")) {
+            nChannel = "LuaNotify";
+            NotificationChannel channel = new NotificationChannel(
+                    nChannel,
+                    "通知",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            channel.enableLights(true);
+            channel.setLightColor(Color.GREEN);
+            channel.enableVibration(true);
+            channel.setVibrationPattern(new long[]{500});
+            nm.createNotificationChannel(channel);
+        }
+        long tm = System.currentTimeMillis();
+        Intent intent = new Intent(sActivity, LuaNotifyBroadcastReceiver.class).putExtra("okFunc",ok);
+        PendingIntent pi = PendingIntent.getBroadcast(sActivity,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification n = new Notification.Builder(sActivity,nChannel)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setShowWhen(true)
+                .setWhen(tm)
+                .setContentIntent(pi)
+                .setCategory(Notification.CATEGORY_MESSAGE)
+                .setFullScreenIntent(pi, true)
+                .setAutoCancel(true)
+                .build();
+
+        nm.notify((int)(tm / 100), n);
     }
 
  	public static String getVersion() {
  		try {
- 			String version = Cocos2dxActivity.getContext().getPackageManager().getPackageInfo(Cocos2dxActivity.getContext().getPackageName(), 0).versionName;
- 			return version;
+            return Cocos2dxActivity.getContext().getPackageManager().getPackageInfo(Cocos2dxActivity.getContext().getPackageName(), 0).versionName;
  		} catch(Exception e) {
  			return "";
  		}
@@ -350,9 +498,7 @@ public class Cocos2dxHelper {
                     array[2] = descriptor.getLength();
                 } catch (NoSuchMethodException e) {
                     Log.e(Cocos2dxHelper.TAG, "Accessing file descriptor directly from the OBB is only supported from Android 3.1 (API level 12) and above.");
-                } catch (IllegalAccessException e) {
-                    Log.e(Cocos2dxHelper.TAG, e.toString());
-                } catch (InvocationTargetException e) {
+                } catch (IllegalAccessException | InvocationTargetException e) {
                     Log.e(Cocos2dxHelper.TAG, e.toString());
                 }
             }
@@ -391,18 +537,14 @@ public class Cocos2dxHelper {
 
 
     public static void setEditTextDialogResult(final String pResult) {
-        try {
-            final byte[] bytesUTF8 = pResult.getBytes("UTF8");
+        final byte[] bytesUTF8 = pResult.getBytes(StandardCharsets.UTF_8);
 
-            Cocos2dxHelper.sCocos2dxHelperListener.runOnGLThread(new Runnable() {
-                @Override
-                public void run() {
-                    Cocos2dxHelper.nativeSetEditTextDialogResult(bytesUTF8);
-                }
-            });
-        } catch (UnsupportedEncodingException pUnsupportedEncodingException) {
-            /* Nothing. */
-        }
+        Cocos2dxHelper.sCocos2dxHelperListener.runOnGLThread(new Runnable() {
+            @Override
+            public void run() {
+                Cocos2dxHelper.nativeSetEditTextDialogResult(bytesUTF8);
+            }
+        });
     }
 
     private static int displayMetricsToDPI(DisplayMetrics metrics)
@@ -461,12 +603,12 @@ public class Cocos2dxHelper {
             }
             else if (value instanceof Integer)
             {
-                int intValue = ((Integer) value).intValue();
+                int intValue = (Integer) value;
                 return (intValue !=  0) ;
             }
             else if (value instanceof Float)
             {
-                float floatValue = ((Float) value).floatValue();
+                float floatValue = (Float) value;
                 return (floatValue != 0.0f);
             }
         }
@@ -493,7 +635,7 @@ public class Cocos2dxHelper {
             }
             else if (value instanceof Boolean)
             {
-                boolean booleanValue = ((Boolean) value).booleanValue();
+                boolean booleanValue = (Boolean) value;
                 if (booleanValue)
                     return 1;
             }
@@ -521,7 +663,7 @@ public class Cocos2dxHelper {
             }
             else if (value instanceof Boolean)
             {
-                boolean booleanValue = ((Boolean) value).booleanValue();
+                boolean booleanValue = (Boolean) value;
                 if (booleanValue)
                     return 1.0f;
             }

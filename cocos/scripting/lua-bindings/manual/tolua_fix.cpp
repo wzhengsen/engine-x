@@ -1,18 +1,18 @@
 /****************************************************************************
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- 
+
  http://www.cocos2d-x.org
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -56,7 +56,7 @@ TOLUA_API int toluafix_pushusertype_ccobject(lua_State* L,
         lua_pushnil(L);
         return -1;
     }
-    
+
     Ref* vPtr = static_cast<Ref*>(ptr);
     const char* vType = getLuaTypeName(vPtr, type);
 
@@ -83,7 +83,7 @@ TOLUA_API int toluafix_pushusertype_ccobject(lua_State* L,
     }
 
     tolua_pushusertype_and_addtoroot(L, vPtr, vType);
-    
+
     return 0;
 }
 
@@ -148,8 +148,8 @@ TOLUA_API int toluafix_remove_ccobject_by_refid(lua_State* L, int refid)
         lua_pushstring(L, "tolua_ubox");                            /* stack: mt key */
         lua_rawget(L, LUA_REGISTRYINDEX);                           /* stack: mt ubox */
     };
-    
-    
+
+
     // cleanup root
     tolua_remove_value_from_root(L, ptr);
 
@@ -192,6 +192,8 @@ TOLUA_API int toluafix_remove_ccobject_by_refid(lua_State* L, int refid)
     return 0;
 }
 
+static auto refMap = std::map<int,int>();
+
 TOLUA_API int toluafix_ref_function(lua_State* L, int lo, int def)
 {
     // function at lo
@@ -202,6 +204,13 @@ TOLUA_API int toluafix_ref_function(lua_State* L, int lo, int def)
     lua_pushvalue(L, lo);                                       /* stack: fun ... refid_fun fun */
     const auto ref = luaL_ref(L, -2);                           /* stack: fun ... refid_fun */
     lua_pop(L, 1);                                              /* stack: fun ... */
+    if (refMap.find(ref) == refMap.cend()) {
+        refMap.emplace(ref,1);
+    }
+    else {
+        int refC = refMap[ref];
+        refMap[ref] = refC++;
+    }
     return ref;
 }
 
@@ -215,6 +224,16 @@ TOLUA_API void toluafix_get_function_by_refid(lua_State* L, int refid)
 
 TOLUA_API void toluafix_remove_function_by_refid(lua_State* L, int refid)
 {
+    if (refMap.find(refid) == refMap.cend()) {
+        return;
+    }
+    else {
+        int refC = refMap[refid];
+        refMap[refid] = refC--;
+        if (0 <= refC){
+            return;
+        }
+    }
     lua_pushstring(L, TOLUA_REFID_FUNCTION_MAPPING);
     lua_rawget(L, LUA_REGISTRYINDEX);                           /* stack: ... refid_fun */
     luaL_unref(L, -1, refid);                                   /* stack: ... refid_fun */

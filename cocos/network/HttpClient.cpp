@@ -27,9 +27,10 @@
 
 #include "network/HttpClient.h"
 #include <queue>
-#include <errno.h>
+#include <cerrno>
 #include <curl/curl.h>
 #include "base/CCDirector.h"
+#include "base/ccUTF8.h"
 #include "platform/CCFileUtils.h"
 
 NS_CC_BEGIN

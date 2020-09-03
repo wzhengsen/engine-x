@@ -105,6 +105,17 @@ public:
     static int callLuaFunctionById(int functionId, const char *arg);
 
     /**
+     * Call the Lua function corresponding to the functionId.
+     *
+     * @param functionId the values corresponding to the Lua function.
+     * @return a number value returned from the Lua function when call successfully, otherwise return -1 or the opposite number for one of the three numbers LUA_ERRRUN, LUA_ERRMEM and LUA_ERRERR.
+     *
+     * @lua NA
+     * @js NA
+     */
+    static int callLuaFunctionById(int functionId);
+
+    /**
      * Call a global Lua function named functionName with the string pointer arg.
      * 
      * @param functionName the name of global function.
@@ -127,6 +138,8 @@ private:
         TypeString  = 4,
         TypeVector  = 5,
         TypeFunction= 6,
+        TypeDouble  = 7,
+        TypeLong    = 8
     } ValueType;
 
     typedef vector<ValueType> ValueTypes;
@@ -136,6 +149,8 @@ private:
         int     intValue;
         float   floatValue;
         int     boolValue;
+        double  doubleValue;
+        int64_t longValue;
         string *stringValue;
     } ReturnValue;
 

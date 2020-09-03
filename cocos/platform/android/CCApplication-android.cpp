@@ -27,6 +27,8 @@ THE SOFTWARE.
 #include "platform/CCApplication.h"
 #include "base/CCDirector.h"
 #include "base/ccUtils.h"
+#include "CCApplication-android.h"
+
 #include <android/log.h>
 #include <jni.h>
 #include <cstring>
@@ -125,6 +127,22 @@ bool Application::openURL(const std::string &url)
 
 void Application::applicationScreenSizeChanged(int newWidth, int newHeight) {
 
+}
+
+int64_t Application::GetCompileVersion() {
+    return JniHelper::callStaticLongMethod(helperClassName, "GetCompileVersion");
+}
+
+void Application::Dialog(const std::string &title, const std::string &content,
+                         const std::function<void()>& okCallback,
+                         const std::function<void()>& cancelCallback) {
+    // Omit the c++ implementation and use luaj
+}
+
+void Application::Notify(const std::string &title, const std::string &content,
+                         const std::function<void()>& clickCallback,
+                         const std::function<void()>& closeCallback) {
+    // Omit the c++ implementation and use luaj
 }
 
 NS_CC_END
