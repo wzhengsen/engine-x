@@ -35,6 +35,7 @@ import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -428,6 +429,7 @@ public class Cocos2dxHelper {
         }
     }
     static String nChannel = "";
+    static LuaNotifyBroadcastReceiver luaNotifyReceiver = new LuaNotifyBroadcastReceiver();
     public void Notify(String title,String content,final int ok) {
         NotificationManager nm = (NotificationManager)sActivity.getSystemService(Context.NOTIFICATION_SERVICE);
         if (!nm.areNotificationsEnabled()) {
@@ -437,6 +439,11 @@ public class Cocos2dxHelper {
 
         if (nChannel.equals("")) {
             nChannel = "LuaNotify";
+
+            IntentFilter filter_click = new IntentFilter();
+            filter_click.addAction("LuaNotifyClicked");
+            sActivity.registerReceiver(luaNotifyReceiver, filter_click);
+
             NotificationChannel channel = new NotificationChannel(
                     nChannel,
                     "通知",
@@ -449,8 +456,9 @@ public class Cocos2dxHelper {
             nm.createNotificationChannel(channel);
         }
         long tm = System.currentTimeMillis();
-        Intent intent = new Intent(sActivity, LuaNotifyBroadcastReceiver.class).putExtra("okFunc",ok);
-        PendingIntent pi = PendingIntent.getBroadcast(sActivity,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent intent = new Intent("LuaNotifyClicked").putExtra("okFunc",ok);
+        PendingIntent pi = PendingIntent.getBroadcast(sActivity,0,intent,0);
         Notification n = new Notification.Builder(sActivity,nChannel)
                 .setContentTitle(title)
                 .setContentText(content)
@@ -557,17 +565,13 @@ public class Cocos2dxHelper {
         }
     }
 
-    public static int getDPI()
-    {
-        if (sActivity != null)
-        {
+    public static int getDPI() {
+        if (sActivity != null) {
             DisplayMetrics metrics = new DisplayMetrics();
             WindowManager wm = sActivity.getWindowManager();
-            if (wm != null)
-            {
+            if (wm != null) {
                 Display d = wm.getDefaultDisplay();
-                if (d != null)
-                {
+                if (d != null) {
                     try {
                         Method getRealMetrics = d.getClass().getMethod("getRealMetrics", metrics.getClass());
                         getRealMetrics.invoke(d, metrics);
@@ -581,167 +585,6 @@ public class Cocos2dxHelper {
             }
         }
         return -1;
-    }
-    
-    // ===========================================================
-    // Functions for CCUserDefault
-    // ===========================================================
-    
-    public static boolean getBoolForKey(String key, boolean defaultValue) {
-        SharedPreferences settings = sActivity.getSharedPreferences(Cocos2dxHelper.PREFS_NAME, 0);
-        try {
-            return settings.getBoolean(key, defaultValue);
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-
-            Map allValues = settings.getAll();
-            Object value = allValues.get(key);
-            if ( value instanceof String)
-            {
-                return  Boolean.parseBoolean(value.toString());
-            }
-            else if (value instanceof Integer)
-            {
-                int intValue = (Integer) value;
-                return (intValue !=  0) ;
-            }
-            else if (value instanceof Float)
-            {
-                float floatValue = (Float) value;
-                return (floatValue != 0.0f);
-            }
-        }
-
-        return defaultValue;
-    }
-    
-    public static int getIntegerForKey(String key, int defaultValue) {
-        SharedPreferences settings = sActivity.getSharedPreferences(Cocos2dxHelper.PREFS_NAME, 0);
-        try {
-            return settings.getInt(key, defaultValue);
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-
-            Map allValues = settings.getAll();
-            Object value = allValues.get(key);
-            if ( value instanceof String) {
-                return  Integer.parseInt(value.toString());
-            }
-            else if (value instanceof Float)
-            {
-                return ((Float) value).intValue();
-            }
-            else if (value instanceof Boolean)
-            {
-                boolean booleanValue = (Boolean) value;
-                if (booleanValue)
-                    return 1;
-            }
-        }
-
-        return defaultValue;
-    }
-    
-    public static float getFloatForKey(String key, float defaultValue) {
-        SharedPreferences settings = sActivity.getSharedPreferences(Cocos2dxHelper.PREFS_NAME, 0);
-        try {
-            return settings.getFloat(key, defaultValue);
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-
-            Map allValues = settings.getAll();
-            Object value = allValues.get(key);
-            if ( value instanceof String) {
-                return  Float.parseFloat(value.toString());
-            }
-            else if (value instanceof Integer)
-            {
-                return ((Integer) value).floatValue();
-            }
-            else if (value instanceof Boolean)
-            {
-                boolean booleanValue = (Boolean) value;
-                if (booleanValue)
-                    return 1.0f;
-            }
-        }
-
-        return defaultValue;
-    }
-    
-    public static double getDoubleForKey(String key, double defaultValue) {
-        // SharedPreferences doesn't support saving double value
-        return getFloatForKey(key, (float) defaultValue);
-    }
-    
-    public static String getStringForKey(String key, String defaultValue) {
-        SharedPreferences settings = sActivity.getSharedPreferences(Cocos2dxHelper.PREFS_NAME, 0);
-        try {
-            return settings.getString(key, defaultValue);
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-            
-            return settings.getAll().get(key).toString();
-        }
-    }
-    
-    public static void setBoolForKey(String key, boolean value) {
-        SharedPreferences settings = sActivity.getSharedPreferences(Cocos2dxHelper.PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean(key, value);
-        editor.apply();
-    }
-    
-    public static void setIntegerForKey(String key, int value) {
-        SharedPreferences settings = sActivity.getSharedPreferences(Cocos2dxHelper.PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putInt(key, value);
-        editor.apply();
-    }
-    
-    public static void setFloatForKey(String key, float value) {
-        SharedPreferences settings = sActivity.getSharedPreferences(Cocos2dxHelper.PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putFloat(key, value);
-        editor.apply();
-    }
-    
-    public static void setDoubleForKey(String key, double value) {
-        // SharedPreferences doesn't support recording double value
-        SharedPreferences settings = sActivity.getSharedPreferences(Cocos2dxHelper.PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putFloat(key, (float)value);
-        editor.apply();
-    }
-    
-    public static void setStringForKey(String key, String value) {
-        SharedPreferences settings = sActivity.getSharedPreferences(Cocos2dxHelper.PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString(key, value);
-        editor.apply();
-    }
-    
-    public static void deleteValueForKey(String key) {
-        SharedPreferences settings = sActivity.getSharedPreferences(Cocos2dxHelper.PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.remove(key);
-        editor.apply();
-    }
-
-    public static byte[] conversionEncoding(byte[] text, String fromCharset,String newCharset)
-    {
-        try {
-            String str = new String(text,fromCharset);
-            return str.getBytes(newCharset);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
     
     // ===========================================================
