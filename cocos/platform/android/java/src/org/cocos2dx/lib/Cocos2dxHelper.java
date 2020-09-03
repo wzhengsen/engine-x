@@ -54,6 +54,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.ParcelFileDescriptor;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -369,7 +370,7 @@ public class Cocos2dxHelper {
         }
     }
 
-    public long GetCompileVersion(){
+    public static long GetCompileVersion(){
         try {
             return sActivity.getPackageManager().getPackageInfo(sActivity.getPackageName(), 0).getLongVersionCode();
         } catch(Exception e) {
@@ -377,37 +378,44 @@ public class Cocos2dxHelper {
         }
     }
 
-    public void Dialog(String title,String content,final int ok,final int cancel){
-        AlertDialog.Builder builder = new AlertDialog.Builder(sActivity)
-                .setTitle(title)
-                .setMessage(content);
-        if (ok != -1) {
-            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Cocos2dxLuaJavaBridge.callLuaFunction(ok);
-                    Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
-                    Cocos2dxLuaJavaBridge.releaseLuaFunction(cancel);
-                    dialogInterface.dismiss();
+    public static void Dialog(final String title,final String content,final int ok,final int cancel) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Looper.prepare();
+                AlertDialog.Builder builder = new AlertDialog.Builder(sActivity)
+                        .setTitle(title)
+                        .setMessage(content);
+                if (ok != -1) {
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Cocos2dxLuaJavaBridge.callLuaFunction(ok);
+                            Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
+                            Cocos2dxLuaJavaBridge.releaseLuaFunction(cancel);
+                            dialogInterface.dismiss();
+                        }
+                    });
                 }
-            });
-        }
-        if (cancel != -1) {
-            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Cocos2dxLuaJavaBridge.callLuaFunction(cancel);
-                    Cocos2dxLuaJavaBridge.releaseLuaFunction(cancel);
-                    Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
-                    dialogInterface.dismiss();
+                if (cancel != -1) {
+                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Cocos2dxLuaJavaBridge.callLuaFunction(cancel);
+                            Cocos2dxLuaJavaBridge.releaseLuaFunction(cancel);
+                            Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
+                            dialogInterface.dismiss();
+                        }
+                    });
                 }
-            });
-        }
-        builder.create().show();
+                builder.create().show();
+                Looper.loop();
+            }
+        }).start();
     }
 
-    public void Dialog(String title,String content,final int ok) {
-        Dialog(title,title,ok,-1);
+    public static void Dialog(String title,String content,final int ok) {
+        Dialog(title,content,ok,-1);
     }
 
     private static class LuaNotifyBroadcastReceiver extends BroadcastReceiver {
@@ -417,7 +425,7 @@ public class Cocos2dxHelper {
 //            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 //            notificationManager.cancel(intent.getIntExtra("notificationId", -1));
 
-            Intent toMainActivityIntent = new Intent(context, Cocos2dxActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            Intent toMainActivityIntent = new Intent(context, sActivity.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             context.startActivity(toMainActivityIntent);
 
             int okFunc = intent.getIntExtra("okFunc",-1);
@@ -430,7 +438,7 @@ public class Cocos2dxHelper {
     }
     static String nChannel = "";
     static LuaNotifyBroadcastReceiver luaNotifyReceiver = new LuaNotifyBroadcastReceiver();
-    public void Notify(String title,String content,final int ok) {
+    public static void Notify(String title,String content,final int ok) {
         NotificationManager nm = (NotificationManager)sActivity.getSystemService(Context.NOTIFICATION_SERVICE);
         if (!nm.areNotificationsEnabled()) {
             Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
@@ -452,7 +460,8 @@ public class Cocos2dxHelper {
             channel.enableLights(true);
             channel.setLightColor(Color.GREEN);
             channel.enableVibration(true);
-            channel.setVibrationPattern(new long[]{500});
+            channel.setVibrationPattern(new long[]{500,0});
+            channel.setShowBadge(false);
             nm.createNotificationChannel(channel);
         }
         long tm = System.currentTimeMillis();
@@ -460,6 +469,7 @@ public class Cocos2dxHelper {
         Intent intent = new Intent("LuaNotifyClicked").putExtra("okFunc",ok);
         PendingIntent pi = PendingIntent.getBroadcast(sActivity,0,intent,0);
         Notification n = new Notification.Builder(sActivity,nChannel)
+                .setSmallIcon(sActivity.getApplication().getApplicationInfo().icon)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setShowWhen(true)
@@ -469,7 +479,6 @@ public class Cocos2dxHelper {
                 .setFullScreenIntent(pi, true)
                 .setAutoCancel(true)
                 .build();
-
         nm.notify((int)(tm / 100), n);
     }
 
