@@ -39,6 +39,8 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.Icon;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.app.Activity;
 import android.content.ComponentName;
@@ -109,6 +111,7 @@ public class Cocos2dxHelper {
     private static Cocos2dxHelperListener sCocos2dxHelperListener;
     private static Set<OnActivityResultListener> onActivityResultListeners = new LinkedHashSet<OnActivityResultListener>();
     private static Vibrator sVibrateService = null;
+    private static ClipboardManager sClipboardService = null;
     //Enhance API modification begin
     private static IGameTuningService mGameServiceBinder = null;
     private static final int BOOST_TIME = 7;
@@ -178,6 +181,7 @@ public class Cocos2dxHelper {
             Cocos2dxBitmap.setContext(activity);
 
             Cocos2dxHelper.sVibrateService = (Vibrator)activity.getSystemService(Context.VIBRATOR_SERVICE);
+            Cocos2dxHelper.sClipboardService = (ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
 
             sInited = true;
             
@@ -327,46 +331,31 @@ public class Cocos2dxHelper {
     }
 
     public static void vibrate(float duration) {
+        AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .build();
         sVibrateService.vibrate(VibrationEffect.createOneShot((long)(duration * 1000),VibrationEffect.DEFAULT_AMPLITUDE));
     }
 
     public static String GetClipboard() {
-        final String[] retStr = {""};
         try {
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    ClipboardManager clipboard = (ClipboardManager)sActivity.getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clipData = clipboard.getPrimaryClip();
-                    if (clipData != null && clipData.getItemCount() > 0) {
-                        CharSequence text = clipData.getItemAt(0).getText();
-                        retStr[0] = text.toString();
-                    }
-                }
-            };
-            sActivity.runOnUiThread(r);
-            r.wait();
+            ClipData clipData = sClipboardService.getPrimaryClip();
+            if (clipData != null && clipData.getItemCount() > 0) {
+                CharSequence text = clipData.getItemAt(0).getText();
+                return text.toString();
+            }
         } catch (Exception e) {
-            Log.e(TAG, "getFromClipboard error");
-            retStr[0] = "";
+            Log.e(TAG, "GetClipboard error");
         }
-        return retStr[0];
+        return "";
     }
 
-    public static void SetClipboard(final String str) {
+    public static void SetClipboard(String str) {
         try {
-            Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    ClipboardManager clipboard = (ClipboardManager)sActivity.getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clipData = ClipData.newPlainText("text", str);
-                    clipboard.setPrimaryClip(clipData);
-                }
-            };
-            sActivity.runOnUiThread(r);
-            r.wait();
+            ClipData clipData = ClipData.newPlainText("text", str);
+            sClipboardService.setPrimaryClip(clipData);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "SetClipboard error");
         }
     }
 
@@ -379,13 +368,13 @@ public class Cocos2dxHelper {
     }
 
     public static void Dialog(final String title,final String content,final int ok,final int cancel) {
-        new Thread(new Runnable() {
+        sActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Looper.prepare();
                 AlertDialog.Builder builder = new AlertDialog.Builder(sActivity)
                         .setTitle(title)
-                        .setMessage(content);
+                        .setMessage(content)
+                        .setCancelable(false);
                 if (ok != -1) {
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
@@ -409,9 +398,8 @@ public class Cocos2dxHelper {
                     });
                 }
                 builder.create().show();
-                Looper.loop();
             }
-        }).start();
+        });
     }
 
     public static void Dialog(String title,String content,final int ok) {
@@ -421,18 +409,18 @@ public class Cocos2dxHelper {
     private static class LuaNotifyBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            //用这个方法实现点击notification后的事件  不知为何不能自动清掉已点击的notification  故自己手动清就ok了
-//            NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-//            notificationManager.cancel(intent.getIntExtra("notificationId", -1));
-
             Intent toMainActivityIntent = new Intent(context, sActivity.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             context.startActivity(toMainActivityIntent);
 
-            int okFunc = intent.getIntExtra("okFunc",-1);
+            String action = intent.getAction();
+            int okFunc = intent.getIntExtra("okFunc", -1);
             if (-1 == okFunc) {
                 return;
             }
-            Cocos2dxLuaJavaBridge.callLuaFunction(okFunc);
+
+            if (action != null && action.equals("LuaNotifyClicked")) {
+                Cocos2dxLuaJavaBridge.callLuaFunction(okFunc);
+            }
             Cocos2dxLuaJavaBridge.releaseLuaFunction(okFunc);
         }
     }
@@ -448,9 +436,10 @@ public class Cocos2dxHelper {
         if (nChannel.equals("")) {
             nChannel = "LuaNotify";
 
-            IntentFilter filter_click = new IntentFilter();
-            filter_click.addAction("LuaNotifyClicked");
-            sActivity.registerReceiver(luaNotifyReceiver, filter_click);
+            IntentFilter filter_click_remove = new IntentFilter();
+            filter_click_remove.addAction("LuaNotifyClicked");
+            filter_click_remove.addAction("LuaNotifyRemoved");
+            sActivity.registerReceiver(luaNotifyReceiver, filter_click_remove);
 
             NotificationChannel channel = new NotificationChannel(
                     nChannel,
@@ -460,24 +449,31 @@ public class Cocos2dxHelper {
             channel.enableLights(true);
             channel.setLightColor(Color.GREEN);
             channel.enableVibration(true);
-            channel.setVibrationPattern(new long[]{500,0});
+            channel.setVibrationPattern(new long[]{500});
             channel.setShowBadge(false);
             nm.createNotificationChannel(channel);
         }
         long tm = System.currentTimeMillis();
 
-        Intent intent = new Intent("LuaNotifyClicked").putExtra("okFunc",ok);
-        PendingIntent pi = PendingIntent.getBroadcast(sActivity,0,intent,0);
+        Intent intentC = new Intent("LuaNotifyClicked").putExtra("okFunc",ok);
+        PendingIntent pic = PendingIntent.getBroadcast(sActivity,0,intentC,PendingIntent.FLAG_ONE_SHOT);
+        Intent intentR = new Intent("LuaNotifyRemoved").putExtra("okFunc",ok);
+        PendingIntent pir = PendingIntent.getBroadcast(sActivity,0,intentR,PendingIntent.FLAG_ONE_SHOT);
+
+        int iconId = sActivity.getApplication().getApplicationInfo().icon;
         Notification n = new Notification.Builder(sActivity,nChannel)
-                .setSmallIcon(sActivity.getApplication().getApplicationInfo().icon)
+                .setSmallIcon(iconId)
+                .setLargeIcon(Icon.createWithResource(sActivity,iconId))
                 .setContentTitle(title)
                 .setContentText(content)
                 .setShowWhen(true)
                 .setWhen(tm)
-                .setContentIntent(pi)
+                .setContentIntent(pic)
+                .setDeleteIntent(pir)
                 .setCategory(Notification.CATEGORY_MESSAGE)
-                .setFullScreenIntent(pi, true)
+                //.setFullScreenIntent(pi, true)
                 .setAutoCancel(true)
+                .setTicker(content)
                 .build();
         nm.notify((int)(tm / 100), n);
     }
