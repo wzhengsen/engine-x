@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 #include "platform/CCDevice.h"
-#include <string.h>
+#include <cstring>
 #include <android/log.h>
 #include <jni.h>
 #include "base/ccTypes.h"
