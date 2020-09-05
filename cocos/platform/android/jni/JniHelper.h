@@ -294,6 +294,50 @@ public:
     }
 
     /**
+    @brief Call of Java static byte(int8_t) method
+    @return value from Java static double method if there are proper JniMethodInfo; otherwise 0.
+    */
+    template <typename... Ts>
+    static int8_t callStaticByteMethod(const std::string& className,
+                                         const std::string& methodName,
+                                         Ts... xs) {
+        jbyte ret = 0;
+        cocos2d::JniMethodInfo t;
+        std::string signature = "(" + std::string(getJNISignature(xs...)) + ")C";
+        if (cocos2d::JniHelper::getStaticMethodInfo(t, className.c_str(), methodName.c_str(), signature.c_str())) {
+            LocalRefMapType localRefs;
+            ret = t.env->CallStaticByteMethod(t.classID, t.methodID, convert(localRefs, t, xs)...);
+            t.env->DeleteLocalRef(t.classID);
+            deleteLocalRefs(t.env, localRefs);
+        } else {
+            reportError(className, methodName, signature);
+        }
+        return ret;
+    }
+
+    /**
+    @brief Call of Java static short(int16_t) method
+    @return value from Java static double method if there are proper JniMethodInfo; otherwise 0.
+    */
+    template <typename... Ts>
+    static int16_t callStaticShortMethod(const std::string& className,
+                                       const std::string& methodName,
+                                       Ts... xs) {
+        jshort ret = 0;
+        cocos2d::JniMethodInfo t;
+        std::string signature = "(" + std::string(getJNISignature(xs...)) + ")S";
+        if (cocos2d::JniHelper::getStaticMethodInfo(t, className.c_str(), methodName.c_str(), signature.c_str())) {
+            LocalRefMapType localRefs;
+            ret = t.env->CallStaticShortMethod(t.classID, t.methodID, convert(localRefs, t, xs)...);
+            t.env->DeleteLocalRef(t.classID);
+            deleteLocalRefs(t.env, localRefs);
+        } else {
+            reportError(className, methodName, signature);
+        }
+        return ret;
+    }
+
+    /**
     @brief Call of Java static string method
     @return JniMethodInfo of string type if there are proper JniMethodInfo; otherwise empty string.
     */

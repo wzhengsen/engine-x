@@ -36,7 +36,9 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Icon;
@@ -476,6 +478,56 @@ public class Cocos2dxHelper {
                 .setTicker(content)
                 .build();
         nm.notify((int)(tm / 100), n);
+    }
+
+    public static int GetOrientation(){
+        Configuration mConfiguration = sActivity.getResources().getConfiguration();
+        if (mConfiguration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            return 1;
+        }
+        return 0;
+    }
+
+    public static void SetOrientation(int ori) {
+        int curORI = GetOrientation();
+        if (ori == curORI) {
+            return;
+        }
+
+        if (ori == 0) {
+            sActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        }
+        else if (ori == 1) {
+            sActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+        else if (ori == 2) {
+            sActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        }
+    }
+
+    static int OnLuaOrientationChanged = -1;
+    public static void OnOrientationChanged(final int ori) {
+        if (OnLuaOrientationChanged != -1) {
+            ((Cocos2dxActivity)sActivity).runOnGLThread(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            if (ori == Configuration.ORIENTATION_PORTRAIT) {
+                                Cocos2dxLuaJavaBridge.callLuaFunctionWithLong(OnLuaOrientationChanged,1);
+                            } else if (ori == Configuration.ORIENTATION_LANDSCAPE) {
+                                Cocos2dxLuaJavaBridge.callLuaFunctionWithLong(OnLuaOrientationChanged,0);
+                            }
+                        }
+                    }
+            );
+        }
+    }
+
+    public static void SetOnLuaOrientationChanged(int luaCallback) {
+        if (OnLuaOrientationChanged != -1) {
+            Cocos2dxLuaJavaBridge.releaseLuaFunction(OnLuaOrientationChanged);
+        }
+        OnLuaOrientationChanged = luaCallback;
     }
 
  	public static String getVersion() {

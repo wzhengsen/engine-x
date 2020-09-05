@@ -80,6 +80,14 @@ bool LuaJavaBridge::CallInfo::execute()
             m_ret.longValue = m_env->CallStaticLongMethod(m_classID, m_methodID);
             break;
 
+        case TypeByte:
+            m_ret.byteValue = m_env->CallStaticByteMethod(m_classID, m_methodID);
+            break;
+
+        case TypeShort:
+            m_ret.shortValue = m_env->CallStaticShortMethod(m_classID, m_methodID);
+            break;
+
         default:
             m_error = LUAJ_ERR_TYPE_NOT_SUPPORT;
             LOGD("Return type '%d' is not supported", static_cast<int>(m_returnType));
@@ -135,6 +143,14 @@ bool LuaJavaBridge::CallInfo::executeWithArgs(jvalue *args)
              m_ret.longValue = m_env->CallStaticLongMethodA(m_classID, m_methodID, args);
              break;
 
+         case TypeByte:
+             m_ret.byteValue = m_env->CallStaticByteMethod(m_classID, m_methodID, args);
+             break;
+
+         case TypeShort:
+             m_ret.shortValue = m_env->CallStaticShortMethod(m_classID, m_methodID, args);
+             break;
+
         default:
             m_error = LUAJ_ERR_TYPE_NOT_SUPPORT;
             LOGD("Return type '%d' is not supported", static_cast<int>(m_returnType));
@@ -182,7 +198,14 @@ int LuaJavaBridge::CallInfo::pushReturnValue(lua_State *L)
 	        lua_pushnumber(L, m_ret.doubleValue);
 	        return 1;
 	    case TypeLong:
-	        lua_pushinteger(L, m_ret.longValue);
+            lua_pushinteger(L, m_ret.longValue);
+            return 1;
+        case TypeByte:
+            lua_pushinteger(L, m_ret.byteValue);
+            return 1;
+        case TypeShort:
+	        lua_pushinteger(L, m_ret.shortValue);
+	        return 1;
         default:
             break;
 	}
@@ -238,6 +261,10 @@ LuaJavaBridge::ValueType LuaJavaBridge::CallInfo::checkType(const string& sig, s
             return TypeDouble;
         case 'J':
             return TypeLong;
+        case 'C':
+            return TypeByte;
+        case 'S':
+            return TypeShort;
         case 'L':
             size_t pos2 = sig.find_first_of(';', *pos + 1);
             if (pos2 == string::npos)
@@ -556,6 +583,47 @@ int LuaJavaBridge::callLuaFunctionById(int functionId, const char *arg)
         if (value == functionId)
         {
             lua_pushstring(L, arg);                             /* L: f_id f arg */
+            int ok = lua_pcall(L, 1, 1, 0);                     /* L: f_id ret|err */
+            int ret;
+            if (ok == 0)
+            {
+                ret = lua_tonumber(L, -1);
+            }
+            else
+            {
+                ret = -ok;
+            }
+
+            lua_settop(L, top);
+            return ret;
+        }
+    }                                                           /* L: f_id */
+
+    lua_settop(L, top);
+    return -1;
+}
+
+int LuaJavaBridge::callLuaFunctionById(int functionId, int64_t arg)
+{
+    lua_State *L = s_luaState;
+    int top = lua_gettop(L);
+    /* L: */
+    lua_pushstring(L, LUAJ_REGISTRY_FUNCTION);                  /* L: key */
+    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f_id */
+    if (!lua_istable(L, -1))
+    {
+        lua_pop(L, 1);
+        return -1;
+    }
+
+    lua_pushnil(L);                                             /* L: f_id nil */
+    while (lua_next(L, -2) != 0)                                /* L: f_id f id */
+    {
+        int value = lua_tonumber(L, -1);
+        lua_pop(L, 1);                                          /* L: f_id f */
+        if (value == functionId)
+        {
+            lua_pushinteger(L, arg);                             /* L: f_id f arg */
             int ok = lua_pcall(L, 1, 1, 0);                     /* L: f_id ret|err */
             int ret;
             if (ok == 0)
