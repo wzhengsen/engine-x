@@ -1,30 +1,31 @@
 /****************************************************************************
-Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2013-2016 Chukong Technologies Inc.
+ Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
-http://www.cocos2d-x.org
+ http://www.cocos2d-x.org
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
  ****************************************************************************/
 package org.cocos2dx.lib;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Notification;
@@ -54,7 +55,13 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
@@ -63,6 +70,8 @@ import android.os.ParcelFileDescriptor;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager.OnActivityResultListener;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -84,12 +93,17 @@ import java.io.FilenameFilter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 
 public class Cocos2dxHelper {
@@ -114,6 +128,10 @@ public class Cocos2dxHelper {
     private static Set<OnActivityResultListener> onActivityResultListeners = new LinkedHashSet<OnActivityResultListener>();
     private static Vibrator sVibrateService = null;
     private static ClipboardManager sClipboardService = null;
+    private static ConnectivityManager sConnectivityService = null;
+    private static WifiManager sWifiService = null;
+    private static TelephonyManager sTelephonyService = null;
+    private static Intent sIntentBattery = null;
     //Enhance API modification begin
     private static IGameTuningService mGameServiceBinder = null;
     private static final int BOOST_TIME = 7;
@@ -121,7 +139,7 @@ public class Cocos2dxHelper {
 
     // The absolute path to the OBB if it exists, else the absolute path to the APK.
     private static String sAssetsPath = "";
-    
+
     // The OBB file
     private static ZipResourceFile sOBBFile = null;
 
@@ -130,13 +148,14 @@ public class Cocos2dxHelper {
     // ===========================================================
 
     public static void runOnGLThread(final Runnable r) {
-        ((Cocos2dxActivity)sActivity).runOnGLThread(r);
+        ((Cocos2dxActivity) sActivity).runOnGLThread(r);
     }
 
     private static boolean sInited = false;
+
     public static void init(final Activity activity) {
         sActivity = activity;
-        Cocos2dxHelper.sCocos2dxHelperListener = (Cocos2dxHelperListener)activity;
+        Cocos2dxHelper.sCocos2dxHelperListener = (Cocos2dxHelperListener) activity;
         if (!sInited) {
 
             PackageManager pm = activity.getPackageManager();
@@ -174,19 +193,26 @@ public class Cocos2dxHelper {
             nativeSetAudioDeviceInfo(isSupportLowLatency, sampleRate, bufferSizeInFrames);
 
             final ApplicationInfo applicationInfo = activity.getApplicationInfo();
-            
+
             Cocos2dxHelper.sPackageName = applicationInfo.packageName;
 
             Cocos2dxHelper.sAssetManager = activity.getAssets();
-            Cocos2dxHelper.nativeSetContext((Context)activity, Cocos2dxHelper.sAssetManager);
-    
+            Cocos2dxHelper.nativeSetContext((Context) activity, Cocos2dxHelper.sAssetManager);
+
             Cocos2dxBitmap.setContext(activity);
 
-            Cocos2dxHelper.sVibrateService = (Vibrator)activity.getSystemService(Context.VIBRATOR_SERVICE);
-            Cocos2dxHelper.sClipboardService = (ClipboardManager)activity.getSystemService(Context.CLIPBOARD_SERVICE);
+            Cocos2dxHelper.sVibrateService = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+            Cocos2dxHelper.sClipboardService = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+            Cocos2dxHelper.sWifiService = (WifiManager) activity.getSystemService(Context.WIFI_SERVICE);
+            Cocos2dxHelper.sConnectivityService = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+            Cocos2dxHelper.sTelephonyService = (TelephonyManager)activity.getSystemService(Context.TELEPHONY_SERVICE);
+
+            // 通过粘性广播读取电池信息。
+            // 注意，粘性广播不需要广播接收器。
+            Cocos2dxHelper.sIntentBattery = activity.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 
             sInited = true;
-            
+
             //Enhance API modification begin
             Intent serviceIntent = new Intent(IGameTuningService.class.getName());
             serviceIntent.setPackage("com.enhance.gameservice");
@@ -194,16 +220,15 @@ public class Cocos2dxHelper {
             //Enhance API modification end
         }
     }
-    
+
     // This function returns the absolute path to the OBB if it exists,
     // else it returns the absolute path to the APK.
-    public static String getAssetsPath()
-    {
+    public static String getAssetsPath() {
         if (Cocos2dxHelper.sAssetsPath.equals("")) {
 
             String pathToOBB = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Android/obb/" + Cocos2dxHelper.sPackageName;
 
-	    	// Listing all files inside the folder (pathToOBB) where OBB files are expected to be found.
+            // Listing all files inside the folder (pathToOBB) where OBB files are expected to be found.
             String[] fileNames = new File(pathToOBB).list(new FilenameFilter() { // Using filter to pick up only main OBB file name.
                 public boolean accept(File dir, String name) {
                     return name.startsWith("main.") && name.endsWith(".obb");  // It's possible to filter only by extension here to get path to patch OBB file also.
@@ -220,10 +245,10 @@ public class Cocos2dxHelper {
             else
                 Cocos2dxHelper.sAssetsPath = Cocos2dxHelper.sActivity.getApplicationInfo().sourceDir;
         }
-        
+
         return Cocos2dxHelper.sAssetsPath;
     }
-    
+
     public static ZipResourceFile getObbFile() {
         if (null == sOBBFile) {
             int versionCode = 1;
@@ -242,7 +267,7 @@ public class Cocos2dxHelper {
 
         return sOBBFile;
     }
-    
+
     //Enhance API modification begin
     private static ServiceConnection connection = new ServiceConnection() {
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -255,20 +280,20 @@ public class Cocos2dxHelper {
         }
     };
     //Enhance API modification end
-    
+
     public static Activity getActivity() {
         return sActivity;
     }
-    
+
     public static void addOnActivityResultListener(OnActivityResultListener listener) {
         onActivityResultListeners.add(listener);
     }
-    
+
     public static Set<OnActivityResultListener> getOnActivityResultListeners() {
         return onActivityResultListeners;
     }
-    
-    public static boolean isActivityVisible(){
+
+    public static boolean isActivityVisible() {
         return sActivityVisible;
     }
 
@@ -293,6 +318,7 @@ public class Cocos2dxHelper {
     public static String getCocos2dxPackageName() {
         return Cocos2dxHelper.sPackageName;
     }
+
     public static String getCocos2dxWritablePath() {
         return sActivity.getFilesDir().getAbsolutePath();
     }
@@ -300,8 +326,8 @@ public class Cocos2dxHelper {
     public static String getCurrentLanguage() {
         return Locale.getDefault().getLanguage();
     }
-    
-    public static String getDeviceModel(){
+
+    public static String getDeviceModel() {
         return Build.MODEL;
     }
 
@@ -329,14 +355,14 @@ public class Cocos2dxHelper {
     }
 
     public static void setKeepScreenOn(boolean value) {
-        ((Cocos2dxActivity)sActivity).setKeepScreenOn(value);
+        ((Cocos2dxActivity) sActivity).setKeepScreenOn(value);
     }
 
     public static void vibrate(float duration) {
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_GAME)
                 .build();
-        sVibrateService.vibrate(VibrationEffect.createOneShot((long)(duration * 1000),VibrationEffect.DEFAULT_AMPLITUDE));
+        sVibrateService.vibrate(VibrationEffect.createOneShot((long) (duration * 1000), VibrationEffect.DEFAULT_AMPLITUDE));
     }
 
     public static String GetClipboard() {
@@ -361,15 +387,15 @@ public class Cocos2dxHelper {
         }
     }
 
-    public static long GetCompileVersion(){
+    public static long GetCompileVersion() {
         try {
             return sActivity.getPackageManager().getPackageInfo(sActivity.getPackageName(), 0).getLongVersionCode();
-        } catch(Exception e) {
+        } catch (Exception e) {
             return 0;
         }
     }
 
-    public static void Dialog(final String title,final String content,final int ok,final int cancel) {
+    public static void Dialog(final String title, final String content, final int ok, final int cancel) {
         sActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -404,8 +430,8 @@ public class Cocos2dxHelper {
         });
     }
 
-    public static void Dialog(String title,String content,final int ok) {
-        Dialog(title,content,ok,-1);
+    public static void Dialog(String title, String content, final int ok) {
+        Dialog(title, content, ok, -1);
     }
 
     private static class LuaNotifyBroadcastReceiver extends BroadcastReceiver {
@@ -426,10 +452,12 @@ public class Cocos2dxHelper {
             Cocos2dxLuaJavaBridge.releaseLuaFunction(okFunc);
         }
     }
+
     static String nChannel = "";
     static LuaNotifyBroadcastReceiver luaNotifyReceiver = new LuaNotifyBroadcastReceiver();
-    public static void Notify(String title,String content,final int ok) {
-        NotificationManager nm = (NotificationManager)sActivity.getSystemService(Context.NOTIFICATION_SERVICE);
+
+    public static void Notify(String title, String content, final int ok) {
+        NotificationManager nm = (NotificationManager) sActivity.getSystemService(Context.NOTIFICATION_SERVICE);
         if (!nm.areNotificationsEnabled()) {
             Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
             return;
@@ -457,15 +485,15 @@ public class Cocos2dxHelper {
         }
         long tm = System.currentTimeMillis();
 
-        Intent intentC = new Intent("LuaNotifyClicked").putExtra("okFunc",ok);
-        PendingIntent pic = PendingIntent.getBroadcast(sActivity,0,intentC,PendingIntent.FLAG_ONE_SHOT);
-        Intent intentR = new Intent("LuaNotifyRemoved").putExtra("okFunc",ok);
-        PendingIntent pir = PendingIntent.getBroadcast(sActivity,0,intentR,PendingIntent.FLAG_ONE_SHOT);
+        Intent intentC = new Intent("LuaNotifyClicked").putExtra("okFunc", ok);
+        PendingIntent pic = PendingIntent.getBroadcast(sActivity, 0, intentC, PendingIntent.FLAG_ONE_SHOT);
+        Intent intentR = new Intent("LuaNotifyRemoved").putExtra("okFunc", ok);
+        PendingIntent pir = PendingIntent.getBroadcast(sActivity, 0, intentR, PendingIntent.FLAG_ONE_SHOT);
 
         int iconId = sActivity.getApplication().getApplicationInfo().icon;
-        Notification n = new Notification.Builder(sActivity,nChannel)
+        Notification n = new Notification.Builder(sActivity, nChannel)
                 .setSmallIcon(iconId)
-                .setLargeIcon(Icon.createWithResource(sActivity,iconId))
+                .setLargeIcon(Icon.createWithResource(sActivity, iconId))
                 .setContentTitle(title)
                 .setContentText(content)
                 .setShowWhen(true)
@@ -477,10 +505,10 @@ public class Cocos2dxHelper {
                 .setAutoCancel(true)
                 .setTicker(content)
                 .build();
-        nm.notify((int)(tm / 100), n);
+        nm.notify((int) (tm / 100), n);
     }
 
-    public static int GetOrientation(){
+    public static int GetOrientation() {
         Configuration mConfiguration = sActivity.getResources().getConfiguration();
         if (mConfiguration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             return 1;
@@ -490,32 +518,31 @@ public class Cocos2dxHelper {
 
     public static void SetOrientation(int ori) {
         int curORI = GetOrientation();
-        if (ori == curORI) {
+        if (!IsAutoOrientation() && ori == curORI) {
             return;
         }
 
         if (ori == 0) {
             sActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-        }
-        else if (ori == 1) {
+        } else if (ori == 1) {
             sActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
-        else if (ori == 2) {
+        } else if (ori == 2) {
             sActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
         }
     }
 
     static int OnLuaOrientationChanged = -1;
+
     public static void OnOrientationChanged(final int ori) {
         if (OnLuaOrientationChanged != -1) {
-            ((Cocos2dxActivity)sActivity).runOnGLThread(
+            ((Cocos2dxActivity) sActivity).runOnGLThread(
                     new Runnable() {
                         @Override
                         public void run() {
                             if (ori == Configuration.ORIENTATION_PORTRAIT) {
-                                Cocos2dxLuaJavaBridge.callLuaFunctionWithLong(OnLuaOrientationChanged,1);
+                                Cocos2dxLuaJavaBridge.callLuaFunctionWithLong(OnLuaOrientationChanged, 1);
                             } else if (ori == Configuration.ORIENTATION_LANDSCAPE) {
-                                Cocos2dxLuaJavaBridge.callLuaFunctionWithLong(OnLuaOrientationChanged,0);
+                                Cocos2dxLuaJavaBridge.callLuaFunctionWithLong(OnLuaOrientationChanged, 0);
                             }
                         }
                     }
@@ -530,7 +557,179 @@ public class Cocos2dxHelper {
         OnLuaOrientationChanged = luaCallback;
     }
 
- 	public static String getVersion() {
+    public static boolean IsAutoOrientation() {
+        return sActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_SENSOR;
+    }
+
+    public static double GetBatteryPercent() {
+        if (sIntentBattery != null) {
+            //获取当前电量
+            int batteryLevel = sIntentBattery.getIntExtra("level", 0);
+            //电量的总刻度
+            int batterySum = sIntentBattery.getIntExtra("scale", 100);
+            return (double) batteryLevel / (double) batterySum;
+        }
+
+        return 0.0;
+    }
+
+    public static boolean IsBatteryCharge() {
+        if (sIntentBattery != null) {
+            int status = sIntentBattery.getIntExtra("status", BatteryManager.BATTERY_STATUS_UNKNOWN);
+            return status == BatteryManager.BATTERY_STATUS_CHARGING;
+        }
+        return false;
+    }
+
+    public static int GetWifiLevel() {
+        int wl = 0;
+        WifiInfo wi = sWifiService.getConnectionInfo();
+        if (wi != null) {
+            int rssi = 100 + wi.getRssi();
+            if (rssi > 0) {
+                wl = (rssi - 1) / 20 + 1;
+                if (wl > 5) {
+                    wl = 5;
+                }
+            }
+        }
+        return wl;
+    }
+
+    public static int GetNetworkType() {
+        try {
+            NetworkInfo actInfo = sConnectivityService.getActiveNetworkInfo();
+            NetworkCapabilities nc = sConnectivityService.getNetworkCapabilities(sConnectivityService.getActiveNetwork());
+            if (actInfo != null && nc != null && actInfo.isConnected()) {
+                if (nc.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    return 1;
+                } else if (nc.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    return 2;
+                } else {
+                    return 3;
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return 0;
+    }
+
+    private static String IntIP2StringIP(int ip) {
+        return (ip & 0xFF) + "." +
+                ((ip >> 8) & 0xFF) + "." +
+                ((ip >> 16) & 0xFF) + "." +
+                (ip >> 24 & 0xFF);
+    }
+
+    public static String GetIp() {
+        int nt = GetNetworkType();
+        if (1 == nt) {
+            WifiInfo wi = sWifiService.getConnectionInfo();
+            if (null != wi) {
+                return IntIP2StringIP(wi.getIpAddress());
+            }
+        } else if (0 != nt) {
+            try {
+                for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
+                    NetworkInterface intf = en.nextElement();
+                    for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+                        InetAddress inetAddress = enumIpAddr.nextElement();
+                        if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
+                            return inetAddress.getHostAddress();
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return "";
+    }
+
+    private static String GetMAC() {
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface iF = interfaces.nextElement();
+
+                byte[] addr = iF.getHardwareAddress();
+                if (addr == null || addr.length == 0) {
+                    continue;
+                }
+
+                StringBuilder buf = new StringBuilder();
+                for (byte b : addr) {
+                    buf.append(String.format("%02X:", b));
+                }
+                if (buf.length() > 0) {
+                    buf.deleteCharAt(buf.length() - 1);
+                }
+                return buf.toString();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /*
+     * 识别符来源标志：
+     * 1， mac地址；
+     * 2， IMEI（imei）；
+     * 3， 序列号（sn）。
+     *
+     * @return String
+     */
+    private static String CacheId = null;
+    @SuppressLint("HardwareIds")
+    public static String GetId() {
+        if (null != CacheId) {
+            return CacheId;
+        }
+
+        StringBuilder deviceId = new StringBuilder();
+        try {
+            //mac地址
+            String mac = GetMAC();
+            if (mac != null) {
+                deviceId.append("mac:");
+                deviceId.append(mac);
+            }
+
+            //IMEI（imei）
+            if (sActivity.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
+                String imei = sTelephonyService.getImei();
+
+                if(imei != null){
+                    deviceId.append("-imei:");
+                    deviceId.append(imei);
+                }
+
+                //序列号（sn）
+                String sn = sTelephonyService.getSimSerialNumber();
+                if(sn != null){
+                    deviceId.append("-sn:");
+                    deviceId.append(sn);
+                }
+            }
+
+            // android_id
+            String aId = Settings.Secure.getString(sActivity.getContentResolver(), Settings.Secure.ANDROID_ID);
+            if (aId != null) {
+                deviceId.append("-android:");
+                deviceId.append(aId);
+            }
+
+            CacheId = deviceId.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return CacheId;
+    }
+
+    public static String getVersion() {
  		try {
             return Cocos2dxActivity.getContext().getPackageManager().getPackageInfo(Cocos2dxActivity.getContext().getPackageName(), 0).versionName;
  		} catch(Exception e) {
