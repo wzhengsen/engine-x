@@ -203,7 +203,7 @@ void LuaStack::addLuaLoader(lua_CFunction func)
 //#if LUA_VERSION_NUM == 501 || LUA_COMPAT_5_1
 	//static constexpr char* loadersField = "loaders";                               /* L: package, loaders */
 //#elif LUA_VERSION_NUM >= 503
-	static constexpr char* loadersField = "searchers";
+	static constexpr char loadersField[] = "searchers";
 //#endif
 	lua_getfield(_state, -1, loadersField);
     // insert loader into index 2
