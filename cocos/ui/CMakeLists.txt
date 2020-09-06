@@ -53,9 +53,12 @@ elseif(APPLE)
 elseif(LINUX)
     set(COCOS_UI_SPECIFIC_HEADER
         ui/UIEditBox/UIEditBoxImpl-linux.h
+        ui/UIWebView/UIWebViewImpl-linux.h
         )
     set(COCOS_UI_SPECIFIC_SRC
         ui/UIEditBox/UIEditBoxImpl-linux.cpp
+        ui/UIVideoPlayer/UIVideoPlayer-linux.cpp
+        ui/UIWebView/UIWebViewImpl-linux.cpp
         )
 elseif(ANDROID)
     set(COCOS_UI_SPECIFIC_HEADER

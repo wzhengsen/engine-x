@@ -134,11 +134,6 @@ Application::Platform Application::getTargetPlatform()
     return Platform::OS_LINUX;
 }
 
-std::string Application::getVersion()
-{
-    return "";
-}
-
 bool Application::openURL(const std::string &url)
 {
     std::string op = std::string("xdg-open '").append(url).append("'");
@@ -186,8 +181,25 @@ LanguageType Application::getCurrentLanguage()
     {
         return LanguageType::ENGLISH;
     }
-    
+
     return utils::getLanguageTypeByISO2(pLanguageName);
 }
+
+void Application::Dialog(
+    const std::string& title,
+    const std::string& content,
+    const std::function<void()>& okCallback,
+    const std::function<void()>& cancelCallback
+) {}
+
+/*
+    @brief 创建一个通知。
+*/
+void Application::Notify(
+    const std::string& title,
+    const std::string& content,
+    const std::function<void()>& clickCallback,
+    const std::function<void()>& closeCallback
+) {}
 
 NS_CC_END

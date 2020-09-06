@@ -64,7 +64,7 @@ public:
 
     /** @deprecated Use getInstance() instead */
     CC_DEPRECATED_ATTRIBUTE static Application* sharedApplication();
-    
+
     /* override functions */
     virtual LanguageType getCurrentLanguage() override;
 
@@ -73,11 +73,16 @@ public:
     @return Current language iso 639-1 code
     */
     virtual const char * getCurrentLanguageCode() override;
-    
+
     /**
     @brief Get application version
     */
-    virtual std::string getVersion() override;
+    virtual std::string getVersion() override {return "0";};
+
+    /**
+    @brief 获取应用的编译版本
+    */
+    virtual int64_t GetCompileVersion() override {return 0;};
 
     /**
      @brief Open url in default browser
@@ -92,21 +97,42 @@ public:
      *  @deprecated Please use FileUtils::getInstance()->setSearchPaths() instead.
      */
     CC_DEPRECATED_ATTRIBUTE void setResourceRootPath(const std::string& rootResDir);
-    
-    /** 
+
+    /**
      *  Gets the Resource root path.
-     *  @deprecated Please use FileUtils::getInstance()->getSearchPaths() instead. 
+     *  @deprecated Please use FileUtils::getInstance()->getSearchPaths() instead.
      */
     CC_DEPRECATED_ATTRIBUTE const std::string& getResourceRootPath();
-    
+
     /**
      @brief Get target platform
      */
     virtual Platform getTargetPlatform() override;
+
+    /*
+     @brief 创建一个非模式对话框。
+            提供0-2个回调，即有1-2个按钮，最少有一个“确定”按钮。
+    */
+    void Dialog(
+        const std::string& title,
+        const std::string& content,
+        const std::function<void()>& okCallback = nullptr,
+        const std::function<void()>& cancelCallback = nullptr
+    ) override;
+
+    /*
+     @brief 创建一个通知。
+    */
+    void Notify(
+        const std::string& title,
+        const std::string& content,
+        const std::function<void()>& clickCallback = nullptr,
+        const std::function<void()>& closeCallback = nullptr
+    ) override;
 protected:
     long       _animationInterval;  //micro second
     std::string _resourceRootPath;
-    
+
     static Application * sm_pSharedApplication;
 };
 
