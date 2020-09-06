@@ -85,6 +85,10 @@ import android.view.WindowManager;
 import com.android.vending.expansion.zipfile.APKExpansionSupport;
 import com.android.vending.expansion.zipfile.ZipResourceFile;
 
+import com.baidu.location.BDAbstractLocationListener;
+import com.baidu.location.BDLocation;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.enhance.gameservice.IGameTuningService;
 
 import java.io.IOException;
@@ -454,8 +458,6 @@ public class Cocos2dxHelper {
     }
 
     static String nChannel = "";
-    static LuaNotifyBroadcastReceiver luaNotifyReceiver = new LuaNotifyBroadcastReceiver();
-
     public static void Notify(String title, String content, final int ok) {
         NotificationManager nm = (NotificationManager) sActivity.getSystemService(Context.NOTIFICATION_SERVICE);
         if (!nm.areNotificationsEnabled()) {
@@ -469,7 +471,7 @@ public class Cocos2dxHelper {
             IntentFilter filter_click_remove = new IntentFilter();
             filter_click_remove.addAction("LuaNotifyClicked");
             filter_click_remove.addAction("LuaNotifyRemoved");
-            sActivity.registerReceiver(luaNotifyReceiver, filter_click_remove);
+            sActivity.registerReceiver(new LuaNotifyBroadcastReceiver(), filter_click_remove);
 
             NotificationChannel channel = new NotificationChannel(
                     nChannel,
@@ -531,8 +533,7 @@ public class Cocos2dxHelper {
         }
     }
 
-    static int OnLuaOrientationChanged = -1;
-
+    static private int OnLuaOrientationChanged = -1;
     public static void OnOrientationChanged(final int ori) {
         if (OnLuaOrientationChanged != -1) {
             ((Cocos2dxActivity) sActivity).runOnGLThread(
@@ -677,8 +678,8 @@ public class Cocos2dxHelper {
      * 识别符来源标志：
      * 1， mac地址；
      * 2， IMEI（imei）；
-     * 3， 序列号（sn）。
-     *
+     * 3， 序列号（sn）；
+     * 4， android_id
      * @return String
      */
     private static String CacheId = null;
@@ -729,6 +730,92 @@ public class Cocos2dxHelper {
         return CacheId;
     }
 
+    static private int OnLuaRequestLocation = -1;
+    static private class BaiduLocationListener extends BDAbstractLocationListener {
+        private LocationClient lc = null;
+
+        BaiduLocationListener(LocationClient lc) {
+            this.lc = lc;
+        }
+        @Override
+        public void onReceiveLocation(BDLocation location){
+            if (lc != null) {
+                lc.stop();
+            }
+
+            if (OnLuaRequestLocation != -1) {
+                double x = location.getLongitude();
+                double y = location.getLatitude();
+                String province = location.getProvince();    //获取省份
+                String city = location.getCity();    //获取城市
+                String district = location.getDistrict();    //获取区县
+                String street = location.getStreet();    //获取街道信息
+                String num = location.getStreetNumber();
+
+                String sb = String.valueOf(location.getLocType()) +
+                        '\r' +
+                        x +
+                        '\r' +
+                        y +
+                        '\r' +
+                        province +
+                        '\r' +
+                        city +
+                        '\r' +
+                        district +
+                        '\r' +
+                        street +
+                        '\r' +
+                        num;
+                Cocos2dxLuaJavaBridge.callLuaFunctionWithString(OnLuaRequestLocation, sb);
+            }
+        }
+    }
+    public static void SetOnLuaRequestLocation(int luaCallBack) {
+        if (OnLuaRequestLocation != -1) {
+            Cocos2dxLuaJavaBridge.releaseLuaFunction(OnLuaRequestLocation);
+        }
+        OnLuaRequestLocation = luaCallBack;
+    }
+
+    public static void RequestLocation() {
+        try {
+            if (sActivity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                sActivity.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},0);
+            }
+            LocationClient lc = new LocationClient(sActivity);
+            // 声明LocationClient类
+            // 注册监听函数
+            lc.registerLocationListener(new BaiduLocationListener(lc));
+
+            LocationClientOption option = new LocationClientOption();
+
+            // 可选，设置发起定位请求的间隔，int类型，单位ms
+            // 如果设置为0，则代表单次定位，即仅定位一次，默认为0
+            // 如果设置非0，需设置1000ms以上才有效
+            option.setScanSpan(0);
+            option.setOnceLocation(true);
+
+            option.setIsNeedAddress(true);
+
+            // 可选，设置是否使用gps，默认false
+            // 使用高精度和仅用设备两种定位模式的，参数必须设置为true
+            option.setOpenGps(true);
+
+            option.SetIgnoreCacheException(true);
+
+            //可选，V7.2版本新增能力
+            //如果设置了该接口，首次启动定位时，会先判断当前Wi-Fi是否超出有效期，若超出有效期，会先重新扫描Wi-Fi，然后定位
+            option.setWifiCacheTimeOut(5 * 60 * 1000);
+
+            lc.setLocOption(option);
+            lc.start();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public static String getVersion() {
  		try {
             return Cocos2dxActivity.getContext().getPackageManager().getPackageInfo(Cocos2dxActivity.getContext().getPackageName(), 0).versionName;
@@ -744,7 +831,7 @@ public class Cocos2dxHelper {
             i.setData(Uri.parse(url));
             sActivity.startActivity(i);
             ret = true;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return ret;
     }
