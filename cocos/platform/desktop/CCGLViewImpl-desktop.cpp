@@ -386,9 +386,9 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     glfwWindowHint(GLFW_ALPHA_BITS,_glContextAttrs.alphaBits);
     glfwWindowHint(GLFW_DEPTH_BITS,_glContextAttrs.depthBits);
     glfwWindowHint(GLFW_STENCIL_BITS,_glContextAttrs.stencilBits);
-    
+
     glfwWindowHint(GLFW_SAMPLES, _glContextAttrs.multisamplingCount);
-    
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
     // Don't create gl context.
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -462,7 +462,7 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
         ccMessageBox(strComplain, "OpenGL version too old");
         return false;
     }
-    
+
     // Will cause OpenGL error 0x0500 when use ANGLE-GLES on desktop
 #if !CC_USE_GLES_ON_DESKTOP
     // Enable point size by default.
@@ -499,13 +499,13 @@ bool GLViewImpl::initWithFullscreen(const std::string &viewname, const GLFWvidmo
     _monitor = monitor;
     if (nullptr == _monitor)
         return false;
-    
+
     //These are soft constraints. If the video mode is retrieved at runtime, the resulting window and context should match these exactly. If invalid attribs are passed (eg. from an outdated cache), window creation will NOT fail but the actual window/context may differ.
     glfwWindowHint(GLFW_REFRESH_RATE, videoMode.refreshRate);
     glfwWindowHint(GLFW_RED_BITS, videoMode.redBits);
     glfwWindowHint(GLFW_BLUE_BITS, videoMode.blueBits);
     glfwWindowHint(GLFW_GREEN_BITS, videoMode.greenBits);
-    
+
     return initWithRect(viewname, Rect(0, 0, (float)videoMode.width, (float)videoMode.height), 1.0f, false);
 }
 
@@ -614,7 +614,7 @@ void GLViewImpl::setCursorVisible( bool isVisible )
 {
     if( _mainWindow == NULL )
         return;
-    
+
     if( isVisible )
         glfwSetInputMode(_mainWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     else
@@ -856,7 +856,7 @@ void GLViewImpl::onGLFWMouseCallBack(GLFWwindow* /*window*/, int button, int act
             }
         }
     }
-    
+
     //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
     float cursorX = (_mouseX - _viewPortRect.origin.x) / _scaleX;
     float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - _mouseY) / _scaleY;
@@ -899,7 +899,7 @@ void GLViewImpl::onGLFWMouseMoveCallBack(GLFWwindow* window, double x, double y)
         intptr_t id = 0;
         this->handleTouchesMove(1, &id, &_mouseX, &_mouseY);
     }
-    
+
     //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
     float cursorX = (_mouseX - _viewPortRect.origin.x) / _scaleX;
     float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - _mouseY) / _scaleY;
@@ -1028,19 +1028,19 @@ void GLViewImpl::onGLFWWindowSizeCallback(GLFWwindow* /*window*/, int w, int h)
 {
     if (w && h && _resolutionPolicy != ResolutionPolicy::UNKNOWN)
     {
-        /* 
+        /*
          x-studio spec, fix view size incorrect when window size changed.
          The original code behavior:
          1. first time enter full screen: w,h=1920,1080
          2. second or later enter full screen: will trigger 2 times WindowSizeCallback
            1). w,h=976,679
            2). w,h=1024,768
-         
+
          @remark: we should use glfwSetWindowMonitor to control the window size in full screen mode
          @see also: updateWindowSize (call after enter/exit full screen mode)
         */
         updateDesignResolutionSize();
-		
+
         Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(GLViewImpl::EVENT_WINDOW_RESIZED, nullptr);
     }
 }
@@ -1155,6 +1155,7 @@ bool GLViewImpl::loadGL()
 {
 #if (CC_TARGET_PLATFORM != CC_PLATFORM_MAC)
 
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_LINUX)
     // glad: load all OpenGL function pointers
     // ---------------------------------------
 #if !CC_USE_GLES_ON_DESKTOP
@@ -1179,6 +1180,32 @@ bool GLViewImpl::loadGL()
 #endif
 
     loadFboExtensions();
+#else
+    GLenum GlewInitResult = glewInit();
+    if (GLEW_OK != GlewInitResult)
+    {
+        ccMessageBox((char *)glewGetErrorString(GlewInitResult), "OpenGL error");
+        return false;
+    }
+
+    if (GLEW_ARB_vertex_shader && GLEW_ARB_fragment_shader)
+    {
+        log("Ready for GLSL");
+    }
+    else
+    {
+        log("Not totally ready :(");
+    }
+
+    if (glewIsSupported("GL_VERSION_2_0"))
+    {
+        log("Ready for OpenGL 2.0");
+    }
+    else
+    {
+        log("OpenGL 2.0 not supported");
+    }
+#endif
 
 #endif // (CC_TARGET_PLATFORM != CC_PLATFORM_MAC)
 
