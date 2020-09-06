@@ -712,8 +712,8 @@ void GLViewImpl::updateWindowSize()
 {
     int w = 0, h = 0;
     glfwGetFramebufferSize(_mainWindow, &w, &h);
-    int frameWidth = w / _frameZoomFactor;
-    int frameHeight = h / _frameZoomFactor;
+    auto frameWidth = w / _frameZoomFactor;
+    auto frameHeight = h / _frameZoomFactor;
     setFrameSize(frameWidth, frameHeight);
     updateDesignResolutionSize();
     Director::getInstance()->getEventDispatcher()->dispatchCustomEvent(GLViewImpl::EVENT_WINDOW_RESIZED, nullptr);
@@ -797,10 +797,10 @@ void GLViewImpl::setViewPortInPoints(float x , float y , float w , float h)
 
 void GLViewImpl::setScissorInPoints(float x , float y , float w , float h)
 {
-    auto x1 = (int)(x * _scaleX * _retinaFactor * _frameZoomFactor + _viewPortRect.origin.x * _retinaFactor * _frameZoomFactor);
-    auto y1 = (int)(y * _scaleY * _retinaFactor  * _frameZoomFactor + _viewPortRect.origin.y * _retinaFactor * _frameZoomFactor);
-    auto width1 = (unsigned int)(w * _scaleX * _retinaFactor * _frameZoomFactor);
-    auto height1 = (unsigned int)(h * _scaleY * _retinaFactor * _frameZoomFactor);
+    auto x1 = (x * _scaleX * _retinaFactor * _frameZoomFactor + _viewPortRect.origin.x * _retinaFactor * _frameZoomFactor);
+    auto y1 = (y * _scaleY * _retinaFactor  * _frameZoomFactor + _viewPortRect.origin.y * _retinaFactor * _frameZoomFactor);
+    auto width1 = (w * _scaleX * _retinaFactor * _frameZoomFactor);
+    auto height1 = (h * _scaleY * _retinaFactor * _frameZoomFactor);
     auto renderer = Director::getInstance()->getRenderer();
     renderer->setScissorRect(x1, y1, width1, height1);
 }
