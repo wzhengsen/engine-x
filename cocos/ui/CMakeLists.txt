@@ -69,7 +69,6 @@ elseif(ANDROID)
         ui/UIEditBox/UIEditBoxImpl-android.cpp
         ui/UIVideoPlayer/UIVideoPlayer-android.cpp
         ui/UIWebView/UIWebViewImpl-android.cpp
-        ui/UIWebView/UIWebView-android.cpp
         )
 endif()
 
