@@ -45,6 +45,16 @@ THE SOFTWARE.
 
 #include "renderer/CCRenderer.h"
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
+#ifndef GLFW_EXPOSE_NATIVE_X11
+#define GLFW_EXPOSE_NATIVE_X11
+#endif
+#ifndef GLFW_EXPOSE_NATIVE_GLX
+#define GLFW_EXPOSE_NATIVE_GLX
+#endif
+#include "glfw3native.h"
+#endif /* (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX) */
+
 NS_CC_BEGIN
 
 const std::string GLViewImpl::EVENT_WINDOW_RESIZED = "glview_window_resized";
@@ -1147,6 +1157,12 @@ static bool loadFboExtensions() {
         }
     }
     return true;
+}
+#endif
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
+X11Window GLViewImpl::getX11Window() const noexcept{
+    return glfwGetX11Window(_mainWindow);
 }
 #endif
 
