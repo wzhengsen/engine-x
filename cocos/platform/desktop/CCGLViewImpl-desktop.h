@@ -26,7 +26,7 @@ THE SOFTWARE.
 
 #pragma once
 
-#include "platform/CCGL.h" 
+#include "platform/CCGL.h"
 #include "base/CCRef.h"
 #include "platform/CCCommon.h"
 #include "platform/CCGLView.h"
@@ -134,14 +134,18 @@ public:
     void enableRetina(bool enabled);
     /** Check whether retina display is enabled. */
     bool isRetinaEnabled() const { return _isRetinaEnabled; };
-    
+
     /** Get retina factor */
     int getRetinaFactor() const override { return _retinaFactor; }
-    
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
     HWND getWin32Window() { return glfwGetWin32Window(_mainWindow); }
 #endif /* (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) */
-    
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
+    X11Window getX11Window() const noexcept;
+#endif /* (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX) */
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
     id getCocoaWindow() override { return glfwGetCocoaWindow(_mainWindow); }
     id getNSGLContext() override { return glfwGetNSGLContext(_mainWindow); } // stevetranby: added
