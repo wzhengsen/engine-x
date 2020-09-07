@@ -591,16 +591,21 @@ FileUtils::Status FileUtils::getContents(const std::string& filename, ResizableB
     if (fullPath.empty())
         return Status::NotExists;
 
+    struct AutoFileHandle {
+        AutoFileHandle(FILE* fp):fp(fp) {}
+        ~AutoFileHandle() {
+            if (fp) {
+                ::fclose(fp);
+            }
+        }
+        private:
+        FILE* fp = nullptr;
+    };
+
     FILE *fp = fopen(fullPath.c_str(), "rb");
+    auto autoHandle = AutoFileHandle(fp);
     if (!fp)
         return Status::OpenFailed;
-
-    struct AutoFileHandle {
-        void operator()(FILE* fp) {
-            fclose(fp);
-        }
-    };
-    std::unique_ptr<FILE, AutoFileHandle> autohandle(fp);
 
     struct stat statBuf;
     if (fstat(fileno(fp), &statBuf) == -1)
@@ -621,14 +626,12 @@ FileUtils::Status FileUtils::getContents(const std::string& filename, ResizableB
     }
     else {
         if (::fseek(fp, 0, SEEK_SET) != 0) {
-            ::fclose(fp);
             return Status::ReadFailed;
         }
     }
 
     buffer->resize(size);
     const size_t readsize = ::fread(buffer->buffer(), 1, size, fp);
-    ::fclose(fp);
 
     if (readsize < size) {
         buffer->resize(readsize);
