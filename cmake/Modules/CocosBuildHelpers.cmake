@@ -119,10 +119,17 @@ function(get_target_depends_ext_dlls cocos_target all_depend_dlls_out)
         if(TARGET ${depend_lib})
             get_target_property(target_type ${depend_lib} TYPE)
             if(${target_type} STREQUAL "SHARED_LIBRARY" OR ${target_type} STREQUAL "STATIC_LIBRARY" OR ${target_type} STREQUAL "MODULE_LIBRARY" OR ${target_type} STREQUAL "EXECUTABLE")
-                get_target_property(found_shared_lib ${depend_lib} IMPORTED_IMPLIB)
-                if(found_shared_lib)
+                if(WINDOWS)
+                    get_target_property(found_shared_lib ${depend_lib} IMPORTED_IMPLIB)
+                    if(found_shared_lib)
+                        get_target_property(tmp_dlls ${depend_lib} IMPORTED_LOCATION)
+                        list(APPEND all_depend_ext_dlls ${tmp_dlls})
+                    endif()
+                elseif(LINUX)
                     get_target_property(tmp_dlls ${depend_lib} IMPORTED_LOCATION)
-                    list(APPEND all_depend_ext_dlls ${tmp_dlls})
+                    if(tmp_dlls AND ${tmp_dlls} MATCHES "\.so$")
+                        list(APPEND all_depend_ext_dlls ${tmp_dlls})
+                    endif()
                 endif()
             endif()
         endif()
@@ -146,21 +153,23 @@ function(cocos_copy_target_dll cocos_target)
         )
     endforeach()
 
-    # Copy windows angle binaries
-    add_custom_command(TARGET ${cocos_target}
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/windows/libGLESv2.dll
-                ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/windows/libEGL.dll
-                ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/windows/d3dcompiler_47.dll
-                $<TARGET_FILE_DIR:${cocos_target}>
-            )
+    if(WINDOWS)
+        # Copy windows angle binaries
+        add_custom_command(TARGET ${cocos_target}
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/windows/libGLESv2.dll
+                    ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/windows/libEGL.dll
+                    ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/windows/d3dcompiler_47.dll
+                    $<TARGET_FILE_DIR:${cocos_target}>
+                )
 
-    add_custom_command(
-        TARGET ${cocos_target} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E
-        copy_directory ${COCOS2DX_ROOT_PATH}/external/vlc/prebuilt/windows/plugins
-        "$<TARGET_FILE_DIR:${cocos_target}>/plugins"
-    )
+        add_custom_command(
+            TARGET ${cocos_target} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E
+            copy_directory ${COCOS2DX_ROOT_PATH}/external/vlc/prebuilt/windows/plugins
+            "$<TARGET_FILE_DIR:${cocos_target}>/plugins"
+        )
+    endif()
 endfunction()
 
 # mark `FILES` as resources, files will be put into sub-dir tree depend on its absolute path
