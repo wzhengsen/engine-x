@@ -27,6 +27,7 @@ THE SOFTWARE.
 #include <unistd.h>
 #include <sys/time.h>
 #include <string>
+#include <gtk/gtk.h>
 #include "base/CCDirector.h"
 #include "base/ccUtils.h"
 #include "platform/CCFileUtils.h"
@@ -70,6 +71,8 @@ int Application::run()
 
     long lastTime = 0L;
     long curTime = 0L;
+
+    gtk_init(nullptr,nullptr);
 
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
@@ -190,7 +193,50 @@ void Application::Dialog(
     const std::string& content,
     const std::function<void()>& okCallback,
     const std::function<void()>& cancelCallback
-) {}
+) {
+    GtkWidget* dialog = gtk_dialog_new_with_buttons(
+        title.c_str(),
+        nullptr,
+        GtkDialogFlags::GTK_DIALOG_DESTROY_WITH_PARENT,
+        nullptr,nullptr
+    );
+    GtkWidget* contentArea = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+
+    gtk_widget_set_size_request(dialog,400,120);
+    gtk_window_set_deletable(GTK_WINDOW(dialog),false);
+    gtk_window_set_modal(GTK_WINDOW(dialog),true);
+    gtk_window_set_resizable(GTK_WINDOW(dialog),false);
+    gtk_dialog_add_button(GTK_DIALOG(dialog),"确定",0);
+    if (nullptr != cancelCallback) {
+        gtk_dialog_add_button(GTK_DIALOG(dialog),"取消",1);
+    }
+
+    GtkWidget* label = gtk_label_new(content.c_str());
+    gtk_label_set_line_wrap(GTK_LABEL(label),true);
+    gtk_label_set_line_wrap_mode(GTK_LABEL(label),PangoWrapMode::PANGO_WRAP_WORD_CHAR);
+    gtk_label_set_max_width_chars(GTK_LABEL(label),40);
+    gtk_label_set_yalign(GTK_LABEL(label),0.5);
+    gtk_widget_set_size_request(label,400,100);
+
+    GtkWidget* fixBox = gtk_fixed_new();
+    gtk_fixed_put(GTK_FIXED(fixBox),label,0,0);
+
+    gtk_container_add(GTK_CONTAINER(contentArea),fixBox);
+
+    gtk_widget_show_all(dialog);
+
+    const gint rId = gtk_dialog_run(GTK_DIALOG(dialog));
+    if (rId == 0 && okCallback) {
+        okCallback();
+    }
+    else if (rId == 1 && cancelCallback) {
+        cancelCallback();
+    }
+
+    gtk_widget_destroy(dialog);
+
+    while (g_main_context_iteration(nullptr, false));
+}
 
 /*
     @brief 创建一个通知。
