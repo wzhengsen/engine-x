@@ -1,5 +1,18 @@
 include(CMakeParseArguments)
 
+function(cocos_sync_target_icon cocos_target)
+    set(oneValueArgs1 ICON_FROM)
+    set(oneValueArgs2 ICON_TO)
+    cmake_parse_arguments(opt "" "${oneValueArgs1}" "${oneValueArgs2}" ${ARGN})
+
+    add_custom_command(TARGET ${cocos_target} POST_BUILD
+        COMMAND ${CMAKE_COMMAND}
+        -E copy_if_different
+        ${opt_ICON_FROM}
+        ${opt_ICON_TO}
+    )
+endfunction()
+
 # copy resource `FILES` and `FOLDERS` to TARGET_FILE_DIR/Resources
 function(cocos_sync_target_res cocos_target)
     set(oneValueArgs1 LINK_TO)

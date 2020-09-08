@@ -37,6 +37,9 @@ THE SOFTWARE.
 #define CC_RESOURCE_FOLDER_LINUX ("/Resources/")
 #endif
 
+// 直接使用当前路径作为可写路径
+#define USE_MODULE_WRITABLE_PATH
+
 using namespace std;
 
 #define DECLARE_GUARD std::lock_guard<std::recursive_mutex> mutexGuard(_mutex)
@@ -77,6 +80,7 @@ bool FileUtilsLinux::init()
     _defaultResRootPath = appPath.substr(0, appPath.find_last_of('/'));
     _defaultResRootPath += CC_RESOURCE_FOLDER_LINUX;
 
+#ifndef USE_MODULE_WRITABLE_PATH
     // Set writable path to $XDG_CONFIG_HOME or ~/.config/<app name>/ if $XDG_CONFIG_HOME not exists.
     const char* xdg_config_path = getenv("XDG_CONFIG_HOME");
     std::string xdgConfigPath;
@@ -89,7 +93,9 @@ bool FileUtilsLinux::init()
     _writablePath = xdgConfigPath;
     _writablePath += appPath.substr(appPath.find_last_of('/'));
     _writablePath += "/";
+#endif
 
+    _writablePath = appPath.substr(0, appPath.find_last_of('/') + 1);
     return FileUtils::init();
 }
 
