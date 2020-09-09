@@ -143,6 +143,7 @@ public:
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
     X11Window getX11Window() const noexcept;
+    X11Display* getX11Display() const noexcept;
 #endif /* (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX) */
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
