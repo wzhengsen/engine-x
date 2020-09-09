@@ -210,6 +210,7 @@ void Application::Dialog(
     if (nullptr != cancelCallback) {
         gtk_dialog_add_button(GTK_DIALOG(dialog),"取消",1);
     }
+    gtk_dialog_set_default_response(GTK_DIALOG(dialog),0);
 
     GtkWidget* label = gtk_label_new(content.c_str());
     gtk_label_set_line_wrap(GTK_LABEL(label),true);
