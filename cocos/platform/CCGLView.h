@@ -37,7 +37,7 @@ THE SOFTWARE.
 #endif /* (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) */
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
-typedef unsigned long long X11Window;
+typedef unsigned long X11Window;
 typedef void X11Display;
 #endif /* (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX) */
 
