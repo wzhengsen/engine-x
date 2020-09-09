@@ -1131,6 +1131,9 @@ static bool loadFboExtensions() {
 X11Window GLViewImpl::getX11Window() const noexcept{
     return glfwGetX11Window(_mainWindow);
 }
+X11Display* GLViewImpl::getX11Display() const noexcept{
+    return glfwGetX11Display();
+}
 #endif
 
 // helper

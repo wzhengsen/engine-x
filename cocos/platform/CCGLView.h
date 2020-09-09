@@ -38,6 +38,7 @@ THE SOFTWARE.
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
 typedef unsigned long long X11Window;
+typedef void X11Display;
 #endif /* (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX) */
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
@@ -415,6 +416,11 @@ public:
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
     virtual HWND getWin32Window() = 0;
 #endif /* (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) */
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
+    virtual X11Window getX11Window() const noexcept = 0;
+    virtual X11Display* getX11Display() const noexcept = 0;
+#endif /* (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX) */
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
     virtual id getCocoaWindow() = 0;
