@@ -27,8 +27,6 @@ THE SOFTWARE.
 #include "platform/CCFileUtils.h"
 #include "platform/CCStdC.h"
 
-#include <thread>
-
 NS_CC_BEGIN
 
 int Device::getDPI()
@@ -550,33 +548,45 @@ void Device::setKeepScreenOn(bool value)
 }
 
 /* 在windows下以窗口震动实现。 */
-void Device::vibrate(float duration)
-{
-    uint64_t time = duration * 1000;
-    static volatile bool inVibrate = false;
-    if (inVibrate || !time) {
+void Device::vibrate(float duration) {
+    static bool inVibrate = false;
+    const uint32_t time = duration * 1000;
+    if (inVibrate || time <= 0) {
         return;
     }
 
-    HWND hwnd = cocos2d::Director::getInstance()->getOpenGLView()->getWin32Window();
-    RECT rect = {};
+    uint32_t repeat = time / 10 + 1;
+    cocos2d::Director* director = cocos2d::Director::getInstance();
+    HWND hwnd = director->getOpenGLView()->getWin32Window();
+    cocos2d::Scheduler* sh = director->getScheduler();
 
+    RECT rect = {};
     if (GetWindowRect(hwnd, &rect)) {
         inVibrate = true;
-        const int vTime = time / 10 + 1;
-        const auto startClock = clock();
-        std::thread([rect, vTime, hwnd, startClock, time]() noexcept {
-            int _vTime = vTime;
-            inVibrate = true;
-            const RECT originRect = rect;
-            while (static_cast<uint64_t>(clock() - startClock) <= time) {
-                MoveWindow(hwnd, rect.left + (_vTime & 1 ? 2 : -2), rect.top, rect.right - rect.left, rect.bottom - rect.top, true);
-                Sleep(10);
-                _vTime--;
-            }
-            MoveWindow(hwnd, originRect.left, originRect.top, originRect.right - originRect.left, originRect.bottom - originRect.top, true);
-            inVibrate = false;
-            }).detach();
+        sh->schedule(
+            [=](float dt) mutable noexcept{
+                if(--repeat <= 0) {
+                    MoveWindow(
+                        hwnd,
+                        rect.left, rect.top,
+                        rect.right - rect.left,rect.bottom - rect.top,
+                        true
+                    );
+                    inVibrate = false;
+                }
+                else {
+                    MoveWindow(
+                        hwnd,
+                        rect.left + (repeat & 1 ? 1 : -1), rect.top,
+                        rect.right - rect.left, rect.bottom - rect.top,
+                        true
+                    );
+                }
+            },
+            director,
+            0.01f,repeat - 1,0.0f,
+            false,"WindowVibrate"
+        );
     }
 }
 
