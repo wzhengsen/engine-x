@@ -92,7 +92,7 @@ int Device::getDPI()
          *         = N pixels / (M inch / 25.4)
          *         = N * 25.4 pixels / M inch
          */
-        double xres = ((((double) DisplayWidth(dpy,scr)) * 25.4) / 
+        double xres = ((((double) DisplayWidth(dpy,scr)) * 25.4) /
             ((double) DisplayWidthMM(dpy,scr)));
         dpi = (int) (xres + 0.5);
         //printf("dpi = %d\n", dpi);
@@ -124,7 +124,7 @@ public:
     ~BitmapDC() {
         FT_Done_FreeType(library);
         FcFini();
-        
+
         reset();
     }
 
@@ -277,7 +277,7 @@ public:
                         textLines.push_back(currentLine);
                         currentLine.reset();
                     }
-    
+
                     prevGlyphIndex = 0;
                     prevCharacter = 0;
                     firstBreakIndex = -1;
@@ -287,7 +287,7 @@ public:
                     prevCharacter = unicode;
                 }
             }
-            
+
             if ( currentLine.glyphs.empty() ) {
                 currentPaintPosition = -glyph.bearingX;
             }
@@ -490,7 +490,7 @@ static BitmapDC& sharedBitmapDC()
 Data Device::getTextureDataForText(const char * text, const FontDefinition& textDefinition, TextAlign align, int &width, int &height, bool& hasPremultipliedAlpha)
 {
     Data ret;
-    do 
+    do
     {
         BitmapDC &dc = sharedBitmapDC();
 
@@ -510,8 +510,44 @@ void Device::setKeepScreenOn(bool /*value*/)
 {
 }
 
-void Device::vibrate(float /*duration*/)
-{
+void Device::vibrate(float duration) {
+    uint64_t time = duration * 1000;
+    static bool inVibrate = false;
+    if (inVibrate || time <= 0) {
+        return;
+    }
+
+    uint32_t repeat = time / 20 + 1;
+    cocos2d::Director* director = cocos2d::Director::getInstance();
+    cocos2d::Scheduler* sh = director->getScheduler();
+    cocos2d::GLView* glView = director->getOpenGLView();
+    Display* dpy = (Display*)glView->getX11Display();
+    Window x11 = glView->getX11Window();
+    int screen = DefaultScreen(dpy);
+    Window root = RootWindow(dpy, screen);
+
+    int x = 0;
+    int y = 0;
+    Window dummy;
+    XTranslateCoordinates(dpy, x11, root, 0, 0, &x, &y, &dummy);
+
+    inVibrate = true;
+    sh->schedule(
+        [=](float dt) mutable noexcept{
+            if(--repeat <= 0) {
+                XMoveWindow(dpy, x11, x, y);
+                XFlush(dpy);
+                inVibrate = false;
+            }
+            else {
+                XMoveWindow(dpy, x11, x + (repeat & 1 ? 1 : -1), y);
+                XFlush(dpy);
+            }
+        },
+        director,
+        0.02f,repeat - 1,0.0f,
+        false,"WindowVibrate"
+    );
 }
 
 NS_CC_END
