@@ -63,6 +63,8 @@ Application::~Application()
 int Application::run()
 {
     initGLContextAttrs();
+    gtk_init(nullptr,nullptr);
+
     // Initialize instance and cocos2d.
     if (! applicationDidFinishLaunching())
     {
@@ -71,8 +73,6 @@ int Application::run()
 
     long lastTime = 0L;
     long curTime = 0L;
-
-    gtk_init(nullptr,nullptr);
 
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
