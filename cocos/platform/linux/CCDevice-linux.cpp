@@ -113,17 +113,24 @@ void Device::setAccelerometerInterval(float interval)
 
 class BitmapDC
 {
+private:
+    static bool inited;
+    static FT_Library library;
 public:
     BitmapDC() {
-        libError = FT_Init_FreeType( &library );
-        FcInit();
+        if (!inited) {
+            libError = FT_Init_FreeType( &library );
+            FcInit();
+            inited = true;
+        }
         _data = NULL;
         reset();
     }
 
     ~BitmapDC() {
-        FT_Done_FreeType(library);
-        FcFini();
+        //fix me: Releasing resources here may conflict with gtk.
+        //FT_Done_FreeType(library);
+        //FcFini();
 
         reset();
     }
@@ -472,7 +479,6 @@ public:
     }
 
 public:
-    FT_Library library;
 
     unsigned char *_data;
     int libError;
@@ -486,6 +492,8 @@ static BitmapDC& sharedBitmapDC()
     static BitmapDC s_BmpDC;
     return s_BmpDC;
 }
+bool BitmapDC::inited = false;
+FT_Library BitmapDC::library = nullptr;
 
 Data Device::getTextureDataForText(const char * text, const FontDefinition& textDefinition, TextAlign align, int &width, int &height, bool& hasPremultipliedAlpha)
 {
