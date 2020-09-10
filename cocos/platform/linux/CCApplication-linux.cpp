@@ -72,8 +72,6 @@ int Application::run()
     long lastTime = 0L;
     long curTime = 0L;
 
-    gtk_init(nullptr,nullptr);
-
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
 
@@ -194,6 +192,8 @@ void Application::Dialog(
     const std::function<void()>& okCallback,
     const std::function<void()>& cancelCallback
 ) {
+    gtk_init(nullptr,nullptr);
+
     GtkWidget* dialog = gtk_dialog_new_with_buttons(
         title.c_str(),
         nullptr,
