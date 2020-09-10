@@ -91,6 +91,7 @@ VideoPlayer::VideoPlayer()
     HWND hwnd = cocos2d::Director::getInstance()->getOpenGLView()->getWin32Window();
     HINSTANCE instance = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE);
     _videoView = ::CreateWindowEx(WS_EX_LEFT, L"STATIC", L"", WS_CHILD, 0, 0, 0, 0, hwnd, nullptr, instance, nullptr);
+    ::ShowWindow(static_cast<HWND>(_videoView), SW_SHOW);
 
     vlcPlayer = libvlc_media_player_new(vlcInstance);
     // ‰÷»æµΩ_videoView
