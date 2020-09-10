@@ -91,7 +91,7 @@ VideoPlayer::VideoPlayer()
     HWND hwnd = cocos2d::Director::getInstance()->getOpenGLView()->getWin32Window();
     HINSTANCE instance = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE);
     _videoView = ::CreateWindowEx(WS_EX_LEFT, L"STATIC", L"", WS_CHILD, 0, 0, 0, 0, hwnd, nullptr, instance, nullptr);
-    
+
     vlcPlayer = libvlc_media_player_new(vlcInstance);
     // ‰÷»æµΩ_videoView
     libvlc_media_player_set_hwnd(vlcPlayer, _videoView);
@@ -129,6 +129,8 @@ VideoPlayer::~VideoPlayer() {
     }
     // Free the media_player
     libvlc_media_player_release(vlcPlayer);
+
+    ::DestroyWindow(static_cast<HWND>(_videoView));
 
     VideoPlayerCount--;
     if (!VideoPlayerCount) {
@@ -168,7 +170,12 @@ void VideoPlayer::draw(Renderer* renderer, const Mat4 &transform, uint32_t flags
 
     if ((!_fullScreenEnabled) && (flags & FLAGS_TRANSFORM_DIRTY)) {
         const auto uiRect = cocos2d::ui::Helper::convertBoundingBoxToScreen(this);
-        ::MoveWindow(static_cast<HWND>(_videoView), uiRect.origin.x, uiRect.origin.y, uiRect.size.width, uiRect.size.height, TRUE);
+        ::MoveWindow(
+            static_cast<HWND>(_videoView),
+            static_cast<int>(uiRect.origin.x), static_cast<int>(uiRect.origin.y),
+            static_cast<int>(uiRect.size.width), static_cast<int>(uiRect.size.height),
+            TRUE
+        );
     }
 
 #if CC_VIDEOPLAYER_DEBUG_DRAW
@@ -192,7 +199,12 @@ void VideoPlayer::setFullScreenEnabled(bool enabled) {
         if (enabled) {
             const auto frameSize = Director::getInstance()->getOpenGLView()->getFrameSize();
             //libvlc_set_fullscreen(vlcPlayer, enabled);
-            ::MoveWindow(static_cast<HWND>(_videoView), 0, 0, frameSize.width, frameSize.height, TRUE);
+            ::MoveWindow(
+                static_cast<HWND>(_videoView),
+                0, 0,
+                static_cast<int>(frameSize.width), static_cast<int>(frameSize.height),
+                TRUE
+            );
         }
         else {
             const bool vs = isVisible();
