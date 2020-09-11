@@ -355,7 +355,6 @@ void VideoPlayer::copySpecialProperties(Widget *widget)
         _videoSource = videoPlayer->_videoSource;
         _videoPlayerIndex = videoPlayer->_videoPlayerIndex;
         _eventCallback = videoPlayer->_eventCallback;
-        _videoView = videoPlayer->_videoView;
     }
 }
 
