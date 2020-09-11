@@ -30,7 +30,9 @@
  * @addtogroup ui
  * @{
  */
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 ||\
+    CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
+#include "CCGLView.h"
 struct libvlc_instance_t;
 struct libvlc_media_player_t;
 struct libvlc_event_t;
@@ -41,7 +43,7 @@ namespace ui{
     /**
         * @class VideoPlayer
         * @brief Displays a video file.
-        * 
+        *
         * @note VideoPlayer displays a video file base on system widget.
         * It's mean VideoPlayer displays a video file above all graphical elements of cocos2d-x.
         * @js NA
@@ -60,10 +62,10 @@ namespace ui{
             COMPLETED,
             V_ERROR
         };
-            
+
         /**
             * Styles of how the the video player is presented
-            * For now only used on iOS to use either MPMovieControlStyleEmbedded (DEFAULT) or 
+            * For now only used on iOS to use either MPMovieControlStyleEmbedded (DEFAULT) or
             * MPMovieControlStyleNone (NONE)
             */
         enum class StyleType
@@ -86,7 +88,7 @@ namespace ui{
             * Sets a file path as a video source for VideoPlayer.
             */
         virtual void setFileName(const std::string& videoPath);
-            
+
         /**
             * @brief Get the local video file name.
             *
@@ -99,28 +101,28 @@ namespace ui{
             */
         virtual void setURL(const std::string& _videoURL);
 
-            
+
         /**
             * @brief Get the URL of remoting video source.
             *
             * @return A remoting URL address.
             */
         virtual const std::string& getURL() const noexcept { return _videoURL;}
-            
+
         /**
             * @brief Set if playback is done in loop mode
             *
             * @param looping the video will or not automatically restart at the end
             */
         virtual void setLooping(bool looping);
-            
+
         /**
             * Set if the player will enable user input for basic pause and resume of video
             *
             * @param enableInput If true, input will be handled for basic functionality (pause/resume)
             */
         virtual void setUserInputEnabled(bool enableInput);
-            
+
         /**
             * Set the style of the player
             *
@@ -161,7 +163,7 @@ namespace ui{
             * @return True if currently playing, false otherwise.
             */
         virtual bool isPlaying() const;
-            
+
         /**
             * Checks whether the VideoPlayer is set with looping mode.
             *
@@ -174,14 +176,14 @@ namespace ui{
             * Checks whether the VideoPlayer is set to listen user input to resume and pause the video
             *
             * @return true if the videoplayer user input is set, false otherwise.
-            */            
+            */
         virtual bool isUserInputEnabled() const;
-            
+
 
         /**
             * Causes the video player to keep aspect ratio or no when displaying the video.
             *
-            * @param enable    Specify true to keep aspect ratio or false to scale the video until 
+            * @param enable    Specify true to keep aspect ratio or false to scale the video until
             * both dimensions fit the visible bounds of the view exactly.
             */
         virtual void setKeepAspectRatioEnabled(bool enable);
@@ -193,7 +195,7 @@ namespace ui{
 
         /**
             * Causes the video player to enter or exit full-screen mode.
-            * 
+            *
             * @param fullscreen    Specify true to enter full-screen mode or false to exit full-screen mode.
             */
         virtual void setFullScreenEnabled(bool fullscreen);
@@ -211,12 +213,12 @@ namespace ui{
             * @param callback  The callback that will be run.
             */
         virtual void addEventListener(const VideoPlayer::ccVideoPlayerCallback& callback);
-            
+
         /**
             * @brief A function which will be called when video is playing.
             *
             * @param event @see VideoPlayer::EventType.
-             
+
             */
         virtual void onPlayEvent(int event);
         virtual void setVisible(bool visible) override;
@@ -227,7 +229,7 @@ namespace ui{
     protected:
         virtual cocos2d::ui::Widget* createCloneInstance() override;
         virtual void copySpecialProperties(Widget* model) override;
-            
+
     CC_CONSTRUCTOR_ACCESS:
         VideoPlayer();
         virtual ~VideoPlayer();
@@ -258,15 +260,27 @@ namespace ui{
         int _videoPlayerIndex = -1;
         ccVideoPlayerCallback _eventCallback = nullptr;
 
-        void* _videoView = nullptr;
-
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 ||\
+    CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
         static size_t VideoPlayerCount;
         static libvlc_instance_t* vlcInstance;
         libvlc_media_player_t* vlcPlayer = nullptr;
         bool _isPaused = false;
 
         static void VLC_PlayerEventCallBack(const libvlc_event_t* p_event, void* p_data);
+
+        void CreateVLC();
+        void ResizeMoveVLC(int32_t x, int32_t y,uint32_t w, uint32_t h) noexcept;
+        void ShowVLC(bool b) noexcept;
+        void DestroyVLC() noexcept;
+
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+        HWND _videoView = nullptr;
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
+        X11Window _videoView = 0;
+        X11Display* dpy = nullptr;
+        X11Window win = 0;
+#endif
 #endif
     };
 }

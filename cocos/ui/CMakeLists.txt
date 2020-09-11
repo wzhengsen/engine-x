@@ -5,7 +5,7 @@ if(WINDOWS)
         )
     set(COCOS_UI_SPECIFIC_SRC
         ui/UIEditBox/UIEditBoxImpl-windows.cpp
-        ui/UIVideoPlayer/UIVideoPlayer-windows.cpp
+        ui/UIVideoPlayer/UIVideoPlayer-desktop.cpp
         ui/UIWebView/UIWebViewImpl-windows.cpp
         )
 elseif(APPLE)
@@ -57,7 +57,7 @@ elseif(LINUX)
         )
     set(COCOS_UI_SPECIFIC_SRC
         ui/UIEditBox/UIEditBoxImpl-linux.cpp
-        ui/UIVideoPlayer/UIVideoPlayer-linux.cpp
+        ui/UIVideoPlayer/UIVideoPlayer-desktop.cpp
         ui/UIWebView/UIWebViewImpl-linux.cpp
         )
 elseif(ANDROID)
