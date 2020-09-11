@@ -227,16 +227,17 @@ void Application::Dialog(
     gtk_widget_show_all(dialog);
 
     const gint rId = gtk_dialog_run(GTK_DIALOG(dialog));
+
+    gtk_widget_destroy(dialog);
+
+    while (g_main_context_iteration(nullptr, false));
+
     if (rId == 0 && okCallback) {
         okCallback();
     }
     else if (rId == 1 && cancelCallback) {
         cancelCallback();
     }
-
-    gtk_widget_destroy(dialog);
-
-    while (g_main_context_iteration(nullptr, false));
 }
 
 /*
