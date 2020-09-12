@@ -115,19 +115,19 @@ void VideoPlayer::VLC_PlayerEventCallBack(const libvlc_event_t* p_event, void* p
         VideoPlayer* vp = static_cast<VideoPlayer*>(p_data);
         switch (copyEvent.type) {
         case libvlc_MediaPlayerPlaying:
-            vp->onPlayEvent((int)VideoPlayer::EventType::PLAYING);
+            vp->OnPlayEvent((int)VideoPlayer::EventType::PLAYING);
             break;
         case libvlc_MediaPlayerPaused:
-            vp->onPlayEvent((int)VideoPlayer::EventType::PAUSED);
+            vp->OnPlayEvent((int)VideoPlayer::EventType::PAUSED);
             break;
         case libvlc_MediaPlayerStopped:
-            vp->onPlayEvent((int)VideoPlayer::EventType::STOPPED);
+            vp->OnPlayEvent((int)VideoPlayer::EventType::STOPPED);
             break;
         case libvlc_MediaPlayerEndReached:
-            if (vp->isLooping()) {
-                vp->play();
+            if (vp->IsLooping()) {
+                vp->Play();
             }
-            vp->onPlayEvent((int)VideoPlayer::EventType::COMPLETED);
+            vp->OnPlayEvent((int)VideoPlayer::EventType::COMPLETED);
             break;
         default:
             break;
@@ -139,7 +139,6 @@ VideoPlayer::VideoPlayer()
 : _fullScreenDirty(false)
 , _fullScreenEnabled(false)
 , _keepAspectRatioEnabled(false)
-, _videoPlayerIndex(-1)
 , _eventCallback(nullptr)
 , _isPlaying(false)
 , _isLooping(false)
@@ -162,7 +161,7 @@ VideoPlayer::VideoPlayer()
     libvlc_event_attach(em, libvlc_MediaPlayerStopped, VLC_PlayerEventCallBack, this);
     libvlc_event_attach(em, libvlc_MediaPlayerEndReached, VLC_PlayerEventCallBack, this);
 
-    setUserInputEnabled(true);
+    SetUserInputEnabled(true);
 
 #if CC_VIDEOPLAYER_DEBUG_DRAW
     _debugDrawNode = DrawNode::create();
@@ -178,13 +177,13 @@ VideoPlayer::~VideoPlayer() {
     libvlc_event_detach(em, libvlc_MediaPlayerStopped, VLC_PlayerEventCallBack, this);
     libvlc_event_detach(em, libvlc_MediaPlayerEndReached, VLC_PlayerEventCallBack, this);
 
-    const bool playing = isPlaying();
+    const bool playing = IsPlaying();
     // Stop playing
     libvlc_media_player_stop(vlcPlayer);
 
     // 手动调用一次STOPPED回调。
     if (playing || _isPaused) {
-        onPlayEvent((int)VideoPlayer::EventType::STOPPED);
+        OnPlayEvent((int)VideoPlayer::EventType::STOPPED);
     }
     // Free the media_player
     libvlc_media_player_release(vlcPlayer);
@@ -199,27 +198,27 @@ VideoPlayer::~VideoPlayer() {
     }
 }
 
-void VideoPlayer::setFileName(const std::string& fileName) {
+void VideoPlayer::SetFileName(const std::string& fileName) {
     _videoURL = FileUtils::getInstance()->fullPathForFilename(fileName);
     _videoSource = VideoPlayer::Source::FILENAME;
 }
 
-void VideoPlayer::setURL(const std::string& videoUrl) {
+void VideoPlayer::SetURL(const std::string& videoUrl) {
     _videoURL = videoUrl;
     _videoSource = VideoPlayer::Source::URL;
 }
 
-void VideoPlayer::setLooping(bool looping) {
+void VideoPlayer::SetLooping(bool looping) {
     _isLooping = looping;
 }
 
-void VideoPlayer::setUserInputEnabled(bool enableInput) {
+void VideoPlayer::SetUserInputEnabled(bool enableInput) {
     _isUserInputEnabled = enableInput;
     libvlc_video_set_mouse_input(vlcPlayer, enableInput);
     libvlc_video_set_key_input(vlcPlayer, enableInput);
 }
 
-void VideoPlayer::setStyle(StyleType style) {
+void VideoPlayer::SetStyle(StyleType style) {
     _styleType = style;
 }
 
@@ -245,7 +244,7 @@ void VideoPlayer::draw(Renderer* renderer, const Mat4 &transform, uint32_t flags
 #endif
 }
 
-void VideoPlayer::setFullScreenEnabled(bool enabled) {
+void VideoPlayer::SetFullScreenEnabled(bool enabled) {
     if (_fullScreenEnabled != enabled) {
         _fullScreenEnabled = enabled;
 
@@ -262,11 +261,11 @@ void VideoPlayer::setFullScreenEnabled(bool enabled) {
     }
 }
 
-bool VideoPlayer::isFullScreenEnabled()const {
+bool VideoPlayer::IsFullScreenEnabled()const {
     return _fullScreenEnabled;
 }
 
-void VideoPlayer::setKeepAspectRatioEnabled(bool enable) {
+void VideoPlayer::SetKeepAspectRatioEnabled(bool enable) {
     if (_keepAspectRatioEnabled != enable) {
         _keepAspectRatioEnabled = enable;
         libvlc_video_set_aspect_ratio(vlcPlayer, enable ? "16:9" : nullptr);
@@ -298,7 +297,7 @@ void VideoPlayer::drawDebugData()
 }
 #endif
 
-void VideoPlayer::play() {
+void VideoPlayer::Play() {
     if (! _videoURL.empty()) {
         // Create a new item
         libvlc_media_t* m = libvlc_media_new_location(vlcInstance, (_videoSource == VideoPlayer::Source::FILENAME ? "file:///" + _videoURL : _videoURL).c_str());
@@ -315,7 +314,7 @@ void VideoPlayer::play() {
     }
 }
 
-void VideoPlayer::pause() {
+void VideoPlayer::Pause() {
     if (! _videoURL.empty()) {
         libvlc_media_player_pause(vlcPlayer);
         _isPaused = true;
@@ -323,7 +322,7 @@ void VideoPlayer::pause() {
     }
 }
 
-void VideoPlayer::resume() {
+void VideoPlayer::Resume() {
     if (! _videoURL.empty()) {
         libvlc_media_player_set_pause(vlcPlayer, 0);
         _isPaused = false;
@@ -331,7 +330,7 @@ void VideoPlayer::resume() {
     }
 }
 
-void VideoPlayer::stop() {
+void VideoPlayer::Stop() {
     if (! _videoURL.empty()) {
         libvlc_media_player_stop(vlcPlayer);
         _isPlaying = false;
@@ -339,21 +338,21 @@ void VideoPlayer::stop() {
     }
 }
 
-void VideoPlayer::seekTo(float sec) {
+void VideoPlayer::SeekTo(float sec) {
     if (! _videoURL.empty()) {
         libvlc_media_player_set_time(vlcPlayer,static_cast<uint64_t>(sec * 1000));
     }
 }
 
-bool VideoPlayer::isPlaying() const {
+bool VideoPlayer::IsPlaying() const {
     return libvlc_media_player_is_playing(vlcPlayer);
 }
 
-bool VideoPlayer::isLooping() const {
+bool VideoPlayer::IsLooping() const {
     return _isLooping;
 }
 
-bool VideoPlayer::isUserInputEnabled() const {
+bool VideoPlayer::IsUserInputEnabled() const {
     return _isUserInputEnabled;
 }
 
@@ -376,11 +375,11 @@ void VideoPlayer::onExit() {
     ShowVLC(false);
 }
 
-void VideoPlayer::addEventListener(const VideoPlayer::ccVideoPlayerCallback& callback) {
+void VideoPlayer::AddEventListener(const VideoPlayer::ccVideoPlayerCallback& callback) {
     _eventCallback = callback;
 }
 
-void VideoPlayer::onPlayEvent(int event) {
+void VideoPlayer::OnPlayEvent(int event) {
     if (_eventCallback) {
         _eventCallback(this, (VideoPlayer::EventType)event);
     }
@@ -402,8 +401,6 @@ void VideoPlayer::copySpecialProperties(Widget *widget) {
         _videoURL = videoPlayer->_videoURL;
         _keepAspectRatioEnabled = videoPlayer->_keepAspectRatioEnabled;
         _videoSource = videoPlayer->_videoSource;
-        _videoPlayerIndex = videoPlayer->_videoPlayerIndex;
         _eventCallback = videoPlayer->_eventCallback;
-        _videoView = videoPlayer->_videoView;
     }
 }
