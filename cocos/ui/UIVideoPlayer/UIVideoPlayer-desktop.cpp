@@ -68,17 +68,39 @@ void VideoPlayer::CreateVLC() {
 }
 
 void VideoPlayer::ResizeMoveVLC(int32_t x, int32_t y,uint32_t w, uint32_t h) noexcept {
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-    ::MoveWindow(_videoView, x, y, w, h, TRUE);
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
-    if (w == 0 || h == 0) {
-        // A zero size X11Window may be cause a error.
-        x = -1;
-        y = -1;
-        w = 1;
-        h = 1;
+    int _x = x;
+    int _y = y;
+    int _w = w;
+    int _h = h;
+    if (_keepAspectRatioEnabled) {
+        if (mVideoWidth * h  > w * mVideoHeight) {
+            _h = w * mVideoHeight / mVideoWidth;
+        }
+        else if (mVideoWidth * h  < w * mVideoHeight) {
+            _w = h * mVideoWidth / mVideoHeight;
+        }
+        _x = x + (w - _w) / 2;
+        _y = y + (h - _h) / 2;
+        libvlc_video_set_aspect_ratio(vlcPlayer, nullptr);
     }
-    XMoveResizeWindow((Display*)dpy, _videoView, x, y, w, h);
+    else {
+        std::stringstream sStr = std::stringstream();
+        sStr << static_cast<int>(w) << ":" << static_cast<int>(h);
+        std::string str = std::string();
+        sStr >> str;
+        libvlc_video_set_aspect_ratio(vlcPlayer, str.c_str());
+    }
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+    ::MoveWindow(_videoView, _x, _y, _w, _h, TRUE);
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
+    if (_w == 0 || _h == 0) {
+        // A zero size X11Window may be cause a error.
+        _x = -1;
+        _y = -1;
+        _w = 1;
+        _h = 1;
+    }
+    XMoveResizeWindow((Display*)dpy, _videoView, _x, _y, _w, _h);
 #endif
 }
 
@@ -115,12 +137,20 @@ void VideoPlayer::VLC_PlayerEventCallBack(const libvlc_event_t* p_event, void* p
         VideoPlayer* vp = static_cast<VideoPlayer*>(p_data);
         switch (copyEvent.type) {
         case libvlc_MediaPlayerPlaying:
+            libvlc_video_get_size(vp->vlcPlayer,0,&vp->mVideoWidth,&vp->mVideoHeight);
+            vp->_transformDirty = true;
+            vp->_isPlaying = true;
+            vp->_isPaused = false;
             vp->OnPlayEvent((int)VideoPlayer::EventType::PLAYING);
             break;
         case libvlc_MediaPlayerPaused:
+            vp->_isPlaying = false;
+            vp->_isPaused = true;
             vp->OnPlayEvent((int)VideoPlayer::EventType::PAUSED);
             break;
         case libvlc_MediaPlayerStopped:
+            vp->_isPlaying = false;
+            vp->_isPaused = false;
             vp->OnPlayEvent((int)VideoPlayer::EventType::STOPPED);
             break;
         case libvlc_MediaPlayerEndReached:
@@ -154,6 +184,8 @@ VideoPlayer::VideoPlayer()
     CreateVLC();
     ShowVLC(true);
 
+    ReigsterVisibleNotify();
+
     // ÊÂ¼þ¼àÌý
     libvlc_event_manager_t* em = libvlc_media_player_event_manager(vlcPlayer);
     libvlc_event_attach(em, libvlc_MediaPlayerPlaying, VLC_PlayerEventCallBack, this);
@@ -161,7 +193,7 @@ VideoPlayer::VideoPlayer()
     libvlc_event_attach(em, libvlc_MediaPlayerStopped, VLC_PlayerEventCallBack, this);
     libvlc_event_attach(em, libvlc_MediaPlayerEndReached, VLC_PlayerEventCallBack, this);
 
-    SetUserInputEnabled(true);
+    libvlc_video_set_mouse_input(vlcPlayer, true);
 
 #if CC_VIDEOPLAYER_DEBUG_DRAW
     _debugDrawNode = DrawNode::create();
@@ -189,6 +221,8 @@ VideoPlayer::~VideoPlayer() {
     libvlc_media_player_release(vlcPlayer);
     DestroyVLC();
 
+    UnreigsterVisibleNotify();
+
     VideoPlayerCount--;
     if (!VideoPlayerCount) {
         if (vlcInstance) {
@@ -213,9 +247,10 @@ void VideoPlayer::SetLooping(bool looping) {
 }
 
 void VideoPlayer::SetUserInputEnabled(bool enableInput) {
-    _isUserInputEnabled = enableInput;
-    libvlc_video_set_mouse_input(vlcPlayer, enableInput);
-    libvlc_video_set_key_input(vlcPlayer, enableInput);
+    if (_isUserInputEnabled != enableInput) {
+        _isUserInputEnabled = enableInput;
+        libvlc_video_set_mouse_input(vlcPlayer, enableInput);
+    }
 }
 
 void VideoPlayer::SetStyle(StyleType style) {
@@ -254,9 +289,8 @@ void VideoPlayer::SetFullScreenEnabled(bool enabled) {
             ResizeMoveVLC(0, 0, frameSize.width, frameSize.height);
         }
         else {
-            const bool vs = isVisible();
-            setVisible(!vs);
-            setVisible(vs);
+            const auto uiRect = cocos2d::ui::Helper::convertBoundingBoxToScreen(this);
+            ResizeMoveVLC(uiRect.origin.x, uiRect.origin.y, uiRect.size.width, uiRect.size.height);
         }
     }
 }
@@ -268,7 +302,8 @@ bool VideoPlayer::IsFullScreenEnabled()const {
 void VideoPlayer::SetKeepAspectRatioEnabled(bool enable) {
     if (_keepAspectRatioEnabled != enable) {
         _keepAspectRatioEnabled = enable;
-        libvlc_video_set_aspect_ratio(vlcPlayer, enable ? "16:9" : nullptr);
+        const auto uiRect = cocos2d::ui::Helper::convertBoundingBoxToScreen(this);
+        ResizeMoveVLC(uiRect.origin.x, uiRect.origin.y, uiRect.size.width, uiRect.size.height);
     }
 }
 
@@ -345,7 +380,7 @@ void VideoPlayer::SeekTo(float sec) {
 }
 
 bool VideoPlayer::IsPlaying() const {
-    return libvlc_media_player_is_playing(vlcPlayer);
+    return _isPlaying;
 }
 
 bool VideoPlayer::IsLooping() const {
@@ -361,6 +396,11 @@ void VideoPlayer::setVisible(bool visible) {
     if (!visible || isRunning()) {
         ShowVLC(visible);
     }
+}
+
+void VideoPlayer::OnVisible(bool visible) {
+    Widget::OnVisible(visible);
+    ShowVLC(visible);
 }
 
 void VideoPlayer::onEnter() {
