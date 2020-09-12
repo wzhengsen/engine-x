@@ -87,19 +87,19 @@ namespace ui{
         /**
             * Sets a file path as a video source for VideoPlayer.
             */
-        virtual void setFileName(const std::string& videoPath);
+        virtual void SetFileName(const std::string& videoPath);
 
         /**
             * @brief Get the local video file name.
             *
             * @return The video file name.
             */
-        virtual const std::string& getFileName() const noexcept { return _videoURL;}
+        virtual const std::string& GetFileName() const noexcept { return _videoURL;}
 
         /**
             * Sets a URL as a video source for VideoPlayer.
             */
-        virtual void setURL(const std::string& _videoURL);
+        virtual void SetURL(const std::string& _videoURL);
 
 
         /**
@@ -107,69 +107,69 @@ namespace ui{
             *
             * @return A remoting URL address.
             */
-        virtual const std::string& getURL() const noexcept { return _videoURL;}
+        virtual const std::string& GetURL() const noexcept { return _videoURL;}
 
         /**
             * @brief Set if playback is done in loop mode
             *
             * @param looping the video will or not automatically restart at the end
             */
-        virtual void setLooping(bool looping);
+        virtual void SetLooping(bool looping);
 
         /**
             * Set if the player will enable user input for basic pause and resume of video
             *
             * @param enableInput If true, input will be handled for basic functionality (pause/resume)
             */
-        virtual void setUserInputEnabled(bool enableInput);
+        virtual void SetUserInputEnabled(bool enableInput);
 
         /**
             * Set the style of the player
             *
             * @param style The corresponding style
             */
-        virtual void setStyle(StyleType style);
+        virtual void SetStyle(StyleType style);
 
         /**
             * Starts playback.
             */
-        virtual void play();
+        virtual void Play();
 
         /**
             * Pauses playback.
             */
-        virtual void pause()override;
+        virtual void Pause();
 
         /**
             * Resumes playback.
             */
-        virtual void resume()override;
+        virtual void Resume();
 
         /**
             * Stops playback.
             */
-        virtual void stop();
+        virtual void Stop();
 
         /**
             * Seeks to specified time position.
             *
             * @param sec   The offset in seconds from the start to seek to.
             */
-        virtual void seekTo(float sec);
+        virtual void SeekTo(float sec);
 
         /**
             * Checks whether the VideoPlayer is playing.
             *
             * @return True if currently playing, false otherwise.
             */
-        virtual bool isPlaying() const;
+        virtual bool IsPlaying() const;
 
         /**
             * Checks whether the VideoPlayer is set with looping mode.
             *
             * @return true if the videoplayer is set to loop, false otherwise.
             */
-        virtual bool isLooping() const;
+        virtual bool IsLooping() const;
 
 
         /**
@@ -177,7 +177,7 @@ namespace ui{
             *
             * @return true if the videoplayer user input is set, false otherwise.
             */
-        virtual bool isUserInputEnabled() const;
+        virtual bool IsUserInputEnabled() const;
 
 
         /**
@@ -186,33 +186,33 @@ namespace ui{
             * @param enable    Specify true to keep aspect ratio or false to scale the video until
             * both dimensions fit the visible bounds of the view exactly.
             */
-        virtual void setKeepAspectRatioEnabled(bool enable);
+        virtual void SetKeepAspectRatioEnabled(bool enable);
 
         /**
             * Indicates whether the video player keep aspect ratio when displaying the video.
             */
-        virtual bool isKeepAspectRatioEnabled() const noexcept { return _keepAspectRatioEnabled;}
+        virtual bool IsKeepAspectRatioEnabled() const noexcept { return _keepAspectRatioEnabled;}
 
         /**
             * Causes the video player to enter or exit full-screen mode.
             *
             * @param fullscreen    Specify true to enter full-screen mode or false to exit full-screen mode.
             */
-        virtual void setFullScreenEnabled(bool fullscreen);
+        virtual void SetFullScreenEnabled(bool fullscreen);
 
         /**
             * Indicates whether the video player is in full-screen mode.
             *
             * @return True if the video player is in full-screen mode, false otherwise.
             */
-        virtual bool isFullScreenEnabled()const;
+        virtual bool IsFullScreenEnabled()const;
 
         /**
             * Register a callback to be invoked when the video state is updated.
             *
             * @param callback  The callback that will be run.
             */
-        virtual void addEventListener(const VideoPlayer::ccVideoPlayerCallback& callback);
+        virtual void AddEventListener(const VideoPlayer::ccVideoPlayerCallback& callback);
 
         /**
             * @brief A function which will be called when video is playing.
@@ -220,7 +220,7 @@ namespace ui{
             * @param event @see VideoPlayer::EventType.
 
             */
-        virtual void onPlayEvent(int event);
+        virtual void OnPlayEvent(int event);
         virtual void setVisible(bool visible) override;
         virtual void draw(Renderer *renderer, const Mat4& transform, uint32_t flags) override;
         virtual void onEnter() override;
@@ -257,7 +257,6 @@ namespace ui{
         std::string _videoURL;
         Source _videoSource;
 
-        int _videoPlayerIndex = -1;
         ccVideoPlayerCallback _eventCallback = nullptr;
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 ||\
@@ -281,6 +280,11 @@ namespace ui{
         X11Display* dpy = nullptr;
         X11Window win = 0;
 #endif
+
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+        int _videoPlayerIndex = -1;
+#else
+        void* _videoView = nullptr;
 #endif
     };
 }

@@ -117,15 +117,15 @@ VideoPlayer::~VideoPlayer()
     JniHelper::callStaticVoidMethod(videoHelperClassName, "removeVideoWidget", _videoPlayerIndex);
 }
 
-void VideoPlayer::setFileName(const std::string& fileName)
+void VideoPlayer::SetFileName(const std::string& fileName)
 {
     _videoURL = FileUtils::getInstance()->fullPathForFilename(fileName);
     _videoSource = VideoPlayer::Source::FILENAME;
-    JniHelper::callStaticVoidMethod(videoHelperClassName, "setVideoUrl", _videoPlayerIndex, 
+    JniHelper::callStaticVoidMethod(videoHelperClassName, "setVideoUrl", _videoPlayerIndex,
                                     (int)Source::FILENAME,_videoURL);
 }
 
-void VideoPlayer::setURL(const std::string& videoUrl)
+void VideoPlayer::SetURL(const std::string& videoUrl)
 {
     _videoURL = videoUrl;
     _videoSource = VideoPlayer::Source::URL;
@@ -133,19 +133,19 @@ void VideoPlayer::setURL(const std::string& videoUrl)
                                     (int)Source::URL,_videoURL);
 }
 
-void VideoPlayer::setLooping(bool looping)
+void VideoPlayer::SetLooping(bool looping)
 {
     _isLooping = looping;
     setLoopingJNI(_videoPlayerIndex, _isLooping);
 }
 
-void VideoPlayer::setUserInputEnabled(bool enableInput)
+void VideoPlayer::SetUserInputEnabled(bool enableInput)
 {
     _isUserInputEnabled = enableInput;
     setUserInputEnabledJNI(_videoPlayerIndex, enableInput);
 }
 
-void VideoPlayer::setStyle(StyleType style)
+void VideoPlayer::SetStyle(StyleType style)
 {
     _styleType = style;
 }
@@ -157,7 +157,7 @@ void VideoPlayer::draw(Renderer* renderer, const Mat4 &transform, uint32_t flags
     if (flags & FLAGS_TRANSFORM_DIRTY)
     {
         auto uiRect = cocos2d::ui::Helper::convertBoundingBoxToScreen(this);
-        JniHelper::callStaticVoidMethod(videoHelperClassName, "setVideoRect", _videoPlayerIndex, 
+        JniHelper::callStaticVoidMethod(videoHelperClassName, "setVideoRect", _videoPlayerIndex,
                                         (int)uiRect.origin.x, (int)uiRect.origin.y,
                                         (int)uiRect.size.width, (int)uiRect.size.height);
     }
@@ -176,24 +176,24 @@ void VideoPlayer::draw(Renderer* renderer, const Mat4 &transform, uint32_t flags
 #endif
 }
 
-void VideoPlayer::setFullScreenEnabled(bool enabled)
+void VideoPlayer::SetFullScreenEnabled(bool enabled)
 {
     if (_fullScreenEnabled != enabled)
     {
         _fullScreenEnabled = enabled;
 
         auto frameSize = Director::getInstance()->getOpenGLView()->getFrameSize();
-        JniHelper::callStaticVoidMethod(videoHelperClassName, "setFullScreenEnabled", _videoPlayerIndex, 
+        JniHelper::callStaticVoidMethod(videoHelperClassName, "setFullScreenEnabled", _videoPlayerIndex,
                                         enabled, (int)frameSize.width, (int)frameSize.height);
     }
 }
 
-bool VideoPlayer::isFullScreenEnabled()const
+bool VideoPlayer::IsFullScreenEnabled()const
 {
     return _fullScreenEnabled;
 }
 
-void VideoPlayer::setKeepAspectRatioEnabled(bool enable)
+void VideoPlayer::SetKeepAspectRatioEnabled(bool enable)
 {
     if (_keepAspectRatioEnabled != enable)
     {
@@ -227,7 +227,7 @@ void VideoPlayer::drawDebugData()
 }
 #endif
 
-void VideoPlayer::play()
+void VideoPlayer::Play()
 {
     if (! _videoURL.empty())
     {
@@ -235,7 +235,7 @@ void VideoPlayer::play()
     }
 }
 
-void VideoPlayer::pause()
+void VideoPlayer::Pause()
 {
     if (! _videoURL.empty())
     {
@@ -243,7 +243,7 @@ void VideoPlayer::pause()
     }
 }
 
-void VideoPlayer::resume()
+void VideoPlayer::Resume()
 {
     if (! _videoURL.empty())
     {
@@ -251,7 +251,7 @@ void VideoPlayer::resume()
     }
 }
 
-void VideoPlayer::stop()
+void VideoPlayer::Stop()
 {
     if (! _videoURL.empty())
     {
@@ -259,7 +259,7 @@ void VideoPlayer::stop()
     }
 }
 
-void VideoPlayer::seekTo(float sec)
+void VideoPlayer::SeekTo(float sec)
 {
     if (! _videoURL.empty())
     {
@@ -267,17 +267,17 @@ void VideoPlayer::seekTo(float sec)
     }
 }
 
-bool VideoPlayer::isPlaying() const
+bool VideoPlayer::IsPlaying() const
 {
     return _isPlaying;
 }
 
-bool VideoPlayer::isLooping() const
+bool VideoPlayer::IsLooping() const
 {
     return _isLooping;
 }
 
-bool VideoPlayer::isUserInputEnabled() const
+bool VideoPlayer::IsUserInputEnabled() const
 {
     return _isUserInputEnabled;
 }
@@ -307,17 +307,17 @@ void VideoPlayer::onExit()
     JniHelper::callStaticVoidMethod(videoHelperClassName, "setVideoVisible", _videoPlayerIndex, false);
 }
 
-void VideoPlayer::addEventListener(const VideoPlayer::ccVideoPlayerCallback& callback)
+void VideoPlayer::AddEventListener(const VideoPlayer::ccVideoPlayerCallback& callback)
 {
     _eventCallback = callback;
 }
 
-void VideoPlayer::onPlayEvent(int event)
+void VideoPlayer::OnPlayEvent(int event)
 {
     if (event == QUIT_FULLSCREEN)
     {
         _fullScreenEnabled = false;
-    } 
+    }
     else
     {
         VideoPlayer::EventType videoEvent = (VideoPlayer::EventType)event;
@@ -353,7 +353,6 @@ void VideoPlayer::copySpecialProperties(Widget *widget)
         _videoURL = videoPlayer->_videoURL;
         _keepAspectRatioEnabled = videoPlayer->_keepAspectRatioEnabled;
         _videoSource = videoPlayer->_videoSource;
-        _videoPlayerIndex = videoPlayer->_videoPlayerIndex;
         _eventCallback = videoPlayer->_eventCallback;
     }
 }
@@ -363,7 +362,7 @@ void executeVideoCallback(int index,int event)
     auto it = s_allVideoPlayers.find(index);
     if (it != s_allVideoPlayers.end())
     {
-        s_allVideoPlayers[index]->onPlayEvent(event);
+        s_allVideoPlayers[index]->OnPlayEvent(event);
     }
 }
 
