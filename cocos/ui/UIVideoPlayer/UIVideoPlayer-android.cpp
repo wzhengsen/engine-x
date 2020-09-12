@@ -104,7 +104,7 @@ VideoPlayer::VideoPlayer()
 {
     _videoPlayerIndex = createVideoWidgetJNI();
     s_allVideoPlayers[_videoPlayerIndex] = this;
-
+    ReigsterVisibleNotify();
 #if CC_VIDEOPLAYER_DEBUG_DRAW
     _debugDrawNode = DrawNode::create();
     addChild(_debugDrawNode);
@@ -115,6 +115,7 @@ VideoPlayer::~VideoPlayer()
 {
     s_allVideoPlayers.erase(_videoPlayerIndex);
     JniHelper::callStaticVoidMethod(videoHelperClassName, "removeVideoWidget", _videoPlayerIndex);
+    UnreigsterVisibleNotify();
 }
 
 void VideoPlayer::SetFileName(const std::string& fileName)
@@ -290,6 +291,11 @@ void VideoPlayer::setVisible(bool visible)
     {
         JniHelper::callStaticVoidMethod(videoHelperClassName, "setVideoVisible", _videoPlayerIndex, visible);
     }
+}
+
+void VideoPlayer::OnVisible(bool visible) {
+    Widget::OnVisible(visible);
+    JniHelper::callStaticVoidMethod(videoHelperClassName, "setVideoVisible", _videoPlayerIndex, visible);
 }
 
 void VideoPlayer::onEnter()

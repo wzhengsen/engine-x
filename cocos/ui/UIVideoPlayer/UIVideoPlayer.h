@@ -229,6 +229,7 @@ namespace ui{
     protected:
         virtual cocos2d::ui::Widget* createCloneInstance() override;
         virtual void copySpecialProperties(Widget* model) override;
+        virtual void OnVisible(bool) override;
 
     CC_CONSTRUCTOR_ACCESS:
         VideoPlayer();
@@ -272,6 +273,9 @@ namespace ui{
         void ResizeMoveVLC(int32_t x, int32_t y,uint32_t w, uint32_t h) noexcept;
         void ShowVLC(bool b) noexcept;
         void DestroyVLC() noexcept;
+
+        uint32_t mVideoWidth = 0;
+        uint32_t mVideoHeight = 0;
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
         HWND _videoView = nullptr;

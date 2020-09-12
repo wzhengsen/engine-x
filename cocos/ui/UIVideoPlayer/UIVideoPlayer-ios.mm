@@ -93,7 +93,7 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
         [self showPlaybackControls:TRUE];
         [self setUserInteractionEnabled:TRUE];
         [self setKeepRatioEnabled:FALSE];
-        
+
         _videoPlayer = (VideoPlayer*)videoPlayer;
         _state = PlayerbackStateUnknown;
     }
@@ -244,7 +244,7 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
         [self seekTo:0];
         [self.playerController.player pause];
         _state = PlayerbackStopped;
-        
+
         // stop() will be invoked in dealloc, which is invoked by _videoPlayer's destructor,
         // so do't send the message when _videoPlayer is being deleted.
         if (_videoPlayer)
@@ -275,7 +275,7 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
 VideoPlayer::VideoPlayer()
 {
     _videoView = [[UIVideoViewWrapperIos alloc] init:this];
-
+    ReigsterVisibleNotify();
 #if CC_VIDEOPLAYER_DEBUG_DRAW
     _debugDrawNode = DrawNode::create();
     addChild(_debugDrawNode);
@@ -288,6 +288,7 @@ VideoPlayer::~VideoPlayer()
     {
         [((UIVideoViewWrapperIos*)_videoView) dealloc];
     }
+    UnreigsterVisibleNotify();
 }
 
 void VideoPlayer::setFileName(const std::string& fileName)
@@ -454,6 +455,16 @@ void VideoPlayer::setVisible(bool visible)
     else if(isRunning())
     {
         [((UIVideoViewWrapperIos*)_videoView) setVisible:YES];
+    }
+}
+
+void VideoPlayer::OnVisible(bool visible) {
+    Widget::OnVisible(visible);
+    if (visible) {
+        [((UIVideoViewWrapperIos*)_videoView) setVisible:YES];
+    }
+    else {
+        [((UIVideoViewWrapperIos*)_videoView) setVisible:NO];
     }
 }
 
