@@ -43,7 +43,36 @@ using namespace cocos2d::ui;
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 ||\
     CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 libvlc_instance_t* VideoPlayer::vlcInstance = nullptr;
-size_t VideoPlayer::VideoPlayerCount = 0;
+std::map<void*,VideoPlayer*> VideoPlayer::VideoPlayerMap = std::map<void*,VideoPlayer*>();;
+
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+bool VideoPlayer::sIsInitialized = false;
+WNDPROC VideoPlayer::sPrevCocosWndProc = nullptr;
+
+LRESULT VideoPlayer::hookGLFWWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    switch (uMsg) {
+    case WM_COMMAND:
+        if (HIWORD(wParam) == STN_CLICKED) {
+            void* vpView = (void*)lParam;
+            if (VideoPlayerMap.find(vpView) != VideoPlayerMap.end()) {
+                VideoPlayer* pThis = (VideoPlayer*)GetWindowLongPtrW((HWND)lParam, GWLP_USERDATA);
+                if (pThis && pThis->_isUserInputEnabled) {
+                    if (pThis->_isPlaying) {
+                        pThis->Pause();
+                    }
+                    else {
+                        pThis->Resume();
+                    }
+                }
+            }
+        }
+        break;
+    default:
+        break;
+    }
+    return ::CallWindowProcW(sPrevCocosWndProc, hwnd, uMsg, wParam, lParam);
+}
+#endif
 
 void VideoPlayer::CreateVLC() {
     vlcPlayer = libvlc_media_player_new(vlcInstance);
@@ -51,7 +80,13 @@ void VideoPlayer::CreateVLC() {
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
     HWND hwnd = cocos2d::Director::getInstance()->getOpenGLView()->getWin32Window();
     HINSTANCE instance = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE);
-    _videoView = ::CreateWindowEx(WS_EX_LEFT, L"STATIC", L"", WS_CHILD, 0, 0, 0, 0, hwnd, nullptr, instance, nullptr);
+    if (!sIsInitialized) {
+        sIsInitialized = true;
+        sPrevCocosWndProc = (WNDPROC)SetWindowLongPtrW(hwnd, GWLP_WNDPROC, (LONG_PTR)hookGLFWWindowProc);
+    }
+
+    _videoView = ::CreateWindow(L"STATIC", L"", WS_CHILD | SS_BITMAP | WS_VISIBLE | SS_NOTIFY, 0, 0, 0, 0, hwnd, nullptr, instance, nullptr);
+    SetWindowLongPtrW(_videoView, GWLP_USERDATA, (LONG_PTR)this);
     // äÖÈ¾µ½_videoView
     libvlc_media_player_set_hwnd(vlcPlayer, _videoView);
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
@@ -67,7 +102,23 @@ void VideoPlayer::CreateVLC() {
 #endif
 }
 
-void VideoPlayer::ResizeMoveVLC(int32_t x, int32_t y,uint32_t w, uint32_t h) noexcept {
+void VideoPlayer::ResizeMoveVLC() noexcept {
+    int x = 0;
+    int y = 0;
+    int w = 0;
+    int h = 0;
+    if (_fullScreenEnabled) {
+        const auto frameSize = Director::getInstance()->getOpenGLView()->getFrameSize();
+        w = static_cast<uint32_t>(frameSize.width);
+        h = static_cast<uint32_t>(frameSize.height);
+    }
+    else {
+        const auto uiRect = cocos2d::ui::Helper::convertBoundingBoxToScreen(this);
+        x = static_cast<int>(uiRect.origin.x);
+        y = static_cast<int>(uiRect.origin.y);
+        w = static_cast<uint32_t>(uiRect.size.width);
+        h = static_cast<uint32_t>(uiRect.size.height);
+    }
     int _x = x;
     int _y = y;
     int _w = w;
@@ -85,7 +136,7 @@ void VideoPlayer::ResizeMoveVLC(int32_t x, int32_t y,uint32_t w, uint32_t h) noe
     }
     else {
         std::stringstream sStr = std::stringstream();
-        sStr << static_cast<int>(w) << ":" << static_cast<int>(h);
+        sStr << static_cast<int>(_w) << ":" << static_cast<int>(_h);
         std::string str = std::string();
         sStr >> str;
         libvlc_video_set_aspect_ratio(vlcPlayer, str.c_str());
@@ -138,7 +189,7 @@ void VideoPlayer::VLC_PlayerEventCallBack(const libvlc_event_t* p_event, void* p
         switch (copyEvent.type) {
         case libvlc_MediaPlayerPlaying:
             libvlc_video_get_size(vp->vlcPlayer,0,&vp->mVideoWidth,&vp->mVideoHeight);
-            vp->_transformDirty = true;
+            vp->_transformUpdated = vp->_transformDirty = vp->_inverseDirty = true;
             vp->_isPlaying = true;
             vp->_isPaused = false;
             vp->OnPlayEvent((int)VideoPlayer::EventType::PLAYING);
@@ -176,12 +227,12 @@ VideoPlayer::VideoPlayer()
 , _styleType(StyleType::DEFAULT)
 , _videoSource(Source::FILENAME) {
 
-    if (!VideoPlayerCount) {
+    if (VideoPlayerMap.empty()) {
         // init vlc modules, should be done only once
         vlcInstance = libvlc_new(0, nullptr);
     }
-    VideoPlayerCount++;
     CreateVLC();
+    VideoPlayerMap.emplace(_videoView,this);
     ShowVLC(true);
 
     ReigsterVisibleNotify();
@@ -193,7 +244,9 @@ VideoPlayer::VideoPlayer()
     libvlc_event_attach(em, libvlc_MediaPlayerStopped, VLC_PlayerEventCallBack, this);
     libvlc_event_attach(em, libvlc_MediaPlayerEndReached, VLC_PlayerEventCallBack, this);
 
-    libvlc_video_set_mouse_input(vlcPlayer, true);
+    // Disable mouse and key event,it handled by self win32 proc.
+    libvlc_video_set_mouse_input(vlcPlayer, false);
+    libvlc_video_set_key_input(vlcPlayer, false);
 
 #if CC_VIDEOPLAYER_DEBUG_DRAW
     _debugDrawNode = DrawNode::create();
@@ -223,8 +276,8 @@ VideoPlayer::~VideoPlayer() {
 
     UnreigsterVisibleNotify();
 
-    VideoPlayerCount--;
-    if (!VideoPlayerCount) {
+    VideoPlayerMap.erase(_videoView);
+    if (VideoPlayerMap.empty()) {
         if (vlcInstance) {
             libvlc_release(vlcInstance);
             vlcInstance = nullptr;
@@ -249,7 +302,6 @@ void VideoPlayer::SetLooping(bool looping) {
 void VideoPlayer::SetUserInputEnabled(bool enableInput) {
     if (_isUserInputEnabled != enableInput) {
         _isUserInputEnabled = enableInput;
-        libvlc_video_set_mouse_input(vlcPlayer, enableInput);
     }
 }
 
@@ -260,9 +312,8 @@ void VideoPlayer::SetStyle(StyleType style) {
 void VideoPlayer::draw(Renderer* renderer, const Mat4 &transform, uint32_t flags) {
     cocos2d::ui::Widget::draw(renderer,transform,flags);
 
-    if ((!_fullScreenEnabled) && (flags & FLAGS_TRANSFORM_DIRTY)) {
-        const auto uiRect = cocos2d::ui::Helper::convertBoundingBoxToScreen(this);
-        ResizeMoveVLC(uiRect.origin.x, uiRect.origin.y, uiRect.size.width, uiRect.size.height);
+    if (flags & FLAGS_TRANSFORM_DIRTY) {
+        ResizeMoveVLC();
     }
 
 #if CC_VIDEOPLAYER_DEBUG_DRAW
@@ -282,16 +333,7 @@ void VideoPlayer::draw(Renderer* renderer, const Mat4 &transform, uint32_t flags
 void VideoPlayer::SetFullScreenEnabled(bool enabled) {
     if (_fullScreenEnabled != enabled) {
         _fullScreenEnabled = enabled;
-
-        if (enabled) {
-            const auto frameSize = Director::getInstance()->getOpenGLView()->getFrameSize();
-            //libvlc_set_fullscreen(vlcPlayer, enabled);
-            ResizeMoveVLC(0, 0, frameSize.width, frameSize.height);
-        }
-        else {
-            const auto uiRect = cocos2d::ui::Helper::convertBoundingBoxToScreen(this);
-            ResizeMoveVLC(uiRect.origin.x, uiRect.origin.y, uiRect.size.width, uiRect.size.height);
-        }
+        _transformUpdated = _transformDirty = _inverseDirty = true;
     }
 }
 
@@ -302,8 +344,7 @@ bool VideoPlayer::IsFullScreenEnabled()const {
 void VideoPlayer::SetKeepAspectRatioEnabled(bool enable) {
     if (_keepAspectRatioEnabled != enable) {
         _keepAspectRatioEnabled = enable;
-        const auto uiRect = cocos2d::ui::Helper::convertBoundingBoxToScreen(this);
-        ResizeMoveVLC(uiRect.origin.x, uiRect.origin.y, uiRect.size.width, uiRect.size.height);
+       _transformUpdated = _transformDirty = _inverseDirty = true;
     }
 }
 
