@@ -60,7 +60,7 @@ LRESULT VideoPlayer::hookGLFWWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
                     if (pThis->_isPlaying) {
                         pThis->Pause();
                     }
-                    else {
+                    else if (pThis->_isPaused){
                         pThis->Resume();
                     }
                 }
@@ -210,6 +210,9 @@ void VideoPlayer::VLC_PlayerEventCallBack(const libvlc_event_t* p_event, void* p
             }
             vp->OnPlayEvent((int)VideoPlayer::EventType::COMPLETED);
             break;
+        case libvlc_MediaPlayerEncounteredError:
+            vp->OnPlayEvent((int)VideoPlayer::EventType::V_ERROR);
+            break;
         default:
             break;
         }
@@ -243,6 +246,7 @@ VideoPlayer::VideoPlayer()
     libvlc_event_attach(em, libvlc_MediaPlayerPaused, VLC_PlayerEventCallBack, this);
     libvlc_event_attach(em, libvlc_MediaPlayerStopped, VLC_PlayerEventCallBack, this);
     libvlc_event_attach(em, libvlc_MediaPlayerEndReached, VLC_PlayerEventCallBack, this);
+    libvlc_event_attach(em, libvlc_MediaPlayerEncounteredError, VLC_PlayerEventCallBack, this);
 
     // Disable mouse and key event,it handled by self win32 proc.
     libvlc_video_set_mouse_input(vlcPlayer, false);
@@ -261,6 +265,7 @@ VideoPlayer::~VideoPlayer() {
     libvlc_event_detach(em, libvlc_MediaPlayerPaused, VLC_PlayerEventCallBack, this);
     libvlc_event_detach(em, libvlc_MediaPlayerStopped, VLC_PlayerEventCallBack, this);
     libvlc_event_detach(em, libvlc_MediaPlayerEndReached, VLC_PlayerEventCallBack, this);
+    libvlc_event_detach(em, libvlc_MediaPlayerEncounteredError, VLC_PlayerEventCallBack, this);
 
     // Stop playing
     libvlc_media_player_stop(vlcPlayer);
