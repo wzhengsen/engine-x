@@ -43,9 +43,9 @@ using namespace cocos2d::ui;
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 ||\
     CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 libvlc_instance_t* VideoPlayer::vlcInstance = nullptr;
-std::map<void*,VideoPlayer*> VideoPlayer::VideoPlayerMap = std::map<void*,VideoPlayer*>();;
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+std::map<HWND,VideoPlayer*> VideoPlayer::VideoPlayerMap = std::map<HWND,VideoPlayer*>();
 bool VideoPlayer::sIsInitialized = false;
 WNDPROC VideoPlayer::sPrevCocosWndProc = nullptr;
 
@@ -72,6 +72,8 @@ LRESULT VideoPlayer::hookGLFWWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
     }
     return ::CallWindowProcW(sPrevCocosWndProc, hwnd, uMsg, wParam, lParam);
 }
+#else
+std::map<X11Window,VideoPlayer*> VideoPlayer::VideoPlayerMap = std::map<X11Window,VideoPlayer*>();
 #endif
 
 void VideoPlayer::CreateVLC() {
