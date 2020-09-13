@@ -115,6 +115,9 @@ VideoPlayer::~VideoPlayer()
 {
     s_allVideoPlayers.erase(_videoPlayerIndex);
     JniHelper::callStaticVoidMethod(videoHelperClassName, "removeVideoWidget", _videoPlayerIndex);
+    if (_isPlaying || _isPaused) {
+        OnPlayEvent((int)VideoPlayer::EventType::STOPPED);
+    }
     UnreigsterVisibleNotify();
 }
 
@@ -326,11 +329,18 @@ void VideoPlayer::OnPlayEvent(int event)
     }
     else
     {
-        VideoPlayer::EventType videoEvent = (VideoPlayer::EventType)event;
+        auto videoEvent = (VideoPlayer::EventType)event;
         if (videoEvent == VideoPlayer::EventType::PLAYING) {
             _isPlaying = true;
-        } else {
+            _isPaused = false;
+        }
+        else if (videoEvent == VideoPlayer::EventType::PAUSED) {
             _isPlaying = false;
+            _isPaused = true;
+        }
+        else if (videoEvent == VideoPlayer::EventType::STOPPED) {
+            _isPlaying = false;
+            _isPaused = false;
         }
 
         if (_eventCallback)
@@ -350,16 +360,15 @@ void VideoPlayer::copySpecialProperties(Widget *widget)
     VideoPlayer* videoPlayer = dynamic_cast<VideoPlayer*>(widget);
     if (videoPlayer)
     {
-        _isPlaying = videoPlayer->_isPlaying;
         _isLooping = videoPlayer->_isLooping;
-        _isUserInputEnabled = videoPlayer->_isUserInputEnabled;
         _styleType = videoPlayer->_styleType;
-        _fullScreenEnabled = videoPlayer->_fullScreenEnabled;
         _fullScreenDirty = videoPlayer->_fullScreenDirty;
         _videoURL = videoPlayer->_videoURL;
-        _keepAspectRatioEnabled = videoPlayer->_keepAspectRatioEnabled;
         _videoSource = videoPlayer->_videoSource;
         _eventCallback = videoPlayer->_eventCallback;
+        SetUserInputEnabled(videoPlayer->_isUserInputEnabled);
+        SetFullScreenEnabled(videoPlayer->_fullScreenEnabled);
+        SetKeepAspectRatioEnabled(videoPlayer->_keepAspectRatioEnabled);
     }
 }
 

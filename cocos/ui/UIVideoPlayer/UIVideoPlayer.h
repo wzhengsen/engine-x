@@ -246,6 +246,7 @@ namespace ui{
             URL
         };
 
+        bool _isPaused = false;
         bool _isPlaying = false;
         bool _isLooping = false;
         bool _isUserInputEnabled = true;
@@ -265,7 +266,6 @@ namespace ui{
         static std::map<void*,VideoPlayer*> VideoPlayerMap;
         static libvlc_instance_t* vlcInstance;
         libvlc_media_player_t* vlcPlayer = nullptr;
-        bool _isPaused = false;
 
         static void VLC_PlayerEventCallBack(const libvlc_event_t* p_event, void* p_data);
 

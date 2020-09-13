@@ -287,6 +287,9 @@ VideoPlayer::~VideoPlayer()
     if(_videoView)
     {
         [((UIVideoViewWrapperIos*)_videoView) dealloc];
+        if (_isPlaying || _isPaused) {
+            OnPlayEvent((int)VideoPlayer::EventType::STOPPED);
+        }
     }
     UnreigsterVisibleNotify();
 }
@@ -512,18 +515,15 @@ void VideoPlayer::copySpecialProperties(Widget *widget)
     VideoPlayer* videoPlayer = dynamic_cast<VideoPlayer*>(widget);
     if (videoPlayer)
     {
-        _isPlaying = videoPlayer->_isPlaying;
         _isLooping = videoPlayer->_isLooping;
-        _isUserInputEnabled = videoPlayer->_isUserInputEnabled;
         _styleType = videoPlayer->_styleType;
-        _fullScreenEnabled = videoPlayer->_fullScreenEnabled;
         _fullScreenDirty = videoPlayer->_fullScreenDirty;
         _videoURL = videoPlayer->_videoURL;
-        _keepAspectRatioEnabled = videoPlayer->_keepAspectRatioEnabled;
         _videoSource = videoPlayer->_videoSource;
-        _videoPlayerIndex = videoPlayer->_videoPlayerIndex;
         _eventCallback = videoPlayer->_eventCallback;
-        _videoView = videoPlayer->_videoView;
+        SetUserInputEnabled(videoPlayer->_isUserInputEnabled);
+        SetFullScreenEnabled(videoPlayer->_fullScreenEnabled);
+        SetKeepAspectRatioEnabled(videoPlayer->_keepAspectRatioEnabled);
     }
 }
 
