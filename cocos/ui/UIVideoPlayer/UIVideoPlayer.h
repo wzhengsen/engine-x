@@ -25,6 +25,7 @@
 #pragma once
 
 #include "ui/UIWidget.h"
+#include <sstream>
 
 /**
  * @addtogroup ui
@@ -263,7 +264,6 @@ namespace ui{
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 ||\
     CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
-        static std::map<void*,VideoPlayer*> VideoPlayerMap;
         static libvlc_instance_t* vlcInstance;
         libvlc_media_player_t* vlcPlayer = nullptr;
 
@@ -278,11 +278,13 @@ namespace ui{
         uint32_t mVideoHeight = 0;
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+        static std::map<HWND,VideoPlayer*> VideoPlayerMap;
         static bool sIsInitialized;
         static WNDPROC sPrevCocosWndProc;
         static LRESULT hookGLFWWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
         HWND _videoView = nullptr;
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
+        static std::map<X11Window,VideoPlayer*> VideoPlayerMap;
         X11Window _videoView = 0;
         X11Display* dpy = nullptr;
         X11Window win = 0;
