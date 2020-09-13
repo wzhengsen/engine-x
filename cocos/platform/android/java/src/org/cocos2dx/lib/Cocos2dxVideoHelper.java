@@ -242,7 +242,7 @@ public class Cocos2dxVideoHelper {
     private void _removeVideoView(int index) {
         Cocos2dxVideoView view = sVideoViews.get(index);
         if (view != null) {
-            view.stopPlayback();
+            view.stop();
             sVideoViews.remove(index);
             mLayout.removeView(view);
         }
