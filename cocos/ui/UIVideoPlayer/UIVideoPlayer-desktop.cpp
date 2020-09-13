@@ -262,12 +262,11 @@ VideoPlayer::~VideoPlayer() {
     libvlc_event_detach(em, libvlc_MediaPlayerStopped, VLC_PlayerEventCallBack, this);
     libvlc_event_detach(em, libvlc_MediaPlayerEndReached, VLC_PlayerEventCallBack, this);
 
-    const bool playing = IsPlaying();
     // Stop playing
     libvlc_media_player_stop(vlcPlayer);
 
     // 手动调用一次STOPPED回调。
-    if (playing || _isPaused) {
+    if (_isPlaying || _isPaused) {
         OnPlayEvent((int)VideoPlayer::EventType::STOPPED);
     }
     // Free the media_player
@@ -393,24 +392,18 @@ void VideoPlayer::Play() {
 void VideoPlayer::Pause() {
     if (! _videoURL.empty()) {
         libvlc_media_player_pause(vlcPlayer);
-        _isPaused = true;
-        _isPlaying = false;
     }
 }
 
 void VideoPlayer::Resume() {
     if (! _videoURL.empty()) {
         libvlc_media_player_set_pause(vlcPlayer, 0);
-        _isPaused = false;
-        _isPlaying = true;
     }
 }
 
 void VideoPlayer::Stop() {
     if (! _videoURL.empty()) {
         libvlc_media_player_stop(vlcPlayer);
-        _isPlaying = false;
-        _isPaused = false;
     }
 }
 
@@ -473,15 +466,14 @@ cocos2d::ui::Widget* VideoPlayer::createCloneInstance() {
 void VideoPlayer::copySpecialProperties(Widget *widget) {
     VideoPlayer* videoPlayer = dynamic_cast<VideoPlayer*>(widget);
     if (videoPlayer) {
-        _isPlaying = videoPlayer->_isPlaying;
         _isLooping = videoPlayer->_isLooping;
-        _isUserInputEnabled = videoPlayer->_isUserInputEnabled;
         _styleType = videoPlayer->_styleType;
-        _fullScreenEnabled = videoPlayer->_fullScreenEnabled;
         _fullScreenDirty = videoPlayer->_fullScreenDirty;
         _videoURL = videoPlayer->_videoURL;
-        _keepAspectRatioEnabled = videoPlayer->_keepAspectRatioEnabled;
         _videoSource = videoPlayer->_videoSource;
         _eventCallback = videoPlayer->_eventCallback;
+        SetUserInputEnabled(videoPlayer->_isUserInputEnabled);
+        SetFullScreenEnabled(videoPlayer->_fullScreenEnabled);
+        SetKeepAspectRatioEnabled(videoPlayer->_keepAspectRatioEnabled);
     }
 }
