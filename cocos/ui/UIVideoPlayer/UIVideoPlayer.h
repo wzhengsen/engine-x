@@ -262,7 +262,7 @@ namespace ui{
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 ||\
     CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
-        static size_t VideoPlayerCount;
+        static std::map<void*,VideoPlayer*> VideoPlayerMap;
         static libvlc_instance_t* vlcInstance;
         libvlc_media_player_t* vlcPlayer = nullptr;
         bool _isPaused = false;
@@ -270,7 +270,7 @@ namespace ui{
         static void VLC_PlayerEventCallBack(const libvlc_event_t* p_event, void* p_data);
 
         void CreateVLC();
-        void ResizeMoveVLC(int32_t x, int32_t y,uint32_t w, uint32_t h) noexcept;
+        void ResizeMoveVLC() noexcept;
         void ShowVLC(bool b) noexcept;
         void DestroyVLC() noexcept;
 
@@ -278,6 +278,9 @@ namespace ui{
         uint32_t mVideoHeight = 0;
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+        static bool sIsInitialized;
+        static WNDPROC sPrevCocosWndProc;
+        static LRESULT hookGLFWWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
         HWND _videoView = nullptr;
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
         X11Window _videoView = 0;
