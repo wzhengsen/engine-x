@@ -53,9 +53,9 @@ LRESULT VideoPlayer::hookGLFWWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
     switch (uMsg) {
     case WM_COMMAND:
         if (HIWORD(wParam) == STN_CLICKED) {
-            void* vpView = (void*)lParam;
+            HWND vpView = (HWND)lParam;
             if (VideoPlayerMap.find(vpView) != VideoPlayerMap.end()) {
-                VideoPlayer* pThis = (VideoPlayer*)GetWindowLongPtrW((HWND)lParam, GWLP_USERDATA);
+                VideoPlayer* pThis = (VideoPlayer*)GetWindowLongPtrW(vpView, GWLP_USERDATA);
                 if (pThis && pThis->_isUserInputEnabled) {
                     if (pThis->_isPlaying) {
                         pThis->Pause();
