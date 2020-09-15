@@ -93,16 +93,21 @@ int lua_register_cocos2dx_backend_PixelFormat(lua_State* tolua_S)
         tolua_constant(tolua_S, "PVRTC2", 12);
         tolua_constant(tolua_S, "PVRTC2A", 13);
         tolua_constant(tolua_S, "ETC1", 14);
-        tolua_constant(tolua_S, "S3TC_DXT1", 15);
-        tolua_constant(tolua_S, "S3TC_DXT3", 16);
-        tolua_constant(tolua_S, "S3TC_DXT5", 17);
-        tolua_constant(tolua_S, "ATC_RGB", 18);
-        tolua_constant(tolua_S, "ATC_EXPLICIT_ALPHA", 19);
-        tolua_constant(tolua_S, "ATC_INTERPOLATED_ALPHA", 20);
-        tolua_constant(tolua_S, "MTL_B5G6R5", 21);
-        tolua_constant(tolua_S, "MTL_BGR5A1", 22);
-        tolua_constant(tolua_S, "MTL_ABGR4", 23);
-        tolua_constant(tolua_S, "D24S8", 24);
+        tolua_constant(tolua_S, "ETC2_RGB", 15);
+        tolua_constant(tolua_S, "ETC2_RGBA", 16);
+        tolua_constant(tolua_S, "S3TC_DXT1", 17);
+        tolua_constant(tolua_S, "S3TC_DXT3", 18);
+        tolua_constant(tolua_S, "S3TC_DXT5", 19);
+        tolua_constant(tolua_S, "ATC_RGB", 20);
+        tolua_constant(tolua_S, "ATC_EXPLICIT_ALPHA", 21);
+        tolua_constant(tolua_S, "ATC_INTERPOLATED_ALPHA", 22);
+        tolua_constant(tolua_S, "MTL_B5G6R5", 23);
+        tolua_constant(tolua_S, "MTL_BGR5A1", 24);
+        tolua_constant(tolua_S, "MTL_ABGR4", 25);
+        tolua_constant(tolua_S, "ASTC4x4", 26);
+        tolua_constant(tolua_S, "ASTC6x6", 27);
+        tolua_constant(tolua_S, "ASTC8x8", 28);
+        tolua_constant(tolua_S, "D24S8", 29);
         tolua_constant(tolua_S, "DEFAULT", 0);
         tolua_constant(tolua_S, "NONE", -1);
     tolua_endmodule(tolua_S);
@@ -305,6 +310,10 @@ int lua_register_cocos2dx_backend_ColorWriteMask(lua_State* tolua_S)
 {
     tolua_module(tolua_S, "ColorWriteMask", 0);
     tolua_beginmodule(tolua_S,"ColorWriteMask");
+        tolua_constant(tolua_S, "RED_BIT", 0);
+        tolua_constant(tolua_S, "GREEN_BIT", 1);
+        tolua_constant(tolua_S, "BLUE_BIT", 2);
+        tolua_constant(tolua_S, "ALPHA_BIT", 3);
         tolua_constant(tolua_S, "NONE", 0);
         tolua_constant(tolua_S, "RED", 1);
         tolua_constant(tolua_S, "GREEN", 2);
@@ -365,197 +374,6 @@ int lua_register_cocos2dx_backend_TextureCubeFace(lua_State* tolua_S)
     return 1;
 }
 
-int lua_cocos2dx_backend_Program_getMaxVertexLocation(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::Program* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.Program",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::Program*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Program_getMaxVertexLocation'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Program_getMaxVertexLocation'", nullptr);
-            return 0;
-        }
-        int ret = cobj->getMaxVertexLocation();
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Program:getMaxVertexLocation",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Program_getMaxVertexLocation'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_backend_Program_getMaxFragmentLocation(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::Program* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.Program",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::Program*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Program_getMaxFragmentLocation'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Program_getMaxFragmentLocation'", nullptr);
-            return 0;
-        }
-        int ret = cobj->getMaxFragmentLocation();
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Program:getMaxFragmentLocation",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Program_getMaxFragmentLocation'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_backend_Program_getFragmentShader(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::Program* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.Program",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::Program*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Program_getFragmentShader'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Program_getFragmentShader'", nullptr);
-            return 0;
-        }
-        const std::string& ret = cobj->getFragmentShader();
-        lua_pushlstring(tolua_S,ret.c_str(),ret.length());
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Program:getFragmentShader",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Program_getFragmentShader'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_backend_Program_getUniformBufferSize(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::Program* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.Program",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::Program*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Program_getUniformBufferSize'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 1) 
-    {
-        cocos2d::backend::ShaderStage arg0;
-
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccb.Program:getUniformBufferSize");
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Program_getUniformBufferSize'", nullptr);
-            return 0;
-        }
-        unsigned int ret = cobj->getUniformBufferSize(arg0);
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Program:getUniformBufferSize",argc, 1);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Program_getUniformBufferSize'.",&tolua_err);
-#endif
-
-    return 0;
-}
 int lua_cocos2dx_backend_Program_getUniformLocation(lua_State* tolua_S)
 {
     int argc = 0;
@@ -611,7 +429,62 @@ int lua_cocos2dx_backend_Program_getUniformLocation(lua_State* tolua_S)
 
     return 0;
 }
-int lua_cocos2dx_backend_Program_getProgramType(lua_State* tolua_S)
+int lua_cocos2dx_backend_Program_getAttributeLocation(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::Program* cobj = nullptr;
+    bool ok  = true;
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.Program",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (cocos2d::backend::Program*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj)
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Program_getAttributeLocation'", nullptr);
+        return 0;
+    }
+#endif
+    argc = lua_gettop(tolua_S)-1;
+    do{
+        if (argc == 1) {
+            cocos2d::backend::Attribute arg0;
+            ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccb.Program:getAttributeLocation");
+
+            if (!ok) { break; }
+            int ret = cobj->getAttributeLocation(arg0);
+            tolua_pushinteger(tolua_S,(lua_Integer)ret);
+            return 1;
+        }
+    }while(0);
+    ok  = true;
+    do{
+        if (argc == 1) {
+            std::string arg0;
+            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccb.Program:getAttributeLocation");
+
+            if (!ok) { break; }
+            int ret = cobj->getAttributeLocation(arg0);
+            tolua_pushinteger(tolua_S,(lua_Integer)ret);
+            return 1;
+        }
+    }while(0);
+    ok  = true;
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n",  "ccb.Program:getAttributeLocation",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Program_getAttributeLocation'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_Program_getMaxVertexLocation(lua_State* tolua_S)
 {
     int argc = 0;
     cocos2d::backend::Program* cobj = nullptr;
@@ -631,7 +504,7 @@ int lua_cocos2dx_backend_Program_getProgramType(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
     if (!cobj) 
     {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Program_getProgramType'", nullptr);
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Program_getMaxVertexLocation'", nullptr);
         return 0;
     }
 #endif
@@ -641,19 +514,66 @@ int lua_cocos2dx_backend_Program_getProgramType(lua_State* tolua_S)
     {
         if(!ok)
         {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Program_getProgramType'", nullptr);
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Program_getMaxVertexLocation'", nullptr);
             return 0;
         }
-        int ret = (int)cobj->getProgramType();
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
+        int ret = cobj->getMaxVertexLocation();
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
         return 1;
     }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Program:getProgramType",argc, 0);
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Program:getMaxVertexLocation",argc, 0);
     return 0;
 
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Program_getProgramType'.",&tolua_err);
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Program_getMaxVertexLocation'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_Program_getMaxFragmentLocation(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::Program* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.Program",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::Program*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Program_getMaxFragmentLocation'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Program_getMaxFragmentLocation'", nullptr);
+            return 0;
+        }
+        int ret = cobj->getMaxFragmentLocation();
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Program:getMaxFragmentLocation",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Program_getMaxFragmentLocation'.",&tolua_err);
 #endif
 
     return 0;
@@ -705,61 +625,6 @@ int lua_cocos2dx_backend_Program_getActiveAttributes(lua_State* tolua_S)
 
     return 0;
 }
-int lua_cocos2dx_backend_Program_getAttributeLocation(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::Program* cobj = nullptr;
-    bool ok  = true;
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.Program",0,&tolua_err)) goto tolua_lerror;
-#endif
-    cobj = (cocos2d::backend::Program*)tolua_tousertype(tolua_S,1,0);
-#if COCOS2D_DEBUG >= 1
-    if (!cobj)
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Program_getAttributeLocation'", nullptr);
-        return 0;
-    }
-#endif
-    argc = lua_gettop(tolua_S)-1;
-    do{
-        if (argc == 1) {
-            cocos2d::backend::Attribute arg0;
-            ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccb.Program:getAttributeLocation");
-
-            if (!ok) { break; }
-            int ret = cobj->getAttributeLocation(arg0);
-            tolua_pushnumber(tolua_S,(lua_Number)ret);
-            return 1;
-        }
-    }while(0);
-    ok  = true;
-    do{
-        if (argc == 1) {
-            std::string arg0;
-            ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccb.Program:getAttributeLocation");
-
-            if (!ok) { break; }
-            int ret = cobj->getAttributeLocation(arg0);
-            tolua_pushnumber(tolua_S,(lua_Number)ret);
-            return 1;
-        }
-    }while(0);
-    ok  = true;
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n",  "ccb.Program:getAttributeLocation",argc, 1);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Program_getAttributeLocation'.",&tolua_err);
-#endif
-
-    return 0;
-}
 int lua_cocos2dx_backend_Program_getVertexShader(lua_State* tolua_S)
 {
     int argc = 0;
@@ -807,6 +672,150 @@ int lua_cocos2dx_backend_Program_getVertexShader(lua_State* tolua_S)
 
     return 0;
 }
+int lua_cocos2dx_backend_Program_getFragmentShader(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::Program* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.Program",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::Program*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Program_getFragmentShader'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Program_getFragmentShader'", nullptr);
+            return 0;
+        }
+        const std::string& ret = cobj->getFragmentShader();
+        lua_pushlstring(tolua_S,ret.c_str(),ret.length());
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Program:getFragmentShader",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Program_getFragmentShader'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_Program_getProgramType(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::Program* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.Program",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::Program*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Program_getProgramType'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Program_getProgramType'", nullptr);
+            return 0;
+        }
+        int ret = (int)cobj->getProgramType();
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Program:getProgramType",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Program_getProgramType'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_Program_getUniformBufferSize(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::Program* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.Program",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::Program*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Program_getUniformBufferSize'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) 
+    {
+        cocos2d::backend::ShaderStage arg0;
+
+        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccb.Program:getUniformBufferSize");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Program_getUniformBufferSize'", nullptr);
+            return 0;
+        }
+        unsigned int ret = cobj->getUniformBufferSize(arg0);
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Program:getUniformBufferSize",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Program_getUniformBufferSize'.",&tolua_err);
+#endif
+
+    return 0;
+}
 int lua_cocos2dx_backend_Program_getBuiltinProgram(lua_State* tolua_S)
 {
     int argc = 0;
@@ -816,16 +825,12 @@ int lua_cocos2dx_backend_Program_getBuiltinProgram(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccb.Program",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 1)
     {
         cocos2d::backend::ProgramType arg0;
-        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccb.Program:getBuiltinProgram");
+        ok &= luaval_to_long_long(tolua_S, 1,(long long*)(&arg0), "ccb.Program:getBuiltinProgram");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Program_getBuiltinProgram'", nullptr);
@@ -855,15 +860,15 @@ int lua_register_cocos2dx_backend_Program(lua_State* tolua_S)
     tolua_cclass(tolua_S,"Program","ccb.Program","cc.Ref",nullptr);
 
     tolua_beginmodule(tolua_S,"Program");
+        tolua_function(tolua_S,"getUniformLocation",lua_cocos2dx_backend_Program_getUniformLocation);
+        tolua_function(tolua_S,"getAttributeLocation",lua_cocos2dx_backend_Program_getAttributeLocation);
         tolua_function(tolua_S,"getMaxVertexLocation",lua_cocos2dx_backend_Program_getMaxVertexLocation);
         tolua_function(tolua_S,"getMaxFragmentLocation",lua_cocos2dx_backend_Program_getMaxFragmentLocation);
-        tolua_function(tolua_S,"getFragmentShader",lua_cocos2dx_backend_Program_getFragmentShader);
-        tolua_function(tolua_S,"getUniformBufferSize",lua_cocos2dx_backend_Program_getUniformBufferSize);
-        tolua_function(tolua_S,"getUniformLocation",lua_cocos2dx_backend_Program_getUniformLocation);
-        tolua_function(tolua_S,"getProgramType",lua_cocos2dx_backend_Program_getProgramType);
         tolua_function(tolua_S,"getActiveAttributes",lua_cocos2dx_backend_Program_getActiveAttributes);
-        tolua_function(tolua_S,"getAttributeLocation",lua_cocos2dx_backend_Program_getAttributeLocation);
         tolua_function(tolua_S,"getVertexShader",lua_cocos2dx_backend_Program_getVertexShader);
+        tolua_function(tolua_S,"getFragmentShader",lua_cocos2dx_backend_Program_getFragmentShader);
+        tolua_function(tolua_S,"getProgramType",lua_cocos2dx_backend_Program_getProgramType);
+        tolua_function(tolua_S,"getUniformBufferSize",lua_cocos2dx_backend_Program_getUniformBufferSize);
         tolua_function(tolua_S,"getBuiltinProgram", lua_cocos2dx_backend_Program_getBuiltinProgram);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::backend::Program).name();
@@ -872,150 +877,6 @@ int lua_register_cocos2dx_backend_Program(lua_State* tolua_S)
     return 1;
 }
 
-int lua_cocos2dx_backend_VertexLayout_getVertexStepMode(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::VertexLayout* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.VertexLayout",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::VertexLayout*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_VertexLayout_getVertexStepMode'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_VertexLayout_getVertexStepMode'", nullptr);
-            return 0;
-        }
-        int ret = (int)cobj->getVertexStepMode();
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.VertexLayout:getVertexStepMode",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_VertexLayout_getVertexStepMode'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_backend_VertexLayout_isValid(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::VertexLayout* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.VertexLayout",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::VertexLayout*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_VertexLayout_isValid'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_VertexLayout_isValid'", nullptr);
-            return 0;
-        }
-        bool ret = cobj->isValid();
-        tolua_pushboolean(tolua_S,(bool)ret);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.VertexLayout:isValid",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_VertexLayout_isValid'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_backend_VertexLayout_setLayout(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::VertexLayout* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.VertexLayout",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::VertexLayout*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_VertexLayout_setLayout'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 1) 
-    {
-        unsigned int arg0;
-
-        ok &= luaval_to_uint32(tolua_S, 2,&arg0, "ccb.VertexLayout:setLayout");
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_VertexLayout_setLayout'", nullptr);
-            return 0;
-        }
-        cobj->setLayout(arg0);
-        lua_settop(tolua_S, 1);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.VertexLayout:setLayout",argc, 1);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_VertexLayout_setLayout'.",&tolua_err);
-#endif
-
-    return 0;
-}
 int lua_cocos2dx_backend_VertexLayout_setAttribute(lua_State* tolua_S)
 {
     int argc = 0;
@@ -1078,6 +939,56 @@ int lua_cocos2dx_backend_VertexLayout_setAttribute(lua_State* tolua_S)
 
     return 0;
 }
+int lua_cocos2dx_backend_VertexLayout_setLayout(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::VertexLayout* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.VertexLayout",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::VertexLayout*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_VertexLayout_setLayout'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) 
+    {
+        unsigned int arg0;
+
+        ok &= luaval_to_uint32(tolua_S, 2,&arg0, "ccb.VertexLayout:setLayout");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_VertexLayout_setLayout'", nullptr);
+            return 0;
+        }
+        cobj->setLayout(arg0);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.VertexLayout:setLayout",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_VertexLayout_setLayout'.",&tolua_err);
+#endif
+
+    return 0;
+}
 int lua_cocos2dx_backend_VertexLayout_getStride(lua_State* tolua_S)
 {
     int argc = 0;
@@ -1112,7 +1023,7 @@ int lua_cocos2dx_backend_VertexLayout_getStride(lua_State* tolua_S)
             return 0;
         }
         unsigned int ret = cobj->getStride();
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
         return 1;
     }
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.VertexLayout:getStride",argc, 0);
@@ -1125,7 +1036,7 @@ int lua_cocos2dx_backend_VertexLayout_getStride(lua_State* tolua_S)
 
     return 0;
 }
-int lua_cocos2dx_backend_VertexLayout_constructor(lua_State* tolua_S)
+int lua_cocos2dx_backend_VertexLayout_getVertexStepMode(lua_State* tolua_S)
 {
     int argc = 0;
     cocos2d::backend::VertexLayout* cobj = nullptr;
@@ -1136,30 +1047,89 @@ int lua_cocos2dx_backend_VertexLayout_constructor(lua_State* tolua_S)
 #endif
 
 
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.VertexLayout",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::VertexLayout*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_VertexLayout_getVertexStepMode'", nullptr);
+        return 0;
+    }
+#endif
 
     argc = lua_gettop(tolua_S)-1;
     if (argc == 0) 
     {
         if(!ok)
         {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_VertexLayout_constructor'", nullptr);
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_VertexLayout_getVertexStepMode'", nullptr);
             return 0;
         }
-        cobj = new cocos2d::backend::VertexLayout();
-        tolua_pushusertype(tolua_S,(void*)cobj,"ccb.VertexLayout");
-        tolua_register_gc(tolua_S,lua_gettop(tolua_S));
+        int ret = (int)cobj->getVertexStepMode();
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
         return 1;
     }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.VertexLayout:VertexLayout",argc, 0);
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.VertexLayout:getVertexStepMode",argc, 0);
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_VertexLayout_constructor'.",&tolua_err);
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_VertexLayout_getVertexStepMode'.",&tolua_err);
 #endif
 
     return 0;
 }
+int lua_cocos2dx_backend_VertexLayout_isValid(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::VertexLayout* cobj = nullptr;
+    bool ok  = true;
 
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.VertexLayout",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::VertexLayout*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_VertexLayout_isValid'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_VertexLayout_isValid'", nullptr);
+            return 0;
+        }
+        bool ret = cobj->isValid();
+        tolua_pushboolean(tolua_S,(bool)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.VertexLayout:isValid",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_VertexLayout_isValid'.",&tolua_err);
+#endif
+
+    return 0;
+}
 static int lua_cocos2dx_backend_VertexLayout_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (VertexLayout)");
@@ -1172,12 +1142,11 @@ int lua_register_cocos2dx_backend_VertexLayout(lua_State* tolua_S)
     tolua_cclass(tolua_S,"VertexLayout","ccb.VertexLayout","",nullptr);
 
     tolua_beginmodule(tolua_S,"VertexLayout");
-        tolua_function(tolua_S,"new",lua_cocos2dx_backend_VertexLayout_constructor);
+        tolua_function(tolua_S,"setAttribute",lua_cocos2dx_backend_VertexLayout_setAttribute);
+        tolua_function(tolua_S,"setLayout",lua_cocos2dx_backend_VertexLayout_setLayout);
+        tolua_function(tolua_S,"getStride",lua_cocos2dx_backend_VertexLayout_getStride);
         tolua_function(tolua_S,"getVertexStepMode",lua_cocos2dx_backend_VertexLayout_getVertexStepMode);
         tolua_function(tolua_S,"isValid",lua_cocos2dx_backend_VertexLayout_isValid);
-        tolua_function(tolua_S,"setLayout",lua_cocos2dx_backend_VertexLayout_setLayout);
-        tolua_function(tolua_S,"setAttribute",lua_cocos2dx_backend_VertexLayout_setAttribute);
-        tolua_function(tolua_S,"getStride",lua_cocos2dx_backend_VertexLayout_getStride);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::backend::VertexLayout).name();
     g_luaType[typeName] = "ccb.VertexLayout";
@@ -1185,62 +1154,6 @@ int lua_register_cocos2dx_backend_VertexLayout(lua_State* tolua_S)
     return 1;
 }
 
-int lua_cocos2dx_backend_ProgramState_setTexture(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::ProgramState* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.ProgramState",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::ProgramState*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_ProgramState_setTexture'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 3) 
-    {
-        cocos2d::backend::UniformLocation arg0;
-        unsigned int arg1;
-        cocos2d::backend::TextureBackend* arg2;
-
-        ok &= luaval_to_uniformLocation(tolua_S, 2, arg0, "ccb.ProgramState:setTexture");
-
-        ok &= luaval_to_uint32(tolua_S, 3,&arg1, "ccb.ProgramState:setTexture");
-
-        ok &= luaval_to_object<cocos2d::backend::TextureBackend>(tolua_S, 4, "ccb.TextureBackend",&arg2, "ccb.ProgramState:setTexture");
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_ProgramState_setTexture'", nullptr);
-            return 0;
-        }
-        cobj->setTexture(arg0, arg1, arg2);
-        lua_settop(tolua_S, 1);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.ProgramState:setTexture",argc, 3);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_ProgramState_setTexture'.",&tolua_err);
-#endif
-
-    return 0;
-}
 int lua_cocos2dx_backend_ProgramState_clone(lua_State* tolua_S)
 {
     int argc = 0;
@@ -1284,59 +1197,6 @@ int lua_cocos2dx_backend_ProgramState_clone(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_ProgramState_clone'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_backend_ProgramState_setParameterAutoBinding(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::ProgramState* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.ProgramState",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::ProgramState*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_ProgramState_setParameterAutoBinding'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 2) 
-    {
-        std::string arg0;
-        std::string arg1;
-
-        ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccb.ProgramState:setParameterAutoBinding");
-
-        ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccb.ProgramState:setParameterAutoBinding");
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_ProgramState_setParameterAutoBinding'", nullptr);
-            return 0;
-        }
-        cobj->setParameterAutoBinding(arg0, arg1);
-        lua_settop(tolua_S, 1);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.ProgramState:setParameterAutoBinding",argc, 2);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_ProgramState_setParameterAutoBinding'.",&tolua_err);
 #endif
 
     return 0;
@@ -1416,7 +1276,7 @@ int lua_cocos2dx_backend_ProgramState_getAttributeLocation(lua_State* tolua_S)
 
             if (!ok) { break; }
             int ret = cobj->getAttributeLocation(arg0);
-            tolua_pushnumber(tolua_S,(lua_Number)ret);
+            tolua_pushinteger(tolua_S,(lua_Integer)ret);
             return 1;
         }
     }while(0);
@@ -1428,7 +1288,7 @@ int lua_cocos2dx_backend_ProgramState_getAttributeLocation(lua_State* tolua_S)
 
             if (!ok) { break; }
             int ret = cobj->getAttributeLocation(arg0);
-            tolua_pushnumber(tolua_S,(lua_Number)ret);
+            tolua_pushinteger(tolua_S,(lua_Integer)ret);
             return 1;
         }
     }while(0);
@@ -1443,7 +1303,94 @@ int lua_cocos2dx_backend_ProgramState_getAttributeLocation(lua_State* tolua_S)
 
     return 0;
 }
-int lua_cocos2dx_backend_ProgramState_constructor(lua_State* tolua_S)
+int lua_cocos2dx_backend_ProgramState_setTexture(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::ProgramState* cobj = nullptr;
+    bool ok  = true;
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.ProgramState",0,&tolua_err)) goto tolua_lerror;
+#endif
+    cobj = (cocos2d::backend::ProgramState*)tolua_tousertype(tolua_S,1,0);
+#if COCOS2D_DEBUG >= 1
+    if (!cobj)
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_ProgramState_setTexture'", nullptr);
+        return 0;
+    }
+#endif
+    argc = lua_gettop(tolua_S)-1;
+    do{
+        if (argc == 3) {
+            cocos2d::backend::UniformLocation arg0;
+            ok &= luaval_to_uniformLocation(tolua_S, 2, arg0, "ccb.ProgramState:setTexture");
+
+            if (!ok) { break; }
+            unsigned short arg1;
+            ok &= luaval_to_ushort(tolua_S, 3, &arg1, "ccb.ProgramState:setTexture");
+
+            if (!ok) { break; }
+            cocos2d::backend::TextureBackend* arg2;
+            ok &= luaval_to_object<cocos2d::backend::TextureBackend>(tolua_S, 4, "ccb.TextureBackend",&arg2, "ccb.ProgramState:setTexture");
+
+            if (!ok) { break; }
+            cobj->setTexture(arg0, arg1, arg2);
+            lua_settop(tolua_S, 1);
+            return 1;
+        }
+    }while(0);
+    ok  = true;
+    do{
+        if (argc == 1) {
+            cocos2d::backend::TextureBackend* arg0;
+            ok &= luaval_to_object<cocos2d::backend::TextureBackend>(tolua_S, 2, "ccb.TextureBackend",&arg0, "ccb.ProgramState:setTexture");
+
+            if (!ok) { break; }
+            cobj->setTexture(arg0);
+            lua_settop(tolua_S, 1);
+            return 1;
+        }
+    }while(0);
+    ok  = true;
+    do{
+        if (argc == 4) {
+            cocos2d::backend::UniformLocation arg0;
+            ok &= luaval_to_uniformLocation(tolua_S, 2, arg0, "ccb.ProgramState:setTexture");
+
+            if (!ok) { break; }
+            unsigned short arg1;
+            ok &= luaval_to_ushort(tolua_S, 3, &arg1, "ccb.ProgramState:setTexture");
+
+            if (!ok) { break; }
+            unsigned short arg2;
+            ok &= luaval_to_ushort(tolua_S, 4, &arg2, "ccb.ProgramState:setTexture");
+
+            if (!ok) { break; }
+            cocos2d::backend::TextureBackend* arg3;
+            ok &= luaval_to_object<cocos2d::backend::TextureBackend>(tolua_S, 5, "ccb.TextureBackend",&arg3, "ccb.ProgramState:setTexture");
+
+            if (!ok) { break; }
+            cobj->setTexture(arg0, arg1, arg2, arg3);
+            lua_settop(tolua_S, 1);
+            return 1;
+        }
+    }while(0);
+    ok  = true;
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n",  "ccb.ProgramState:setTexture",argc, 4);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_ProgramState_setTexture'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_ProgramState_setParameterAutoBinding(lua_State* tolua_S)
 {
     int argc = 0;
     cocos2d::backend::ProgramState* cobj = nullptr;
@@ -1454,35 +1401,48 @@ int lua_cocos2dx_backend_ProgramState_constructor(lua_State* tolua_S)
 #endif
 
 
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.ProgramState",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::ProgramState*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_ProgramState_setParameterAutoBinding'", nullptr);
+        return 0;
+    }
+#endif
 
     argc = lua_gettop(tolua_S)-1;
-    if (argc == 1) 
+    if (argc == 2) 
     {
-        cocos2d::backend::Program* arg0;
+        std::string arg0;
+        std::string arg1;
 
-        ok &= luaval_to_object<cocos2d::backend::Program>(tolua_S, 2, "ccb.Program",&arg0, "ccb.ProgramState:ProgramState");
+        ok &= luaval_to_std_string(tolua_S, 2,&arg0, "ccb.ProgramState:setParameterAutoBinding");
+
+        ok &= luaval_to_std_string(tolua_S, 3,&arg1, "ccb.ProgramState:setParameterAutoBinding");
         if(!ok)
         {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_ProgramState_constructor'", nullptr);
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_ProgramState_setParameterAutoBinding'", nullptr);
             return 0;
         }
-        cobj = new cocos2d::backend::ProgramState(arg0);
-        cobj->autorelease();
-        int ID =  (int)cobj->_ID ;
-        int* luaID =  &cobj->_luaID ;
-        toluafix_pushusertype_ccobject(tolua_S, ID, luaID, (void*)cobj,"ccb.ProgramState");
+        cobj->setParameterAutoBinding(arg0, arg1);
+        lua_settop(tolua_S, 1);
         return 1;
     }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.ProgramState:ProgramState",argc, 1);
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.ProgramState:setParameterAutoBinding",argc, 2);
     return 0;
 
 #if COCOS2D_DEBUG >= 1
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_ProgramState_constructor'.",&tolua_err);
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_ProgramState_setParameterAutoBinding'.",&tolua_err);
 #endif
 
     return 0;
 }
-
 static int lua_cocos2dx_backend_ProgramState_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (ProgramState)");
@@ -1495,12 +1455,11 @@ int lua_register_cocos2dx_backend_ProgramState(lua_State* tolua_S)
     tolua_cclass(tolua_S,"ProgramState","ccb.ProgramState","cc.Ref",nullptr);
 
     tolua_beginmodule(tolua_S,"ProgramState");
-        tolua_function(tolua_S,"new",lua_cocos2dx_backend_ProgramState_constructor);
-        tolua_function(tolua_S,"setTexture",lua_cocos2dx_backend_ProgramState_setTexture);
         tolua_function(tolua_S,"clone",lua_cocos2dx_backend_ProgramState_clone);
-        tolua_function(tolua_S,"setParameterAutoBinding",lua_cocos2dx_backend_ProgramState_setParameterAutoBinding);
         tolua_function(tolua_S,"getProgram",lua_cocos2dx_backend_ProgramState_getProgram);
         tolua_function(tolua_S,"getAttributeLocation",lua_cocos2dx_backend_ProgramState_getAttributeLocation);
+        tolua_function(tolua_S,"setTexture",lua_cocos2dx_backend_ProgramState_setTexture);
+        tolua_function(tolua_S,"setParameterAutoBinding",lua_cocos2dx_backend_ProgramState_setParameterAutoBinding);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::backend::ProgramState).name();
     g_luaType[typeName] = "ccb.ProgramState";
@@ -1508,100 +1467,6 @@ int lua_register_cocos2dx_backend_ProgramState(lua_State* tolua_S)
     return 1;
 }
 
-int lua_cocos2dx_backend_TextureBackend_getTextureFormat(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::TextureBackend* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.TextureBackend",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::TextureBackend*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_getTextureFormat'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_getTextureFormat'", nullptr);
-            return 0;
-        }
-        int ret = (int)cobj->getTextureFormat();
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:getTextureFormat",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_getTextureFormat'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_backend_TextureBackend_getTextureType(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::TextureBackend* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.TextureBackend",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::TextureBackend*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_getTextureType'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_getTextureType'", nullptr);
-            return 0;
-        }
-        int ret = (int)cobj->getTextureType();
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:getTextureType",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_getTextureType'.",&tolua_err);
-#endif
-
-    return 0;
-}
 int lua_cocos2dx_backend_TextureBackend_updateSamplerDescriptor(lua_State* tolua_S)
 {
     int argc = 0;
@@ -1648,151 +1513,6 @@ int lua_cocos2dx_backend_TextureBackend_updateSamplerDescriptor(lua_State* tolua
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_updateSamplerDescriptor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_backend_TextureBackend_updateTextureDescriptor(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::TextureBackend* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.TextureBackend",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::TextureBackend*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_updateTextureDescriptor'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 1) 
-    {
-        cocos2d::backend::TextureDescriptor arg0;
-
-        #pragma warning NO CONVERSION TO NATIVE FOR TextureDescriptor
-		ok = false;
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_updateTextureDescriptor'", nullptr);
-            return 0;
-        }
-        cobj->updateTextureDescriptor(arg0);
-        lua_settop(tolua_S, 1);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:updateTextureDescriptor",argc, 1);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_updateTextureDescriptor'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_backend_TextureBackend_getTextureUsage(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::TextureBackend* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.TextureBackend",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::TextureBackend*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_getTextureUsage'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_getTextureUsage'", nullptr);
-            return 0;
-        }
-        int ret = (int)cobj->getTextureUsage();
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:getTextureUsage",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_getTextureUsage'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_backend_TextureBackend_hasMipmaps(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::TextureBackend* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.TextureBackend",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::TextureBackend*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_hasMipmaps'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_hasMipmaps'", nullptr);
-            return 0;
-        }
-        bool ret = cobj->hasMipmaps();
-        tolua_pushboolean(tolua_S,(bool)ret);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:hasMipmaps",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_hasMipmaps'.",&tolua_err);
 #endif
 
     return 0;
@@ -1844,7 +1564,7 @@ int lua_cocos2dx_backend_TextureBackend_generateMipmaps(lua_State* tolua_S)
 
     return 0;
 }
-int lua_cocos2dx_backend_TextureBackend_getBytes(lua_State* tolua_S)
+int lua_cocos2dx_backend_TextureBackend_updateTextureDescriptor(lua_State* tolua_S)
 {
     int argc = 0;
     cocos2d::backend::TextureBackend* cobj = nullptr;
@@ -1864,53 +1584,441 @@ int lua_cocos2dx_backend_TextureBackend_getBytes(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
     if (!cobj) 
     {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_getBytes'", nullptr);
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_updateTextureDescriptor'", nullptr);
         return 0;
     }
 #endif
 
     argc = lua_gettop(tolua_S)-1;
-    if (argc == 6) 
+    if (argc == 1) 
     {
-        unsigned int arg0;
-        unsigned int arg1;
-        unsigned int arg2;
-        unsigned int arg3;
-        bool arg4;
-        std::function<void (const unsigned char *, unsigned int, unsigned int)> arg5;
+        cocos2d::backend::TextureDescriptor arg0;
 
-        ok &= luaval_to_uint32(tolua_S, 2,&arg0, "ccb.TextureBackend:getBytes");
-
-        ok &= luaval_to_uint32(tolua_S, 3,&arg1, "ccb.TextureBackend:getBytes");
-
-        ok &= luaval_to_uint32(tolua_S, 4,&arg2, "ccb.TextureBackend:getBytes");
-
-        ok &= luaval_to_uint32(tolua_S, 5,&arg3, "ccb.TextureBackend:getBytes");
-
-        ok &= luaval_to_boolean(tolua_S, 6,&arg4, "ccb.TextureBackend:getBytes");
-
-        do {
-			// Lambda binding for lua is not supported.
-			assert(false);
-		} while(0)
-		;
+        #pragma warning NO CONVERSION TO NATIVE FOR TextureDescriptor
+		ok = false;
         if(!ok)
         {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_getBytes'", nullptr);
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_updateTextureDescriptor'", nullptr);
             return 0;
         }
-        // actual it's unused, and will crash, because the callback arg5 is empty
-        // futher new lua bindings sol2
-        // cobj->getBytes(arg0, arg1, arg2, arg3, arg4, arg5);
+        cobj->updateTextureDescriptor(arg0);
         lua_settop(tolua_S, 1);
         return 1;
     }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:getBytes",argc, 6);
+    if (argc == 2) 
+    {
+        cocos2d::backend::TextureDescriptor arg0;
+        int arg1;
+
+        #pragma warning NO CONVERSION TO NATIVE FOR TextureDescriptor
+		ok = false;
+
+        ok &= luaval_to_int32(tolua_S, 3,(int *)&arg1, "ccb.TextureBackend:updateTextureDescriptor");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_updateTextureDescriptor'", nullptr);
+            return 0;
+        }
+        cobj->updateTextureDescriptor(arg0, arg1);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:updateTextureDescriptor",argc, 1);
     return 0;
 
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_getBytes'.",&tolua_err);
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_updateTextureDescriptor'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_TextureBackend_getTextureFormat(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::TextureBackend* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.TextureBackend",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::TextureBackend*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_getTextureFormat'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_getTextureFormat'", nullptr);
+            return 0;
+        }
+        int ret = (int)cobj->getTextureFormat();
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:getTextureFormat",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_getTextureFormat'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_TextureBackend_getTextureUsage(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::TextureBackend* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.TextureBackend",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::TextureBackend*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_getTextureUsage'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_getTextureUsage'", nullptr);
+            return 0;
+        }
+        int ret = (int)cobj->getTextureUsage();
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:getTextureUsage",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_getTextureUsage'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_TextureBackend_getTextureType(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::TextureBackend* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.TextureBackend",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::TextureBackend*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_getTextureType'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_getTextureType'", nullptr);
+            return 0;
+        }
+        int ret = (int)cobj->getTextureType();
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:getTextureType",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_getTextureType'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_TextureBackend_hasMipmaps(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::TextureBackend* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.TextureBackend",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::TextureBackend*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_hasMipmaps'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_hasMipmaps'", nullptr);
+            return 0;
+        }
+        bool ret = cobj->hasMipmaps();
+        tolua_pushboolean(tolua_S,(bool)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:hasMipmaps",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_hasMipmaps'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_TextureBackend_getCount(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::TextureBackend* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.TextureBackend",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::TextureBackend*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_getCount'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_getCount'", nullptr);
+            return 0;
+        }
+        int ret = cobj->getCount();
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:getCount",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_getCount'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_TextureBackend_getHandler(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::TextureBackend* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.TextureBackend",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::TextureBackend*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_getHandler'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_getHandler'", nullptr);
+            return 0;
+        }
+        unsigned int ret = cobj->getHandler();
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
+        return 1;
+    }
+    if (argc == 1) 
+    {
+        int arg0;
+
+        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccb.TextureBackend:getHandler");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_getHandler'", nullptr);
+            return 0;
+        }
+        unsigned int ret = cobj->getHandler(arg0);
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:getHandler",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_getHandler'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_TextureBackend_getWidth(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::TextureBackend* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.TextureBackend",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::TextureBackend*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_getWidth'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_getWidth'", nullptr);
+            return 0;
+        }
+        int ret = cobj->getWidth();
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:getWidth",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_getWidth'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_TextureBackend_getHeight(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::TextureBackend* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.TextureBackend",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::TextureBackend*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_getHeight'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_getHeight'", nullptr);
+            return 0;
+        }
+        int ret = cobj->getHeight();
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:getHeight",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_getHeight'.",&tolua_err);
 #endif
 
     return 0;
@@ -1927,14 +2035,17 @@ int lua_register_cocos2dx_backend_TextureBackend(lua_State* tolua_S)
     tolua_cclass(tolua_S,"TextureBackend","ccb.TextureBackend","cc.Ref",nullptr);
 
     tolua_beginmodule(tolua_S,"TextureBackend");
-        tolua_function(tolua_S,"getTextureFormat",lua_cocos2dx_backend_TextureBackend_getTextureFormat);
-        tolua_function(tolua_S,"getTextureType",lua_cocos2dx_backend_TextureBackend_getTextureType);
         tolua_function(tolua_S,"updateSamplerDescriptor",lua_cocos2dx_backend_TextureBackend_updateSamplerDescriptor);
-        tolua_function(tolua_S,"updateTextureDescriptor",lua_cocos2dx_backend_TextureBackend_updateTextureDescriptor);
-        tolua_function(tolua_S,"getTextureUsage",lua_cocos2dx_backend_TextureBackend_getTextureUsage);
-        tolua_function(tolua_S,"hasMipmaps",lua_cocos2dx_backend_TextureBackend_hasMipmaps);
         tolua_function(tolua_S,"generateMipmaps",lua_cocos2dx_backend_TextureBackend_generateMipmaps);
-        tolua_function(tolua_S,"getBytes",lua_cocos2dx_backend_TextureBackend_getBytes);
+        tolua_function(tolua_S,"updateTextureDescriptor",lua_cocos2dx_backend_TextureBackend_updateTextureDescriptor);
+        tolua_function(tolua_S,"getTextureFormat",lua_cocos2dx_backend_TextureBackend_getTextureFormat);
+        tolua_function(tolua_S,"getTextureUsage",lua_cocos2dx_backend_TextureBackend_getTextureUsage);
+        tolua_function(tolua_S,"getTextureType",lua_cocos2dx_backend_TextureBackend_getTextureType);
+        tolua_function(tolua_S,"hasMipmaps",lua_cocos2dx_backend_TextureBackend_hasMipmaps);
+        tolua_function(tolua_S,"getCount",lua_cocos2dx_backend_TextureBackend_getCount);
+        tolua_function(tolua_S,"getHandler",lua_cocos2dx_backend_TextureBackend_getHandler);
+        tolua_function(tolua_S,"getWidth",lua_cocos2dx_backend_TextureBackend_getWidth);
+        tolua_function(tolua_S,"getHeight",lua_cocos2dx_backend_TextureBackend_getHeight);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::backend::TextureBackend).name();
     g_luaType[typeName] = "ccb.TextureBackend";
@@ -1942,100 +2053,6 @@ int lua_register_cocos2dx_backend_TextureBackend(lua_State* tolua_S)
     return 1;
 }
 
-int lua_cocos2dx_backend_Texture2DBackend_getHeight(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::Texture2DBackend* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.Texture2DBackend",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::Texture2DBackend*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Texture2DBackend_getHeight'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Texture2DBackend_getHeight'", nullptr);
-            return 0;
-        }
-        unsigned int ret = cobj->getHeight();
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Texture2DBackend:getHeight",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Texture2DBackend_getHeight'.",&tolua_err);
-#endif
-
-    return 0;
-}
-int lua_cocos2dx_backend_Texture2DBackend_getWidth(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::backend::Texture2DBackend* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"ccb.Texture2DBackend",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::backend::Texture2DBackend*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Texture2DBackend_getWidth'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 0) 
-    {
-        if(!ok)
-        {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Texture2DBackend_getWidth'", nullptr);
-            return 0;
-        }
-        unsigned int ret = cobj->getWidth();
-        tolua_pushnumber(tolua_S,(lua_Number)ret);
-        return 1;
-    }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Texture2DBackend:getWidth",argc, 0);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Texture2DBackend_getWidth'.",&tolua_err);
-#endif
-
-    return 0;
-}
 int lua_cocos2dx_backend_Texture2DBackend_updateData(lua_State* tolua_S)
 {
     int argc = 0;
@@ -2083,6 +2100,33 @@ int lua_cocos2dx_backend_Texture2DBackend_updateData(lua_State* tolua_S)
             return 0;
         }
         cobj->updateData(arg0, arg1, arg2, arg3);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    if (argc == 5) 
+    {
+        unsigned char* arg0;
+        unsigned int arg1;
+        unsigned int arg2;
+        unsigned int arg3;
+        int arg4;
+
+        #pragma warning NO CONVERSION TO NATIVE FOR unsigned char*
+		ok = false;
+
+        ok &= luaval_to_uint32(tolua_S, 3,&arg1, "ccb.Texture2DBackend:updateData");
+
+        ok &= luaval_to_uint32(tolua_S, 4,&arg2, "ccb.Texture2DBackend:updateData");
+
+        ok &= luaval_to_uint32(tolua_S, 5,&arg3, "ccb.Texture2DBackend:updateData");
+
+        ok &= luaval_to_int32(tolua_S, 6,(int *)&arg4, "ccb.Texture2DBackend:updateData");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Texture2DBackend_updateData'", nullptr);
+            return 0;
+        }
+        cobj->updateData(arg0, arg1, arg2, arg3, arg4);
         lua_settop(tolua_S, 1);
         return 1;
     }
@@ -2149,6 +2193,36 @@ int lua_cocos2dx_backend_Texture2DBackend_updateCompressedData(lua_State* tolua_
         lua_settop(tolua_S, 1);
         return 1;
     }
+    if (argc == 6) 
+    {
+        unsigned char* arg0;
+        unsigned int arg1;
+        unsigned int arg2;
+        unsigned int arg3;
+        unsigned int arg4;
+        int arg5;
+
+        #pragma warning NO CONVERSION TO NATIVE FOR unsigned char*
+		ok = false;
+
+        ok &= luaval_to_uint32(tolua_S, 3,&arg1, "ccb.Texture2DBackend:updateCompressedData");
+
+        ok &= luaval_to_uint32(tolua_S, 4,&arg2, "ccb.Texture2DBackend:updateCompressedData");
+
+        ok &= luaval_to_uint32(tolua_S, 5,&arg3, "ccb.Texture2DBackend:updateCompressedData");
+
+        ok &= luaval_to_uint32(tolua_S, 6,&arg4, "ccb.Texture2DBackend:updateCompressedData");
+
+        ok &= luaval_to_int32(tolua_S, 7,(int *)&arg5, "ccb.Texture2DBackend:updateCompressedData");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Texture2DBackend_updateCompressedData'", nullptr);
+            return 0;
+        }
+        cobj->updateCompressedData(arg0, arg1, arg2, arg3, arg4, arg5);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Texture2DBackend:updateCompressedData",argc, 5);
     return 0;
 
@@ -2212,6 +2286,39 @@ int lua_cocos2dx_backend_Texture2DBackend_updateSubData(lua_State* tolua_S)
             return 0;
         }
         cobj->updateSubData(arg0, arg1, arg2, arg3, arg4, arg5);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    if (argc == 7) 
+    {
+        unsigned int arg0;
+        unsigned int arg1;
+        unsigned int arg2;
+        unsigned int arg3;
+        unsigned int arg4;
+        unsigned char* arg5;
+        int arg6;
+
+        ok &= luaval_to_uint32(tolua_S, 2,&arg0, "ccb.Texture2DBackend:updateSubData");
+
+        ok &= luaval_to_uint32(tolua_S, 3,&arg1, "ccb.Texture2DBackend:updateSubData");
+
+        ok &= luaval_to_uint32(tolua_S, 4,&arg2, "ccb.Texture2DBackend:updateSubData");
+
+        ok &= luaval_to_uint32(tolua_S, 5,&arg3, "ccb.Texture2DBackend:updateSubData");
+
+        ok &= luaval_to_uint32(tolua_S, 6,&arg4, "ccb.Texture2DBackend:updateSubData");
+
+        #pragma warning NO CONVERSION TO NATIVE FOR unsigned char*
+		ok = false;
+
+        ok &= luaval_to_int32(tolua_S, 8,(int *)&arg6, "ccb.Texture2DBackend:updateSubData");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Texture2DBackend_updateSubData'", nullptr);
+            return 0;
+        }
+        cobj->updateSubData(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
         lua_settop(tolua_S, 1);
         return 1;
     }
@@ -2284,12 +2391,142 @@ int lua_cocos2dx_backend_Texture2DBackend_updateCompressedSubData(lua_State* tol
         lua_settop(tolua_S, 1);
         return 1;
     }
+    if (argc == 8) 
+    {
+        unsigned int arg0;
+        unsigned int arg1;
+        unsigned int arg2;
+        unsigned int arg3;
+        unsigned int arg4;
+        unsigned int arg5;
+        unsigned char* arg6;
+        int arg7;
+
+        ok &= luaval_to_uint32(tolua_S, 2,&arg0, "ccb.Texture2DBackend:updateCompressedSubData");
+
+        ok &= luaval_to_uint32(tolua_S, 3,&arg1, "ccb.Texture2DBackend:updateCompressedSubData");
+
+        ok &= luaval_to_uint32(tolua_S, 4,&arg2, "ccb.Texture2DBackend:updateCompressedSubData");
+
+        ok &= luaval_to_uint32(tolua_S, 5,&arg3, "ccb.Texture2DBackend:updateCompressedSubData");
+
+        ok &= luaval_to_uint32(tolua_S, 6,&arg4, "ccb.Texture2DBackend:updateCompressedSubData");
+
+        ok &= luaval_to_uint32(tolua_S, 7,&arg5, "ccb.Texture2DBackend:updateCompressedSubData");
+
+        #pragma warning NO CONVERSION TO NATIVE FOR unsigned char*
+		ok = false;
+
+        ok &= luaval_to_int32(tolua_S, 9,(int *)&arg7, "ccb.Texture2DBackend:updateCompressedSubData");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Texture2DBackend_updateCompressedSubData'", nullptr);
+            return 0;
+        }
+        cobj->updateCompressedSubData(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
     luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Texture2DBackend:updateCompressedSubData",argc, 7);
     return 0;
 
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Texture2DBackend_updateCompressedSubData'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_Texture2DBackend_getWidth(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::Texture2DBackend* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.Texture2DBackend",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::Texture2DBackend*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Texture2DBackend_getWidth'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Texture2DBackend_getWidth'", nullptr);
+            return 0;
+        }
+        unsigned int ret = cobj->getWidth();
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Texture2DBackend:getWidth",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Texture2DBackend_getWidth'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_Texture2DBackend_getHeight(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::Texture2DBackend* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.Texture2DBackend",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::Texture2DBackend*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Texture2DBackend_getHeight'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Texture2DBackend_getHeight'", nullptr);
+            return 0;
+        }
+        unsigned int ret = cobj->getHeight();
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Texture2DBackend:getHeight",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Texture2DBackend_getHeight'.",&tolua_err);
 #endif
 
     return 0;
@@ -2306,12 +2543,12 @@ int lua_register_cocos2dx_backend_Texture2DBackend(lua_State* tolua_S)
     tolua_cclass(tolua_S,"Texture2DBackend","ccb.Texture2DBackend","ccb.TextureBackend",nullptr);
 
     tolua_beginmodule(tolua_S,"Texture2DBackend");
-        tolua_function(tolua_S,"getHeight",lua_cocos2dx_backend_Texture2DBackend_getHeight);
-        tolua_function(tolua_S,"getWidth",lua_cocos2dx_backend_Texture2DBackend_getWidth);
         tolua_function(tolua_S,"updateData",lua_cocos2dx_backend_Texture2DBackend_updateData);
         tolua_function(tolua_S,"updateCompressedData",lua_cocos2dx_backend_Texture2DBackend_updateCompressedData);
         tolua_function(tolua_S,"updateSubData",lua_cocos2dx_backend_Texture2DBackend_updateSubData);
         tolua_function(tolua_S,"updateCompressedSubData",lua_cocos2dx_backend_Texture2DBackend_updateCompressedSubData);
+        tolua_function(tolua_S,"getWidth",lua_cocos2dx_backend_Texture2DBackend_getWidth);
+        tolua_function(tolua_S,"getHeight",lua_cocos2dx_backend_Texture2DBackend_getHeight);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::backend::Texture2DBackend).name();
     g_luaType[typeName] = "ccb.Texture2DBackend";
@@ -2360,6 +2597,27 @@ int lua_cocos2dx_backend_TextureCubemapBackend_updateFaceData(lua_State* tolua_S
             return 0;
         }
         cobj->updateFaceData(arg0, arg1);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    if (argc == 3) 
+    {
+        cocos2d::backend::TextureCubeFace arg0;
+        void* arg1;
+        int arg2;
+
+        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccb.TextureCubemapBackend:updateFaceData");
+
+        #pragma warning NO CONVERSION TO NATIVE FOR void*
+		ok = false;
+
+        ok &= luaval_to_int32(tolua_S, 4,(int *)&arg2, "ccb.TextureCubemapBackend:updateFaceData");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureCubemapBackend_updateFaceData'", nullptr);
+            return 0;
+        }
+        cobj->updateFaceData(arg0, arg1, arg2);
         lua_settop(tolua_S, 1);
         return 1;
     }
@@ -2455,11 +2713,7 @@ int lua_cocos2dx_backend_Device_getInstance(lua_State* tolua_S)
     tolua_Error tolua_err;
 #endif
 
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertable(tolua_S,1,"ccb.Device",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    argc = lua_gettop(tolua_S) - 1;
+    argc = lua_gettop(tolua_S);
 
     if (argc == 0)
     {
@@ -2507,33 +2761,33 @@ TOLUA_API int register_all_cocos2dx_backend(lua_State* tolua_S)
 	tolua_module(tolua_S,"ccb",0);
 	tolua_beginmodule(tolua_S,"ccb");
 
-	lua_register_cocos2dx_backend_ColorWriteMask(tolua_S);
-	lua_register_cocos2dx_backend_TextureType(tolua_S);
-	lua_register_cocos2dx_backend_PrimitiveType(tolua_S);
-	lua_register_cocos2dx_backend_SamplerAddressMode(tolua_S);
-	lua_register_cocos2dx_backend_ProgramState(tolua_S);
-	lua_register_cocos2dx_backend_IndexFormat(tolua_S);
-	lua_register_cocos2dx_backend_TextureBackend(tolua_S);
-	lua_register_cocos2dx_backend_TextureCubemapBackend(tolua_S);
-	lua_register_cocos2dx_backend_SamplerFilter(tolua_S);
-	lua_register_cocos2dx_backend_TextureCubeFace(tolua_S);
-	lua_register_cocos2dx_backend_VertexLayout(tolua_S);
-	lua_register_cocos2dx_backend_BlendFactor(tolua_S);
-	lua_register_cocos2dx_backend_Device(tolua_S);
+	lua_register_cocos2dx_backend_BufferUsage(tolua_S);
+	lua_register_cocos2dx_backend_BufferType(tolua_S);
+	lua_register_cocos2dx_backend_ShaderStage(tolua_S);
 	lua_register_cocos2dx_backend_VertexFormat(tolua_S);
+	lua_register_cocos2dx_backend_PixelFormat(tolua_S);
+	lua_register_cocos2dx_backend_TextureUsage(tolua_S);
+	lua_register_cocos2dx_backend_IndexFormat(tolua_S);
 	lua_register_cocos2dx_backend_VertexStepMode(tolua_S);
+	lua_register_cocos2dx_backend_PrimitiveType(tolua_S);
+	lua_register_cocos2dx_backend_TextureType(tolua_S);
+	lua_register_cocos2dx_backend_SamplerAddressMode(tolua_S);
+	lua_register_cocos2dx_backend_SamplerFilter(tolua_S);
 	lua_register_cocos2dx_backend_StencilOperation(tolua_S);
 	lua_register_cocos2dx_backend_CompareFunction(tolua_S);
-	lua_register_cocos2dx_backend_BufferUsage(tolua_S);
-	lua_register_cocos2dx_backend_TextureUsage(tolua_S);
-	lua_register_cocos2dx_backend_BufferType(tolua_S);
+	lua_register_cocos2dx_backend_BlendOperation(tolua_S);
+	lua_register_cocos2dx_backend_BlendFactor(tolua_S);
+	lua_register_cocos2dx_backend_ColorWriteMask(tolua_S);
 	lua_register_cocos2dx_backend_CullMode(tolua_S);
 	lua_register_cocos2dx_backend_Winding(tolua_S);
-	lua_register_cocos2dx_backend_PixelFormat(tolua_S);
+	lua_register_cocos2dx_backend_TextureCubeFace(tolua_S);
 	lua_register_cocos2dx_backend_Program(tolua_S);
-	lua_register_cocos2dx_backend_BlendOperation(tolua_S);
-	lua_register_cocos2dx_backend_ShaderStage(tolua_S);
+	lua_register_cocos2dx_backend_VertexLayout(tolua_S);
+	lua_register_cocos2dx_backend_ProgramState(tolua_S);
+	lua_register_cocos2dx_backend_TextureBackend(tolua_S);
 	lua_register_cocos2dx_backend_Texture2DBackend(tolua_S);
+	lua_register_cocos2dx_backend_TextureCubemapBackend(tolua_S);
+	lua_register_cocos2dx_backend_Device(tolua_S);
 
 	tolua_endmodule(tolua_S);
 	return 1;

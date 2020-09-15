@@ -35,7 +35,7 @@
 #include "base/CCScheduler.h"
 #include "platform/CCFileUtils.h"
 #include "network/CCDownloader.h"
-#include "platform/PXFileStream.h"
+#include "platform/CCFileStream.h"
 #include "md5/md5.h"
 #include "yasio/xxsocket.hpp"
 
@@ -70,7 +70,7 @@ namespace cocos2d { namespace network {
 
         DownloadTaskCURL()
         : serialId(_sSerialId++), _requestHeaders(nullptr)
-        
+
         {
             _initInternal();
             DLLOG("Construct DownloadTaskCURL %p", this);
@@ -152,7 +152,7 @@ namespace cocos2d { namespace network {
                     }
                 }
                 // open file
-                _fs.open(_tempFileName, PXFileStream::kModeAppend);
+                _fs.open(_tempFileName, FileStream::Mode::APPEND);
                 if (!_fs)
                 {
                     _errCode = DownloadTask::ERROR_OPEN_FILE_FAILED;
@@ -164,7 +164,7 @@ namespace cocos2d { namespace network {
 
 				// init md5 state
 				_checksumFileName = filename + ".chksum";
-				_fsMd5.open(_checksumFileName.c_str(), PXFileStream::kModeWrite);
+				_fsMd5.open(_checksumFileName.c_str(), FileStream::Mode::WRITE);
 				if (_fsMd5.seek(0, SEEK_END) != sizeof(md5_state_s)) {
 					md5_init(&_md5State);
 				}
@@ -306,12 +306,12 @@ namespace cocos2d { namespace network {
         string _tempFileName;
 		std::string _checksumFileName;
         vector<unsigned char> _buf;
-        PXFileStream _fs;
+        FileStream _fs;
 
 		// calculate md5 in downloading time support
-        PXFileStream _fsMd5; // store md5 state realtime
+        FileStream _fsMd5; // store md5 state realtime
 		md5_state_s _md5State;
-		
+
 
         void _initInternal()
         {
@@ -895,7 +895,7 @@ public:
 
         _impl->addTask(task, coTask);
         _impl->run();
-		
+
         _scheduler->resumeTarget(this);
         return coTask;
     }
@@ -954,10 +954,10 @@ public:
                     coTask._fs.close();
                     coTask._fsMd5.close();
 
-                    if (coTask.md5State & kCheckSumStateSucceed) // No need download 
+                    if (coTask.md5State & kCheckSumStateSucceed) // No need download
                     {
-                        PXFileStream fsOrigin;
-                        if (fsOrigin.open(coTask._fileName)) {
+                        FileStream fsOrigin;
+                        if (fsOrigin.open(coTask._fileName, FileStream::Mode::READ)) {
                             task.progressInfo.totalBytesExpected = fsOrigin.seek(0, SEEK_END);
                             task.progressInfo.bytesReceived = task.progressInfo.totalBytesExpected;
                             task.progressInfo.totalBytesReceived = task.progressInfo.totalBytesExpected;
@@ -1039,4 +1039,3 @@ public:
         }
     }
 }}  //  namespace cocos2d::network
-
