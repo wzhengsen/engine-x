@@ -7180,7 +7180,6 @@ int register_all_cocos2dx_manual(lua_State* tolua_S)
     extendProgramState(tolua_S);
 
     extendLabel(tolua_S);
-    extendTMXTiledMap(tolua_S);
     extendConsole(tolua_S);
     extendOrbitCamera(tolua_S);
     extendFastTMXLayer(tolua_S);
