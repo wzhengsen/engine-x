@@ -125,23 +125,29 @@ void VideoPlayer::ResizeMoveVLC() noexcept {
     int _y = y;
     int _w = w;
     int _h = h;
-    if (_keepAspectRatioEnabled) {
-        if (mVideoWidth * h  > w * mVideoHeight) {
-            _h = w * mVideoHeight / mVideoWidth;
+    if (mVideoWidth && mVideoHeight) {
+        if (_keepAspectRatioEnabled) {
+            if (mVideoWidth * h  > w * mVideoHeight) {
+                _h = w * mVideoHeight / mVideoWidth;
+            }
+            else if (mVideoWidth * h  < w * mVideoHeight) {
+                _w = h * mVideoWidth / mVideoHeight;
+            }
+            _x = x + (w - _w) / 2;
+            _y = y + (h - _h) / 2;
+            libvlc_video_set_aspect_ratio(vlcPlayer, nullptr);
         }
-        else if (mVideoWidth * h  < w * mVideoHeight) {
-            _w = h * mVideoWidth / mVideoHeight;
+        else {
+            std::stringstream sStr = std::stringstream();
+            sStr << static_cast<int>(_w) << ":" << static_cast<int>(_h);
+            std::string str = std::string();
+            sStr >> str;
+            libvlc_video_set_aspect_ratio(vlcPlayer, str.c_str());
         }
-        _x = x + (w - _w) / 2;
-        _y = y + (h - _h) / 2;
-        libvlc_video_set_aspect_ratio(vlcPlayer, nullptr);
     }
     else {
-        std::stringstream sStr = std::stringstream();
-        sStr << static_cast<int>(_w) << ":" << static_cast<int>(_h);
-        std::string str = std::string();
-        sStr >> str;
-        libvlc_video_set_aspect_ratio(vlcPlayer, str.c_str());
+        _w = 0;
+        _h = 0;
     }
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
     ::MoveWindow(_videoView, _x, _y, _w, _h, TRUE);
