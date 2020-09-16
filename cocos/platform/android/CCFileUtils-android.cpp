@@ -31,6 +31,7 @@ THE SOFTWARE.
 #include "android/asset_manager.h"
 #include "android/asset_manager_jni.h"
 #include "base/ZipUtils.h"
+#include "openssl/aes.h"
 
 #include <stdlib.h>
 #include <sys/types.h>
@@ -93,7 +94,7 @@ bool FileUtilsAndroid::init()
     DECLARE_GUARD;
 
     _defaultResRootPath = ASSETS_FOLDER_NAME;
-    
+
     std::string assetsPath(getApkPath());
     if (assetsPath.find("/obb/") != std::string::npos)
     {
@@ -157,7 +158,7 @@ std::string FileUtilsAndroid::getNewFilename(const std::string &filename) const
 
 bool FileUtilsAndroid::isFileExistInternal(const std::string& strFilePath) const
 {
-    
+
     DECLARE_GUARD;
 
     if (strFilePath.empty())
@@ -174,7 +175,7 @@ bool FileUtilsAndroid::isFileExistInternal(const std::string& strFilePath) const
 
         // Found "assets/" at the beginning of the path and we don't want it
         if (strFilePath.find(_defaultResRootPath) == 0) s += _defaultResRootPath.length();
-        
+
         if (obbfile && obbfile->fileExists(s))
         {
             bFound = true;
@@ -214,7 +215,7 @@ bool FileUtilsAndroid::isDirectoryExistInternal(const std::string& dirPath) cons
     }
 
     const char* s = dirPathCopy.c_str();
-    
+
     // find absolute path in flash memory
     if (s[0] == '/')
     {
@@ -247,7 +248,7 @@ bool FileUtilsAndroid::isDirectoryExistInternal(const std::string& dirPath) cons
             }
         }
     }
-    
+
     return false;
 }
 
@@ -268,7 +269,7 @@ int64_t FileUtilsAndroid::getFileSize(const std::string& filepath) const
     if (size != -1) {
         return size;
     }
-    
+
     if (FileUtilsAndroid::assetmanager)
     {
         string relativePath = filepath;
@@ -276,7 +277,7 @@ int64_t FileUtilsAndroid::getFileSize(const std::string& filepath) const
         {
             relativePath = filepath.substr(_defaultResRootPath.size());
         }
-        
+
         AAsset* asset = AAssetManager_open(FileUtilsAndroid::assetmanager, relativePath.data(), AASSET_MODE_UNKNOWN);
         if (asset)
         {
@@ -284,7 +285,7 @@ int64_t FileUtilsAndroid::getFileSize(const std::string& filepath) const
             AAsset_close(asset);
         }
     }
-    
+
     return size;
 }
 
@@ -354,7 +355,7 @@ FileUtils::Status FileUtilsAndroid::getContents(const std::string& filename, Res
     } else {
         relativePath = fullPath;
     }
-    
+
     if (obbfile)
     {
         if (obbfile->getFileData(relativePath, buffer))
@@ -373,6 +374,23 @@ FileUtils::Status FileUtilsAndroid::getContents(const std::string& filename, Res
     }
 
     auto size = AAsset_getLength(asset);
+
+    bool isAes = false;
+    static char preSignBuffer[EncryptSignLen + 1] = { 0 };
+    ::memset(preSignBuffer, 0, EncryptSignLen + 1);
+
+    AAsset_read(asset, preSignBuffer, EncryptSignLen);
+    if(::memcmp(preSignBuffer, AES_Sign, EncryptSignLen) == 0) {
+        size -= EncryptSignLen;
+        isAes = true;
+    }
+    else {
+        if (AAsset_seek(asset, 0, SEEK_SET) == -1) {
+            AAsset_close(asset);
+            return Status::ReadFailed;
+        }
+    }
+
     buffer->resize(size);
 
     int readsize = AAsset_read(asset, buffer->buffer(), size);
@@ -382,6 +400,14 @@ FileUtils::Status FileUtilsAndroid::getContents(const std::string& filename, Res
         if (readsize >= 0)
             buffer->resize(readsize);
         return FileUtils::Status::ReadFailed;
+    }
+
+    if (isAes) {
+        uint8_t iv[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        AES_KEY aeskey = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+        int num = 0;
+        AES_set_encrypt_key(reinterpret_cast<uint8_t*>(AES_SignPassword), 128, &aeskey);
+        AES_cfb128_encrypt(reinterpret_cast<uint8_t*>(buffer->buffer()), reinterpret_cast<uint8_t*>(buffer->buffer()), size, &aeskey, iv, &num, AES_DECRYPT);
     }
 
     return FileUtils::Status::OK;
@@ -394,7 +420,7 @@ std::string FileUtilsAndroid::getWritablePath() const
     std::string path = JniHelper::callStaticStringMethod("org.cocos2dx.lib.Cocos2dxHelper", "getCocos2dxWritablePath");
     if (!path.empty())
         path.append("/");
-    
+
     return path;
 }
 
