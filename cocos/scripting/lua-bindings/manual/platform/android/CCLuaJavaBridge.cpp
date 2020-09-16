@@ -386,6 +386,12 @@ int LuaJavaBridge::callJavaStaticMethod(lua_State *L)
 
     CallInfo call(className, methodName, methodSig);
 
+    if (!call.isValid()) {
+        lua_pushboolean(L, 0);
+        lua_pushinteger(L, LUAJ_ERR_INVALID_SIGNATURES);
+        return 2;
+    }
+
     // check args
     lua_pop(L, 1);													/* L: args */
     int count = fetchArrayElements(L, -1);                      	/* L: args e1 e2 e3 e4 ... */
