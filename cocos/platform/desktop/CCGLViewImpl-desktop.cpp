@@ -1046,7 +1046,7 @@ void GLViewImpl::onGLFWWindowFocusCallback(GLFWwindow* /*window*/, int focused)
     }
 }
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_MAC)
 static bool loadFboExtensions() {
     const char* gl_extensions = (const char*)glGetString(GL_EXTENSIONS);
 
@@ -1140,8 +1140,6 @@ X11Display* GLViewImpl::getX11Display() const noexcept{
 bool GLViewImpl::loadGL()
 {
 #if (CC_TARGET_PLATFORM != CC_PLATFORM_MAC)
-
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_LINUX)
     // glad: load all OpenGL function pointers
     // ---------------------------------------
 #if defined(CC_USE_GL)
@@ -1191,8 +1189,6 @@ bool GLViewImpl::loadGL()
     {
         log("OpenGL 2.0 not supported");
     }
-#endif
-
 #endif // (CC_TARGET_PLATFORM != CC_PLATFORM_MAC)
 
     return true;

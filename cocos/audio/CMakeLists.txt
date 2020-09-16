@@ -12,7 +12,7 @@ set(COCOS_AUDIO_HEADER
     audio/include/AudioCache.h
     audio/include/AudioEngineImpl.h
     )
-    
+
 set(COCOS_AUDIO_SRC
     audio/src/AudioEngine.cpp
     audio/src/AudioDecoderManager.cpp
@@ -21,15 +21,19 @@ set(COCOS_AUDIO_SRC
     audio/src/AudioPlayer.cpp
     audio/src/AudioCache.cpp
     )
-    
+
 # stupid, clang always compie .mm as objc/cpp mix obj
 if(ANDROID)
     set(COCOS_AUDIO_SRC ${COCOS_AUDIO_SRC}
         audio/src/android-link.cpp
     )
-else()
+elseif(APPLE OR WINDOWS)
     set(COCOS_AUDIO_SRC ${COCOS_AUDIO_SRC}
         audio/src/AudioEngineImpl.mm
+    )
+elseif(LINUX)
+    set(COCOS_AUDIO_SRC ${COCOS_AUDIO_SRC}
+        audio/src/AudioEngineImpl.cpp
     )
 endif()
 
