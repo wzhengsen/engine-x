@@ -269,7 +269,7 @@ struct NotifyWrapper {
 
 static void NotificationClicked(NotifyNotification* notification, char* action,gpointer gp) {
     NotifyWrapper* nw = reinterpret_cast<NotifyWrapper*>(gp);
-    if (nw && !nw->callOnce) {
+    if (nw->clickCallback && !nw->callOnce) {
         nw->callOnce = true;
         cocos2d::Director::getInstance()->getScheduler()->performFunctionInCocosThread([ccb = nw->clickCallback](){
             ccb();
@@ -279,7 +279,7 @@ static void NotificationClicked(NotifyNotification* notification, char* action,g
 
 static void NotificationClosed(NotifyNotification* notification, gpointer gp) {
     NotifyWrapper* nw = reinterpret_cast<NotifyWrapper*>(gp);
-    if (nw && !nw->callOnce) {
+    if (nw->closeCallback && !nw->callOnce) {
         nw->callOnce = true;
         cocos2d::Director::getInstance()->getScheduler()->performFunctionInCocosThread([ccb = nw->closeCallback](){
             ccb();
