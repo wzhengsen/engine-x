@@ -45,7 +45,6 @@ bool LinuxInputBox(std::string &entryLine)
     GtkWidget *dialog;
     GtkWidget *entry;
     GtkWidget *contentArea;
-    gtk_init(nullptr,nullptr);
     dialog = gtk_dialog_new();
     entry = gtk_entry_new();
     contentArea = gtk_dialog_get_content_area(GTK_DIALOG(dialog));

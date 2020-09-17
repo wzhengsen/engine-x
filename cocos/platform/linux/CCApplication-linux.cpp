@@ -28,12 +28,18 @@ THE SOFTWARE.
 #include <sys/time.h>
 #include <string>
 #include <gtk/gtk.h>
+#include "libnotify/notify.h"
+#include <thread>
+#include <queue>
+#include <mutex>
+#include "rapidjson/document.h"
+#include "rapidjson/reader.h"
 #include "base/CCDirector.h"
 #include "base/ccUtils.h"
 #include "platform/CCFileUtils.h"
 
 NS_CC_BEGIN
-
+using namespace rapidjson;
 
 // sharedApplication pointer
 Application * Application::sm_pSharedApplication = nullptr;
@@ -62,6 +68,9 @@ Application::~Application()
 
 int Application::run()
 {
+    gtk_init(nullptr,nullptr);
+    notify_init("StarryX");
+
     initGLContextAttrs();
     // Initialize instance and cocos2d.
     if (! applicationDidFinishLaunching())
@@ -103,6 +112,8 @@ int Application::run()
         director = nullptr;
     }
     glview->release();
+
+    notify_uninit();
     return EXIT_SUCCESS;
 }
 
@@ -192,8 +203,6 @@ void Application::Dialog(
     const std::function<void()>& okCallback,
     const std::function<void()>& cancelCallback
 ) {
-    gtk_init(nullptr,nullptr);
-
     GtkWidget* dialog = gtk_dialog_new_with_buttons(
         title.c_str(),
         nullptr,
@@ -240,6 +249,44 @@ void Application::Dialog(
     }
 }
 
+struct NotifyWrapper {
+    std::string title = std::string();
+    std::string content = std::string();
+    std::function<void()> clickCallback = nullptr;
+    std::function<void()> closeCallback = nullptr;
+    bool callOnce = false;
+    NotifyWrapper(
+        const std::string& title,
+        const std::string& content,
+        const std::function<void()>& clickCallback,
+        const std::function<void()>& closeCallback
+    ):
+    title(title),
+    content(content),
+    clickCallback(clickCallback),
+    closeCallback(closeCallback){}
+};
+
+static void NotificationClicked(NotifyNotification* notification, char* action,gpointer gp) {
+    NotifyWrapper* nw = reinterpret_cast<NotifyWrapper*>(gp);
+    if (nw && !nw->callOnce) {
+        nw->callOnce = true;
+        cocos2d::Director::getInstance()->getScheduler()->performFunctionInCocosThread([ccb = nw->clickCallback](){
+            ccb();
+        });
+    }
+}
+
+static void NotificationClosed(NotifyNotification* notification, gpointer gp) {
+    NotifyWrapper* nw = reinterpret_cast<NotifyWrapper*>(gp);
+    if (nw && !nw->callOnce) {
+        nw->callOnce = true;
+        cocos2d::Director::getInstance()->getScheduler()->performFunctionInCocosThread([ccb = nw->closeCallback](){
+            ccb();
+        });
+    }
+}
+
 /*
     @brief 创建一个通知。
 */
@@ -248,6 +295,93 @@ void Application::Notify(
     const std::string& content,
     const std::function<void()>& clickCallback,
     const std::function<void()>& closeCallback
-) {}
+) {
+    // Static
+    static auto iconPath = std::string();
+    static auto nwQueue = std::queue<NotifyWrapper>();
+    static std::mutex ntyMutex;
+    static std::thread* ntyThread = nullptr;
+    if (iconPath.empty()) {
+        auto fu = cocos2d::FileUtils::getInstance();
+        iconPath = "file://" + fu->getWritablePath();
+        const std::string fileName = fu->fullPathForFilename("config.json");
+        const std::string content = fu->getStringFromFile(fileName);
+        Document docRootjson = Document();
+        if (!docRootjson.Parse<ParseFlag::kParseNoFlags>(content.c_str()).HasParseError()) {
+            if (docRootjson.HasMember("linuxIcon") && docRootjson["linuxIcon"].IsString()) {
+                iconPath += docRootjson["linuxIcon"].GetString();
+            }
+        }
+        else {
+            iconPath += "linuxIcon.png";
+        }
+    }
+
+    // Lock and pushback notify info to queue.
+    const std::lock_guard<std::mutex> lg(ntyMutex);
+    nwQueue.emplace(std::move(title),std::move(content),std::move(clickCallback),std::move(closeCallback));
+
+    if (!ntyThread) {
+        ntyThread = new std::thread([](){
+            // Work thread,deal notify one by one.
+            while(true) {
+                ntyMutex.lock();
+                if(!nwQueue.size()) {
+                    ntyMutex.unlock();
+                    break;
+                }
+                auto& nw = nwQueue.front();
+                ntyMutex.unlock();
+
+                NotifyNotification* nty = notify_notification_new(nw.title.c_str(), nw.content.c_str(), iconPath.c_str());
+                notify_notification_set_urgency(nty, NotifyUrgency::NOTIFY_URGENCY_NORMAL);
+                // Don't use a specific time,it not callback sometime.
+                notify_notification_set_timeout(nty, NOTIFY_EXPIRES_NEVER);
+                notify_notification_add_action(
+                    nty,
+                    "default", "确定",
+                    (NotifyActionCallback)NotificationClicked, (gpointer)&nw,
+                    nullptr
+                );
+                g_signal_connect(G_OBJECT(nty),"closed",G_CALLBACK(NotificationClosed),(gpointer)&nw);
+
+                bool failed = !notify_notification_show(nty, nullptr);
+                if (!failed) {
+                    const auto beginTime = clock();
+                    while(-1 == notify_notification_get_closed_reason(nty)) {
+                        // Timeout 4 seconds.
+                        if ((clock() - beginTime) / CLOCKS_PER_SEC > 3) {
+                            failed = !notify_notification_close(nty,nullptr);
+                            if (failed) {
+                                break;
+                            }
+                        }
+                        g_main_context_iteration(nullptr, false);
+                    }
+                }
+                if (failed && nw.closeCallback){
+                    // Notify show failed,call close callback directly.
+                    nw.callOnce = true;
+                    cocos2d::Director::getInstance()->getScheduler()->performFunctionInCocosThread([ccb = nw.closeCallback](){
+                        ccb();
+                    });
+                }
+                g_object_unref(G_OBJECT(nty));
+                while(g_main_context_iteration(nullptr, false));
+
+                // Pop the front notify,deal next notify at next loop.
+                ntyMutex.lock();
+                nwQueue.pop();
+                ntyMutex.unlock();
+            }
+
+            // All notify consumed,destory this thread.
+            const std::lock_guard<std::mutex> lg(ntyMutex);
+            delete ntyThread;
+            ntyThread = nullptr;
+        });
+        ntyThread->detach();
+    }
+}
 
 NS_CC_END
