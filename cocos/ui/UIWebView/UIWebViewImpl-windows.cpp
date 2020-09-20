@@ -48,9 +48,7 @@ namespace cocos2d {
             CreateCefBrowser();
         }
 
-        WebViewImpl::~WebViewImpl() {
-            DestoryCefBrowser();
-        }
+        WebViewImpl::~WebViewImpl() {}
 
         void WebViewImpl::setJavascriptInterfaceScheme(const std::string& scheme) {
             mJsScheme = scheme;
@@ -208,9 +206,10 @@ namespace cocos2d {
             );
         }
 
-        void WebViewImpl::DestoryCefBrowser() {
+        void WebViewImpl::DestroyCefBrowser() {
             if (mBrowser) {
                 mBrowser->GetHost()->CloseBrowser(true);
+                DestroyWindow(mHWND);
                 mBrowser = nullptr;
             }
         }

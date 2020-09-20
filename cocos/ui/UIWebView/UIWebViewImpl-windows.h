@@ -124,11 +124,11 @@ namespace cocos2d {
                 bool user_gesture,
                 bool is_redirect) OVERRIDE;
 
+            void DestroyCefBrowser();
         private:
             // Create a new browser and native window.
             void CreateCefBrowser();
             void ResizeMoveCefBrowser();
-            void DestoryCefBrowser();
             bool BrowserValid() const {
                 return mBrowser && !mIsClosed && !mIsClosing;
             };
