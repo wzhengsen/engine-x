@@ -167,14 +167,31 @@ function(cocos_copy_target_dll cocos_target)
     endforeach()
 
     if(WINDOWS)
-        # Copy windows angle binaries
+        # Copy windows cef binaries
         add_custom_command(TARGET ${cocos_target}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/windows/libGLESv2.dll
-                    ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/windows/libEGL.dll
-                    ${COCOS2DX_ROOT_PATH}/external/angle/prebuilt/windows/d3dcompiler_47.dll
+                    ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/windows/libGLESv2.dll
+                    ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/windows/libEGL.dll
+                    ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/windows/d3dcompiler_47.dll
+                    ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/windows/chrome_elf.dll
+                    ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/windows/snapshot_blob.bin
+                    ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/windows/v8_context_snapshot.bin
                     $<TARGET_FILE_DIR:${cocos_target}>
                 )
+
+        add_custom_command(
+            TARGET ${cocos_target} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E
+            copy_directory ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/windows/swiftshader
+            "$<TARGET_FILE_DIR:${cocos_target}>/swiftshader"
+        )
+
+        add_custom_command(
+            TARGET ${cocos_target} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E
+            copy_directory ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/windows/Resources
+            "$<TARGET_FILE_DIR:${cocos_target}>"
+        )
 
         add_custom_command(
             TARGET ${cocos_target} POST_BUILD
