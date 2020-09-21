@@ -1772,7 +1772,7 @@ public:
      * @param applyChildren A boolean value to determine whether the mask bit should apply to its children or not.
      */
     virtual void setCameraMask(unsigned short mask, bool applyChildren = true);
-    
+
     /**
      * Sets ProgramState with retain
      * @param programState
@@ -1836,7 +1836,8 @@ protected:
     void ReigsterVisibleNotify();
     void UnreigsterVisibleNotify();
 
-    virtual void OnVisible(bool visible) {};
+    virtual void OnVisibleChanged(bool visible) {};
+    bool IsDisplay() const;
 private:
     static std::vector<Node*> regVisibleVec;
     void addChildHelper(Node* child, int localZOrder, int tag, const std::string &name, bool setTag);

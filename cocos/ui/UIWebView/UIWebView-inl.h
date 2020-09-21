@@ -36,6 +36,7 @@ namespace ui{
     WebView::WebView()
     : _impl(new WebViewImpl(this))
     {
+        ReigsterVisibleNotify();
     }
 
     WebView::~WebView()
@@ -45,6 +46,7 @@ namespace ui{
 #else
         _impl->DestroyCefBrowser();
 #endif
+        UnreigsterVisibleNotify();
     }
 
     WebView *WebView::create()
@@ -84,11 +86,7 @@ namespace ui{
 
     void WebView::loadURL(const std::string& url, bool cleanCachedData)
     {
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-        _impl->loadURL(url);
-#else
         _impl->loadURL(url, cleanCachedData);
-#endif
     }
 
     void WebView::loadFile(const std::string &fileName)
@@ -150,37 +148,29 @@ namespace ui{
             _impl->setVisible(visible);
         }
     }
-    
-    void WebView::setOpacityWebView(float opacity){
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-        CCLOGWARN("%s", "This function is not implemented on Windows.");
-#else
+
+    void WebView::setOpacityWebView(float opacity) {
         _impl->setOpacityWebView(opacity);
-#endif
     }
-    
-    float WebView::getOpacityWebView() const{
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-        CCLOGWARN("%s", "This function is not implemented on Windows.");
-        return 1.0f;
-#else
+
+    float WebView::getOpacityWebView() const {
         return _impl->getOpacityWebView();
-#endif
     }
-    
+
     void WebView::setBackgroundTransparent()
     {
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-        CCLOGWARN("%s", "This function is not implemented on Windows.");
-#else
         _impl->setBackgroundTransparent();
-#endif
     };
+
+    void WebView::OnVisibleChanged(bool visible) {
+        Widget::OnVisibleChanged(visible);
+        _impl->setVisible(visible);
+    }
 
     void WebView::onEnter()
     {
         Widget::onEnter();
-        if(isVisible())
+        if (IsDisplay())
         {
             _impl->setVisible(true);
         }
@@ -191,12 +181,12 @@ namespace ui{
         Widget::onExit();
         _impl->setVisible(false);
     }
-    
+
     void WebView::setBounces(bool bounces)
     {
       _impl->setBounces(bounces);
     }
-    
+
     cocos2d::ui::Widget* WebView::createCloneInstance()
     {
         return WebView::create();

@@ -230,7 +230,7 @@ namespace ui{
     protected:
         virtual cocos2d::ui::Widget* createCloneInstance() override;
         virtual void copySpecialProperties(Widget* model) override;
-        virtual void OnVisible(bool) override;
+        virtual void OnVisibleChanged(bool) override;
 
     CC_CONSTRUCTOR_ACCESS:
         VideoPlayer();

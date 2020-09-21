@@ -445,14 +445,14 @@ void VideoPlayer::setVisible(bool visible) {
     }
 }
 
-void VideoPlayer::OnVisible(bool visible) {
-    Widget::OnVisible(visible);
+void VideoPlayer::OnVisibleChanged(bool visible) {
+    Widget::OnVisibleChanged(visible);
     ShowVLC(visible);
 }
 
 void VideoPlayer::onEnter() {
     Widget::onEnter();
-    if (isVisible() && !_videoURL.empty()) {
+    if (IsDisplay() && !_videoURL.empty()) {
         ShowVLC(true);
     }
 }

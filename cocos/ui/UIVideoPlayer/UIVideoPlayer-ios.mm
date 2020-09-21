@@ -461,8 +461,8 @@ void VideoPlayer::setVisible(bool visible)
     }
 }
 
-void VideoPlayer::OnVisible(bool visible) {
-    Widget::OnVisible(visible);
+void VideoPlayer::OnVisibleChanged(bool visible) {
+    Widget::OnVisibleChanged(visible);
     if (visible) {
         [((UIVideoViewWrapperIos*)_videoView) setVisible:YES];
     }
@@ -474,7 +474,7 @@ void VideoPlayer::OnVisible(bool visible) {
 void VideoPlayer::onEnter()
 {
     Widget::onEnter();
-    if (isVisible())
+    if (IsDisplay() && !_videoURL.empty())
     {
         [((UIVideoViewWrapperIos*)_videoView) setVisible: YES];
     }

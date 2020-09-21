@@ -313,6 +313,9 @@ int Application::run() {
     if (wTimerRes != 0) {
         timeEndPeriod(wTimerRes);
     }
+    while (!cefClose) {
+        CefDoMessageLoopWork();
+    }
     return 0;
 }
 

@@ -595,16 +595,23 @@ void Node::setVisible(bool visible)
             _transformUpdated = _transformDirty = _inverseDirty = true;
         }
         if (_running) {
-            for(auto it = regVisibleVec.begin();it != regVisibleVec.end(); it++) {
-                Node* node = *it;
-                Node* parent = node;
-                while(parent = parent->getParent()) {
-                    if (parent == this) {
-                        if (node->_visible && node->_running) {
-                            node->OnVisible(visible);
-                        }
+            for (auto it : regVisibleVec) {
+                if (!it->_running || !it->_visible) {
+                    continue;
+                }
+                const Node* parent = it;
+                bool canChange = false;
+                while (parent = parent->_parent) {
+                    if (!parent->_visible && parent != this) {
+                        canChange = false;
                         break;
                     }
+                    else if (parent == this) {
+                        canChange = true;
+                    }
+                }
+                if (canChange) {
+                    it->OnVisibleChanged(visible);
                 }
             }
         }
@@ -2206,6 +2213,19 @@ void Node::UnreigsterVisibleNotify() {
     if (me != regVisibleVec.end()) {
         regVisibleVec.erase(me);
     }
+}
+
+bool Node::IsDisplay() const {
+    if (!_running || !_visible) {
+        return false;
+    }
+    const Node* parent = this;
+    while (parent = parent->_parent) {
+        if (!parent->_visible) {
+            return false;
+        }
+    }
+    return true;
 }
 
 NS_CC_END

@@ -127,6 +127,7 @@ public:
         const std::function<void()>& closeCallback = nullptr
     ) override;
 
+    void SetCefClose(bool b) { cefClose = b; }
 
 protected:
     HINSTANCE           _instance;
@@ -166,6 +167,9 @@ protected:
     static std::map<uint16_t,NotifyWrapper> MapNotifyWrapper;
     // ֪ͨID
     static uint16_t NotifyID;
+
+    // CefCloseFlag
+    bool cefClose = true;
 
     static Application * sm_pSharedApplication;
 };

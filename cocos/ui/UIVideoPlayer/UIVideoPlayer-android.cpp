@@ -296,15 +296,15 @@ void VideoPlayer::setVisible(bool visible)
     }
 }
 
-void VideoPlayer::OnVisible(bool visible) {
-    Widget::OnVisible(visible);
+void VideoPlayer::OnVisibleChanged(bool visible) {
+    Widget::OnVisibleChanged(visible);
     JniHelper::callStaticVoidMethod(videoHelperClassName, "setVideoVisible", _videoPlayerIndex, visible);
 }
 
 void VideoPlayer::onEnter()
 {
     Widget::onEnter();
-    if (isVisible() && !_videoURL.empty())
+    if (IsDisplay() && !_videoURL.empty())
     {
         JniHelper::callStaticVoidMethod(videoHelperClassName, "setVideoVisible", _videoPlayerIndex, true);
     }

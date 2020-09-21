@@ -43,12 +43,20 @@
 
 namespace cocos2d {
     namespace ui {
+        size_t WebViewImpl::CefBrowserCount = 0;
         WebViewImpl::WebViewImpl(WebView* webView) :
             _webView(webView) {
+            CefBrowserCount++;
+            cocos2d::Application::getInstance()->SetCefClose(false);
             CreateCefBrowser();
         }
 
-        WebViewImpl::~WebViewImpl() {}
+        WebViewImpl::~WebViewImpl() {
+            CefBrowserCount--;
+            if (!CefBrowserCount) {
+                cocos2d::Application::getInstance()->SetCefClose(true);
+            }
+        }
 
         void WebViewImpl::setJavascriptInterfaceScheme(const std::string& scheme) {
             mJsScheme = scheme;

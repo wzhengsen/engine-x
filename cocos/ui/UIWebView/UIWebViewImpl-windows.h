@@ -138,6 +138,8 @@ namespace cocos2d {
                     ";base64," + CefURIEncode(CefBase64Encode(data.data(), data.size()), false).ToString();
             }
 
+            static size_t CefBrowserCount;
+
             WebView* _webView;
             HWND mHWND = nullptr;
             CefRefPtr<CefBrowser> mBrowser = nullptr;
