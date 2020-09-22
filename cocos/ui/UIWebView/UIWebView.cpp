@@ -31,7 +31,7 @@
 
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 
-#include "ui/UIWebView/UIWebViewImpl-windows.h"
+#include "ui/UIWebView/UIWebViewImpl-desktop.h"
 #include "ui/UIWebView/UIWebView-inl.h"
 
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
