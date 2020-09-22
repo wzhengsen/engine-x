@@ -1,12 +1,12 @@
 if(WINDOWS)
     set(COCOS_UI_SPECIFIC_HEADER
         ui/UIEditBox/UIEditBoxImpl-windows.h
-        ui/UIWebView/UIWebViewImpl-windows.h
+        ui/UIWebView/UIWebViewImpl-desktop.h
         )
     set(COCOS_UI_SPECIFIC_SRC
         ui/UIEditBox/UIEditBoxImpl-windows.cpp
         ui/UIVideoPlayer/UIVideoPlayer-desktop.cpp
-        ui/UIWebView/UIWebViewImpl-windows.cpp
+        ui/UIWebView/UIWebViewImpl-desktop.cpp
         )
 elseif(APPLE)
     if(MACOSX)
@@ -53,12 +53,12 @@ elseif(APPLE)
 elseif(LINUX)
     set(COCOS_UI_SPECIFIC_HEADER
         ui/UIEditBox/UIEditBoxImpl-linux.h
-        ui/UIWebView/UIWebViewImpl-linux.h
+        ui/UIWebView/UIWebViewImpl-desktop.h
         )
     set(COCOS_UI_SPECIFIC_SRC
         ui/UIEditBox/UIEditBoxImpl-linux.cpp
         ui/UIVideoPlayer/UIVideoPlayer-desktop.cpp
-        ui/UIWebView/UIWebViewImpl-linux.cpp
+        ui/UIWebView/UIWebViewImpl-desktop.cpp
         )
 elseif(ANDROID)
     set(COCOS_UI_SPECIFIC_HEADER

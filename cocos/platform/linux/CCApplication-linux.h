@@ -129,9 +129,14 @@ public:
         const std::function<void()>& clickCallback = nullptr,
         const std::function<void()>& closeCallback = nullptr
     ) override;
+
+    void SetCefClose(bool b) { cefClose = b; }
 protected:
     long       _animationInterval;  //micro second
     std::string _resourceRootPath;
+
+    // CefCloseFlag
+    bool cefClose = true;
 
     static Application * sm_pSharedApplication;
 };

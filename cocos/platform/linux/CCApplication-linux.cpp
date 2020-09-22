@@ -38,6 +38,9 @@ THE SOFTWARE.
 #include "base/ccUtils.h"
 #include "platform/CCFileUtils.h"
 
+// The "cef_app.h" contains macros that may cause conflicts, so the function to be used is declared here.
+void CefDoMessageLoopWork();
+
 NS_CC_BEGIN
 using namespace rapidjson;
 
@@ -91,6 +94,7 @@ int Application::run()
     {
         lastTime = getCurrentMillSecond();
 
+        CefDoMessageLoopWork();
         director->mainLoop();
         glview->pollEvents();
 
@@ -114,6 +118,11 @@ int Application::run()
     glview->release();
 
     notify_uninit();
+
+    while (!cefClose) {
+        CefDoMessageLoopWork();
+    }
+
     return EXIT_SUCCESS;
 }
 

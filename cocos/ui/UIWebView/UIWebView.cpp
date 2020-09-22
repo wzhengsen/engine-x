@@ -41,7 +41,7 @@
 
 #elif (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
 
-#include "ui/UIWebView/UIWebViewImpl-linux.h"
+#include "ui/UIWebView/UIWebViewImpl-desktop.h"
 #include "ui/UIWebView/UIWebView-inl.h"
 
 #endif

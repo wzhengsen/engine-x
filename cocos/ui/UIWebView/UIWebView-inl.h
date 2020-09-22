@@ -41,7 +41,7 @@ namespace ui{
 
     WebView::~WebView()
     {
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_WIN32)
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_WIN32 && CC_TARGET_PLATFORM != CC_PLATFORM_LINUX)
         CC_SAFE_DELETE(_impl);
 #else
         _impl->DestroyCefBrowser();
