@@ -2023,6 +2023,53 @@ int lua_cocos2dx_backend_TextureBackend_getHeight(lua_State* tolua_S)
 
     return 0;
 }
+int lua_cocos2dx_backend_TextureBackend_getBytesPerRow(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::TextureBackend* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.TextureBackend",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::TextureBackend*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_TextureBackend_getBytesPerRow'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_TextureBackend_getBytesPerRow'", nullptr);
+            return 0;
+        }
+        int ret = cobj->getBytesPerRow();
+        tolua_pushinteger(tolua_S,(lua_Integer)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.TextureBackend:getBytesPerRow",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_TextureBackend_getBytesPerRow'.",&tolua_err);
+#endif
+
+    return 0;
+}
 static int lua_cocos2dx_backend_TextureBackend_finalize(lua_State* tolua_S)
 {
     printf("luabindings: finalizing LUA object (TextureBackend)");
@@ -2046,6 +2093,7 @@ int lua_register_cocos2dx_backend_TextureBackend(lua_State* tolua_S)
         tolua_function(tolua_S,"getHandler",lua_cocos2dx_backend_TextureBackend_getHandler);
         tolua_function(tolua_S,"getWidth",lua_cocos2dx_backend_TextureBackend_getWidth);
         tolua_function(tolua_S,"getHeight",lua_cocos2dx_backend_TextureBackend_getHeight);
+        tolua_function(tolua_S,"getBytesPerRow",lua_cocos2dx_backend_TextureBackend_getBytesPerRow);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::backend::TextureBackend).name();
     g_luaType[typeName] = "ccb.TextureBackend";
@@ -2651,6 +2699,213 @@ int lua_register_cocos2dx_backend_TextureCubemapBackend(lua_State* tolua_S)
     return 1;
 }
 
+int lua_cocos2dx_backend_Device_newDefaultRenderTarget(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::Device* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.Device",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::Device*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Device_newDefaultRenderTarget'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) 
+    {
+        cocos2d::backend::TargetBufferFlags arg0;
+
+        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccb.Device:newDefaultRenderTarget");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Device_newDefaultRenderTarget'", nullptr);
+            return 0;
+        }
+        cocos2d::backend::RenderTarget* ret = cobj->newDefaultRenderTarget(arg0);
+        object_to_luaval<cocos2d::backend::RenderTarget>(tolua_S, "ccb.RenderTarget",(cocos2d::backend::RenderTarget*)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Device:newDefaultRenderTarget",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Device_newDefaultRenderTarget'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_Device_newRenderTarget(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::Device* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.Device",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::Device*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Device_newRenderTarget'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) 
+    {
+        cocos2d::backend::TargetBufferFlags arg0;
+
+        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccb.Device:newRenderTarget");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Device_newRenderTarget'", nullptr);
+            return 0;
+        }
+        cocos2d::backend::RenderTarget* ret = cobj->newRenderTarget(arg0);
+        object_to_luaval<cocos2d::backend::RenderTarget>(tolua_S, "ccb.RenderTarget",(cocos2d::backend::RenderTarget*)ret);
+        return 1;
+    }
+    if (argc == 2) 
+    {
+        cocos2d::backend::TargetBufferFlags arg0;
+        cocos2d::backend::TextureBackend* arg1;
+
+        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccb.Device:newRenderTarget");
+
+        ok &= luaval_to_object<cocos2d::backend::TextureBackend>(tolua_S, 3, "ccb.TextureBackend",&arg1, "ccb.Device:newRenderTarget");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Device_newRenderTarget'", nullptr);
+            return 0;
+        }
+        cocos2d::backend::RenderTarget* ret = cobj->newRenderTarget(arg0, arg1);
+        object_to_luaval<cocos2d::backend::RenderTarget>(tolua_S, "ccb.RenderTarget",(cocos2d::backend::RenderTarget*)ret);
+        return 1;
+    }
+    if (argc == 3) 
+    {
+        cocos2d::backend::TargetBufferFlags arg0;
+        cocos2d::backend::TextureBackend* arg1;
+        cocos2d::backend::TextureBackend* arg2;
+
+        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccb.Device:newRenderTarget");
+
+        ok &= luaval_to_object<cocos2d::backend::TextureBackend>(tolua_S, 3, "ccb.TextureBackend",&arg1, "ccb.Device:newRenderTarget");
+
+        ok &= luaval_to_object<cocos2d::backend::TextureBackend>(tolua_S, 4, "ccb.TextureBackend",&arg2, "ccb.Device:newRenderTarget");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Device_newRenderTarget'", nullptr);
+            return 0;
+        }
+        cocos2d::backend::RenderTarget* ret = cobj->newRenderTarget(arg0, arg1, arg2);
+        object_to_luaval<cocos2d::backend::RenderTarget>(tolua_S, "ccb.RenderTarget",(cocos2d::backend::RenderTarget*)ret);
+        return 1;
+    }
+    if (argc == 4) 
+    {
+        cocos2d::backend::TargetBufferFlags arg0;
+        cocos2d::backend::TextureBackend* arg1;
+        cocos2d::backend::TextureBackend* arg2;
+        cocos2d::backend::TextureBackend* arg3;
+
+        ok &= luaval_to_int32(tolua_S, 2,(int *)&arg0, "ccb.Device:newRenderTarget");
+
+        ok &= luaval_to_object<cocos2d::backend::TextureBackend>(tolua_S, 3, "ccb.TextureBackend",&arg1, "ccb.Device:newRenderTarget");
+
+        ok &= luaval_to_object<cocos2d::backend::TextureBackend>(tolua_S, 4, "ccb.TextureBackend",&arg2, "ccb.Device:newRenderTarget");
+
+        ok &= luaval_to_object<cocos2d::backend::TextureBackend>(tolua_S, 5, "ccb.TextureBackend",&arg3, "ccb.Device:newRenderTarget");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Device_newRenderTarget'", nullptr);
+            return 0;
+        }
+        cocos2d::backend::RenderTarget* ret = cobj->newRenderTarget(arg0, arg1, arg2, arg3);
+        object_to_luaval<cocos2d::backend::RenderTarget>(tolua_S, "ccb.RenderTarget",(cocos2d::backend::RenderTarget*)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Device:newRenderTarget",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Device_newRenderTarget'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_backend_Device_newDepthStencilState(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::backend::Device* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"ccb.Device",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::backend::Device*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_backend_Device_newDepthStencilState'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_backend_Device_newDepthStencilState'", nullptr);
+            return 0;
+        }
+        cocos2d::backend::DepthStencilState* ret = cobj->newDepthStencilState();
+        object_to_luaval<cocos2d::backend::DepthStencilState>(tolua_S, "ccb.DepthStencilState",(cocos2d::backend::DepthStencilState*)ret);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "ccb.Device:newDepthStencilState",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_backend_Device_newDepthStencilState'.",&tolua_err);
+#endif
+
+    return 0;
+}
 int lua_cocos2dx_backend_Device_newProgram(lua_State* tolua_S)
 {
     int argc = 0;
@@ -2746,6 +3001,9 @@ int lua_register_cocos2dx_backend_Device(lua_State* tolua_S)
     tolua_cclass(tolua_S,"Device","ccb.Device","cc.Ref",nullptr);
 
     tolua_beginmodule(tolua_S,"Device");
+        tolua_function(tolua_S,"newDefaultRenderTarget",lua_cocos2dx_backend_Device_newDefaultRenderTarget);
+        tolua_function(tolua_S,"newRenderTarget",lua_cocos2dx_backend_Device_newRenderTarget);
+        tolua_function(tolua_S,"newDepthStencilState",lua_cocos2dx_backend_Device_newDepthStencilState);
         tolua_function(tolua_S,"newProgram",lua_cocos2dx_backend_Device_newProgram);
         tolua_function(tolua_S,"getInstance", lua_cocos2dx_backend_Device_getInstance);
     tolua_endmodule(tolua_S);
