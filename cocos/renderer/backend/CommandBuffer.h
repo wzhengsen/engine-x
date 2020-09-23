@@ -31,7 +31,7 @@
 
 #include "Macros.h"
 #include "Types.h"
-#include "RenderPassDescriptor.h"
+#include "RenderPassParams.h"
 #include "PixelBufferDescriptor.h"
 #include "CCStdC.h"
 #include "ProgramState.h"
@@ -40,13 +40,18 @@
 #include <memory>
 #include <vector>
 
-CC_BACKEND_BEGIN
+NS_CC_BEGIN
+struct PipelineDescriptor;
+
+namespace backend {
 
 class RenderPass;
 class RenderPipeline;
 class Buffer;
 class DepthStencilState;
 class TextureBackend;
+class RenderTarget;
+struct DepthStencilDescriptor;
 
 /**
  * @addtogroup _backend
@@ -60,6 +65,18 @@ class TextureBackend;
 class CommandBuffer : public cocos2d::Ref
 {
 public:
+    /**
+     * Set depthStencil status once
+     * @param depthStencilState Specifies the depth and stencil status
+     */
+    virtual void setDepthStencilState(DepthStencilState* depthStencilState) = 0;
+
+    /**
+     * Sets the current render pipeline state object once
+     * @param renderPipeline An object that contains the graphics functions and configuration state used in a render pass.
+     */
+    virtual void setRenderPipeline(RenderPipeline* renderPipeline) = 0;
+    
     /// @name Setters & Getters
     /**
      * @brief Indicate the begining of a frame
@@ -70,14 +87,24 @@ public:
      * Begin a render pass, initial color, depth and stencil attachment.
      * @param descriptor Specifies a group of render targets that hold the results of a render pass.
      */
-    virtual void beginRenderPass(const RenderPassDescriptor& descriptor) = 0;
+    virtual void beginRenderPass(const RenderTarget* renderTarget, const RenderPassParams& descriptor) = 0;
     
+
     /**
-     * Sets the current render pipeline state object.
-     * @param renderPipeline An object that contains the graphics functions and configuration state used in a render pass.
+     * Update depthStencil status, improvment: for metal backend cache it
+     * @param depthStencilState Specifies the depth and stencil status
      */
-    virtual void setRenderPipeline(RenderPipeline* renderPipeline) = 0;
-    
+    virtual void updateDepthStencilState(const DepthStencilDescriptor& descriptor) = 0;
+
+    /**
+     * Update render pipeline status
+     * Building a programmable pipeline involves an expensive evaluation of GPU state.
+     * So a new render pipeline object will be created only if it hasn't been created before.
+     * @param rt Specifies the render target.
+     * @param pipelineDescriptor Specifies the pipeline descriptor.
+     */
+    virtual void updatePipelineState(const RenderTarget* rt, const PipelineDescriptor& descriptor) = 0;
+
     /**
      * Fixed-function state
      * @param x The x coordinate of the upper-left corner of the viewport.
@@ -163,16 +190,10 @@ public:
     virtual void setScissorRect(bool isEnabled, float x, float y, float width, float height) = 0;
 
     /**
-     * Set depthStencil status
-     * @param depthStencilState Specifies the depth and stencil status
-     */
-    virtual void setDepthStencilState(DepthStencilState* depthStencilState) = 0;
-
-    /**
      * Get a screen snapshot
      * @param callback A callback to deal with screen snapshot image.
      */
-    virtual void capture(TextureBackend* texture, std::function<void(const PixelBufferDescriptor&)> callback) = 0;
+    virtual void readPixels(RenderTarget* rt, std::function<void(const PixelBufferDescriptor&)> callback) = 0;
     
     /**
      * Update both front and back stencil reference value.

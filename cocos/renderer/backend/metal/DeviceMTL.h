@@ -95,13 +95,17 @@ public:
      * @return A TextureBackend object.
      */
     virtual TextureBackend* newTexture(const TextureDescriptor& descriptor) override;
+
+    RenderTarget* newDefaultRenderTarget(TargetBufferFlags rtf) override;
+    RenderTarget* newRenderTarget(TargetBufferFlags rtf,
+        TextureBackend* colorAttachment,
+        TextureBackend* depthAttachment, 
+        TextureBackend* stencilAttachhment) override;
     
     /**
-     * Create a DepthStencilState object.
-     * @param descriptor Specifies depth and stencil description.
-     * @return An auto release DepthStencilState object.
+     * New a DepthStencilState object.
      */
-    virtual DepthStencilState* createDepthStencilState(const DepthStencilDescriptor& descriptor) override;
+    virtual DepthStencilState* newDepthStencilState() override;
     
     /**
      * New a RenderPipeline object.

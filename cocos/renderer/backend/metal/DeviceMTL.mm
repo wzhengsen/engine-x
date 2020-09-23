@@ -31,6 +31,7 @@
 #include "TextureMTL.h"
 #include "ProgramMTL.h"
 #include "DeviceInfoMTL.h"
+#include "RenderTargetMTL.h"
 
 #include "base/ccMacros.h"
 
@@ -108,18 +109,35 @@ TextureBackend* DeviceMTL::newTexture(const TextureDescriptor& descriptor)
     }
 }
 
+RenderTarget* DeviceMTL::newDefaultRenderTarget(TargetBufferFlags rtf)
+{
+    auto rtGL = new RenderTargetMTL(true);
+    rtGL->setTargetFlags(rtf);
+    return rtGL;
+}
+
+RenderTarget* DeviceMTL::newRenderTarget(TargetBufferFlags rtf,
+    TextureBackend* colorAttachment,
+    TextureBackend* depthAttachment,
+    TextureBackend* stencilAttachhment)
+{
+    auto rtGL = new RenderTargetMTL(false);
+    rtGL->setTargetFlags(rtf);
+    rtGL->bindFrameBuffer();
+    rtGL->setColorAttachment(RenderTarget::ColorAttachment{ { colorAttachment, 0 } });
+    rtGL->setDepthAttachment(depthAttachment);
+    rtGL->setStencilAttachment(stencilAttachhment);
+    return rtGL;
+}
+
 ShaderModule* DeviceMTL::newShaderModule(ShaderStage stage, const std::string& source)
 {
     return new (std::nothrow) ShaderModuleMTL(_mtlDevice, stage, source);
 }
 
-DepthStencilState* DeviceMTL::createDepthStencilState(const DepthStencilDescriptor& descriptor)
+DepthStencilState* DeviceMTL::newDepthStencilState()
 {
-    auto ret = new (std::nothrow) DepthStencilStateMTL(_mtlDevice, descriptor);
-    if (ret)
-        ret->autorelease();
-    
-    return ret;
+    return new (std::nothrow) DepthStencilStateMTL(_mtlDevice);
 }
 
 RenderPipeline* DeviceMTL::newRenderPipeline()

@@ -27,7 +27,7 @@
 #include "Macros.h"
 #include "Types.h"
 #include "RenderPipelineDescriptor.h"
-#include "RenderPassDescriptor.h"
+#include "RenderPassParams.h"
 #include "Texture.h"
 #include "DepthStencilState.h"
 #include "ProgramCache.h"
@@ -45,6 +45,7 @@ class Buffer;
 class ShaderModule;
 class RenderPipeline;
 class RenderPass;
+class RenderTarget;
 
 /**
  * @addtogroup _backend
@@ -89,12 +90,14 @@ public:
      */
     virtual TextureBackend* newTexture(const TextureDescriptor& descriptor) = 0;
 
-    /**
-     * Create an auto released DepthStencilState object.
-     * @param descriptor Specifies depth and stencil description.
-     * @return An auto release DepthStencilState object.
-     */
-    virtual DepthStencilState* createDepthStencilState(const DepthStencilDescriptor& descriptor) = 0;
+    virtual RenderTarget* newDefaultRenderTarget(TargetBufferFlags rtf) = 0;
+
+    virtual RenderTarget* newRenderTarget(TargetBufferFlags rtf,
+        TextureBackend* colorAttachment = nullptr,
+        TextureBackend* depthAttachment = nullptr,
+        TextureBackend* stencilAttachhment = nullptr) = 0;
+
+    virtual DepthStencilState* newDepthStencilState() = 0;
 
     /**
      * New a RenderPipeline object, not auto released.

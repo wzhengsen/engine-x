@@ -31,6 +31,7 @@
 #include "DepthStencilStateGL.h"
 #include "ProgramGL.h"
 #include "DeviceInfoGL.h"
+#include "RenderTargetGL.h"
 
 CC_BACKEND_BEGIN
 
@@ -82,18 +83,35 @@ TextureBackend* DeviceGL::newTexture(const TextureDescriptor& descriptor)
     }
 }
 
+RenderTarget* DeviceGL::newDefaultRenderTarget(TargetBufferFlags rtf)
+{
+    auto rtGL = new RenderTargetGL(true);
+    rtGL->setTargetFlags(rtf);
+    return rtGL;
+}
+
+RenderTarget* DeviceGL::newRenderTarget(TargetBufferFlags rtf,
+    TextureBackend* colorAttachment,
+    TextureBackend* depthAttachment,
+    TextureBackend* stencilAttachhment)
+{
+    auto rtGL = new RenderTargetGL(false);
+    rtGL->setTargetFlags(rtf);
+    rtGL->bindFrameBuffer();
+    rtGL->setColorAttachment({ RenderTarget::ColorAttachment{ {colorAttachment, 0} } });
+    rtGL->setDepthAttachment(depthAttachment);
+    rtGL->setStencilAttachment(stencilAttachhment);
+    return rtGL;
+}
+
 ShaderModule* DeviceGL::newShaderModule(ShaderStage stage, const std::string& source)
 {
     return new (std::nothrow) ShaderModuleGL(stage, source);
 }
 
-DepthStencilState* DeviceGL::createDepthStencilState(const DepthStencilDescriptor& descriptor)
+DepthStencilState* DeviceGL::newDepthStencilState()
 {
-    auto ret = new (std::nothrow) DepthStencilStateGL(descriptor);
-    if (ret)
-        ret->autorelease();
-    
-    return ret;
+    return new (std::nothrow) DepthStencilStateGL();
 }
 
 RenderPipeline* DeviceGL::newRenderPipeline()

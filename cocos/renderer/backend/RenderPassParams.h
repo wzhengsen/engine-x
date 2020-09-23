@@ -24,45 +24,58 @@
  
 #pragma once
 
-#include "../RenderPipeline.h"
-#include "../RenderPipelineDescriptor.h"
-
-#include "platform/CCGL.h"
-
+#include <array>
 #include <vector>
+
+#include "Macros.h"
+#include "Types.h"
 
 CC_BACKEND_BEGIN
 
-class ProgramGL;
+class TextureBackend;
 /**
- * @addtogroup _opengl
+ * @addtogroup _backend
  * @{
  */
 
-/**
- * Set program and blend state.
- */
-class RenderPipelineGL : public RenderPipeline
-{
-public:
+struct RenderPassFlags {
     /**
-     * @param descriptor Specifies render pipeline descriptor.
+     * bitmask indicating which buffers to clear at the beginning of a render pass.
+     * This implies discard.
      */
-    RenderPipelineGL() = default;
-    ~RenderPipelineGL();
+    TargetBufferFlags clear;
 
-    virtual void update(const RenderTarget*, const PipelineDescriptor & pipelineDescirptor) override;
     /**
-     * Get program instance.
-     * @return Program instance.
+     * bitmask indicating which buffers to discard at the beginning of a render pass.
+     * Discarded buffers have uninitialized content, they must be entirely drawn over or cleared.
      */
-    inline ProgramGL* getProgram() const { return _programGL; }
+    TargetBufferFlags discardStart;
 
-private:
-    void updateBlendState(const BlendDescriptor& descriptor);
-
-    ProgramGL* _programGL = nullptr;
+    /**
+     * bitmask indicating which buffers to discard at the end of a render pass.
+     * Discarded buffers' content becomes invalid, they must not be read from again.
+     */
+    TargetBufferFlags discardEnd;
 };
-// end of _opengl group
+
+
+/**
+ * Store values about color, depth and stencil attachment.
+ */
+struct RenderPassParams
+{
+    RenderPassParams& operator=(const RenderPassParams& descriptor) = default;
+    bool operator==(const RenderPassParams& descriptor) const;
+
+    float clearDepthValue = 0.f;
+    float clearStencilValue = 0.f;
+    std::array<float, 4> clearColorValue {{0.f, 0.f, 0.f, 0.f}}; // double-braces required in C++11
+    
+    // Now, only clear flag used
+    RenderPassFlags flags{};
+};
+typedef RenderPassParams RenderPassParams;
+
+//end of _backend group
 /// @}
 CC_BACKEND_END

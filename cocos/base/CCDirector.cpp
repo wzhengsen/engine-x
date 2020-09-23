@@ -391,12 +391,12 @@ void Director::setOpenGLView(GLView *openGLView)
 
         _isStatusLabelUpdated = true;
 
+        _renderer->init();
+        
         if (_openGLView)
         {
             setGLDefaultValues();
         }
-
-       _renderer->init();
 
         if (_eventDispatcher)
         {
