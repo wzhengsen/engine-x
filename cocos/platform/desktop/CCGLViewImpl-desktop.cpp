@@ -1046,7 +1046,6 @@ void GLViewImpl::onGLFWWindowFocusCallback(GLFWwindow* /*window*/, int focused)
     }
 }
 
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_MAC)
 static bool loadFboExtensions() {
     const char* gl_extensions = (const char*)glGetString(GL_EXTENSIONS);
 
@@ -1125,7 +1124,6 @@ static bool loadFboExtensions() {
     }
     return true;
 }
-#endif
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
 X11Window GLViewImpl::getX11Window() const noexcept{
