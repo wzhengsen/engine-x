@@ -153,7 +153,7 @@ namespace cocos2d {
 
         void WebViewImpl::setVisible(bool visible) {
             mVisible = visible;
-            if (mBrowserWindow) {
+            if (mBrowserWindow && mBrowser) {
 #if _WIN32
                 ShowWindow(mBrowserWindow, visible ? SW_SHOW : SW_HIDE);
                 if (!visible) {
@@ -197,7 +197,7 @@ namespace cocos2d {
         }
 
         void WebViewImpl::ResizeMoveCefBrowser() {
-            if (!mBrowserWindow) {
+            if (!mBrowserWindow || !mBrowser || !_webView) {
                 return;
             }
             const auto uiRect = cocos2d::ui::Helper::convertBoundingBoxToScreen(_webView);
@@ -219,18 +219,22 @@ namespace cocos2d {
             }
             XMoveResizeWindow(
                 (Display*)mXDisplay, mBrowserWindow,
-                x,y,w,h
+                x, y, w, h
             );
 #endif
         }
 
         void WebViewImpl::DestroyCefBrowser() {
+            _webView = nullptr;
             if (mBrowser) {
                 mBrowser->GetHost()->CloseBrowser(true);
 #if _WIN32
                 DestroyWindow(mBrowserWindow);
+                mBrowserWindow = nullptr;
 #elif __linux__
-                XDestroyWindow((Display*)mXDisplay, mBrowserWindow);
+                XUnmapWindow((Display*)mXDisplay, mBrowserWindow);
+                //XDestroyWindow((Display*)mXDisplay, mBrowserWindow);
+                mBrowserWindow = 0;
 #endif
                 mBrowser = nullptr;
             }
@@ -241,10 +245,16 @@ namespace cocos2d {
 
             mBrowserWindow = browser->GetHost()->GetWindowHandle();
             mBrowser = browser;
+            if (!_webView) {
+                DestroyCefBrowser();
+                return;
+            }
             if (!mUrl.empty()) {
                 mBrowser->GetMainFrame()->LoadURL(mUrl);
             }
-            _webView->_transformUpdated = _webView->_transformDirty = _webView->_inverseDirty = true;
+            if (_webView) {
+                _webView->_transformUpdated = _webView->_transformDirty = _webView->_inverseDirty = true;
+            }
             if (mScalesPageToFit) {
                 setScalesPageToFit(true);
             }
@@ -256,7 +266,11 @@ namespace cocos2d {
             mIsClosing = true;
             // Allow the close. For windowed browsers this will result in the OS close
             // event being sent.
+#if _WIN32
             return true;
+#elif __linux__
+            return false;
+#endif
         }
 
         void WebViewImpl::OnBeforeClose(CefRefPtr<CefBrowser> browser) {
@@ -267,7 +281,7 @@ namespace cocos2d {
 
         void WebViewImpl::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, int httpStatusCode) {
             CEF_REQUIRE_UI_THREAD();
-            if (_webView->_onDidFinishLoading) {
+            if (_webView && _webView->_onDidFinishLoading) {
                 _webView->_onDidFinishLoading(_webView, frame->GetURL());
             }
         }
@@ -292,7 +306,7 @@ namespace cocos2d {
 
             frame->LoadURL(GetDataURI(ss.str(), "text/html"));
 
-            if (_webView->_onDidFailLoading) {
+            if (_webView && _webView->_onDidFailLoading) {
                 _webView->_onDidFailLoading(_webView, failedUrl);
             }
         }
@@ -309,13 +323,13 @@ namespace cocos2d {
             const std::string url = request->GetURL();
             std::string scheme = url.substr(0, url.find_first_of(':'));
             if (scheme == mJsScheme) {
-                if (_webView->_onJSCallback) {
+                if (_webView && _webView->_onJSCallback) {
                     _webView->_onJSCallback(_webView, url);
                 }
                 return true;
             }
 
-            if (_webView->_onShouldStartLoading && !url.empty()) {
+            if (_webView && _webView->_onShouldStartLoading && !url.empty()) {
                 return !_webView->_onShouldStartLoading(_webView, url);
             }
 
