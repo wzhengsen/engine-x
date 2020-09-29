@@ -40,7 +40,7 @@ static long getCurrentMillSecond()
 {
     long lLastTime = 0;
     struct timeval stCurrentTime;
-    
+
     gettimeofday(&stCurrentTime,NULL);
     lLastTime = stCurrentTime.tv_sec*1000+stCurrentTime.tv_usec*0.001; // milliseconds
     return lLastTime;
@@ -68,20 +68,20 @@ int Application::run()
     {
         return 1;
     }
-    
+
     long lastTime = 0L;
     long curTime = 0L;
-    
+
     auto director = Director::getInstance();
     auto glview = director->getOpenGLView();
-    
+
     // Retain glview to avoid glview being released in the while loop
     glview->retain();
 
     while (!glview->windowShouldClose())
     {
         lastTime = getCurrentMillSecond();
-        
+
         director->mainLoop();
         glview->pollEvents();
 
@@ -102,9 +102,9 @@ int Application::run()
         director->end();
         director->mainLoop();
     }
-    
+
     glview->release();
-    
+
     return 0;
 }
 
@@ -126,6 +126,14 @@ std::string Application::getVersion() {
     return "";
 }
 
+int64_t Application::GetCompileVersion() {
+    NSString* version = [[[NSBundle mainBundle]infoDictionary] objectForKey:@"CFBundleVersion"];
+    if (version) {
+        return[version intValue];
+    }
+    return 0;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // static member function
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -142,7 +150,7 @@ const char * Application::getCurrentLanguageCode()
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSArray *languages = [defaults objectForKey:@"AppleLanguages"];
     NSString *currentLanguage = [languages objectAtIndex:0];
-    
+
     // get the current language code.(such as English is "en", Chinese is "zh" and so on)
     NSDictionary* temp = [NSLocale componentsFromLocaleIdentifier:currentLanguage];
     NSString * languageCode = [temp objectForKey:NSLocaleLanguageCode];
@@ -157,11 +165,11 @@ LanguageType Application::getCurrentLanguage()
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     NSArray *languages = [defaults objectForKey:@"AppleLanguages"];
     NSString *currentLanguage = [languages objectAtIndex:0];
-    
+
     // get the current language code.(such as English is "en", Chinese is "zh" and so on)
     NSDictionary* temp = [NSLocale componentsFromLocaleIdentifier:currentLanguage];
     NSString * languageCode = [temp objectForKey:NSLocaleLanguageCode];
-    
+
     return utils::getLanguageTypeByISO2([languageCode UTF8String]);
 }
 

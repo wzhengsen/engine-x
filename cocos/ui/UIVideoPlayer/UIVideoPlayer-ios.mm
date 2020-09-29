@@ -23,7 +23,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "ui/UIVideoPlayer.h"
+#include "ui/UIVideoPlayer/UIVideoPlayer.h"
 
 // No Available on tvOS
 #if CC_TARGET_PLATFORM == CC_PLATFORM_IOS && !defined(CC_TARGET_OS_TVOS)
@@ -183,7 +183,7 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
 -(void) videoFinished:(NSNotification *)notification
 {
     if(_videoPlayer != nullptr) {
-        _videoPlayer->onPlayEvent((int)VideoPlayer::EventType::COMPLETED);
+        _videoPlayer->OnPlayEvent((int)VideoPlayer::EventType::COMPLETED);
         _state = PlayerbackStateCompleted;
 
         if (_repeatEnabled) {
@@ -218,7 +218,7 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
     if (self.playerController.player && _state != PlayerbackStatePlaying) {
         [self.playerController.player play];
         _state = PlayerbackStatePlaying;
-        _videoPlayer->onPlayEvent((int)VideoPlayer::EventType::PLAYING);
+        _videoPlayer->OnPlayEvent((int)VideoPlayer::EventType::PLAYING);
     }
 }
 
@@ -227,7 +227,7 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
     if (self.playerController.player && _state == PlayerbackStatePlaying) {
         [self.playerController.player pause];
         _state = PlayerbackStatePaused;
-        _videoPlayer->onPlayEvent((int)VideoPlayer::EventType::PAUSED);
+        _videoPlayer->OnPlayEvent((int)VideoPlayer::EventType::PAUSED);
     }
 }
 
@@ -248,7 +248,7 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
         // stop() will be invoked in dealloc, which is invoked by _videoPlayer's destructor,
         // so do't send the message when _videoPlayer is being deleted.
         if (_videoPlayer)
-            _videoPlayer->onPlayEvent((int)VideoPlayer::EventType::STOPPED);
+            _videoPlayer->OnPlayEvent((int)VideoPlayer::EventType::STOPPED);
     }
 }
 
@@ -294,33 +294,33 @@ VideoPlayer::~VideoPlayer()
     UnreigsterVisibleNotify();
 }
 
-void VideoPlayer::setFileName(const std::string& fileName)
+void VideoPlayer::SetFileName(const std::string& fileName)
 {
     _videoURL = FileUtils::getInstance()->fullPathForFilename(fileName);
     _videoSource = VideoPlayer::Source::FILENAME;
     [((UIVideoViewWrapperIos*)_videoView) setURL:(int)_videoSource :_videoURL];
 }
 
-void VideoPlayer::setURL(const std::string& videoUrl)
+void VideoPlayer::SetURL(const std::string& videoUrl)
 {
     _videoURL = videoUrl;
     _videoSource = VideoPlayer::Source::URL;
     [((UIVideoViewWrapperIos*)_videoView) setURL:(int)_videoSource :_videoURL];
 }
 
-void VideoPlayer::setLooping(bool looping)
+void VideoPlayer::SetLooping(bool looping)
 {
     _isLooping = looping;
     [((UIVideoViewWrapperIos*)_videoView) setRepeatEnabled:_isLooping];
 }
 
-void VideoPlayer::setUserInputEnabled(bool enableInput)
+void VideoPlayer::SetUserInputEnabled(bool enableInput)
 {
     _isUserInputEnabled = enableInput;
     [((UIVideoViewWrapperIos*)_videoView) setUserInteractionEnabled:enableInput];
 }
 
-void VideoPlayer::setStyle(StyleType style)
+void VideoPlayer::SetStyle(StyleType style)
 {
     _styleType = style;
 
@@ -373,17 +373,17 @@ void VideoPlayer::draw(Renderer* renderer, const Mat4 &transform, uint32_t flags
 #endif
 }
 
-bool VideoPlayer::isFullScreenEnabled()const
+bool VideoPlayer::IsFullScreenEnabled()const
 {
     return [((UIVideoViewWrapperIos*)_videoView) isFullScreenEnabled];
 }
 
-void VideoPlayer::setFullScreenEnabled(bool enabled)
+void VideoPlayer::SetFullScreenEnabled(bool enabled)
 {
     [((UIVideoViewWrapperIos*)_videoView) setFullScreenEnabled:enabled];
 }
 
-void VideoPlayer::setKeepAspectRatioEnabled(bool enable)
+void VideoPlayer::SetKeepAspectRatioEnabled(bool enable)
 {
     if (_keepAspectRatioEnabled != enable)
     {
@@ -392,7 +392,7 @@ void VideoPlayer::setKeepAspectRatioEnabled(bool enable)
     }
 }
 
-void VideoPlayer::play()
+void VideoPlayer::Play()
 {
     if (! _videoURL.empty())
     {
@@ -400,7 +400,7 @@ void VideoPlayer::play()
     }
 }
 
-void VideoPlayer::pause()
+void VideoPlayer::Pause()
 {
     if (! _videoURL.empty())
     {
@@ -408,7 +408,7 @@ void VideoPlayer::pause()
     }
 }
 
-void VideoPlayer::resume()
+void VideoPlayer::Resume()
 {
     if (! _videoURL.empty())
     {
@@ -416,7 +416,7 @@ void VideoPlayer::resume()
     }
 }
 
-void VideoPlayer::stop()
+void VideoPlayer::Stop()
 {
     if (! _videoURL.empty())
     {
@@ -424,7 +424,7 @@ void VideoPlayer::stop()
     }
 }
 
-void VideoPlayer::seekTo(float sec)
+void VideoPlayer::SeekTo(float sec)
 {
     if (! _videoURL.empty())
     {
@@ -432,17 +432,17 @@ void VideoPlayer::seekTo(float sec)
     }
 }
 
-bool VideoPlayer::isPlaying() const
+bool VideoPlayer::IsPlaying() const
 {
     return _isPlaying;
 }
 
-bool VideoPlayer::isLooping() const
+bool VideoPlayer::IsLooping() const
 {
     return _isLooping;
 }
 
-bool VideoPlayer::isUserInputEnabled() const
+bool VideoPlayer::IsUserInputEnabled() const
 {
     return _isUserInputEnabled;
 }
@@ -486,12 +486,12 @@ void VideoPlayer::onExit()
     [((UIVideoViewWrapperIos*)_videoView) setVisible: NO];
 }
 
-void VideoPlayer::addEventListener(const VideoPlayer::ccVideoPlayerCallback& callback)
+void VideoPlayer::AddEventListener(const VideoPlayer::ccVideoPlayerCallback& callback)
 {
     _eventCallback = callback;
 }
 
-void VideoPlayer::onPlayEvent(int event)
+void VideoPlayer::OnPlayEvent(int event)
 {
     if (event == (int)VideoPlayer::EventType::PLAYING) {
         _isPlaying = true;

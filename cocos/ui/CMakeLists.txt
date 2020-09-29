@@ -40,7 +40,6 @@ elseif(APPLE)
             )
         set(COCOS_UI_SPECIFIC_SRC
             ui/UIVideoPlayer/UIVideoPlayer-ios.mm
-            ui/UIWebView/UIWebView-ios.mm
             ui/UIWebView/UIWebViewImpl-ios.mm
             ui/UIEditBox/UIEditBoxImpl-ios.mm
             ui/UIEditBox/iOS/CCUIEditBoxIOS.mm
@@ -155,7 +154,7 @@ set(COCOS_UI_SRC
     ui/UITabControl.cpp
     ui/UIEditBox/UIEditBox.cpp
     ui/UIEditBox/UIEditBoxImpl-common.cpp
-    ui/UIWebView/UIWebView.cpp
+    #ui/UIWebView/UIWebView.cpp
     ui/UIQrCode/UIQrCode.cpp
     ui/UIQrCode/QrEncode/bitstream.cpp
     ui/UIQrCode/QrEncode/mask.cpp
@@ -164,4 +163,10 @@ set(COCOS_UI_SRC
     ui/UIQrCode/QrEncode/qrspec.cpp
     ui/UIQrCode/QrEncode/rscode.cpp
     ui/UIQrCode/QrEncode/split.cpp
-    )
+)
+
+if(APPLE)
+    list(APPEND COCOS_UI_SRC ui/UIWebView/UIWebView.mm)
+else()
+    list(APPEND COCOS_UI_SRC ui/UIWebView/UIWebView.cpp)
+endif()

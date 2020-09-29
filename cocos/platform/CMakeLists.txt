@@ -68,7 +68,6 @@ elseif(APPLE)
             platform/mac/CCGLViewImpl-mac.h
             platform/mac/CCPlatformDefine-mac.h
             platform/mac/CCApplication-mac.h
-           # platform/desktop/CCGLViewImpl-desktop.h
             )
         set(COCOS_PLATFORM_SPECIFIC_SRC
             ${COCOS_PLATFORM_SPECIFIC_SRC}
@@ -76,7 +75,6 @@ elseif(APPLE)
             platform/mac/CCGLViewImpl-mac.mm
             platform/mac/CCCommon-mac.mm
             platform/mac/CCDevice-mac.mm
-           # platform/desktop/CCGLViewImpl-desktop.cpp
             )
     elseif(IOS)
         set(COCOS_PLATFORM_SPECIFIC_HEADER

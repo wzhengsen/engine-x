@@ -121,6 +121,14 @@ std::string Application::getVersion() {
     return "";
 }
 
+int64_t Application::GetCompileVersion() {
+    NSString* version = [[[NSBundle mainBundle]infoDictionary] objectForKey:@"CFBundleVersion"];
+    if (version) {
+        return[version intValue];
+    }
+    return 0;
+}
+
 bool Application::openURL(const std::string &url)
 {
     NSString* msg = [NSString stringWithCString:url.c_str() encoding:NSUTF8StringEncoding];

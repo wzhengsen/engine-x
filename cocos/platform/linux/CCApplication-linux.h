@@ -110,7 +110,7 @@ public:
     virtual Platform getTargetPlatform() override;
 
     /*
-     @brief 创建一个非模式对话框。
+     @brief 创建一个模式对话框。
             提供0-2个回调，即有1-2个按钮，最少有一个“确定”按钮。
     */
     void Dialog(

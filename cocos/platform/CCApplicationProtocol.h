@@ -161,7 +161,7 @@ public:
     virtual bool RestartLuaEngine() = 0;
 
     /*
-     @brief 创建一个非模式对话框。
+     @brief 创建一个非模式或模式对话框。
             提供0-2个回调，即有1-2个按钮，最少有一个“确定”按钮。
      @param title           标题
             content         内容
