@@ -29,6 +29,7 @@
 #include <string.h>
 #include <string>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -115,6 +116,18 @@ public:
      * @js NA
      */
     static int callLuaFunctionById(int functionId, int64_t arg);
+
+    /**
+     * Call the Lua function corresponding to the functionId with the std::map<string,string> arg.
+     *
+     * @param functionId the values corresponding to the Lua function.
+     * @param arg the std::map<string,string> to the argument.
+     * @return a number value returned from the Lua function when call successfully, otherwise return -1 or the opposite number for one of the three numbers LUA_ERRRUN, LUA_ERRMEM and LUA_ERRERR.
+     *
+     * @lua NA
+     * @js NA
+     */
+    static int callLuaFunctionById(int functionId, const std::map<std::string,std::string>& arg);
 
     /**
      * Call the Lua function corresponding to the functionId.

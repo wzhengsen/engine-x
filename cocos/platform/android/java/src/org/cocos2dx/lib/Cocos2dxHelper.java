@@ -102,6 +102,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -127,7 +128,7 @@ public class Cocos2dxHelper {
     private static boolean sCompassEnabled;
     private static boolean sActivityVisible;
     private static String sPackageName;
-    private static Activity sActivity = null;
+    private static Cocos2dxActivity sActivity = null;
     private static Cocos2dxHelperListener sCocos2dxHelperListener;
     private static Set<OnActivityResultListener> onActivityResultListeners = new LinkedHashSet<OnActivityResultListener>();
     private static Vibrator sVibrateService = null;
@@ -157,7 +158,7 @@ public class Cocos2dxHelper {
 
     private static boolean sInited = false;
 
-    public static void init(final Activity activity) {
+    public static void init(final Cocos2dxActivity activity) {
         sActivity = activity;
         Cocos2dxHelper.sCocos2dxHelperListener = (Cocos2dxHelperListener) activity;
         if (!sInited) {
@@ -411,9 +412,16 @@ public class Cocos2dxHelper {
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Cocos2dxLuaJavaBridge.callLuaFunction(ok);
-                            Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
-                            Cocos2dxLuaJavaBridge.releaseLuaFunction(cancel);
+                            sActivity.runOnGLThread(
+                                    new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Cocos2dxLuaJavaBridge.callLuaFunction(ok);
+                                            Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
+                                            Cocos2dxLuaJavaBridge.releaseLuaFunction(cancel);
+                                        }
+                                    }
+                            );
                             dialogInterface.dismiss();
                         }
                     });
@@ -422,9 +430,16 @@ public class Cocos2dxHelper {
                     builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            Cocos2dxLuaJavaBridge.callLuaFunction(cancel);
-                            Cocos2dxLuaJavaBridge.releaseLuaFunction(cancel);
-                            Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
+                            sActivity.runOnGLThread(
+                                    new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Cocos2dxLuaJavaBridge.callLuaFunction(cancel);
+                                            Cocos2dxLuaJavaBridge.releaseLuaFunction(cancel);
+                                            Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
+                                        }
+                                    }
+                            );
                             dialogInterface.dismiss();
                         }
                     });
@@ -444,16 +459,22 @@ public class Cocos2dxHelper {
             Intent toMainActivityIntent = new Intent(context, sActivity.getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             context.startActivity(toMainActivityIntent);
 
-            String action = intent.getAction();
-            int okFunc = intent.getIntExtra("okFunc", -1);
+            final String action = intent.getAction();
+            final int okFunc = intent.getIntExtra("okFunc", -1);
             if (-1 == okFunc) {
                 return;
             }
-
-            if (action != null && action.equals("LuaNotifyClicked")) {
-                Cocos2dxLuaJavaBridge.callLuaFunction(okFunc);
-            }
-            Cocos2dxLuaJavaBridge.releaseLuaFunction(okFunc);
+            sActivity.runOnGLThread(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            if (action != null && action.equals("LuaNotifyClicked")) {
+                                Cocos2dxLuaJavaBridge.callLuaFunction(okFunc);
+                            }
+                            Cocos2dxLuaJavaBridge.releaseLuaFunction(okFunc);
+                        }
+                    }
+            );
         }
     }
 
@@ -536,7 +557,7 @@ public class Cocos2dxHelper {
     static private int OnLuaOrientationChanged = -1;
     public static void OnOrientationChanged(final int ori) {
         if (OnLuaOrientationChanged != -1) {
-            ((Cocos2dxActivity) sActivity).runOnGLThread(
+            sActivity.runOnGLThread(
                     new Runnable() {
                         @Override
                         public void run() {
@@ -744,30 +765,24 @@ public class Cocos2dxHelper {
             }
 
             if (OnLuaRequestLocation != -1) {
-                double x = location.getLongitude();
-                double y = location.getLatitude();
-                String province = location.getProvince();    //获取省份
-                String city = location.getCity();    //获取城市
-                String district = location.getDistrict();    //获取区县
-                String street = location.getStreet();    //获取街道信息
-                String num = location.getStreetNumber();
+                final HashMap<String,String> hashMap = new HashMap<>();
+                hashMap.put("code",String.valueOf(location.getLocType()));
+                hashMap.put("x",String.valueOf(location.getLongitude()));
+                hashMap.put("y",String.valueOf(location.getLatitude()));
+                hashMap.put("province",location.getProvince());//获取省份
+                hashMap.put("city",location.getCity());//获取城市
+                hashMap.put("district",location.getDistrict());//获取区县
+                hashMap.put("street",location.getStreet());//获取街道信息
+                hashMap.put("num",location.getStreetNumber());
 
-                String sb = String.valueOf(location.getLocType()) +
-                        '\r' +
-                        x +
-                        '\r' +
-                        y +
-                        '\r' +
-                        province +
-                        '\r' +
-                        city +
-                        '\r' +
-                        district +
-                        '\r' +
-                        street +
-                        '\r' +
-                        num;
-                Cocos2dxLuaJavaBridge.callLuaFunctionWithString(OnLuaRequestLocation, sb);
+                sActivity.runOnGLThread(
+                        new Runnable() {
+                            @Override
+                            public void run() {
+                                Cocos2dxLuaJavaBridge.callLuaFunctionWithMap(OnLuaRequestLocation, hashMap);
+                            }
+                        }
+                );
             }
         }
     }
