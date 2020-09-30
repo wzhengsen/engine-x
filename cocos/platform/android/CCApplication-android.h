@@ -68,18 +68,18 @@ public:
     @return Current language config
     */
     virtual LanguageType getCurrentLanguage() override;
-    
+
     /**
     @brief Get current language iso 639-1 code
     @return Current language iso 639-1 code
     */
     virtual const char * getCurrentLanguageCode() override;
-    
+
     /**
      @brief Get target platform
      */
     virtual Platform getTargetPlatform() override;
-    
+
     /**
      @brief Get application version.
      */
@@ -105,7 +105,7 @@ public:
     virtual void applicationScreenSizeChanged(int newWidth, int newHeight);
 
     /*
-     @brief 创建一个非模式对话框。
+     @brief 创建一个模式对话框。
             提供0-2个回调，即有1-2个按钮，最少有一个“确定”按钮。
     */
     void Dialog(

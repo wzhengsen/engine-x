@@ -31,7 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class Cocos2dxReflectionHelper {
-    public static <T> T getConstantValue(final Class aClass, final String constantName) {
+    public static <T> T getConstantValue(final Class<?> aClass, final String constantName) {
         try {
             return (T)aClass.getDeclaredField(constantName).get(null);
         } catch (NoSuchFieldException e) {
@@ -51,9 +51,9 @@ public class Cocos2dxReflectionHelper {
     }
 
     public static <T> T invokeInstanceMethod(final Object instance, final String methodName,
-                                             final Class[] parameterTypes, final Object[] parameters) {
+                                             final Class<?>[] parameterTypes, final Object[] parameters) {
 
-        final Class aClass = instance.getClass();
+        final Class<?> aClass = instance.getClass();
         try {
             final Method method = aClass.getMethod(methodName, parameterTypes);
             return (T)method.invoke(instance, parameters);

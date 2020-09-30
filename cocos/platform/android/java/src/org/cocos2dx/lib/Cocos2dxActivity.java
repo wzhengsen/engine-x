@@ -376,12 +376,25 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
             return !powerManager.isScreenOn();
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[]grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Check it is a lua Request?
+        if (requestCode >= 10000) {
+            // Lua request one permission at once.
+            if (permissions.length == 1) {
+                Cocos2dxLuaJavaBridge.callLuaFunctionWithBool(requestCode - 10000,grantResults[0] == PackageManager.PERMISSION_GRANTED);
+            }
+            Cocos2dxLuaJavaBridge.releaseLuaFunction(requestCode);
+        }
+    }
     
     // ===========================================================
     // Inner and Anonymous Classes
     // ===========================================================
 
-    private class Cocos2dxEGLConfigChooser implements GLSurfaceView.EGLConfigChooser
+    private static class Cocos2dxEGLConfigChooser implements GLSurfaceView.EGLConfigChooser
     {
         private int[] mConfigAttributes;
         private  final int EGL_OPENGL_ES2_BIT = 0x04;

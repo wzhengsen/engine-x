@@ -49,6 +49,14 @@ JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFuncti
 /*
  * Class:     Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge
  * Method:    callLuaFunctionWithLong
+ * Signature: (IZ)I
+ */
+JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFunctionWithBool
+        (JNIEnv *, jclass, jint, jboolean);
+
+/*
+ * Class:     Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge
+ * Method:    callLuaFunctionWithLong
  * Signature: (ILjava/util/Map;)I
  */
 JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFunctionWithMap

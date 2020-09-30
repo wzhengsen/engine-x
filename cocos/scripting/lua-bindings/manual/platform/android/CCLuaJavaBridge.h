@@ -106,16 +106,28 @@ public:
     static int callLuaFunctionById(int functionId, const char *arg);
 
     /**
-     * Call the Lua function corresponding to the functionId with the string pointer arg.
+     * Call the Lua function corresponding to the functionId with int64 arg.
      *
      * @param functionId the values corresponding to the Lua function.
-     * @param arg the string pointer point to the argument.
+     * @param arg int64 to the argument.
      * @return a number value returned from the Lua function when call successfully, otherwise return -1 or the opposite number for one of the three numbers LUA_ERRRUN, LUA_ERRMEM and LUA_ERRERR.
      *
      * @lua NA
      * @js NA
      */
     static int callLuaFunctionById(int functionId, int64_t arg);
+
+    /**
+     * Call the Lua function corresponding to the functionId with boolean arg.
+     *
+     * @param functionId the values corresponding to the Lua function.
+     * @param arg boolean to the argument.
+     * @return a number value returned from the Lua function when call successfully, otherwise return -1 or the opposite number for one of the three numbers LUA_ERRRUN, LUA_ERRMEM and LUA_ERRERR.
+     *
+     * @lua NA
+     * @js NA
+     */
+    static int callLuaFunctionById(int functionId, bool arg);
 
     /**
      * Call the Lua function corresponding to the functionId with the std::map<string,string> arg.

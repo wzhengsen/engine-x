@@ -136,6 +136,7 @@ public class Cocos2dxHelper {
     private static ConnectivityManager sConnectivityService = null;
     private static WifiManager sWifiService = null;
     private static TelephonyManager sTelephonyService = null;
+    private static NotificationManager sNotifyService = null;
     private static Intent sIntentBattery = null;
     //Enhance API modification begin
     private static IGameTuningService mGameServiceBinder = null;
@@ -206,11 +207,12 @@ public class Cocos2dxHelper {
 
             Cocos2dxBitmap.setContext(activity);
 
-            Cocos2dxHelper.sVibrateService = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
-            Cocos2dxHelper.sClipboardService = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-            Cocos2dxHelper.sWifiService = (WifiManager) activity.getSystemService(Context.WIFI_SERVICE);
-            Cocos2dxHelper.sConnectivityService = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-            Cocos2dxHelper.sTelephonyService = (TelephonyManager)activity.getSystemService(Context.TELEPHONY_SERVICE);
+            sVibrateService = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+            sClipboardService = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+            sWifiService = (WifiManager) activity.getSystemService(Context.WIFI_SERVICE);
+            sConnectivityService = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+            sTelephonyService = (TelephonyManager)activity.getSystemService(Context.TELEPHONY_SERVICE);
+            sNotifyService = (NotificationManager)sActivity.getSystemService(Context.NOTIFICATION_SERVICE);
 
             // 通过粘性广播读取电池信息。
             // 注意，粘性广播不需要广播接收器。
@@ -478,10 +480,21 @@ public class Cocos2dxHelper {
         }
     }
 
+    static public boolean NotifyEnabled() {
+        return sNotifyService.areNotificationsEnabled();
+    }
+
+    static public void GotoNotifySetting() {
+        Intent intent = new Intent();
+        intent.setAction("android.settings.APP_NOTIFICATION_SETTINGS");
+        intent.putExtra("android.provider.extra.APP_PACKAGE", sActivity.getPackageName());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        sActivity.startActivity(intent);
+    }
+
     static String nChannel = "";
     public static void Notify(String title, String content, final int ok) {
-        NotificationManager nm = (NotificationManager) sActivity.getSystemService(Context.NOTIFICATION_SERVICE);
-        if (!nm.areNotificationsEnabled()) {
+        if (!sNotifyService.areNotificationsEnabled()) {
             Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
             return;
         }
@@ -504,7 +517,7 @@ public class Cocos2dxHelper {
             channel.enableVibration(true);
             channel.setVibrationPattern(new long[]{500});
             channel.setShowBadge(false);
-            nm.createNotificationChannel(channel);
+            sNotifyService.createNotificationChannel(channel);
         }
         long tm = System.currentTimeMillis();
 
@@ -528,7 +541,7 @@ public class Cocos2dxHelper {
                 .setAutoCancel(true)
                 .setTicker(content)
                 .build();
-        nm.notify((int) (tm / 100), n);
+        sNotifyService.notify((int) (tm / 100), n);
     }
 
     public static int GetOrientation() {
@@ -751,12 +764,13 @@ public class Cocos2dxHelper {
         return CacheId;
     }
 
-    static private int OnLuaRequestLocation = -1;
     static private class BaiduLocationListener extends BDAbstractLocationListener {
         private LocationClient lc = null;
+        private int luaCallback = -1;
 
-        BaiduLocationListener(LocationClient lc) {
+        BaiduLocationListener(LocationClient lc, int cb) {
             this.lc = lc;
+            luaCallback = cb;
         }
         @Override
         public void onReceiveLocation(BDLocation location){
@@ -764,7 +778,7 @@ public class Cocos2dxHelper {
                 lc.stop();
             }
 
-            if (OnLuaRequestLocation != -1) {
+            if (luaCallback != -1) {
                 final HashMap<String,String> hashMap = new HashMap<>();
                 hashMap.put("code",String.valueOf(location.getLocType()));
                 hashMap.put("x",String.valueOf(location.getLongitude()));
@@ -779,29 +793,26 @@ public class Cocos2dxHelper {
                         new Runnable() {
                             @Override
                             public void run() {
-                                Cocos2dxLuaJavaBridge.callLuaFunctionWithMap(OnLuaRequestLocation, hashMap);
+                                Cocos2dxLuaJavaBridge.callLuaFunctionWithMap(luaCallback, hashMap);
+                                Cocos2dxLuaJavaBridge.releaseLuaFunction(luaCallback);
                             }
                         }
                 );
             }
         }
     }
-    public static void SetOnLuaRequestLocation(int luaCallBack) {
-        if (OnLuaRequestLocation != -1) {
-            Cocos2dxLuaJavaBridge.releaseLuaFunction(OnLuaRequestLocation);
-        }
-        OnLuaRequestLocation = luaCallBack;
-    }
 
-    public static void RequestLocation() {
+    public static void RequestLocation(int luaCallback) {
         try {
             if (sActivity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 sActivity.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},0);
+                Cocos2dxLuaJavaBridge.releaseLuaFunction(luaCallback);
+                return;
             }
             LocationClient lc = new LocationClient(sActivity);
             // 声明LocationClient类
             // 注册监听函数
-            lc.registerLocationListener(new BaiduLocationListener(lc));
+            lc.registerLocationListener(new BaiduLocationListener(lc,luaCallback));
 
             LocationClientOption option = new LocationClientOption();
 
@@ -829,6 +840,15 @@ public class Cocos2dxHelper {
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public static boolean CheckPermission(String pmStr) {
+        return sActivity.checkSelfPermission(pmStr) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public static void RequestPermission(String rpStr,int luaCallback) {
+        // LuaRequest use request code bigger than 10000.
+        sActivity.requestPermissions(new String[]{rpStr},10000 + luaCallback);
     }
 
     public static String getVersion() {

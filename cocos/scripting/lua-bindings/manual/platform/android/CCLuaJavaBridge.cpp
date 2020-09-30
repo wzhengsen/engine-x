@@ -651,6 +651,47 @@ int LuaJavaBridge::callLuaFunctionById(int functionId, int64_t arg)
     return -1;
 }
 
+int LuaJavaBridge::callLuaFunctionById(int functionId, bool arg)
+{
+    lua_State *L = s_luaState;
+    int top = lua_gettop(L);
+    /* L: */
+    lua_pushstring(L, LUAJ_REGISTRY_FUNCTION);                  /* L: key */
+    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f_id */
+    if (!lua_istable(L, -1))
+    {
+        lua_pop(L, 1);
+        return -1;
+    }
+
+    lua_pushnil(L);                                             /* L: f_id nil */
+    while (lua_next(L, -2) != 0)                                /* L: f_id f id */
+    {
+        int value = lua_tonumber(L, -1);
+        lua_pop(L, 1);                                          /* L: f_id f */
+        if (value == functionId)
+        {
+            lua_pushboolean(L, arg);                             /* L: f_id f arg */
+            int ok = lua_pcall(L, 1, 1, 0);                     /* L: f_id ret|err */
+            int ret;
+            if (ok == 0)
+            {
+                ret = lua_tonumber(L, -1);
+            }
+            else
+            {
+                ret = -ok;
+            }
+
+            lua_settop(L, top);
+            return ret;
+        }
+    }                                                           /* L: f_id */
+
+    lua_settop(L, top);
+    return -1;
+}
+
 int LuaJavaBridge::callLuaFunctionById(int functionId, const std::map<std::string,std::string>& arg) {
     lua_State *L = s_luaState;
     int top = lua_gettop(L);

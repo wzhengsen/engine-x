@@ -52,6 +52,12 @@ JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFuncti
     return LuaJavaBridge::callLuaFunctionById(functionId, value);
 }
 
+JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFunctionWithBool
+        (JNIEnv *env, jclass cls, jint functionId, jboolean value)
+{
+    return LuaJavaBridge::callLuaFunctionById(functionId, (bool)value);
+}
+
 JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFunctionWithMap
         (JNIEnv *env, jclass cls, jint functionId, jobject value)
 {
