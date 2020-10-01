@@ -243,4 +243,151 @@ int LuaBridge::retainLuaFunction(lua_State *L, int functionIndex, int *retainCou
     return functionId;
 }
 
+int LuaBridge::callLuaFunctionById(int functionId, const char *arg)
+{
+    lua_State *L = s_luaState;
+    int top = lua_gettop(L);
+    /* L: */
+    lua_pushstring(L, LUA_BRIDGE_REGISTRY_FUNCTION);                  /* L: key */
+    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f_id */
+    if (!lua_istable(L, -1))
+    {
+        lua_pop(L, 1);
+        return -1;
+    }
+
+    lua_geti(L, -1, functionId);
+    if(!lua_isfunction(L, -1)) {
+        lua_settop(L, top);
+        return -1;
+    }
+
+    lua_pushstring(L, arg);
+    int ok = lua_pcall(L, 1, 0, 0);
+    lua_settop(L, top);
+    return ok;
+}
+
+int LuaBridge::callLuaFunctionById(int functionId, int64_t arg)
+{
+    lua_State *L = s_luaState;
+    int top = lua_gettop(L);
+    /* L: */
+    lua_pushstring(L, LUA_BRIDGE_REGISTRY_FUNCTION);                  /* L: key */
+    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f_id */
+    if (!lua_istable(L, -1))
+    {
+        lua_pop(L, 1);
+        return -1;
+    }
+
+    lua_geti(L, -1, functionId);
+    if(!lua_isfunction(L, -1)) {
+        lua_settop(L, top);
+        return -1;
+    }
+
+    lua_pushinteger(L, arg);
+    int ok = lua_pcall(L, 1, 0, 0);
+    lua_settop(L, top);
+    return ok;
+}
+
+int LuaBridge::callLuaFunctionById(int functionId, bool arg)
+{
+    lua_State *L = s_luaState;
+    int top = lua_gettop(L);
+    /* L: */
+    lua_pushstring(L, LUA_BRIDGE_REGISTRY_FUNCTION);                  /* L: key */
+    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f_id */
+    if (!lua_istable(L, -1))
+    {
+        lua_pop(L, 1);
+        return -1;
+    }
+
+    lua_geti(L, -1, functionId);
+    if(!lua_isfunction(L, -1)) {
+        lua_settop(L, top);
+        return -1;
+    }
+
+    lua_pushboolean(L, arg);
+    int ok = lua_pcall(L, 1, 0, 0);
+    lua_settop(L, top);
+    return ok;
+}
+
+int LuaBridge::callLuaFunctionById(int functionId, const std::map<std::string,std::string>& arg) {
+    lua_State *L = s_luaState;
+    int top = lua_gettop(L);
+    /* L: */
+    lua_pushstring(L, LUA_BRIDGE_REGISTRY_FUNCTION);                  /* L: key */
+    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f_id */
+    if (!lua_istable(L, -1))
+    {
+        lua_pop(L, 1);
+        return -1;
+    }
+
+    lua_geti(L, -1, functionId);
+    if(!lua_isfunction(L, -1)) {
+        lua_settop(L, top);
+        return -1;
+    }
+
+    lua_createtable(L, 0, arg.size());
+    for(const auto& it : arg) {
+        lua_pushlstring(L, it.second.c_str(), it.second.length());
+        lua_setfield(L, -2, it.first.c_str());
+    }
+    int ok = lua_pcall(L, 1, 0, 0);
+    lua_settop(L, top);
+
+    return ok;
+}
+
+int LuaBridge::callLuaFunctionById(int functionId)
+{
+    lua_State *L = s_luaState;
+    int top = lua_gettop(L);
+    /* L: */
+    lua_pushstring(L, LUA_BRIDGE_REGISTRY_FUNCTION);                  /* L: key */
+    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f_id */
+    if (!lua_istable(L, -1))
+    {
+        lua_pop(L, 1);
+        return -1;
+    }
+
+    lua_geti(L, -1, functionId);
+    if(!lua_isfunction(L, -1)) {
+        lua_settop(L, top);
+        return -1;
+    }
+
+    const int ok = lua_pcall(L, 0, 0, 0);                     /* L: f_id ret|err */
+    lua_settop(L, top);
+    return ok;
+}
+
+// call lua global function
+int LuaBridge::callLuaGlobalFunction(const char *functionName, const char *arg)
+{
+    lua_State *L = s_luaState;
+
+    int top = lua_gettop(L);
+
+    lua_getglobal(L, functionName);
+    int ok = -1;
+    if (lua_isfunction(L, -1))
+    {
+        lua_pushstring(L, arg);
+        ok = lua_pcall(L, 1, 0, 0);
+    }
+
+    lua_settop(L, top);
+    return ok;
+}
+
 NS_CC_END

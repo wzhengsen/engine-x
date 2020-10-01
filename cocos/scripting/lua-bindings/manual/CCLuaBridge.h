@@ -99,6 +99,77 @@ public:
      * @return the retain count or 0.
      */
     static int releaseLuaFunctionById(int functionId);
+
+    /**
+     * Call the Lua function corresponding to the functionId with the string pointer arg.
+     *
+     * @param functionId the values corresponding to the Lua function.
+     * @param arg the string pointer point to the argument.
+     * @return a number value returned from the Lua function when call successfully, otherwise return -1 or the opposite number for one of the three numbers LUA_ERRRUN, LUA_ERRMEM and LUA_ERRERR.
+     *
+     * @lua NA
+     * @js NA
+     */
+    static int callLuaFunctionById(int functionId, const char *arg);
+
+    /**
+     * Call the Lua function corresponding to the functionId with int64 arg.
+     *
+     * @param functionId the values corresponding to the Lua function.
+     * @param arg int64 to the argument.
+     * @return a number value returned from the Lua function when call successfully, otherwise return -1 or the opposite number for one of the three numbers LUA_ERRRUN, LUA_ERRMEM and LUA_ERRERR.
+     *
+     * @lua NA
+     * @js NA
+     */
+    static int callLuaFunctionById(int functionId, int64_t arg);
+
+    /**
+     * Call the Lua function corresponding to the functionId with boolean arg.
+     *
+     * @param functionId the values corresponding to the Lua function.
+     * @param arg boolean to the argument.
+     * @return a number value returned from the Lua function when call successfully, otherwise return -1 or the opposite number for one of the three numbers LUA_ERRRUN, LUA_ERRMEM and LUA_ERRERR.
+     *
+     * @lua NA
+     * @js NA
+     */
+    static int callLuaFunctionById(int functionId, bool arg);
+
+    /**
+     * Call the Lua function corresponding to the functionId with the std::map<string,string> arg.
+     *
+     * @param functionId the values corresponding to the Lua function.
+     * @param arg the std::map<string,string> to the argument.
+     * @return a number value returned from the Lua function when call successfully, otherwise return -1 or the opposite number for one of the three numbers LUA_ERRRUN, LUA_ERRMEM and LUA_ERRERR.
+     *
+     * @lua NA
+     * @js NA
+     */
+    static int callLuaFunctionById(int functionId, const std::map<std::string,std::string>& arg);
+
+    /**
+     * Call the Lua function corresponding to the functionId.
+     *
+     * @param functionId the values corresponding to the Lua function.
+     * @return a number value returned from the Lua function when call successfully, otherwise return -1 or the opposite number for one of the three numbers LUA_ERRRUN, LUA_ERRMEM and LUA_ERRERR.
+     *
+     * @lua NA
+     * @js NA
+     */
+    static int callLuaFunctionById(int functionId);
+
+    /**
+     * Call a global Lua function named functionName with the string pointer arg.
+     *
+     * @param functionName the name of global function.
+     * @param arg the string pointer point to the argument.
+     * @return a number value returned from the Lua function when call successfully, otherwise return -1 or the opposite number for one of the three numbers LUA_ERRRUN, LUA_ERRMEM and LUA_ERRERR.
+     *
+     * @lua NA
+     * @js NA
+     */
+    static int callLuaGlobalFunction(const char *functionName, const char *arg);
     
 protected:
     static int retainLuaFunction(lua_State *L, int functionIndex, int *retainCountReturn);

@@ -89,7 +89,7 @@ bool LuaJavaBridge::CallInfo::execute()
             break;
 
         default:
-            m_error = LUAJ_ERR_TYPE_NOT_SUPPORT;
+            m_error = LuaBridgeError::kLuaBridgeErrorMethodSignature;
             LOGD("Return type '%d' is not supported", static_cast<int>(m_returnType));
             return false;
     }
@@ -98,7 +98,7 @@ bool LuaJavaBridge::CallInfo::execute()
 	{
 		m_env->ExceptionDescribe();
 		m_env->ExceptionClear();
-		m_error = LUAJ_ERR_EXCEPTION_OCCURRED;
+		m_error = LuaBridgeError::kLuaBridgeErrorExceptionOccurred;
 		return false;
 	}
 
@@ -152,7 +152,7 @@ bool LuaJavaBridge::CallInfo::executeWithArgs(jvalue *args)
              break;
 
         default:
-            m_error = LUAJ_ERR_TYPE_NOT_SUPPORT;
+            m_error = LuaBridgeError::kLuaBridgeErrorMethodSignature;
             LOGD("Return type '%d' is not supported", static_cast<int>(m_returnType));
             return false;
      }
@@ -161,7 +161,7 @@ bool LuaJavaBridge::CallInfo::executeWithArgs(jvalue *args)
 	{
 		m_env->ExceptionDescribe();
 		m_env->ExceptionClear();
-		m_error = LUAJ_ERR_EXCEPTION_OCCURRED;
+		m_error = LuaBridgeError::kLuaBridgeErrorExceptionOccurred;
 		return false;
 	}
 
@@ -170,7 +170,7 @@ bool LuaJavaBridge::CallInfo::executeWithArgs(jvalue *args)
 
 int LuaJavaBridge::CallInfo::pushReturnValue(lua_State *L)
 {
-	if (m_error != LUAJ_ERR_OK)
+	if (m_error != LuaBridgeError::kLuaBridgeErrorOk)
 	{
 		lua_pushinteger(L, m_error);
 		return 1;
@@ -219,7 +219,7 @@ bool LuaJavaBridge::CallInfo::validateMethodSig()
     size_t len = m_methodSig.length();
     if (len < 3 || m_methodSig[0] != '(') // min sig is "()V"
     {
-    	m_error = LUAJ_ERR_INVALID_SIGNATURES;
+    	m_error = LuaBridgeError::kLuaBridgeErrorMethodSignature;
     	return false;
 	}
 
@@ -236,7 +236,7 @@ bool LuaJavaBridge::CallInfo::validateMethodSig()
 
     if (pos >= len || m_methodSig[pos] != ')')
 	{
-    	m_error = LUAJ_ERR_INVALID_SIGNATURES;
+    	m_error = LuaBridgeError::kLuaBridgeErrorMethodSignature;
     	return false;
 	}
 
@@ -269,7 +269,7 @@ LuaJavaBridge::ValueType LuaJavaBridge::CallInfo::checkType(const string& sig, s
             size_t pos2 = sig.find_first_of(';', *pos + 1);
             if (pos2 == string::npos)
             {
-                m_error = LUAJ_ERR_INVALID_SIGNATURES;
+                m_error = LuaBridgeError::kLuaBridgeErrorMethodSignature;
                 return TypeInvalid;
             }
 
@@ -286,12 +286,12 @@ LuaJavaBridge::ValueType LuaJavaBridge::CallInfo::checkType(const string& sig, s
             }
             else
             {
-            	m_error = LUAJ_ERR_TYPE_NOT_SUPPORT;
+            	m_error = LuaBridgeError::kLuaBridgeErrorMethodSignature;
                 return TypeInvalid;
             }
     }
 
-    m_error = LUAJ_ERR_TYPE_NOT_SUPPORT;
+    m_error = LuaBridgeError::kLuaBridgeErrorMethodSignature;
     return TypeInvalid;
 }
 
@@ -311,7 +311,7 @@ bool LuaJavaBridge::CallInfo::getMethodInfo()
             if (jvm->AttachCurrentThread(&m_env, nullptr) < 0)
             {
                 LOGD("%s", "Failed to get the environment using AttachCurrentThread()");
-                m_error = LUAJ_ERR_VM_THREAD_DETACHED;
+                m_error = LuaBridgeError::kLuaBridgeErrorJavaVMError;
                 return false;
             }
             break;
@@ -319,7 +319,7 @@ bool LuaJavaBridge::CallInfo::getMethodInfo()
         case JNI_EVERSION :
         default :
             LOGD("%s", "Failed to get the environment using GetEnv()");
-            m_error = LUAJ_ERR_VM_FAILURE;
+            m_error = LuaBridgeError::kLuaBridgeErrorJavaVMError;
             return false;
     }
     jstring _jstrClassName = m_env->NewStringUTF(m_className.c_str());
@@ -341,7 +341,7 @@ bool LuaJavaBridge::CallInfo::getMethodInfo()
                 m_className.c_str(),
                 m_methodName.c_str(),
                 m_methodSig.c_str());
-        m_error = LUAJ_ERR_METHOD_NOT_FOUND;
+        m_error = LuaBridgeError::kLuaBridgeErrorMethodNotFound;
         return false;
     }
 
@@ -375,7 +375,7 @@ int LuaJavaBridge::callJavaStaticMethod(lua_State *L)
     if (!lua_isstring(L, -4) || !lua_isstring(L, -3)  || !lua_istable(L, -2) || !lua_isstring(L, -1))
     {
     	lua_pushboolean(L, 0);
-    	lua_pushinteger(L, LUAJ_ERR_INVALID_SIGNATURES);
+    	lua_pushinteger(L, LuaBridgeError::kLuaBridgeErrorMethodSignature);
     	return 2;
     }
 
@@ -389,7 +389,7 @@ int LuaJavaBridge::callJavaStaticMethod(lua_State *L)
 
     if (!call.isValid()) {
         lua_pushboolean(L, 0);
-        lua_pushinteger(L, LUAJ_ERR_INVALID_SIGNATURES);
+        lua_pushinteger(L, LuaBridgeError::kLuaBridgeErrorMethodSignature);
         return 2;
     }
 
@@ -461,423 +461,7 @@ int LuaJavaBridge::callJavaStaticMethod(lua_State *L)
 	return 1 + call.pushReturnValue(L);
 }
 
-// increase lua function reference counter, return counter
-int LuaJavaBridge::retainLuaFunctionById(int functionId)
-{
-    lua_State *L = s_luaState;
-
-    lua_pushstring(L, LUAJ_REGISTRY_RETAIN);                    /* L: key */
-    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: id_r */
-    if (!lua_istable(L, -1))
-    {
-        lua_pop(L, 1);
-        return 0;
-    }
-
-    // get counter
-    lua_pushinteger(L, functionId);                             /* L: id_r id */
-    lua_rawget(L, -2);                                          /* L: id_r r */
-    if (lua_type(L, -1) != LUA_TNUMBER)
-    {
-        lua_pop(L, 2);
-        return 0;
-    }
-
-    // increase counter
-    int retainCount = lua_tonumber(L, -1);
-    retainCount++;
-    lua_pop(L, 1);                                              /* L: id_r */
-    lua_pushinteger(L, functionId);                             /* L: id_r id */
-    lua_pushinteger(L, retainCount);                            /* L: id_r id r */
-    lua_rawset(L, -3);                            /* id_r[id] = r, L: id_r */
-    lua_pop(L, 1);
-
-    LOGD("luajretainLuaFunctionById(%d) - retain count = %d", functionId, retainCount);
-
-    return retainCount;
-}
-
-// decrease lua function reference counter, return counter
-int LuaJavaBridge::releaseLuaFunctionById(int functionId)
-{
-    lua_State *L = s_luaState;
-                                                                /* L: */
-    lua_pushstring(L, LUAJ_REGISTRY_FUNCTION);                  /* L: key */
-    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f_id */
-    if (!lua_istable(L, -1))
-    {
-        lua_pop(L, 1);
-        LOGD("%s", "luajreleaseLuaFunctionById() - LUAJ_REGISTRY_FUNCTION not exists");
-        return 0;
-    }
-
-    lua_pushstring(L, LUAJ_REGISTRY_RETAIN);                    /* L: f_id key */
-    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f_id id_r */
-    if (!lua_istable(L, -1))
-    {
-        lua_pop(L, 2);
-        LOGD("%s", "luajreleaseLuaFunctionById() - LUAJ_REGISTRY_RETAIN not exists");
-        return 0;
-    }
-
-    lua_pushinteger(L, functionId);                             /* L: f_id id_r id */
-    lua_rawget(L, -2);                                          /* L: f_id id_r r */
-    if (lua_type(L, -1) != LUA_TNUMBER)
-    {
-        lua_pop(L, 3);
-        LOGD("luajreleaseLuaFunctionById() - function id %d not found", functionId);
-        return 0;
-    }
-
-    int retainCount = lua_tonumber(L, -1);
-    retainCount--;
-
-    if (retainCount > 0)
-    {
-        // update counter
-        lua_pop(L, 1);                                          /* L: f_id id_r */
-        lua_pushinteger(L, functionId);                         /* L: f_id id_r id */
-        lua_pushinteger(L, retainCount);                        /* L: f_id id_r id r */
-        lua_rawset(L, -3);                        /* id_r[id] = r, L: f_id id_r */
-        lua_pop(L, 2);
-        LOGD("luajreleaseLuaFunctionById() - function id %d retain count = %d", functionId, retainCount);
-        return retainCount;
-    }
-
-    // remove lua function reference
-    lua_pop(L, 1);                                              /* L: f_id id_r */
-    lua_pushinteger(L, functionId);                             /* L: f_id id_r id */
-    lua_pushnil(L);                                             /* L: f_id id_r id nil */
-    lua_rawset(L, -3);                          /* id_r[id] = nil, L: f_id id_r */
-
-    lua_pop(L, 1);                                              /* L: f_id */
-    lua_pushnil(L);                                             /* L: f_id nil */
-    while (lua_next(L, -2) != 0)                                /* L: f_id f id */
-    {
-        int value = lua_tonumber(L, -1);
-        lua_pop(L, 1);                                          /* L: f_id f */
-        if (value == functionId)
-        {
-            lua_pushnil(L);                                     /* L: f_id f nil */
-            lua_rawset(L, -3);                   /* f_id[f] = nil, L: f_id */
-            break;
-        }
-    }                                                           /* L: f_id */
-
-    lua_pop(L, 1);
-    LOGD("luajreleaseLuaFunctionById() - function id %d released", functionId);
-    return 0;
-}
-
-int LuaJavaBridge::callLuaFunctionById(int functionId, const char *arg)
-{
-    lua_State *L = s_luaState;
-    int top = lua_gettop(L);
-                                                                /* L: */
-    lua_pushstring(L, LUAJ_REGISTRY_FUNCTION);                  /* L: key */
-    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f_id */
-    if (!lua_istable(L, -1))
-    {
-        lua_pop(L, 1);
-        return -1;
-    }
-
-    lua_pushnil(L);                                             /* L: f_id nil */
-    while (lua_next(L, -2) != 0)                                /* L: f_id f id */
-    {
-        int value = lua_tonumber(L, -1);
-        lua_pop(L, 1);                                          /* L: f_id f */
-        if (value == functionId)
-        {
-            lua_pushstring(L, arg);                             /* L: f_id f arg */
-            int ok = lua_pcall(L, 1, 1, 0);                     /* L: f_id ret|err */
-            int ret;
-            if (ok == 0)
-            {
-                ret = lua_tonumber(L, -1);
-            }
-            else
-            {
-                ret = -ok;
-            }
-
-            lua_settop(L, top);
-            return ret;
-        }
-    }                                                           /* L: f_id */
-
-    lua_settop(L, top);
-    return -1;
-}
-
-int LuaJavaBridge::callLuaFunctionById(int functionId, int64_t arg)
-{
-    lua_State *L = s_luaState;
-    int top = lua_gettop(L);
-    /* L: */
-    lua_pushstring(L, LUAJ_REGISTRY_FUNCTION);                  /* L: key */
-    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f_id */
-    if (!lua_istable(L, -1))
-    {
-        lua_pop(L, 1);
-        return -1;
-    }
-
-    lua_pushnil(L);                                             /* L: f_id nil */
-    while (lua_next(L, -2) != 0)                                /* L: f_id f id */
-    {
-        int value = lua_tonumber(L, -1);
-        lua_pop(L, 1);                                          /* L: f_id f */
-        if (value == functionId)
-        {
-            lua_pushinteger(L, arg);                             /* L: f_id f arg */
-            int ok = lua_pcall(L, 1, 1, 0);                     /* L: f_id ret|err */
-            int ret;
-            if (ok == 0)
-            {
-                ret = lua_tonumber(L, -1);
-            }
-            else
-            {
-                ret = -ok;
-            }
-
-            lua_settop(L, top);
-            return ret;
-        }
-    }                                                           /* L: f_id */
-
-    lua_settop(L, top);
-    return -1;
-}
-
-int LuaJavaBridge::callLuaFunctionById(int functionId, bool arg)
-{
-    lua_State *L = s_luaState;
-    int top = lua_gettop(L);
-    /* L: */
-    lua_pushstring(L, LUAJ_REGISTRY_FUNCTION);                  /* L: key */
-    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f_id */
-    if (!lua_istable(L, -1))
-    {
-        lua_pop(L, 1);
-        return -1;
-    }
-
-    lua_pushnil(L);                                             /* L: f_id nil */
-    while (lua_next(L, -2) != 0)                                /* L: f_id f id */
-    {
-        int value = lua_tonumber(L, -1);
-        lua_pop(L, 1);                                          /* L: f_id f */
-        if (value == functionId)
-        {
-            lua_pushboolean(L, arg);                             /* L: f_id f arg */
-            int ok = lua_pcall(L, 1, 1, 0);                     /* L: f_id ret|err */
-            int ret;
-            if (ok == 0)
-            {
-                ret = lua_tonumber(L, -1);
-            }
-            else
-            {
-                ret = -ok;
-            }
-
-            lua_settop(L, top);
-            return ret;
-        }
-    }                                                           /* L: f_id */
-
-    lua_settop(L, top);
-    return -1;
-}
-
-int LuaJavaBridge::callLuaFunctionById(int functionId, const std::map<std::string,std::string>& arg) {
-    lua_State *L = s_luaState;
-    int top = lua_gettop(L);
-    /* L: */
-    lua_pushstring(L, LUAJ_REGISTRY_FUNCTION);                  /* L: key */
-    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f_id */
-    if (!lua_istable(L, -1))
-    {
-        lua_pop(L, 1);
-        return -1;
-    }
-
-    lua_pushnil(L);                                             /* L: f_id nil */
-    while (lua_next(L, -2) != 0)                                /* L: f_id f id */
-    {
-        int value = lua_tonumber(L, -1);
-        lua_pop(L, 1);                                          /* L: f_id f */
-        if (value == functionId)
-        {
-            lua_createtable(L, 0, arg.size());
-            for(const auto& it : arg) {
-                lua_pushlstring(L, it.second.c_str(), it.second.length());
-                lua_setfield(L, -2, it.first.c_str());
-            }
-            int ok = lua_pcall(L, 1, 1, 0);                     /* L: f_id ret|err */
-            int ret;
-            if (ok == 0)
-            {
-                ret = lua_tonumber(L, -1);
-            }
-            else
-            {
-                ret = -ok;
-            }
-
-            lua_settop(L, top);
-            return ret;
-        }
-    }                                                           /* L: f_id */
-
-    lua_settop(L, top);
-    return -1;
-}
-
-int LuaJavaBridge::callLuaFunctionById(int functionId)
-{
-    lua_State *L = s_luaState;
-    int top = lua_gettop(L);
-    /* L: */
-    lua_pushstring(L, LUAJ_REGISTRY_FUNCTION);                  /* L: key */
-    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f_id */
-    if (!lua_istable(L, -1))
-    {
-        lua_pop(L, 1);
-        return -1;
-    }
-
-    lua_pushnil(L);                                             /* L: f_id nil */
-    while (lua_next(L, -2) != 0)                                /* L: f_id f id */
-    {
-        int value = lua_tonumber(L, -1);
-        lua_pop(L, 1);                                          /* L: f_id f */
-        if (value == functionId)
-        {
-            int ok = lua_pcall(L, 0, 1, 0);                     /* L: f_id ret|err */
-            int ret;
-            if (ok == 0)
-            {
-                ret = lua_tonumber(L, -1);
-            }
-            else
-            {
-                ret = -ok;
-            }
-
-            lua_settop(L, top);
-            return ret;
-        }
-    }                                                           /* L: f_id */
-
-    lua_settop(L, top);
-    return -1;
-}
-
-// call lua global function
-int LuaJavaBridge::callLuaGlobalFunction(const char *functionName, const char *arg)
-{
-    lua_State *L = s_luaState;
-
-    int ret = -1;
-    int top = lua_gettop(L);
-
-    lua_getglobal(L, functionName);
-    if (lua_isfunction(L, -1))
-    {
-        lua_pushstring(L, arg);
-        int ok = lua_pcall(L, 1, 1, 0);
-        if (ok == 0)
-        {
-            ret = lua_tonumber(L, -1);
-        }
-        else
-        {
-            ret = -ok;
-        }
-    }
-
-    lua_settop(L, top);
-    return ret;
-}
-
 // ----------------------------------------
-
-// increase lua function reference counter, return functionId
-int LuaJavaBridge::retainLuaFunction(lua_State *L, int functionIndex, int *retainCountReturn)
-{
-                                                                /* L: f ... */
-    lua_pushstring(L, LUAJ_REGISTRY_FUNCTION);                  /* L: f ... key */
-    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f ... f_id */
-    if (!lua_istable(L, -1))
-    {
-        lua_pop(L, 1);
-        lua_newtable(L);
-        lua_pushstring(L, LUAJ_REGISTRY_FUNCTION);
-        lua_pushvalue(L, -2);
-        lua_rawset(L, LUA_REGISTRYINDEX);
-    }
-
-    lua_pushstring(L, LUAJ_REGISTRY_RETAIN);                    /* L: f ... f_id key */
-    lua_rawget(L, LUA_REGISTRYINDEX);                           /* L: f ... f_id id_r */
-    if (!lua_istable(L, -1))
-    {
-        lua_pop(L, 1);
-        lua_newtable(L);
-        lua_pushstring(L, LUAJ_REGISTRY_RETAIN);
-        lua_pushvalue(L, -2);
-        lua_rawset(L, LUA_REGISTRYINDEX);
-    }
-
-    // get function id
-    lua_pushvalue(L, functionIndex - 2);                        /* L: f ... f_id id_r f */
-    lua_rawget(L, -3);                                          /* L: f ... f_id id_r id */
-
-    int functionId;
-    if (lua_type(L, -1) != LUA_TNUMBER)
-    {
-        // first retain, create new id
-        lua_pop(L, 1);                                          /* L: f ... f_id id_r */
-        s_newFunctionId++;
-        functionId = s_newFunctionId;
-
-        lua_pushvalue(L, functionIndex - 2);                    /* L: f ... f_id id_r f */
-        lua_pushinteger(L, functionId);                         /* L: f ... f_id id_r f id */
-        lua_rawset(L, -4);                        /* f_id[f] = id, L: f ... f_id id_r */
-        lua_pushinteger(L, functionId);                         /* L: f ... f_id id_r id */
-    }
-    else
-    {
-        functionId = lua_tonumber(L, -1);
-    }
-
-    // get function retain
-    lua_pushvalue(L, -1);                                       /* L: f ... f_id id_r id id */
-    lua_rawget(L, -3);                                          /* L: f ... f_id id_r id r */
-    int retainCount = 1;
-    if (lua_type(L, -1) != LUA_TNUMBER)
-    {
-        // first retain, set retain count = 1
-        lua_pop(L, 1);
-        lua_pushinteger(L, retainCount);
-    }
-    else
-    {
-        // add retain count
-        retainCount = lua_tonumber(L, -1);
-        retainCount++;
-        lua_pop(L, 1);
-        lua_pushinteger(L, retainCount);
-    }
-
-    lua_rawset(L, -3);                            /* id_r[id] = r, L: f ... f_id id_r */
-    lua_pop(L, 2);                                              /* L: f ... */
-
-    if (retainCountReturn) *retainCountReturn = retainCount;
-    return functionId;
-}
 
 int LuaJavaBridge::fetchArrayElements(lua_State *L, int index)
 {
