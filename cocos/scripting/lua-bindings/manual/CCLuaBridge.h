@@ -73,11 +73,11 @@ public:
     static LuaStack *getStack();
     /**
      * Push the function pointer corresponding to functionId on the top of lua stack by searching the `lua_bridge_function_id` table.
-     * If it don't find the function pointer corresponding to functionId, it will reset stack top index to the index before searching.
+     * If it don't find the function pointer corresponding to functionId, it will push nil value on top.
      *
      * @param functionId the value used to search the `lua_bridge_function_id` table.
      */
-    static int pushLuaFunctionById(int functionId);
+    static bool pushLuaFunctionById(int functionId);
     
     /**
      * The retain count would be increase by 1 corresponding to functionId in the `lua_bridge_function_id_retain` table if it could be found.
@@ -174,7 +174,7 @@ public:
 protected:
     static int retainLuaFunction(lua_State *L, int functionIndex, int *retainCountReturn);
 
-    static lua_State *s_luaState;
+    static lua_State * L;
     static int        s_newFunctionId;
 };
 

@@ -350,12 +350,9 @@ bool LuaJavaBridge::CallInfo::getMethodInfo()
 
 /* ---------------------------------------- */
 
-lua_State *LuaJavaBridge::s_luaState = nullptr;
-int LuaJavaBridge::s_newFunctionId = 0;
-
 void LuaJavaBridge::luaopen_luaj(lua_State *L)
 {
-	s_luaState = L;
+	LuaBridge::L = L;
     lua_newtable(L);
     lua_pushstring(L, "callStaticMethod");
     lua_pushcfunction(L, LuaJavaBridge::callJavaStaticMethod);

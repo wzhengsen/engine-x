@@ -158,9 +158,6 @@ private:
     static int getMethodInfo(CallInfo *call, const char *className, const char *methodName, const char *paramCode);
     static int fetchArrayElements(lua_State *L, int index);
     static int callAndPushReturnValue(lua_State *L, CallInfo *call, jvalue *args);
-
-    static lua_State *s_luaState;
-    static int        s_newFunctionId;
 };
 
 // end group
