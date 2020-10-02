@@ -522,9 +522,9 @@ public class Cocos2dxHelper {
         long tm = System.currentTimeMillis();
 
         Intent intentC = new Intent("LuaNotifyClicked").putExtra("okFunc", ok);
-        PendingIntent pic = PendingIntent.getBroadcast(sActivity, 0, intentC, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pic = PendingIntent.getBroadcast(sActivity, ok, intentC, PendingIntent.FLAG_ONE_SHOT);
         Intent intentR = new Intent("LuaNotifyRemoved").putExtra("okFunc", ok);
-        PendingIntent pir = PendingIntent.getBroadcast(sActivity, 0, intentR, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pir = PendingIntent.getBroadcast(sActivity, ok, intentR, PendingIntent.FLAG_ONE_SHOT);
 
         int iconId = sActivity.getApplication().getApplicationInfo().icon;
         Notification n = new Notification.Builder(sActivity, nChannel)
