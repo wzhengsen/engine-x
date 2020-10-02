@@ -34,6 +34,7 @@
 NS_CC_BEGIN
 
 Application* Application::sm_pSharedApplication = nullptr;
+std::vector<Application::DialogFuncsWrapper> Application::VecDlgWrapper = std::vector<Application::DialogFuncsWrapper>();
 
 Application::Application()
 {
@@ -147,6 +148,66 @@ bool Application::openURL(const std::string &url)
 
 void Application::applicationScreenSizeChanged(int newWidth, int newHeight) {
 
+}
+
+void Application::Dialog(const std::string &title, const std::string &content,
+                         const std::function<void()>& okCallback,
+                         const std::function<void()>& cancelCallback) {
+    UIAlertController* alert = [UIAlertController
+        alertControllerWithTitle:[NSString
+            stringWithCString:title.c_str()
+            encoding:NSUTF8StringEncoding
+        ]
+        message:[NSString
+            stringWithCString:content.c_str()
+            encoding:NSUTF8StringEncoding
+        ]
+        preferredStyle:UIAlertControllerStyleAlert
+    ];
+
+    UIAlertAction* okAction = [UIAlertAction
+        actionWithTitle:@"确定"
+        style:UIAlertActionStyleDefault
+        handler:^(UIAlertAction * action) {
+        for(auto it = VecDlgWrapper.begin();it != VecDlgWrapper.end();it++){
+                if ((*it).ok.action == action && (*it).ok.callback) {
+                    (*it).ok.callback();
+                    VecDlgWrapper.erase(it);
+                    break;
+                }
+            }
+        }
+    ];
+    [alert addAction:okAction];
+
+    UIAlertAction* cancelAction = nullptr;
+    if(cancelCallback) {
+        cancelAction = [UIAlertAction
+            actionWithTitle:@"取消"
+            style:UIAlertActionStyleDefault
+            handler:^(UIAlertAction * action) {
+            for(auto it = VecDlgWrapper.begin();it != VecDlgWrapper.end();it++){
+                if ((*it).cancel.action == action && (*it).cancel.callback) {
+                    (*it).cancel.callback();
+                    VecDlgWrapper.erase(it);
+                    break;
+                }
+            }
+        }
+        ];
+        [alert addAction:cancelAction];
+    }
+
+    VecDlgWrapper.emplace_back(okAction,okCallback,cancelAction,cancelCallback);
+
+    auto rootViewController = [UIApplication sharedApplication].windows[0].rootViewController;
+    [rootViewController presentViewController:alert animated:YES completion:nil];
+}
+
+void Application::Notify(const std::string &title, const std::string &content,
+                         const std::function<void()>& clickCallback,
+                         const std::function<void()>& closeCallback) {
+    // Omit the c++ implementation and use luaj
 }
 
 NS_CC_END

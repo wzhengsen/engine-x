@@ -30,12 +30,14 @@ macro(cocos2dx_depend)
         find_library(QUARTZCORE_LIBRARY QuartzCore)
         find_library(GAMECONTROLLER_LIBRARY GameController)
         find_library(METAL_LIBRARY Metal)
+        find_library(UN_LIBRARY UserNotifications)
         set(COCOS_APPLE_LIBS
             ${AUDIOTOOLBOX_LIBRARY}
             ${QUARTZCORE_LIBRARY}
             ${FOUNDATION_LIBRARY}
             ${GAMECONTROLLER_LIBRARY}
             ${METAL_LIBRARY}
+            ${UN_LIBRARY}
             )
 
         if(NOT BUILD_EXT_ALSOFT)

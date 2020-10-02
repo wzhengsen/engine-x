@@ -42,18 +42,18 @@ public:
      * @lua NA
      */
     virtual ~Application();
-        
+
     /**
     @brief    Run the message loop.
     */
     int run();
-        
+
     /**
     @brief    Get the current application instance.
     @return Current application instance pointer.
     */
     static Application* getInstance();
-    
+
     /**
      @brief    Callback by Director for limit FPS.
      @param interval    The time, expressed in seconds, between current frame and next.
@@ -65,28 +65,28 @@ public:
     @return Current language config
     */
     virtual LanguageType getCurrentLanguage() override;
-    
+
     /**
      @brief Get current language iso 639-1 code
      @return Current language iso 639-1 code
      */
     virtual const char * getCurrentLanguageCode() override;
-    
+
     /**
      @brief Get target platform
      */
     virtual Platform getTargetPlatform() override;
-    
+
     /**
      @brief Get application version.
      */
     virtual std::string getVersion() override;
-    
+
     /**
     @brief 获取应用的编译版本
     */
     virtual int64_t GetCompileVersion() override;
-    
+
     /**
      @brief Open url in default browser
      @param String with url to open.
@@ -100,9 +100,9 @@ public:
     @param new height
     */
     virtual void applicationScreenSizeChanged(int newWidth, int newHeight);
-    
+
     /*
-    @brief  创建一个非模式对话框。
+    @brief  创建一个模式对话框。
             提供0-2个回调，即有1-2个按钮，最少有一个“确定”按钮。
     */
     void Dialog(
@@ -110,7 +110,7 @@ public:
         const std::string& content,
         const std::function<void()>& okCallback = nullptr,
         const std::function<void()>& cancelCallback = nullptr
-    ) override {};
+    ) override;
 
     /*
      @brief 创建一个通知。
@@ -120,10 +120,28 @@ public:
         const std::string& content,
         const std::function<void()>& clickCallback = nullptr,
         const std::function<void()>& closeCallback = nullptr
-    ) override {};
+    ) override;
 
 protected:
     static Application * sm_pSharedApplication;
+    struct DialogFuncWrapper {
+        const void* action = nullptr;
+        std::function<void()> callback = nullptr;
+    };
+    struct DialogFuncsWrapper {
+        DialogFuncWrapper ok = DialogFuncWrapper();
+        DialogFuncWrapper cancel = DialogFuncWrapper();
+        DialogFuncsWrapper(
+            const void* actionOK,const std::function<void()>& callbackOK,
+            const void* actionCancel,const std::function<void()>& callbackCancel
+        ){
+            ok.action = actionOK;
+            ok.callback = callbackOK;
+            cancel.action = actionCancel;
+            cancel.callback = callbackCancel;
+        }
+    };
+    static std::vector<DialogFuncsWrapper> VecDlgWrapper;
 };
 
 NS_CC_END
