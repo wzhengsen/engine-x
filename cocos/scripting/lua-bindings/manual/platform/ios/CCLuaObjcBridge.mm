@@ -30,7 +30,7 @@ NS_CC_BEGIN
 
 void LuaObjcBridge::luaopen_luaoc(lua_State *L)
 {
-    s_luaState = L;
+    LuaBridge::L = L;
     lua_newtable(L);
     lua_pushstring(L, "callStaticMethod");
     lua_pushcfunction(L, LuaObjcBridge::callObjcStaticMethod);
@@ -49,7 +49,12 @@ static void luaTableToObjcDictionary(lua_State *L, NSMutableDictionary *dict,NSS
         switch (lua_type(L, -1))
         {
             case LUA_TNUMBER:
-                [dict2 setObject:[NSNumber numberWithFloat:lua_tonumber(L, -1)] forKey:key2];
+                if (lua_isinteger(L, -1)) {
+                    [dict2 setObject:[NSNumber numberWithInteger:lua_tointeger(L, -1)] forKey:key2];
+                }
+                else {
+                    [dict2 setObject:[NSNumber numberWithDouble:lua_tonumber(L, -1)] forKey:key2];
+                }
                 break;
                 
             case LUA_TBOOLEAN:
@@ -149,7 +154,12 @@ int LuaObjcBridge::callObjcStaticMethod(lua_State *L)
                 switch (lua_type(L, -1))
                 {
                     case LUA_TNUMBER:
-                        [dict setObject:[NSNumber numberWithFloat:lua_tonumber(L, -1)] forKey:key];
+                        if (lua_isinteger(L, -1)) {
+                            [dict setObject:[NSNumber numberWithInteger:lua_tointeger(L, -1)] forKey:key];
+                        }
+                        else {
+                            [dict setObject:[NSNumber numberWithDouble:lua_tonumber(L, -1)] forKey:key];
+                        }
                         break;
                         
                     case LUA_TBOOLEAN:
@@ -203,11 +213,53 @@ int LuaObjcBridge::callObjcStaticMethod(lua_State *L)
                 [invocation getReturnValue:&ret];
                 lua_pushinteger(L, ret);
             }
+            else if (strcmp(returnType, @encode(long)) == 0) // long
+            {
+                long ret;
+                [invocation getReturnValue:&ret];
+                lua_pushinteger(L, ret);
+            }
+            else if (strcmp(returnType, @encode(double)) == 0) // double
+            {
+                float ret;
+                [invocation getReturnValue:&ret];
+                lua_pushnumber(L, ret);
+            }
             else if (strcmp(returnType, @encode(float)) == 0) // float
             {
                 float ret;
                 [invocation getReturnValue:&ret];
                 lua_pushnumber(L, ret);
+            }
+            else if (strcmp(returnType, @encode(unsigned int)) == 0) // unsigned int
+            {
+                unsigned int ret;
+                [invocation getReturnValue:&ret];
+                lua_pushinteger(L, ret);
+            }
+            else if (strcmp(returnType, @encode(short)) == 0) // short
+            {
+                short ret;
+                [invocation getReturnValue:&ret];
+                lua_pushinteger(L, ret);
+            }
+            else if (strcmp(returnType, @encode(unsigned short)) == 0) // unsigned short
+            {
+                unsigned short ret;
+                [invocation getReturnValue:&ret];
+                lua_pushinteger(L, ret);
+            }
+            else if (strcmp(returnType, @encode(char)) == 0) // char
+            {
+                char ret;
+                [invocation getReturnValue:&ret];
+                lua_pushinteger(L, ret);
+            }
+            else if (strcmp(returnType, @encode(unsigned char)) == 0) // unsigned char
+            {
+                unsigned char ret;
+                [invocation getReturnValue:&ret];
+                lua_pushinteger(L, ret);
             }
             else
             {
@@ -241,17 +293,35 @@ void LuaObjcBridge::pushValue(lua_State *L, void *val)
     {
         NSNumber *number = (NSNumber *)oval;
         const char *numberType = [number objCType];
-        if (strcmp(numberType, @encode(BOOL)) == 0)
-        {
+        if (strcmp(numberType, @encode(BOOL)) == 0) {
             lua_pushboolean(L, [number boolValue]);
         }
-        else if (strcmp(numberType, @encode(int)) == 0)
-        {
+        else if (strcmp(numberType, @encode(int)) == 0) {
             lua_pushinteger(L, [number intValue]);
         }
-        else
-        {
-            lua_pushnumber(L, [number floatValue]);
+        else if (strcmp(numberType, @encode(long)) == 0) {
+            lua_pushnumber(L, [number longValue]);
+        }
+        else if (strcmp(numberType, @encode(double)) == 0) {
+            lua_pushnumber(L, [number doubleValue]);
+        }
+        else if (strcmp(numberType, @encode(float)) == 0) {
+            lua_pushnumber(L, [number doubleValue]);
+        }
+        else if (strcmp(numberType, @encode(unsigned int)) == 0) {
+            lua_pushnumber(L, [number unsignedIntValue]);
+        }
+        else if (strcmp(numberType, @encode(short)) == 0) {
+            lua_pushnumber(L, [number shortValue]);
+        }
+        else if (strcmp(numberType, @encode(unsigned short)) == 0) {
+            lua_pushnumber(L, [number unsignedShortValue]);
+        }
+        else if (strcmp(numberType, @encode(char)) == 0) {
+            lua_pushnumber(L, [number charValue]);
+        }
+        else if (strcmp(numberType, @encode(unsigned char)) == 0) {
+            lua_pushnumber(L, [number unsignedCharValue]);
         }
     }
     else if ([oval isKindOfClass:[NSString class]])

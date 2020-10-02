@@ -329,6 +329,7 @@ bool LuaJavaBridge::CallInfo::getMethodInfo()
     m_env->DeleteLocalRef(_jstrClassName);
 
     if (nullptr == m_classID) {
+        m_error = LuaBridgeError::kLuaBridgeErrorClassNotFound;
         LOGD("Classloader failed to find class of %s", m_className.c_str());
         return false;
     }
@@ -372,7 +373,7 @@ int LuaJavaBridge::callJavaStaticMethod(lua_State *L)
     if (!lua_isstring(L, -4) || !lua_isstring(L, -3)  || !lua_istable(L, -2) || !lua_isstring(L, -1))
     {
     	lua_pushboolean(L, 0);
-    	lua_pushinteger(L, LuaBridgeError::kLuaBridgeErrorMethodSignature);
+    	lua_pushinteger(L, LuaBridgeError::kLuaBridgeErrorInvalidParameters);
     	return 2;
     }
 
