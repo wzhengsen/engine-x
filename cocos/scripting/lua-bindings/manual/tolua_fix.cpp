@@ -192,8 +192,6 @@ TOLUA_API int toluafix_remove_ccobject_by_refid(lua_State* L, int refid)
     return 0;
 }
 
-static auto refMap = std::map<int,int>();
-
 TOLUA_API int toluafix_ref_function(lua_State* L, int lo, int def)
 {
     // function at lo
@@ -204,13 +202,6 @@ TOLUA_API int toluafix_ref_function(lua_State* L, int lo, int def)
     lua_pushvalue(L, lo);                                       /* stack: fun ... refid_fun fun */
     const auto ref = luaL_ref(L, -2);                           /* stack: fun ... refid_fun */
     lua_pop(L, 1);                                              /* stack: fun ... */
-    if (refMap.find(ref) == refMap.cend()) {
-        refMap.emplace(ref,1);
-    }
-    else {
-        int refC = refMap[ref];
-        refMap[ref] = refC++;
-    }
     return ref;
 }
 
@@ -224,16 +215,6 @@ TOLUA_API void toluafix_get_function_by_refid(lua_State* L, int refid)
 
 TOLUA_API void toluafix_remove_function_by_refid(lua_State* L, int refid)
 {
-    if (refMap.find(refid) == refMap.cend()) {
-        return;
-    }
-    else {
-        int refC = refMap[refid];
-        refMap[refid] = refC--;
-        if (0 <= refC){
-            return;
-        }
-    }
     lua_pushstring(L, TOLUA_REFID_FUNCTION_MAPPING);
     lua_rawget(L, LUA_REGISTRYINDEX);                           /* stack: ... refid_fun */
     luaL_unref(L, -1, refid);                                   /* stack: ... refid_fun */
