@@ -30,7 +30,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
@@ -49,7 +48,6 @@ import org.cocos2dx.lib.Cocos2dxHelper.Cocos2dxHelperListener;
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
-import javax.microedition.khronos.egl.EGLContext;
 
 public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelperListener {
     // ===========================================================
@@ -384,9 +382,9 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         if (requestCode >= 10000) {
             // Lua request one permission at once.
             if (permissions.length == 1) {
-                Cocos2dxLuaJavaBridge.callLuaFunctionWithBool(requestCode - 10000,grantResults[0] == PackageManager.PERMISSION_GRANTED);
+                LuaJavaBridge.callLuaFunctionWithBool(requestCode - 10000,grantResults[0] == PackageManager.PERMISSION_GRANTED);
             }
-            Cocos2dxLuaJavaBridge.releaseLuaFunction(requestCode);
+            LuaJavaBridge.releaseLuaFunction(requestCode);
         }
     }
     

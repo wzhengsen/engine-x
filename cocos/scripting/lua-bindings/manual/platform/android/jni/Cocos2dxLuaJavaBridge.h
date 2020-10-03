@@ -35,7 +35,7 @@ extern "C" {
  * Method:    callLuaFunctionWithString
  * Signature: (ILjava/lang/String;)I
  */
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFunctionWithString
+JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_LuaJavaBridge_callLuaFunctionWithString
   (JNIEnv *, jclass, jint, jstring);
 
 /*
@@ -43,7 +43,7 @@ JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFuncti
  * Method:    callLuaFunctionWithLong
  * Signature: (IJ)I
  */
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFunctionWithLong
+JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_LuaJavaBridge_callLuaFunctionWithLong
         (JNIEnv *, jclass, jint, jlong);
 
 /*
@@ -51,7 +51,7 @@ JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFuncti
  * Method:    callLuaFunctionWithLong
  * Signature: (IZ)I
  */
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFunctionWithBool
+JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_LuaJavaBridge_callLuaFunctionWithBool
         (JNIEnv *, jclass, jint, jboolean);
 
 /*
@@ -59,7 +59,7 @@ JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFuncti
  * Method:    callLuaFunctionWithLong
  * Signature: (ILjava/util/Map;)I
  */
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFunctionWithMap
+JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_LuaJavaBridge_callLuaFunctionWithMap
         (JNIEnv *, jclass, jint, jobject);
 
 /*
@@ -67,7 +67,7 @@ JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFuncti
  * Method:    callLuaFunction
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFunction
+JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_LuaJavaBridge_callLuaFunction
         (JNIEnv *, jclass, jint);
 
 /*
@@ -75,23 +75,15 @@ JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFuncti
  * Method:    callLuaGlobalFunctionWithString
  * Signature: (Ljava/lang/String;Ljava/lang/String;)I
  */
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaGlobalFunctionWithString
+JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_LuaJavaBridge_callLuaGlobalFunctionWithString
   (JNIEnv *env, jclass, jstring, jstring);
 
 /*
  * Class:     Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge
- * Method:    retainLuaFunction
- * Signature: (I)I
- */
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_retainLuaFunction
-  (JNIEnv *env, jclass, jint);
-
-/*
- * Class:     Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge
  * Method:    releaseLuaFunction
- * Signature: (I)I
+ * Signature: (I)V
  */
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_releaseLuaFunction
+JNIEXPORT void JNICALL Java_org_cocos2dx_lib_LuaJavaBridge_releaseLuaFunction
   (JNIEnv *env, jclass, jint);
 
 } // extern "C"

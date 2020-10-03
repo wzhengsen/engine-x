@@ -28,7 +28,7 @@ package org.cocos2dx.lib;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Cocos2dxLuaJavaBridge
+public class LuaJavaBridge
 {
     public static native int callLuaFunctionWithString(int luaFunctionId, String value);
     public static native int callLuaFunction(int luaFunctionId);
@@ -36,6 +36,5 @@ public class Cocos2dxLuaJavaBridge
     public static native int callLuaFunctionWithBool(int luaFunctionId,boolean arg);
     public static native int callLuaFunctionWithMap(int luaFunctionId, HashMap<String,String> arg);
     public static native int callLuaGlobalFunctionWithString(String luaFunctionName, String value);
-    public static native int retainLuaFunction(int luaFunctionId);
-    public static native int releaseLuaFunction(int luaFunctionId);
+    public static native void releaseLuaFunction(int luaFunctionId);
 }

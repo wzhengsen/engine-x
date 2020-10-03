@@ -38,27 +38,27 @@
 
 extern "C" {
 
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFunctionWithString
+JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_LuaJavaBridge_callLuaFunctionWithString
   (JNIEnv *env, jclass cls, jint functionId, jstring value)
 {
     std::string strValue = cocos2d::StringUtils::getStringUTFCharsJNI(env, value);
-    int ret = LuaJavaBridge::callLuaFunctionById(functionId, strValue.c_str());
+    int ret = LuaJavaBridge::callLuaFunction(functionId, strValue.c_str());
     return ret;
 }
 
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFunctionWithLong
+JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_LuaJavaBridge_callLuaFunctionWithLong
         (JNIEnv *env, jclass cls, jint functionId, jlong value)
 {
-    return LuaJavaBridge::callLuaFunctionById(functionId, value);
+    return LuaJavaBridge::callLuaFunction(functionId, value);
 }
 
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFunctionWithBool
+JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_LuaJavaBridge_callLuaFunctionWithBool
         (JNIEnv *env, jclass cls, jint functionId, jboolean value)
 {
-    return LuaJavaBridge::callLuaFunctionById(functionId, (bool)value);
+    return LuaJavaBridge::callLuaFunction(functionId, (bool) value);
 }
 
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFunctionWithMap
+JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_LuaJavaBridge_callLuaFunctionWithMap
         (JNIEnv *env, jclass cls, jint functionId, jobject value)
 {
     // 获取HashMap类entrySet()方法ID
@@ -119,16 +119,16 @@ JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFuncti
     env->DeleteLocalRef(iteratorClass);
     env->DeleteLocalRef(entryClass);
 
-    return LuaJavaBridge::callLuaFunctionById(functionId, jMap);
+    return LuaJavaBridge::callLuaFunction(functionId, jMap);
 }
 
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaFunction
+JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_LuaJavaBridge_callLuaFunction
         (JNIEnv *env, jclass cls, jint functionId)
 {
-    return LuaJavaBridge::callLuaFunctionById(functionId);
+    return LuaJavaBridge::callLuaFunction(functionId);
 }
 
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaGlobalFunctionWithString
+JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_LuaJavaBridge_callLuaGlobalFunctionWithString
   (JNIEnv *env, jclass cls, jstring luaFunctionName, jstring value)
 {
     std::string functionNameStr = cocos2d::StringUtils::getStringUTFCharsJNI(env, luaFunctionName);
@@ -138,16 +138,10 @@ JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_callLuaGlobal
     return ret;
 }
 
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_retainLuaFunction
+JNIEXPORT void JNICALL Java_org_cocos2dx_lib_LuaJavaBridge_releaseLuaFunction
   (JNIEnv *env, jclass cls, jint luaFunctionId)
 {
-    return LuaJavaBridge::retainLuaFunctionById(luaFunctionId);
-}
-
-JNIEXPORT jint JNICALL Java_org_cocos2dx_lib_Cocos2dxLuaJavaBridge_releaseLuaFunction
-  (JNIEnv *env, jclass cls, jint luaFunctionId)
-{
-    return LuaJavaBridge::releaseLuaFunctionById(luaFunctionId);
+    LuaJavaBridge::releaseLuaFunction(luaFunctionId);
 }
 
 } // extern "C"

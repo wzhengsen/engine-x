@@ -50,7 +50,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetFileDescriptor;
@@ -65,7 +64,6 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.ParcelFileDescriptor;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -94,7 +92,6 @@ import com.enhance.gameservice.IGameTuningService;
 import java.io.IOException;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Inet4Address;
@@ -106,9 +103,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 
 public class Cocos2dxHelper {
@@ -410,7 +405,7 @@ public class Cocos2dxHelper {
                         .setTitle(title)
                         .setMessage(content)
                         .setCancelable(false);
-                if (ok != -1) {
+                if (ok != 0) {
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -418,9 +413,9 @@ public class Cocos2dxHelper {
                                     new Runnable() {
                                         @Override
                                         public void run() {
-                                            Cocos2dxLuaJavaBridge.callLuaFunction(ok);
-                                            Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
-                                            Cocos2dxLuaJavaBridge.releaseLuaFunction(cancel);
+                                            LuaJavaBridge.callLuaFunction(ok);
+                                            LuaJavaBridge.releaseLuaFunction(ok);
+                                            LuaJavaBridge.releaseLuaFunction(cancel);
                                         }
                                     }
                             );
@@ -428,7 +423,7 @@ public class Cocos2dxHelper {
                         }
                     });
                 }
-                if (cancel != -1) {
+                if (cancel != 0) {
                     builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
@@ -436,9 +431,9 @@ public class Cocos2dxHelper {
                                     new Runnable() {
                                         @Override
                                         public void run() {
-                                            Cocos2dxLuaJavaBridge.callLuaFunction(cancel);
-                                            Cocos2dxLuaJavaBridge.releaseLuaFunction(cancel);
-                                            Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
+                                            LuaJavaBridge.callLuaFunction(cancel);
+                                            LuaJavaBridge.releaseLuaFunction(cancel);
+                                            LuaJavaBridge.releaseLuaFunction(ok);
                                         }
                                     }
                             );
@@ -471,9 +466,9 @@ public class Cocos2dxHelper {
                         @Override
                         public void run() {
                             if (action != null && action.equals("LuaNotifyClicked")) {
-                                Cocos2dxLuaJavaBridge.callLuaFunction(okFunc);
+                                LuaJavaBridge.callLuaFunction(okFunc);
                             }
-                            Cocos2dxLuaJavaBridge.releaseLuaFunction(okFunc);
+                            LuaJavaBridge.releaseLuaFunction(okFunc);
                         }
                     }
             );
@@ -495,7 +490,7 @@ public class Cocos2dxHelper {
     static String nChannel = "";
     public static void Notify(String title, String content, final int ok) {
         if (!sNotifyService.areNotificationsEnabled()) {
-            Cocos2dxLuaJavaBridge.releaseLuaFunction(ok);
+            LuaJavaBridge.releaseLuaFunction(ok);
             return;
         }
 
@@ -567,17 +562,17 @@ public class Cocos2dxHelper {
         }
     }
 
-    static private int OnLuaOrientationChanged = -1;
+    static private int OnLuaOrientationChanged = 0;
     public static void OnOrientationChanged(final int ori) {
-        if (OnLuaOrientationChanged != -1) {
+        if (OnLuaOrientationChanged != 0) {
             sActivity.runOnGLThread(
                     new Runnable() {
                         @Override
                         public void run() {
                             if (ori == Configuration.ORIENTATION_PORTRAIT) {
-                                Cocos2dxLuaJavaBridge.callLuaFunctionWithLong(OnLuaOrientationChanged, 1);
+                                LuaJavaBridge.callLuaFunctionWithLong(OnLuaOrientationChanged, 1);
                             } else if (ori == Configuration.ORIENTATION_LANDSCAPE) {
-                                Cocos2dxLuaJavaBridge.callLuaFunctionWithLong(OnLuaOrientationChanged, 0);
+                                LuaJavaBridge.callLuaFunctionWithLong(OnLuaOrientationChanged, 0);
                             }
                         }
                     }
@@ -586,8 +581,8 @@ public class Cocos2dxHelper {
     }
 
     public static void SetOnLuaOrientationChanged(int luaCallback) {
-        if (OnLuaOrientationChanged != -1) {
-            Cocos2dxLuaJavaBridge.releaseLuaFunction(OnLuaOrientationChanged);
+        if (OnLuaOrientationChanged != 0) {
+            LuaJavaBridge.releaseLuaFunction(OnLuaOrientationChanged);
         }
         OnLuaOrientationChanged = luaCallback;
     }
@@ -766,7 +761,7 @@ public class Cocos2dxHelper {
 
     static private class BaiduLocationListener extends BDAbstractLocationListener {
         private LocationClient lc = null;
-        private int luaCallback = -1;
+        private int luaCallback = 0;
 
         BaiduLocationListener(LocationClient lc, int cb) {
             this.lc = lc;
@@ -778,7 +773,7 @@ public class Cocos2dxHelper {
                 lc.stop();
             }
 
-            if (luaCallback != -1) {
+            if (luaCallback != 0) {
                 final HashMap<String,String> hashMap = new HashMap<>();
                 hashMap.put("code",String.valueOf(location.getLocType()));
                 hashMap.put("x",String.valueOf(location.getLongitude()));
@@ -793,8 +788,8 @@ public class Cocos2dxHelper {
                         new Runnable() {
                             @Override
                             public void run() {
-                                Cocos2dxLuaJavaBridge.callLuaFunctionWithMap(luaCallback, hashMap);
-                                Cocos2dxLuaJavaBridge.releaseLuaFunction(luaCallback);
+                                LuaJavaBridge.callLuaFunctionWithMap(luaCallback, hashMap);
+                                LuaJavaBridge.releaseLuaFunction(luaCallback);
                             }
                         }
                 );
@@ -806,7 +801,7 @@ public class Cocos2dxHelper {
         try {
             if (sActivity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 sActivity.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},0);
-                Cocos2dxLuaJavaBridge.releaseLuaFunction(luaCallback);
+                LuaJavaBridge.releaseLuaFunction(luaCallback);
                 return;
             }
             LocationClient lc = new LocationClient(sActivity);

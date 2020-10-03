@@ -1,19 +1,19 @@
 /****************************************************************************
  Copyright (c) 2013-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- 
+
  http://www.cocos2d-x.org
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -53,7 +53,6 @@ typedef enum {
 } LuaBridgeError;
 
 #define LUA_BRIDGE_REGISTRY_FUNCTION    "lua_bridge_function_id"        // table[function] = id
-#define LUA_BRIDGE_REGISTRY_RETAIN      "lua_bridge_function_id_retain" // table[id] = retain count
 
 /**
  * Build bridge between ObjC and Lua.
@@ -65,40 +64,7 @@ typedef enum {
 class LuaBridge
 {
 public:
-    /**
-     * Get the LuaStack of LuaEngine.
-     *
-     * @return the LuaStack object.
-     */
-    static LuaStack *getStack();
-    /**
-     * Push the function pointer corresponding to functionId on the top of lua stack by searching the `lua_bridge_function_id` table.
-     * If it don't find the function pointer corresponding to functionId, it will push nil value on top.
-     *
-     * @param functionId the value used to search the `lua_bridge_function_id` table.
-     */
-    static bool pushLuaFunctionById(int functionId);
-    
-    /**
-     * The retain count would be increase by 1 corresponding to functionId in the `lua_bridge_function_id_retain` table if it could be found.
-     * If `lua_bridge_function_id_retain` table is not existed or the type of lua_bridge_function_id_retain[functionId] isn't LUA_TNUMBER, It would return 0.
-     * The top index of lua stack the same as before calling this function.
-     *
-     * @param functionId the value used to search the `lua_bridge_function_id_retain` table.
-     * @return the retain count or 0.
-     */
-    static int retainLuaFunctionById(int functionId);
-    
-    /**
-     *
-     * The retain count would be reduced by 1 corresponding to functionId in the `lua_bridge_function_id_retain` table if it could be found.
-     * If `lua_bridge_function_id` table or `lua_bridge_function_id_retain` aren't found, it would return 0.
-     * If the value of retain count is 0 after reducing, it would update the `lua_bridge_function_id_retain` table and `lua_bridge_function_id_retain` table to remove the  reference corresponding to this functionId
-     *
-     * @param functionId the value used to search the `lua_bridge_function_id` table and `lua_bridge_function_id` table.
-     * @return the retain count or 0.
-     */
-    static int releaseLuaFunctionById(int functionId);
+    static void releaseLuaFunction(int functionId);
 
     /**
      * Call the Lua function corresponding to the functionId with the string pointer arg.
@@ -110,7 +76,7 @@ public:
      * @lua NA
      * @js NA
      */
-    static int callLuaFunctionById(int functionId, const char *arg);
+    static int callLuaFunction(int functionId, const char *arg);
 
     /**
      * Call the Lua function corresponding to the functionId with int64 arg.
@@ -122,7 +88,7 @@ public:
      * @lua NA
      * @js NA
      */
-    static int callLuaFunctionById(int functionId, int64_t arg);
+    static int callLuaFunction(int functionId, int64_t arg);
 
     /**
      * Call the Lua function corresponding to the functionId with boolean arg.
@@ -134,7 +100,7 @@ public:
      * @lua NA
      * @js NA
      */
-    static int callLuaFunctionById(int functionId, bool arg);
+    static int callLuaFunction(int functionId, bool arg);
 
     /**
      * Call the Lua function corresponding to the functionId with the std::map<string,string> arg.
@@ -146,7 +112,7 @@ public:
      * @lua NA
      * @js NA
      */
-    static int callLuaFunctionById(int functionId, const std::map<std::string,std::string>& arg);
+    static int callLuaFunction(int functionId, const std::map<std::string,std::string>& arg);
 
     /**
      * Call the Lua function corresponding to the functionId.
@@ -157,7 +123,7 @@ public:
      * @lua NA
      * @js NA
      */
-    static int callLuaFunctionById(int functionId);
+    static int callLuaFunction(int functionId);
 
     /**
      * Call a global Lua function named functionName with the string pointer arg.
@@ -170,12 +136,11 @@ public:
      * @js NA
      */
     static int callLuaGlobalFunction(const char *functionName, const char *arg);
-    
-protected:
-    static int retainLuaFunction(lua_State *L, int functionIndex, int *retainCountReturn);
 
-    static lua_State * L;
-    static int        s_newFunctionId;
+protected:
+    static int retainLuaFunction(int functionIndex);
+
+    static lua_State* L;
 };
 
 NS_CC_END
