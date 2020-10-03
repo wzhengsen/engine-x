@@ -189,7 +189,7 @@ int LuaJavaBridge::CallInfo::pushReturnValue(lua_State *L)
 			return 1;
 		case TypeString:
 			if(m_ret.stringValue == nullptr){
-				lua_pushnil(L);
+				lua_pushstring(L, "");
 			}else{
 				lua_pushstring(L, m_ret.stringValue->c_str());
 			}

@@ -110,7 +110,7 @@ int LuaObjcBridge::callObjcStaticMethod(lua_State *L)
     }
 
     SEL methodSel;
-    bool hasArguments = lua_istable(L, -1);
+    bool hasArguments = !lua_isnil(L, -1);
     if (hasArguments)
     {
         NSString *methodName_ = [NSString stringWithCString:methodName encoding:NSUTF8StringEncoding];
@@ -143,7 +143,7 @@ int LuaObjcBridge::callObjcStaticMethod(lua_State *L)
         NSUInteger returnLength = [methodSig methodReturnLength];
         const char *returnType = [methodSig methodReturnType];
 
-        if (hasArguments)
+        if (lua_istable(L, -1))
         {
             NSMutableDictionary *dict = [NSMutableDictionary dictionary];
             lua_pushnil(L);
@@ -155,7 +155,7 @@ int LuaObjcBridge::callObjcStaticMethod(lua_State *L)
                 {
                     case LUA_TNUMBER:
                         if (lua_isinteger(L, -1)) {
-                            [dict setObject:[NSNumber numberWithInteger:lua_tointeger(L, -1)] forKey:key];
+                            [dict setObject:[NSNumber numberWithLong:lua_tointeger(L, -1)] forKey:key];
                         }
                         else {
                             [dict setObject:[NSNumber numberWithDouble:lua_tonumber(L, -1)] forKey:key];
@@ -185,6 +185,33 @@ int LuaObjcBridge::callObjcStaticMethod(lua_State *L)
             }
 
             [invocation setArgument:&dict atIndex:2];
+            [invocation invoke];
+        }
+        else if(lua_isnumber(L, -1)) {
+            if (lua_isinteger(L, -1)) {
+                int64_t integer = lua_tointeger(L, -1);
+                [invocation setArgument:&integer atIndex:2];
+                [invocation invoke];
+            }
+            else {
+                double number = lua_tonumber(L, -1);
+                [invocation setArgument:&number atIndex:2];
+                [invocation invoke];
+            }
+        }
+        else if(lua_isfunction(L, -1)) {
+            int functionId = retainLuaFunction(-1);
+            [invocation setArgument:&functionId atIndex:2];
+            [invocation invoke];
+        }
+        else if(lua_isstring(L, -1)) {
+            NSString* str = [NSString stringWithCString:lua_tostring(L, -1) encoding:NSUTF8StringEncoding];
+            [invocation setArgument:&str atIndex:2];
+            [invocation invoke];
+        }
+        else if(lua_isboolean(L, -1)) {
+            bool boolean = lua_toboolean(L, -1);
+            [invocation setArgument:&boolean atIndex:2];
             [invocation invoke];
         }
         else
@@ -231,33 +258,15 @@ int LuaObjcBridge::callObjcStaticMethod(lua_State *L)
                 [invocation getReturnValue:&ret];
                 lua_pushnumber(L, ret);
             }
-            else if (strcmp(returnType, @encode(unsigned int)) == 0) // unsigned int
-            {
-                unsigned int ret;
-                [invocation getReturnValue:&ret];
-                lua_pushinteger(L, ret);
-            }
             else if (strcmp(returnType, @encode(short)) == 0) // short
             {
                 short ret;
                 [invocation getReturnValue:&ret];
                 lua_pushinteger(L, ret);
             }
-            else if (strcmp(returnType, @encode(unsigned short)) == 0) // unsigned short
-            {
-                unsigned short ret;
-                [invocation getReturnValue:&ret];
-                lua_pushinteger(L, ret);
-            }
             else if (strcmp(returnType, @encode(char)) == 0) // char
             {
                 char ret;
-                [invocation getReturnValue:&ret];
-                lua_pushinteger(L, ret);
-            }
-            else if (strcmp(returnType, @encode(unsigned char)) == 0) // unsigned char
-            {
-                unsigned char ret;
                 [invocation getReturnValue:&ret];
                 lua_pushinteger(L, ret);
             }
@@ -308,20 +317,11 @@ void LuaObjcBridge::pushValue(lua_State *L, void *val)
         else if (strcmp(numberType, @encode(float)) == 0) {
             lua_pushnumber(L, [number doubleValue]);
         }
-        else if (strcmp(numberType, @encode(unsigned int)) == 0) {
-            lua_pushnumber(L, [number unsignedIntValue]);
-        }
         else if (strcmp(numberType, @encode(short)) == 0) {
             lua_pushnumber(L, [number shortValue]);
         }
-        else if (strcmp(numberType, @encode(unsigned short)) == 0) {
-            lua_pushnumber(L, [number unsignedShortValue]);
-        }
         else if (strcmp(numberType, @encode(char)) == 0) {
             lua_pushnumber(L, [number charValue]);
-        }
-        else if (strcmp(numberType, @encode(unsigned char)) == 0) {
-            lua_pushnumber(L, [number unsignedCharValue]);
         }
     }
     else if ([oval isKindOfClass:[NSString class]])
