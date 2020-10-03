@@ -139,7 +139,8 @@ public:
 
 protected:
     static int retainLuaFunction(int functionIndex);
-
+    static int increaseIdLevel;
+    static void SetLua(lua_State*);
     static lua_State* L;
 };
 

@@ -28,18 +28,44 @@
 NS_CC_BEGIN
 
 lua_State* LuaBridge::L = nullptr;
+int LuaBridge::increaseIdLevel = -1;
+
+void LuaBridge::SetLua(lua_State* L) {
+    if (LuaBridge::L != L){
+        LuaBridge::L = L;
+        if (increaseIdLevel < 0) {
+            increaseIdLevel = 0;
+        }
+        else {
+            increaseIdLevel += 4096;
+        }
+    }
+}
 
 void LuaBridge::releaseLuaFunction(int functionId)
 {
+    if (functionId > increaseIdLevel + 4096 || functionId <= increaseIdLevel) {
+        return;
+    }
+    functionId -= increaseIdLevel;
     /* L: */
     lua_pushstring(L, LUA_BRIDGE_REGISTRY_FUNCTION);            /* L: key */
     if (lua_rawget(L, LUA_REGISTRYINDEX) != LUA_TTABLE)    /* L: id_f */
     {
-        lua_pop(L, 1);
+        lua_pop(L, 1);//
         CCLOG("CCLuaBridge::releaseLuaFunction() - LUA_BRIDGE_REGISTRY_FUNCTION not exists");
+        return;
     }
 
+    if (lua_rawgeti(L, -1, functionId) != LUA_TFUNCTION) {// table function?
+        lua_pop(L, 2); //
+        return;
+    }
+
+    lua_pop(L, 1);// table
     luaL_unref(L, -1, functionId);
+    lua_pop(L, 1);//
+
     CCLOG("CCLuaBridge::releaseLuaFunction() - function id %d released", functionId);
 }
 
@@ -62,12 +88,21 @@ int LuaBridge::retainLuaFunction(int functionIndex)
     }
     lua_pushvalue(L, functionIndex);                // function ... table function
     const auto ref = luaL_ref(L, -2);               // function ... table(ref)
+    if (ref > 4096) {
+        luaL_unref(L, -1, ref);                     // function ... table
+        lua_pop(L, 1);                              // function ...
+        return 0;
+    }
     lua_pop(L, 1);                                  // function ...
-    return ref;
+    return ref + increaseIdLevel;
 }
 
 int LuaBridge::callLuaFunction(int functionId, const char *arg)
 {
+    if (functionId > increaseIdLevel + 4096 || functionId <= increaseIdLevel) {
+        return -1;
+    }
+    functionId -= increaseIdLevel;
     const int top = lua_gettop(L);
     /* L: */
     lua_pushstring(L, LUA_BRIDGE_REGISTRY_FUNCTION);                  /* L: key */
@@ -86,6 +121,10 @@ int LuaBridge::callLuaFunction(int functionId, const char *arg)
 
 int LuaBridge::callLuaFunction(int functionId, int64_t arg)
 {
+    if (functionId > increaseIdLevel + 4096 || functionId <= increaseIdLevel) {
+        return -1;
+    }
+    functionId -= increaseIdLevel;
     const int top = lua_gettop(L);
     /* L: */
     lua_pushstring(L, LUA_BRIDGE_REGISTRY_FUNCTION);                  /* L: key */
@@ -104,6 +143,10 @@ int LuaBridge::callLuaFunction(int functionId, int64_t arg)
 
 int LuaBridge::callLuaFunction(int functionId, bool arg)
 {
+    if (functionId > increaseIdLevel + 4096 || functionId <= increaseIdLevel) {
+        return -1;
+    }
+    functionId -= increaseIdLevel;
     const int top = lua_gettop(L);
     /* L: */
     lua_pushstring(L, LUA_BRIDGE_REGISTRY_FUNCTION);                  /* L: key */
@@ -121,6 +164,10 @@ int LuaBridge::callLuaFunction(int functionId, bool arg)
 }
 
 int LuaBridge::callLuaFunction(int functionId, const std::map<std::string,std::string>& arg) {
+    if (functionId > increaseIdLevel + 4096 || functionId <= increaseIdLevel) {
+        return -1;
+    }
+    functionId -= increaseIdLevel;
     const int top = lua_gettop(L);
     /* L: */
     lua_pushstring(L, LUA_BRIDGE_REGISTRY_FUNCTION);                  /* L: key */
@@ -131,7 +178,7 @@ int LuaBridge::callLuaFunction(int functionId, const std::map<std::string,std::s
         return -1;
     }
 
-    lua_createtable(L, 0, arg.size());
+    lua_createtable(L, 0, static_cast<int>(arg.size()));
     for(const auto& it : arg) {
         lua_pushlstring(L, it.second.c_str(), it.second.length());
         lua_setfield(L, -2, it.first.c_str());
@@ -144,6 +191,10 @@ int LuaBridge::callLuaFunction(int functionId, const std::map<std::string,std::s
 
 int LuaBridge::callLuaFunction(int functionId)
 {
+    if (functionId > increaseIdLevel + 4096 || functionId <= increaseIdLevel) {
+        return -1;
+    }
+    functionId -= increaseIdLevel;
     const int top = lua_gettop(L);
     /* L: */
     lua_pushstring(L, LUA_BRIDGE_REGISTRY_FUNCTION);                  /* L: key */

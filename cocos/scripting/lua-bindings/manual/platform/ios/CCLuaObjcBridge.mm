@@ -30,7 +30,7 @@ NS_CC_BEGIN
 
 void LuaObjcBridge::luaopen_luaoc(lua_State *L)
 {
-    LuaBridge::L = L;
+    SetLua(L);
     lua_newtable(L);
     lua_pushstring(L, "callStaticMethod");
     lua_pushcfunction(L, LuaObjcBridge::callObjcStaticMethod);
