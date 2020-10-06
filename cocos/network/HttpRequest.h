@@ -315,27 +315,29 @@ public:
      *
      * @return std::vector<std::string> the string vector of custom-defined headers.
      */
-    std::vector<std::string> getHeaders() const
+    const std::vector<std::string>& getHeaders() const
     {
         return _headers;
     }
 
+    void setHosts(std::vector<std::string> hosts) { _hosts = std::move(hosts); }
+    const std::vector<std::string>& getHosts() const { return _hosts; }
 	/*
-		ÉèÖÃ³¬Ê±Ê±¼ä£¬ºÁÃë
+		ï¿½ï¿½ï¿½Ã³ï¿½Ê±Ê±ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½
 	*/
 	void SetTimeout(uint32_t timeout) noexcept {
 		_timeout = timeout;
 	}
 
 	/*
-		»ñÈ¡³¬Ê±Ê±¼ä£¬ºÁÃë
+		ï¿½ï¿½È¡ï¿½ï¿½Ê±Ê±ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½
 	*/
 	uint32_t GetTimeout() const noexcept {
 		return _timeout;
 	}
 
 	/*
-		ÉèÖÃÊÇ·ñÒì²½
+		ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ì²½
 	*/
 	void SetAsync(bool isAsync) noexcept {
 		_isAsync = isAsync;
@@ -343,13 +345,13 @@ public:
 	}
 
 	/*
-		ÉèÖÃÊÇ·ñÒì²½
+		ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ì²½
 	*/
 	bool IsAsync() const noexcept {
 		return _isAsync;
 	}
 
-	// Ä¬ÈÏºÁÃë³¬Ê±
+	// Ä¬ï¿½Ïºï¿½ï¿½ë³¬Ê±
 	static constexpr uint32_t			 DefaultTimeoutMillisecond = 30000;
 
 private:
@@ -379,6 +381,7 @@ protected:
     ccHttpRequestCallback       _pCallback;      /// C++11 style callbacks
     void*                       _pUserData;      /// You can add your customed data here
     std::vector<std::string>    _headers;        /// custom http headers
+    std::vector<std::string>    _hosts;
 	uint32_t					_timeout = DefaultTimeoutMillisecond;		 /// Connect Timeout,millisecond
 	bool						_isAsync = true;
 };

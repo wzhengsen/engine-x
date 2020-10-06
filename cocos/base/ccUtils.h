@@ -347,7 +347,13 @@ namespace utils
         return newInstance<T>(&T::init);
     }
 
-	// Unicode±àÂë×ªÎªUTF8  
+
+    // check a number is power of two.
+    static bool isPOT(int number)
+    {
+        return ((number > 0) && (number & (number - 1)) == 0);
+    }
+	// Unicodeï¿½ï¿½ï¿½ï¿½×ªÎªUTF8  
 	CC_DLL bool UnicodeToUTF8(std::vector<char>& pu8, const wchar_t* pun, int uLen);
     CC_DLL std::string UTF8ToGB2312(const char* c, size_t len, bool* fullSuc = nullptr);
     CC_DLL std::string UTF8ToGB2312(const std::string& str, bool* fullSuc = nullptr);

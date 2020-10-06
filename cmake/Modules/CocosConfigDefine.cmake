@@ -122,13 +122,9 @@ endif()
             # PUBLIC GLAD_GLAPI_EXPORT
         )
         if(BUILD_SHARED_LIBS)
-            target_compile_definitions(${target}
-                PUBLIC _USRDLL
-                PUBLIC _EXPORT_DLL_
-                PUBLIC _USEGUIDLL
-                PUBLIC _USREXDLL
-                PUBLIC _USRSTUDIODLL
-                PUBLIC _USE3DDLL
+            target_compile_definitions(${target} 
+                PRIVATE _USRDLL
+                PRIVATE _USEGUIDLL # ui
             )
         else()
             target_compile_definitions(${target} PUBLIC CC_STATIC)

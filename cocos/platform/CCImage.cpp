@@ -888,12 +888,12 @@ Image::Format Image::detectFormat(const uint8_t * data, ssize_t dataLen)
 
 int Image::getBitPerPixel()
 {
-    return backend::PixelFormatUtils::getBlockInfo(_pixelFormat).bpp;
+    return Texture2D::getBitsPerPixelForFormat(_pixelFormat);
 }
 
 bool Image::hasAlpha()
 {
-    return !!backend::PixelFormatUtils::getBlockInfo(_pixelFormat).aBits;
+    return backend::PixelFormatUtils::getFormatDescriptor(_pixelFormat).alpha;
 }
 
 bool Image::isCompressed()
@@ -1390,7 +1390,7 @@ bool Image::initWithPVRv2Data(uint8_t * data, ssize_t dataLen, bool ownData)
     }
     
     auto pixelFormat = getDevicePVRPixelFormat(v2_pixel_formathash.at(formatFlags));
-    auto& info = backend::PixelFormatUtils::getBlockInfo(pixelFormat);
+    auto& info = backend::PixelFormatUtils::getFormatDescriptor(pixelFormat);
     int bpp = info.bpp;
     if (!bpp)
     {
@@ -1536,7 +1536,7 @@ bool Image::initWithPVRv3Data(uint8_t * data, ssize_t dataLen, bool ownData)
     }
 
     auto finalPixelFormat = getDevicePVRPixelFormat(v3_pixel_formathash.at(pixelFormat));
-    auto& info = backend::PixelFormatUtils::getBlockInfo(finalPixelFormat);
+    auto& info = backend::PixelFormatUtils::getFormatDescriptor(finalPixelFormat);
     int bpp = info.bpp;
     if (!info.bpp)
     {
