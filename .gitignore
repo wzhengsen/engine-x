@@ -44,7 +44,6 @@
 *.vssscc
 .builds
 *.pidb
-*.log
 *.scc
 *.tlog
 *.idb
@@ -164,7 +163,6 @@ $RECYCLE.BIN/
 
 Browse.VC.db
 Solution.VC.db
-.DS_Store
 .idea/
 .vs/
 UserDefault.xml
@@ -175,3 +173,4 @@ runtime/win32/*
 *.pyc
 *.luac
 build/
+userconf.ini
