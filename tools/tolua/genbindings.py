@@ -8,7 +8,7 @@ import shutil
 try:
     import yaml
 except ModuleNotFoundError:
-    os.system("pip3 install -U pyyaml --ignore-installed pyyaml")
+    os.system("pip3 install -U pyyaml --ignore-installed --user pyyaml")
     import yaml
 import configparser
 import subprocess

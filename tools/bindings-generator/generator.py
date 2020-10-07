@@ -15,7 +15,7 @@ import traceback
 try:
     import Cheetah
 except ModuleNotFoundError:
-    os.system("pip3 install -U Cheetah3 --ignore-installed Cheetah3")
+    os.system("pip3 install -U Cheetah3 --ignore-installed --user Cheetah3")
     import Cheetah
 finally:
     from Cheetah.Template import Template
