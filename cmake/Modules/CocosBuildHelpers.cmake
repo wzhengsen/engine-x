@@ -26,7 +26,7 @@ function(cocos_sync_target_res cocos_target)
 
     # linking folders
     get_filename_component(link_folder_abs ${opt_LINK_TO} ABSOLUTE)
-    if(MSVC)
+    if(MSVC OR XCODE)
         add_custom_command(TARGET SYNC_RESOURCE-${cocos_target} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E echo "    syncing and deploy to ${link_folder_abs}"
         COMMAND ${PYTHON_COMMAND} ARGS ${CMAKE_CURRENT_SOURCE_DIR}/tool/python/RunMe.py
@@ -63,8 +63,12 @@ endfunction()
 
 
 function(cocos_get_resource_path output cocos_target)
-    get_target_property(rt_output ${cocos_target} RUNTIME_OUTPUT_DIRECTORY)
-    set(${output} "${rt_output}/${CMAKE_CFG_INTDIR}/Resources" PARENT_SCOPE)
+    if (NOT XCODE)
+        get_target_property(rt_output ${cocos_target} RUNTIME_OUTPUT_DIRECTORY)
+        set(${output} "${rt_output}/${CMAKE_CFG_INTDIR}/Resources" PARENT_SCOPE)
+    else()
+        set(${output} "${CMAKE_CURRENT_SOURCE_DIR}/build/Resources" PARENT_SCOPE)
+    endif()
 endfunction()
 
 
@@ -84,7 +88,11 @@ function(cocos_mark_multi_resources res_out)
     list(APPEND tmp_file_list ${opt_FILES})
 
     foreach(cc_folder ${opt_FOLDERS})
-        file(GLOB_RECURSE folder_files "${cc_folder}/*")
+        if(VS)
+            file(GLOB_RECURSE folder_files "${cc_folder}/*")
+        elseif(XCODE)
+            file(GLOB folder_files "${cc_folder}/*")
+        endif()
         list(APPEND tmp_file_list ${folder_files})
         cocos_mark_resources(FILES ${folder_files} BASEDIR ${cc_folder} RESOURCEBASE ${opt_RES_TO})
     endforeach()
@@ -314,7 +322,7 @@ function(setup_cocos_app_config app_name)
         cocos_config_app_xcode_property(${app_name})
     endif()
 
-    if(LINUX OR WINDOWS)
+    if(LINUX OR WINDOWS OR XCODE)
         cocos_def_sync_resource_target(${app_name})
     endif()
 
