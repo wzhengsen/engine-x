@@ -35,13 +35,16 @@
 #include "vlc/vlc.h"
 #if CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 #include <X11/Xlib.h>
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+#import <AppKit/AppKit.h>
 #endif
 
 using namespace cocos2d;
 using namespace cocos2d::ui;
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 ||\
-    CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
+    CC_TARGET_PLATFORM == CC_PLATFORM_LINUX ||\
+    CC_TARGET_PLATFORM == CC_PLATFORM_MAC
 libvlc_instance_t* VideoPlayer::vlcInstance = nullptr;
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
@@ -72,8 +75,10 @@ LRESULT VideoPlayer::hookGLFWWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
     }
     return ::CallWindowProcW(sPrevCocosWndProc, hwnd, uMsg, wParam, lParam);
 }
-#else
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 std::map<X11Window,VideoPlayer*> VideoPlayer::VideoPlayerMap = std::map<X11Window,VideoPlayer*>();
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+std::map<void*,VideoPlayer*> VideoPlayer::VideoPlayerMap = std::map<void*,VideoPlayer*>();
 #endif
 
 void VideoPlayer::CreateVLC() {
@@ -101,6 +106,13 @@ void VideoPlayer::CreateVLC() {
     _videoView = XCreateSimpleWindow((Display*)dpy,win,-1,-1,1,1,0,white,white);
     // äÖÈ¾µ½_videoView
     libvlc_media_player_set_xwindow(vlcPlayer, _videoView);
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+    auto glView = cocos2d::Director::getInstance()->getOpenGLView();
+    win = glView->getCocoaWindow();
+    ctx = glView->getNSGLContext();
+    _videoView = [[NSView alloc] init];
+    [win addSubview:(NSView*)_videoView];
+    libvlc_media_player_set_nsobject(vlcPlayer, _videoView);
 #endif
 }
 
@@ -160,6 +172,8 @@ void VideoPlayer::ResizeMoveVLC() noexcept {
         _h = 1;
     }
     XMoveResizeWindow((Display*)dpy, _videoView, _x, _y, _w, _h);
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+    ((NSView*)_videoView).bounds = CGRectMake(_x, _y, _w, _h);
 #endif
 }
 
@@ -173,6 +187,8 @@ void VideoPlayer::ShowVLC(bool b) noexcept {
     else {
         XUnmapWindow((Display*)dpy,_videoView);
     }
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+    [((NSView*)_videoView) setHidden:!b];
 #endif
 }
 
@@ -181,6 +197,8 @@ void VideoPlayer::DestroyVLC() noexcept {
     ::DestroyWindow(_videoView);
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
     XDestroyWindow((Display*)dpy,_videoView);
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+    [((NSView*)_videoView) removeFromSuperview];
 #endif
 }
 
