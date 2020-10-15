@@ -102,7 +102,7 @@ public:
     const std::string& getStartupScriptFilename();
 
     /*
-    @brief  创建一个非模式对话框。
+    @brief  创建一个模式对话框。
             提供0-2个回调，即有1-2个按钮，最少有一个“确定”按钮。
     */
     void Dialog(
@@ -110,7 +110,7 @@ public:
         const std::string& content,
         const std::function<void()>& okCallback = nullptr,
         const std::function<void()>& cancelCallback = nullptr
-    ) override {};
+    ) override;
 
     /*
      @brief 创建一个通知。
@@ -120,7 +120,7 @@ public:
         const std::string& content,
         const std::function<void()>& clickCallback = nullptr,
         const std::function<void()>& closeCallback = nullptr
-    ) override {};
+    ) override;
 
 protected:
     static Application * sm_pSharedApplication;

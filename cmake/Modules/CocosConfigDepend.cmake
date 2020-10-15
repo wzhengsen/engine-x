@@ -31,6 +31,7 @@ macro(cocos2dx_depend)
         find_library(GAMECONTROLLER_LIBRARY GameController)
         find_library(METAL_LIBRARY Metal)
         find_library(UN_LIBRARY UserNotifications)
+        find_library(SECURITY_LIBRARY Security)
         set(COCOS_APPLE_LIBS
             ${AUDIOTOOLBOX_LIBRARY}
             ${QUARTZCORE_LIBRARY}
@@ -38,6 +39,7 @@ macro(cocos2dx_depend)
             ${GAMECONTROLLER_LIBRARY}
             ${METAL_LIBRARY}
             ${UN_LIBRARY}
+            ${SECURITY_LIBRARY}
             )
 
         if(NOT BUILD_EXT_ALSOFT)
@@ -78,7 +80,6 @@ macro(cocos2dx_depend)
             find_library(AVKIT_LIBRARY AVKit)
             find_library(CORE_MEDIA_LIBRARY CoreMedia)
             find_library(CORE_TEXT_LIBRARY CoreText)
-            find_library(SECURITY_LIBRARY Security)
             find_library(CORE_GRAPHICS_LIBRARY CoreGraphics)
             find_library(AV_FOUNDATION_LIBRARY AVFoundation)
             find_library(WEBKIT_LIBRARY WebKit)
@@ -89,7 +90,6 @@ macro(cocos2dx_depend)
                  ${AVKIT_LIBRARY}
                  ${CORE_MEDIA_LIBRARY}
                  ${CORE_TEXT_LIBRARY}
-                 ${SECURITY_LIBRARY}
                  ${CORE_GRAPHICS_LIBRARY}
                  ${AV_FOUNDATION_LIBRARY}
                  ${WEBKIT_LIBRARY}

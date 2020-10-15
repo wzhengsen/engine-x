@@ -207,7 +207,7 @@ void Application::Dialog(const std::string &title, const std::string &content,
 void Application::Notify(const std::string &title, const std::string &content,
                          const std::function<void()>& clickCallback,
                          const std::function<void()>& closeCallback) {
-    // Omit the c++ implementation and use luaj
+    // Omit the c++ implementation and use lua
 }
 
 NS_CC_END

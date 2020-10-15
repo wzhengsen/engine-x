@@ -5,7 +5,7 @@ if(WINDOWS)
         )
     set(COCOS_UI_SPECIFIC_SRC
         ui/UIEditBox/UIEditBoxImpl-windows.cpp
-        ui/UIVideoPlayer/UIVideoPlayer-desktop.cpp
+        ui/UIVideoPlayer/UIVideoPlayer-desktop.mm
         ui/UIWebView/UIWebViewImpl-desktop.cpp
         )
 elseif(APPLE)
@@ -26,6 +26,7 @@ elseif(APPLE)
             ui/UIEditBox/Mac/CCUIPasswordTextField.m
             ui/UIEditBox/Mac/CCUISingleLineTextField.m
             ui/UIEditBox/Mac/CCUITextFieldFormatter.m
+            ui/UIVideoPlayer/UIVideoPlayer-desktop.mm
             )
     elseif(IOS)
         set(COCOS_UI_SPECIFIC_HEADER

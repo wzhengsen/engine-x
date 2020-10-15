@@ -191,4 +191,36 @@ const std::string& Application::getStartupScriptFilename()
     return _startupScriptFilename;
 }
 
+void Application::Dialog(const std::string &title, const std::string &content,
+                         const std::function<void()>& okCallback,
+                         const std::function<void()>& cancelCallback) {
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.alertStyle = NSAlertStyleInformational;
+    [alert addButtonWithTitle:@"确定"];
+    if (cancelCallback) {
+        [alert addButtonWithTitle:@"取消"];
+    }
+
+    alert.messageText = [NSString stringWithCString:title.c_str() encoding:NSUTF8StringEncoding];
+    alert.informativeText = [NSString stringWithCString:content.c_str() encoding:NSUTF8StringEncoding];
+
+    NSUInteger action = [alert runModal];
+    if(action == NSAlertFirstButtonReturn) {
+        if(okCallback) {
+            okCallback();
+        }
+    }
+    else if(action == NSAlertSecondButtonReturn) {
+        if (cancelCallback) {
+            cancelCallback();
+        }
+    }
+}
+
+void Application::Notify(const std::string &title, const std::string &content,
+                         const std::function<void()>& clickCallback,
+                         const std::function<void()>& closeCallback) {
+    // Omit the c++ implementation and use lua
+}
+
 NS_CC_END
