@@ -106,7 +106,7 @@ public:
     }
 
     /*
-     @brief 创建一个非模式对话框。
+     @brief 创建一个模式对话框。
             提供0-2个回调，即有1-2个按钮，最少有一个“确定”按钮。
     */
     void Dialog(
@@ -136,15 +136,6 @@ protected:
     std::string         _resourceRootPath;
     std::string         _startupScriptFilename;
 
-    struct DialogWrapper {
-        DialogWrapper(HWND dlgWnd, const std::function<void()>& okCallback, const std::function<void()>& cancelCallback) :
-            dlgWnd(dlgWnd),
-            okCallback(okCallback),
-            cancelCallback(cancelCallback){}
-        HWND dlgWnd = nullptr;
-        std::function<void()> okCallback = nullptr;
-        std::function<void()> cancelCallback = nullptr;
-    };
     struct NotifyWrapper {
         NotifyWrapper(const std::function<void()>& clickCallback, const std::function<void()>& closeCallback) :
             clickCallback(clickCallback),
@@ -154,11 +145,6 @@ protected:
     };
 
     static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-    // 用于存放非模式对话框句柄。
-    static std::vector<DialogWrapper> VecDlgWrapper;
-    // 判断MSG是否应是对话框处理。
-    void DialogMessageFilter() noexcept;
-    static INT_PTR CALLBACK DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
     static const uint32_t NotifyMsgID = 99;
     static void NotifyProc(HWND hwnd, WPARAM wParam, LPARAM lParam);

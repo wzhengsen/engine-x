@@ -49,7 +49,6 @@ NS_CC_BEGIN
 
 // sharedApplication pointer
 Application* Application::sm_pSharedApplication = nullptr;
-std::vector<Application::DialogWrapper> Application::VecDlgWrapper = std::vector<Application::DialogWrapper>();
 std::map<uint16_t, Application::NotifyWrapper> Application::MapNotifyWrapper = std::map<uint16_t, Application::NotifyWrapper>();
 uint16_t Application::NotifyID = 0;
 
@@ -60,38 +59,6 @@ LRESULT CALLBACK Application::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LP
         break;
     }
     return g_oldWindowProc(hWnd, uMsg, wParam, lParam);
-}
-
-INT_PTR CALLBACK Application::DialogProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-    switch (message) {
-    case WM_INITDIALOG:
-        PeekMessage(nullptr, nullptr, 0, 0, PM_REMOVE);
-        return TRUE;
-
-    case WM_COMMAND: {
-        if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL) {
-            PeekMessage(nullptr, nullptr, 0, 0, PM_REMOVE);
-            if (VecDlgWrapper.size() > 0) {
-                const auto& bw = VecDlgWrapper.back();
-                if (bw.dlgWnd == hWnd) {
-                    if (LOWORD(wParam) == IDOK && bw.okCallback) {
-                        bw.okCallback();
-                    }
-                    else if (LOWORD(wParam) == IDCANCEL && bw.cancelCallback) {
-                        bw.cancelCallback();
-                    }
-                    DestroyWindow(hWnd);
-                    VecDlgWrapper.pop_back();
-                }
-            }
-            return TRUE;
-        }
-        break;
-    }
-    default:
-        break;
-    }
-    return FALSE;
 }
 
 void Application::NotifyProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
@@ -153,54 +120,29 @@ void Application::Dialog(
     const std::function<void()>& okCallback,
     const std::function<void()>& cancelCallback
 ) {
-    HWND hwnd = cocos2d::Director::getInstance()->getOpenGLView()->getWin32Window();
-    // 创建对话框。
-    HWND dlgWnd = CreateDialog(
-        GetSelfModuleHandle(),
-        MAKEINTRESOURCE(IDD_COCOS_DIALOG),
-        hwnd,
-        DialogProc);
-
-    if (dlgWnd) {
-        const std::wstring wstrT = ntcvt::from_chars(title);
-        const std::wstring wstrC = ntcvt::from_chars(content);
-
-        // 标题与内容。
-        SetWindowText(dlgWnd, wstrT.c_str());
-        SetWindowText(GetDlgItem(dlgWnd, IDC_STATIC1), wstrC.c_str());
-
-        if (!cancelCallback) {
-            // 此情况下隐藏取消按钮，并将确定移动到取消处。
-            HWND ok = GetDlgItem(dlgWnd, IDOK);
-            HWND cancel = GetDlgItem(dlgWnd, IDCANCEL);
-
-            ShowWindow(cancel, SW_HIDE);
-            RECT rect = {};
-
-            if (GetWindowRect(cancel, &rect)) {
-                POINT pt = {
-                    rect.left,
-                    rect.top
-                };
-                ScreenToClient(dlgWnd, &pt);
-                MoveWindow(ok, pt.x, pt.y, rect.right - rect.left, rect.bottom - rect.top, true);
-            }
-        }
-
-        UpdateWindow(dlgWnd);
-        VecDlgWrapper.emplace_back(dlgWnd, okCallback, cancelCallback);
+    const std::wstring wstrT = ntcvt::from_chars(title);
+    const std::wstring wstrC = ntcvt::from_chars(content);
+    UINT mb = MB_OK;
+    if (cancelCallback) {
+        mb = MB_OKCANCEL;
     }
-}
-
-void Application::DialogMessageFilter() noexcept {
-    static MSG msg = {};
-    if (PeekMessage(&msg, nullptr, 0, 0, PM_NOREMOVE) && VecDlgWrapper.size() > 0) {
-        for (auto& wrapper : VecDlgWrapper) {
-            if (IsDialogMessage(wrapper.dlgWnd, &msg)) {
-                return;
-            }
+    auto clickRet = MessageBoxW(
+        cocos2d::Director::getInstance()->getOpenGLView()->getWin32Window(),
+        wstrC.c_str(),
+        wstrT.c_str(),
+        mb
+    );
+    if (clickRet == IDOK) {
+        if (okCallback) {
+            okCallback();
         }
     }
+    else if (clickRet == IDCANCEL) {
+        if (cancelCallback) {
+            cancelCallback();
+        }
+    }
+
 }
 
 void Application::Notify(
@@ -283,7 +225,6 @@ int Application::run() {
         if (interval >= _animationInterval.QuadPart) {
             nLast.QuadPart = nNow.QuadPart;
             CefDoMessageLoopWork();
-            DialogMessageFilter();
             director->mainLoop();
             glview->pollEvents();
         }
