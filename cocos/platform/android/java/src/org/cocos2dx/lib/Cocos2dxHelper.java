@@ -94,6 +94,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -321,6 +322,28 @@ public class Cocos2dxHelper {
         return Cocos2dxHelper.sPackageName;
     }
 
+    static public String GetStaticMethodsSignature() {
+        Method[] methods = Cocos2dxHelper.class.getMethods();
+        StringBuilder signature = new StringBuilder();
+        for (Method method : methods) {
+            if(!Modifier.isStatic(method.getModifiers())) {
+                continue;
+            }
+            Class<?>[] parameters = method.getParameterTypes();
+            for (Class<?> p : parameters) {
+                signature.append(p.getName()).append(";");
+            }
+            signature.append(method.getReturnType().getName())
+                    .append(";")
+                    .append(method.getName())
+                    .append("\n");
+        }
+        if(signature.length() > 0) {
+            signature.deleteCharAt(signature.length() - 1);
+        }
+        return signature.toString();
+    }
+
     public static String getCocos2dxWritablePath() {
         return sActivity.getFilesDir().getAbsolutePath();
     }
@@ -427,16 +450,18 @@ public class Cocos2dxHelper {
                     builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
-                            sActivity.runOnGLThread(
-                                    new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            LuaJavaBridge.callLuaFunction(cancel);
-                                            LuaJavaBridge.releaseLuaFunction(cancel);
-                                            LuaJavaBridge.releaseLuaFunction(ok);
+                            if (cancel != -1) {
+                                sActivity.runOnGLThread(
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                LuaJavaBridge.callLuaFunction(cancel);
+                                                LuaJavaBridge.releaseLuaFunction(cancel);
+                                                LuaJavaBridge.releaseLuaFunction(ok);
+                                            }
                                         }
-                                    }
-                            );
+                                );
+                            }
                             dialogInterface.dismiss();
                         }
                     });
@@ -447,7 +472,10 @@ public class Cocos2dxHelper {
     }
 
     public static void Dialog(String title, String content, final int ok) {
-        Dialog(title, content, ok, -1);
+        Dialog(title, content, ok, 0);
+    }
+    public static void Dialog(String title, String content, final int ok,final boolean cancel) {
+        Dialog(title, content, ok, cancel ? -1 : 0);
     }
 
     private static class LuaNotifyBroadcastReceiver extends BroadcastReceiver {
@@ -457,8 +485,8 @@ public class Cocos2dxHelper {
             context.startActivity(toMainActivityIntent);
 
             final String action = intent.getAction();
-            final int okFunc = intent.getIntExtra("okFunc", -1);
-            if (-1 == okFunc) {
+            final int okFunc = intent.getIntExtra("okFunc", 0);
+            if (0 == okFunc) {
                 return;
             }
             sActivity.runOnGLThread(
@@ -488,8 +516,11 @@ public class Cocos2dxHelper {
     }
 
     static String nChannel = "";
+    public static void Notify(String title, String content) {
+        Notify(title, content, 0);
+    }
     public static void Notify(String title, String content, final int ok) {
-        if (!sNotifyService.areNotificationsEnabled()) {
+        if (!sNotifyService.areNotificationsEnabled() && ok != 0) {
             LuaJavaBridge.releaseLuaFunction(ok);
             return;
         }
