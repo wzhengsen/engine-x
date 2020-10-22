@@ -26,15 +26,18 @@ package org.cocos2dx.lib;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.Gravity;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.concurrent.CountDownLatch;
 
 class ShouldStartLoadingWorker implements Runnable {
@@ -44,16 +47,16 @@ class ShouldStartLoadingWorker implements Runnable {
     private final String mUrlString;
 
     ShouldStartLoadingWorker(CountDownLatch latch, boolean[] result, int viewTag, String urlString) {
-        this.mLatch = latch;
-        this.mResult = result;
-        this.mViewTag = viewTag;
-        this.mUrlString = urlString;
+        mLatch = latch;
+        mResult = result;
+        mViewTag = viewTag;
+        mUrlString = urlString;
     }
 
     @Override
     public void run() {
-        this.mResult[0] = Cocos2dxWebViewHelper._shouldStartLoading(mViewTag, mUrlString);
-        this.mLatch.countDown(); // notify that result is ready
+        mResult[0] = Cocos2dxWebViewHelper._shouldStartLoading(mViewTag, mUrlString);
+        mLatch.countDown(); // notify that result is ready
     }
 }
 
@@ -61,7 +64,7 @@ public class Cocos2dxWebView extends WebView {
     private static final String TAG = Cocos2dxWebViewHelper.class.getSimpleName();
 
     private int mViewTag;
-    private String mJSScheme;
+    private String mJSScheme = "";
 
     public Cocos2dxWebView(Context context) {
         this(context, -1);
@@ -70,55 +73,52 @@ public class Cocos2dxWebView extends WebView {
     @SuppressLint("SetJavaScriptEnabled")
     public Cocos2dxWebView(Context context, int viewTag) {
         super(context);
-        this.mViewTag = viewTag;
-        this.mJSScheme = "";
+        mViewTag = viewTag;
 
-        this.setFocusable(true);
-        this.setFocusableInTouchMode(true);
+        setFocusable(true);
+        setFocusableInTouchMode(true);
 
-        this.getSettings().setSupportZoom(false);
-
-        this.getSettings().setDomStorageEnabled(true);
-        this.getSettings().setJavaScriptEnabled(true);
+        WebSettings settings = getSettings();
+        settings.setSupportZoom(false);
+        settings.setDomStorageEnabled(true);
+        settings.setJavaScriptEnabled(true);
+        settings.setAllowFileAccess(true);
+        settings.setAllowContentAccess(true);
 
         // `searchBoxJavaBridge_` has big security risk. http://jvn.jp/en/jp/JVN53768697
         try {
-            Method method = this.getClass().getMethod("removeJavascriptInterface", new Class[]{String.class});
+            Method method = getClass().getMethod("removeJavascriptInterface", String.class);
             method.invoke(this, "searchBoxJavaBridge_");
         } catch (Exception e) {
             Log.d(TAG, "This API level do not support `removeJavascriptInterface`");
         }
 
-        this.setWebViewClient(new Cocos2dxWebViewClient());
-        this.setWebChromeClient(new WebChromeClient());
+        setWebViewClient(new Cocos2dxWebViewClient());
+        setWebChromeClient(new WebChromeClient());
     }
 
     public void setJavascriptInterfaceScheme(String scheme) {
-        this.mJSScheme = scheme != null ? scheme : "";
+        mJSScheme = scheme != null ? scheme : "";
     }
 
     public void setScalesPageToFit(boolean scalesPageToFit) {
-        this.getSettings().setSupportZoom(scalesPageToFit);
+        getSettings().setSupportZoom(scalesPageToFit);
     }
 
     class Cocos2dxWebViewClient extends WebViewClient {
         @Override
-        public boolean shouldOverrideUrlLoading(WebView view, final String urlString) {
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             Cocos2dxActivity activity = (Cocos2dxActivity)getContext();
-
-            try {
-                URI uri = URI.create(urlString);
-                if (uri != null && uri.getScheme().equals(mJSScheme)) {
-                    activity.runOnGLThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Cocos2dxWebViewHelper._onJsCallback(mViewTag, urlString);
-                        }
-                    });
-                    return true;
-                }
-            } catch (Exception e) {
-                Log.d(TAG, "Failed to create URI from url");
+            Uri uri = request.getUrl();
+            final String urlString = uri.toString();
+            if (uri.getScheme() != null && uri.getScheme().equals(mJSScheme)) {
+                activity.runOnGLThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Cocos2dxWebViewHelper._onJsCallback(mViewTag, urlString);
+                    }
+                });
+                return true;
             }
 
             boolean[] result = new boolean[] { true };
@@ -150,9 +150,11 @@ public class Cocos2dxWebView extends WebView {
         }
 
         @Override
-        public void onReceivedError(WebView view, int errorCode, String description, final String failingUrl) {
-            super.onReceivedError(view, errorCode, description, failingUrl);
+        public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+            super.onReceivedError(view, request, error);
             Cocos2dxActivity activity = (Cocos2dxActivity)getContext();
+            Uri uri = request.getUrl();
+            final String failingUrl = uri.toString();
             activity.runOnGLThread(new Runnable() {
                 @Override
                 public void run() {
@@ -169,7 +171,7 @@ public class Cocos2dxWebView extends WebView {
         layoutParams.topMargin = top;
         layoutParams.width = maxWidth;
         layoutParams.height = maxHeight;
-        layoutParams.gravity = Gravity.TOP | Gravity.LEFT;
-        this.setLayoutParams(layoutParams);
+        layoutParams.gravity = Gravity.TOP | Gravity.START;
+        setLayoutParams(layoutParams);
     }
 }

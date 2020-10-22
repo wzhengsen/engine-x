@@ -362,6 +362,9 @@ void WebViewImpl::loadURL(const std::string &url, bool cleanCachedData) {
 
 void WebViewImpl::loadFile(const std::string &fileName) {
     auto fullPath = cocos2d::FileUtils::getInstance()->fullPathForFilename(fileName);
+    if (fullPath.find("file://") != 0) {
+        fullPath = "file://" + fullPath;
+    }
     [_uiWebViewWrapper loadFile:fullPath];
 }
 

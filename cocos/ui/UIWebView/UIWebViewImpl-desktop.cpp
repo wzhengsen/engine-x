@@ -69,7 +69,11 @@ namespace cocos2d {
         }
 
         void WebViewImpl::loadFile(const std::string& fileName) {
-            loadURL(cocos2d::FileUtils::getInstance()->fullPathForFilename(fileName), false);
+            auto fullPath = cocos2d::FileUtils::getInstance()->fullPathForFilename(fileName);
+            if (fullPath.find("file://") != 0) {
+                fullPath = "file://" + fullPath;
+            }
+            loadURL(fullPath, false);
         }
 
         void WebViewImpl::stopLoading() {
