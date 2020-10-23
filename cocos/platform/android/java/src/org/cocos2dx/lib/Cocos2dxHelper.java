@@ -828,12 +828,12 @@ public class Cocos2dxHelper {
         }
     }
 
-    public static void RequestLocation(int luaCallback) {
+    public static boolean RequestLocation(int luaCallback) {
         try {
             if (sActivity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 sActivity.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},0);
                 LuaJavaBridge.releaseLuaFunction(luaCallback);
-                return;
+                return false;
             }
             LocationClient lc = new LocationClient(sActivity);
             // 声明LocationClient类
@@ -865,7 +865,9 @@ public class Cocos2dxHelper {
         }
         catch (Exception e){
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     public static boolean CheckPermission(String pmStr) {
