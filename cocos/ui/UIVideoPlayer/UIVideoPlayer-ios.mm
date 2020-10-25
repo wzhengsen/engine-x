@@ -58,8 +58,6 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
 - (void) seekTo:(float) sec;
 - (void) setVisible:(BOOL) visible;
 - (void) setKeepRatioEnabled:(BOOL) enabled;
-- (void) setFullScreenEnabled:(BOOL) enabled;
-- (BOOL) isFullScreenEnabled;
 - (void) showPlaybackControls:(BOOL) value;
 - (void) setRepeatEnabled:(BOOL)enabled;
 - (void) setUserInteractionEnabled:(BOOL)userInteractionEnabled;
@@ -90,15 +88,31 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
         self.playerController = [AVPlayerViewController new];
 
         [self setRepeatEnabled:FALSE];
-        [self showPlaybackControls:TRUE];
+        [self showPlaybackControls : FALSE] ;
         [self setUserInteractionEnabled:TRUE];
         [self setKeepRatioEnabled:FALSE];
 
         _videoPlayer = (VideoPlayer*)videoPlayer;
         _state = PlayerbackStateUnknown;
+
+
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
+        tap.numberOfTapsRequired = 1;
+        [self.playerController.view addGestureRecognizer:tap];
     }
 
     return self;
+}
+
+-(void) viewTapped:(UITapGestureRecognizer *)_ {
+    if (_userInteractionEnabled && self.playerController.player) {
+        if (_state == PlayerbackStatePaused) {
+            [self resume];
+        }
+        else if (_state == PlayerbackStatePlaying) {
+            [self pause];
+        }
+    }
 }
 
 -(void) dealloc
@@ -124,18 +138,6 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
     _height = height;
     [self.playerController.view setFrame:CGRectMake(left, top, width, height)];
 }
-
--(void) setFullScreenEnabled:(BOOL) enabled
-{
-    // AVPlayerViewController doesn't provide API to enable fullscreen. But you can toggle
-    // fullsreen by the playback controllers.
-}
-
--(BOOL) isFullScreenEnabled
-{
-    return false;
-}
-
 
 -(void) showPlaybackControls:(BOOL)value
 {
@@ -190,6 +192,14 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
             [self seekTo:0];
             [self play];
         }
+    }
+}
+
+-(void) videoError:(NSNotification *)notification
+{
+    if(_videoPlayer != nullptr) {
+        _videoPlayer->OnPlayEvent((int)VideoPlayer::EventType::V_ERROR);
+        _state = PlayerbackStateUnknown;
     }
 }
 
@@ -254,19 +264,28 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
 
 -(void) registerPlayerEventListener
 {
-    if (self.playerController.player)
+    if (self.playerController.player) {
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(videoFinished:)
                                                  name:AVPlayerItemDidPlayToEndTimeNotification
                                                  object:self.playerController.player.currentItem];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(videoFinished:)
+                                                     name:AVPlayerItemFailedToPlayToEndTimeNotification
+                                                   object:self.playerController.player.currentItem];
+    }
 }
 
 -(void) removePlayerEventListener
 {
-    if (self.playerController.player)
+    if (self.playerController.player) {
         [[NSNotificationCenter defaultCenter] removeObserver:self
                                               name:AVPlayerItemDidPlayToEndTimeNotification
                                               object:self.playerController.player.currentItem];
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                        name:AVPlayerItemFailedToPlayToEndTimeNotification
+                                                      object:self.playerController.player.currentItem];
+    }
 }
 
 @end
@@ -296,13 +315,22 @@ VideoPlayer::~VideoPlayer()
 
 void VideoPlayer::SetFileName(const std::string& fileName)
 {
-    _videoURL = FileUtils::getInstance()->fullPathForFilename(fileName);
+    std::string fullFilePath = FileUtils::getInstance()->fullPathForFilename(fileName);
+    if (_videoURL == fullFilePath) {
+        return;
+    }
+    Stop();
+    _videoURL = fullFilePath;
     _videoSource = VideoPlayer::Source::FILENAME;
     [((UIVideoViewWrapperIos*)_videoView) setURL:(int)_videoSource :_videoURL];
 }
 
 void VideoPlayer::SetURL(const std::string& videoUrl)
 {
+    if (_videoURL == videoUrl) {
+        return;
+    }
+    Stop();
     _videoURL = videoUrl;
     _videoSource = VideoPlayer::Source::URL;
     [((UIVideoViewWrapperIos*)_videoView) setURL:(int)_videoSource :_videoURL];
@@ -343,20 +371,26 @@ void VideoPlayer::draw(Renderer* renderer, const Mat4 &transform, uint32_t flags
     {
         auto directorInstance = Director::getInstance();
         auto glView = directorInstance->getOpenGLView();
-        auto frameSize = glView->getFrameSize();
         auto scaleFactor = [static_cast<CCEAGLView *>(glView->getEAGLView()) contentScaleFactor];
-
         auto winSize = directorInstance->getWinSize();
 
-        auto leftBottom = convertToWorldSpace(Vec2::ZERO);
-        auto rightTop = convertToWorldSpace(Vec2(_contentSize.width,_contentSize.height));
+        if (!_fullScreenEnabled){
+            auto frameSize = glView->getFrameSize();
+            auto leftBottom = convertToWorldSpace(Vec2::ZERO);
+            auto rightTop = convertToWorldSpace(Vec2(_contentSize.width,_contentSize.height));
 
-        auto uiLeft = (frameSize.width / 2 + (leftBottom.x - winSize.width / 2 ) * glView->getScaleX()) / scaleFactor;
-        auto uiTop = (frameSize.height /2 - (rightTop.y - winSize.height / 2) * glView->getScaleY()) / scaleFactor;
+            auto uiLeft = (frameSize.width / 2 + (leftBottom.x - winSize.width / 2 ) * glView->getScaleX()) / scaleFactor;
+            auto uiTop = (frameSize.height /2 - (rightTop.y - winSize.height / 2) * glView->getScaleY()) / scaleFactor;
 
-        [((UIVideoViewWrapperIos*)_videoView) setFrame :uiLeft :uiTop
-                                                          :(rightTop.x - leftBottom.x) * glView->getScaleX() / scaleFactor
-                                                          :( (rightTop.y - leftBottom.y) * glView->getScaleY()/scaleFactor)];
+            [((UIVideoViewWrapperIos*)_videoView) setFrame :uiLeft :uiTop
+                                                              :(rightTop.x - leftBottom.x) * glView->getScaleX() / scaleFactor
+                                                              :( (rightTop.y - leftBottom.y) * glView->getScaleY()/scaleFactor)];
+        }
+        else {
+            [((UIVideoViewWrapperIos*)_videoView) setFrame :0 :0
+                                                           :winSize.width * glView->getScaleX() / scaleFactor
+                                                           :winSize.height * glView->getScaleY()/scaleFactor];
+        }
     }
 
 #if CC_VIDEOPLAYER_DEBUG_DRAW
@@ -375,12 +409,15 @@ void VideoPlayer::draw(Renderer* renderer, const Mat4 &transform, uint32_t flags
 
 bool VideoPlayer::IsFullScreenEnabled()const
 {
-    return [((UIVideoViewWrapperIos*)_videoView) isFullScreenEnabled];
+    return _fullScreenEnabled;
 }
 
 void VideoPlayer::SetFullScreenEnabled(bool enabled)
 {
-    [((UIVideoViewWrapperIos*)_videoView) setFullScreenEnabled:enabled];
+    if (_fullScreenEnabled != enabled) {
+        _fullScreenEnabled = enabled;
+        _transformUpdated = _transformDirty = _inverseDirty = true;
+    }
 }
 
 void VideoPlayer::SetKeepAspectRatioEnabled(bool enable)

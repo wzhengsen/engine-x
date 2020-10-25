@@ -123,7 +123,12 @@ VideoPlayer::~VideoPlayer()
 
 void VideoPlayer::SetFileName(const std::string& fileName)
 {
-    _videoURL = FileUtils::getInstance()->fullPathForFilename(fileName);
+    std::string fullFilePath = FileUtils::getInstance()->fullPathForFilename(fileName);
+    if (_videoURL == fullFilePath) {
+        return;
+    }
+    Stop();
+    _videoURL = fullFilePath;
     _videoSource = VideoPlayer::Source::FILENAME;
     JniHelper::callStaticVoidMethod(videoHelperClassName, "setVideoUrl", _videoPlayerIndex,
                                     (int)Source::FILENAME,_videoURL);
@@ -131,6 +136,10 @@ void VideoPlayer::SetFileName(const std::string& fileName)
 
 void VideoPlayer::SetURL(const std::string& videoUrl)
 {
+    if (_videoURL == videoUrl) {
+        return;
+    }
+    Stop();
     _videoURL = videoUrl;
     _videoSource = VideoPlayer::Source::URL;
     JniHelper::callStaticVoidMethod(videoHelperClassName, "setVideoUrl", _videoPlayerIndex,
