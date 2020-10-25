@@ -5,7 +5,7 @@ if(WINDOWS)
         )
     set(COCOS_UI_SPECIFIC_SRC
         ui/UIEditBox/UIEditBoxImpl-windows.cpp
-        ui/UIVideoPlayer/UIVideoPlayer-desktop.mm
+        ui/UIVideoPlayer/UIVideoPlayer-desktop.cpp
         ui/UIWebView/UIWebViewImpl-desktop.cpp
         )
 elseif(APPLE)
@@ -26,7 +26,7 @@ elseif(APPLE)
             ui/UIEditBox/Mac/CCUIPasswordTextField.m
             ui/UIEditBox/Mac/CCUISingleLineTextField.m
             ui/UIEditBox/Mac/CCUITextFieldFormatter.m
-            ui/UIVideoPlayer/UIVideoPlayer-desktop.mm
+            ui/UIVideoPlayer/UIVideoPlayer-apple.mm
             )
     elseif(IOS)
         set(COCOS_UI_SPECIFIC_HEADER
@@ -40,7 +40,7 @@ elseif(APPLE)
             ui/UIEditBox/iOS/CCUISingleLineTextField.h
             )
         set(COCOS_UI_SPECIFIC_SRC
-            ui/UIVideoPlayer/UIVideoPlayer-ios.mm
+            ui/UIVideoPlayer/UIVideoPlayer-apple.mm
             ui/UIWebView/UIWebViewImpl-ios.mm
             ui/UIEditBox/UIEditBoxImpl-ios.mm
             ui/UIEditBox/iOS/CCUIEditBoxIOS.mm

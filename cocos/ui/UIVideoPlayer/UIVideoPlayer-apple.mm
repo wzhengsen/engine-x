@@ -25,19 +25,37 @@
 
 #include "ui/UIVideoPlayer/UIVideoPlayer.h"
 
-// No Available on tvOS
-#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS && !defined(CC_TARGET_OS_TVOS)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) ||\
+(CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 
 using namespace cocos2d::ui;
 //-------------------------------------------------------------------------------------
-
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
 #include "platform/ios/CCEAGLView-ios.h"
 #import <AVKit/AVPlayerViewController.h>
+#else
+#import <AppKit/AppKit.h>
+#import <AVFoundation/AVFoundation.h>
+#import <AVFoundation/AVPlayerLayer.h>
+#endif
 #import <CoreMedia/CMTime.h>
 #include "base/CCDirector.h"
 #include "platform/CCFileUtils.h"
 
-@interface UIVideoViewWrapperIos : NSObject
+#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+@class UIVideoViewWrapperApple;
+@interface PlayerView : NSView
+-(void)mouseDown:(NSEvent *)event;
+@property (assign, nonatomic) UIVideoViewWrapperApple * wrapper;
+@end
+@interface PlayerViewController : AVPlayerLayer
+@property (assign, nonatomic) PlayerView * view;
+@end
+@implementation PlayerViewController
+@end
+#endif
+
+@interface UIVideoViewWrapperApple : NSObject
 
 typedef NS_ENUM(NSInteger, PlayerbackState) {
     PlayerbackStateUnknown = 0,
@@ -46,8 +64,13 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
     PlayerbackStatePlaying,
     PlayerbackStateCompleted
 };
-
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
 @property (assign, nonatomic) AVPlayerViewController * playerController;
+#else
+@property (assign, nonatomic) PlayerViewController* playerController;
+@property (assign, nonatomic) PlayerbackState state;
+@property (assign, nonatomic) BOOL userInteractionEnabled;
+#endif
 
 - (void) setFrame:(int) left :(int) top :(int) width :(int) height;
 - (void) setURL:(int) videoSource :(std::string&) videoUrl;
@@ -68,7 +91,7 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
 
 @end
 
-@implementation UIVideoViewWrapperIos
+@implementation UIVideoViewWrapperApple
 {
     int _left;
     int _top;
@@ -85,7 +108,14 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
 -(id)init:(void*)videoPlayer
 {
     if (self = [super init]) {
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
         self.playerController = [AVPlayerViewController new];
+#else
+        self.playerController = [PlayerViewController new];
+        self.playerController.view = [PlayerView new];
+        self.playerController.view.layer = self.playerController;
+        self.playerController.view.wrapper = self;
+#endif
 
         [self setRepeatEnabled:FALSE];
         [self showPlaybackControls : FALSE] ;
@@ -95,15 +125,16 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
         _videoPlayer = (VideoPlayer*)videoPlayer;
         _state = PlayerbackStateUnknown;
 
-
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(viewTapped:)];
         tap.numberOfTapsRequired = 1;
         [self.playerController.view addGestureRecognizer:tap];
+#endif
     }
 
     return self;
 }
-
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
 -(void) viewTapped:(UITapGestureRecognizer *)_ {
     if (_userInteractionEnabled && self.playerController.player) {
         if (_state == PlayerbackStatePaused) {
@@ -114,6 +145,7 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
         }
     }
 }
+#endif
 
 -(void) dealloc
 {
@@ -141,8 +173,10 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
 
 -(void) showPlaybackControls:(BOOL)value
 {
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
     _showPlaybackControls = value;
     self.playerController.showsPlaybackControls = value;
+#endif
 }
 
 -(void) setRepeatEnabled:(BOOL)enabled
@@ -159,7 +193,9 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
 -(void) setUserInteractionEnabled:(BOOL)userInteractionEnabled
 {
     _userInteractionEnabled = userInteractionEnabled;
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
     self.playerController.view.userInteractionEnabled = _userInteractionEnabled;
+#endif
 }
 
 -(void) setURL:(int)videoSource :(std::string &)videoUrl
@@ -177,8 +213,13 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
     [self showPlaybackControls:_showPlaybackControls];
 
     auto view = cocos2d::Director::getInstance()->getOpenGLView();
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
     auto eaglview = (CCEAGLView *) view->getEAGLView();
     [eaglview addSubview:self.playerController.view];
+#else
+    auto cocoaWindow = (NSWindow *) view->getCocoaWindow();
+    [cocoaWindow.contentView addSubview:self.playerController.view];
+#endif
     [self registerPlayerEventListener];
 }
 
@@ -289,11 +330,25 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
 }
 
 @end
+#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+@implementation PlayerView
+-(void)mouseDown:(NSEvent *)event {
+    if (_wrapper.userInteractionEnabled && _wrapper.playerController.player) {
+        if (_wrapper.state == PlayerbackStatePaused) {
+            [_wrapper resume];
+        }
+        else if (_wrapper.state == PlayerbackStatePlaying) {
+            [_wrapper pause];
+        }
+    }
+}
+@end
+#endif
 //------------------------------------------------------------------------------------------------------------
 
 VideoPlayer::VideoPlayer()
 {
-    _videoView = [[UIVideoViewWrapperIos alloc] init:this];
+    _videoView = [[UIVideoViewWrapperApple alloc] init:this];
     ReigsterVisibleNotify();
 #if CC_VIDEOPLAYER_DEBUG_DRAW
     _debugDrawNode = DrawNode::create();
@@ -305,7 +360,7 @@ VideoPlayer::~VideoPlayer()
 {
     if(_videoView)
     {
-        [((UIVideoViewWrapperIos*)_videoView) dealloc];
+        [((UIVideoViewWrapperApple*)_videoView) dealloc];
         if (_isPlaying || _isPaused) {
             OnPlayEvent((int)VideoPlayer::EventType::STOPPED);
         }
@@ -322,7 +377,7 @@ void VideoPlayer::SetFileName(const std::string& fileName)
     Stop();
     _videoURL = fullFilePath;
     _videoSource = VideoPlayer::Source::FILENAME;
-    [((UIVideoViewWrapperIos*)_videoView) setURL:(int)_videoSource :_videoURL];
+    [((UIVideoViewWrapperApple*)_videoView) setURL:(int)_videoSource :_videoURL];
 }
 
 void VideoPlayer::SetURL(const std::string& videoUrl)
@@ -333,19 +388,19 @@ void VideoPlayer::SetURL(const std::string& videoUrl)
     Stop();
     _videoURL = videoUrl;
     _videoSource = VideoPlayer::Source::URL;
-    [((UIVideoViewWrapperIos*)_videoView) setURL:(int)_videoSource :_videoURL];
+    [((UIVideoViewWrapperApple*)_videoView) setURL:(int)_videoSource :_videoURL];
 }
 
 void VideoPlayer::SetLooping(bool looping)
 {
     _isLooping = looping;
-    [((UIVideoViewWrapperIos*)_videoView) setRepeatEnabled:_isLooping];
+    [((UIVideoViewWrapperApple*)_videoView) setRepeatEnabled:_isLooping];
 }
 
 void VideoPlayer::SetUserInputEnabled(bool enableInput)
 {
     _isUserInputEnabled = enableInput;
-    [((UIVideoViewWrapperIos*)_videoView) setUserInteractionEnabled:enableInput];
+    [((UIVideoViewWrapperApple*)_videoView) setUserInteractionEnabled:enableInput];
 }
 
 void VideoPlayer::SetStyle(StyleType style)
@@ -354,11 +409,11 @@ void VideoPlayer::SetStyle(StyleType style)
 
     switch (style) {
         case StyleType::DEFAULT:
-            [((UIVideoViewWrapperIos*)_videoView) showPlaybackControls:TRUE];
+            [((UIVideoViewWrapperApple*)_videoView) showPlaybackControls:TRUE];
             break;
 
         case StyleType::NONE:
-            [((UIVideoViewWrapperIos*)_videoView) showPlaybackControls:FALSE];
+            [((UIVideoViewWrapperApple*)_videoView) showPlaybackControls:FALSE];
             break;
     }
 }
@@ -371,7 +426,11 @@ void VideoPlayer::draw(Renderer* renderer, const Mat4 &transform, uint32_t flags
     {
         auto directorInstance = Director::getInstance();
         auto glView = directorInstance->getOpenGLView();
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
         auto scaleFactor = [static_cast<CCEAGLView *>(glView->getEAGLView()) contentScaleFactor];
+#else
+        auto scaleFactor = 1.0;
+#endif
         auto winSize = directorInstance->getWinSize();
 
         if (!_fullScreenEnabled){
@@ -382,12 +441,12 @@ void VideoPlayer::draw(Renderer* renderer, const Mat4 &transform, uint32_t flags
             auto uiLeft = (frameSize.width / 2 + (leftBottom.x - winSize.width / 2 ) * glView->getScaleX()) / scaleFactor;
             auto uiTop = (frameSize.height /2 - (rightTop.y - winSize.height / 2) * glView->getScaleY()) / scaleFactor;
 
-            [((UIVideoViewWrapperIos*)_videoView) setFrame :uiLeft :uiTop
+            [((UIVideoViewWrapperApple*)_videoView) setFrame :uiLeft :uiTop
                                                               :(rightTop.x - leftBottom.x) * glView->getScaleX() / scaleFactor
                                                               :( (rightTop.y - leftBottom.y) * glView->getScaleY()/scaleFactor)];
         }
         else {
-            [((UIVideoViewWrapperIos*)_videoView) setFrame :0 :0
+            [((UIVideoViewWrapperApple*)_videoView) setFrame :0 :0
                                                            :winSize.width * glView->getScaleX() / scaleFactor
                                                            :winSize.height * glView->getScaleY()/scaleFactor];
         }
@@ -425,7 +484,7 @@ void VideoPlayer::SetKeepAspectRatioEnabled(bool enable)
     if (_keepAspectRatioEnabled != enable)
     {
         _keepAspectRatioEnabled = enable;
-        [((UIVideoViewWrapperIos*)_videoView) setKeepRatioEnabled:enable];
+        [((UIVideoViewWrapperApple*)_videoView) setKeepRatioEnabled:enable];
     }
 }
 
@@ -433,7 +492,7 @@ void VideoPlayer::Play()
 {
     if (! _videoURL.empty())
     {
-        [((UIVideoViewWrapperIos*)_videoView) play];
+        [((UIVideoViewWrapperApple*)_videoView) play];
     }
 }
 
@@ -441,7 +500,7 @@ void VideoPlayer::Pause()
 {
     if (! _videoURL.empty())
     {
-        [((UIVideoViewWrapperIos*)_videoView) pause];
+        [((UIVideoViewWrapperApple*)_videoView) pause];
     }
 }
 
@@ -449,7 +508,7 @@ void VideoPlayer::Resume()
 {
     if (! _videoURL.empty())
     {
-        [((UIVideoViewWrapperIos*)_videoView) resume];
+        [((UIVideoViewWrapperApple*)_videoView) resume];
     }
 }
 
@@ -457,7 +516,7 @@ void VideoPlayer::Stop()
 {
     if (! _videoURL.empty())
     {
-        [((UIVideoViewWrapperIos*)_videoView) stop];
+        [((UIVideoViewWrapperApple*)_videoView) stop];
     }
 }
 
@@ -465,7 +524,7 @@ void VideoPlayer::SeekTo(float sec)
 {
     if (! _videoURL.empty())
     {
-        [((UIVideoViewWrapperIos*)_videoView) seekTo:sec];
+        [((UIVideoViewWrapperApple*)_videoView) seekTo:sec];
     }
 }
 
@@ -490,21 +549,21 @@ void VideoPlayer::setVisible(bool visible)
 
     if (!visible)
     {
-        [((UIVideoViewWrapperIos*)_videoView) setVisible:NO];
+        [((UIVideoViewWrapperApple*)_videoView) setVisible:NO];
     }
     else if(isRunning())
     {
-        [((UIVideoViewWrapperIos*)_videoView) setVisible:YES];
+        [((UIVideoViewWrapperApple*)_videoView) setVisible:YES];
     }
 }
 
 void VideoPlayer::OnVisibleChanged(bool visible) {
     Widget::OnVisibleChanged(visible);
     if (visible) {
-        [((UIVideoViewWrapperIos*)_videoView) setVisible:YES];
+        [((UIVideoViewWrapperApple*)_videoView) setVisible:YES];
     }
     else {
-        [((UIVideoViewWrapperIos*)_videoView) setVisible:NO];
+        [((UIVideoViewWrapperApple*)_videoView) setVisible:NO];
     }
 }
 
@@ -513,14 +572,14 @@ void VideoPlayer::onEnter()
     Widget::onEnter();
     if (IsDisplay() && !_videoURL.empty())
     {
-        [((UIVideoViewWrapperIos*)_videoView) setVisible: YES];
+        [((UIVideoViewWrapperApple*)_videoView) setVisible: YES];
     }
 }
 
 void VideoPlayer::onExit()
 {
     Widget::onExit();
-    [((UIVideoViewWrapperIos*)_videoView) setVisible: NO];
+    [((UIVideoViewWrapperApple*)_videoView) setVisible: NO];
 }
 
 void VideoPlayer::AddEventListener(const VideoPlayer::ccVideoPlayerCallback& callback)

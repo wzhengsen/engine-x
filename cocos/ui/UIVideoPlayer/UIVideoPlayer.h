@@ -32,8 +32,7 @@
  * @{
  */
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 ||\
-    CC_TARGET_PLATFORM == CC_PLATFORM_LINUX ||\
-    CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+    CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 #include "CCGLView.h"
 struct libvlc_instance_t;
 struct libvlc_media_player_t;
@@ -264,8 +263,7 @@ namespace ui{
         ccVideoPlayerCallback _eventCallback = nullptr;
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 ||\
-    CC_TARGET_PLATFORM == CC_PLATFORM_LINUX ||\
-    CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+    CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
         static libvlc_instance_t* vlcInstance;
         libvlc_media_player_t* vlcPlayer = nullptr;
 
@@ -290,11 +288,6 @@ namespace ui{
         X11Window _videoView = 0;
         X11Display* dpy = nullptr;
         X11Window win = 0;
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
-        static std::map<void*,VideoPlayer*> VideoPlayerMap;
-        void* _videoView = nullptr;
-        id win = nullptr;
-        id ctx = nullptr;
 #endif
 
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID

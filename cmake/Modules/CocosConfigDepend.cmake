@@ -32,6 +32,7 @@ macro(cocos2dx_depend)
         find_library(METAL_LIBRARY Metal)
         find_library(UN_LIBRARY UserNotifications)
         find_library(SECURITY_LIBRARY Security)
+        find_library(CORE_MEDIA_LIBRARY CoreMedia)
         set(COCOS_APPLE_LIBS
             ${AUDIOTOOLBOX_LIBRARY}
             ${QUARTZCORE_LIBRARY}
@@ -40,6 +41,7 @@ macro(cocos2dx_depend)
             ${METAL_LIBRARY}
             ${UN_LIBRARY}
             ${SECURITY_LIBRARY}
+            ${CORE_MEDIA_LIBRARY}
             )
 
         if(NOT BUILD_EXT_ALSOFT)
@@ -62,6 +64,7 @@ macro(cocos2dx_depend)
             find_library(AUDIOUNIT_LIBRARY AudioUnit)
             find_library(COREAUDIO_LIBRARY CoreAudio)
             find_library(COREWLAN_LIBRARY CoreWLAN)
+            find_library(AVFOUNDATION_LIBRARY AVFoundation)
             list(APPEND PLATFORM_SPECIFIC_LIBS
                  ${COCOA_LIBRARY}
                  ${OPENGL_LIBRARY}
@@ -73,6 +76,7 @@ macro(cocos2dx_depend)
                  ${AUDIOUNIT_LIBRARY}
                  ${COREAUDIO_LIBRARY}
                  ${COREWLAN_LIBRARY}
+                 ${AVFOUNDATION_LIBRARY}
                  )
         elseif(IOS)
             # Locate system libraries on iOS
@@ -80,7 +84,6 @@ macro(cocos2dx_depend)
             find_library(OPENGLES_LIBRARY OpenGLES)
             find_library(CORE_MOTION_LIBRARY CoreMotion)
             find_library(AVKIT_LIBRARY AVKit)
-            find_library(CORE_MEDIA_LIBRARY CoreMedia)
             find_library(CORE_TEXT_LIBRARY CoreText)
             find_library(CORE_GRAPHICS_LIBRARY CoreGraphics)
             find_library(AV_FOUNDATION_LIBRARY AVFoundation)
@@ -90,7 +93,6 @@ macro(cocos2dx_depend)
                  ${OPENGLES_LIBRARY}
                  ${CORE_MOTION_LIBRARY}
                  ${AVKIT_LIBRARY}
-                 ${CORE_MEDIA_LIBRARY}
                  ${CORE_TEXT_LIBRARY}
                  ${CORE_GRAPHICS_LIBRARY}
                  ${AV_FOUNDATION_LIBRARY}
