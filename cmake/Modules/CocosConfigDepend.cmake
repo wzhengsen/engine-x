@@ -33,6 +33,8 @@ macro(cocos2dx_depend)
         find_library(UN_LIBRARY UserNotifications)
         find_library(SECURITY_LIBRARY Security)
         find_library(CORE_MEDIA_LIBRARY CoreMedia)
+        find_library(WEBKIT_LIBRARY WebKit)
+        find_library(AV_FOUNDATION_LIBRARY AVFoundation)
         set(COCOS_APPLE_LIBS
             ${AUDIOTOOLBOX_LIBRARY}
             ${QUARTZCORE_LIBRARY}
@@ -42,6 +44,8 @@ macro(cocos2dx_depend)
             ${UN_LIBRARY}
             ${SECURITY_LIBRARY}
             ${CORE_MEDIA_LIBRARY}
+            ${WEBKIT_LIBRARY}
+            ${AV_FOUNDATION_LIBRARY}
             )
 
         if(NOT BUILD_EXT_ALSOFT)
@@ -64,7 +68,6 @@ macro(cocos2dx_depend)
             find_library(AUDIOUNIT_LIBRARY AudioUnit)
             find_library(COREAUDIO_LIBRARY CoreAudio)
             find_library(COREWLAN_LIBRARY CoreWLAN)
-            find_library(AVFOUNDATION_LIBRARY AVFoundation)
             list(APPEND PLATFORM_SPECIFIC_LIBS
                  ${COCOA_LIBRARY}
                  ${OPENGL_LIBRARY}
@@ -76,7 +79,6 @@ macro(cocos2dx_depend)
                  ${AUDIOUNIT_LIBRARY}
                  ${COREAUDIO_LIBRARY}
                  ${COREWLAN_LIBRARY}
-                 ${AVFOUNDATION_LIBRARY}
                  )
         elseif(IOS)
             # Locate system libraries on iOS
@@ -86,8 +88,6 @@ macro(cocos2dx_depend)
             find_library(AVKIT_LIBRARY AVKit)
             find_library(CORE_TEXT_LIBRARY CoreText)
             find_library(CORE_GRAPHICS_LIBRARY CoreGraphics)
-            find_library(AV_FOUNDATION_LIBRARY AVFoundation)
-            find_library(WEBKIT_LIBRARY WebKit)
             list(APPEND PLATFORM_SPECIFIC_LIBS
                  ${UIKIT_LIBRARY}
                  ${OPENGLES_LIBRARY}
@@ -95,8 +95,6 @@ macro(cocos2dx_depend)
                  ${AVKIT_LIBRARY}
                  ${CORE_TEXT_LIBRARY}
                  ${CORE_GRAPHICS_LIBRARY}
-                 ${AV_FOUNDATION_LIBRARY}
-                 ${WEBKIT_LIBRARY}
                  ${COCOS_APPLE_LIBS}
                  "/usr/lib/libz.dylib"
                  "/usr/lib/libiconv.dylib"

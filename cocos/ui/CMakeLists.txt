@@ -18,6 +18,7 @@ elseif(APPLE)
             ui/UIEditBox/Mac/CCUIEditBoxMac.h
             ui/UIEditBox/Mac/CCUISingleLineTextField.h
             ui/UIEditBox/Mac/CCUITextFieldFormatter.h
+            ui/UIWebView/UIWebViewImpl-apple.h
             )
         set(COCOS_UI_SPECIFIC_SRC
             ui/UIEditBox/UIEditBoxImpl-mac.mm
@@ -27,10 +28,11 @@ elseif(APPLE)
             ui/UIEditBox/Mac/CCUISingleLineTextField.m
             ui/UIEditBox/Mac/CCUITextFieldFormatter.m
             ui/UIVideoPlayer/UIVideoPlayer-apple.mm
+            ui/UIWebView/UIWebViewImpl-apple.mm
             )
     elseif(IOS)
         set(COCOS_UI_SPECIFIC_HEADER
-            ui/UIWebView/UIWebViewImpl-ios.h
+            ui/UIWebView/UIWebViewImpl-apple.h
             ui/UIEditBox/UIEditBoxImpl-ios.h
             ui/UIEditBox/iOS/CCUIEditBoxIOS.h
             ui/UIEditBox/iOS/CCUIMultilineTextField.h
@@ -41,7 +43,7 @@ elseif(APPLE)
             )
         set(COCOS_UI_SPECIFIC_SRC
             ui/UIVideoPlayer/UIVideoPlayer-apple.mm
-            ui/UIWebView/UIWebViewImpl-ios.mm
+            ui/UIWebView/UIWebViewImpl-apple.mm
             ui/UIEditBox/UIEditBoxImpl-ios.mm
             ui/UIEditBox/iOS/CCUIEditBoxIOS.mm
             ui/UIEditBox/iOS/CCUIMultilineTextField.mm

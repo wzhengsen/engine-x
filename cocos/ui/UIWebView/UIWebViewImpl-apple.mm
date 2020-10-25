@@ -25,13 +25,16 @@
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKUIDelegate.h>
 #import <WebKit/WKNavigationDelegate.h>
+#import <WebKit/WKNavigationAction.h>
 
-#include "ui/UIWebView/UIWebViewImpl-ios.h"
+#include "ui/UIWebView/UIWebViewImpl-apple.h"
 #include "ui/UIWebView/UIWebView.h"
 #include "renderer/CCRenderer.h"
 #include "base/CCDirector.h"
 #include "platform/CCGLView.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
 #include "platform/ios/CCEAGLView-ios.h"
+#endif
 #include "platform/CCFileUtils.h"
 
 @interface UIWebViewWrapper : NSObject
@@ -124,8 +127,13 @@
     }
     if (!self.wkWebView.superview) {
         auto view = cocos2d::Director::getInstance()->getOpenGLView();
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
         auto eaglview = (CCEAGLView *) view->getEAGLView();
         [eaglview addSubview:self.wkWebView];
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+        NSWindow* cocoaWindow = view->getCocoaWindow();
+        [cocoaWindow.contentView addSubview:self.wkWebView];
+#endif
     }
 }
 
@@ -135,23 +143,33 @@
 }
 
 - (void)setBounces:(bool)bounces {
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
   self.wkWebView.scrollView.bounces = bounces;
+#endif
 }
 
 - (void)setOpacityWebView:(float)opacity {
     if (!self.wkWebView) { [self setupWebView]; }
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
     self.wkWebView.alpha = opacity;
     [self.wkWebView setOpaque:YES];
+#endif
 }
 
 -(float) getOpacityWebView{
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
     return self.wkWebView.alpha;
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+    return 1.0f;
+#endif
 }
 
 -(void) setBackgroundTransparent{
     if (!self.wkWebView) {[self setupWebView];}
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
     [self.wkWebView setOpaque:NO];
     [self.wkWebView setBackgroundColor:[UIColor clearColor]];
+#endif
 }
 
 - (void)setFrameWithX:(float)x y:(float)y width:(float)width height:(float)height {
@@ -251,8 +269,12 @@
         return;
     }
     if (self.shouldStartLoading && url) {
-        if (self.shouldStartLoading([url UTF8String]) )
+        if (self.shouldStartLoading([url UTF8String]) ) {
+            if (navigationAction.targetFrame == nil) {
+                [webView loadRequest:navigationAction.request];
+            }
             decisionHandler(WKNavigationActionPolicyAllow);
+        }
         else
             decisionHandler(WKNavigationActionPolicyCancel);
 
@@ -283,6 +305,7 @@
 // Implement js alert function.
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler
 {
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:message
                                                                              message:nil
                                                                       preferredStyle:UIAlertControllerStyleAlert];
@@ -294,6 +317,20 @@
 
     auto rootViewController = [UIApplication sharedApplication].windows[0].rootViewController;
     [rootViewController presentViewController:alertController animated:YES completion:^{}];
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.alertStyle = NSAlertStyleInformational;
+    [alert addButtonWithTitle:@"Ok"];
+
+    alert.messageText = message;
+
+    NSUInteger action = [alert runModal];
+    if(action == NSAlertFirstButtonReturn) {
+        if(completionHandler) {
+            completionHandler();
+        }
+    }
+#endif
 }
 
 @end
@@ -410,8 +447,11 @@ void WebViewImpl::draw(cocos2d::Renderer *renderer, cocos2d::Mat4 const &transfo
         auto director = cocos2d::Director::getInstance();
         auto glView = director->getOpenGLView();
         auto frameSize = glView->getFrameSize();
-        
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
         auto scaleFactor = [static_cast<CCEAGLView *>(glView->getEAGLView()) contentScaleFactor];
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+        auto scaleFactor = 1.0f;
+#endif
 
         auto winSize = director->getWinSize();
 

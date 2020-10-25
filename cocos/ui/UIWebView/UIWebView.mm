@@ -24,9 +24,9 @@
  ****************************************************************************/
 #include "platform/CCPlatformConfig.h"
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) || (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 
-#include "ui/UIWebView/UIWebViewImpl-ios.h"
+#include "ui/UIWebView/UIWebViewImpl-apple.h"
 #include "ui/UIWebView/UIWebView-inl.h"
 
 #endif
