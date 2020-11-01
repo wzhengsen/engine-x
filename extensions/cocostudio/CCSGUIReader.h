@@ -1,6 +1,5 @@
 ﻿/****************************************************************************
 Copyright (c) 2013-2017 Chukong Technologies Inc.
-Copyright (c) 2019-2020 simdsoft, @HALX99
 
 http://www.cocos2d-x.org
 
@@ -27,15 +26,20 @@ THE SOFTWARE.
 #define __CCSGUIREADER_H__
 
 #include "ui/UILayout.h"
-#include "cocostudio/DictionaryHelper.h"
-#include "cocostudio/WidgetReader/WidgetReaderProtocol.h"
+#include "DictionaryHelper.h"
+#include "WidgetReader/WidgetReaderProtocol.h"
 #include "base/ObjectFactory.h"
 #include "base/CCValue.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CocosStudioExport.h"
 
 namespace protocolbuffers
 {
     class NodeTree;
+}
+
+namespace tinyxml2
+{
+    class XMLElement;
 }
 
 namespace cocostudio {
@@ -49,7 +53,7 @@ namespace cocostudio {
     typedef void (cocos2d::Ref::*SEL_ParseEvent)(const std::string&, cocos2d::Ref*, const rapidjson::Value&);
 #define parseselector(_SELECTOR) (SEL_ParseEvent)(&_SELECTOR)
 
-class CC_STUDIO_DLL GUIReader : public cocos2d::Ref
+class CCS_DLL GUIReader : public cocos2d::Ref
 {
 public:
     CC_DEPRECATED_ATTRIBUTE static GUIReader* shareReader() { return GUIReader::getInstance(); };
@@ -102,7 +106,7 @@ public:
     
 };
 
-class CC_STUDIO_DLL WidgetPropertiesReader : public cocos2d::Ref
+class CCS_DLL WidgetPropertiesReader : public cocos2d::Ref
 {
 public:
     virtual cocos2d::ui::Widget* createWidget(const rapidjson::Value& dic, const char* fullPath, const char* fileName)=0;
@@ -137,7 +141,7 @@ protected:
 };
 
 
-class CC_STUDIO_DLL WidgetPropertiesReader0250 : public WidgetPropertiesReader
+class CCS_DLL WidgetPropertiesReader0250 : public WidgetPropertiesReader
 {
     
     
@@ -184,7 +188,7 @@ public:
                                                               const rapidjson::Value& customOptions) override;
 };
    
-class CC_STUDIO_DLL WidgetPropertiesReader0300 : public WidgetPropertiesReader
+class CCS_DLL WidgetPropertiesReader0300 : public WidgetPropertiesReader
 {
     
     

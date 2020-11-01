@@ -1,6 +1,5 @@
 ﻿/****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -27,9 +26,9 @@ THE SOFTWARE.
 #ifndef __CCANIMATION_H__
 #define __CCANIMATION_H__
 
-#include "cocostudio/CCProcessBase.h"
-#include "cocostudio/CCTween.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CCProcessBase.h"
+#include "CCTween.h"
+#include "CocosStudioExport.h"
 #include <queue>
 
 namespace cocostudio {
@@ -67,7 +66,7 @@ struct MovementEvent
     std::string movementID;
 };
 
-class  CC_STUDIO_DLL ArmatureAnimation : public ProcessBase
+class  CCS_DLL ArmatureAnimation : public ProcessBase
 {
 public:
     /**
@@ -84,7 +83,7 @@ public:
      * @js NA
      * @lua NA
      */
-    virtual ~ArmatureAnimation();
+    virtual ~ArmatureAnimation(void);
 
     /**
      * Init with a Armature

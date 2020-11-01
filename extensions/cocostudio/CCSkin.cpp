@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -28,9 +27,9 @@ THE SOFTWARE.
 #include "base/CCDirector.h"
 #include "renderer/CCRenderer.h"
 
-#include "cocostudio/CCSkin.h"
-#include "cocostudio/CCTransformHelp.h"
-#include "cocostudio/CCArmature.h"
+#include "CCSkin.h"
+#include "CCTransformHelp.h"
+#include "CCArmature.h"
 
 
 using namespace cocos2d;

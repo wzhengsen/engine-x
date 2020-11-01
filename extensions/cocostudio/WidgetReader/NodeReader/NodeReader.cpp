@@ -22,11 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "cocostudio/WidgetReader/NodeReader/NodeReader.h"
+#include "WidgetReader/NodeReader/NodeReader.h"
 
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/ActionTimeline/CCActionTimeline.h"
-#include "cocostudio/CCComExtensionData.h"
+#include "CSParseBinary_generated.h"
+#include "ActionTimeline/CCActionTimeline.h"
+#include "CCComExtensionData.h"
 
 #include "flatbuffers/flatbuffers.h"
 #include "ui/UILayoutComponent.h"

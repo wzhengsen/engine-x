@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "cocostudio/ActionTimeline/CCTimeLine.h"
-#include "cocostudio/ActionTimeline/CCActionTimeline.h"
+#include "ActionTimeline/CCTimeLine.h"
+#include "ActionTimeline/CCActionTimeline.h"
 
 USING_NS_CC;
 

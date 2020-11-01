@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -26,9 +25,9 @@ THE SOFTWARE.
 #ifndef __CCARMATUREDATAMANAGER_H__
 #define __CCARMATUREDATAMANAGER_H__
 
-#include "cocostudio/CCArmatureDefine.h"
-#include "cocostudio/CCDatas.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CCArmatureDefine.h"
+#include "CCDatas.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio {
 
@@ -43,7 +42,7 @@ struct RelativeData
 /**
  *    @brief    format and manage armature configuration and armature animation
  */
-class CC_STUDIO_DLL ArmatureDataManager : public cocos2d::Ref
+class CCS_DLL ArmatureDataManager : public cocos2d::Ref
 {
 public:
     /** @deprecated Use getInstance() instead */
@@ -55,16 +54,16 @@ public:
     static ArmatureDataManager *getInstance();
     static void destroyInstance();
     
-private:
+protected:
     /**
      * @js ctor
      */
-    ArmatureDataManager();
+    ArmatureDataManager(void);
     /**
      * @js NA
      * @lua NA
      */
-    ~ArmatureDataManager();
+    ~ArmatureDataManager(void);
 
 public:
 
@@ -173,7 +172,7 @@ public:
     const cocos2d::Map<std::string, AnimationData*>&    getAnimationDatas() const;
     const cocos2d::Map<std::string, TextureData*>&      getTextureDatas() const;
 
-protected:
+public:
     void addRelativeData(const std::string& configFilePath);
     RelativeData *getRelativeData(const std::string& configFilePath);
 private:

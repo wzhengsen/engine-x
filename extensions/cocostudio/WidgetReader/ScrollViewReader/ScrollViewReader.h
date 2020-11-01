@@ -25,12 +25,12 @@
 #ifndef __TestCpp__ScrollViewReader__
 #define __TestCpp__ScrollViewReader__
 
-#include "cocostudio/WidgetReader/LayoutReader/LayoutReader.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "WidgetReader/LayoutReader/LayoutReader.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio
 {
-    class CC_STUDIO_DLL ScrollViewReader : public LayoutReader
+    class CCS_DLL ScrollViewReader : public LayoutReader
     {
         DECLARE_CLASS_NODE_READER_INFO
         

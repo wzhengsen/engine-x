@@ -25,8 +25,8 @@ THE SOFTWARE.
 #define __CCSPRITEFRAMECACHEHELPER_H__
 
 #include "platform/CCPlatformMacros.h"
-#include "cocostudio/CCArmatureDefine.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CCArmatureDefine.h"
+#include "CocosStudioExport.h"
 #include <string>
 #include <map>
 #include <vector>
@@ -41,7 +41,7 @@ namespace cocostudio {
  *  @js NA
  *  @lua NA
  */
-class CC_STUDIO_DLL SpriteFrameCacheHelper
+class CCS_DLL SpriteFrameCacheHelper
 {
 public:
     /** @deprecated Use getInstance() instead */

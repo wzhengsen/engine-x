@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -10,8 +9,7 @@ in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
+The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -23,19 +21,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "cocostudio/CCBatchNode.h"
-#include "cocostudio/CCArmature.h"
-#include "cocostudio/CCSkin.h"
+#include "CCBatchNode.h"
+#include "CCArmature.h"
+#include "CCSkin.h"
 
 #include "renderer/CCRenderer.h"
 #include "renderer/CCGroupCommand.h"
 #include "base/CCDirector.h"
 
 using namespace cocos2d;
-
-namespace cocostudio {
-
-BatchNode *BatchNode::create()
+namespace cocostudio {
+BatchNode *BatchNode::create()
 {
     BatchNode *batchNode = new (std::nothrow) BatchNode();
     if (batchNode && batchNode->init())
@@ -46,13 +42,11 @@ BatchNode *BatchNode::create()
     CC_SAFE_DELETE(batchNode);
     return nullptr;
 }
-
-BatchNode::BatchNode()
+BatchNode::BatchNode()
 : _groupCommand(nullptr)
 {
 }
-
-BatchNode::~BatchNode()
+BatchNode::~BatchNode()
 {
     CC_SAFE_DELETE(_groupCommand);
 }

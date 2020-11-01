@@ -10,6 +10,12 @@ import sys
 import subprocess
 import tempfile
 import argparse
+import ssl
+try:
+    ssl._create_default_https_context = ssl._create_unverified_context
+    print("==> setup_android.py set ssl context ok")
+except Exception:
+    pass
 from retry import retry
 
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -87,8 +93,8 @@ def install_android_sdk():
     switches = " --verbose --sdk_root=" + ANDROID_SDK + " "
     cmd1 = SDK_MANAGER + switches
     packages = [
-        "platforms;android-27",
-        "build-tools;28.0.3",
+        "platforms;android-28",
+        "build-tools;29.0.2",
         "platform-tools",
         "tools"
     ]

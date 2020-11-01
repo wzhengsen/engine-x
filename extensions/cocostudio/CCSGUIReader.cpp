@@ -1,7 +1,5 @@
 /****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
-Copyright (c) 2019-2020 simdsoft, @HALX99
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#include "cocostudio/CCSGUIReader.h"
+#include "CCSGUIReader.h"
 
 #include <fstream>
 #include <iostream>
@@ -33,21 +31,23 @@ THE SOFTWARE.
 #include "base/CCDirector.h"
 #include "base/ccUtils.h"
 
-#include "cocostudio/CCActionManagerEx.h"
-#include "cocostudio/WidgetReader/ButtonReader/ButtonReader.h"
-#include "cocostudio/WidgetReader/CheckBoxReader/CheckBoxReader.h"
-#include "cocostudio/WidgetReader/SliderReader/SliderReader.h"
-#include "cocostudio/WidgetReader/ImageViewReader/ImageViewReader.h"
-#include "cocostudio/WidgetReader/LoadingBarReader/LoadingBarReader.h"
-#include "cocostudio/WidgetReader/TextAtlasReader/TextAtlasReader.h"
-#include "cocostudio/WidgetReader/TextReader/TextReader.h"
-#include "cocostudio/WidgetReader/TextBMFontReader/TextBMFontReader.h"
-#include "cocostudio/WidgetReader/TextFieldReader/TextFieldReader.h"
-#include "cocostudio/WidgetReader/LayoutReader/LayoutReader.h"
-#include "cocostudio/WidgetReader/PageViewReader/PageViewReader.h"
-#include "cocostudio/WidgetReader/ScrollViewReader/ScrollViewReader.h"
-#include "cocostudio/WidgetReader/ListViewReader/ListViewReader.h"
-#include "cocostudio/CocoLoader.h"
+#include "CCActionManagerEx.h"
+// #include "WidgetReader/ButtonReader/ButtonReader.h"
+// #include "WidgetReader/CheckBoxReader/CheckBoxReader.h"
+// #include "WidgetReader/SliderReader/SliderReader.h"
+// #include "WidgetReader/ImageViewReader/ImageViewReader.h"
+// #include "WidgetReader/LoadingBarReader/LoadingBarReader.h"
+// #include "WidgetReader/TextAtlasReader/TextAtlasReader.h"
+// #include "WidgetReader/TextReader/TextReader.h"
+// #include "WidgetReader/TextBMFontReader/TextBMFontReader.h"
+// #include "WidgetReader/TextFieldReader/TextFieldReader.h"
+// #include "WidgetReader/LayoutReader/LayoutReader.h"
+// #include "WidgetReader/PageViewReader/PageViewReader.h"
+// #include "WidgetReader/ScrollViewReader/ScrollViewReader.h"
+// #include "WidgetReader/ListViewReader/ListViewReader.h"
+#include "CocoLoader.h"
+#include "pugixml/pugixml.hpp"
+
 
 using namespace cocos2d;
 using namespace cocos2d::ui;
@@ -61,19 +61,20 @@ m_strFilePath("")
 {
     ObjectFactory* factoryCreate = ObjectFactory::getInstance();
     
-    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ButtonReader));
-    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(CheckBoxReader));
-    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(SliderReader));
-    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ImageViewReader));
-    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(LoadingBarReader));
-    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextAtlasReader));
-    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextReader));
-    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextBMFontReader));
-    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextFieldReader));
-    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(LayoutReader));
-    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(PageViewReader));
-    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ScrollViewReader));
-    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ListViewReader));
+    // TODO:
+    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ButtonReader));
+    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(CheckBoxReader));
+    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(SliderReader));
+    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ImageViewReader));
+    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(LoadingBarReader));
+    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextAtlasReader));
+    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextReader));
+    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextBMFontReader));
+    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextFieldReader));
+    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(LayoutReader));
+    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(PageViewReader));
+    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ScrollViewReader));
+    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ListViewReader));
     
     factoryCreate->registerType(CREATE_CLASS_GUI_INFO(Button));
     factoryCreate->registerType(CREATE_CLASS_GUI_INFO(CheckBox));
@@ -116,19 +117,19 @@ int GUIReader::getVersionInteger(const char *str)
     {
         return 0;
     }
-    size_t pos = strVersion.find_first_of('.');
+    size_t pos = strVersion.find_first_of(".");
     std::string t = strVersion.substr(0,pos);
     strVersion = strVersion.substr(pos+1,strVersion.length()-1);
     
-    pos = strVersion.find_first_of('.');
+    pos = strVersion.find_first_of(".");
     std::string h = strVersion.substr(0,pos);
     strVersion = strVersion.substr(pos+1,strVersion.length()-1);
     
-    pos = strVersion.find_first_of('.');
+    pos = strVersion.find_first_of(".");
     std::string te = strVersion.substr(0,pos);
     strVersion = strVersion.substr(pos+1,strVersion.length()-1);
     
-    pos = strVersion.find_first_of('.');
+    pos = strVersion.find_first_of(".");
     std::string s = strVersion.substr(0,pos);
     
     int it = atoi(t.c_str());
@@ -379,7 +380,7 @@ Widget* GUIReader::widgetFromBinaryFile(const char *fileName)
     auto fileDataBytes = fileData.getBytes();
     auto fileDataSize = fileData.getSize();
     
-    const char* fileVersion;
+    const char* fileVersion = "";
     ui::Widget* widget = nullptr;
 
     if (fileDataBytes != nullptr && fileDataSize > 0)

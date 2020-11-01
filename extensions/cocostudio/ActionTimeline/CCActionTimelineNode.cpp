@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "cocostudio/ActionTimeline/CCActionTimelineNode.h"
+#include "ActionTimeline/CCActionTimelineNode.h"
 
 USING_NS_CC;
 

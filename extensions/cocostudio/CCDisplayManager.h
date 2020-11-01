@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
 Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
@@ -25,10 +25,10 @@ THE SOFTWARE.
 #ifndef __CCDISPLAYMANAGER_H__
 #define __CCDISPLAYMANAGER_H__
 
-#include "cocostudio/CCArmatureDefine.h"
-#include "cocostudio/CCDecorativeDisplay.h"
-#include "cocostudio/CCDatas.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CCArmatureDefine.h"
+#include "CCDecorativeDisplay.h"
+#include "CCDatas.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio {
 
@@ -38,7 +38,7 @@ class Bone;
  *  @js NA
  *  @lua NA
  */
-class CC_STUDIO_DLL DisplayManager : public cocos2d::Ref
+class CCS_DLL DisplayManager : public cocos2d::Ref
 {
 public:
     static DisplayManager *create(Bone *bone);

@@ -25,15 +25,15 @@
 #ifndef __COCOSSTUDIO_CCACTIONTIMELINENODE_H__
 #define __COCOSSTUDIO_CCACTIONTIMELINENODE_H__
 
-#include "cocostudio/ActionTimeline/CCActionTimeline.h"
-#include "cocostudio/ActionTimeline/CCTimelineMacro.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "ActionTimeline/CCActionTimeline.h"
+#include "ActionTimeline/CCTimelineMacro.h"
+#include "CocosStudioExport.h"
 
 NS_TIMELINE_BEGIN
 
 class ActionTimeline;
 
-class CC_STUDIOP_DLL ActionTimelineNode : public cocos2d::Node
+class CCS_DLL ActionTimelineNode : public cocos2d::Node
 {
 public:
     static ActionTimelineNode* create(cocos2d::Node* root, ActionTimeline* action);

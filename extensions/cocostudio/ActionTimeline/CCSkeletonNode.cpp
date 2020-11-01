@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2015-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2015-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -22,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#include "cocostudio/ActionTimeline/CCSkeletonNode.h"
+#include "ActionTimeline/CCSkeletonNode.h"
 
 #include "base/CCDirector.h"
 #include "math/TransformUtils.h"
@@ -54,7 +53,7 @@ bool SkeletonNode::init()
     // init _customCommand  
     auto& pipelineDescriptor = _customCommand.getPipelineDescriptor();
     auto* program = cocos2d::backend::Program::getBuiltinProgram(cocos2d::backend::ProgramType::POSITION_COLOR); // TODO: noMVP?
-    attachProgramState(new (std::nothrow) cocos2d::backend::ProgramState(program));
+    setProgramState(new (std::nothrow) cocos2d::backend::ProgramState(program), false);
     pipelineDescriptor.programState = _programState;
 
     _mvpLocation = _programState->getUniformLocation("u_MVPMatrix");

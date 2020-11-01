@@ -1,7 +1,5 @@
 ﻿/****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
-Copyright (c) 2019-2020 simdsoft, @HALX99
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -27,13 +25,13 @@ THE SOFTWARE.
 #ifndef __CCARMATURE_H__
 #define __CCARMATURE_H__
 
-#include "cocostudio/CCArmatureDefine.h"
-#include "cocostudio/CCBone.h"
-#include "cocostudio/CCBatchNode.h"
-#include "cocostudio/CCArmatureAnimation.h"
-#include "cocostudio/CCSpriteFrameCacheHelper.h"
-#include "cocostudio/CCArmatureDataManager.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CCArmatureDefine.h"
+#include "CCBone.h"
+#include "CCBatchNode.h"
+#include "CCArmatureAnimation.h"
+#include "CCSpriteFrameCacheHelper.h"
+#include "CCArmatureDataManager.h"
+#include "CocosStudioExport.h"
 #include "math/CCMath.h"
 
 class b2Body;
@@ -70,7 +68,7 @@ CC_DEPRECATED_ATTRIBUTE typedef Armature CCArmature;
 CC_DEPRECATED_ATTRIBUTE typedef ArmatureDataManager CCArmatureDataManager;
 CC_DEPRECATED_ATTRIBUTE typedef cocos2d::tweenfunc::TweenType CCTweenType;
 
-class CC_STUDIO_DLL Armature : public cocos2d::Node, public cocos2d::BlendProtocol
+class CCS_DLL Armature : public cocos2d::Node, public cocos2d::BlendProtocol
 {
 
 public:

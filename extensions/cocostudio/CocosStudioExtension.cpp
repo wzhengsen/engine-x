@@ -1,4 +1,4 @@
-#include "cocostudio/CocosStudioExtension.h"
+#include "CocosStudioExtension.h"
 
 NS_CC_BEGIN
 

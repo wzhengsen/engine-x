@@ -25,13 +25,13 @@ THE SOFTWARE.
 #ifndef __CC_EXTENTIONS_CCCOMRENDER_H__
 #define __CC_EXTENTIONS_CCCOMRENDER_H__
 
-#include "cocostudio/CCComBase.h"
+#include "CCComBase.h"
 #include "2d/CCComponent.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio {
 
-class CC_STUDIO_DLL ComRender : public cocos2d::Component
+class CCS_DLL ComRender : public cocos2d::Component
 {
     DECLARE_CLASS_COMPONENT_INFO
  

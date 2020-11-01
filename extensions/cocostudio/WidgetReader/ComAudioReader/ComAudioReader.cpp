@@ -22,11 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "cocostudio/WidgetReader/ComAudioReader/ComAudioReader.h"
+#include "WidgetReader/ComAudioReader/ComAudioReader.h"
 
-#include "cocostudio/CCComAudio.h"
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/WidgetReader/NodeReader/NodeReader.h"
+#include "CCComAudio.h"
+#include "CSParseBinary_generated.h"
+#include "WidgetReader/NodeReader/NodeReader.h"
 
 #include "flatbuffers/flatbuffers.h"
 

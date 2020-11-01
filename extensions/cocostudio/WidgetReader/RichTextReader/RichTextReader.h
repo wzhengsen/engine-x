@@ -25,12 +25,12 @@
 #ifndef __xssd__RichTextReader__
 #define __xssd__RichTextReader__
 
-#include "cocostudio/WidgetReader/WidgetReader.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "WidgetReader/WidgetReader.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio
 {
-    class CC_STUDIO_DLL RichTextReader : public WidgetReader
+    class CCS_DLL RichTextReader : public WidgetReader
     {
         DECLARE_CLASS_NODE_READER_INFO
         

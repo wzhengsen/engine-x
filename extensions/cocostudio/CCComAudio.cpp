@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "cocostudio/CCComAudio.h"
+#include "CCComAudio.h"
+// #include "audio/include/SimpleAudioEngine.h"
 #include "platform/CCFileUtils.h"
 
 namespace cocostudio {

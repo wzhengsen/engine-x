@@ -1,13 +1,13 @@
 
 
-#include "cocostudio/WidgetReader/TextBMFontReader/TextBMFontReader.h"
+#include "WidgetReader/TextBMFontReader/TextBMFontReader.h"
 
 #include "2d/CCFontAtlasCache.h"
 #include "ui/UITextBMFont.h"
 #include "platform/CCFileUtils.h"
-#include "cocostudio/CocoLoader.h"
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/LocalizationManager.h"
+#include "CocoLoader.h"
+#include "CSParseBinary_generated.h"
+#include "LocalizationManager.h"
 
 #include "flatbuffers/flatbuffers.h"
 

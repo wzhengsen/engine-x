@@ -25,12 +25,12 @@
 #ifndef __X365LIBS__RadioButtonReader__
 #define __X365LIBS__RadioButtonReader__
 
-#include "cocostudio/WidgetReader/WidgetReader.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "WidgetReader/WidgetReader.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio
 {
-    class CC_STUDIO_DLL RadioButtonReader : public WidgetReader
+    class CCS_DLL RadioButtonReader : public WidgetReader
     {
         DECLARE_CLASS_NODE_READER_INFO
         

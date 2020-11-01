@@ -24,16 +24,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "cocostudio/WidgetReader/SpriteReader/SpriteReader.h"
+#include "WidgetReader/SpriteReader/SpriteReader.h"
 
 #include "base/ccUtils.h"
 #include "2d/CCSprite.h"
 #include "2d/CCSpriteFrameCache.h"
 #include "platform/CCFileUtils.h"
 
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/FlatBuffersSerialize.h"
-#include "cocostudio/WidgetReader/NodeReader/NodeReader.h"
+#include "CSParseBinary_generated.h"
+#include "FlatBuffersSerialize.h"
+#include "WidgetReader/NodeReader/NodeReader.h"
 
 
 #include "flatbuffers/flatbuffers.h"
@@ -337,7 +337,6 @@ namespace cocostudio
             auto filter = options->filter();
             if (hsv != nullptr && filter != nullptr) {
                 Colorizer::enableNodeIntelliShading(sprite,
-                    true,
                     Vec3(hsv->x(), hsv->y(), hsv->z()),
                     Vec3(filter->x(), filter->y(), filter->z()));
             }

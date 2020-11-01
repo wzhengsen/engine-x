@@ -1,6 +1,5 @@
 ﻿/****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -26,9 +25,9 @@ THE SOFTWARE.
 #ifndef __CCPROCESSBASE_H__
 #define __CCPROCESSBASE_H__
 
-#include "cocostudio/CCArmatureDefine.h"
-#include "cocostudio/CCDatas.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CCArmatureDefine.h"
+#include "CCDatas.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio {
 
@@ -52,11 +51,11 @@ enum AnimationType
  *  @js NA
  *  @lua NA
  */
-class  CC_STUDIO_DLL ProcessBase : public cocos2d::Ref
+class  CCS_DLL ProcessBase : public cocos2d::Ref
 {
 public:
-    ProcessBase();
-    virtual ~ProcessBase();
+    ProcessBase(void);
+    virtual ~ProcessBase(void);
 
     /**
      * Play animation by animation name.

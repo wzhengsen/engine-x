@@ -1,16 +1,16 @@
 
 
-#include "cocostudio/WidgetReader/WidgetReader.h"
+#include "WidgetReader/WidgetReader.h"
 
-#include "cocostudio/CocoLoader.h"
+#include "CocoLoader.h"
 #include "ui/UIButton.h"
-#include "cocostudio/ActionTimeline/CCActionTimeline.h"
-#include "cocostudio/CCComExtensionData.h"
-#include "cocostudio/CSParseBinary_generated.h"
+#include "ActionTimeline/CCActionTimeline.h"
+#include "CCComExtensionData.h"
+#include "CSParseBinary_generated.h"
 
 #include "flatbuffers/flatbuffers.h"
 #include "ui/UILayoutComponent.h"
-#include "cocostudio/ActionTimeline/CSLoader.h"
+#include "ActionTimeline/CSLoader.h"
 #include "base/ccUtils.h"
 #include "base/CCDirector.h"
 

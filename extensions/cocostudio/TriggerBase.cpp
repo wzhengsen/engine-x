@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "cocostudio/TriggerBase.h"
+#include "TriggerBase.h"
 #include "base/CCEventCustom.h"
 
 using namespace cocos2d;

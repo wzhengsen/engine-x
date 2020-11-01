@@ -25,9 +25,9 @@ THE SOFTWARE.
 #ifndef __CCTRANSFORMHELP_H__
 #define __CCTRANSFORMHELP_H__
 
-#include "cocostudio/CCArmatureDefine.h"
-#include "cocostudio/CCDatas.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CCArmatureDefine.h"
+#include "CCDatas.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio {
 
@@ -36,7 +36,7 @@ namespace cocostudio {
  * @js NA
  * @lua NA
  */
-class CC_STUDIO_DLL TransformHelp
+class CCS_DLL TransformHelp
 {
 public:
     TransformHelp();

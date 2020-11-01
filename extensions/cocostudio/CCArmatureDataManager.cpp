@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -25,15 +24,14 @@ THE SOFTWARE.
 
 #include "2d/CCSpriteFrameCache.h"
 
-#include "cocostudio/CCArmatureDataManager.h"
-#include "cocostudio/CCTransformHelp.h"
-#include "cocostudio/CCDataReaderHelper.h"
-#include "cocostudio/CCSpriteFrameCacheHelper.h"
+#include "CCArmatureDataManager.h"
+#include "CCTransformHelp.h"
+#include "CCDataReaderHelper.h"
+#include "CCSpriteFrameCacheHelper.h"
 
 using namespace cocos2d;
 
 namespace cocostudio {
-
 static ArmatureDataManager *s_sharedArmatureDataManager = nullptr;
 
 ArmatureDataManager *ArmatureDataManager::getInstance()
@@ -56,7 +54,7 @@ void ArmatureDataManager::destroyInstance()
     CC_SAFE_RELEASE_NULL(s_sharedArmatureDataManager);
 }
 
-ArmatureDataManager::ArmatureDataManager()
+ArmatureDataManager::ArmatureDataManager(void)
 {
     _armarureDatas.clear();
     _animationDatas.clear();
@@ -65,7 +63,7 @@ ArmatureDataManager::ArmatureDataManager()
 }
 
 
-ArmatureDataManager::~ArmatureDataManager()
+ArmatureDataManager::~ArmatureDataManager(void)
 {
     _animationDatas.clear();
     _armarureDatas.clear();
@@ -73,6 +71,7 @@ ArmatureDataManager::~ArmatureDataManager()
 
     _relativeDatas.clear();
 }
+
 
 
 bool ArmatureDataManager::init()
@@ -95,22 +94,22 @@ void ArmatureDataManager::removeArmatureFileInfo(const std::string& configFilePa
 {
     if (RelativeData *data = getRelativeData(configFilePath))
     {
-        for (const std::string& str : data->armatures)
+        for (std::string str : data->armatures)
         {
             removeArmatureData(str);
         }
 
-        for (const std::string& str : data->animations)
+        for (std::string str : data->animations)
         {
             removeAnimationData(str);
         }
 
-        for (const std::string& str : data->textures)
+        for (std::string str : data->textures)
         {
             removeTextureData(str);
         }
 
-        for (const std::string& str : data->plistFiles)
+        for (std::string str : data->plistFiles)
         {
             SpriteFrameCacheHelper::getInstance()->removeSpriteFrameFromFile(str);
         }
@@ -176,6 +175,7 @@ TextureData *ArmatureDataManager::getTextureData(const std::string& id)
 {
     return dynamic_cast<TextureData*>(_textureDatas.at(id));
 }
+
 
 
 void ArmatureDataManager::removeTextureData(const std::string& id)

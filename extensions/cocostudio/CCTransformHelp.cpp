@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "cocostudio/CCTransformHelp.h"
-#include "cocostudio/CCUtilMath.h"
+#include "CCTransformHelp.h"
+#include "CCUtilMath.h"
 
 using namespace cocos2d;
 

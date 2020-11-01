@@ -1,13 +1,13 @@
 #pragma once
 
-#include "cocostudio/CCComBase.h"
+#include "CCComBase.h"
 #include "2d/CCComponent.h"
-#include "cocostudio/CocosStudioExport.h"
-#include "cocostudio/ActionTimeline/CCTimelineMacro.h"
+#include "CocosStudioExport.h"
+#include "ActionTimeline/CCTimelineMacro.h"
 
 NS_TIMELINE_BEGIN
 
-class CC_STUDIOP_DLL ActionTimelineData : public cocos2d::Ref
+class CCS_DLL ActionTimelineData : public cocos2d::Ref
 {
 public:
     static ActionTimelineData* create(int actionTag);

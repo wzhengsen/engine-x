@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2015-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2015-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -28,8 +27,9 @@ THE SOFTWARE.
 #include "renderer/CCRenderer.h"
 #include "renderer/ccShaders.h"
 #include "renderer/backend/ProgramState.h"
-#include "cocostudio/ActionTimeline/CCBoneNode.h"
-#include "cocostudio/ActionTimeline/CCSkeletonNode.h"
+
+#include "ActionTimeline/CCBoneNode.h"
+#include "ActionTimeline/CCSkeletonNode.h"
 
 NS_TIMELINE_BEGIN
 
@@ -59,6 +59,47 @@ BoneNode* BoneNode::create(int length)
         CC_SAFE_DELETE(ret);
     }
     return ret;
+}
+
+BoneNode::~BoneNode()
+{
+}
+
+bool BoneNode::init()
+{
+    _rackLength = 50;
+    _rackWidth = 20;
+    updateVertices();
+    updateColor();
+
+    auto& pipelineDescriptor = _customCommand.getPipelineDescriptor();
+    auto* program = cocos2d::backend::Program::getBuiltinProgram(cocos2d::backend::ProgramType::POSITION_COLOR); // TODO: noMVP?
+    setProgramState(new (std::nothrow) cocos2d::backend::ProgramState(program), false);
+    pipelineDescriptor.programState = _programState;
+
+    _mvpLocation = _programState->getUniformLocation("u_MVPMatrix");
+
+    auto vertexLayout = _programState->getVertexLayout();
+    const auto& attributeInfo = _programState->getProgram()->getActiveAttributes();
+    auto iter = attributeInfo.find("a_position");
+    if (iter != attributeInfo.end())
+    {
+        vertexLayout->setAttribute("a_position", iter->second.location, cocos2d::backend::VertexFormat::FLOAT3, 0, false);
+    }
+    iter = attributeInfo.find("a_color");
+    if (iter != attributeInfo.end())
+    {
+        vertexLayout->setAttribute("a_color", iter->second.location, cocos2d::backend::VertexFormat::FLOAT4, 3 * sizeof(float), false);
+    }
+    vertexLayout->setLayout(7 * sizeof(float));
+
+    _customCommand.createVertexBuffer(sizeof(_vertexData[0]), 4, cocos2d::CustomCommand::BufferUsage::DYNAMIC);
+    _customCommand.createIndexBuffer(cocos2d::CustomCommand::IndexFormat::U_SHORT, 6, cocos2d::CustomCommand::BufferUsage::STATIC);
+    unsigned short indices[6] = { 0, 1, 2,
+                                 0, 2, 3 };
+    _customCommand.updateIndexBuffer(indices, sizeof(indices));
+
+    return true;
 }
 
 void BoneNode::addChild(cocos2d::Node* child, int localZOrder, int tag)
@@ -400,47 +441,6 @@ void BoneNode::draw(cocos2d::Renderer *renderer, const cocos2d::Mat4 &transform,
     _customCommand.updateVertexBuffer(_vertexData, sizeof(_vertexData));
 
    _programState->setUniform(_mvpLocation, transform.m, sizeof(transform.m));
-}
-
-BoneNode::~BoneNode()
-{
-}
-
-bool BoneNode::init()
-{
-    _rackLength = 50;
-    _rackWidth = 20;
-    updateVertices();
-    updateColor();
-
-    auto& pipelineDescriptor = _customCommand.getPipelineDescriptor();
-    auto* program = cocos2d::backend::Program::getBuiltinProgram(cocos2d::backend::ProgramType::POSITION_COLOR); // TODO: noMVP?
-    attachProgramState(new (std::nothrow) cocos2d::backend::ProgramState(program));
-    pipelineDescriptor.programState = _programState;
-
-    _mvpLocation = _programState->getUniformLocation("u_MVPMatrix");
-
-    auto vertexLayout = _programState->getVertexLayout();
-    const auto& attributeInfo = _programState->getProgram()->getActiveAttributes();
-    auto iter = attributeInfo.find("a_position");
-    if(iter != attributeInfo.end())
-    {
-        vertexLayout->setAttribute("a_position", iter->second.location, cocos2d::backend::VertexFormat::FLOAT3, 0, false);
-    }
-    iter = attributeInfo.find("a_color");
-    if(iter != attributeInfo.end())
-    {
-        vertexLayout->setAttribute("a_color", iter->second.location, cocos2d::backend::VertexFormat::FLOAT4, 3 * sizeof(float), false);
-    }
-    vertexLayout->setLayout(7 * sizeof(float));
-
-    _customCommand.createVertexBuffer(sizeof(_vertexData[0]), 4, cocos2d::CustomCommand::BufferUsage::DYNAMIC);
-    _customCommand.createIndexBuffer(cocos2d::CustomCommand::IndexFormat::U_SHORT, 6, cocos2d::CustomCommand::BufferUsage::STATIC);
-    unsigned short indices[6] = {0, 1, 2,
-                                 0, 2, 3};
-    _customCommand.updateIndexBuffer(indices, sizeof(indices));
-
-    return true;
 }
 
 void BoneNode::updateVertices()

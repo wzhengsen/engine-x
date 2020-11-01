@@ -1,14 +1,14 @@
 
 
-#include "cocostudio/WidgetReader/TextReader/TextReader.h"
+#include "WidgetReader/TextReader/TextReader.h"
 
 #include "ui/UIText.h"
 #include "2d/CCLabel.h"
 #include "platform/CCFileUtils.h"
 
-#include "cocostudio/CocoLoader.h"
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/LocalizationManager.h"
+#include "CocoLoader.h"
+#include "CSParseBinary_generated.h"
+#include "LocalizationManager.h"
 
 #include "flatbuffers/flatbuffers.h"
 

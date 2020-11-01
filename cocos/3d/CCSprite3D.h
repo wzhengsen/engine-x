@@ -120,7 +120,7 @@ public:
     
     // overrides
     /** Sets ProgramState, you should bind attributes by yourself */
-    void setProgramState(backend::ProgramState *programState) override;
+    bool setProgramState(backend::ProgramState *programState, bool needsRetain = true) override;
 
     /*
      * Get AABB
@@ -161,7 +161,7 @@ public:
     virtual Rect getBoundingBox() const override;
 
     // set which face is going to cull, CullFaceSide::BACK, CullFaceSide::FRONT and CullFaceSide::NONE.
-    void setCullFace(CullFaceSide side);
+    virtual void setCullFace(CullFaceSide side);
     // set cull face enable or not
     void setCullFaceEnabled(bool enable);
     

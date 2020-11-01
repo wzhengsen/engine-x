@@ -39,6 +39,11 @@ THE SOFTWARE.
 #include "base/ccUtils.h"
 #include "base/ccUTF8.h"
 #include "2d/CCCamera.h"
+
+#if defined(_WIN32)
+#include "glfw3ext.h"
+#endif
+
 #if CC_ICON_SET_SUPPORT
 #include "platform/CCImage.h"
 #endif /* CC_ICON_SET_SUPPORT */
@@ -315,7 +320,11 @@ GLViewImpl::GLViewImpl(bool initglfw)
 #if defined(CC_USE_GLES) && GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR >= 4
         glfwInitHint(GLFW_ANGLE_PLATFORM_TYPE, GLFW_ANGLE_PLATFORM_TYPE_D3D11); // since glfw-3.4
 #endif
+#if defined(_WIN32)
+        glfwxInit();
+#else
         glfwInit();
+#endif
     }
 }
 
@@ -323,7 +332,11 @@ GLViewImpl::~GLViewImpl()
 {
     CCLOGINFO("deallocing GLViewImpl: %p", this);
     GLFWEventHandler::setGLViewImpl(nullptr);
+#if defined(_WIN32)
+    glfwxTerminate();
+#else
     glfwTerminate();
+#endif
 }
 
 GLViewImpl* GLViewImpl::create(const std::string& viewName)
@@ -398,6 +411,9 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
 
     glfwWindowHint(GLFW_SAMPLES, _glContextAttrs.multisamplingCount);
 
+    glfwWindowHint(GLFW_VISIBLE, _glContextAttrs.visible);
+    glfwWindowHint(GLFW_DECORATED, _glContextAttrs.decorated);
+    
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
     // Don't create gl context.
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -405,6 +421,10 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
 
     int neededWidth = (int)(rect.size.width * _frameZoomFactor);
     int neededHeight = (int)(rect.size.height * _frameZoomFactor);
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+    glfwxSetParent((HWND)_glContextAttrs.viewParent);
+#endif
 
     _mainWindow = glfwCreateWindow(neededWidth, neededHeight, _viewName.c_str(), _monitor, nullptr);
 
@@ -418,6 +438,7 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
         }
 
         ccMessageBox(message.c_str(), "Error launch application");
+        utils::killCurrentProcess(); // kill current process, don't cause crash when driver issue.
         return false;
     }
 
@@ -468,7 +489,8 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
                 "OpenGL 1.5 or higher is required (your version is %s). Please upgrade the driver of your video card.",
                 glVersion);
         ccMessageBox(strComplain, "OpenGL version too old");
-        return false;
+		utils::killCurrentProcess(); // kill current process, don't cause crash when driver issue.        
+		return false;
     }
 
     // Will cause OpenGL error 0x0500 when use ANGLE-GLES on desktop
@@ -483,6 +505,10 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
         glEnable(GL_MULTISAMPLE);
 #endif
     CHECK_GL_ERROR_DEBUG();
+
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+    ::glfwSwapInterval(_glContextAttrs.vsync ? 1 : 0);
+#endif
 
 //    // GLFW v3.2 no longer emits "onGLFWWindowSizeFunCallback" at creation time. Force default viewport:
 //    setViewPortInPoints(0, 0, neededWidth, neededHeight);

@@ -1,13 +1,13 @@
 
 
-#include "cocostudio/WidgetReader/TextAtlasReader/TextAtlasReader.h"
+#include "WidgetReader/TextAtlasReader/TextAtlasReader.h"
 
 #include "ui/UITextAtlas.h"
 #include "platform/CCFileUtils.h"
 
-#include "cocostudio/CocoLoader.h"
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/FlatBuffersSerialize.h"
+#include "CocoLoader.h"
+#include "CSParseBinary_generated.h"
+#include "FlatBuffersSerialize.h"
 
 #include "flatbuffers/flatbuffers.h"
 

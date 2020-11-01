@@ -27,7 +27,7 @@
 
 #include <stdint.h>
 #include "rapidjson/document-wrapper.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CocosStudioExport.h"
 
 #pragma pack (4)
 
@@ -35,7 +35,7 @@ namespace cocostudio{
         
 class CocoLoader;
     
-struct CC_STUDIO_DLL stExpCocoAttribDesc
+struct CCS_DLL stExpCocoAttribDesc
 {
     char	m_cTypeName;
     uint32_t m_szName;
@@ -43,7 +43,7 @@ public:
     char* GetName(CocoLoader*	pCoco);
 };
 
-struct CC_STUDIO_DLL stExpCocoObjectDesc
+struct CCS_DLL stExpCocoObjectDesc
 {
     unsigned char	m_cAttribNum;
     uint32_t		m_szName;
@@ -54,7 +54,7 @@ public:
     stExpCocoAttribDesc*	GetAttribDescArray(CocoLoader*	pCoco);
 };
 
-struct CC_STUDIO_DLL stExpCocoNode
+struct CCS_DLL stExpCocoNode
 {
 public:
     int16_t			m_ObjIndex;
@@ -72,7 +72,7 @@ public:
     void WriteJson(CocoLoader* pCoco,void* pFileName = nullptr, int vLayer = 0, bool bEndNode = false, bool bParentNodeIsArray = false);
 };
 
-struct CC_STUDIO_DLL stCocoFileHeader
+struct CCS_DLL stCocoFileHeader
 {
     char		m_FileDesc[32];
     char		m_Version[32];
@@ -85,7 +85,7 @@ struct CC_STUDIO_DLL stCocoFileHeader
     
 };
 
-class CC_STUDIO_DLL CocoLoader
+class CCS_DLL CocoLoader
 {
     stCocoFileHeader*			m_pFileHeader;
     stExpCocoNode*				m_pRootNode;

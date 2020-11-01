@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "cocostudio/CCActionObject.h"
-#include "cocostudio/CocoLoader.h"
+#include "CCActionObject.h"
+#include "CocoLoader.h"
 
 #include "base/CCDirector.h"
 #include "base/CCScheduler.h"

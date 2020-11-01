@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -24,12 +23,12 @@ THE SOFTWARE.
 ****************************************************************************/
 
 
-#include "cocostudio/CCTween.h"
-#include "cocostudio/CCArmatureAnimation.h"
-#include "cocostudio/CCBone.h"
-#include "cocostudio/CCArmature.h"
-#include "cocostudio/CCUtilMath.h"
-#include "cocostudio/CCTransformHelp.h"
+#include "CCTween.h"
+#include "CCArmatureAnimation.h"
+#include "CCBone.h"
+#include "CCArmature.h"
+#include "CCUtilMath.h"
+#include "CCTransformHelp.h"
 
 
 namespace cocostudio {
@@ -69,7 +68,7 @@ Tween::Tween()
 }
 
 
-Tween::~Tween()
+Tween::~Tween(void)
 {
     CC_SAFE_DELETE( _from );
     CC_SAFE_DELETE( _between );

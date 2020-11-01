@@ -23,6 +23,7 @@
  ****************************************************************************/
  
 #include "../Device.h"
+#include "platform/CCGL.h"
 
 CC_BACKEND_BEGIN
 /**
@@ -38,6 +39,8 @@ class DeviceGL : public Device
 public:
     DeviceGL();
     ~DeviceGL();
+
+    GLint getDefaultFBO() const;
 
     /**
      * New a CommandBuffer object, not auto released.
@@ -99,6 +102,7 @@ protected:
      */
     virtual ShaderModule* newShaderModule(ShaderStage stage, const std::string& source) override;
 
+    GLint _defaultFBO = 0;// The value gets from glGetIntegerv, so need to use GLint
 };
 //end of _opengl group
 /// @}

@@ -22,16 +22,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "cocostudio/WidgetReader/GameNode3DReader/GameNode3DReader.h"
+#include "WidgetReader/GameNode3DReader/GameNode3DReader.h"
 
 #include "platform/CCFileUtils.h"
 
-#include "cocostudio/CCComExtensionData.h"
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/CSParse3DBinary_generated.h"
+#include "CCComExtensionData.h"
+#include "CSParseBinary_generated.h"
+#include "CSParse3DBinary_generated.h"
 
-#include "cocostudio/FlatBuffersSerialize.h"
-#include "cocostudio/WidgetReader/NodeReader/NodeReader.h"
+#include "FlatBuffersSerialize.h"
+#include "WidgetReader/NodeReader/NodeReader.h"
 
 #include "flatbuffers/flatbuffers.h"
 

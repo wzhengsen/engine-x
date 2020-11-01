@@ -1,6 +1,5 @@
 /****************************************************************************
 Copyright (c) 2013 cocos2d-x.org
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 
 http://www.cocos2d-x.org
 
@@ -23,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "cocostudio/ActionTimeline/CCFrame.h"
-#include "cocostudio/ActionTimeline/CCTimeLine.h"
-#include "cocostudio/ActionTimeline/CCActionTimeline.h"
+#include "ActionTimeline/CCFrame.h"
+#include "ActionTimeline/CCTimeLine.h"
+#include "ActionTimeline/CCActionTimeline.h"
 #include "2d/CCSpriteFrameCache.h"
 #include "2d/CCSpriteFrame.h"
 #include <exception>

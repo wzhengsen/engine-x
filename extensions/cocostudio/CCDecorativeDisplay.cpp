@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "cocostudio/CCDecorativeDisplay.h"
+#include "CCDecorativeDisplay.h"
 #include "2d/CCNode.h"
 
 using namespace cocos2d;
@@ -53,7 +52,7 @@ DecorativeDisplay::DecorativeDisplay()
 }
 
 
-DecorativeDisplay::~DecorativeDisplay()
+DecorativeDisplay::~DecorativeDisplay(void)
 {
     CC_SAFE_RELEASE_NULL(_displayData);
     CC_SAFE_RELEASE_NULL(_display);

@@ -23,7 +23,7 @@ THE SOFTWARE.
 ****************************************************************************/
 
 #include "platform/CCPlatformMacros.h"
-#include "cocostudio/DictionaryHelper.h"
+#include "DictionaryHelper.h"
 
 namespace cocostudio {
     

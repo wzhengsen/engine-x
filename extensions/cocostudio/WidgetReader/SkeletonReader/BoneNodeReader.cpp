@@ -24,11 +24,11 @@ THE SOFTWARE.
 ****************************************************************************/
 
 #include "flatbuffers/flatbuffers.h"
-#include "cocostudio/WidgetReader/NodeReader/NodeReader.h"
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/WidgetReader/SkeletonReader/CSBoneBinary_generated.h"
-#include "cocostudio/WidgetReader/SkeletonReader/BoneNodeReader.h"
-#include "cocostudio/ActionTimeline/CCBoneNode.h"
+#include "WidgetReader/NodeReader/NodeReader.h"
+#include "CSParseBinary_generated.h"
+#include "WidgetReader/SkeletonReader/CSBoneBinary_generated.h"
+#include "WidgetReader/SkeletonReader/BoneNodeReader.h"
+#include "ActionTimeline/CCBoneNode.h"
 #include "base/ccUtils.h"
 
 USING_NS_CC;

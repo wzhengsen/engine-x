@@ -70,6 +70,16 @@
 #include "windows-specific/ntcvt/ntcvt.hpp"
 #endif
 
+// !FIXME: the previous version of cocos2d::log not thread safe
+// since engine-x make it multi-threading safe by default
+#if !defined(CC_LOG_MULTITHREAD)
+#define CC_LOG_MULTITHREAD 1
+#endif
+
+#if !defined(CC_LOG_TO_CONSOLE)
+#define CC_LOG_TO_CONSOLE 1
+#endif
+
 NS_CC_BEGIN
 
 extern const char* cocos2dVersion(void);

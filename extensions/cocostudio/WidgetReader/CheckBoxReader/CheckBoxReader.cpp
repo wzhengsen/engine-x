@@ -1,13 +1,13 @@
 
 
-#include "cocostudio/WidgetReader/CheckBoxReader/CheckBoxReader.h"
+#include "WidgetReader/CheckBoxReader/CheckBoxReader.h"
 
 #include "ui/UICheckBox.h"
 #include "platform/CCFileUtils.h"
 #include "2d/CCSpriteFrameCache.h"
-#include "cocostudio/CocoLoader.h"
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/FlatBuffersSerialize.h"
+#include "CocoLoader.h"
+#include "CSParseBinary_generated.h"
+#include "FlatBuffersSerialize.h"
 
 #include "flatbuffers/flatbuffers.h"
 

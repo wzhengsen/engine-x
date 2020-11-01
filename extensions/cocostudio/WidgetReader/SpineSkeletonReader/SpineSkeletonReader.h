@@ -25,15 +25,15 @@
 #ifndef __X365LIBS__SpineSkeletonReader__
 #define __X365LIBS__SpineSkeletonReader__
 
-#include "cocostudio/CocosStudioExport.h"
-#include "cocostudio/WidgetReader/NodeReaderProtocol.h"
-#include "cocostudio/WidgetReader/NodeReaderDefine.h"
+#include "CocosStudioExport.h"
+#include "WidgetReader/NodeReaderProtocol.h"
+#include "WidgetReader/NodeReaderDefine.h"
 
-#if defined(CC_BUILD_WITH_SPINE) && CC_BUILD_WITH_SPINE
+#if defined(CC_BUILD_WITH_SPINE)
 
 namespace cocostudio
 {
-    class CC_STUDIO_DLL SpineSkeletonReader : public cocos2d::Ref, public NodeReaderProtocol
+    class CCS_DLL SpineSkeletonReader : public cocos2d::Ref, public NodeReaderProtocol
     {
         DECLARE_CLASS_NODE_READER_INFO
         

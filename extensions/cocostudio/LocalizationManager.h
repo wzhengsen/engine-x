@@ -4,13 +4,13 @@
 #include <string>
 #include <unordered_map>
 #include "rapidjson/document-wrapper.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio {
     /**
     *@brief Localization string manager interface template.
     */
-    class CC_STUDIO_DLL ILocalizationManager
+    class CCS_DLL ILocalizationManager
     {
     public:
         virtual ~ILocalizationManager() = default;
@@ -24,7 +24,7 @@ namespace cocostudio {
     *    text file format with encoding as 'UTF8 no BOM', otherwise the localization data may
     *    not been parse successfully.
     */
-    class CC_STUDIO_DLL JsonLocalizationManager : ILocalizationManager
+    class CCS_DLL JsonLocalizationManager : ILocalizationManager
     {
     public:
         static ILocalizationManager* getInstance();
@@ -52,7 +52,7 @@ namespace cocostudio {
         rapidjson::Document * languageData;
     };
 
-    class CC_STUDIO_DLL BinLocalizationManager : ILocalizationManager
+    class CCS_DLL BinLocalizationManager : ILocalizationManager
     {
     public:
         static ILocalizationManager* getInstance();
@@ -79,7 +79,7 @@ namespace cocostudio {
         std::unordered_map<std::string, std::string> languageData;
     };
 
-    class CC_STUDIO_DLL LocalizationHelper
+    class CCS_DLL LocalizationHelper
     {
     public:
         /* Get current localization manager.

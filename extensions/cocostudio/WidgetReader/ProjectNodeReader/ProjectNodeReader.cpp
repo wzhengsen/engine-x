@@ -22,10 +22,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "cocostudio/WidgetReader/ProjectNodeReader/ProjectNodeReader.h"
+#include "WidgetReader/ProjectNodeReader/ProjectNodeReader.h"
 
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/WidgetReader/NodeReader/NodeReader.h"
+#include "CSParseBinary_generated.h"
+#include "WidgetReader/NodeReader/NodeReader.h"
 
 #include "flatbuffers/flatbuffers.h"
 

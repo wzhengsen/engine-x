@@ -1,7 +1,5 @@
 /****************************************************************************
-Copyright (c) 2015-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
-Copyright (c) 2019-2020 simdsoft, @HALX99
+Copyright (c) 2015-2017 Chukong Technologies Inc.
  
 http://www.cocos2d-x.org
 
@@ -23,14 +21,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#pragma once
+
+
+#ifndef __CCBONENODE_H__
+#define __CCBONENODE_H__
 
 #include "base/CCProtocols.h"
 #include "2d/CCNode.h"
 #include "renderer/CCCustomCommand.h"
-#include "cocostudio/ActionTimeline/CCTimelineMacro.h"
-#include "cocostudio/CocosStudioExport.h"
-#include "cocostudio/ActionTimeline/CCSkinNode.h"
+#include "ActionTimeline/CCTimelineMacro.h"
+#include "CocosStudioExport.h"
+#include "ActionTimeline/CCSkinNode.h"
 
 namespace cocos2d{ namespace backend {
     class ProgramState;
@@ -40,7 +41,7 @@ NS_TIMELINE_BEGIN
 
 class SkeletonNode;
 
-class CC_STUDIOP_DLL BoneNode : public cocos2d::Node, public cocos2d::BlendProtocol
+class CCS_DLL BoneNode : public cocos2d::Node, public cocos2d::BlendProtocol
 {
 public:
     static BoneNode* create();
@@ -235,3 +236,4 @@ private:
 };
 
 NS_TIMELINE_END
+#endif //__CCBONENODE_H__

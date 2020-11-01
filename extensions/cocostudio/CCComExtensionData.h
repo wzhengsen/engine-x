@@ -1,6 +1,5 @@
 ﻿/****************************************************************************
  Copyright (c) 2015 cocos2d-x.org
-Copyright (c) 2019-2020 simdsoft, @HALX99
  
  http://www.cocos2d-x.org
  
@@ -27,9 +26,9 @@ Copyright (c) 2019-2020 simdsoft, @HALX99
 #define __cocos2d_libs__CCObjectExtensionData__
 
 #include <string>
-#include "cocostudio/CCComBase.h"
+#include "CCComBase.h"
 #include "2d/CCComponent.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio
 {
@@ -41,7 +40,7 @@ namespace cocostudio
 
 namespace cocostudio
 {
-    class CC_STUDIOP_DLL ComExtensionData : public cocos2d::Component
+    class CCS_DLL ComExtensionData : public cocos2d::Component
     {
         DECLARE_CLASS_COMPONENT_INFO
     public:

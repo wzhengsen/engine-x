@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "cocostudio/CCComRender.h"
-#include "cocostudio/CocoStudio.h"
+#include "CCComRender.h"
+#include "CocoStudio.h"
 
 #include "platform/CCFileUtils.h"
 #include "2d/CCFastTMXTiledMap.h"

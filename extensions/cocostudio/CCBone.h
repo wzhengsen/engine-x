@@ -1,6 +1,5 @@
-﻿/****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+/****************************************************************************
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -26,12 +25,12 @@ THE SOFTWARE.
 #ifndef __CCBONE_H__
 #define __CCBONE_H__
 
-#include "cocostudio/CCArmatureDefine.h"
-#include "cocostudio/CCDatas.h"
-#include "cocostudio/CCTween.h"
-#include "cocostudio/CCDecorativeDisplay.h"
-#include "cocostudio/CCDisplayManager.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CCArmatureDefine.h"
+#include "CCDatas.h"
+#include "CCTween.h"
+#include "CCDecorativeDisplay.h"
+#include "CCDisplayManager.h"
+#include "CocosStudioExport.h"
 #include "2d/CCNode.h"
 #include "math/CCMath.h"
 
@@ -39,7 +38,7 @@ namespace cocostudio {
 
 class Armature;
 
-class CC_STUDIO_DLL Bone : public cocos2d::Node
+class CCS_DLL Bone : public cocos2d::Node
 {
 public:
     /**
@@ -64,7 +63,7 @@ public:
      * @js NA
      * @lua NA
      */
-    virtual ~Bone();
+    virtual ~Bone(void);
 
     /**
      * Initializes an empty Bone with nothing init.
@@ -199,13 +198,13 @@ public:
      * Set blend function
      */
     virtual void setBlendFunc(const cocos2d::BlendFunc& blendFunc);
-    virtual cocos2d::BlendFunc getBlendFunc() { return _blendFunc; }
+    virtual cocos2d::BlendFunc getBlendFunc(void) { return _blendFunc; }
 
     /*
      * Set if blend function is dirty 
      */
     virtual void setBlendDirty(bool dirty) { _blendDirty = dirty; }
-    virtual bool isBlendDirty() { return _blendDirty; }
+    virtual bool isBlendDirty(void) { return _blendDirty; }
 
     virtual FrameData *getTweenData() const { return _tweenData; }
 

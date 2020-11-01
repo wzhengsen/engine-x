@@ -29,9 +29,9 @@ THE SOFTWARE.
 #include "base/CCMap.h"
 #include "base/CCData.h"
 
-#include "cocostudio/DictionaryHelper.h"
-#include "cocostudio/ActionTimeline/CCTimelineMacro.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "DictionaryHelper.h"
+#include "ActionTimeline/CCTimelineMacro.h"
+#include "CocosStudioExport.h"
 
 namespace flatbuffers
 {
@@ -57,7 +57,7 @@ class ActionTimeline;
 class Timeline;
 class Frame;
 
-class CC_STUDIO_DLL ActionTimelineCache
+class CCS_DLL ActionTimelineCache
 {
 public:    
     

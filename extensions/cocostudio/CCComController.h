@@ -25,14 +25,14 @@ THE SOFTWARE.
 #ifndef __CC_EXTENTIONS_CCCOMCONTROLLER_H__
 #define __CC_EXTENTIONS_CCCOMCONTROLLER_H__
 
-#include "cocostudio/CCComBase.h"
-#include "cocostudio/CCInputDelegate.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CCComBase.h"
+#include "CCInputDelegate.h"
+#include "CocosStudioExport.h"
 #include "2d/CCComponent.h"
 
 namespace cocostudio {
 
-class CC_STUDIO_DLL ComController : public cocos2d::Component, public InputDelegate
+class CCS_DLL ComController : public cocos2d::Component, public InputDelegate
 {
     DECLARE_CLASS_COMPONENT_INFO
 public:

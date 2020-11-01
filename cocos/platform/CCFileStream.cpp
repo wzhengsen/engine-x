@@ -9,27 +9,6 @@
 #include <sys/stat.h>
 #include <assert.h>
 
-#if defined(_WIN32)
-#define O_READ_FLAGS O_BINARY | O_RDONLY, S_IREAD
-#define O_WRITE_FLAGS O_CREAT | O_RDWR | O_BINARY, S_IWRITE | S_IREAD
-#define O_APPEND_FLAGS O_APPEND | O_CREAT | O_RDWR | O_BINARY, S_IWRITE | S_IREAD
-#define posix_open ::_open
-#define posix_close ::_close
-#define posix_lseek ::_lseek
-#define posix_read ::_read
-#define posix_write ::_write
-#include "iconv.h"
-#else
-#define O_READ_FLAGS O_RDONLY, S_IRUSR
-#define O_WRITE_FLAGS O_CREAT | O_RDWR, S_IRWXU
-#define O_APPEND_FLAGS O_APPEND | O_CREAT | O_RDWR, S_IRWXU
-#define posix_open ::open
-#define posix_close ::close
-#define posix_lseek ::lseek
-#define posix_read ::read
-#define posix_write ::write
-#endif
-
 NS_CC_BEGIN
 
 struct PXIoF {
@@ -142,13 +121,7 @@ bool FileStream::open(const std::string& path, FileStream::Mode mode)
 {
     bool ok = false;
 #if CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID
-    
-#ifdef _WIN32
-    std::string _path = utils::UTF8ToGB2312(path);
-#else
-    std::string _path = path;
-#endif
-    ok = pfs_posix_open(_path, mode, _handle) != -1;
+    ok = pfs_posix_open(path, mode, _handle) != -1;
 #else // Android
     if (path[0] != '/') { // from package, always readonly
         std::string relativePath;

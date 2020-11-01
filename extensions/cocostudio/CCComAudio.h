@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
 Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
@@ -25,14 +25,14 @@ THE SOFTWARE.
 #ifndef __CC_EXTENTIONS_CCCOMAUDIO_H__
 #define __CC_EXTENTIONS_CCCOMAUDIO_H__
 
-#include "cocostudio/CCComBase.h"
+#include "CCComBase.h"
 #include "base/CCProtocols.h"
 #include "2d/CCComponent.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio {
 
-    class CC_STUDIO_DLL ComAudio : public cocos2d::Component, public cocos2d::PlayableProtocol
+    class CCS_DLL ComAudio : public cocos2d::Component, public cocos2d::PlayableProtocol
 {
     DECLARE_CLASS_COMPONENT_INFO
 public:

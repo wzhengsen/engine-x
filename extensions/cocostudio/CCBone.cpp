@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "cocostudio/CCBone.h"
-#include "cocostudio/CCArmature.h"
-#include "cocostudio/CCUtilMath.h"
-#include "cocostudio/CCArmatureDataManager.h"
-#include "cocostudio/CCTransformHelp.h"
-#include "cocostudio/CCDisplayManager.h"
+#include "CCBone.h"
+#include "CCArmature.h"
+#include "CCUtilMath.h"
+#include "CCArmatureDataManager.h"
+#include "CCTransformHelp.h"
+#include "CCDisplayManager.h"
 
 using namespace cocos2d;
 
@@ -82,7 +81,7 @@ Bone::Bone()
 }
 
 
-Bone::~Bone()
+Bone::~Bone(void)
 {
     CC_SAFE_DELETE(_tweenData);
     CC_SAFE_DELETE(_tween);
@@ -96,7 +95,7 @@ Bone::~Bone()
 
 bool Bone::init()
 {
-    return Bone::init("");
+    return Bone::init(nullptr);
 }
 
 

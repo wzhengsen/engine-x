@@ -25,12 +25,12 @@
 #ifndef __TestCpp__LoadingBarReader__
 #define __TestCpp__LoadingBarReader__
 
-#include "cocostudio/WidgetReader/WidgetReader.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "WidgetReader/WidgetReader.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio
 {
-    class CC_STUDIO_DLL LoadingBarReader : public WidgetReader
+    class CCS_DLL LoadingBarReader : public WidgetReader
     {
         DECLARE_CLASS_NODE_READER_INFO
         

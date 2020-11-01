@@ -35,6 +35,7 @@
 
 #include <spine/spine.h>
 #include <vector>
+#include "renderer/backend/ProgramState.h"
 
 namespace spine {
 	struct V3F_C4B_C4B_T2F {
@@ -51,15 +52,15 @@ namespace spine {
 		int indexCount;
 	};
 	
-	class TwoColorTrianglesCommand : public cocos2d::CustomCommand {
+	class SP_API TwoColorTrianglesCommand : public cocos2d::CustomCommand {
 	public:
 		TwoColorTrianglesCommand();
 		
 		~TwoColorTrianglesCommand();
 
-        void init(float globalOrder, cocos2d::Texture2D* texture, cocos2d::BlendFunc blendType, const TwoColorTriangles& triangles, const cocos2d::Mat4& mv, uint32_t flags);
+        void init(float globalOrder, cocos2d::Texture2D* texture, cocos2d::backend::ProgramState* programState, cocos2d::BlendFunc blendType, const TwoColorTriangles& triangles, const cocos2d::Mat4& mv, uint32_t flags);
 
-        void updateCommandPipelineDescriptor();
+        void updateCommandPipelineDescriptor(cocos2d::backend::ProgramState* programState);
 
         inline cocos2d::backend::TextureBackend* getTexture() const { return _texture; }
 
@@ -104,7 +105,7 @@ namespace spine {
 		bool                _forceFlush;
 	};
 
-    class SkeletonTwoColorBatch {
+    class SP_API SkeletonTwoColorBatch {
     public:
         static SkeletonTwoColorBatch* getInstance ();
 
@@ -118,7 +119,7 @@ namespace spine {
 		unsigned short* allocateIndices(uint32_t numIndices);
 		void deallocateIndices(uint32_t numIndices);
 
-        TwoColorTrianglesCommand* addCommand(cocos2d::Renderer* renderer, float globalOrder, cocos2d::Texture2D* texture, cocos2d::BlendFunc blendType, const TwoColorTriangles& triangles, const cocos2d::Mat4& mv, uint32_t flags);
+        TwoColorTrianglesCommand* addCommand(cocos2d::Renderer* renderer, float globalOrder, cocos2d::Texture2D* texture, cocos2d::backend::ProgramState* programState, cocos2d::BlendFunc blendType, const TwoColorTriangles& triangles, const cocos2d::Mat4& mv, uint32_t flags);
 
         void batch(cocos2d::Renderer* renderer, TwoColorTrianglesCommand* command);
 

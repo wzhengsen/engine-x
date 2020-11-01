@@ -29,7 +29,7 @@
 #include <vector>
 
 #include "ExtensionMacros.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CocosStudioExport.h"
 #include "platform/CCPlatformMacros.h"
 #include "ui/UIWidget.h"
 
@@ -89,7 +89,7 @@ namespace flatbuffers
 
 namespace cocostudio {
     
-class CC_STUDIO_DLL FlatBuffersSerialize
+class CCS_DLL FlatBuffersSerialize
 {
     
 public:

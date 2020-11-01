@@ -23,12 +23,12 @@
  ****************************************************************************/
 
 #include "platform/CCFileUtils.h"
-#include "cocostudio/WidgetReader/Particle3DReader/Particle3DReader.h"
+#include "WidgetReader/Particle3DReader/Particle3DReader.h"
 
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/CSParse3DBinary_generated.h"
-#include "cocostudio/FlatBuffersSerialize.h"
-#include "cocostudio/WidgetReader/Node3DReader/Node3DReader.h"
+#include "CSParseBinary_generated.h"
+#include "CSParse3DBinary_generated.h"
+#include "FlatBuffersSerialize.h"
+#include "WidgetReader/Node3DReader/Node3DReader.h"
 
 #include "flatbuffers/flatbuffers.h"
 

@@ -1,6 +1,5 @@
-﻿/****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+/****************************************************************************
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -32,14 +31,14 @@ THE SOFTWARE.
 #include "base/CCMap.h"
 #include "math/CCAffineTransform.h"
 
-#include "cocostudio/CCArmatureDefine.h"
+#include "CCArmatureDefine.h"
 #include "2d/CCTweenFunction.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CocosStudioExport.h"
 
 
 #define CC_CREATE_NO_PARAM_NO_INIT(varType)\
 public: \
-    static inline varType *create(){ \
+    static inline varType *create(void){ \
     varType *var = new (std::nothrow) varType();\
     if (var)\
 {\
@@ -52,7 +51,7 @@ public: \
 
 #define CC_CREATE_NO_PARAM(varType)\
 public: \
-    static inline varType *create(){ \
+    static inline varType *create(void){ \
     varType *var = new (std::nothrow) varType();\
     if (var && var->init())\
 {\
@@ -70,7 +69,7 @@ namespace cocostudio {
  * @js NA
  * @lua NA
  */
-class CC_STUDIO_DLL BaseData : public cocos2d::Ref
+class CCS_DLL BaseData : public cocos2d::Ref
 {
 public:
     CC_CREATE_NO_PARAM_NO_INIT(BaseData)
@@ -83,7 +82,7 @@ public:
      * @js NA
      * @lua NA
      */
-    ~BaseData();
+    ~BaseData(void);
 
     /*
     * Copy data from node
@@ -139,7 +138,7 @@ enum DisplayType
  *  @js NA
  *  @lua NA
  */
-class CC_STUDIO_DLL DisplayData : public cocos2d::Ref
+class CCS_DLL DisplayData : public cocos2d::Ref
 {
 public:
     CC_CREATE_NO_PARAM_NO_INIT(DisplayData)
@@ -154,7 +153,7 @@ public:
      * @js NA
      * @lua NA
      */
-    virtual ~DisplayData() {}
+    virtual ~DisplayData(void) {}
 
     virtual void copy(DisplayData *displayData);
 
@@ -167,7 +166,7 @@ public:
  *  @js NA
  *  @lua NA
  */
-class CC_STUDIO_DLL SpriteDisplayData : public DisplayData
+class CCS_DLL SpriteDisplayData : public DisplayData
 {
 public:
     CC_CREATE_NO_PARAM_NO_INIT(SpriteDisplayData)
@@ -191,7 +190,7 @@ public:
  *  @js NA
  *  @lua NA
  */
-class CC_STUDIO_DLL ArmatureDisplayData  : public DisplayData
+class CCS_DLL ArmatureDisplayData  : public DisplayData
 {
 public:
     CC_CREATE_NO_PARAM_NO_INIT(ArmatureDisplayData)
@@ -211,7 +210,7 @@ public:
  *  @js NA
  *  @lua NA
  */
-class CC_STUDIO_DLL ParticleDisplayData : public DisplayData
+class CCS_DLL ParticleDisplayData : public DisplayData
 {
 public:
     CC_CREATE_NO_PARAM_NO_INIT(ParticleDisplayData)
@@ -228,7 +227,6 @@ public:
 };
 
 
-
 /**
 * BoneData used to init a Bone.
 * BoneData keeps a DisplayData list, a Bone can have many display to change.
@@ -236,7 +234,7 @@ public:
 * @js NA
 * @lua NA
 */
-class CC_STUDIO_DLL BoneData : public BaseData
+class CCS_DLL BoneData : public BaseData
 {
 public:
     CC_CREATE_NO_PARAM(BoneData)
@@ -244,12 +242,12 @@ public:
     /**
      * @js ctor
      */
-    BoneData();
+    BoneData(void);
     /**
      * @js NA
      * @lua NA
      */
-    ~BoneData();
+    ~BoneData(void);
 
     virtual bool init();
 
@@ -262,7 +260,6 @@ public:
     cocos2d::AffineTransform boneDataTransform;
 };
 
-
 /**
 * ArmatureData saved the Armature name and Bonedata needed for the CCBones in this Armature
 * When we create a Armature, we need to get each Bone's BoneData as it's init information.
@@ -270,7 +267,7 @@ public:
 * @js NA
 * @lua NA
 */
-class CC_STUDIO_DLL ArmatureData : public cocos2d::Ref
+class CCS_DLL ArmatureData : public cocos2d::Ref
 {
 public:
     CC_CREATE_NO_PARAM(ArmatureData)
@@ -316,7 +313,7 @@ enum BlendType
  *  @js NA
  *  @lua NA
  */
-class CC_STUDIO_DLL FrameData : public BaseData
+class CCS_DLL FrameData : public BaseData
 {
 public:
     CC_CREATE_NO_PARAM_NO_INIT(FrameData)
@@ -363,7 +360,7 @@ public:
  *  @js NA
  *  @lua NA
  */
-class CC_STUDIO_DLL MovementBoneData : public cocos2d::Ref
+class CCS_DLL MovementBoneData : public cocos2d::Ref
 {
 public:
     CC_CREATE_NO_PARAM(MovementBoneData)
@@ -376,7 +373,7 @@ public:
      * @js NA
      * @lua NA
      */
-    ~MovementBoneData();
+    ~MovementBoneData(void);
 
     virtual bool init();
 
@@ -395,7 +392,7 @@ public:
  *  @js NA
  *  @lua NA
  */
-class CC_STUDIO_DLL MovementData : public cocos2d::Ref
+class CCS_DLL MovementData : public cocos2d::Ref
 {
 public:
     CC_CREATE_NO_PARAM_NO_INIT(MovementData)
@@ -403,12 +400,12 @@ public:
     /**
      * @js ctor
      */
-    MovementData();
+    MovementData(void);
     /**
      * @js NA
      * @lua NA
      */
-    ~MovementData();
+    ~MovementData(void);
 
     void addMovementBoneData(MovementBoneData *movBoneData);
     MovementBoneData *getMovementBoneData(const std::string& boneName);
@@ -457,7 +454,7 @@ public:
 *  @js NA
 *  @lua NA
 */
-class CC_STUDIO_DLL AnimationData : public cocos2d::Ref
+class CCS_DLL AnimationData : public cocos2d::Ref
 {
 public:
     CC_CREATE_NO_PARAM_NO_INIT(AnimationData)
@@ -465,12 +462,12 @@ public:
     /**
      * @js ctor
      */
-    AnimationData();
+    AnimationData(void);
     /**
      * @js NA
      * @lua NA
      */
-    ~AnimationData();
+    ~AnimationData(void);
 
     void addMovement(MovementData *movData);
     MovementData *getMovement(const std::string& movementName);
@@ -488,7 +485,7 @@ public:
 * @js NA
 * @lua NA
 */
-class CC_STUDIO_DLL ContourData : public cocos2d::Ref
+class CCS_DLL ContourData : public cocos2d::Ref
 {
 public:
     CC_CREATE_NO_PARAM(ContourData)
@@ -501,7 +498,7 @@ public:
      * @js NA
      * @lua NA
      */
-    ~ContourData();
+    ~ContourData(void);
 
     virtual bool init();
     virtual void addVertex(cocos2d::Vec2 &vertex);
@@ -517,7 +514,7 @@ public:
 * @js NA
 * @lua NA
 */
-class CC_STUDIO_DLL TextureData : public cocos2d::Ref
+class CCS_DLL TextureData : public cocos2d::Ref
 {
 public:
     CC_CREATE_NO_PARAM(TextureData)
@@ -530,7 +527,7 @@ public:
      * @js NA
      * @lua NA
      */
-    ~TextureData();
+    ~TextureData(void);
 
     virtual bool init();
 

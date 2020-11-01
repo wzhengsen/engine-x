@@ -1,15 +1,15 @@
 
 
-#include "cocostudio/WidgetReader/ButtonReader/ButtonReader.h"
+#include "WidgetReader/ButtonReader/ButtonReader.h"
 
 #include "ui/UIButton.h"
 #include "2d/CCSpriteFrameCache.h"
 #include "2d/CCLabel.h"
 #include "platform/CCFileUtils.h"
-#include "cocostudio/CocoLoader.h"
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/FlatBuffersSerialize.h"
-#include "cocostudio/LocalizationManager.h"
+#include "CocoLoader.h"
+#include "CSParseBinary_generated.h"
+#include "FlatBuffersSerialize.h"
+#include "LocalizationManager.h"
 
 #include "flatbuffers/flatbuffers.h"
 

@@ -59,27 +59,11 @@ namespace
 
 CommandBufferGL::CommandBufferGL()
 {
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &_defaultFBO);
-
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    _backToForegroundListener = EventListenerCustom::create(EVENT_RENDERER_RECREATED, [this](EventCustom*){
-       if(_generatedFBO)
-           glGenFramebuffers(1, &_generatedFBO); //recreate framebuffer
-    });
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithFixedPriority(_backToForegroundListener, -1);
-#endif
 }
 
 CommandBufferGL::~CommandBufferGL()
 {
-    if(_generatedFBO)
-        glDeleteFramebuffers(1, &_generatedFBO);
-
     cleanResources();
-
-#if CC_ENABLE_CACHE_TEXTURE_DATA
-    Director::getInstance()->getEventDispatcher()->removeEventListener(_backToForegroundListener);
-#endif
 }
 
 void CommandBufferGL::beginFrame()
@@ -303,16 +287,14 @@ void CommandBufferGL::setUniforms(ProgramGL* program) const
 {
     if (_programState)
     {
-        auto& callbacks = _programState->getCallbackUniforms();
         auto& uniformInfos = _programState->getProgram()->getAllActiveUniformInfo(ShaderStage::VERTEX);
         std::size_t bufferSize = 0;
         char* buffer = nullptr;
         _programState->getVertexUniformBuffer(&buffer, bufferSize);
 
-        for (auto &cb : callbacks)
-        {
+        auto& callbacks = _programState->getCallbackUniforms();
+        for (auto& cb : callbacks)
             cb.second(_programState, cb.first);
-        }
 
         int i = 0;
         for(auto& iter : uniformInfos)

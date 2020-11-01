@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "cocostudio/CCDisplayManager.h"
-#include "cocostudio/CCBone.h"
-#include "cocostudio/CCArmature.h"
-#include "cocostudio/CCUtilMath.h"
-#include "cocostudio/CCSkin.h"
+#include "CCDisplayManager.h"
+#include "CCBone.h"
+#include "CCArmature.h"
+#include "CCUtilMath.h"
+#include "CCSkin.h"
 
 #include "2d/CCParticleSystemQuad.h"
 

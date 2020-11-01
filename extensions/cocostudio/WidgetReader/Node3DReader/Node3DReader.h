@@ -26,13 +26,13 @@
 #define __cocos2d_libs__Node3DReader__
 
 #include "math/Vec3.h"
-#include "cocostudio/CocosStudioExport.h"
-#include "cocostudio/WidgetReader/NodeReaderProtocol.h"
-#include "cocostudio/WidgetReader/NodeReaderDefine.h"
+#include "CocosStudioExport.h"
+#include "WidgetReader/NodeReaderProtocol.h"
+#include "WidgetReader/NodeReaderDefine.h"
 
 namespace cocostudio
 {
-    class CC_STUDIO_DLL Node3DReader : public cocos2d::Ref, public NodeReaderProtocol
+    class CCS_DLL Node3DReader : public cocos2d::Ref, public NodeReaderProtocol
     {
         DECLARE_CLASS_NODE_READER_INFO
         

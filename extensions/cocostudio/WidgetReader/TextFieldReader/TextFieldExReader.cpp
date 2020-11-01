@@ -1,14 +1,14 @@
 
 
-#include "cocostudio/WidgetReader/TextFieldReader/TextFieldExReader.h"
+#include "WidgetReader/TextFieldReader/TextFieldExReader.h"
 
 #include "ui/UITextFieldEx.h"
 #include "platform/CCFileUtils.h"
-#include "cocostudio/CocoLoader.h"
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/LocalizationManager.h"
+#include "CocoLoader.h"
+#include "CSParseBinary_generated.h"
+#include "LocalizationManager.h"
 
-#include "cocostudio/WidgetReader/NodeReader/NodeReader.h"
+#include "WidgetReader/NodeReader/NodeReader.h"
 
 #include "flatbuffers/flatbuffers.h"
 

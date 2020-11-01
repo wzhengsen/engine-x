@@ -1,6 +1,5 @@
 ﻿/****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -25,7 +24,7 @@ THE SOFTWARE.
 #ifndef __TRIGGERMNG_H__
 #define __TRIGGERMNG_H__
 
-#include "cocostudio/CocoStudio.h"
+#include "CocoStudio.h"
 
 namespace cocos2d {
 class EventDispatcher;
@@ -36,11 +35,11 @@ namespace cocostudio {
 
 class TriggerObj;
 
-class CC_STUDIO_DLL ArmatureMovementDispatcher : public cocos2d::Ref
+class CCS_DLL ArmatureMovementDispatcher : public cocos2d::Ref
 {
 public:
-	ArmatureMovementDispatcher();
-	~ArmatureMovementDispatcher();
+	ArmatureMovementDispatcher(void);
+	~ArmatureMovementDispatcher(void);
 public:
 	void addAnimationEventCallBack(cocos2d::Ref*pTarget, SEL_MovementEventCallFunc mecf);
 	void removeAnnimationEventCallBack(cocos2d::Ref*pTarget, SEL_MovementEventCallFunc mecf);
@@ -51,11 +50,11 @@ private:
 
 };
 
-class CC_STUDIO_DLL TriggerMng
+class CCS_DLL TriggerMng
 {
 public:
-    TriggerMng();
-    virtual ~TriggerMng();
+    TriggerMng(void);
+    virtual ~TriggerMng(void);
 
 public:
     static TriggerMng* getInstance();
@@ -65,12 +64,12 @@ public:
 public:
     void parse(const rapidjson::Value &root);
     void parse(cocostudio::CocoLoader *pCocoLoader, cocostudio::stExpCocoNode *pCocoNode);
-    void removeAll();
+    void removeAll(void);
     cocos2d::Vector<TriggerObj*>* get(unsigned int event) const;
     TriggerObj* getTriggerObj(unsigned int id) const;
     bool removeTriggerObj(TriggerObj *Obj);
     bool removeTriggerObj(unsigned int id);
-    bool isEmpty() const;
+    bool isEmpty(void) const;
 
     void addArmatureMovementCallBack(Armature *pAr, cocos2d::Ref *pTarget, SEL_MovementEventCallFunc mecf);
     void removeArmatureMovementCallBack(Armature *pAr, cocos2d::Ref *pTarget, SEL_MovementEventCallFunc mecf);

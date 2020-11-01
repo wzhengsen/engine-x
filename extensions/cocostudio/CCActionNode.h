@@ -25,9 +25,9 @@ THE SOFTWARE.
 #ifndef __ActionNODE_H__
 #define __ActionNODE_H__
 
-#include "cocostudio/CCActionFrame.h"
-#include "cocostudio/DictionaryHelper.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CCActionFrame.h"
+#include "DictionaryHelper.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio {
     
@@ -37,7 +37,7 @@ struct stExpCocoNode;
 *  @js NA
 *  @lua NA
 */
-class CC_STUDIO_DLL ActionNode : public cocos2d::Ref
+class CCS_DLL ActionNode : public cocos2d::Ref
 {
 public:
 

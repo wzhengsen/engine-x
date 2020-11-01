@@ -25,12 +25,12 @@
 #ifndef __TestCpp__PageViewReader__
 #define __TestCpp__PageViewReader__
 
-#include "cocostudio/WidgetReader/LayoutReader/LayoutReader.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "WidgetReader/LayoutReader/LayoutReader.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio
 {
-    class CC_STUDIO_DLL PageViewReader : public LayoutReader
+    class CCS_DLL PageViewReader : public LayoutReader
     {
         DECLARE_CLASS_NODE_READER_INFO
         

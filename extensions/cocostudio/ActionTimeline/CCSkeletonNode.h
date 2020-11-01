@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2015-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2015-2017 Chukong Technologies Inc.
  
 http://www.cocos2d-x.org
 
@@ -26,16 +25,16 @@ THE SOFTWARE.
 #ifndef __CCSKELETONNODE_H__
 #define  __CCSKELETONNODE_H__
 
-#include "cocostudio/ActionTimeline/CCTimelineMacro.h"
+#include "ActionTimeline/CCTimelineMacro.h"
 #include "renderer/CCRenderer.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CocosStudioExport.h"
 #include "base/CCMap.h"
 
-#include "cocostudio/ActionTimeline/CCBoneNode.h"
+#include "ActionTimeline/CCBoneNode.h"
 
 NS_TIMELINE_BEGIN
 
-class CC_STUDIOP_DLL SkeletonNode : public BoneNode
+class CCS_DLL SkeletonNode : public BoneNode
 {
     friend class BoneNode;
 

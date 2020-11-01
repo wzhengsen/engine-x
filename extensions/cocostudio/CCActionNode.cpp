@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2019-2020 simdsoft, @HALX99
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,14 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "cocostudio/CCActionNode.h"
-#include "cocostudio/CCActionFrameEasing.h"
+#include "CCActionNode.h"
+#include "CCActionFrameEasing.h"
 #include "ui/UIWidget.h"
 #include "ui/UIHelper.h"
 #include "ui/UILayout.h"
-#include "cocostudio/CocoLoader.h"
+#include "CocoLoader.h"
 #include "base/ccUtils.h"
-#include "cocostudio/CCActionManagerEx.h"
+#include "CCActionManagerEx.h"
 
 
 using namespace cocos2d;

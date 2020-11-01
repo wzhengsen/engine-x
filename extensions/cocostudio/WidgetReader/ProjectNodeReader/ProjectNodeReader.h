@@ -26,13 +26,13 @@
 #define __cocos2d_libs__ProjectNodeReader__
 
 #include "base/CCRef.h"
-#include "cocostudio/CocosStudioExport.h"
-#include "cocostudio/WidgetReader/NodeReaderProtocol.h"
+#include "CocosStudioExport.h"
+#include "WidgetReader/NodeReaderProtocol.h"
 
 
 namespace cocostudio
 {
-    class CC_STUDIO_DLL ProjectNodeReader : public cocos2d::Ref, public NodeReaderProtocol
+    class CCS_DLL ProjectNodeReader : public cocos2d::Ref, public NodeReaderProtocol
     {
         
     public:

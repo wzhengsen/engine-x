@@ -25,15 +25,15 @@ THE SOFTWARE.
 #ifndef __CCTIMELINE_H__
 #define __CCTIMELINE_H__
 
-#include "cocostudio/ActionTimeline/CCFrame.h"
-#include "cocostudio/ActionTimeline/CCTimelineMacro.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "ActionTimeline/CCFrame.h"
+#include "ActionTimeline/CCTimelineMacro.h"
+#include "CocosStudioExport.h"
 
 NS_TIMELINE_BEGIN
 
 class ActionTimeline;
 
-class CC_STUDIOP_DLL Timeline : public cocos2d::Ref
+class CCS_DLL Timeline : public cocos2d::Ref
 {
 public:
     static Timeline* create();

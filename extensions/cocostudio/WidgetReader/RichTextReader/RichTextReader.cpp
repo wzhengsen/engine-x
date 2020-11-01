@@ -1,13 +1,13 @@
 
 
-#include "cocostudio/WidgetReader/RichTextReader/RichTextReader.h"
+#include "WidgetReader/RichTextReader/RichTextReader.h"
 
 #include "2d/CCFontAtlasCache.h"
 #include "ui/UIRichText.h"
 #include "platform/CCFileUtils.h"
-#include "cocostudio/CocoLoader.h"
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/LocalizationManager.h"
+#include "CocoLoader.h"
+#include "CSParseBinary_generated.h"
+#include "LocalizationManager.h"
 
 #include "flatbuffers/flatbuffers.h"
 

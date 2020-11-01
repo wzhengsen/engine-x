@@ -1,6 +1,5 @@
 ﻿/****************************************************************************
 Copyright (c) 2013 cocos2d-x.org
-Copyright (c) 2019-2020 simdsoft, @HALX99
 
 http://www.cocos2d-x.org
 
@@ -26,10 +25,10 @@ THE SOFTWARE.
 #ifndef __CCTIMELINE_ACTION_H__
 #define __CCTIMELINE_ACTION_H__
 
-#include "cocostudio/ActionTimeline/CCTimeLine.h"
-#include "cocostudio/ActionTimeline/CCActionTimelineData.h"
+#include "ActionTimeline/CCTimeLine.h"
+#include "ActionTimeline/CCActionTimelineData.h"
 #include "base/CCProtocols.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CocosStudioExport.h"
 #include "2d/CCAction.h"
 
 NS_TIMELINE_BEGIN
@@ -58,8 +57,23 @@ typedef struct AnimationInfo
     std::function<void()> clipEndCallBack;
 } AnimationClip;
 
+#if 0
+class CCS_DLL ActionTimelineData : public cocos2d::Ref
+{
+public:
+    static ActionTimelineData* create(int actionTag);
 
-class CC_STUDIOP_DLL ActionTimeline : public cocos2d::Action, public cocos2d::PlayableProtocol
+    virtual void setActionTag(int actionTag) { _actionTag = actionTag; }
+    virtual int getActionTag() const { return _actionTag; }
+CC_CONSTRUCTOR_ACCESS:
+    ActionTimelineData();
+    virtual bool init(int actionTag);
+protected:
+    int _actionTag;
+};
+#endif
+
+class CCS_DLL ActionTimeline : public cocos2d::Action, public cocos2d::PlayableProtocol
 {
 public:
     friend class Frame;
@@ -206,7 +220,7 @@ protected:
     cocos2d::Vector<Timeline*> _timelineList;
 
     int     _duration;
-    float   _time;
+    double  _time;
     float   _timeSpeed;
     float   _frameInternal;
     bool    _playing;

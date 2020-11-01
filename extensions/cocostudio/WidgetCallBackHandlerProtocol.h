@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
  Copyright (c) 2014 cocos2d-x.org
  
  http://www.cocos2d-x.org
@@ -26,16 +26,15 @@
 #define __cocos2d_libs__WidgetCallBackHandlerProtocol__
 
 
-#include "cocostudio/CocosStudioExport.h"
+#include "CocosStudioExport.h"
 #include "ui/UIWidget.h"
 
 namespace cocostudio {
     
-    class CC_STUDIO_DLL WidgetCallBackHandlerProtocol
+    class CCS_DLL WidgetCallBackHandlerProtocol
     {
     public:
-        WidgetCallBackHandlerProtocol() {};
-        virtual ~WidgetCallBackHandlerProtocol() {};
+        virtual ~WidgetCallBackHandlerProtocol();
         
         virtual cocos2d::ui::Widget::ccWidgetTouchCallback onLocateTouchCallback(const std::string& callBackName);
         virtual cocos2d::ui::Widget::ccWidgetClickCallback onLocateClickCallback(const std::string& callBackName);

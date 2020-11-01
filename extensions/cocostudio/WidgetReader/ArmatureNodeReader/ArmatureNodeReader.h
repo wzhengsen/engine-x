@@ -25,8 +25,8 @@ THE SOFTWARE.
 #ifndef __ARMATURENODEREADER_H_
 #define __ARMATURENODEREADER_H_
 
-#include "cocostudio/WidgetReader/NodeReaderProtocol.h"
-#include "cocostudio/WidgetReader/NodeReaderDefine.h"
+#include "WidgetReader/NodeReaderProtocol.h"
+#include "WidgetReader/NodeReaderDefine.h"
 
 
 /****************************************

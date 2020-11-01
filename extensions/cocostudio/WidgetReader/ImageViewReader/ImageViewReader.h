@@ -25,12 +25,12 @@
 #ifndef __TestCpp__ImageViewReader__
 #define __TestCpp__ImageViewReader__
 
-#include "cocostudio/WidgetReader/WidgetReader.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "WidgetReader/WidgetReader.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio
 {
-    class CC_STUDIO_DLL ImageViewReader : public WidgetReader
+    class CCS_DLL ImageViewReader : public WidgetReader
     {
         DECLARE_CLASS_NODE_READER_INFO
         

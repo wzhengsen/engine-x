@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "cocostudio/ActionTimeline/CSLoader.h"
+#include "ActionTimeline/CSLoader.h"
 
 #include "base/ObjectFactory.h"
 #include "base/CCDirector.h"
@@ -35,63 +35,63 @@
 #include "2d/CCFastTMXTiledMap.h"
 #include "platform/CCFileUtils.h"
 
-#include "cocostudio/ActionTimeline/CCActionTimelineCache.h"
-#include "cocostudio/ActionTimeline/CCActionTimeline.h"
-#include "cocostudio/ActionTimeline/CCActionTimelineNode.h"
-#include "cocostudio/CCSGUIReader.h"
-#include "cocostudio/CocoStudio.h"
-#include "cocostudio/CSParseBinary_generated.h"
+#include "ActionTimeline/CCActionTimelineCache.h"
+#include "ActionTimeline/CCActionTimeline.h"
+#include "ActionTimeline/CCActionTimelineNode.h"
+#include "CCSGUIReader.h"
+#include "CCComAudio.h"
+#include "CSParseBinary_generated.h"
 
-#include "cocostudio/WidgetReader/NodeReaderProtocol.h"
-#include "cocostudio/WidgetReader/NodeReaderDefine.h"
+#include "WidgetReader/NodeReaderProtocol.h"
+#include "WidgetReader/NodeReaderDefine.h"
 
-#include "cocostudio/WidgetReader/NodeReader/NodeReader.h"
-#include "cocostudio/WidgetReader/SingleNodeReader/SingleNodeReader.h"
-#include "cocostudio/WidgetReader/SpriteReader/SpriteReader.h"
-#include "cocostudio/WidgetReader/ParticleReader/ParticleReader.h"
-#include "cocostudio/WidgetReader/GameMapReader/GameMapReader.h"
-#include "cocostudio/WidgetReader/ProjectNodeReader/ProjectNodeReader.h"
-#include "cocostudio/WidgetReader/ComAudioReader/ComAudioReader.h"
+#include "WidgetReader/NodeReader/NodeReader.h"
+#include "WidgetReader/SingleNodeReader/SingleNodeReader.h"
+#include "WidgetReader/SpriteReader/SpriteReader.h"
+#include "WidgetReader/ParticleReader/ParticleReader.h"
+#include "WidgetReader/GameMapReader/GameMapReader.h"
+#include "WidgetReader/ProjectNodeReader/ProjectNodeReader.h"
+#include "WidgetReader/ComAudioReader/ComAudioReader.h"
 
-#include "cocostudio/WidgetReader/ButtonReader/ButtonReader.h"
-#include "cocostudio/WidgetReader/CheckBoxReader/CheckBoxReader.h"
-#include "cocostudio/WidgetReader/ImageViewReader/ImageViewReader.h"
-#include "cocostudio/WidgetReader/TextBMFontReader/TextBMFontReader.h"
-#include "cocostudio/WidgetReader/TextReader/TextReader.h"
-#include "cocostudio/WidgetReader/TextFieldReader/TextFieldReader.h"
-#include "cocostudio/WidgetReader/TextAtlasReader/TextAtlasReader.h"
-#include "cocostudio/WidgetReader/LoadingBarReader/LoadingBarReader.h"
-#include "cocostudio/WidgetReader/SliderReader/SliderReader.h"
-#include "cocostudio/WidgetReader/LayoutReader/LayoutReader.h"
-#include "cocostudio/WidgetReader/ScrollViewReader/ScrollViewReader.h"
-#include "cocostudio/WidgetReader/PageViewReader/PageViewReader.h"
-#include "cocostudio/WidgetReader/ListViewReader/ListViewReader.h"
-#include "cocostudio/WidgetReader/ArmatureNodeReader/ArmatureNodeReader.h"
-#include "cocostudio/WidgetReader/Node3DReader/Node3DReader.h"
-#include "cocostudio/WidgetReader/Sprite3DReader/Sprite3DReader.h"
-#include "cocostudio/WidgetReader/UserCameraReader/UserCameraReader.h"
-#include "cocostudio/WidgetReader/Particle3DReader/Particle3DReader.h"
-#include "cocostudio/WidgetReader/GameNode3DReader/GameNode3DReader.h"
-#include "cocostudio/WidgetReader/Light3DReader/Light3DReader.h"
-#include "cocostudio/WidgetReader/TabControlReader/TabControlReader.h"
+#include "WidgetReader/ButtonReader/ButtonReader.h"
+#include "WidgetReader/CheckBoxReader/CheckBoxReader.h"
+#include "WidgetReader/ImageViewReader/ImageViewReader.h"
+#include "WidgetReader/TextBMFontReader/TextBMFontReader.h"
+#include "WidgetReader/TextReader/TextReader.h"
+#include "WidgetReader/TextFieldReader/TextFieldReader.h"
+#include "WidgetReader/TextAtlasReader/TextAtlasReader.h"
+#include "WidgetReader/LoadingBarReader/LoadingBarReader.h"
+#include "WidgetReader/SliderReader/SliderReader.h"
+#include "WidgetReader/LayoutReader/LayoutReader.h"
+#include "WidgetReader/ScrollViewReader/ScrollViewReader.h"
+#include "WidgetReader/PageViewReader/PageViewReader.h"
+#include "WidgetReader/ListViewReader/ListViewReader.h"
+#include "WidgetReader/ArmatureNodeReader/ArmatureNodeReader.h"
+#include "WidgetReader/Node3DReader/Node3DReader.h"
+#include "WidgetReader/Sprite3DReader/Sprite3DReader.h"
+#include "WidgetReader/UserCameraReader/UserCameraReader.h"
+#include "WidgetReader/Particle3DReader/Particle3DReader.h"
+#include "WidgetReader/GameNode3DReader/GameNode3DReader.h"
+#include "WidgetReader/Light3DReader/Light3DReader.h"
+#include "WidgetReader/TabControlReader/TabControlReader.h"
 
-#include "cocostudio/WidgetReader/SkeletonReader/BoneNodeReader.h"
-#include "cocostudio/WidgetReader/SkeletonReader/SkeletonNodeReader.h"
+#include "WidgetReader/SkeletonReader/BoneNodeReader.h"
+#include "WidgetReader/SkeletonReader/SkeletonNodeReader.h"
 
 #if defined(CC_BUILD_WITH_SPINE) && CC_BUILD_WITH_SPINE
-#include "cocostudio/WidgetReader/SpineSkeletonReader/SpineSkeletonReader.h"
+#include "WidgetReader/SpineSkeletonReader/SpineSkeletonReader.h"
 #endif
-#include "cocostudio/WidgetReader/RichTextReader/RichTextReader.h"
-#include "cocostudio/WidgetReader/RadioButtonReader/RadioButtonReader.h"
-#include "cocostudio/WidgetReader/RadioButtonReader/RadioButtonGroupReader.h"
-#include "cocostudio/WidgetReader/TextFieldReader/TextFieldExReader.h"
-#include "cocostudio/CCComExtensionData.h"
+#include "WidgetReader/RichTextReader/RichTextReader.h"
+#include "WidgetReader/RadioButtonReader/RadioButtonReader.h"
+#include "WidgetReader/RadioButtonReader/RadioButtonGroupReader.h"
+#include "WidgetReader/TextFieldReader/TextFieldExReader.h"
+#include "CCComExtensionData.h"
 
 #include "flatbuffers/flatbuffers.h"
 
-#include "cocostudio/FlatBuffersSerialize.h"
+#include "FlatBuffersSerialize.h"
 
-#include "cocostudio/WidgetCallBackHandlerProtocol.h"
+#include "WidgetCallBackHandlerProtocol.h"
 
 #include <fstream>
 
@@ -769,7 +769,7 @@ Node* CSLoader::loadWidget(const rapidjson::Value& json)
 
 
 
-    WidgetPropertiesReader0300* widgetPropertiesReader = new (std::nothrow) WidgetPropertiesReader0300();
+    WidgetPropertiesReader0300 widgetPropertiesReader;
     Widget* widget = nullptr;
 
     if (isWidget(classname))
@@ -786,7 +786,7 @@ Node* CSLoader::loadWidget(const rapidjson::Value& json)
 
         if (reader && widget)
         {
-            widgetPropertiesReader->setPropsForAllWidgetFromJsonDictionary(reader, widget, json);
+            widgetPropertiesReader.setPropsForAllWidgetFromJsonDictionary(reader, widget, json);
         }
     }
     else if (isCustomWidget(classname))
@@ -802,7 +802,7 @@ Node* CSLoader::loadWidget(const rapidjson::Value& json)
         WidgetReaderProtocol* reader = dynamic_cast<WidgetReaderProtocol*>(ObjectFactory::getInstance()->createObject(readerName));
         if (reader && widget)
         {
-            widgetPropertiesReader->setPropsForAllWidgetFromJsonDictionary(reader, widget, json);
+            widgetPropertiesReader.setPropsForAllWidgetFromJsonDictionary(reader, widget, json);
 
             // 2nd., custom widget parse with custom reader
             const char* customProperty = DICTOOL->getStringValue_json(json, "customProperty");
@@ -813,14 +813,13 @@ Node* CSLoader::loadWidget(const rapidjson::Value& json)
                 CCLOG("GetParseError %d\n", customJsonDict.GetParseError());
             }
 
-            widgetPropertiesReader->setPropsForAllCustomWidgetFromJsonDictionary(classname, widget, customJsonDict);
+            widgetPropertiesReader.setPropsForAllCustomWidgetFromJsonDictionary(classname, widget, customJsonDict);
         }
         else
         {
             CCLOG("Widget or WidgetReader doesn't exists!!!  Please check your protocol buffers file.");
         }
     }
-    CC_SAFE_DELETE(widgetPropertiesReader);
 
     if (widget)
     {
@@ -1128,7 +1127,7 @@ Node* CSLoader::nodeWithFlatBuffers(const flatbuffers::NodeTree *nodetree, const
             std::string filePath = projectNodeOptions->fileName()->c_str();
 
             cocostudio::timeline::ActionTimeline* action = nullptr;
-            if (filePath != "" && FileUtils::getInstance()->isFileExist(filePath))
+            if (!filePath.empty() && FileUtils::getInstance()->isFileExist(filePath))
             {
                 Data buf = FileUtils::getInstance()->getDataFromFile(filePath);
                 node = createNode(buf, callback);

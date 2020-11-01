@@ -1,7 +1,5 @@
 /****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
-Copyright (c) 2019-2020 simdsoft, @HALX99
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -24,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "cocostudio/CCArmature.h"
-#include "cocostudio/CCArmatureDataManager.h"
-#include "cocostudio/CCArmatureDefine.h"
-#include "cocostudio/CCDataReaderHelper.h"
-#include "cocostudio/CCDatas.h"
-#include "cocostudio/CCSkin.h"
+#include "CCArmature.h"
+#include "CCArmatureDataManager.h"
+#include "CCArmatureDefine.h"
+#include "CCDataReaderHelper.h"
+#include "CCDatas.h"
+#include "CCSkin.h"
 
 #include "renderer/CCRenderer.h"
 #include "renderer/CCGroupCommand.h"

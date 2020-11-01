@@ -1,14 +1,14 @@
 
 
-#include "cocostudio/WidgetReader/LoadingBarReader/LoadingBarReader.h"
+#include "WidgetReader/LoadingBarReader/LoadingBarReader.h"
 
 #include "ui/UILoadingBar.h"
 #include "2d/CCSpriteFrameCache.h"
 #include "platform/CCFileUtils.h"
 
-#include "cocostudio/CocoLoader.h"
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/FlatBuffersSerialize.h"
+#include "CocoLoader.h"
+#include "CSParseBinary_generated.h"
+#include "FlatBuffersSerialize.h"
 
 #include "flatbuffers/flatbuffers.h"
 

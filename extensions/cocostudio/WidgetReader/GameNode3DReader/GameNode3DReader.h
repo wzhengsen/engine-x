@@ -26,13 +26,13 @@
 #define __cocos2d_libs__GameNode3DReader__
 
 #include "2d/CCCameraBackgroundBrush.h"
-#include "cocostudio/CocosStudioExport.h"
-#include "cocostudio/WidgetReader/NodeReaderProtocol.h"
-#include "cocostudio/WidgetReader/NodeReaderDefine.h"
+#include "CocosStudioExport.h"
+#include "WidgetReader/NodeReaderProtocol.h"
+#include "WidgetReader/NodeReaderDefine.h"
 
 namespace cocostudio
 {
-    class CC_STUDIO_DLL GameNode3DReader : public cocos2d::Ref, public NodeReaderProtocol
+    class CCS_DLL GameNode3DReader : public cocos2d::Ref, public NodeReaderProtocol
     {
         DECLARE_CLASS_NODE_READER_INFO
         

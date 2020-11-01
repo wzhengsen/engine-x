@@ -28,13 +28,13 @@
 #include "base/CCRef.h"
 #include "2d/CCComponent.h"
 #include "2d/CCNode.h"
-#include "cocostudio/CocosStudioExport.h"
-#include "cocostudio/WidgetReader/NodeReaderProtocol.h"
+#include "CocosStudioExport.h"
+#include "WidgetReader/NodeReaderProtocol.h"
 
 
 namespace cocostudio
 {
-    class CC_STUDIO_DLL ComAudioReader : public cocos2d::Ref, public NodeReaderProtocol
+    class CCS_DLL ComAudioReader : public cocos2d::Ref, public NodeReaderProtocol
     {
         
     public:

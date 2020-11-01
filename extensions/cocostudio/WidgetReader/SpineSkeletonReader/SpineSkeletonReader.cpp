@@ -22,18 +22,18 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "cocostudio/WidgetReader/SpineSkeletonReader/SpineSkeletonReader.h"
+#include "WidgetReader/SpineSkeletonReader/SpineSkeletonReader.h"
 
-#if defined(CC_BUILD_WITH_SPINE) && CC_BUILD_WITH_SPINE
-#include "cocostudio/SpineSkeletonDataCache.h"
+#if defined(CC_BUILD_WITH_SPINE)
+#include "SpineSkeletonDataCache.h"
 
 #include "2d/CCSprite.h"
 #include "2d/CCSpriteFrameCache.h"
 #include "platform/CCFileUtils.h"
 
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/FlatBuffersSerialize.h"
-#include "cocostudio/WidgetReader/NodeReader/NodeReader.h"
+#include "CSParseBinary_generated.h"
+#include "FlatBuffersSerialize.h"
+#include "WidgetReader/NodeReader/NodeReader.h"
 
 
 #include "flatbuffers/flatbuffers.h"

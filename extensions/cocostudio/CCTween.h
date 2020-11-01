@@ -1,6 +1,5 @@
-﻿/****************************************************************************
-Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+/****************************************************************************
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -27,9 +26,9 @@ THE SOFTWARE.
 #ifndef __CCTWEEN_H__
 #define __CCTWEEN_H__
 
-#include "cocostudio/CCProcessBase.h"
+#include "CCProcessBase.h"
 #include "2d/CCTweenFunction.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio {
 
@@ -41,7 +40,7 @@ using cocos2d::tweenfunc::TweenType;
  *  @js NA
  *  @lua NA
  */
-class CC_STUDIO_DLL Tween : public ProcessBase
+class CCS_DLL Tween : public ProcessBase
 {
 public:
     /**
@@ -50,8 +49,8 @@ public:
      */
     static Tween *create(Bone *bone);
 public:
-    Tween();
-    virtual ~Tween();
+    Tween(void);
+    virtual ~Tween(void);
 
     /**
      * Init with a Bone

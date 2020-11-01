@@ -1,14 +1,12 @@
 #ifndef _SPINESKELETONDATACACHE_H_
 #define _SPINESKELETONDATACACHE_H_
 #include <cocos2d.h>
-
-#if defined(CC_BUILD_WITH_SPINE) && CC_BUILD_WITH_SPINE
 #include "spine/spine.h"
 #include "spine/spine-cocos2dx.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CocosStudioExport.h"
 #include <functional>
 
-class CC_STUDIO_DLL SpineSkeletonDataCache
+class CCS_DLL SpineSkeletonDataCache
 {
 public:
 	class SkeletonData : public cocos2d::Ref
@@ -43,8 +41,6 @@ public:
 	std::map<std::string, SkeletonData*> _cacheTable;
     void(*_reportError)(const char* pszFormat, ...);
 };
-
-#endif
 
 #endif
 

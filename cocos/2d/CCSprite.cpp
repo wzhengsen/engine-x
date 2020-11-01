@@ -373,22 +373,15 @@ void Sprite::setVertexLayout()
     vertexLayout->setLayout(sizeof(V3F_C4B_T2F));
 }
 
-void Sprite::updateShaders(const char* vert, const char* frag)
-{
-    auto* program = backend::Device::getInstance()->newProgram(vert, frag);
-    attachProgramState(new (std::nothrow) backend::ProgramState(program));
-    CC_SAFE_RELEASE(program);
-}
-
-void Sprite::setProgramState(backend::ProgramType type)
+void Sprite::setProgramState(uint32_t type)
 {
     setProgramStateWithRegistry(type, _texture);
 }
 
-bool Sprite::attachProgramState(backend::ProgramState *programState)
+bool Sprite::setProgramState(backend::ProgramState *programState, bool needsRetain)
 {
     CCASSERT(programState, "argument should not be nullptr");
-    if (Node::attachProgramState(programState)) {
+    if (Node::setProgramState(programState, needsRetain)) {
         auto& pipelineDescriptor = _trianglesCommand.getPipelineDescriptor();
         pipelineDescriptor.programState = _programState;
 
@@ -436,7 +429,8 @@ void Sprite::setTexture(Texture2D *texture)
         updateBlendFunc();
     }
 
-    setProgramState(backend::ProgramType::POSITION_TEXTURE_COLOR);
+    if(_programState == nullptr || _programState->getProgram()->getProgramType() < backend::ProgramType::HSV)
+        setProgramState(backend::ProgramType::POSITION_TEXTURE_COLOR);
 }
 
 Texture2D* Sprite::getTexture() const

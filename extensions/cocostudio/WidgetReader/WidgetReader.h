@@ -25,19 +25,19 @@
 #ifndef __TestCpp__WidgetReader__
 #define __TestCpp__WidgetReader__
 
-#include "cocostudio/WidgetReader/WidgetReaderProtocol.h"
-#include "cocostudio/CCSGUIReader.h"
+#include "WidgetReader/WidgetReaderProtocol.h"
+#include "CCSGUIReader.h"
 #include "ui/GUIDefine.h"
-#include "cocostudio/CocosStudioExport.h"
-#include "cocostudio/WidgetReader/NodeReaderProtocol.h"
-#include "cocostudio/WidgetReader/NodeReaderDefine.h"
+#include "CocosStudioExport.h"
+#include "WidgetReader/NodeReaderProtocol.h"
+#include "WidgetReader/NodeReaderDefine.h"
 
 namespace cocostudio
 {
     class CocoLoader;
     struct stExpCocoNode;
     
-    class CC_STUDIO_DLL WidgetReader : public cocos2d::Ref, public WidgetReaderProtocol, public NodeReaderProtocol
+    class CCS_DLL WidgetReader : public cocos2d::Ref, public WidgetReaderProtocol, public NodeReaderProtocol
     {
         DECLARE_CLASS_NODE_READER_INFO
         

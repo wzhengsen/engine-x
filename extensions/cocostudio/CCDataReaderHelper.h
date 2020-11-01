@@ -25,11 +25,11 @@ THE SOFTWARE.
 #ifndef __CCDATAREADERHELPER_H__
 #define __CCDATAREADERHELPER_H__
 
-#include "cocostudio/CCArmatureDefine.h"
-#include "cocostudio/CCDatas.h"
-#include "cocostudio/CCArmature.h"
-#include "cocostudio/DictionaryHelper.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CCArmatureDefine.h"
+#include "CCDatas.h"
+#include "CCArmature.h"
+#include "DictionaryHelper.h"
+#include "CocosStudioExport.h"
 
 #include "pugixml/pugixml.hpp"
 #include "pugixml/pugiext.hpp"
@@ -50,7 +50,7 @@ namespace cocostudio {
  *  @js NA
  *  @lua NA
  */
-class CC_STUDIO_DLL DataReaderHelper : cocos2d::Ref
+class CCS_DLL DataReaderHelper : cocos2d::Ref
 {
 protected:
 

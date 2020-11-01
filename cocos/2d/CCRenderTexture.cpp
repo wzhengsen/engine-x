@@ -432,7 +432,7 @@ bool RenderTexture::saveToFile(const std::string& fileName, Image::Format format
 
 void RenderTexture::onSaveToFile(const std::string& filename, bool isRGBA, bool forceNonPMA)
 {
-    auto callbackFunc = [&, filename, isRGBA, forceNonPMA](Image* image){
+    auto callbackFunc = [&, filename, isRGBA, forceNonPMA](RefPtr<Image> image){
         if (image)
         {
             if (forceNonPMA && image->hasPremultipliedAlpha())
@@ -445,7 +445,6 @@ void RenderTexture::onSaveToFile(const std::string& filename, bool isRGBA, bool 
         {
             _saveFileCallback(this, filename);
         }
-        CC_SAFE_DELETE(image);
     };
     newImage(callbackFunc);
 }
@@ -617,11 +616,20 @@ void RenderTexture::setClearFlags(ClearFlag clearFlags)
 
 void RenderTexture::clearColorAttachment()
 {
-    auto renderer = _director->getRenderer();
-    _oldRenderTarget = renderer->getRenderTarget();
-    renderer->setRenderTarget(_renderTarget);
-    renderer->clear(TargetBufferFlags::COLOR, Color4F{0.f, 0.f, 0.f, 0.f}, 1, 0, _globalZOrder);
-    renderer->setRenderTarget(_oldRenderTarget);
+    auto renderer = Director::getInstance()->getRenderer();
+    _beforeClearAttachmentCommand.func = [=]() -> void {
+        _oldRenderTarget = renderer->getRenderTarget();
+        renderer->setRenderTarget(_renderTarget);
+    };
+    renderer->addCommand(&_beforeClearAttachmentCommand);
+
+    Color4F color(0.f, 0.f, 0.f, 0.f);
+    renderer->clear(ClearFlag::COLOR, color, 1, 0, _globalZOrder);
+
+    _afterClearAttachmentCommand.func = [=]() -> void {
+        renderer->setRenderTarget(_oldRenderTarget);
+    };
+    renderer->addCommand(&_afterClearAttachmentCommand);
 }
 
 NS_CC_END

@@ -25,12 +25,12 @@
 #ifndef __TestCpp__TextFieldExReader__
 #define __TestCpp__TextFieldExReader__
 
-#include "cocostudio/WidgetReader/WidgetReader.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "WidgetReader/WidgetReader.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio
 {
-    class CC_STUDIO_DLL TextFieldExReader : public cocos2d::Ref, public NodeReaderProtocol
+    class CCS_DLL TextFieldExReader : public cocos2d::Ref, public NodeReaderProtocol
     {
         DECLARE_CLASS_NODE_READER_INFO
         

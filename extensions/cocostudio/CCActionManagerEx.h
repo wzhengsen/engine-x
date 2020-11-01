@@ -25,16 +25,16 @@ THE SOFTWARE.
 #ifndef __ActionMANAGER_H__
 #define __ActionMANAGER_H__
 
-#include "cocostudio/CCActionObject.h"
-#include "cocostudio/DictionaryHelper.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CCActionObject.h"
+#include "DictionaryHelper.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio {
     
 class CocoLoader;
 struct stExpCocoNode;
 
-class CC_STUDIO_DLL ActionManagerEx:public cocos2d::Ref
+class CCS_DLL ActionManagerEx:public cocos2d::Ref
 {
 public:
 

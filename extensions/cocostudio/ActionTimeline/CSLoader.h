@@ -25,8 +25,8 @@
 #ifndef __cocos2d_libs__CSLoader__
 #define __cocos2d_libs__CSLoader__
 
-#include "cocostudio/DictionaryHelper.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "DictionaryHelper.h"
+#include "CocosStudioExport.h"
 
 #include "base/ObjectFactory.h"
 #include "base/CCData.h"
@@ -67,7 +67,7 @@ NS_CC_BEGIN
 
 typedef std::function<void(Ref*)> ccNodeLoadCallback;
 
-class CC_STUDIO_DLL CSLoader
+class CCS_DLL CSLoader
 {
 public:
     static CSLoader* getInstance();

@@ -28,13 +28,13 @@ THE SOFTWARE.
 #include "2d/CCSprite.h"
 #include "renderer/CCQuadCommand.h"
 
-#include "cocostudio/CCArmatureDefine.h"
-#include "cocostudio/CCBone.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CCArmatureDefine.h"
+#include "CCBone.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio {
 
-class CC_STUDIO_DLL Skin : public cocos2d::Sprite
+class CCS_DLL Skin : public cocos2d::Sprite
 {
 public:
     static Skin *create();

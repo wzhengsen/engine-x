@@ -24,11 +24,11 @@
 
 
 #include "flatbuffers/flatbuffers.h"
-#include "cocostudio/WidgetReader/WidgetReader.h"
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/WidgetReader/TabControlReader/TabControlReader.h"
-#include "cocostudio/FlatBuffersSerialize.h"
-#include "cocostudio/ActionTimeline/CSLoader.h"
+#include "WidgetReader/WidgetReader.h"
+#include "CSParseBinary_generated.h"
+#include "WidgetReader/TabControlReader/TabControlReader.h"
+#include "FlatBuffersSerialize.h"
+#include "ActionTimeline/CSLoader.h"
 #include "ui/UITabControl.h"
 #include "platform/CCFileUtils.h"
 #include "2d/CCSpriteFrameCache.h"

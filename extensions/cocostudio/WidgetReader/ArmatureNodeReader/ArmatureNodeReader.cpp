@@ -1,14 +1,14 @@
-#include "cocostudio/WidgetReader/ArmatureNodeReader/ArmatureNodeReader.h"
+#include "WidgetReader/ArmatureNodeReader/ArmatureNodeReader.h"
 
 #include "platform/CCFileUtils.h"
 
 #include "flatbuffers/flatbuffers.h"
-#include "cocostudio/WidgetReader/NodeReader/NodeReader.h"
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/WidgetReader/ArmatureNodeReader/CSArmatureNode_generated.h"
-#include "cocostudio/CCArmature.h"
+#include "WidgetReader/NodeReader/NodeReader.h"
+#include "CSParseBinary_generated.h"
+#include "WidgetReader/ArmatureNodeReader/CSArmatureNode_generated.h"
+#include "CCArmature.h"
 #if defined(CC_BUILD_WITH_DRANGBONES) && CC_BUILD_WITH_DRANGBONES
-#include "dragonbones/CCDragonBonesHeaders.h"
+#include "DragonBones/CCDragonBonesHeaders.h"
 #endif
 
 USING_NS_CC;

@@ -59,15 +59,18 @@ if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
 endif()
 
 # The version number
-set(EGNX_VERSION 1.0)
+set(ENGINEX_VERSION 1.0)
 
-if(NOT DEFINED EGNX_CORE_LIB)
-    set(EGNX_CORE_LIB cocos2d CACHE INTERNAL "The EGNX core lib name" )
+if(NOT DEFINED ENGINEX_CORE_LIB)
+    set(ENGINEX_CORE_LIB cocos2d CACHE INTERNAL "The engine-x core lib name" )
 endif()
 
 if (NOT DEFINED CC_FORCE_USE_GLES)
     set(CC_FORCE_USE_GLES FALSE CACHE INTERNAL "Force use GLES" )
 endif()
+
+set(LUA_ENGINE "plainlua" CACHE INTERNAL "The lua core lib, luajit or plainlua")
+set(LUA_VERSION "5.3.6" CACHE INTERNAL "The plainlua version")
 
 project(cocos2d_libs)
 
@@ -116,7 +119,7 @@ set(COCOS_SRC cocos2d.cpp
 
 list(APPEND COCOS_SRC ${COCOS_HEADER})
 
-add_library(${EGNX_CORE_LIB} ${COCOS_SRC})
+add_library(${ENGINEX_CORE_LIB} ${COCOS_SRC})
 
 # if (NOT APPLE)
 #   set_source_files_properties("audio/src/AudioEngineImpl.mm" PROPERTIES LANGUAGE CXX)
@@ -124,49 +127,51 @@ add_library(${EGNX_CORE_LIB} ${COCOS_SRC})
 
 # use external libs
 add_subdirectory(${COCOS2DX_ROOT_PATH}/external ${ENGINE_BINARY_PATH}/external)
-target_link_libraries(${EGNX_CORE_LIB} external)
+target_link_libraries(${ENGINEX_CORE_LIB} external)
 
 # add base macro define and compile options
-use_cocos2dx_compile_define(${EGNX_CORE_LIB})
-use_cocos2dx_compile_options(${EGNX_CORE_LIB})
+use_cocos2dx_compile_define(${ENGINEX_CORE_LIB})
+use_cocos2dx_compile_options(${ENGINEX_CORE_LIB})
 
 # use all platform related system libs
-use_cocos2dx_libs_depend(${EGNX_CORE_LIB})
+use_cocos2dx_libs_depend(${ENGINEX_CORE_LIB})
 
-target_include_directories(${EGNX_CORE_LIB}
+target_include_directories(${ENGINEX_CORE_LIB}
     PUBLIC ${COCOS2DX_ROOT_PATH}
     PUBLIC ${COCOS2DX_ROOT_PATH}/external
     PUBLIC ${COCOS2DX_ROOT_PATH}/extensions
     PUBLIC ${COCOS2DX_ROOT_PATH}/cocos
     PUBLIC ${COCOS2DX_ROOT_PATH}/cocos/platform
 
+    INTERFACE ${COCOS2DX_ROOT_PATH}/external
     INTERFACE ${COCOS2DX_ROOT_PATH}/extensions
     INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/base
     INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/audio/include
     INTERFACE ${COCOS2DX_ROOT_PATH}/cocos/platform/${PLATFORM_FOLDER}
 )
 
-set_target_properties(${EGNX_CORE_LIB}
+set_target_properties(${ENGINEX_CORE_LIB}
                       PROPERTIES
                       ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
                       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-                      VERSION "${EGNX_VERSION}"
+                      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+                      VERSION "${ENGINEX_VERSION}"
                       FOLDER "Internal"
                       )
 
 ## Lua bindings lib
-if(BUILD_LUA_LIBS)
-    add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos/scripting/lua-bindings ${ENGINE_BINARY_PATH}/cocos/lua-bindings)
-endif()
+# if(BUILD_LUA_LIBS)
+#     add_subdirectory(${COCOS2DX_ROOT_PATH}/extensions/scripting/lua-bindings ${ENGINE_BINARY_PATH}/cocos/lua-bindings)
+# endif()
 
 if(XCODE OR VS)
-    cocos_mark_code_files("${EGNX_CORE_LIB}")
+    cocos_mark_code_files("${ENGINEX_CORE_LIB}")
 endif()
 
 if(WINDOWS)
     # precompiled header. Compilation time speedup ~4x.
-    target_sources(${EGNX_CORE_LIB} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/precheader.cpp")
-    set_target_properties(${EGNX_CORE_LIB} PROPERTIES COMPILE_FLAGS "/Yuprecheader.h /FIprecheader.h")
+    target_sources(${ENGINEX_CORE_LIB} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/precheader.cpp")
+    set_target_properties(${ENGINEX_CORE_LIB} PROPERTIES COMPILE_FLAGS "/Yuprecheader.h /FIprecheader.h")
     set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/precheader.cpp" PROPERTIES COMPILE_FLAGS "/Ycprecheader.h")
     # compile c as c++. needed for precompiled header
     set_source_files_properties(${COCOS_SPINE_SRC} base/ccFPSImages.c PROPERTIES LANGUAGE CXX)
@@ -175,8 +180,13 @@ endif()
 # engine extensions
 add_subdirectory(${COCOS2DX_ROOT_PATH}/extensions ${ENGINE_BINARY_PATH}/extensions)
 
+# copy all external libraries to ${CMAKE_BINARY_DIR}/lib/$<CONFIG>
+# if (WINDOWS)
+#     copy_thirdparty_dlls(libcocos2d ${CMAKE_BINARY_DIR}/lib/$<CONFIG>)
+# endif()
+
 #if(XCODE)
 #    # Later versions of Xcode clang want to compile C++17 with aligned allocation turned on and this is only supported on iOS 11.0+
 #    # TODO: Only turn this off if ${CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET} < 11.0
-#    target_compile_options(${EGNX_CORE_LIB} PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-fno-aligned-allocation>)
+#    target_compile_options(${ENGINEX_CORE_LIB} PUBLIC $<$<COMPILE_LANGUAGE:CXX>:-fno-aligned-allocation>)
 #endif()

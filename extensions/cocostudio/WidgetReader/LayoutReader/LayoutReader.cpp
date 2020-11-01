@@ -1,14 +1,14 @@
 
 
-#include "cocostudio/WidgetReader/LayoutReader/LayoutReader.h"
+#include "WidgetReader/LayoutReader/LayoutReader.h"
 
 #include "ui/UILayout.h"
-#include "cocostudio/CocoLoader.h"
+#include "CocoLoader.h"
 #include "ui/UIScrollView.h"
 #include "ui/UIPageView.h"
 #include "ui/UIListView.h"
-#include "cocostudio/CSParseBinary_generated.h"
-#include "cocostudio/FlatBuffersSerialize.h"
+#include "CSParseBinary_generated.h"
+#include "FlatBuffersSerialize.h"
 #include "base/CCDirector.h"
 #include "platform/CCFileUtils.h"
 #include "2d/CCSpriteFrameCache.h"

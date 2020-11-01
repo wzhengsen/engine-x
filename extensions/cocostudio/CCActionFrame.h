@@ -27,7 +27,7 @@ THE SOFTWARE.
 
 #include "math/CCGeometry.h"
 #include "2d/CCActionInterval.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "CocosStudioExport.h"
 
 namespace cocostudio {
     
@@ -93,7 +93,7 @@ enum class FrameEaseType
 *  @js NA
 *  @lua NA
 */
-class CC_STUDIO_DLL ActionFrame: public cocos2d::Ref
+class CCS_DLL ActionFrame: public cocos2d::Ref
 {
 
 public:
@@ -211,7 +211,7 @@ protected:
 *  @js NA
 *  @lua NA
 */
-class CC_STUDIO_DLL ActionMoveFrame:public ActionFrame
+class CCS_DLL ActionMoveFrame:public ActionFrame
 {
 public:
 
@@ -255,7 +255,7 @@ protected:
 *  @js NA
 *  @lua NA
 */
-class CC_STUDIO_DLL ActionScaleFrame:public ActionFrame
+class CCS_DLL ActionScaleFrame:public ActionFrame
 {
 public:
 
@@ -313,7 +313,7 @@ protected:
 *  @js NA
 *  @lua NA
 */
-class CC_STUDIO_DLL ActionRotationFrame:public ActionFrame
+class CCS_DLL ActionRotationFrame:public ActionFrame
 {
 public:
 
@@ -366,7 +366,7 @@ public:
 *  @js NA
 *  @lua NA
 */
-class CC_STUDIO_DLL ActionFadeFrame:public ActionFrame
+class CCS_DLL ActionFadeFrame:public ActionFrame
 {
 public:
 
@@ -409,7 +409,7 @@ protected:
 *  @js NA
 *  @lua NA
 */
-class CC_STUDIO_DLL ActionTintFrame:public ActionFrame
+class CCS_DLL ActionTintFrame:public ActionFrame
 {
 
 public:

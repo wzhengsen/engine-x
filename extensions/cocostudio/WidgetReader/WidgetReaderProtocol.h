@@ -26,15 +26,17 @@
 #define __TestCpp__WidgetReaderProtocol__
 
 
-#include "cocostudio/DictionaryHelper.h"
-#include "cocostudio/CocosStudioExport.h"
+#include "DictionaryHelper.h"
+#include "CocosStudioExport.h"
 
 #include "pugixml/pugixml.hpp"
 #include "pugixml/pugiext.hpp"
 
+// protobuf present at cocos2d-x-3.3rc1@libccs19
 namespace protocolbuffers
 {
     class NodeTree;
+    class ResourceData; // please match in CSParseBinary.pb
 }
 
 namespace cocos2d
@@ -50,12 +52,14 @@ namespace cocostudio
     class CocoLoader;
     struct stExpCocoNode;
     
-    class CC_STUDIO_DLL WidgetReaderProtocol
+    class CCS_DLL WidgetReaderProtocol
     {
     public:
-        virtual ~WidgetReaderProtocol() {};
+        virtual ~WidgetReaderProtocol();
         virtual void setPropsFromJsonDictionary(cocos2d::ui::Widget* widget, const rapidjson::Value& options) = 0;
-        virtual void setPropsFromBinary(cocos2d::ui::Widget* widget, CocoLoader* cocoLoader,  stExpCocoNode*	pCocoNode) = 0;        
+        virtual void setPropsFromBinary(cocos2d::ui::Widget* widget, CocoLoader* cocoLoader,  stExpCocoNode*	pCocoNode) = 0;
+        virtual void setPropsFromProtocolBuffers(cocos2d::ui::Widget* widget, const protocolbuffers::NodeTree& nodeTree); // cocos2d-x-3.3rc1@libccs19 spec
+        virtual void setPropsFromXML(cocos2d::ui::Widget* widget, pugi::xml_node objectData); // cocos2d-x-3.3rc1@libccs19 spec
     };
 }
 
