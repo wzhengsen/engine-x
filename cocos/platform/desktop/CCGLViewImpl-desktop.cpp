@@ -40,7 +40,11 @@ THE SOFTWARE.
 #include "base/ccUTF8.h"
 #include "2d/CCCamera.h"
 
-#if defined(_WIN32)
+#include "glfw3.h"
+#if GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR >= 4
+#define USEGLFW3EXT
+#endif
+#if defined(_WIN32) && defined(USEGLFW3EXT)
 #include "glfw3ext.h"
 #endif
 
@@ -320,7 +324,7 @@ GLViewImpl::GLViewImpl(bool initglfw)
 #if defined(CC_USE_GLES) && GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR >= 4
         glfwInitHint(GLFW_ANGLE_PLATFORM_TYPE, GLFW_ANGLE_PLATFORM_TYPE_D3D11); // since glfw-3.4
 #endif
-#if defined(_WIN32)
+#if defined(_WIN32) && defined(USEGLFW3EXT)
         glfwxInit();
 #else
         glfwInit();
@@ -332,7 +336,7 @@ GLViewImpl::~GLViewImpl()
 {
     CCLOGINFO("deallocing GLViewImpl: %p", this);
     GLFWEventHandler::setGLViewImpl(nullptr);
-#if defined(_WIN32)
+#if defined(_WIN32) && defined(USEGLFW3EXT)
     glfwxTerminate();
 #else
     glfwTerminate();
@@ -422,7 +426,7 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     int neededWidth = (int)(rect.size.width * _frameZoomFactor);
     int neededHeight = (int)(rect.size.height * _frameZoomFactor);
 
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) && defined(USEGLFW3EXT)
     glfwxSetParent((HWND)_glContextAttrs.viewParent);
 #endif
 

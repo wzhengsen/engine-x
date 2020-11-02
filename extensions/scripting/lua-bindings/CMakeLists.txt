@@ -14,7 +14,6 @@ set(lua_bindings_manual_headers
     manual/network/lua_cocos2dx_network_manual.h
     manual/network/lua_xml_http_request.h
     manual/network/Lua_web_socket.h
-    manual/network/lua_extensions.h
     manual/audioengine/lua_cocos2dx_audioengine_manual.h
     manual/Lua-BindingsExport.h
     manual/tolua_fix.h
@@ -156,14 +155,6 @@ set(lua_bindings_headers
     ${lua_bindings_auto_headers}
     ${COCOS_DEPRECATED_HEADER}
     )
-
-# lua-cjson
-set(lua_bindings_files
-        ${lua_bindings_files}
-        lua-cjson/fpconv.c
-        lua-cjson/strbuf.c
-        lua-cjson/lua_cjson.c
-        )
 
 option(BUILD_YASIO_LUA "Build yasio with cclua support" ON)
 

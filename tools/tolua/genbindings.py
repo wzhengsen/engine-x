@@ -113,6 +113,7 @@ def main():
     cur_platform= '??'
     llvm_path = '??'
     ndk_root = _check_ndk_root_env()
+    python_bin = _check_python_bin_env()
     # del the " in the path
     ndk_root = re.sub(r"\"", "", ndk_root)
 
@@ -165,7 +166,7 @@ def main():
     cxx_generator_root = os.path.abspath(os.path.join(project_root, 'tools/bindings-generator'))
 
     extraFlags = _defaultIncludePath()
-    
+
     # save config to file
     if(sys.version_info.major >= 3):
         import configparser # import ConfigParser
@@ -173,7 +174,7 @@ def main():
     else:
         import ConfigParser
         config = ConfigParser.ConfigParser()
-    
+
     config.set('DEFAULT', 'androidndkdir', ndk_root)
     config.set('DEFAULT', 'clangllvmdir', llvm_path)
     config.set('DEFAULT', 'gcc_toolchain_dir', gcc_toolchain_path)

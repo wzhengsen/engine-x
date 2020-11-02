@@ -1369,8 +1369,8 @@ class Generator(object):
                 header, replaced_header = replace.split("::")
                 self.replace_headers[header] = replaced_header
 
-        for i,sp in enumerate(self.search_path):
-            self.search_path[i] = sp.replace(r"-I",r"",1)
+        for i,sp in enumerate(self.search_paths):
+            self.search_paths[i] = sp.replace(r"-I",r"",1)
 
 
     def should_rename_function(self, class_name, method_name):
@@ -1810,14 +1810,14 @@ def main():
     if len(args) == 0:
         parser.error('invalid number of arguments')
 
-    userconfig = configparser.ConfigParser()
+    userconfig = ConfigParser.ConfigParser()
     userconfig.read('userconf.ini')
     print('Using userconfig \n ', userconfig.items('DEFAULT'))
 
     clang_lib_path = os.path.join(userconfig.get('DEFAULT', 'cxxgeneratordir'), 'libclang')
     cindex.Config.set_library_path(clang_lib_path)
 
-    config = configparser.ConfigParser()
+    config = ConfigParser.ConfigParser()
     config.read(args[0])
 
     if (0 == len(config.sections())):
