@@ -13,6 +13,7 @@ set(lua_bindings_manual_headers
     manual/platform/ios/CCLuaObjcBridge.h
     manual/network/lua_cocos2dx_network_manual.h
     manual/network/lua_xml_http_request.h
+    manual/network/lua_extensions.h
     manual/network/Lua_web_socket.h
     manual/audioengine/lua_cocos2dx_audioengine_manual.h
     manual/Lua-BindingsExport.h
@@ -53,6 +54,7 @@ set(lua_bindings_manual_files
     manual/controller/lua_cocos2dx_controller_manual.cpp
     manual/extension/lua_cocos2dx_extension_manual.cpp
     manual/network/lua_cocos2dx_network_manual.cpp
+    manual/network/lua_extensions.c
     manual/network/Lua_web_socket.cpp
     manual/network/lua_xml_http_request.cpp
     manual/spine/lua_cocos2dx_spine_manual.cpp
