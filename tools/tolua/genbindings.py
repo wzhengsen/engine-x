@@ -5,28 +5,34 @@
 import sys
 import os, os.path
 import shutil
-try:
-    import yaml
-except ModuleNotFoundError:
-    os.system("pip3 install -U pyyaml --ignore-installed --user pyyaml")
-    import yaml
-import configparser
 import subprocess
 import re
 from contextlib import contextmanager
 
 
 def _check_ndk_root_env():
-    ''' Checking the environment NDK_ROOT, which will be used for building
+    ''' Checking the environment ANDROID_NDK, which will be used for building
     '''
 
     try:
-        NDK_ROOT = os.environ['NDK_ROOT']
+        ANDROID_NDK = os.environ['ANDROID_NDK']
     except Exception:
-        print("NDK_ROOT not defined. Please define NDK_ROOT in your environment.")
+        print("ANDROID_NDK not defined. Please define ANDROID_NDK in your environment.")
         sys.exit(1)
 
-    return NDK_ROOT
+    return ANDROID_NDK
+
+def _check_python_bin_env():
+    ''' Checking the environment PYTHON_BIN, which will be used for building
+    '''
+
+    try:
+        PYTHON_BIN = os.environ['PYTHON_BIN']
+    except Exception:
+        print("PYTHON_BIN not defined, use current python.")
+        PYTHON_BIN = sys.executable
+
+    return PYTHON_BIN
 
 def _find_first_file_in_dir(dir, fn):
     if os.path.isfile(dir):
@@ -53,7 +59,7 @@ def _find_all_files_match(dir, cond, all):
 def _find_toolchain_include_path():
     '''
     Search gcc prebuilt include path
-    for instance: "$NDK_ROOT/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/include"
+    for instance: "$ANDROID_NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/include"
     '''
     foundFiles = []
     _find_all_files_match(os.path.join(_check_ndk_root_env(), "toolchains"), lambda x : os.path.basename(x) == "stdarg.h" and "arm-linux-androideabi" in x , foundFiles)
@@ -65,7 +71,7 @@ def _find_toolchain_include_path():
 def _find_llvm_include_path():
     '''
     Search llvm prebuilt include path.
-    for instance: "$NDK_ROOT/toolchains/llvm/prebuilt/windows-x86_64/lib64/clang/6.0.2/include"
+    for instance: "$ANDROID_NDK/toolchains/llvm/prebuilt/windows-x86_64/lib64/clang/6.0.2/include"
     '''
     versionFile = _find_first_file_in_dir(_check_ndk_root_env(), "AndroidVersion.txt")
     if versionFile is None:
@@ -159,8 +165,15 @@ def main():
     cxx_generator_root = os.path.abspath(os.path.join(project_root, 'tools/bindings-generator'))
 
     extraFlags = _defaultIncludePath()
+    
     # save config to file
-    config = configparser.ConfigParser()
+    if(sys.version_info.major >= 3):
+        import configparser # import ConfigParser
+        config = configparser.ConfigParser()
+    else:
+        import ConfigParser
+        config = ConfigParser.ConfigParser()
+    
     config.set('DEFAULT', 'androidndkdir', ndk_root)
     config.set('DEFAULT', 'clangllvmdir', llvm_path)
     config.set('DEFAULT', 'gcc_toolchain_dir', gcc_toolchain_path)
@@ -211,7 +224,8 @@ def main():
             args = cmd_args[key]
             cfg = '%s/%s' % (tolua_root, key)
             print('Generating bindings for %s...' % (key[:-4]))
-            command = '%s %s %s -s %s -t %s -o %s -n %s' % ('python3', generator_py, cfg, args[0], target, output_dir, args[1])
+            command = '%s %s %s -s %s -t %s -o %s -n %s' % (python_bin, generator_py, cfg, args[0], target, output_dir, args[1])
+            print(command)
             _run_cmd(command)
 
         print('---------------------------------')

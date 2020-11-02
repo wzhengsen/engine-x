@@ -3,13 +3,18 @@
 $macro_judgement
 #end if
 #for header in $headers
-    #for sp in $search_path
-        #set relative = os.path.relpath(header, sp)
+    #set relative = '..'
+    #for search_path in $search_paths
+        #set relative = os.path.relpath(header, $search_path)
         #if not '..' in relative
-\#include "${relative.replace(os.path.sep, '/')}"
             #break
         #end if
     #end for
+    #if not '..' in relative
+\#include "${relative.replace(os.path.sep, '/')}"
+    #else
+\#include "${os.path.basename(header)}"
+    #end if
 #end for
 \#include "scripting/lua-bindings/manual/tolua_fix.h"
 \#include "scripting/lua-bindings/manual/LuaBasicConversions.h"

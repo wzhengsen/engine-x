@@ -6,7 +6,6 @@
 
 from clang import cindex
 import sys
-import configparser
 import yaml
 import re
 import os
@@ -20,6 +19,10 @@ except ModuleNotFoundError:
 finally:
     from Cheetah.Template import Template
 
+if(sys.version_info.major >= 3):
+    import configparser as ConfigParser
+else:
+    import ConfigParser
 type_map = {
     cindex.TypeKind.VOID        : "void",
     cindex.TypeKind.BOOL        : "bool",
@@ -1198,7 +1201,7 @@ class NativeClass(object):
         elif self._current_visibility == cindex.AccessSpecifier.PUBLIC and cursor.kind == cindex.CursorKind.CONSTRUCTOR and not self.is_abstract:
             # Skip copy constructor
             if cursor.displayname == self.class_name + "(const " + self.namespaced_class_name + " &)":
-                # print "Skip copy constructor: " + cursor.displayname
+                # print("Skip copy constructor: " + cursor.displayname)
                 return True
 
             m = NativeFunction(cursor)
@@ -1274,7 +1277,8 @@ class Generator(object):
     def __init__(self, opts):
         self.index = cindex.Index.create()
         self.outdir = opts['outdir']
-        self.search_path = opts['search_path'].split(' ')
+        print('search_paths=' + opts['search_paths'])
+        self.search_paths = opts['search_paths'].split(';')
         self.prefix = opts['prefix']
         self.headers = opts['headers'].split(' ')
         self.classes = opts['classes']
@@ -1856,9 +1860,9 @@ def main():
         if t == ".svn" or t == ".cvs" or t == ".git" or t == ".gitignore":
             continue
 
-        print("\n.... Generating bindings for target", t)
+        print( "\n.... Generating bindings for target", t)
         for s in sections:
-            print("\n.... .... Processing section", s, "\n")
+            print( "\n.... .... Processing section", s, "\n")
             gen_opts = {
                 'prefix': config.get(s, 'prefix'),
                 'headers':    (config.get(s, 'headers'        , raw = False, vars = dict(userconfig.items('DEFAULT')))),
@@ -1868,7 +1872,7 @@ def main():
                 'clang_args': (config.get(s, 'extra_arguments', raw = False, vars = dict(userconfig.items('DEFAULT'))) or "").split(" "),
                 'target': os.path.join(workingdir, "targets", t),
                 'outdir': outdir,
-                'search_path': (config.get(s, 'cocos_headers'        , raw = False, vars = dict(userconfig.items('DEFAULT')))),
+                'search_paths': os.path.abspath(os.path.join(userconfig.get('DEFAULT', 'cocosdir'), 'cocos')) + ";" + os.path.abspath(os.path.join(userconfig.get('DEFAULT', 'cocosdir'), 'extensions')),
                 'remove_prefix': config.get(s, 'remove_prefix'),
                 'target_ns': config.get(s, 'target_namespace'),
                 'cpp_ns': config.get(s, 'cpp_namespace').split(' ') if config.has_option(s, 'cpp_namespace') else None,
