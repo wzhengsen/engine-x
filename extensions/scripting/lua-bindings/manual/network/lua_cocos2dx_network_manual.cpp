@@ -23,6 +23,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 #include "scripting/lua-bindings/manual/network/lua_cocos2dx_network_manual.h"
+#include "scripting/lua-bindings/manual/network/Lua_web_socket.h"
 #include "scripting/lua-bindings/manual/network/lua_xml_http_request.h"
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
 

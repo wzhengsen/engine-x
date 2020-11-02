@@ -33,7 +33,6 @@
 #include "scripting/lua-bindings/manual/CCLuaEngine.h"
 #include "scripting/lua-bindings/manual/LuaBasicConversions.h"
 #include "scripting/lua-bindings/manual/cocos2d/LuaScriptHandlerMgr.h"
-#include "scripting/deprecated/CCString.h"
 
 using namespace cocos2d;
 
