@@ -38,13 +38,13 @@ set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED NO)
 set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED NO)
 
 # Fix compile failed with armv7 deployment target >= 11.0, xcode clang will report follow error
-# clang: error: invalid iOS deployment version '--target=armv7-apple-ios13.6', 
+# clang: error: invalid iOS deployment version '--target=armv7-apple-ios13.6',
 #        iOS 10 is the maximum deployment target for 32-bit targets
 # If not defined CMAKE_OSX_DEPLOYMENT_TARGET, cmake will choose latest deployment target
 if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
     if("${CMAKE_OSX_ARCHITECTURES}" MATCHES ".*armv7.*")
-        if(NOT DEFINED CMAKE_OSX_DEPLOYMENT_TARGET 
-        OR "${CMAKE_OSX_DEPLOYMENT_TARGET}" VERSION_GREATER "11.0" 
+        if(NOT DEFINED CMAKE_OSX_DEPLOYMENT_TARGET
+        OR "${CMAKE_OSX_DEPLOYMENT_TARGET}" VERSION_GREATER "11.0"
         OR "${CMAKE_OSX_DEPLOYMENT_TARGET}" VERSION_EQUAL "11.0")
             message(STATUS "Sets iOS minimum deployment target to 10.0 for armv7")
             # a. armv7 maximum deployment 10.x
@@ -69,8 +69,8 @@ if (NOT DEFINED CC_FORCE_USE_GLES)
     set(CC_FORCE_USE_GLES FALSE CACHE INTERNAL "Force use GLES" )
 endif()
 
-set(LUA_ENGINE "plainlua" CACHE INTERNAL "The lua core lib, luajit or plainlua")
-set(LUA_VERSION "5.3.6" CACHE INTERNAL "The plainlua version")
+set(LUA_ENGINE "lua" CACHE INTERNAL "The lua core lib")
+set(LUA_VERSION "5.4.0" CACHE INTERNAL "The lua version")
 
 project(cocos2d_libs)
 
