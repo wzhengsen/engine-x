@@ -7340,7 +7340,7 @@ int lua_cocos2dx_physics_PhysicsJoint_isCollisionEnabled(lua_State* tolua_S)
 
     return 0;
 }
-int lua_cocos2dx_physics_PhysicsJoint_setCollisionEnable(lua_State* tolua_S)
+int lua_cocos2dx_physics_PhysicsJoint_setCollisionEnabled(lua_State* tolua_S)
 {
     int argc = 0;
     cocos2d::PhysicsJoint* cobj = nullptr;
@@ -7360,7 +7360,7 @@ int lua_cocos2dx_physics_PhysicsJoint_setCollisionEnable(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
     if (!cobj) 
     {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_physics_PhysicsJoint_setCollisionEnable'", nullptr);
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_physics_PhysicsJoint_setCollisionEnabled'", nullptr);
         return 0;
     }
 #endif
@@ -7370,22 +7370,22 @@ int lua_cocos2dx_physics_PhysicsJoint_setCollisionEnable(lua_State* tolua_S)
     {
         bool arg0;
 
-        ok &= luaval_to_boolean(tolua_S, 2,&arg0, "cc.PhysicsJoint:setCollisionEnable");
+        ok &= luaval_to_boolean(tolua_S, 2,&arg0, "cc.PhysicsJoint:setCollisionEnabled");
         if(!ok)
         {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsJoint_setCollisionEnable'", nullptr);
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_physics_PhysicsJoint_setCollisionEnabled'", nullptr);
             return 0;
         }
-        cobj->setCollisionEnable(arg0);
+        cobj->setCollisionEnabled(arg0);
         lua_settop(tolua_S, 1);
         return 1;
     }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.PhysicsJoint:setCollisionEnable",argc, 1);
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.PhysicsJoint:setCollisionEnabled",argc, 1);
     return 0;
 
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_physics_PhysicsJoint_setCollisionEnable'.",&tolua_err);
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_physics_PhysicsJoint_setCollisionEnabled'.",&tolua_err);
 #endif
 
     return 0;
@@ -7554,7 +7554,7 @@ int lua_register_cocos2dx_physics_PhysicsJoint(lua_State* tolua_S)
         tolua_function(tolua_S,"isEnabled",lua_cocos2dx_physics_PhysicsJoint_isEnabled);
         tolua_function(tolua_S,"setEnable",lua_cocos2dx_physics_PhysicsJoint_setEnable);
         tolua_function(tolua_S,"isCollisionEnabled",lua_cocos2dx_physics_PhysicsJoint_isCollisionEnabled);
-        tolua_function(tolua_S,"setCollisionEnable",lua_cocos2dx_physics_PhysicsJoint_setCollisionEnable);
+        tolua_function(tolua_S,"setCollisionEnabled",lua_cocos2dx_physics_PhysicsJoint_setCollisionEnabled);
         tolua_function(tolua_S,"removeFormWorld",lua_cocos2dx_physics_PhysicsJoint_removeFormWorld);
         tolua_function(tolua_S,"setMaxForce",lua_cocos2dx_physics_PhysicsJoint_setMaxForce);
         tolua_function(tolua_S,"getMaxForce",lua_cocos2dx_physics_PhysicsJoint_getMaxForce);

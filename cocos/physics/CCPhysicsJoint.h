@@ -1,19 +1,19 @@
 /****************************************************************************
  Copyright (c) 2013-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- 
+
  http://www.cocos2d-x.org
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -65,45 +65,45 @@ protected:
 public:
     /**Get physics body a connected to this joint.*/
     PhysicsBody* getBodyA() const { return _bodyA; }
-    
+
     /**Get physics body b connected to this joint.*/
     PhysicsBody* getBodyB() const { return _bodyB; }
 
     /**Get the physics world.*/
     PhysicsWorld* getWorld() const { return _world; }
-    
+
     /**
      * Get this joint's tag.
      *
      * @return An integer number.
      */
     int getTag() const { return _tag; }
-    
+
     /**
      * Set this joint's tag.
      *
      * @param tag An integer number that identifies a PhysicsJoint.
      */
     void setTag(int tag) { _tag = tag; }
-    
+
     /** Determines if the joint is enable. */
     bool isEnabled() const { return _enable; }
 
     /** Enable/Disable the joint. */
     void setEnable(bool enable);
-    
+
     /** Determines if the collision is enable. */
     bool isCollisionEnabled() const { return _collisionEnable; }
-    
+
     /** Enable/disable the collision between two bodies. */
-    void setCollisionEnable(bool enable);
-    
+    void setCollisionEnabled(bool enable);
+
     /** Remove the joint from the world. */
     void removeFormWorld();
 
     /** Set the max force between two bodies. */
     void setMaxForce(float force);
-    
+
     /** Get the max force setting. */
     float getMaxForce() const { return _maxForce; }
 
@@ -115,7 +115,7 @@ protected:
     void delay(const DelayTask & task) { _delayTasks.push_back(task); }
 
     void flushDelayTasks();
-    
+
     /** Create constraints for this type joint */
     virtual bool createConstraints() { return false; }
 
@@ -147,7 +147,7 @@ class CC_DLL PhysicsJointFixed : public PhysicsJoint
 {
 public:
     /** Create a fixed joint.
-     
+
      @param a A is the body to connect.
      @param b B is the body to connect.
      @param anchr It's the pivot position.
@@ -171,7 +171,7 @@ class CC_DLL PhysicsJointLimit : public PhysicsJoint
 {
 public:
     /** Create a limit joint.
-     
+
      @param a A is the body to connect.
      @param b B is the body to connect.
      @param anchr1 Anchr1 is the anchor point on body a.
@@ -179,9 +179,9 @@ public:
      @return A object pointer.
      */
     static PhysicsJointLimit* construct(PhysicsBody* a, PhysicsBody* b, const Vec2& anchr1, const Vec2& anchr2);
-    
+
     /** Create a limit joint.
-     
+
      @param a A is the body to connect.
      @param b B is the body to connect.
      @param anchr1 Anchr1 is the anchor point on body a.
@@ -194,21 +194,21 @@ public:
 
     /** Get the anchor point on body a.*/
     Vec2 getAnchr1() const;
-    
+
     /** Set the anchor point on body a.*/
     void setAnchr1(const Vec2& anchr1);
-    
+
     /** Get the anchor point on body b.*/
     Vec2 getAnchr2() const;
-    
+
     /** Set the anchor point on body b.*/
     void setAnchr2(const Vec2& anchr2);
-    
+
     /** Get the allowed min distance of the anchor points.*/
     float getMin() const;
     /** Set the min distance of the anchor points.*/
     void setMin(float min);
-  
+
     /** Get the allowed max distance of the anchor points.*/
     float getMax() const;
     /** Set the max distance of the anchor points.*/
@@ -233,7 +233,7 @@ class CC_DLL PhysicsJointPin : public PhysicsJoint
 {
 public:
     /** Create a pin joint.
-     
+
      @param a A is the body to connect.
      @param b B is the body to connect.
      @param pivot It's the pivot position.
@@ -242,7 +242,7 @@ public:
     static PhysicsJointPin* construct(PhysicsBody* a, PhysicsBody* b, const Vec2& pivot);
 
     /** Create a pin joint.
-     
+
      @param a A is the body to connect.
      @param b B is the body to connect.
      @param anchr1 Anchr1 is the anchor point on body a.
@@ -267,7 +267,7 @@ class CC_DLL PhysicsJointDistance : public PhysicsJoint
 {
 public:
     /** Create a fixed distance joint.
-     
+
      @param a A is the body to connect.
      @param b B is the body to connect.
      @param anchr1 Anchr1 is the anchor point on body a.
@@ -295,7 +295,7 @@ class CC_DLL PhysicsJointSpring : public PhysicsJoint
 {
 public:
     /** Create a fixed distance joint.
-     
+
      @param a A is the body to connect.
      @param b B is the body to connect.
      @param anchr1 Anchr1 is the anchor point on body a.
@@ -317,25 +317,25 @@ public:
 
     /** Set the anchor point on body b.*/
     void setAnchr2(const Vec2& anchr2);
-    
+
     /** Get the distance of the anchor points.*/
     float getRestLength() const;
-    
+
     /** Set the distance of the anchor points.*/
     void setRestLength(float restLength);
-    
+
     /** Get the spring constant.*/
     float getStiffness() const;
-    
+
     /** Set the spring constant.*/
     void setStiffness(float stiffness);
-    
+
     /** Get the spring soft constant.*/
     float getDamping() const;
-    
+
     /** Set the spring soft constant.*/
     void setDamping(float damping);
-    
+
     virtual bool createConstraints() override;
 
 protected:
@@ -353,7 +353,7 @@ class CC_DLL PhysicsJointGroove : public PhysicsJoint
 {
 public:
     /** Create a groove joint.
-     
+
      @param a A is the body to connect.
      @param b B is the body to connect.
      @param grooveA The line begin position.
@@ -368,19 +368,19 @@ public:
 
     /** Set the line begin position*/
     void setGrooveA(const Vec2& grooveA);
-    
+
     /** Get the line end position*/
     Vec2 getGrooveB() const;
-    
+
     /** Set the line end position*/
     void setGrooveB(const Vec2& grooveB);
-    
+
     /** Get the anchor point on body b.*/
     Vec2 getAnchr2() const;
-    
+
     /** Set the anchor point on body b.*/
     void setAnchr2(const Vec2& anchr2);
-    
+
     virtual bool createConstraints() override;
 
 protected:
@@ -397,7 +397,7 @@ class CC_DLL PhysicsJointRotarySpring : public PhysicsJoint
 {
 public:
     /** Create a damped rotary spring joint.
-     
+
      @param a A is the body to connect.
      @param b B is the body to connect.
      @param stiffness It's the spring constant.
@@ -414,16 +414,16 @@ public:
 
     /** Get the spring constant.*/
     float getStiffness() const;
-    
+
     /** Set the spring constant.*/
     void setStiffness(float stiffness);
-    
+
     /** Get the spring soft constant.*/
     float getDamping() const;
 
     /** Set the spring soft constant.*/
     void setDamping(float damping);
-    
+
     virtual bool createConstraints() override;
 
 protected:
@@ -439,7 +439,7 @@ class CC_DLL PhysicsJointRotaryLimit : public PhysicsJoint
 {
 public:
     /** Create a limit rotary joint.
-     
+
      @param a A is the body to connect.
      @param b B is the body to connect.
      @param min It's min rotation limit in radians.
@@ -449,7 +449,7 @@ public:
     static PhysicsJointRotaryLimit* construct(PhysicsBody* a, PhysicsBody* b, float min, float max);
 
     /** Create a limit rotary joint.
-     
+
      @param a A is the body to connect.
      @param b B is the body to connect.
      @return A object pointer.
@@ -458,16 +458,16 @@ public:
 
     /** Get the min rotation limit.*/
     float getMin() const;
-    
+
     /** Set the min rotation limit.*/
     void setMin(float min);
-    
+
     /** Get the max rotation limit.*/
     float getMax() const;
-    
+
     /** Set the max rotation limit.*/
     void setMax(float max);
-    
+
     virtual bool createConstraints() override;
 
 protected:
@@ -483,7 +483,7 @@ class CC_DLL PhysicsJointRatchet : public PhysicsJoint
 {
 public:
     /** Create a ratchet joint.
-     
+
      @param a A is the body to connect.
      @param b B is the body to connect.
      @param phase Phase is the initial offset to use when deciding where the ratchet angles are.
@@ -494,16 +494,16 @@ public:
 
     /** Get the ratchet angle.*/
     float getAngle() const;
-    
+
     /** Set the ratchet angle.*/
     void setAngle(float angle);
-    
+
     /** Get the initial offset.*/
     float getPhase() const;
-    
+
     /** Set the initial offset.*/
     void setPhase(float phase);
-    
+
     /** Get the distance between "clicks".*/
     float getRatchet() const;
 
@@ -524,7 +524,7 @@ class CC_DLL PhysicsJointGear : public PhysicsJoint
 {
 public:
     /** Create a gear joint.
-     
+
      @param a A is the body to connect.
      @param b B is the body to connect.
      @param phase Phase is the initial angular offset of the two bodies.
@@ -535,13 +535,13 @@ public:
 
     /** Get the angular offset of the two bodies.*/
     float getPhase() const;
-    
+
     /** Set the angular offset of the two bodies.*/
     void setPhase(float phase);
-    
+
     /** Get the ratio.*/
     float getRatio() const;
-    
+
     /** Set the ratio.*/
     void setRatio(float ratchet);
 
@@ -560,7 +560,7 @@ class CC_DLL PhysicsJointMotor : public PhysicsJoint
 {
 public:
     /** Create a motor joint.
-     
+
      @param a A is the body to connect.
      @param b B is the body to connect.
      @param rate Rate is the desired relative angular velocity.
@@ -570,7 +570,7 @@ public:
 
     /** Get the relative angular velocity.*/
     float getRate() const;
-    
+
     /** Set the relative angular velocity.*/
     void setRate(float rate);
     virtual bool createConstraints() override;
