@@ -81,26 +81,20 @@ static void luaTableToObjcDictionary(lua_State *L, NSMutableDictionary *dict,NSS
 /**
  className
  methodName
- args
+ args...
  */
 int LuaObjcBridge::callObjcStaticMethod(lua_State *L)
 {
-    if (lua_gettop(L) != 3 || !lua_isstring(L, -3) || !lua_isstring(L, -2))
+    const auto top = lua_gettop(L);
+    if (top < 2 || !lua_isstring(L, 1) || !lua_isstring(L, 2))
     {
     	lua_pushboolean(L, 0);
     	lua_pushinteger(L, kLuaBridgeErrorInvalidParameters);
     	return 2;
     }
 
-    const char *className  = lua_tostring(L, -3);
-    const char *methodName = lua_tostring(L, -2);
-    if (!className || !methodName)
-    {
-        lua_pushboolean(L, 0);
-        lua_pushinteger(L, kLuaBridgeErrorInvalidParameters);
-        return 2;
-    }
-
+    const char *className  = lua_tostring(L, 1);
+    const char *methodName = lua_tostring(L, 2);
     Class targetClass = NSClassFromString([NSString stringWithCString:className encoding:NSUTF8StringEncoding]);
     if (!targetClass)
     {
@@ -110,11 +104,10 @@ int LuaObjcBridge::callObjcStaticMethod(lua_State *L)
     }
 
     SEL methodSel;
-    bool hasArguments = !lua_isnil(L, -1);
-    if (hasArguments)
+    if (top > 2)
     {
         NSString *methodName_ = [NSString stringWithCString:methodName encoding:NSUTF8StringEncoding];
-        methodName_ = [NSString stringWithFormat:@"%@:", methodName_];
+        methodName_ = [NSString stringWithFormat:@"%@%@", methodName_ ,[@"" stringByPaddingToLength:top-2 withString: @":" startingAtIndex:0]];
         methodSel = NSSelectorFromString(methodName_);
     }
     else
@@ -143,81 +136,80 @@ int LuaObjcBridge::callObjcStaticMethod(lua_State *L)
         NSUInteger returnLength = [methodSig methodReturnLength];
         const char *returnType = [methodSig methodReturnType];
 
-        if (lua_istable(L, -1))
-        {
-            NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-            lua_pushnil(L);
-            while (lua_next(L, -2))
-            {
-                NSString *key = [NSString stringWithCString:lua_tostring(L, -2) encoding:NSUTF8StringEncoding];
+        for (int idx = 3;idx <= top;idx++) {
+            switch (lua_type(L, idx)) {
+                case LUA_TNUMBER: {
+                    if (lua_isinteger(L, idx)) {
+                        int64_t integer = lua_tointeger(L, idx);
+                        [invocation setArgument:&integer atIndex:idx-1];
+                    }
+                    else {
+                        double number = lua_tonumber(L, idx);
+                        [invocation setArgument:&number atIndex:idx-1];
+                    }
+                    break;
+                }
+                case LUA_TFUNCTION: {
+                    int functionId = retainLuaFunction(idx);
+                    [invocation setArgument:&functionId atIndex:idx-1];
+                    break;
+                }
+                case LUA_TSTRING: {
+                    NSString* str = [NSString stringWithCString:lua_tostring(L, idx) encoding:NSUTF8StringEncoding];
+                    [invocation setArgument:&str atIndex:idx-1];
+                    break;
+                }
+                case LUA_TBOOLEAN: {
+                    BOOL boolean = lua_toboolean(L, idx);
+                    [invocation setArgument:&boolean atIndex:idx-1];
+                    break;
+                }
+                case LUA_TTABLE: {
+                    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+                    lua_pushnil(L);
+                    while (lua_next(L, idx)) {
+                        NSString *key = [NSString stringWithCString:lua_tostring(L, -2) encoding:NSUTF8StringEncoding];
 
-                switch (lua_type(L, -1))
-                {
-                    case LUA_TNUMBER:
-                        if (lua_isinteger(L, -1)) {
-                            [dict setObject:[NSNumber numberWithLong:lua_tointeger(L, -1)] forKey:key];
+                        switch (lua_type(L, -1)) {
+                            case LUA_TNUMBER:
+                                if (lua_isinteger(L, -1)) {
+                                    [dict setObject:[NSNumber numberWithLong:lua_tointeger(L, -1)] forKey:key];
+                                }
+                                else {
+                                    [dict setObject:[NSNumber numberWithDouble:lua_tonumber(L, -1)] forKey:key];
+                                }
+                                break;
+
+                            case LUA_TBOOLEAN:
+                                [dict setObject:[NSNumber numberWithBool:lua_toboolean(L, -1)] forKey:key];
+                                break;
+
+                            case LUA_TSTRING:
+                                [dict setObject:[NSString stringWithCString:lua_tostring(L, -1) encoding:NSUTF8StringEncoding]
+                                         forKey:key];
+                                break;
+
+                            case LUA_TTABLE:
+                                luaTableToObjcDictionary(L, dict, key);
+                                break;
+
+                            case LUA_TFUNCTION:
+                                int functionId = retainLuaFunction(-1);
+                                [dict setObject:[NSNumber numberWithInt:functionId] forKey:key];
+                                break;
                         }
-                        else {
-                            [dict setObject:[NSNumber numberWithDouble:lua_tonumber(L, -1)] forKey:key];
-                        }
-                        break;
+                        lua_pop(L, 1);
+                    }
 
-                    case LUA_TBOOLEAN:
-                        [dict setObject:[NSNumber numberWithBool:lua_toboolean(L, -1)] forKey:key];
-                        break;
-
-                    case LUA_TSTRING:
-                        [dict setObject:[NSString stringWithCString:lua_tostring(L, -1) encoding:NSUTF8StringEncoding]
-                                 forKey:key];
-                        break;
-
-                    case LUA_TTABLE:
-                        luaTableToObjcDictionary(L, dict, key);
-                        break;
-
-                    case LUA_TFUNCTION:
-                        int functionId = retainLuaFunction(-1);
-                        [dict setObject:[NSNumber numberWithInt:functionId] forKey:key];
-                        break;
+                    [invocation setArgument:&dict atIndex:idx-1];
+                    break;
                 }
 
-                lua_pop(L, 1);
-            }
-
-            [invocation setArgument:&dict atIndex:2];
-            [invocation invoke];
-        }
-        else if(lua_isnumber(L, -1)) {
-            if (lua_isinteger(L, -1)) {
-                int64_t integer = lua_tointeger(L, -1);
-                [invocation setArgument:&integer atIndex:2];
-                [invocation invoke];
-            }
-            else {
-                double number = lua_tonumber(L, -1);
-                [invocation setArgument:&number atIndex:2];
-                [invocation invoke];
+                default:
+                    break;
             }
         }
-        else if(lua_isfunction(L, -1)) {
-            int functionId = retainLuaFunction(-1);
-            [invocation setArgument:&functionId atIndex:2];
-            [invocation invoke];
-        }
-        else if(lua_isstring(L, -1)) {
-            NSString* str = [NSString stringWithCString:lua_tostring(L, -1) encoding:NSUTF8StringEncoding];
-            [invocation setArgument:&str atIndex:2];
-            [invocation invoke];
-        }
-        else if(lua_isboolean(L, -1)) {
-            bool boolean = lua_toboolean(L, -1);
-            [invocation setArgument:&boolean atIndex:2];
-            [invocation invoke];
-        }
-        else
-        {
-            [invocation invoke];
-        }
+        [invocation invoke];
 
         lua_pushboolean(L, 1);
         if (returnLength > 0)
@@ -230,7 +222,7 @@ int LuaObjcBridge::callObjcStaticMethod(lua_State *L)
             }
             else if (strcmp(returnType, @encode(BOOL)) == 0) // BOOL
             {
-                char ret;
+                BOOL ret;
                 [invocation getReturnValue:&ret];
                 lua_pushboolean(L, ret);
             }
@@ -248,7 +240,7 @@ int LuaObjcBridge::callObjcStaticMethod(lua_State *L)
             }
             else if (strcmp(returnType, @encode(double)) == 0) // double
             {
-                float ret;
+                double ret;
                 [invocation getReturnValue:&ret];
                 lua_pushnumber(L, ret);
             }
@@ -315,7 +307,7 @@ void LuaObjcBridge::pushValue(lua_State *L, void *val)
             lua_pushnumber(L, [number doubleValue]);
         }
         else if (strcmp(numberType, @encode(float)) == 0) {
-            lua_pushnumber(L, [number doubleValue]);
+            lua_pushnumber(L, [number floatValue]);
         }
         else if (strcmp(numberType, @encode(short)) == 0) {
             lua_pushnumber(L, [number shortValue]);

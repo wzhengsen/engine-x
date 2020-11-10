@@ -29,6 +29,7 @@ NS_CC_BEGIN
 
 lua_State* LuaBridge::L = nullptr;
 int LuaBridge::increaseIdLevel = -1;
+constexpr int functionRetainLimit = 4096;
 
 void LuaBridge::SetLua(lua_State* L) {
     if (LuaBridge::L != L){
@@ -37,14 +38,14 @@ void LuaBridge::SetLua(lua_State* L) {
             increaseIdLevel = 0;
         }
         else {
-            increaseIdLevel += 4096;
+            increaseIdLevel += functionRetainLimit;
         }
     }
 }
 
 void LuaBridge::releaseLuaFunction(int functionId)
 {
-    if (functionId > increaseIdLevel + 4096 || functionId <= increaseIdLevel) {
+    if (functionId > increaseIdLevel + functionRetainLimit || functionId <= increaseIdLevel) {
         return;
     }
     functionId -= increaseIdLevel;
@@ -88,7 +89,7 @@ int LuaBridge::retainLuaFunction(int functionIndex)
     }
     lua_pushvalue(L, functionIndex);                // function ... table function
     const auto ref = luaL_ref(L, -2);               // function ... table(ref)
-    if (ref > 4096) {
+    if (ref > functionRetainLimit) {
         luaL_unref(L, -1, ref);                     // function ... table
         lua_pop(L, 1);                              // function ...
         return 0;
@@ -99,7 +100,7 @@ int LuaBridge::retainLuaFunction(int functionIndex)
 
 int LuaBridge::callLuaFunction(int functionId, const char *arg)
 {
-    if (functionId > increaseIdLevel + 4096 || functionId <= increaseIdLevel) {
+    if (functionId > increaseIdLevel + functionRetainLimit || functionId <= increaseIdLevel) {
         return -1;
     }
     functionId -= increaseIdLevel;
@@ -121,7 +122,7 @@ int LuaBridge::callLuaFunction(int functionId, const char *arg)
 
 int LuaBridge::callLuaFunction(int functionId, int64_t arg)
 {
-    if (functionId > increaseIdLevel + 4096 || functionId <= increaseIdLevel) {
+    if (functionId > increaseIdLevel + functionRetainLimit || functionId <= increaseIdLevel) {
         return -1;
     }
     functionId -= increaseIdLevel;
@@ -143,7 +144,7 @@ int LuaBridge::callLuaFunction(int functionId, int64_t arg)
 
 int LuaBridge::callLuaFunction(int functionId, bool arg)
 {
-    if (functionId > increaseIdLevel + 4096 || functionId <= increaseIdLevel) {
+    if (functionId > increaseIdLevel + functionRetainLimit || functionId <= increaseIdLevel) {
         return -1;
     }
     functionId -= increaseIdLevel;
@@ -164,7 +165,7 @@ int LuaBridge::callLuaFunction(int functionId, bool arg)
 }
 
 int LuaBridge::callLuaFunction(int functionId, const std::map<std::string,std::string>& arg) {
-    if (functionId > increaseIdLevel + 4096 || functionId <= increaseIdLevel) {
+    if (functionId > increaseIdLevel + functionRetainLimit || functionId <= increaseIdLevel) {
         return -1;
     }
     functionId -= increaseIdLevel;
@@ -191,7 +192,7 @@ int LuaBridge::callLuaFunction(int functionId, const std::map<std::string,std::s
 
 int LuaBridge::callLuaFunction(int functionId)
 {
-    if (functionId > increaseIdLevel + 4096 || functionId <= increaseIdLevel) {
+    if (functionId > increaseIdLevel + functionRetainLimit || functionId <= increaseIdLevel) {
         return -1;
     }
     functionId -= increaseIdLevel;
