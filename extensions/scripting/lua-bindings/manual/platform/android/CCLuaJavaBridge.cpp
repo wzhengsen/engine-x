@@ -366,12 +366,13 @@ void LuaJavaBridge::luaopen_luaj(lua_State *L)
 args:
     const char *className
     const char *methodName
-    LUA_TABLE   args
     const char *sig
+    LUA_PARAMS args...
 */
 int LuaJavaBridge::callJavaStaticMethod(lua_State *L)
 {
-    if (!lua_isstring(L, -4) || !lua_isstring(L, -3)  || !lua_istable(L, -2) || !lua_isstring(L, -1))
+    const auto top = lua_gettop(L);
+    if (top < 3 || !lua_isstring(L, 1) || !lua_isstring(L, 2)  || !lua_isstring(L, 3))
     {
     	lua_pushboolean(L, 0);
     	lua_pushinteger(L, LuaBridgeError::kLuaBridgeErrorInvalidParameters);
@@ -380,9 +381,9 @@ int LuaJavaBridge::callJavaStaticMethod(lua_State *L)
 
     LOGD("%s", "LuaJavaBridge::callJavaStaticMethod(lua_State *L)");
 
-    const char *className  = lua_tostring(L, -4);
-    const char *methodName = lua_tostring(L, -3);
-    const char *methodSig  = lua_tostring(L, -1);
+    const char *className  = lua_tostring(L, 1);
+    const char *methodName = lua_tostring(L, 2);
+    const char *methodSig  = lua_tostring(L, 3);
 
     CallInfo call(className, methodName, methodSig);
 
@@ -393,8 +394,7 @@ int LuaJavaBridge::callJavaStaticMethod(lua_State *L)
     }
 
     // check args
-    lua_pop(L, 1);													/* L: args */
-    int count = fetchArrayElements(L, -1);                      	/* L: args e1 e2 e3 e4 ... */
+    int count = top - 3;
     jvalue *args = nullptr;
     if (count > 0)
     {
@@ -437,7 +437,6 @@ int LuaJavaBridge::callJavaStaticMethod(lua_State *L)
 	                break;
 	        }
 	    }
-	    lua_pop(L, count);                               			/* L: args */
     }
 
     bool success = args ? call.executeWithArgs(args) : call.execute();
@@ -458,23 +457,5 @@ int LuaJavaBridge::callJavaStaticMethod(lua_State *L)
 
 	lua_pushboolean(L, 1);
 	return 1 + call.pushReturnValue(L);
-}
-
-// ----------------------------------------
-
-int LuaJavaBridge::fetchArrayElements(lua_State *L, int index)
-{
-    int count = 0;
-    do
-    {
-        lua_rawgeti(L, index - count, count + 1);
-        if (lua_isnil(L, -1))
-        {
-            lua_pop(L, 1);
-            break;
-        }
-        ++count;
-    } while (true);
-    return count;
 }
 #endif
