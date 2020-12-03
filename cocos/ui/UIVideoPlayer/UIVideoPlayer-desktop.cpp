@@ -299,8 +299,13 @@ VideoPlayer::~VideoPlayer() {
 
 void VideoPlayer::SetFileName(const std::string& fileName) {
     std::string fullFilePath = FileUtils::getInstance()->fullPathForFilename(fileName);
-    if (fullFilePath.find("file://") != 0) {
-        fullFilePath = "file://" + fullFilePath;
+    if (fullFilePath.find("file:///") != 0) {
+        if (fullFilePath[0] == '/') {
+            fullFilePath = "file://" + fullFilePath;
+        }
+        else {
+            fullFilePath = "file:///" + fullFilePath;
+        }
     }
     if (_videoURL == fullFilePath) {
         return;
@@ -399,7 +404,7 @@ void VideoPlayer::drawDebugData() {
 void VideoPlayer::Play() {
     if (!_videoURL.empty()) {
         // Create a new item
-        libvlc_media_t* m = libvlc_media_new_location(vlcInstance, (_videoSource == VideoPlayer::Source::FILENAME ? "file:///" + _videoURL : _videoURL).c_str());
+        libvlc_media_t* m = libvlc_media_new_location(vlcInstance, _videoURL.c_str());
         if (m) {
             // Create a media player playing environement
             libvlc_media_player_set_media(vlcPlayer, m);
