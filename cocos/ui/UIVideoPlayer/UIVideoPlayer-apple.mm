@@ -261,7 +261,7 @@ typedef NS_ENUM(NSInteger, PlayerbackState) {
     if (_keepRatioEnabled)
         self.playerController.videoGravity = AVLayerVideoGravityResizeAspect;
     else
-        self.playerController.videoGravity = AVLayerVideoGravityResizeAspectFill;
+        self.playerController.videoGravity = AVLayerVideoGravityResize;
 }
 
 -(void) play
