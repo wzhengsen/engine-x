@@ -67,8 +67,7 @@ public class Cocos2dxVideoHelper {
     private final static int VideoTaskKeepRatio = 11;
     private final static int VideoTaskFullScreen = 12;
     private final static int VideoTaskSetLooping = 13;
-     private final static int VideoTaskSetUserInputEnabled = 14;
-    final static int KeyEventBack = 1000;
+    private final static int VideoTaskSetUserInputEnabled = 14;
     
     static class VideoHandler extends Handler{
         WeakReference<Cocos2dxVideoHelper> mReference;
@@ -170,12 +169,6 @@ public class Cocos2dxVideoHelper {
                 helper._setUserInputEnabled(msg.arg1, msg.arg2 != 0);
                 break;
             }
-            
-            case KeyEventBack: {
-                Cocos2dxVideoHelper helper = mReference.get();
-                helper.onBackKeyEvent();
-                break;
-            }            
 
             default:
                 break;
@@ -335,18 +328,6 @@ public class Cocos2dxVideoHelper {
         Cocos2dxVideoView videoView = sVideoViews.get(index);
         if (videoView != null) {
             videoView.setFullScreenEnabled(enabled, width, height);
-        }
-    }
-    
-    private void onBackKeyEvent() {
-        int viewCount = sVideoViews.size();
-        for (int i = 0; i < viewCount; i++) {
-            int key = sVideoViews.keyAt(i);
-            Cocos2dxVideoView videoView = sVideoViews.get(key);
-            if (videoView != null) {
-                videoView.setFullScreenEnabled(false, 0, 0);
-                mActivity.runOnGLThread(new VideoEventRunnable(key, KeyEventBack));
-            }
         }
     }
     
