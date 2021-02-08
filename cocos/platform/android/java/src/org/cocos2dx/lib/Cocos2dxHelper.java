@@ -150,7 +150,7 @@ public class Cocos2dxHelper {
     // ===========================================================
 
     public static void runOnGLThread(final Runnable r) {
-        ((Cocos2dxActivity) sActivity).runOnGLThread(r);
+        nativeRunOnGLThread(r);
     }
 
     private static boolean sInited = false;
@@ -312,9 +312,11 @@ public class Cocos2dxHelper {
     // Methods
     // ===========================================================
 
+    private static native void nativeRunOnGLThread(final Object runnable);
+
     private static native void nativeSetEditTextDialogResult(final byte[] pBytes);
 
-    private static native void nativeSetContext(final Context pContext, final AssetManager pAssetManager);
+    private static native void nativeSetContext(final Object pContext, final Object pAssetManager);
 
     private static native void nativeSetAudioDeviceInfo(boolean isSupportLowLatency, int deviceSampleRate, int audioBufferSizeInFames);
 
@@ -953,12 +955,18 @@ public class Cocos2dxHelper {
     public static void setEditTextDialogResult(final String pResult) {
         final byte[] bytesUTF8 = pResult.getBytes(StandardCharsets.UTF_8);
 
-        Cocos2dxHelper.sCocos2dxHelperListener.runOnGLThread(new Runnable() {
-            @Override
-            public void run() {
-                Cocos2dxHelper.nativeSetEditTextDialogResult(bytesUTF8);
-            }
-        });
+        try {
+            final byte[] bytesUTF8 = pResult.getBytes("UTF8");
+
+            Cocos2dxHelper.runOnGLThread(new Runnable() {
+                @Override
+                public void run() {
+                    Cocos2dxHelper.nativeSetEditTextDialogResult(bytesUTF8);
+                }
+            });
+        } catch (UnsupportedEncodingException pUnsupportedEncodingException) {
+            /* Nothing. */
+        }
     }
 
     private static int displayMetricsToDPI(DisplayMetrics metrics)
@@ -999,8 +1007,6 @@ public class Cocos2dxHelper {
 
     public static interface Cocos2dxHelperListener {
         public void showDialog(final String pTitle, final String pMessage);
-
-        public void runOnGLThread(final Runnable pRunnable);
     }
 
     //Enhance API modification begin

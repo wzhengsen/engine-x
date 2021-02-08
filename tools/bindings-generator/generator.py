@@ -1651,13 +1651,8 @@ class Generator(object):
 
     def is_cocos_class(self, namespace_class_name):
         script_ns_dict = self.config['conversions']['ns_map']
-<<<<<<< HEAD
-        for (k, _) in script_ns_dict.items():
-            if namespace_class_name.find("std::") == 0:
-=======
         for (k, v) in script_ns_dict.items():
             if namespace_class_name.find("std::") == 0 or namespace_class_name.find("cxx17::") == 0:
->>>>>>> upstream/master
                 return False
             if namespace_class_name.find(k) >= 0:
                 return True

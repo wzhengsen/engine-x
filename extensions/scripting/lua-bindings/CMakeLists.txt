@@ -158,15 +158,18 @@ set(lua_bindings_headers
     ${COCOS_DEPRECATED_HEADER}
     )
 
-option(BUILD_YASIO_LUA "Build yasio with cclua support" ON)
-
-if(BUILD_YASIO_LUA)
-    message(STATUS "BUILD_YASIO_LUA=${BUILD_YASIO_LUA}")
-    set(lua_bindings_files
+# lua-cjson
+set(lua_bindings_files
         ${lua_bindings_files}
-        "${cocos_root}/external/yasio/bindings/lyasio.cpp"
-        "${cocos_root}/external/yasio/bindings/yasio_cclua.cpp")
-endif()
+        lua-cjson/fpconv.c
+        lua-cjson/strbuf.c
+        lua-cjson/lua_cjson.c
+        )
+
+set(lua_bindings_files
+    ${lua_bindings_files}
+    "${cocos_root}/external/yasio/bindings/lyasio.cpp"
+    "${cocos_root}/external/yasio/bindings/yasio_cclua.cpp")
 
 list(APPEND lua_bindings_files ${lua_bindings_headers})
 
@@ -175,10 +178,6 @@ set(ENGINEX_LUA_LIB luacocos2d CACHE INTERNAL "The EGNX lua bindings lib name" )
 add_library(${ENGINEX_LUA_LIB} STATIC ${lua_bindings_files})
 target_link_libraries(${ENGINEX_LUA_LIB} ${ENGINEX_CORE_LIB})
 add_dependencies(${ENGINEX_LUA_LIB} ${ENGINEX_CORE_LIB})
-
-if(BUILD_YASIO_LUA)
-    target_compile_definitions(${ENGINEX_LUA_LIB} PRIVATE CC_ENABLE_YASIO_LUA=1)
-endif()
 
 get_target_property(lua_ext_depend external CC_LUA_DEPEND)
 target_link_libraries(${ENGINEX_LUA_LIB} ${lua_ext_depend})
@@ -195,8 +194,6 @@ target_include_directories(${ENGINEX_LUA_LIB}
 if(WINDOWS)
     target_compile_definitions(${ENGINEX_LUA_LIB} PUBLIC _USRLUASTATIC)
 endif()
-
-target_compile_definitions(${ENGINEX_LUA_LIB} PUBLIC LUA_COMPAT_MODULE)
 
 set_target_properties(${ENGINEX_LUA_LIB}
                       PROPERTIES

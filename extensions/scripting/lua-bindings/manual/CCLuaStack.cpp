@@ -69,8 +69,7 @@ namespace {
             size_t sz;
             s = lua_tolstring(L, -1, &sz);  /* get result */
             if (s == NULL)
-                return luaL_error(L, "'""tostring""'" " must return a string to "
-                    "'""print""'");
+                return luaL_error(L, "'tostring' must return a string to 'print'");
             if (i>1) out->append("\t");
             out->append(s, sz);
             lua_pop(L, 1);  /* pop result */
@@ -193,16 +192,18 @@ void LuaStack::addSearchPath(const char* path)
 void LuaStack::addLuaLoader(lua_CFunction func)
 {
     if (!func) return;
+    
+#if LUA_VERSION_NUM >= 504 || (LUA_VERSION_NUM >= 502 && !defined(LUA_COMPAT_LOADERS))
+    const char* realname = "searchers";
+#else
+    const char* realname = "loaders";
+#endif
 
     // stack content after the invoking of the function
     // get loader table
     lua_getglobal(_state, "package");                                  /* L: package */
-//#if LUA_VERSION_NUM == 501 || LUA_COMPAT_5_1
-	//static constexpr char* loadersField = "loaders";                               /* L: package, loaders */
-//#elif LUA_VERSION_NUM >= 503
-	static constexpr char loadersField[] = "searchers";
-//#endif
-	lua_getfield(_state, -1, loadersField);
+    lua_getfield(_state, -1, realname);                               /* L: package, loaders */
+
     // insert loader into index 2
     lua_pushcfunction(_state, func);                                   /* L: package, loaders, func */
     for (int i = (int)(lua_rawlen(_state, -2) + 1); i > 2; --i)
@@ -214,7 +215,7 @@ void LuaStack::addLuaLoader(lua_CFunction func)
     lua_rawseti(_state, -2, 2);                                        /* L: package, loaders */
 
     // set loaders into package
-    lua_setfield(_state, -2, loadersField);                               /* L: package */
+    lua_setfield(_state, -2, realname);                               /* L: package */
 
     lua_pop(_state, 1);
 }

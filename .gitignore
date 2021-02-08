@@ -226,10 +226,9 @@ tests/*/proj.android-studio/app/proguard-project.txt
 project.properties
 *.iml
 
-# Ignore prebuilt libraries folder
-/external/*
-!/external/config.json
+# Ignore template runtime
 /templates/lua-template-runtime/runtime
+
 /v*-deps-*.zip
 /v*-lua-runtime-*.zip
 /v*-console-*.zip
@@ -257,6 +256,10 @@ tests/lua-tests/project/proj.tizen/res/
 
 # Ignore vscode folder
 .vscode/
+
+# Ignore static libraries
+*.a
+!/external/**/*.a
 
 # Ignore the CMake build folder, such as ios-build/linux-build
 *-build/
