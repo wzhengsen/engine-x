@@ -27,21 +27,14 @@ set(APP_NAME HelloLua)
 
 project(${APP_NAME})
 
-set(ENGINEX_ROOT "$ENV{ENGINEX_ROOT}")
-if(ENGINEX_ROOT STREQUAL "")
-    set(ENGINEX_ROOT "$ENV{COCOS2DX_ROOT}")
-endif()
-
-if(NOT (ENGINEX_ROOT STREQUAL ""))
-    set(COCOS2DX_ROOT_PATH "${ENGINEX_ROOT}")
-    file(TO_CMAKE_PATH ${COCOS2DX_ROOT_PATH} COCOS2DX_ROOT_PATH) # string(REPLACE "\\" "/" COCOS2DX_ROOT_PATH ${COCOS2DX_ROOT_PATH})
-    message(STATUS "Using system env var ENGINEX_ROOT=${ENGINEX_ROOT}")
-else()
-    message(FATAL_ERROR "Please run setup.py add system env var 'ENGINEX_ROOT' to specific the engine root")
+if(XCODE)
+    if(NOT DEFINED CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET)
+        SET (CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET 10.0)
+    endif()
 endif()
 
 set(RUNTIME_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/frameworks/runtime-src)
-
+set(COCOS2DX_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/frameworks/cocos2d-x)
 set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules/)
 
 include(CocosBuildSet)
@@ -49,16 +42,17 @@ set(BUILD_LUA_LIBS ON)
 add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos ${ENGINE_BINARY_PATH}/cocos/core)
 
 # script and source files info, not need to compile
-set(res_res_folders
-    "${CMAKE_CURRENT_SOURCE_DIR}/res"
-    )
-set(res_src_folders
-    "${CMAKE_CURRENT_SOURCE_DIR}/src"
-    )
+set(ori_res_folders "${CMAKE_CURRENT_SOURCE_DIR}/Resources")
+if(NOT XCODE)
+    set(res_folders ${ori_res_folders})
+else()
+    set(res_folders
+        "${CMAKE_CURRENT_SOURCE_DIR}/build/Resources"
+        )
+endif()
 if(APPLE OR VS)
-    cocos_mark_multi_resources(res_res RES_TO "Resources/res" FOLDERS ${res_res_folders})
-    cocos_mark_multi_resources(res_src RES_TO "Resources/src" FOLDERS ${res_src_folders})
-    set(cc_common_res ${res_res} ${res_src} ${res_script})
+    cocos_mark_multi_resources(res_res RES_TO "Resources" FOLDERS ${res_folders})
+    set(cc_common_res ${res_res})
 endif()
 
 # record sources, headers
@@ -67,19 +61,30 @@ set(GAME_SOURCE ${RUNTIME_SRC_ROOT}/Classes/AppDelegate.cpp)
 # sources need to compile info, include dirs and source files
 
 if(ANDROID)
-    # the APP_NAME should match on AndroidManifest.xml
+    # change APP_NAME to the share library name for Android, it's value depend on AndroidManifest.xml
+    set(APP_NAME cocos2dlua)
     list(APPEND GAME_SOURCE ${RUNTIME_SRC_ROOT}/proj.android/app/jni/hellolua/main.cpp)
 elseif(LINUX)
     list(APPEND GAME_SOURCE ${RUNTIME_SRC_ROOT}/proj.linux/main.cpp)
 elseif(WINDOWS)
     list(APPEND GAME_HEADER
-         ${RUNTIME_SRC_ROOT}/proj.win32/main.h
+         ${RUNTIME_SRC_ROOT}/proj.windows/main.h
+         ${RUNTIME_SRC_ROOT}/proj.windows/resource.h
          )
     list(APPEND GAME_SOURCE
-         ${RUNTIME_SRC_ROOT}/proj.win32/main.cpp
+         ${RUNTIME_SRC_ROOT}/proj.windows/main.cpp
+         ${RUNTIME_SRC_ROOT}/proj.windows/game.rc
          ${cc_common_res}
          )
 elseif(APPLE)
+    file(GLOB res_files "${res_folders}/*")
+    list(APPEND GAME_HEADER
+        ${RUNTIME_SRC_ROOT}/proj.ios_mac/Cocos2dxHelper.h
+        )
+    list(APPEND GAME_SOURCE
+        ${RUNTIME_SRC_ROOT}/proj.ios_mac/Cocos2dxHelper.mm
+        ${res_files}
+        )
     if(IOS)
         list(APPEND GAME_HEADER
              ${RUNTIME_SRC_ROOT}/proj.ios_mac/ios/AppController.h
@@ -111,7 +116,6 @@ elseif(APPLE)
              ${APP_UI_RES}
              )
     endif()
-    list(APPEND GAME_SOURCE ${cc_common_res})
 endif()
 
 set(APP_SRC ${GAME_HEADER} ${GAME_SOURCE})
@@ -119,24 +123,27 @@ set(APP_SRC ${GAME_HEADER} ${GAME_SOURCE})
 # mark app complie info and libs info
 if(NOT ANDROID)
     add_executable(${APP_NAME} ${APP_SRC})
+    if(LINUX)
+        SET(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} -Wl,-rpath=./")
+    endif()
 else()
     add_library(${APP_NAME} SHARED ${APP_SRC})
     add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos/platform/android ${ENGINE_BINARY_PATH}/cocos/platform)
     target_link_libraries(${APP_NAME} -Wl,--whole-archive cpp_android_spec -Wl,--no-whole-archive)
     add_subdirectory(${COCOS2DX_ROOT_PATH}/extensions/scripting/lua-bindings/proj.android ${ENGINE_BINARY_PATH}/cocos/lua-android)
     target_link_libraries(${APP_NAME} -Wl,--whole-archive lua_android_spec -Wl,--no-whole-archive)
-
-    config_android_shared_libs("org.cocos2dx.lib" "${CMAKE_CURRENT_SOURCE_DIR}/frameworks/runtime-src/proj.android/app/src")
 endif()
 
+add_subdirectory(${RUNTIME_SRC_ROOT}/Classes)
+
 target_link_libraries(${APP_NAME} luacocos2d)
+target_link_libraries(${APP_NAME} derivative)
 target_include_directories(${APP_NAME} PRIVATE ${RUNTIME_SRC_ROOT}/Classes)
 
 # mark app resources, resource will be copy auto after mark
 setup_cocos_app_config(${APP_NAME})
 if(APPLE)
     set_target_properties(${APP_NAME} PROPERTIES RESOURCE "${APP_UI_RES}")
-    set_xcode_property(${APP_NAME} INSTALL_PATH "\$(LOCAL_APPS_DIR)")
     if(MACOSX)
         set_target_properties(${APP_NAME} PROPERTIES
                               MACOSX_BUNDLE_INFO_PLIST "${RUNTIME_SRC_ROOT}/proj.ios_mac/mac/Info.plist"
@@ -145,17 +152,22 @@ if(APPLE)
             LINK_FLAGS "-pagezero_size 10000 -image_base 100000000"
         )
     elseif(IOS)
-        set_target_properties(${APP_NAME} PROPERTIES MACOSX_BUNDLE_INFO_PLIST "${RUNTIME_SRC_ROOT}/proj.ios_mac/ios/Info.plist")
+        set_xcode_property(${APP_NAME} INFOPLIST_FILE "${RUNTIME_SRC_ROOT}/proj.ios_mac/ios/Info.plist")
         set_xcode_property(${APP_NAME} ASSETCATALOG_COMPILER_APPICON_NAME "AppIcon")
         set_xcode_property(${APP_NAME} DEVELOPMENT_TEAM "")
         set_xcode_property(${APP_NAME} CODE_SIGN_IDENTITY "iPhone Developer")
     endif()
-elseif(WINDOWS)
+elseif(WINDOWS OR LINUX)
     cocos_copy_target_dll(${APP_NAME})
 endif()
-# copy resource on linux or WINDOWS
-if(LINUX OR WINDOWS)
+# copy resource on linux or WINDOWS or xcode
+if(LINUX OR WINDOWS OR XCODE)
     cocos_get_resource_path(APP_RES_DIR ${APP_NAME})
-    cocos_copy_target_res(${APP_NAME} LINK_TO ${APP_RES_DIR}/res FOLDERS ${res_res_folders})
-    cocos_copy_lua_scripts(${APP_NAME} ${res_src_folders} ${APP_RES_DIR}/src )
+    cocos_sync_target_res(${APP_NAME} LINK_TO ${APP_RES_DIR} FOLDERS ${ori_res_folders})
+    if(LINUX)
+        cocos_sync_target_icon(${APP_NAME}
+            ICON_FROM ${RUNTIME_SRC_ROOT}/proj.linux/res/linuxIcon.png
+            ICON_TO "$<TARGET_FILE_DIR:${APP_NAME}>/linuxIcon.png"
+        )
+    endif()
 endif()

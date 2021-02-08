@@ -1,0 +1,127 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion PROP_COMPILE_SDK_VERSION.toInteger()
+
+    defaultConfig {
+        applicationId "org.cocos2dx.StarryX"
+        minSdkVersion PROP_MIN_SDK_VERSION.toInteger()
+        targetSdkVersion PROP_TARGET_SDK_VERSION.toInteger()
+        versionCode 1
+        versionName "1.0"
+
+        manifestPlaceholders = [
+                BaiduAK : "uwWgSqzOtvG2SbLEnfn6FBZ3QIEzTNTU"
+        ]
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DCMAKE_FIND_ROOT_PATH=", "-DANDROID_STL=c++_static", "-DANDROID_TOOLCHAIN=clang", "-DANDROID_ARM_NEON=TRUE"
+                cppFlags "-frtti -fexceptions -fsigned-char"
+            }
+        }
+
+        ndk {
+            abiFilters = []
+            abiFilters.addAll(PROP_APP_ABI.split(':').collect{it as String})
+        }
+    }
+
+    sourceSets.main {
+        java.srcDir "src"
+        res.srcDir "res"
+        jniLibs.srcDir "libs"
+        manifest.srcFile "AndroidManifest.xml"
+        assets.srcDir "assets"
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "../../../../CMakeLists.txt"
+        }
+    }
+
+    signingConfigs {
+       release {
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                storeFile file(RELEASE_STORE_FILE)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+            }
+        }
+        debug {
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                storeFile file(RELEASE_STORE_FILE)
+                storePassword RELEASE_STORE_PASSWORD
+                keyAlias RELEASE_KEY_ALIAS
+                keyPassword RELEASE_KEY_PASSWORD
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                signingConfig signingConfigs.release
+            }
+        }
+
+        debug {
+            debuggable true
+            jniDebuggable true
+            renderscriptDebuggable true
+            if (project.hasProperty("RELEASE_STORE_FILE")) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+}
+
+// a method used to invoke the python deal
+def PythonDeal(srcDir, dstDir, releaseTask) {
+    def compileArgs = ["${projectDir}/../../../../tool/python/RunMe.py", '-s', srcDir, '-d', dstDir]
+    if (releaseTask) {
+        compileArgs << '--release'
+    }
+    else {
+        compileArgs << '--debug'
+    }
+
+    exec {
+        executable "python3"
+        args compileArgs
+    }
+}
+
+android.applicationVariants.all { variant ->
+    def project_root_folder = "${projectDir}/../../../.."
+    def dest_assets_folder = "${projectDir}/assets"
+
+    def targetName = variant.name.capitalize()
+    def copyTaskName = "copy${targetName}ResourcesToAssets"
+   
+    tasks.register(copyTaskName) {
+        doLast {
+            def releaseTask = (variant.name.compareTo('release') == 0)
+            println 'python deal files ...'
+            if (releaseTask) {
+                delete dest_assets_folder
+            }
+            PythonDeal(project_root_folder + "/Resources", dest_assets_folder, releaseTask)
+        }
+    }
+    tasks.getByName("pre${targetName}Build").dependsOn copyTaskName
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: "${projectDir}/../../../cocos2d-x/cocos/platform/android/java/libs", include: ['*.jar'])
+    implementation project(':libcocos2dx')
+}
