@@ -32,19 +32,19 @@ THE SOFTWARE.
 #include "base/ccUtils.h"
 
 #include "CCActionManagerEx.h"
-// #include "WidgetReader/ButtonReader/ButtonReader.h"
-// #include "WidgetReader/CheckBoxReader/CheckBoxReader.h"
-// #include "WidgetReader/SliderReader/SliderReader.h"
-// #include "WidgetReader/ImageViewReader/ImageViewReader.h"
-// #include "WidgetReader/LoadingBarReader/LoadingBarReader.h"
-// #include "WidgetReader/TextAtlasReader/TextAtlasReader.h"
-// #include "WidgetReader/TextReader/TextReader.h"
-// #include "WidgetReader/TextBMFontReader/TextBMFontReader.h"
-// #include "WidgetReader/TextFieldReader/TextFieldReader.h"
-// #include "WidgetReader/LayoutReader/LayoutReader.h"
-// #include "WidgetReader/PageViewReader/PageViewReader.h"
-// #include "WidgetReader/ScrollViewReader/ScrollViewReader.h"
-// #include "WidgetReader/ListViewReader/ListViewReader.h"
+#include "WidgetReader/ButtonReader/ButtonReader.h"
+#include "WidgetReader/CheckBoxReader/CheckBoxReader.h"
+#include "WidgetReader/SliderReader/SliderReader.h"
+#include "WidgetReader/ImageViewReader/ImageViewReader.h"
+#include "WidgetReader/LoadingBarReader/LoadingBarReader.h"
+#include "WidgetReader/TextAtlasReader/TextAtlasReader.h"
+#include "WidgetReader/TextReader/TextReader.h"
+#include "WidgetReader/TextBMFontReader/TextBMFontReader.h"
+#include "WidgetReader/TextFieldReader/TextFieldReader.h"
+#include "WidgetReader/LayoutReader/LayoutReader.h"
+#include "WidgetReader/PageViewReader/PageViewReader.h"
+#include "WidgetReader/ScrollViewReader/ScrollViewReader.h"
+#include "WidgetReader/ListViewReader/ListViewReader.h"
 #include "CocoLoader.h"
 #include "pugixml/pugixml.hpp"
 
@@ -61,20 +61,19 @@ m_strFilePath("")
 {
     ObjectFactory* factoryCreate = ObjectFactory::getInstance();
     
-    // TODO:
-    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ButtonReader));
-    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(CheckBoxReader));
-    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(SliderReader));
-    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ImageViewReader));
-    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(LoadingBarReader));
-    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextAtlasReader));
-    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextReader));
-    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextBMFontReader));
-    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextFieldReader));
-    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(LayoutReader));
-    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(PageViewReader));
-    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ScrollViewReader));
-    // factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ListViewReader));
+    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ButtonReader));
+    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(CheckBoxReader));
+    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(SliderReader));
+    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ImageViewReader));
+    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(LoadingBarReader));
+    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextAtlasReader));
+    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextReader));
+    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextBMFontReader));
+    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(TextFieldReader));
+    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(LayoutReader));
+    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(PageViewReader));
+    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ScrollViewReader));
+    factoryCreate->registerType(CREATE_CLASS_WIDGET_READER_INFO(ListViewReader));
     
     factoryCreate->registerType(CREATE_CLASS_GUI_INFO(Button));
     factoryCreate->registerType(CREATE_CLASS_GUI_INFO(CheckBox));
@@ -209,14 +208,12 @@ void GUIReader::registerTypeAndCallBack(const std::string& classType,
 
 Widget* GUIReader::widgetFromJsonFile(const char *fileName)
 {
-	auto thiz = GUIReader::getInstance();
-
 	std::string jsonpath;
 	rapidjson::Document jsonDict;
     jsonpath = fileName;
 //    jsonpath = CCFileUtils::getInstance()->fullPathForFilename(fileName);
     size_t pos = jsonpath.find_last_of('/');
-	thiz->m_strFilePath = jsonpath.substr(0,pos+1);
+    m_strFilePath = jsonpath.substr(0,pos+1);
     std::string contentStr = FileUtils::getInstance()->getStringFromFile(jsonpath);
 	jsonDict.Parse<0>(contentStr.c_str());
     if (jsonDict.HasParseError())
@@ -228,22 +225,22 @@ Widget* GUIReader::widgetFromJsonFile(const char *fileName)
     WidgetPropertiesReader * pReader = nullptr;
     if (fileVersion)
     {
-        int versionInteger = thiz->getVersionInteger(fileVersion);
+        int versionInteger = this->getVersionInteger(fileVersion);
         if (versionInteger < 250)
         {
             pReader = new (std::nothrow) WidgetPropertiesReader0250();
-            widget = pReader->createWidget(jsonDict, thiz->m_strFilePath.c_str(), fileName);
+            widget = pReader->createWidget(jsonDict, this->m_strFilePath.c_str(), fileName);
         }
         else
         {
             pReader = new (std::nothrow) WidgetPropertiesReader0300();
-            widget = pReader->createWidget(jsonDict, thiz->m_strFilePath.c_str(), fileName);
+            widget = pReader->createWidget(jsonDict, this->m_strFilePath.c_str(), fileName);
         }
     }
     else
     {
         pReader = new (std::nothrow) WidgetPropertiesReader0250();
-        widget = pReader->createWidget(jsonDict, thiz->m_strFilePath.c_str(), fileName);
+        widget = pReader->createWidget(jsonDict, this->m_strFilePath.c_str(), fileName);
     }
     
     CC_SAFE_DELETE(pReader);
@@ -367,14 +364,12 @@ WidgetReaderProtocol* WidgetPropertiesReader::createWidgetReaderProtocol(const s
 
 Widget* GUIReader::widgetFromBinaryFile(const char *fileName)
 {
-	auto thiz = GUIReader::getInstance();
-
     std::string jsonpath;
     rapidjson::Document jsonDict;
     jsonpath = fileName;
 //    jsonpath = CCFileUtils::getInstance()->fullPathForFilename(fileName);
     size_t pos = jsonpath.find_last_of('/');
-	thiz->m_strFilePath = jsonpath.substr(0,pos+1);
+	m_strFilePath = jsonpath.substr(0,pos+1);
     std::string fullPath = FileUtils::getInstance()->fullPathForFilename(fileName);
     auto fileData = FileUtils::getInstance()->getDataFromFile(fullPath);
     auto fileDataBytes = fileData.getBytes();
@@ -407,7 +402,7 @@ Widget* GUIReader::widgetFromBinaryFile(const char *fileName)
                 WidgetPropertiesReader * pReader = nullptr;
                 if (fileVersion)
                 {
-                    int versionInteger = thiz->getVersionInteger(fileVersion);
+                    int versionInteger = this->getVersionInteger(fileVersion);
                     if (versionInteger < 250)
                     {
                         CCASSERT(0, "You current studio doesn't support binary format, please upgrade to the latest version!");

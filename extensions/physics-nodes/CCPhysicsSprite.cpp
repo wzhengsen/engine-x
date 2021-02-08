@@ -27,14 +27,11 @@
 
 #if (CC_ENABLE_CHIPMUNK_INTEGRATION || CC_ENABLE_BOX2D_INTEGRATION)
 
-#if (CC_ENABLE_CHIPMUNK_INTEGRATION && CC_ENABLE_BOX2D_INTEGRATION)
-#error "Either Chipmunk or Box2d should be enabled, but not both at the same time"
-#endif
 
 #if CC_ENABLE_CHIPMUNK_INTEGRATION
 #include "chipmunk/chipmunk.h"
 #elif CC_ENABLE_BOX2D_INTEGRATION
-#include "Box2D/Box2D.h"
+#include "box2d/box2d.h"
 #endif
 
 NS_CC_EXT_BEGIN

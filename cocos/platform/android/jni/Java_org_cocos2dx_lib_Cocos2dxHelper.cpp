@@ -52,18 +52,18 @@ using namespace std;
 
 extern "C" {
 
-    JNIEXPORT void JNICALL Java_org_cocos2dx_lib_Cocos2dxHelper_nativeSetContext(JNIEnv*  env, jobject thiz, jobject context, jobject assetManager) {
+    JNIEXPORT void JNICALL Java_org_cocos2dx_lib_Cocos2dxHelper_nativeSetContext(JNIEnv*  env, jclass, jobject context, jobject assetManager) {
         JniHelper::setClassLoaderFrom(context);
         FileUtilsAndroid::setassetmanager(AAssetManager_fromJava(env, assetManager));
     }
 
-    JNIEXPORT void JNICALL Java_org_cocos2dx_lib_Cocos2dxHelper_nativeSetAudioDeviceInfo(JNIEnv*  env, jobject thiz, jboolean isSupportLowLatency, jint deviceSampleRate, jint deviceAudioBufferSizeInFrames) {
+    JNIEXPORT void JNICALL Java_org_cocos2dx_lib_Cocos2dxHelper_nativeSetAudioDeviceInfo(JNIEnv* , jclass, jboolean isSupportLowLatency, jint deviceSampleRate, jint deviceAudioBufferSizeInFrames) {
         __deviceSampleRate = deviceSampleRate;
         __deviceAudioBufferSizeInFrames = deviceAudioBufferSizeInFrames;
         LOGD("nativeSetAudioDeviceInfo: sampleRate: %d, bufferSizeInFrames: %d", __deviceSampleRate, __deviceAudioBufferSizeInFrames);
     }
 
-    JNIEXPORT void JNICALL Java_org_cocos2dx_lib_Cocos2dxHelper_nativeSetEditTextDialogResult(JNIEnv * env, jobject obj, jbyteArray text) {
+    JNIEXPORT void JNICALL Java_org_cocos2dx_lib_Cocos2dxHelper_nativeSetEditTextDialogResult(JNIEnv* env, jclass, jbyteArray text) {
         jsize  size = env->GetArrayLength(text);
 
         if (size > 0) {
@@ -82,6 +82,23 @@ extern "C" {
         }
     }
 
+    JNIEXPORT void JNICALL Java_org_cocos2dx_lib_Cocos2dxHelper_nativeRunOnGLThread(JNIEnv* env, jclass, jobject runnable) {
+        using jobject_type = std::remove_pointer_t<jobject>;
+        struct jobject_delete {
+            void operator()(jobject_type* __ptr) const _NOEXCEPT {
+                JniHelper::getEnv()->DeleteGlobalRef(__ptr);
+            }
+        };
+
+        cocos2d::Director::getInstance()->getScheduler()->performFunctionInCocosThread([wrap = std::make_shared<std::unique_ptr<jobject_type, jobject_delete>>(env->NewGlobalRef(runnable))]{
+            auto curEnv = JniHelper::getEnv();
+
+            JniMethodInfo mi;
+            if(JniHelper::getMethodInfo(mi, "java/lang/Runnable", "run", "()V")){
+                curEnv->CallVoidMethod(wrap.get()->get(), mi.methodID);
+            }
+        });
+    }
 }
 
 const char * getApkPath() {

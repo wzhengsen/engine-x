@@ -1,11 +1,14 @@
 # Engine-x
+
+[![dev](https://img.shields.io/badge/v1.0.0-alpha19-yellow.svg)](https://github.com/c4games/engine-x/releases)
+[![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/c4games/engine-x/blob/master/LICENSE)
+  
 [![Android Build Status](https://github.com/c4games/engine-x/workflows/android/badge.svg)](https://github.com/c4games/engine-x/actions?query=workflow%3Aandroid)
 [![iOS Build Status](https://github.com/c4games/engine-x/workflows/ios/badge.svg)](https://github.com/c4games/engine-x/actions?query=workflow%3Aios)
 [![Windows Build Status](https://github.com/c4games/engine-x/workflows/win32/badge.svg)](https://github.com/c4games/engine-x/actions?query=workflow%3Awin32)
 [![Linux Build Status](https://github.com/c4games/engine-x/workflows/linux/badge.svg)](https://github.com/c4games/engine-x/actions?query=workflow%3Alinux)
 [![macOS Build Status](https://github.com/c4games/engine-x/workflows/osx/badge.svg)](https://github.com/c4games/engine-x/actions?query=workflow%3Aosx)  
 
-[![dev](https://img.shields.io/badge/v1.0.0-alpha19-yellow.svg)](https://github.com/c4games/engine-x/releases)
 
 **这是另外一个基于 *Cocos2d-x-4.0* 持续维护的分支, 全平台基于OpenAL, c++14/17...**
   
@@ -47,12 +50,11 @@
 
 #### 准备步骤
   1. 进入引擎```engine-x```根目录
-  2. 执行```python download-deps.py```等待下载第三方库完成
   3. 执行```python setup.py```后重启控制台
 
 #### Windows
   1. 安装CMake，要求3.14以上  
-  2. 确保Visual Studio 2019以正确安装
+  2. 确保 Visual Studio 2019 已正确安装
   3. 执行下面的命令
   ```bat
   cd engine-x
@@ -77,22 +79,19 @@
   1. 确保已安装xcode11+和[cmake3.14+](https://github.com/Kitware/CMake/releases), 安装CMake命令行支持: ```sudo "/Applications/CMake.app/Contents/bin/cmake-gui" --install```
   2. 执行如下命令确保cmake能成功生成xcode工程:  
   ```sudo xcode-select -switch /Applications/Xcode.app/Contents/Developer```  
-  3. 生成xcode工程, 进入engine-x根目录执行如下命令:  
-  ```sh
-    # for device arm64
-    cmake -S . -B build -GXcode -DCMAKE_TOOLCHAIN_FILE=cmake/ios.mini.cmake
+  3. 生成xcode工程, 进入engine-x根目录执行如下命令之一:  
+     - for any device:   
+     ```cmake -S . -B build -GXcode -DCMAKE_TOOLCHAIN_FILE=cmake/ios.mini.cmake```
+     - for arm64:  
+     ```cmake -S . -B build -GXcode -DCMAKE_TOOLCHAIN_FILE=cmake/ios.mini.cmake -DCMAKE_OSX_ARCHITECTURES=arm64```
+     - for simulator x86_64:  
+     ```cmake -S . -B build -GXcode -DCMAKE_TOOLCHAIN_FILE=cmake/ios.mini.cmake -DCMAKE_OSX_SYSROOT=iphonesimulator -DCMAKE_OSX_ARCHITECTURES=x86_64```
 
-    # for device combined armv7,arm64
-    # cmake -S . -B build -GXcode -DCMAKE_TOOLCHAIN_FILE=cmake/ios.mini.cmake "-DCMAKE_OSX_ARCHITECTURES=armv7;arm64"
-
-    # for simulator x86_64
-    # cmake -S . -B build -GXcode -DCMAKE_TOOLCHAIN_FILE=cmake/ios.mini.cmake -DCMAKE_OSX_SYSROOT=iphonesimulator
-  ```
   4. 之后就可以用xcode打开, 选择cpp-tests编译运行
 
 ### 注意
   * ThreadLocalStorage线程本地存储
-    - ios x86 simulator ios>=10
+    - ios x86 simulator ios>=10 and engine-x no longer provide x86 libraries
     - ios x64 or devices(armv7,arm64) ios sdk>=9.0
     - the openal-soft maintained by kcat use TLS
 
@@ -101,5 +100,5 @@
   点击链接加入群聊【engine-x交流群】：https://jq.qq.com/?_wv=1027&k=nvNmzOIY
   
 ### 参考链接
-  * engine-x-3rd: https://github.com/c4games/engine-x-3rd
   * official v4: https://gitee.com/mirrors/cocos2d-x
+  * Git快速手册: https://github.com/c4games/engine-x/wiki/Git-Guides
