@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "ms-python.python",
+        "ms-vscode.cmake-tools",
+        "alexzshl.tasks-here",
+        "sumneko.lua",
+        "stuartwang.luapanda",
+    ]
+}

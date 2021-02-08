@@ -256,6 +256,7 @@ tests/lua-tests/project/proj.tizen/res/
 
 # Ignore vscode folder
 .vscode/
+!/templates/lua-template-default/.vscode/
 
 # Ignore static libraries
 *.a

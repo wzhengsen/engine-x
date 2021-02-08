@@ -1,0 +1,158 @@
+{
+    "inputs": [
+        {
+            "type": "pickString",
+            "id": "appleType",
+            "description": "选择构建的工程类型",
+            "options": [
+                "Mac应用",
+                "Ios应用"
+            ]
+        }
+    ],
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compile",
+            "type": "shell",
+            "command": "cmake",
+            "osx": {
+                "args": [
+                    "--build",
+                    "build/mac/."
+                ]
+            },
+            "args":[
+                "--build",
+                "build/."
+            ],
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "options": {
+                "tasksHere": {
+                    "display": false
+                }
+            }
+        },
+        {
+            "label": "AllSync",
+            "type": "shell",
+            "command": "python3",
+            "windows":{
+                "args": [
+                    "${workspaceFolder}/tool/python/SyncDir.py",
+                    "-s",
+                    "${workspaceFolder}/Resources",
+                    "-d",
+                    "${workspaceFolder}/build/bin/${workspaceFolderBasename}/Debug/Resources"
+                ],
+            },
+            "linux":{
+                "args": [
+                    "${workspaceFolder}/tool/python/SyncDir.py",
+                    "-s",
+                    "${workspaceFolder}/Resources",
+                    "-d",
+                    "${workspaceFolder}/build/bin/${workspaceFolderBasename}/Resources"
+                ],
+            },
+            "osx": {
+                "args": [
+                    "${workspaceFolder}/tool/python/SyncDir.py",
+                    "-s",
+                    "${workspaceFolder}/Resources",
+                    "-d",
+                    "${workspaceFolder}/build/mac/bin/${workspaceFolderBasename}/Debug/${workspaceFolderBasename}.app/Contents/Resources",
+                    "-e",
+                    "Info.plist",
+                    "-e",
+                    "Icon.icns"
+                ],
+            },
+            "presentation": {
+                "echo": false,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "options": {
+                "tasksHere": {
+                    "name": "$(sync) 全量同步",
+                    "color": "#c9c612",
+                    "display": false
+                }
+            }
+        },
+        {
+            "label": "LuaGen",
+            "type": "shell",
+            "command": "python3",
+            "args": [
+                "${workspaceFolder}/frameworks/cocos2d-x/tools/tolua/genbindings.py"
+            ],
+            "presentation": {
+                "echo": false,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/frameworks/cocos2d-x/tools/tolua",
+                "tasksHere": {
+                    "name": "$(file-code)",
+                    "color": "#6cc4ff",
+                    "display": false,
+                }
+            }
+        },
+        {
+            "label": "Apple Build",
+            "type": "shell",
+            "command": "python3",
+            "args": [
+                "${workspaceFolder}/tool/python/AppleCMakeBuild.py",
+                "--type",
+                "${input:appleType}"
+            ],
+            "presentation": {
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            },
+            "osx": {
+                "options": {
+                    "cwd": "${workspaceFolder}",
+                    "tasksHere": {
+                        "name": "$(archive)",
+                        "color": "#fc46cf",
+                        "display": true,
+                    }
+                }
+            },
+            "windows": {
+                "options": {
+                    "tasksHere": {
+                        "display": false
+                    }
+                }
+            },
+            "linux": {
+                "options": {
+                    "tasksHere": {
+                        "display": false
+                    }
+                }
+            }
+        }
+    ]
+}

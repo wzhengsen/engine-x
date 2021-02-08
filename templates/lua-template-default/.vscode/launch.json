@@ -1,0 +1,162 @@
+{
+    "version": "0.2.0",
+    "inputs": [
+        {
+            "type": "promptString",
+            "id": "deviceIP",
+            "description": "输入调试设备的IP地址：",
+            "default": "192.168."
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Windows: 复合调试",
+            "configurations": [
+                "Windows: 调试",
+                "Lua: 附加"
+            ]
+        },
+        {
+            "name": "Linux: 复合调试",
+            "configurations": [
+                "Linux: 调试",
+                "Lua: 附加"
+            ]
+        },
+        {
+            "name": "Mac: 复合调试",
+            "configurations": [
+                "Mac: 调试",
+                "Lua: 附加"
+            ]
+        }
+    ],
+    "configurations": [
+        {
+            "name": "Mac: 调试",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/mac/bin/${workspaceFolderBasename}/Debug/${workspaceFolderBasename}.app/Contents/MacOS/${workspaceFolderBasename}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/mac/bin/${workspaceFolderBasename}/Debug/${workspaceFolderBasename}.app",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "presentation": {
+                "group": "C++",
+                "order": 1
+            },
+            "preLaunchTask": "Compile"
+        },
+        {
+            "name": "Linux: 调试",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/bin/${workspaceFolderBasename}/${workspaceFolderBasename}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/bin/${workspaceFolderBasename}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "presentation": {
+                "group": "C++",
+                "order": 1
+            },
+            "preLaunchTask": "Compile"
+        },
+        {
+            "name": "Windows: 调试",
+            "request": "launch",
+            "type": "cppvsdbg",
+            "program": "${workspaceFolder}/build/bin/${workspaceFolderBasename}/Debug/${workspaceFolderBasename}.exe",
+            "cwd": "${workspaceFolder}/build/bin/${workspaceFolderBasename}/Debug",
+            "args": [
+                "--noCmd"
+            ],
+            "stopAtEntry": false,
+            "environment": [],
+            "externalConsole": false,
+            "presentation": {
+                "hidden": false,
+                "group": "C++",
+                "order": 1
+            },
+            "preLaunchTask": "Compile"
+        },
+        {
+            "type": "lua",
+            "request": "launch",
+            "tag": "normal",
+            "name": "Lua: 调试",
+            "windows": {
+                "program": "${workspaceFolder}/build/bin/${workspaceFolderBasename}/Debug/${workspaceFolderBasename}.exe"
+            },
+            "linux": {
+                "program": "${workspaceFolder}/tool/python/RunOnLinux.py",
+                "args": [
+                    "-r",
+                    "${workspaceFolder}/build/bin/${workspaceFolderBasename}/${workspaceFolderBasename}"
+                ]
+            },
+            "osx": {
+                "program": "${workspaceFolder}/build/mac/bin/${workspaceFolderBasename}/Debug/${workspaceFolderBasename}.app/Contents/MacOS/${workspaceFolderBasename}"
+            },
+            "cwd": "${workspaceFolder}/Resources",
+            "TempFilePath": "${workspaceFolder}/Resources",
+            "luaFileExtension": "lua",
+            "pathCaseSensitivity": true,
+            "stopOnEntry": false,
+            "VSCodeAsClient": true,
+            "connectionIP": "127.0.0.1",
+            "connectionPort": 8818,
+            "logLevel": 1,
+            "useCHook": true,
+            "isNeedB64EncodeStr": true,
+            "preLaunchTask": "AllSync",
+            "luaPath": "",
+            "updateTips": true,
+            "autoPathMode": true,
+            "distinguishSameNameFile": true,
+            "presentation": {
+                "hidden": false,
+                "group": "Lua",
+                "order": 1
+            }
+        },
+        {
+            "type": "lua",
+            "request": "launch",
+            "tag": "attach",
+            "name": "Lua: 附加",
+            "cwd": "${workspaceFolder}/Resources",
+            "TempFilePath": "${workspaceFolder}/Resources",
+            "luaFileExtension": "lua",
+            "pathCaseSensitivity": true,
+            "stopOnEntry": false,
+            "VSCodeAsClient": true,
+            "connectionIP": "${input:deviceIP}",
+            "connectionPort": 8818,
+            "logLevel": 1,
+            "useCHook": true,
+            "isNeedB64EncodeStr": true,
+            "luaPath": "",
+            "updateTips": true,
+            "autoPathMode": true,
+            "distinguishSameNameFile": true,
+            "presentation": {
+                "hidden": false,
+                "group": "Lua",
+                "order": 2
+            }
+        }
+    ]
+}
