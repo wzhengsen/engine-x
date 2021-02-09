@@ -118,8 +118,8 @@ class CCPluginNew(cocos.CCPlugin):
             "--mac-bundleid", dest="mac_bundleid", help=MultiLanguage.get_string('NEW_ARG_MAC_BUNDLEID'))
         parser.add_argument("-e", "--engine-path", dest="engine_path",
                             help=MultiLanguage.get_string('NEW_ARG_ENGINE_PATH'))
-        parser.add_argument("--portrait", action="store_true", dest="portrait",
-                            help=MultiLanguage.get_string('NEW_ARG_PORTRAIT'))
+        # parser.add_argument("--portrait", action="store_true", dest="portrait",
+        #                     help=MultiLanguage.get_string('NEW_ARG_PORTRAIT'))
 
         # REMOVE the option --no-native. Because it's added for Cocos Code IDE.
         # It will cause confusion: https://github.com/cocos2d/cocos2d-console/issues/401
@@ -131,7 +131,7 @@ class CCPluginNew(cocos.CCPlugin):
         # -l | --list-templates
         group = parser.add_mutually_exclusive_group(required=True)
         group.add_argument("-l", "--language",
-                            choices=["cpp", "lua", "js"],
+                            choices=["cpp", "lua"],
                             help=MultiLanguage.get_string('NEW_ARG_LANG'))
 #        group.add_argument("--list-templates", action="store_true",
 #                            help='List available templates. To be used with --template option.')
@@ -223,11 +223,11 @@ class CCPluginNew(cocos.CCPlugin):
         creator.do_default_step()
 
         data = None
-        cfg_path = os.path.join(self._projdir, cocos_project.Project.CONFIG)
-        if os.path.isfile(cfg_path):
-            f = open(cfg_path)
-            data = json.load(f)
-            f.close()
+        # cfg_path = os.path.join(self._projdir, cocos_project.Project.CONFIG)
+        # if os.path.isfile(cfg_path):
+        #     f = open(cfg_path)
+        #     data = json.load(f)
+        #     f.close()
 
         if data is None:
             data = {}
@@ -254,12 +254,12 @@ class CCPluginNew(cocos.CCPlugin):
                 data[cocos_project.Project.KEY_ENGINE_VERSION] = engine_version
 
         # if --portrait is specified, change the orientation
-        if self._other_opts.portrait:
-            creator.do_other_step("change_orientation", not_existed_error=False)
+        # if self._other_opts.portrait:
+        #     creator.do_other_step("change_orientation", not_existed_error=False)
 
         # write config files
-        with open(cfg_path, 'w') as outfile:
-            json.dump(data, outfile, sort_keys=True, indent=4)
+        # with open(cfg_path, 'w') as outfile:
+        #     json.dump(data, outfile, sort_keys=True, indent=4)
 
     # main entry point
     def run(self, argv, dependencies):
