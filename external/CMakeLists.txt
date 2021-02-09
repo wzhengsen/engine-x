@@ -35,21 +35,6 @@ set(ANDROID_SHARED_LOAD_FILE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${ANDROID_SHARED_
 
 # cmake_policy(SET CMP0079 NEW)
 
-if(NOT DEFINED LUA_ENGINE)
-    set(LUA_ENGINE "plainlua" CACHE INTERNAL "The lua core lib, luajit or plainlua")
-endif()
-
-if(LUA_ENGINE STREQUAL "plainlua")
-    if(NOT DEFINED LUA_VERSION)
-        set(LUA_VERSION "5.3.6" CACHE INTERNAL "The plainlua version")
-    endif()
-    message(STATUS "Using plainlua: ${LUA_VERSION}")
-elseif(LUA_ENGINE STREQUAL "luajit")
-    message(STATUS "Using luajit")
-else()
-    message(FATAL_ERROR "Invalid lua engine: ${LUA_ENGINE}, must be plainlua or luajit")
-endif()
-
 if(NOT BUILD_EXT_KCP)
     add_library(external STATIC empty.cpp)
 else()
@@ -193,10 +178,10 @@ endif(BUILD_EXT_ASTC)
 
 # use lua/js specific libs by property to prevent conflict
 if(BUILD_LUA_LIBS)
-    add_subdirectory(lua/${LUA_ENGINE})
+    add_subdirectory(lua/plainlua)
     add_subdirectory(lua/tolua)
     set_property(TARGET external APPEND PROPERTY 
-        CC_LUA_DEPEND ${LUA_ENGINE} tolua
+        CC_LUA_DEPEND plainlua tolua
     )
 endif()
 

@@ -17,11 +17,7 @@ add_library(${target_name} STATIC
   ${${target_name}_src}
 )
 
-if(LUA_ENGINE STREQUAL "plainlua")
-  target_include_directories(${target_name} PRIVATE ../${LUA_ENGINE}/lua-${LUA_VERSION}/src)
-else()
-  target_include_directories(${target_name} PRIVATE ../${LUA_ENGINE}/include)
-endif()
+target_include_directories(${target_name} PRIVATE ../plainlua/src)
 target_include_directories(${target_name} PUBLIC .)
 
 set_target_properties(${target_name}

@@ -69,9 +69,6 @@ if (NOT DEFINED CC_COMPAT_GL)
     set(CC_COMPAT_GL FALSE CACHE INTERNAL "Enabling CC_COMPAT_GL" )
 endif()
 
-set(LUA_ENGINE "lua" CACHE INTERNAL "The lua core lib")
-set(LUA_VERSION "5.4.0" CACHE INTERNAL "The lua version")
-
 project(cocos2d_libs)
 
 include(2d/CMakeLists.txt)
