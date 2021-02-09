@@ -180,8 +180,11 @@ endif(BUILD_EXT_ASTC)
 if(BUILD_LUA_LIBS)
     add_subdirectory(lua/plainlua)
     add_subdirectory(lua/tolua)
+    add_subdirectory(lua/luasocket)
+    add_subdirectory(lua/cjson)
+    add_subdirectory(lua/lua-protobuf)
     set_property(TARGET external APPEND PROPERTY 
-        CC_LUA_DEPEND plainlua tolua
+        CC_LUA_DEPEND plainlua tolua luasocket cjson lua-protobuf
     )
 endif()
 
