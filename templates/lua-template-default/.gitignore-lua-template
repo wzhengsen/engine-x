@@ -181,3 +181,4 @@ build-ios/
 build-simulator/
 Resources/Version/*
 GPUCache/
+*.code-workspace

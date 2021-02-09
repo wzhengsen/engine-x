@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "${env:ENGINEX_ROOT}"
+		}
+	]
+}

@@ -16,6 +16,7 @@ import os
 import sys
 import json
 import shutil
+import winreg
 import cocos
 import cocos_project
 import re
@@ -567,6 +568,19 @@ class TPCreator(object):
             shutil.copy2(src, dst)
 
 # project cmd
+    def replace_workspace(self, v):
+        """ will modify the workspace["path:{$env:ENGINEX_ROOT}"]
+        """
+        dst_project_dir = self.project_dir
+        files = v['files']
+        engine_root = os.environ["ENGINEX_ROOT"]
+        if sys.platform == "win32":
+            engine_root = engine_root.replace("\\","/")
+        for f in files:
+            dst_file_path = os.path.join(dst_project_dir, f)
+            replace_string(dst_file_path, "${env:ENGINEX_ROOT}", engine_root)
+
+
     def project_rename(self, v):
         """ will modify the file name of the file
         """

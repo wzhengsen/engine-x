@@ -5,7 +5,9 @@
             "runtime/config.json",
             "runtime/version.json",
             ".settings",
-            ".project"
+            ".project",
+            ".gitignore-lua-template",
+            ".vscode/workspace.code-workspace"
         ],
         "project_replace_project_name": {
             "src_project_name": "StarryX",
@@ -13,7 +15,15 @@
                 "templates/lua-template-default/config.json"
             ]
         },
-        "append_dir": [
+        "append_file": [
+            {
+                "from": "templates/lua-template-default/.gitignore-lua-template",
+                "to": ".gitignore"
+            },
+            {
+                "from": "templates/lua-template-default/.vscode/workspace.code-workspace",
+                "to": ".vscode/StarryX.code-workspace"
+            }
         ]
     },
     "do_add_native_support": {
@@ -35,6 +45,12 @@
                 "to": "frameworks/runtime-src/Classes/"
             }
         ],
+        "replace_workspace": {
+            "src_project_name": "StarryX",
+            "files": [
+                ".vscode/StarryX.code-workspace"
+            ]
+        },
         "project_rename": {
             "src_project_name": "StarryX",
             "files": [
@@ -55,7 +71,8 @@
             "src_package_name": "org.cocos2dx.StarryX",
             "files": [
                 "frameworks/runtime-src/proj.android/app/build.gradle",
-                "frameworks/runtime-src/proj.android/app/AndroidManifest.xml"            ]
+                "frameworks/runtime-src/proj.android/app/AndroidManifest.xml"
+            ]
         },
         "project_replace_so_name": {
             "src_so_name": "StarryX",
