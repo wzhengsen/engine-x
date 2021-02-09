@@ -27,6 +27,19 @@ set(APP_NAME HelloLua)
 
 project(${APP_NAME})
 
+set(ENGINEX_ROOT "$ENV{ENGINEX_ROOT}")
+if(ENGINEX_ROOT STREQUAL "")
+    set(ENGINEX_ROOT "$ENV{COCOS2DX_ROOT}")
+endif()
+
+if(NOT (ENGINEX_ROOT STREQUAL ""))
+    set(COCOS2DX_ROOT_PATH "${ENGINEX_ROOT}")
+    file(TO_CMAKE_PATH ${COCOS2DX_ROOT_PATH} COCOS2DX_ROOT_PATH) # string(REPLACE "\\" "/" COCOS2DX_ROOT_PATH ${COCOS2DX_ROOT_PATH})
+    message(STATUS "Using system env var ENGINEX_ROOT=${ENGINEX_ROOT}")
+else()
+    message(FATAL_ERROR "Please run setup.py add system env var 'ENGINEX_ROOT' to specific the engine root")
+endif()
+
 if(XCODE)
     if(NOT DEFINED CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET)
         SET (CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET 10.0)
@@ -34,7 +47,7 @@ if(XCODE)
 endif()
 
 set(RUNTIME_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/frameworks/runtime-src)
-set(COCOS2DX_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/frameworks/cocos2d-x)
+
 set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules/)
 
 include(CocosBuildSet)
