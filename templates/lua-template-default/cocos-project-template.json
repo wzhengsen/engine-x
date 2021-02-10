@@ -6,8 +6,7 @@
             "runtime/version.json",
             ".settings",
             ".project",
-            ".gitignore-lua-template",
-            ".vscode/workspace.code-workspace"
+            ".gitignore-lua-template"
         ],
         "project_replace_project_name": {
             "src_project_name": "StarryX",
@@ -19,10 +18,6 @@
             {
                 "from": "templates/lua-template-default/.gitignore-lua-template",
                 "to": ".gitignore"
-            },
-            {
-                "from": "templates/lua-template-default/.vscode/workspace.code-workspace",
-                "to": ".vscode/StarryX.code-workspace"
             }
         ]
     },
@@ -48,7 +43,7 @@
         "replace_workspace": {
             "src_project_name": "StarryX",
             "files": [
-                ".vscode/StarryX.code-workspace"
+                ".vscode/workspace.code-workspace"
             ]
         },
         "project_rename": {

@@ -117,6 +117,7 @@ TOLUA_API void tolua_addbase(lua_State* L, char* name, char* base);
 TOLUA_API void tolua_pushvalue (lua_State* L, int lo);
 TOLUA_API void tolua_pushboolean (lua_State* L, int value);
 TOLUA_API void tolua_pushnumber (lua_State* L, lua_Number value);
+TOLUA_API void tolua_pushinteger(lua_State* L, lua_Integer value);
 TOLUA_API void tolua_pushstring (lua_State* L, const char* value);
 TOLUA_API void tolua_pushuserdata (lua_State* L, void* value);
 TOLUA_API void tolua_pushusertype (lua_State* L, void* value, const char* type);
@@ -134,6 +135,7 @@ TOLUA_API void tolua_add_value_to_root (lua_State* L,void* value);
 TOLUA_API void tolua_remove_value_from_root (lua_State* L, void* value);
 
 TOLUA_API lua_Number tolua_tonumber (lua_State* L, int narg, lua_Number def);
+TOLUA_API lua_Integer tolua_tointeger(lua_State* L, int narg, lua_Integer def);
 TOLUA_API const char* tolua_tostring (lua_State* L, int narg, const char* def);
 TOLUA_API void* tolua_touserdata (lua_State* L, int narg, void* def);
 TOLUA_API void* tolua_tousertype (lua_State* L, int narg, void* def);

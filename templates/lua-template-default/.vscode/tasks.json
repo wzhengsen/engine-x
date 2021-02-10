@@ -46,7 +46,7 @@
             "command": "python3",
             "windows":{
                 "args": [
-                    "${workspaceFolder}/tool/python/SyncDir.py",
+                    "${env:ENGINEX_ROOT}/tools/StarryXTools/python/SyncDir.py",
                     "-s",
                     "${workspaceFolder}/Resources",
                     "-d",
@@ -55,7 +55,7 @@
             },
             "linux":{
                 "args": [
-                    "${workspaceFolder}/tool/python/SyncDir.py",
+                    "${env:ENGINEX_ROOT}/tools/StarryXTools/python/SyncDir.py",
                     "-s",
                     "${workspaceFolder}/Resources",
                     "-d",
@@ -64,7 +64,7 @@
             },
             "osx": {
                 "args": [
-                    "${workspaceFolder}/tool/python/SyncDir.py",
+                    "${env:ENGINEX_ROOT}/tools/StarryXTools/python/SyncDir.py",
                     "-s",
                     "${workspaceFolder}/Resources",
                     "-d",
@@ -96,7 +96,7 @@
             "type": "shell",
             "command": "python3",
             "args": [
-                "${workspaceFolder}/frameworks/cocos2d-x/tools/tolua/genbindings.py"
+                "${env:ENGINEX_ROOT}/tools/tolua/genbindings.py"
             ],
             "presentation": {
                 "echo": false,
@@ -107,7 +107,7 @@
                 "clear": false
             },
             "options": {
-                "cwd": "${workspaceFolder}/frameworks/cocos2d-x/tools/tolua",
+                "cwd": "${env:ENGINEX_ROOT}/tools/tolua",
                 "tasksHere": {
                     "name": "$(file-code)",
                     "color": "#6cc4ff",
@@ -120,7 +120,7 @@
             "type": "shell",
             "command": "python3",
             "args": [
-                "${workspaceFolder}/tool/python/AppleCMakeBuild.py",
+                "${env:ENGINEX_ROOT}/tools/StarryXTools/python/AppleCMakeBuild.py",
                 "--type",
                 "${input:appleType}"
             ],

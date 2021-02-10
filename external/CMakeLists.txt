@@ -179,6 +179,12 @@ if(BUILD_EXT_ASTC)
     target_link_libraries(external astc)
 endif(BUILD_EXT_ASTC)
 
+if(BUILD_EXT_WEBSOCKETS)
+    add_subdirectory(websockets)
+    add_subdirectory(uv)
+    target_link_libraries(external ext_websockets ext_uv)
+endif(BUILD_EXT_WEBSOCKETS)
+
 # use lua/js specific libs by property to prevent conflict
 if(BUILD_LUA_LIBS)
     add_subdirectory(lua/plainlua)

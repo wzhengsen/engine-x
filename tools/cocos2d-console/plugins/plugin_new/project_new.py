@@ -13,6 +13,7 @@ __docformat__ = 'restructuredtext'
 
 # python
 import os
+from os.path import dirname
 import sys
 import json
 import shutil
@@ -579,6 +580,8 @@ class TPCreator(object):
         for f in files:
             dst_file_path = os.path.join(dst_project_dir, f)
             replace_string(dst_file_path, "${env:ENGINEX_ROOT}", engine_root)
+            repFileName = f.replace("workspace.code-workspace", os.path.basename(dst_project_dir)+".code-workspace")
+            os.rename(os.path.join(dst_project_dir,f),os.path.join(dst_project_dir,repFileName))
 
 
     def project_rename(self, v):

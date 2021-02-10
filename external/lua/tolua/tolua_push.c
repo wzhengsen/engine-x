@@ -108,6 +108,10 @@ TOLUA_API void tolua_pushnumber (lua_State* L, lua_Number value)
     lua_pushnumber(L,value);
 }
 
+TOLUA_API void tolua_pushinteger(lua_State* L, lua_Integer value) {
+    lua_pushinteger(L, value);
+}
+
 TOLUA_API void tolua_pushstring (lua_State* L, const char* value)
 {
     if (value == NULL)

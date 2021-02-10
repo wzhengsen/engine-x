@@ -20409,7 +20409,41 @@ int lua_cocos2dx_Image_setPNGPremultipliedAlphaEnabled(lua_State* tolua_S)
 #endif
     return 0;
 }
-int lua_cocos2dx_Image_setPVRImagesHavePremultipliedAlpha(lua_State* tolua_S)
+int lua_cocos2dx_Image_setCompressedImagesHavePMA(lua_State* tolua_S)
+{
+    int argc = 0;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+    argc = lua_gettop(tolua_S);
+
+    if (argc == 2)
+    {
+        unsigned int arg0;
+        bool arg1;
+        ok &= luaval_to_uint32(tolua_S, 1,&arg0, "cc.Image:setCompressedImagesHavePMA");
+        ok &= luaval_to_boolean(tolua_S, 2,&arg1, "cc.Image:setCompressedImagesHavePMA");
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_Image_setCompressedImagesHavePMA'", nullptr);
+            return 0;
+        }
+        cocos2d::Image::setCompressedImagesHavePMA(arg0, arg1);
+        lua_settop(tolua_S, 0);
+        return 0;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "cc.Image:setCompressedImagesHavePMA",argc, 2);
+    return 0;
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_Image_setCompressedImagesHavePMA'.",&tolua_err);
+#endif
+    return 0;
+}
+int lua_cocos2dx_Image_isCompressedImageHavePMA(lua_State* tolua_S)
 {
     int argc = 0;
     bool ok  = true;
@@ -20422,22 +20456,22 @@ int lua_cocos2dx_Image_setPVRImagesHavePremultipliedAlpha(lua_State* tolua_S)
 
     if (argc == 1)
     {
-        bool arg0;
-        ok &= luaval_to_boolean(tolua_S, 1,&arg0, "cc.Image:setPVRImagesHavePremultipliedAlpha");
+        unsigned int arg0;
+        ok &= luaval_to_uint32(tolua_S, 1,&arg0, "cc.Image:isCompressedImageHavePMA");
         if(!ok)
         {
-            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_Image_setPVRImagesHavePremultipliedAlpha'", nullptr);
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_Image_isCompressedImageHavePMA'", nullptr);
             return 0;
         }
-        cocos2d::Image::setPVRImagesHavePremultipliedAlpha(arg0);
-        lua_settop(tolua_S, 0);
-        return 0;
+        bool ret = cocos2d::Image::isCompressedImageHavePMA(arg0);
+        tolua_pushboolean(tolua_S,(bool)ret);
+        return 1;
     }
-    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "cc.Image:setPVRImagesHavePremultipliedAlpha",argc, 1);
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d\n ", "cc.Image:isCompressedImageHavePMA",argc, 1);
     return 0;
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_Image_setPVRImagesHavePremultipliedAlpha'.",&tolua_err);
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_Image_isCompressedImageHavePMA'.",&tolua_err);
 #endif
     return 0;
 }
@@ -20469,7 +20503,8 @@ int lua_register_cocos2dx_Image(lua_State* tolua_S)
         tolua_function(tolua_S,"premultiplyAlpha",lua_cocos2dx_Image_premultiplyAlpha);
         tolua_function(tolua_S,"reversePremultipliedAlpha",lua_cocos2dx_Image_reversePremultipliedAlpha);
         tolua_function(tolua_S,"setPNGPremultipliedAlphaEnabled", lua_cocos2dx_Image_setPNGPremultipliedAlphaEnabled);
-        tolua_function(tolua_S,"setPVRImagesHavePremultipliedAlpha", lua_cocos2dx_Image_setPVRImagesHavePremultipliedAlpha);
+        tolua_function(tolua_S,"setCompressedImagesHavePMA", lua_cocos2dx_Image_setCompressedImagesHavePMA);
+        tolua_function(tolua_S,"isCompressedImageHavePMA", lua_cocos2dx_Image_isCompressedImageHavePMA);
     tolua_endmodule(tolua_S);
     std::string typeName = typeid(cocos2d::Image).name();
     g_luaType[typeName] = "cc.Image";
@@ -29968,14 +30003,14 @@ int lua_cocos2dx_UserDefault_setEncryptEnabled(lua_State* tolua_S)
     if (argc == 3) 
     {
         bool arg0;
-        std::string arg1;
-        std::string arg2;
+        cxx17::string_view arg1;
+        cxx17::string_view arg2;
 
         ok &= luaval_to_boolean(tolua_S, 2,&arg0, "cc.UserDefault:setEncryptEnabled");
 
-        ok &= luaval_to_std_string(tolua_S, 3,&arg1, "cc.UserDefault:setEncryptEnabled");
+        ok &= luaval_to_std_string_view(tolua_S, 3,&arg1, "cc.UserDefault:setEncryptEnabled");
 
-        ok &= luaval_to_std_string(tolua_S, 4,&arg2, "cc.UserDefault:setEncryptEnabled");
+        ok &= luaval_to_std_string_view(tolua_S, 4,&arg2, "cc.UserDefault:setEncryptEnabled");
         if(!ok)
         {
             tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_UserDefault_setEncryptEnabled'", nullptr);
@@ -84816,6 +84851,104 @@ int lua_cocos2dx_Renderer_getStencilReferenceValue(lua_State* tolua_S)
 
     return 0;
 }
+int lua_cocos2dx_Renderer_setDepthStencilDesc(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::Renderer* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.Renderer",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::Renderer*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_Renderer_setDepthStencilDesc'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) 
+    {
+        cocos2d::backend::DepthStencilDescriptor arg0;
+
+        #pragma warning NO CONVERSION TO NATIVE FOR DepthStencilDescriptor
+		ok = false;
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_Renderer_setDepthStencilDesc'", nullptr);
+            return 0;
+        }
+        cobj->setDepthStencilDesc(arg0);
+        lua_settop(tolua_S, 1);
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.Renderer:setDepthStencilDesc",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_Renderer_setDepthStencilDesc'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_Renderer_getDepthStencilDesc(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::Renderer* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.Renderer",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::Renderer*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_Renderer_getDepthStencilDesc'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 0) 
+    {
+        if(!ok)
+        {
+            tolua_error(tolua_S,"invalid arguments in function 'lua_cocos2dx_Renderer_getDepthStencilDesc'", nullptr);
+            return 0;
+        }
+        const cocos2d::backend::DepthStencilDescriptor& ret = cobj->getDepthStencilDesc();
+        #pragma warning NO CONVERSION FROM NATIVE FOR DepthStencilDescriptor;
+        return 1;
+    }
+    luaL_error(tolua_S, "%s has wrong number of arguments: %d, was expecting %d \n", "cc.Renderer:getDepthStencilDesc",argc, 0);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_Renderer_getDepthStencilDesc'.",&tolua_err);
+#endif
+
+    return 0;
+}
 int lua_cocos2dx_Renderer_setCullMode(lua_State* tolua_S)
 {
     int argc = 0;
@@ -85480,6 +85613,8 @@ int lua_register_cocos2dx_Renderer(lua_State* tolua_S)
         tolua_function(tolua_S,"getStencilReadMask",lua_cocos2dx_Renderer_getStencilReadMask);
         tolua_function(tolua_S,"getStencilWriteMask",lua_cocos2dx_Renderer_getStencilWriteMask);
         tolua_function(tolua_S,"getStencilReferenceValue",lua_cocos2dx_Renderer_getStencilReferenceValue);
+        tolua_function(tolua_S,"setDepthStencilDesc",lua_cocos2dx_Renderer_setDepthStencilDesc);
+        tolua_function(tolua_S,"getDepthStencilDesc",lua_cocos2dx_Renderer_getDepthStencilDesc);
         tolua_function(tolua_S,"setCullMode",lua_cocos2dx_Renderer_setCullMode);
         tolua_function(tolua_S,"getCullMode",lua_cocos2dx_Renderer_getCullMode);
         tolua_function(tolua_S,"setWinding",lua_cocos2dx_Renderer_setWinding);
