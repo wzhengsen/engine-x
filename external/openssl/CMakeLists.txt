@@ -21,7 +21,7 @@ macro(set_openssl_sub_target sub_lib_name)
   )
   if(WINDOWS)
     set_target_properties(${sub_target_name} PROPERTIES
-      IMPORTED_LOCATION "${platform_spec_path}/lib${sub_lib_name}-1_1.dll"
+      IMPORTED_LOCATION "${platform_spec_path}/lib${sub_lib_name}-1_1-x64.dll"
       IMPORTED_IMPLIB "${platform_spec_path}/lib${sub_lib_name}.lib"
     )
   else()
@@ -38,4 +38,3 @@ set_openssl_sub_target(${target_name})
 # -----sub target 2: crypto-----
 set(target_name crypto)
 set_openssl_sub_target(${target_name})
-

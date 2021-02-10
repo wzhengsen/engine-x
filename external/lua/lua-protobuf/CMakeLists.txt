@@ -14,7 +14,7 @@ add_library(${target_name} STATIC
 )
 
 target_include_directories(${target_name} PUBLIC .)
-target_link_libraries(${target_name} lua)
+target_link_libraries(${target_name} plainlua)
 
 set_target_properties(${target_name}
     PROPERTIES

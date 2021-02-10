@@ -44,9 +44,9 @@ endif()
 
 target_include_directories(${target_name}
   INTERFACE ..
-  PRIVATE ../lua
+  PRIVATE ../plainlua/src
 )
-target_link_libraries(${target_name} lua)
+target_link_libraries(${target_name} plainlua)
 
 if(MSVC)
   target_compile_definitions(${target_name} PRIVATE _CRT_SECURE_NO_WARNINGS _WINSOCK_DEPRECATED_NO_WARNINGS)

@@ -19,7 +19,7 @@
         
         <!-- Tell Cocos2dxActivity the name of our .so -->
 		<meta-data android:name="android.app.lib_name"
-				   android:value="cocos2dlua" />
+				   android:value="enginex" />
 
         <meta-data
             android:name="com.baidu.lbsapi.AK"

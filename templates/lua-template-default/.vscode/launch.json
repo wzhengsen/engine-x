@@ -84,7 +84,7 @@
             ],
             "stopAtEntry": false,
             "environment": [],
-            "externalConsole": false,
+            "console": "integratedTerminal",
             "presentation": {
                 "hidden": false,
                 "group": "C++",

@@ -28,6 +28,9 @@ option(BUILD_EXT_ASTC "Build with internal ASTC support" ON)
 option(BUILD_EXT_ALSOFT "Build with internal openal-soft support" ${OPT_ALSOFT_DEFAULT})
 option(BUILD_EXT_CARES "Build with internal c-ares support" OFF)
 option(BUILD_EXT_KCP "Build with internal kcp support" OFF)
+option(BUILD_EXT_MINIZIP "Build with internal minizip support" ON)
+option(BUILD_EXT_WEBSOCKETS "Build with internal websockets support" ON)
+option(BUILD_EXT_MONGOOSE "Build with internal mongoose support" ON)
 
 set(ANDROID_SHARED_LOADS "" CACHE INTERNAL "The android shared libraries load source code" )
 set(ANDROID_SHARED_LOAD_FILE_NAME "SharedLoader.java" CACHE INTERNAL "The android shared load java file name" )
@@ -220,11 +223,19 @@ target_link_libraries(external ogg)
 
 if(WINDOWS OR LINUX)
     add_subdirectory(glad)
-    target_link_libraries(external glad)
+    add_subdirectory(cef)
+    add_subdirectory(vlc)
+    target_link_libraries(external
+        glad
+        ext_libcef
+        ext_libcef_dll_wrapper
+        ext_libvlc
+        ext_libvlccore
+    )
 endif()
 
 if(WINDOWS)
-    add_subdirectory(win32-specific/iconv)
+    add_subdirectory(windows-specific/iconv)
     target_link_libraries(external ext_iconv)
 endif()
 
@@ -253,10 +264,15 @@ if(NOT LINUX)
 endif()
 
 # unzip depend on zlib
-if(BUILD_EXT_UNZIP)
-    add_subdirectory(unzip)
-    target_link_libraries(external unzip)
-endif(BUILD_EXT_UNZIP)
+# if(BUILD_EXT_UNZIP)
+#     add_subdirectory(unzip)
+#     target_link_libraries(external unzip)
+# endif(BUILD_EXT_UNZIP)
+
+if(BUILD_EXT_MINIZIP)
+    add_subdirectory(minizip)
+    target_link_libraries(external minizip)
+endif(BUILD_EXT_MINIZIP)
 
 # since 3.6/3.7 c runtime support build as DLL
 # since 3.8 cpp runtime is preferred for cocos2d-x
@@ -298,6 +314,20 @@ if(MACOSX OR IOS)
     ext_glsl_optimizer
     ext_libmesa
     )
+    if (IOS)
+        find_library(CORE_LOCATION_LIBRARY CoreLocation)
+        find_library(SYS_CONFIG_LIBRARY SystemConfiguration)
+        find_library(CORE_TELEPHONY_LIBRARY CoreTelephony)
+        find_library(AD_SUPPORT_LIBRARY AdSupport)
+        set(BMKDependFrameworks
+            ${CORE_LOCATION_LIBRARY}
+            ${SYS_CONFIG_LIBRARY}
+            ${CORE_TELEPHONY_LIBRARY}
+            ${AD_SUPPORT_LIBRARY}
+            ${COCOS2DX_ROOT_PATH}/external/BMKLocation/BMKLocationKit.framework
+        )
+        target_link_libraries(external ${BMKDependFrameworks})
+    endif()
 endif()
 
 if (ANDROID)

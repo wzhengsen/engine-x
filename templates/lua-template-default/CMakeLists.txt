@@ -40,14 +40,7 @@ else()
     message(FATAL_ERROR "Please run setup.py add system env var 'ENGINEX_ROOT' to specific the engine root")
 endif()
 
-if(XCODE)
-    if(NOT DEFINED CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET)
-        SET (CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET 10.0)
-    endif()
-endif()
-
 set(RUNTIME_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/frameworks/runtime-src)
-
 set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules/)
 
 include(CocosBuildSet)
@@ -56,14 +49,14 @@ add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos ${ENGINE_BINARY_PATH}/cocos/core)
 
 # script and source files info, not need to compile
 set(ori_res_folders "${CMAKE_CURRENT_SOURCE_DIR}/Resources")
-if(NOT XCODE)
+if(NOT APPLE)
     set(res_folders ${ori_res_folders})
 else()
     set(res_folders
         "${CMAKE_CURRENT_SOURCE_DIR}/build/Resources"
         )
 endif()
-if(APPLE OR VS)
+if(APPLE OR WINDOWS)
     cocos_mark_multi_resources(res_res RES_TO "Resources" FOLDERS ${res_folders})
     set(cc_common_res ${res_res})
 endif()
@@ -75,7 +68,7 @@ set(GAME_SOURCE ${RUNTIME_SRC_ROOT}/Classes/AppDelegate.cpp)
 
 if(ANDROID)
     # change APP_NAME to the share library name for Android, it's value depend on AndroidManifest.xml
-    set(APP_NAME cocos2dlua)
+    set(APP_NAME enginex)
     list(APPEND GAME_SOURCE ${RUNTIME_SRC_ROOT}/proj.android/app/jni/hellolua/main.cpp)
 elseif(LINUX)
     list(APPEND GAME_SOURCE ${RUNTIME_SRC_ROOT}/proj.linux/main.cpp)
@@ -173,8 +166,8 @@ if(APPLE)
 elseif(WINDOWS OR LINUX)
     cocos_copy_target_dll(${APP_NAME})
 endif()
-# copy resource on linux or WINDOWS or xcode
-if(LINUX OR WINDOWS OR XCODE)
+# copy resource on linux or WINDOWS or Apple
+if(LINUX OR WINDOWS OR APPLE)
     cocos_get_resource_path(APP_RES_DIR ${APP_NAME})
     cocos_sync_target_res(${APP_NAME} LINK_TO ${APP_RES_DIR} FOLDERS ${ori_res_folders})
     if(LINUX)

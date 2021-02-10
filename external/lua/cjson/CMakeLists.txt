@@ -17,9 +17,9 @@ add_library(${target_name} STATIC
 
 target_include_directories(${target_name}
   PUBLIC .
-  PRIVATE ../lua
+  PRIVATE ../plainlua/src
 )
-target_link_libraries(${target_name} lua)
+target_link_libraries(${target_name} plainlua)
 
 if(MSVC)
 target_compile_definitions(${target_name} PRIVATE _CRT_SECURE_NO_WARNINGS)
