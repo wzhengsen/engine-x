@@ -21,7 +21,6 @@ local config = {
 
     --[[
         可选协议类型：
-        pbc             见：https://github.com/cloudwu/pbc，支持protobuf2
         lua-protobuf    见：https://github.com/starwing/lua-protobuf，支持protobuf3
         json            require("cjson")
     ]]

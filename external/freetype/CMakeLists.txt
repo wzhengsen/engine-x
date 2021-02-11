@@ -7,23 +7,20 @@ project(${lib_name})
 
 include(../cmake/CocosExternalConfig.cmake)
 
-add_library(${target_name} STATIC IMPORTED GLOBAL)
-
 if(WIN32)
+  add_library(${target_name} SHARED IMPORTED GLOBAL)
   set_target_properties(${target_name} PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include/win32"
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include/windows"
+  )
+  set_target_properties(${target_name} PROPERTIES
+    IMPORTED_IMPLIB "${platform_spec_path}/${lib_name}.lib"
+    IMPORTED_LOCATION "${platform_spec_path}/${lib_name}.dll"
   )
 else()
+  add_library(${target_name} STATIC IMPORTED GLOBAL)
   set_target_properties(${target_name} PROPERTIES
     INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include/unix"
   )
-endif()
-
-if(WINDOWS)
-  set_target_properties(${target_name} PROPERTIES
-    IMPORTED_LOCATION "${platform_spec_path}/${lib_name}.lib"
-  )
-else()
   set_target_properties(${target_name} PROPERTIES
     IMPORTED_LOCATION "${platform_spec_path}/lib${lib_name}.a"
   )

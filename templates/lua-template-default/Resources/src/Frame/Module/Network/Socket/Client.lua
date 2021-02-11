@@ -12,7 +12,6 @@ local Connection = require("Network.Socket.Connection");
 local cClient = Connection.Client;
 local Client = class(cClient);
 
-local pbc = require("Network.LuaPB.protobuf");
 local pb = require("pb");
 
 local config = require("config");
@@ -44,21 +43,7 @@ function Client:ctor()
                 Event.SocketClose(sender);
             end
         elseif info.event == Client.MG_Recv then
-            if Client.ProtocolType == "pbc" then
-                --接受事件
-                local msg = info.msg
-                local offset = msg:find("\0")
-                if offset then
-                    local msgName = msg:sub(1,offset - 1)
-                    local ret = msg:sub(offset + 1)
-                    local ok,dataTab = pcall(pbc.decode,msgName,ret)
-                    if msgName == "ServerToClientHeartbeat" then
-                        self.hbDelay = 0;
-                    elseif ok and not self:OnRecv(msgName,dataTab) then
-                        Event.SocketRecv(sender,msgName,dataTab);
-                    end
-                end
-            elseif Client.ProtocolType == "json" then
+            if Client.ProtocolType == "json" then
                 local ret = cjson.decode(info.msg)
                 if type(ret) == "table" then
                     local msgName = ret.msgName
@@ -89,12 +74,7 @@ end
 
 function Client:Send(msgName,data)
     data = data or {};
-    if Client.ProtocolType == "pbc" then
-        local ok,sendStr = pcall(pbc.encode,msgName,data)
-        if ok then
-            cClient.Send(self,msgName.."\0"..sendStr)
-        end
-    elseif Client.ProtocolType == "json" then
+    if Client.ProtocolType == "json" then
         data.msgName = msgName
         local sendStr = cjson.encode(data);
         if sendStr then

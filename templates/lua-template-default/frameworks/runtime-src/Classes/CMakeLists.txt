@@ -28,8 +28,6 @@ set(${target_name}_src
     LuaModule/lua-protobuf/LuaRegister_lua-protobuf.cpp
     LuaModule/Network/LuaRegisterConnection.h
     LuaModule/Network/LuaRegisterConnection.cpp
-    LuaModule/pbc/LuaRegister_pbc.h
-    LuaModule/pbc/LuaRegister_pbc.cpp
     LuaModule/Zip/LuaRegisterZipFile.h
     LuaModule/Zip/LuaRegisterZipFile.cpp
     LuaModule/Cocos2dx/LuaRegisterCocos2dx.h

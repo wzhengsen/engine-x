@@ -30,7 +30,6 @@
 #include "cjson/LuaRegister_cjson.h"
 #include "crypto/LuaRegister_crypto.h"
 #include "Network/LuaRegisterConnection.h"
-#include "pbc/LuaRegister_pbc.h"
 #include "lua-protobuf/LuaRegister_lua-protobuf.h"
 #include "Zip/LuaRegisterZipFile.h"
 #include "Cocos2dx/LuaRegisterCocos2dx.h"
@@ -49,7 +48,6 @@ static int register_custom_function(lua_State* L) noexcept {
     LuaRegister_crypto(L);
     LuaRegisterConnection(L);
     LuaRegisterDownloader(L);
-    LuaRegister_pbc(L);
     LuaRegister_luaprotobuf(L);
     LuaRegisterZipFile(L);
     LuaRegisterCocos2dx(L);

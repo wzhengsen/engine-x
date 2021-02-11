@@ -709,7 +709,7 @@ static std::string IconvTo(const char* to, const char* from, uint8_t sizeRate, c
         char* inBuffer = const_cast<char*>(c);
         char* outBuffer = &outStr.front();
 
-        const auto cvCount = iconv(i, const_cast<const char**>(&inBuffer), &inLen, &outBuffer, &cvtLen);
+        const auto cvCount = iconv(i, const_cast<char**>(&inBuffer), &inLen, &outBuffer, &cvtLen);
         if (fullSuc) {
             *fullSuc = cvCount == 0;
         }

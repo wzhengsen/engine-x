@@ -63,7 +63,7 @@ static int Lua_string_Convert(lua_State* L) {
     char* buffer = lua.BufferInitSize(&b,strLen * 4);
 
     size_t cvtLeft = cvtLen;
-    const auto cvCount = iconv(i,const_cast<const char**>(&str),&strLen,&buffer,&cvtLeft);
+    const auto cvCount = iconv(i,const_cast<char**>(&str),&strLen,&buffer,&cvtLeft);
     iconv_close(i);
     if (cvCount == static_cast<size_t>(-1)){
         lua.Push();

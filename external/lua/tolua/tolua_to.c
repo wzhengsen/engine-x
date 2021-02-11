@@ -22,7 +22,8 @@ TOLUA_API lua_Number tolua_tonumber (lua_State* L, int narg, lua_Number def)
     return lua_gettop(L)<abs(narg) ? def : lua_tonumber(L,narg);
 }
 
-TOLUA_API lua_Integer tolua_tointeger(lua_State* L, int narg, lua_Integer def) {
+TOLUA_API lua_Integer tolua_tointeger(lua_State* L, int narg, lua_Integer def)
+{
     return lua_gettop(L) < abs(narg) ? def : lua_tointeger(L, narg);
 }
 

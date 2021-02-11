@@ -47,15 +47,6 @@ typedef int lua_Object;
 
 #include "lua.h"
 #include "lauxlib.h"
-    
-#if LUA_VERSION_NUM >= 502
-#define lua_setfenv lua_setuservalue
-#define lua_getfenv lua_getuservalue
-#define lua_open luaL_newstate
-#if !defined(LUA_COMPAT_5_1) && !defined(LUA_COMPAT_ALL)
-#define lua_objlen(L,i)		lua_rawlen(L, (i))
-#endif
-#endif
 
 struct tolua_Error
 {
@@ -107,7 +98,7 @@ TOLUA_API void tolua_module (lua_State* L, const char* name, int hasvar);
 TOLUA_API void tolua_class (lua_State* L, const char* name, const char* base);
 TOLUA_API void tolua_cclass (lua_State* L, const char* lname, const char* name, const char* base, lua_CFunction col);
 TOLUA_API void tolua_function (lua_State* L, const char* name, lua_CFunction func);
-TOLUA_API void tolua_constant (lua_State* L, const char* name, lua_Number value);
+TOLUA_API void tolua_constant (lua_State* L, const char* name, lua_Integer value);
 TOLUA_API void tolua_variable (lua_State* L, const char* name, lua_CFunction get, lua_CFunction set);
 TOLUA_API void tolua_array (lua_State* L,const char* name, lua_CFunction get, lua_CFunction set);
 
@@ -134,8 +125,8 @@ TOLUA_API void tolua_pushusertype_and_addtoroot (lua_State* L, void* value, cons
 TOLUA_API void tolua_add_value_to_root (lua_State* L,void* value);
 TOLUA_API void tolua_remove_value_from_root (lua_State* L, void* value);
 
-TOLUA_API lua_Number tolua_tonumber (lua_State* L, int narg, lua_Number def);
 TOLUA_API lua_Integer tolua_tointeger(lua_State* L, int narg, lua_Integer def);
+TOLUA_API lua_Number tolua_tonumber (lua_State* L, int narg, lua_Number def);
 TOLUA_API const char* tolua_tostring (lua_State* L, int narg, const char* def);
 TOLUA_API void* tolua_touserdata (lua_State* L, int narg, void* def);
 TOLUA_API void* tolua_tousertype (lua_State* L, int narg, void* def);

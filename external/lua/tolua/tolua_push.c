@@ -52,9 +52,12 @@ void tolua_pushusertype_internal (lua_State* L, void* value, const char* type, i
             lua_pushvalue(L, -2);                                   /* stack: mt newud mt */
             lua_setmetatable(L,-2);                      /* update mt, stack: mt newud */
             
-#ifdef LUA_VERSION_NUM
-            lua_pushvalue(L, TOLUA_NOPEER);             /* stack: mt newud peer */
-            lua_setfenv(L, -2);                         /* stack: mt newud */
+#if LUA_VERSION_NUM == 501
+			lua_pushvalue(L, TOLUA_NOPEER);             /* stack: mt newud peer */
+			lua_setfenv(L, -2);                         /* stack: mt newud */
+#elif LUA_VERSION_NUM >= 503
+			lua_pushvalue(L, TOLUA_NOPEER);             /* stack: mt newud peer */
+			lua_setuservalue(L, -2);                         /* stack: mt newud */
 #endif
         }
         else
@@ -105,10 +108,11 @@ TOLUA_API void tolua_pushboolean (lua_State* L, int value)
 
 TOLUA_API void tolua_pushnumber (lua_State* L, lua_Number value)
 {
-    lua_pushnumber(L,value);
+	lua_pushnumber(L, value);
 }
 
-TOLUA_API void tolua_pushinteger(lua_State* L, lua_Integer value) {
+TOLUA_API void tolua_pushinteger(lua_State* L, lua_Integer value)
+{
     lua_pushinteger(L, value);
 }
 

@@ -19,7 +19,6 @@ local Connection = require("Network.Socket.Connection");
 local cServer = Connection.Server;
 local Server = class(cServer);
 
-local pbc = require("Network.LuaPB.protobuf");
 local pb = require("pb");
 
 local config = require("config");
@@ -58,22 +57,7 @@ function Server:ctor()
                 Event.SocketClose(sender,info.conn);
             end
         elseif info.event == Server.MG_Recv then
-            if Server.ProtocolType == "pbc" then
-                --接受事件
-                local msg = info.msg
-                local offset = msg:find("\0")
-                if offset then
-                    local msgName = msg:sub(1,offset - 1)
-                    local ret = msg:sub(offset + 1)
-                    local ok,dataTab = pcall(pbc.decode,msgName,ret)
-                    if msgName == "ClientToServerHeartbeat" then
-                        self.hbDelays[info.conn] = 0;
-                        self:Send(info.conn,"ServerToClientHeartbeat");
-                    elseif ok and not self:OnRecv(info.conn,msgName,dataTab) then
-                        Event.SocketRecv(sender,info.conn,msgName,dataTab);
-                    end
-                end
-            elseif Server.ProtocolType == "json" then
+            if Server.ProtocolType == "json" then
                 local ret = cjson.decode(info.msg)
                 if type(ret) == "table" then
                     local msgName = ret.msgName
@@ -113,16 +97,7 @@ function Server:Send(conn,msgName,data)
     else
         data = data or {};
     end
-    if Server.ProtocolType == "pbc" then
-        local ok,sendStr = pcall(pbc.encode,msgName,data)
-        if ok then
-            if toAll then
-                cServer.Send(self,msgName.."\0"..sendStr);
-            else
-                cServer.Send(self,conn,msgName.."\0"..sendStr)
-            end
-        end
-    elseif Server.ProtocolType == "json" then
+    if Server.ProtocolType == "json" then
         data.msgName = msgName
         local sendStr = cjson.encode(data);
         if sendStr then

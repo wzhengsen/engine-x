@@ -19,6 +19,10 @@ target_compile_definitions(${target_name}
     PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS
     )
 
+#LUA_FLOORN2I=1
+#The 1 means F2Ifloor,default is 0,which means F2Ieq.
+target_compile_definitions(${target_name} PUBLIC LUA_FLOORN2I=1)
+
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(${target_name} PUBLIC LUA_BUILD_AS_DLL=1)
 endif()

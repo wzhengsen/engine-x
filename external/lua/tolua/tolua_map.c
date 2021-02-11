@@ -267,7 +267,7 @@ static int tolua_bnd_inherit (lua_State* L) {
     return 0;
 };
 
-#ifdef LUA_VERSION_NUM /* lua 5.1 */
+#if LUA_VERSION_NUM == 501  /* lua 5.1 */
 static int tolua_bnd_setpeer(lua_State* L) {
 
     /* stack: userdata, table */
@@ -296,16 +296,36 @@ static int tolua_bnd_getpeer(lua_State* L) {
     };
     return 1;
 };
-#endif
+#elif LUA_VERSION_NUM >= 503 /* lua 5.3 */
+static int tolua_bnd_setpeer(lua_State* L) {
 
-static void tolua_pushglobaltable(lua_State* L)
-{
-#if LUA_VERSION_NUM >= 502
-    lua_rawgeti(L, LUA_REGISTRYINDEX, LUA_RIDX_GLOBALS);
-#else
-    lua_pushvalue(L, LUA_GLOBALSINDEX);
+	/* stack: userdata, table */
+	if (!lua_isuserdata(L, -2)) {
+		lua_pushstring(L, "Invalid argument #1 to setpeer: userdata expected.");
+		lua_error(L);
+	};
+
+	if (lua_isnil(L, -1)) {
+
+		lua_pop(L, 1);
+		lua_pushvalue(L, TOLUA_NOPEER);
+	};
+	lua_setuservalue(L, -2);
+
+	return 0;
+};
+
+static int tolua_bnd_getpeer(lua_State* L) {
+
+	/* stack: userdata */
+	lua_getuservalue(L, -1);
+	if (lua_rawequal(L, -1, TOLUA_NOPEER)) {
+		lua_pop(L, 1);
+		lua_pushnil(L);
+	};
+	return 1;
+};
 #endif
-}
 
 /* Get the index which have been override
     2014.6.5 by SunLightJuly
@@ -540,7 +560,7 @@ TOLUA_API void tolua_beginmodule (lua_State* L, const char* name)
         }
 //---- by SunLightJuly, 2014.6.5
     } else {
-        tolua_pushglobaltable(L);
+		lua_getglobal(L, "_G");
     }
 }
 
@@ -575,7 +595,7 @@ TOLUA_API void tolua_module (lua_State* L, const char* name, int hasvar)
     else
     {
         /* global table */
-        tolua_pushglobaltable(L);
+		lua_getglobal(L, "_G");
     }
     if (hasvar)
     {
@@ -603,7 +623,7 @@ TOLUA_API void tolua_module (lua_State* L, const char* name, int hasvar)
     else
     {
         /* global table */
-        tolua_pushglobaltable(L);
+        lua_pushvalue(L,LUA_GLOBALSINDEX);
     }
     if (hasvar)
     {
@@ -645,11 +665,83 @@ static void push_collector(lua_State* L, const char* type, lua_CFunction col) {
     lua_pop(L, 1);
 };
 
+// 这两个函数第一个上值指代“类”这个表。
+static int tolua_ext_gtor(lua_State* L) {
+    const int index = lua_upvalueindex(1);      //table_p
+    lua_pushvalue(L, index);                    //table_cls table_p
+    lua_getmetatable(L, -1);                    //mt table_cls table_p
+    if (lua_isnil(L, -1)) {
+        return 0;
+    }
+    lua_remove(L, -2);                          //mt table_p
+    lua_pushstring(L, ".get");                  //".get" mt table_p
+    lua_rawget(L, -2);                          //table? mt table_p
+    if (!lua_istable(L, -1)) {
+        lua_pop(L, 1);                          //mt table_p
+        lua_pushstring(L, ".get");              //".get" mt table_p
+        lua_newtable(L);                        //table ".get" mt table_p
+        lua_pushvalue(L, -1);                   //table table ".get" mt table_p
+        lua_insert(L, -3);                      //table ".get" table mt table_p
+        lua_rawset(L, -4);                      //table mt table_p
+    }
+
+    /*  表放在索引 't' 处 */
+    lua_pushnil(L);  /* 第一个键 */
+    while (lua_next(L, 1) != 0) {
+        /* 使用 '键' （在索引 -2 处） 和 '值' （在索引 -1 处）*/
+        lua_pushvalue(L, 4);
+        lua_pushvalue(L, 5);
+        lua_rawset(L, -5);
+        /* 移除 '值' ；保留 '键' 做下一次迭代 */
+        lua_pop(L, 1);
+    }
+
+    return 0;
+}
+
+static int tolua_ext_stor(lua_State* L) {
+    const int index = lua_upvalueindex(1);      //table_p
+    lua_pushvalue(L, index);                    //table_cls table_p
+    lua_getmetatable(L, -1);                    //mt table_cls table_p
+    if (lua_isnil(L, -1)) {
+        return 0;
+    }
+    lua_remove(L, -2);                          //mt table_p
+    lua_pushstring(L, ".set");                  //".get" mt table_p
+    lua_rawget(L, -2);                          //table? mt table_p
+    if (!lua_istable(L, -1)) {
+        lua_pop(L, 1);                          //mt table_p
+        lua_pushstring(L, ".set");              //".get" mt table_p
+        lua_newtable(L);                        //table ".get" mt table_p
+        lua_pushvalue(L, -1);                   //table table ".get" mt table_p
+        lua_insert(L, -3);                      //table ".get" table mt table_p
+        lua_rawset(L, -4);                      //table mt table_p
+    }
+
+    /*  表放在索引 't' 处 */
+    lua_pushnil(L);  /* 第一个键 */
+    while (lua_next(L, 1) != 0) {
+        /* 使用 '键' （在索引 -2 处） 和 '值' （在索引 -1 处）*/
+        lua_pushvalue(L, 4);
+        lua_pushvalue(L, 5);
+        lua_rawset(L, -5);
+        /* 移除 '值' ；保留 '键' 做下一次迭代 */
+        lua_pop(L, 1);
+    }
+
+    return 0;
+}
+
 /* Map C class
     * It maps a C class, setting the appropriate inheritance and super classes.
 */
 TOLUA_API void tolua_cclass (lua_State* L, const char* lname, const char* name, const char* base, lua_CFunction col)
 {
+    static const luaL_Reg regFuncs[] = {
+        {"gtor",tolua_ext_gtor},
+        {"stor",tolua_ext_stor},
+        {NULL,NULL}
+    };
     char cname[128] = "const ";
     char cbase[128] = "const ";
     strncat(cname,name,120);
@@ -680,6 +772,12 @@ TOLUA_API void tolua_cclass (lua_State* L, const char* lname, const char* name, 
     lua_pushliteral(L, ".isclass");
     lua_pushboolean(L, 1);
     lua_rawset(L, -3);                  // stack: module lname table
+
+    // 压入上值
+    lua_pushvalue(L, -1);
+    // 此处注册gtor和stor
+    luaL_setfuncs(L, regFuncs, 1);
+
     lua_rawset(L, -3);                  // stack: module
 //---- by SunLightJuly, 2014.6.5
 
@@ -739,10 +837,10 @@ TOLUA_API void tolua_set_call_event(lua_State* L, lua_CFunction func, char* type
 /* Map constant number
     * It assigns a constant number into the current module (or class)
 */
-TOLUA_API void tolua_constant (lua_State* L, const char* name, lua_Number value)
+TOLUA_API void tolua_constant (lua_State* L, const char* name, lua_Integer value)
 {
     lua_pushstring(L,name);
-    tolua_pushnumber(L,value);
+    tolua_pushinteger(L,value);
     lua_rawset(L,-3);
 }
 

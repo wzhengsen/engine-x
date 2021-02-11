@@ -185,6 +185,11 @@ if(BUILD_EXT_WEBSOCKETS)
     target_link_libraries(external ext_websockets ext_uv)
 endif(BUILD_EXT_WEBSOCKETS)
 
+if(BUILD_EXT_MONGOOSE)
+    add_subdirectory(mongoose)
+    target_link_libraries(external mongoose)
+endif(BUILD_EXT_MONGOOSE)
+
 # use lua/js specific libs by property to prevent conflict
 if(BUILD_LUA_LIBS)
     add_subdirectory(lua/plainlua)
