@@ -29,6 +29,8 @@ endif()
 
 set_target_properties(${target_name} PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${LUA_SRC_PATH}"
+  #for sol path
+  PUBLIC    ..
 )
 
 set_target_properties(${target_name}
