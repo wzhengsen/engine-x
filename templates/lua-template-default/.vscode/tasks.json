@@ -35,8 +35,8 @@
                 "clear": false
             },
             "options": {
-                "tasksHere": {
-                    "display": false
+                "statusbar": {
+                    "hide": true
                 }
             }
         },
@@ -84,10 +84,10 @@
                 "clear": false
             },
             "options": {
-                "tasksHere": {
+                "statusbar": {
                     "name": "$(sync) 全量同步",
                     "color": "#c9c612",
-                    "display": false
+                    "hide": true
                 }
             }
         },
@@ -108,10 +108,11 @@
             },
             "options": {
                 "cwd": "${env:ENGINEX_ROOT}/tools/tolua",
-                "tasksHere": {
-                    "name": "$(file-code)",
+                "statusbar": {
+                    "label": "$(file-code)",
+                    "tooltip": "LuaGen",
                     "color": "#6cc4ff",
-                    "display": false,
+                    "hide": false,
                 }
             }
         },
@@ -132,24 +133,24 @@
             "osx": {
                 "options": {
                     "cwd": "${workspaceFolder}",
-                    "tasksHere": {
-                        "name": "$(archive)",
+                    "statusbar": {
+                        "label": "$(archive)",
                         "color": "#fc46cf",
-                        "display": true,
+                        "hide": false,
                     }
                 }
             },
             "windows": {
                 "options": {
-                    "tasksHere": {
-                        "display": false
+                    "statusbar": {
+                        "hide": true
                     }
                 }
             },
             "linux": {
                 "options": {
-                    "tasksHere": {
-                        "display": false
+                    "statusbar": {
+                        "hide": true
                     }
                 }
             }

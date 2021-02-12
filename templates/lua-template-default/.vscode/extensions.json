@@ -2,7 +2,7 @@
     "recommendations": [
         "ms-python.python",
         "ms-vscode.cmake-tools",
-        "alexzshl.tasks-here",
+        "actboy168.tasks",
         "sumneko.lua",
         "stuartwang.luapanda",
     ]
