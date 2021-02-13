@@ -8,6 +8,19 @@
 		}
 	],
 	"settings": {
+		"C_Cpp.formatting": "vcFormat",
+		"C_Cpp.vcFormat.newLine.beforeOpenBrace.block": "sameLine",
+		"C_Cpp.vcFormat.newLine.beforeOpenBrace.function": "sameLine",
+		"C_Cpp.vcFormat.newLine.beforeOpenBrace.lambda": "sameLine",
+		"C_Cpp.vcFormat.newLine.beforeOpenBrace.namespace": "sameLine",
+		"C_Cpp.vcFormat.newLine.beforeOpenBrace.type": "sameLine",
+		"C_Cpp.vcFormat.newLine.closeBraceSameLine.emptyFunction": true,
+		"C_Cpp.vcFormat.newLine.closeBraceSameLine.emptyType": true,
+		"C_Cpp.vcFormat.indent.lambdaBracesWhenParameter": false,
+		"editor.formatOnPaste": true,
+		"editor.formatOnType": true,
+		"editor.formatOnSave": true,
+		"editor.formatOnSaveMode": "modifications",
 		"cmake.statusbar.visibility": "icon",
 		"cmake.statusbar.advanced": {
 			"build": {
@@ -114,7 +127,8 @@
 			"cfenv": "cpp",
 			"cinttypes": "cpp",
 			"*.mm": "cpp",
-			"*.rh": "cpp"
+			"*.rh": "cpp",
+			"coroutine": "cpp"
 		}
 	}
 }

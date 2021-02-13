@@ -31,6 +31,7 @@ set(lua_bindings_manual_headers
     manual/controller/lua_cocos2dx_controller_manual.hpp
     manual/ui/lua_cocos2dx_webview_manual.hpp
     manual/ui/lua_cocos2dx_video_manual.hpp
+    SolWrapper.hpp
     )
 
 set(lua_bindings_manual_files

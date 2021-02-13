@@ -79,9 +79,6 @@
             "type": "cppvsdbg",
             "program": "${workspaceFolder}/build/bin/${workspaceFolderBasename}/Debug/${workspaceFolderBasename}.exe",
             "cwd": "${workspaceFolder}/build/bin/${workspaceFolderBasename}/Debug",
-            "args": [
-                "--noCmd"
-            ],
             "stopAtEntry": false,
             "environment": [],
             "console": "integratedTerminal",
