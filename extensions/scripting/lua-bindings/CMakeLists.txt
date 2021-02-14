@@ -31,7 +31,6 @@ set(lua_bindings_manual_headers
     manual/controller/lua_cocos2dx_controller_manual.hpp
     manual/ui/lua_cocos2dx_webview_manual.hpp
     manual/ui/lua_cocos2dx_video_manual.hpp
-    SolWrapper.hpp
     )
 
 set(lua_bindings_manual_files
@@ -152,11 +151,15 @@ set(lua_bindings_files
     ${lua_bindings_manual_files}
     ${lua_bindings_auto_files}
     ${COCOS_DEPRECATED_SRC}
+    Lua.cpp
+    LuaObject.cpp
     )
 set(lua_bindings_headers
     ${lua_bindings_manual_headers}
     ${lua_bindings_auto_headers}
     ${COCOS_DEPRECATED_HEADER}
+    Lua.h
+    LuaObject.h
     )
 
 set(lua_bindings_files
