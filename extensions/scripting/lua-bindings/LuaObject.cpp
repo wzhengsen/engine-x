@@ -24,6 +24,9 @@
 
 namespace cocos2d {
     LuaObject::~LuaObject() {
+        if (_dtorHandler) {
+            _dtorHandler(this);
+        }
         if (_luaRef == LuaNoRef) {
             return;
         }
@@ -34,5 +37,8 @@ namespace cocos2d {
     }
     int LuaObject::GetLuaRef() const {
         return _luaRef;
+    }
+    void LuaObject::SetDtorHandler(std::function<void(LuaObject*)>& dh) {
+        _dtorHandler = dh;
     }
 } // namespace cocos2d

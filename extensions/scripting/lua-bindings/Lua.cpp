@@ -21,10 +21,91 @@
  ****************************************************************************/
 
 #include "Lua.h"
+#include "base/CCData.h"
+#include "platform/CCFileUtils.h"
+
+using namespace cocos2d;
 namespace cocos2d {
     Lua* Lua::GetInstance() {
         if (!lua) {
             lua = new Lua();
+            lua->open_libraries();
+            lua->add_package_loader([](std::string fileName) {
+                static const std::string ExtLuaC = ".luac";
+                static const std::string ExtLua = ".lua";
+                std::string searchPath = (*lua)["package"]["path"];
+                Data chunk = {};
+                std::string chunkName = {};
+                FileUtils* utils = FileUtils::getInstance();
+
+                size_t pos = 0;
+                for (const std::string& ext : { ExtLuaC,ExtLua }) {
+                    pos = fileName.rfind(ext);
+                    if (pos != std::string::npos && pos == fileName.length() - ext.length()) {
+                        // fileName ignore end with ".lua" or ".luac".
+                        fileName = fileName.substr(0, pos);
+                        break;
+                    }
+                }
+
+                while (std::string::npos != (pos = fileName.find_first_of('.'))) {
+                    // fileName replace . by /
+                    fileName.replace(pos, 1, "/");
+                }
+
+                // search file in package.path
+                size_t begin = 0;
+                size_t next = 0;
+
+                while (std::string::npos != (next = searchPath.find_first_of(';', begin))) {
+                    std::string prefix = searchPath.substr(begin, next - begin);
+                    if (prefix[0] == '.' && prefix[1] == '/') {
+                        // prefix skip start with "./".
+                        prefix = prefix.substr(2);
+                    }
+                    for (const std::string& ext : { ExtLuaC,ExtLua }) {
+                        pos = prefix.rfind(ext);
+                        if (pos != std::string::npos && pos == prefix.length() - ext.length()) {
+                            // prefix ignore end with ".lua" or ".luac".
+                            prefix = prefix.substr(0, pos);
+                            break;
+                        }
+                    }
+
+                    // prefix replace ? by fileName.
+                    pos = prefix.find_first_of('?', 0);
+                    while (pos != std::string::npos) {
+                        prefix.replace(pos, 1, fileName);
+                        pos = prefix.find_first_of('?', pos + fileName.length() + 1);
+                    }
+
+                    bool breakOut = false;
+                    for (const std::string& ext : { ExtLuaC,ExtLua,std::string() }) {
+                        // Test ".luac"/".lua" and no ext.
+                        chunkName = prefix + ext;
+                        if (utils->isFileExist(chunkName)) {
+                            chunk = utils->getDataFromFile(chunkName);
+                            breakOut = true;
+                            break;
+                        }
+                    }
+                    if (breakOut) {
+                        break;
+                    }
+
+                    begin = next + 1;
+                }
+                const uint8_t* cByte = chunk.getBytes();
+                size_t cSize = static_cast<size_t>(chunk.getSize());
+                if (chunk.getSize() >= 3) {
+                    // SkipBOM
+                    if (cByte[0] == 0xEF && cByte[1] == 0xBB && cByte[2] == 0xBF) {
+                        cByte += 3;
+                        cSize -= 3;
+                    }
+                }
+                return lua->load_buffer(reinterpret_cast<const std::byte*>(cByte), cSize, chunkName);
+            });
         }
         return lua;
     }
@@ -40,7 +121,7 @@ namespace cocos2d {
         }
 
         // Get lua_State*.
-        auto l = GetInstance()->lua_state();// ...
+        auto l = lua_state();// ...
         // Get registry["SolWrapper.UD"] as a table.
         if (LUA_TTABLE == lua_getfield(l, LUA_REGISTRYINDEX, "SolWrapper.UD")) {// ...table?
             luaL_unref(l, -1, ref);// ...table
@@ -48,4 +129,4 @@ namespace cocos2d {
         // Keep lua stack.
         lua_pop(l, 1);// ...
     }
-};
+}

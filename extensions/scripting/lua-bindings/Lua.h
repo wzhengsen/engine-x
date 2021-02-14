@@ -145,7 +145,7 @@ namespace cocos2d {
         }
 
         void UnRefUserData(int ref);
-    private:
+    protected:
         using sol::state::state;
         inline static Lua* lua = nullptr;
         inline static const std::map<std::string, sol::meta_function> MethodToSolMap = {

@@ -30,7 +30,13 @@ namespace cocos2d {
 
         void SetLuaRef(int ref);
         int GetLuaRef() const;
+        void SetDtorHandler(std::function<void(LuaObject*)>& dh);
+    protected:
+        LuaObject() = default;
     private:
+        LuaObject(const LuaObject&) = delete;
+        LuaObject& operator=(const LuaObject&) = delete;
+        std::function<void(LuaObject*)> _dtorHandler = nullptr;
         int _luaRef = LuaNoRef;
     };
 } // namespace cocos2d
