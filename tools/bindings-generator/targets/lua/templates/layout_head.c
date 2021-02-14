@@ -16,8 +16,6 @@ $macro_judgement
 \#include "${os.path.basename(header)}"
     #end if
 #end for
-\#include "scripting/lua-bindings/manual/tolua_fix.h"
-\#include "scripting/lua-bindings/manual/LuaBasicConversions.h"
 #if $cpp_headers
 #for header in $cpp_headers
 \#include "${header}"

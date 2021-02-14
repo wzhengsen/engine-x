@@ -1,4 +1,5 @@
 \#include "base/ccConfig.h"
+\#include "scripting/lua-bindings/CCLua.h"
 #if $macro_judgement
 $macro_judgement
 #end if 
@@ -9,13 +10,4 @@ $macro_judgement
 \#include "${header}"
 #end for
 #end if 
-
-\#ifdef __cplusplus
-extern "C" {
-\#endif
-\#include "tolua++.h"
-\#ifdef __cplusplus
-}
-\#endif
-
-int register_all_${prefix}(lua_State* tolua_S);
+void register_all_${prefix}();
