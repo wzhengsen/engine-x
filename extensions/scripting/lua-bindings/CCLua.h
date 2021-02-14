@@ -22,7 +22,8 @@
 #pragma once
 #include <map>
 #include "sol/sol.hpp"
-#include "LuaObject.h"
+#include "CCLuaObject.h"
+#include "platform/CCPlatformMacros.h"
 
 template<typename T, typename = typename std::enable_if<std::is_base_of<cocos2d::LuaObject, T>::value>::type>
 int sol_lua_push(lua_State* L, T* obj) {
@@ -77,7 +78,7 @@ int sol_lua_push(lua_State* L, const T* obj) {
 }
 
 namespace cocos2d {
-    class Lua : public sol::state {
+    class CC_DLL Lua : public sol::state {
     public:
         static Lua* GetInstance();
         static void Close();

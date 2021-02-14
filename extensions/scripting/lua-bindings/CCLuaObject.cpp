@@ -20,7 +20,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "Lua.h"
+#include "CCLua.h"
 
 namespace cocos2d {
     LuaObject::~LuaObject() {

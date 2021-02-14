@@ -21,9 +21,10 @@
  ****************************************************************************/
 #pragma once
 #include "sol/sol.hpp"
+#include "platform/CCPlatformMacros.h"
 
 namespace cocos2d {
-    class LuaObject {
+    class CC_DLL LuaObject {
     public:
         inline static int LuaNoRef = LUA_NOREF;
         virtual ~LuaObject();

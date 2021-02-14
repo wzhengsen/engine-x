@@ -20,7 +20,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "Lua.h"
+#include "CCLua.h"
 #include "base/CCData.h"
 #include "platform/CCFileUtils.h"
 

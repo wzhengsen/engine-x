@@ -151,15 +151,15 @@ set(lua_bindings_files
     ${lua_bindings_manual_files}
     ${lua_bindings_auto_files}
     ${COCOS_DEPRECATED_SRC}
-    Lua.cpp
-    LuaObject.cpp
+    CCLua.cpp
+    CCLuaObject.cpp
     )
 set(lua_bindings_headers
     ${lua_bindings_manual_headers}
     ${lua_bindings_auto_headers}
     ${COCOS_DEPRECATED_HEADER}
-    Lua.h
-    LuaObject.h
+    CCLua.h
+    CCLuaObject.h
     )
 
 set(lua_bindings_files
