@@ -3,8 +3,8 @@
 #if $macro_judgement
 $macro_judgement
 #end if 
-\#ifndef __${prefix}_h__
-\#define __${prefix}_h__
+\#ifndef __lua_${prefix}_auto_h__
+\#define __lua_${prefix}_auto_h__
 #if $hpp_headers
 #for header in $hpp_headers
 \#include "${header}"

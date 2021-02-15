@@ -1165,7 +1165,12 @@ class NativeClass(object):
                     else:
                         parent = self.generator.generated_classes[parent.displayname]
 
-                    self.parents.append(parent)
+                    if parent not in self.parents:
+                        self.parents.append(parent)
+                    for p_parent in parent.parents:
+                        if p_parent not in self.parents:
+                            self.parents.append(p_parent)
+
 
             if parent_name == "Ref":
                 self.is_ref_class = True
@@ -1195,7 +1200,7 @@ class NativeClass(object):
                                     previous_m.append(m)
                                 else:
                                     self.override_methods[registration_name] = NativeOverloadedFunction([m, previous_m])
-                        return False
+                        #return False
 
                 if m.static:
                     if registration_name not in self.static_methods.keys():
