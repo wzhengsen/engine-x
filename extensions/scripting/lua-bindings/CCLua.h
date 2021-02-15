@@ -25,19 +25,21 @@
 #include "CCLuaObject.h"
 #include "platform/CCPlatformMacros.h"
 
+ /**
+  * @brief       Any class which base of cocos2d::LuaObject will trigger this function when it be pushed into lua stack.
+  *              Shound not be called by manual.
+  */
 template<typename T, typename = typename std::enable_if<std::is_base_of<cocos2d::LuaObject, T>::value>::type>
-int sol_lua_push(lua_State* L, T* obj) {
+int sol_lua_push(lua_State* L, const T* obj) {
     if (nullptr == obj) {
         return 0;
     }
-    int luaRef = obj->GetLuaRef();
-    bool udExist =
-        (luaRef != cocos2d::LuaObject::LuaNoRef) &&
-        (LUA_TTABLE == lua_getfield(L, LUA_REGISTRYINDEX, "SolWrapper.UD"));// table?
+    bool udExist = LUA_TTABLE == lua_getfield(L, LUA_REGISTRYINDEX, UserDataKey);// table?
 
     if (udExist) {
         // Try to get exist userdata from registry["SolWrapper.UD"].
-        udExist = LUA_TUSERDATA == lua_rawgeti(L, 1, obj->GetLuaRef()); // table,userdata?
+        lua_pushlightuserdata(L, obj);// table,light_ud
+        udExist = LUA_TUSERDATA == lua_rawget(L, 1); // table,userdata?
     }
     if (!udExist) {
         lua_settop(L, 0);
@@ -45,16 +47,17 @@ int sol_lua_push(lua_State* L, T* obj) {
         *static_cast<const T**>(lua_newuserdata(L, sizeof(const T*))) = obj;// ud
 
         // Make sure the registry["SolWrapper.UD"] is a table.
-        if (LUA_TTABLE != lua_getfield(L, LUA_REGISTRYINDEX, "SolWrapper.UD")) {// ud,table?
+        if (LUA_TTABLE != lua_getfield(L, LUA_REGISTRYINDEX, UserDataKey)) {// ud,table?
             lua_pop(L, 1);// ud
             lua_newtable(L);// ud,table
             lua_pushvalue(L, -1);// ud,table,table
-            lua_setfield(L, LUA_REGISTRYINDEX, "SolWrapper.UD");// ud,table
+            lua_setfield(L, LUA_REGISTRYINDEX, UserDataKey);// ud,table
         }
 
-        // Save lua ref into LuaObject.
-        lua_pushvalue(L, 1);// ud,table,ud
-        obj->SetLuaRef(luaL_ref(L, -2));//ud,table
+        // Save object into registry["SolWrapper.UD"] with light_ud pointer as key.
+        lua_pushlightuserdata(L, obj);// ud,table,light_ud
+        lua_pushvalue(L, -3);// ud,table,light_ud,ud
+        lua_rawset(L, -3);// ud,table
         lua_pop(L, 1);//ud
 
         // Set uservalue for this userdata with a table.
@@ -72,17 +75,34 @@ int sol_lua_push(lua_State* L, T* obj) {
     return 1;
 }
 
-template<typename T, typename = typename std::enable_if<std::is_base_of<cocos2d::LuaObject, T>::value>::type>
-int sol_lua_push(lua_State* L, const T* obj) {
-    return sol_lua_push(L, const_cast<T*>(obj));
-}
-
 namespace cocos2d {
+    /**
+    * @brief Simply wrapped sol::state type, all cocos lua operations are centralized to this class.
+    */
     class CC_DLL Lua : public sol::state {
     public:
+        /**
+        * @brief    Get lua instance.
+        *           Will create a new sol::state as lua state on first call or after called Lua::Close().
+        *           The lua stack will keep alive utill call Lua::Close().
+        * @return   cocos2d::Lua*
+        */
         static Lua* GetInstance();
+
+        /**
+        * @brief    Close the opened lua instance.
+        */
         static void Close();
 
+        /**
+        * @brief    A wrapper of sol::table::new_usertype.
+        *           The __newindex/__index/__pairs meta-method has been registered in advance.
+        * @param    U The class or struct which want to be register into lua table.
+        * @param    B All of base class of U,such as base's base,and so on.
+        * @param    t The sol::table that class want register into.
+        * @param    name The class name in lua.
+        * @return   You can use it to register your own member-method or meta-method.
+        */
         template<typename U, typename ...B>
         static sol::usertype<U> NewUserType(sol::table& t, const std::string& name) {
             auto ut = t.new_usertype<U>(name,
@@ -117,6 +137,7 @@ namespace cocos2d {
                 lua_pushnil(L);// userdata,function,userdata,nil
                 return 3;
             });
+            // Provides a way to register a meta-method in lua.
             ut["mtor"] = [ut](const std::string& name, const sol::function& method) mutable {
                 auto iter = MethodToSolMap.find(name);
                 if (iter == MethodToSolMap.cend()) {
@@ -126,6 +147,7 @@ namespace cocos2d {
                 }
                 ut[iter->second] = method;
             };
+            // Provides a way to register property in lua.
             ut["stor"] = [ut](const sol::table& stor) mutable {
                 stor.for_each([ut](const sol::object& o1, const sol::object& o2) mutable {
                     sol::function f = o2.as<sol::function>();
@@ -145,9 +167,15 @@ namespace cocos2d {
             return ut;
         }
 
-        void UnRefUserData(int ref);
+        /**
+        * @brief    This method should be called when a c++ instance registered in lua is destroyed.
+        *           This method releases the userdata bound to the c++ instance pointer from the registry["SolWrapper.UD"] and points the userdata to the nullptr.
+        * @param    obj Any c++ pointer.
+        */
+        void ReleaseInLua(void* obj);
     protected:
         using sol::state::state;
+        inline static constexpr char UserDataKey[] = "Lua.UD?";
         inline static Lua* lua = nullptr;
         inline static const std::map<std::string, sol::meta_function> MethodToSolMap = {
             {"__index",sol::meta_function::index},

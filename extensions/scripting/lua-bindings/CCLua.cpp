@@ -115,16 +115,22 @@ namespace cocos2d {
         lua = nullptr;
     }
 
-    void Lua::UnRefUserData(int ref) {
-        if (LuaObject::LuaNoRef == ref) {
-            return;
-        }
-
+    void Lua::ReleaseInLua(void* obj) {
         // Get lua_State*.
         auto l = lua_state();// ...
         // Get registry["SolWrapper.UD"] as a table.
-        if (LUA_TTABLE == lua_getfield(l, LUA_REGISTRYINDEX, "SolWrapper.UD")) {// ...table?
-            luaL_unref(l, -1, ref);// ...table
+        if (LUA_TTABLE == lua_getfield(l, LUA_REGISTRYINDEX, UserDataKey)) {// ...table?
+            lua_pushlightuserdata(l, obj);// ...table,light_ud
+            lua_pushvalue(l, -1);// ...table,light_ud,light_ud
+            if (LUA_TUSERDATA == lua_rawget(l, -2)) {// ...table,light_ud,userdata?
+                void** ud = (void**)lua_touserdata(l, -1);// ...table,light_ud,userdata?
+                if (ud) {
+                    *ud = nullptr;
+                }
+            }
+            lua_pop(l, 1);// ...table,light_ud
+            lua_pushnil(l);// ...table,light_ud,nil
+            lua_rawset(l, -3);// ...table
         }
         // Keep lua stack.
         lua_pop(l, 1);// ...

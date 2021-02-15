@@ -20,17 +20,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 #pragma once
-#include "sol/sol.hpp"
 #include "platform/CCPlatformMacros.h"
 
 namespace cocos2d {
+    /**
+    * @brief Any c++ class that wants to automatically manage the allocation behavior of userdata in lua, please inherit from me.
+    */
     class CC_DLL LuaObject {
     public:
-        inline static int LuaNoRef = LUA_NOREF;
         virtual ~LuaObject();
-
-        void SetLuaRef(int ref);
-        int GetLuaRef() const;
         void SetDtorHandler(std::function<void(LuaObject*)>& dh);
     protected:
         LuaObject() = default;
@@ -38,6 +36,5 @@ namespace cocos2d {
         LuaObject(const LuaObject&) = delete;
         LuaObject& operator=(const LuaObject&) = delete;
         std::function<void(LuaObject*)> _dtorHandler = nullptr;
-        int _luaRef = LuaNoRef;
     };
 } // namespace cocos2d
