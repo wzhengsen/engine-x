@@ -472,6 +472,9 @@ class NativeType(object):
                 nt.namespaced_name = normalize_type_str(nt.namespaced_name)
                 nt.namespace_name = get_namespace_name(decl)
                 nt.whole_name = nt.namespaced_name
+                nt.is_const = ntype.is_const_qualified()
+                if nt.is_const:
+                    nt.whole_name = "const " + nt.whole_name
             else:
                 if decl.kind == cindex.CursorKind.NO_DECL_FOUND:
                     nt.name = native_name_from_type(ntype)
@@ -498,13 +501,13 @@ class NativeType(object):
                 if None != cdecl.spelling and 0 == cmp(cdecl.spelling, "function"):
                     nt.name = "std::function"
 
-                if nt.name != INVALID_NATIVE_TYPE and nt.name != "std::string" and nt.name != "std::function" and nt.name != "cxx17::string_view":
-                    if ntype.kind == cindex.TypeKind.UNEXPOSED or ntype.kind == cindex.TypeKind.TYPEDEF or ntype.kind == cindex.TypeKind.ELABORATED:
-                        ret = NativeType.from_type(ntype.get_canonical())
-                        if ret.name != "":
-                            if decl.kind == cindex.CursorKind.TYPEDEF_DECL or decl.kind == cindex.CursorKind.TYPE_ALIAS_DECL:
-                                ret.canonical_type = nt
-                            return ret
+                # if nt.name != INVALID_NATIVE_TYPE and nt.name != "std::string" and nt.name != "std::function" and nt.name != "cxx17::string_view":
+                #     if ntype.kind == cindex.TypeKind.UNEXPOSED or ntype.kind == cindex.TypeKind.TYPEDEF or ntype.kind == cindex.TypeKind.ELABORATED:
+                #         ret = NativeType.from_type(ntype.get_canonical())
+                #         if ret.name != "":
+                #             if decl.kind == cindex.CursorKind.TYPEDEF_DECL or decl.kind == cindex.CursorKind.TYPE_ALIAS_DECL:
+                #                 ret.canonical_type = nt
+                #             return ret
 
                 nt.is_enum = ntype.get_canonical().kind == cindex.TypeKind.ENUM
 
@@ -765,6 +768,7 @@ class NativeFunction(object):
         self.arguments = []
         self.argumtntTips = []
         self.static = cursor.kind == cindex.CursorKind.CXX_METHOD and cursor.is_static_method()
+        self.const = cursor.kind == cindex.CursorKind.CXX_METHOD and cursor.is_const_method()
         self.implementations = []
         self.is_overloaded = False
         self.is_constructor = False

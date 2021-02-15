@@ -8,11 +8,11 @@ conversions:
   # some times you want to use a special native type when converting from spidermonkey to native
   # the most common case would be from JS-boolean to bool. Using "bool" will fail here since we
   # pass the address to the conversion method, and a JSBool is defined as an integer in spidermonkey
-  native_types:
-    float: "double"
-    short: "int32_t"
-    "unsigned char": "uint16_t"
-    "char": "int32_t"
+  # native_types:
+  #   float: "float"
+  #   short: "short"
+  #   "unsigned char": "uint16_t"
+  #   "char": "int32_t"
   ns_map:
     "cocos2d::experimental::ui::": "ccexp."
     "cocos2d::experimental::": "ccexp."
