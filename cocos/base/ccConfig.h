@@ -310,17 +310,17 @@ THE SOFTWARE.
 #endif // CC_USE_WEBP
 
 /** Enable Lua Script binding */
-#ifndef CC_ENABLE_SCRIPT_BINDING
-#define CC_ENABLE_SCRIPT_BINDING 1
+#ifndef CC_ENABLE_LUA_BINDING
+#define CC_ENABLE_LUA_BINDING 1
 #endif
 
-/** When CC_ENABLE_SCRIPT_BINDING and CC_ENABLE_GC_FOR_NATIVE_OBJECTS are both 1
+/** When CC_ENABLE_LUA_BINDING and CC_ENABLE_GC_FOR_NATIVE_OBJECTS are both 1
  * then the Garbage collector will release the native objects, only when the JS/Lua objects
  * are collected.
  * The benefit is that users don't need to retain/release the JS/Lua objects manually.
  * Disabled by default.
  */
-#ifdef CC_ENABLE_SCRIPT_BINDING
+#ifdef CC_ENABLE_LUA_BINDING
   #ifndef CC_ENABLE_GC_FOR_NATIVE_OBJECTS
   #define CC_ENABLE_GC_FOR_NATIVE_OBJECTS 0
   #endif
@@ -332,7 +332,7 @@ THE SOFTWARE.
  * protected by default.
  */
 #ifndef CC_CONSTRUCTOR_ACCESS
-  #ifdef CC_ENABLE_SCRIPT_BINDING
+#ifdef CC_ENABLE_LUA_BINDING
     #define CC_CONSTRUCTOR_ACCESS public
   #else
     #define CC_CONSTRUCTOR_ACCESS protected

@@ -48,9 +48,6 @@ EditBox::EditBox()
 EditBox::~EditBox()
 {
     CC_SAFE_DELETE(_editBoxImpl);
-#if CC_ENABLE_SCRIPT_BINDING
-    unregisterScriptEditBoxHandler();
-#endif
 }
 
 void EditBox::openKeyboard() const
@@ -872,24 +869,6 @@ void EditBox::setGlobalZOrder(float globalZOrder)
         _editBoxImpl->setGlobalZOrder(globalZOrder);
     }
 }
-
-#if CC_ENABLE_SCRIPT_BINDING
-void EditBox::registerScriptEditBoxHandler(int handler)
-{
-    unregisterScriptEditBoxHandler();
-    _scriptEditBoxHandler = handler;
-}
-
-void EditBox::unregisterScriptEditBoxHandler()
-{
-    if (0 != _scriptEditBoxHandler)
-    {
-        ScriptEngineManager::getInstance()->getScriptEngine()->removeScriptHandler(_scriptEditBoxHandler);
-        _scriptEditBoxHandler = 0;
-    }
-}
-#endif
-
 }
 
 NS_CC_END

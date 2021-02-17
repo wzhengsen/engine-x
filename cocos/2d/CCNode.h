@@ -34,11 +34,9 @@
 #include "base/ccMacros.h"
 #include "base/CCVector.h"
 #include "base/CCProtocols.h"
-#include "base/CCScriptSupport.h"
 #include "math/CCAffineTransform.h"
 #include "math/CCMath.h"
 #include "2d/CCComponentContainer.h"
-#include "2d/CCComponent.h"
 
 #if CC_USE_PHYSICS
 #include "physics/CCPhysicsBody.h"
@@ -112,7 +110,7 @@ class CC_DLL Node : public Ref
 {
 public:
     /** Default tag used for all the nodes */
-    static const int INVALID_TAG = -1;
+    static constexpr int INVALID_TAG = -1;
 
     enum {
         FLAGS_TRANSFORM_DIRTY = (1 << 0),
@@ -1047,21 +1045,6 @@ public:
     virtual bool isRunning() const;
 
     /**
-     * Schedules for lua script.
-     * @js NA
-     *
-     * @param handler The key to search lua function.
-     * @param priority A given priority value.
-     */
-    void scheduleUpdateWithPriorityLua(int handler, int priority);
-
-    /// @}  end Script Bindings
-
-
-    /// @{
-    /// @name Event Callbacks
-
-    /**
      * Event callback that is invoked every time when Node enters the 'stage'.
      * If the Node enters the 'stage' with a transition, this event is called when the transition starts.
      * During onEnter you can't access a "sister/brother" node.
@@ -1721,45 +1704,65 @@ public:
     virtual bool isOpacityModifyRGB() const;
 
     /**
-     * Set the callback of event onEnter.
-     * @param callback A std::function<void()> callback.
+     * Set the handler of event onEnter.
+     * @param handler A std::function<void(Node*)> handler.
      */
-    void setOnEnterCallback(const std::function<void()>& callback) { _onEnterCallback = callback; }
+    void SetOnEnterHandler(const std::function<void(Node*)>& handler) { _enterHandler = handler; }
     /**
-     * Get the callback of event onEnter.
-     * @return A std:function<void()> callback.
+     * Get the handler of event onEnter.
+     * @return A std:function<void()> handler.
      */
-    const std::function<void()>& getOnEnterCallback() const { return _onEnterCallback; }
+    const std::function<void(Node*)>& GetOnEnterHandler() const { return _enterHandler; }
     /**
-     * Set the callback of event onExit.
-     * @param callback A std::function<void()> callback.
+     * Set the handler of event onExit.
+     * @param handler A std::function<void(Node*)> handler.
      */
-    void setOnExitCallback(const std::function<void()>& callback) { _onExitCallback = callback; }
+    void SetOnExitHandler(const std::function<void(Node*)>& handler) { _exitHandler = handler; }
     /**
-     * Get the callback of event onExit.
-     * @return A std::function<void()>.
+     * Get the handler of event onExit.
+     * @return A std::function<void(Node*)>.
      */
-    const std::function<void()>& getOnExitCallback() const { return _onExitCallback; }
+    const std::function<void(Node*)>& GetOnExitHandler() const { return _exitHandler; }
     /**
-     * Set the callback of event EnterTransitionDidFinish.
-     * @param callback A std::function<void()> callback.
+     * Set the handler of event EnterTransitionDidFinish.
+     * @param handler A std::function<void(Node*)> handler.
      */
-    void setOnEnterTransitionDidFinishCallback(const std::function<void()>& callback) { _onEnterTransitionDidFinishCallback = callback; }
+    void SetOnEnterTransitionDidFinishHandler(const std::function<void(Node*)>& handler) { _enterTransitionDidFinishHandler = handler; }
     /**
-     * Get the callback of event EnterTransitionDidFinish.
-     * @return std::function<void()>
+     * Get the handler of event EnterTransitionDidFinish.
+     * @return std::function<void(Node*)>
      */
-    const std::function<void()>& getOnEnterTransitionDidFinishCallback() const { return _onEnterTransitionDidFinishCallback; }
+    const std::function<void(Node*)>& GetOnEnterTransitionDidFinishHandler() const { return _enterTransitionDidFinishHandler; }
     /**
-     * Set the callback of event ExitTransitionDidStart.
-     * @param callback A std::function<void()> callback.
+     * Set the handler of event ExitTransitionDidStart.
+     * @param handler A std::function<void(Node*)> handler.
      */
-    void setOnExitTransitionDidStartCallback(const std::function<void()>& callback) { _onExitTransitionDidStartCallback = callback; }
+    void SetOnExitTransitionDidStartHandler(const std::function<void(Node*)>& handler) { _exitTransitionDidStartHandler = handler; }
     /**
-     * Get the callback of event ExitTransitionDidStart.
-     * @return std::function<void()>
+     * Get the handler of event ExitTransitionDidStart.
+     * @return std::function<void(Node*)>
      */
-    const std::function<void()>& getOnExitTransitionDidStartCallback() const { return _onExitTransitionDidStartCallback; }
+    const std::function<void(Node*)>& GetOnExitTransitionDidStartHandler() const { return _exitTransitionDidStartHandler; }
+    /**
+     * @brief Set the handler of event onCleanUp.
+     * @param handler A std::function<void(Node*)> handler.
+     */
+    void SetOnCleanUpHandler(const std::function<void(Node*)>& handler) { _cleanUpHandler = handler; }
+    /**
+     * @brief Get the handler of event onCleanUp.
+     * @return A std:function<void()> handler.
+     */
+    const std::function<void(Node*)>& GetOnCleanUpHandler() const { return _cleanUpHandler; }
+    /**
+     * @brief Set the handler of event onUpdate.
+     * @param handler A std::function<void(Node*)> handler.
+     */
+    void SetOnUpdateHandler(const std::function<void(Node*)>& handler) { _updateHandler = handler; }
+    /**
+     * @brief Get the handler of event onUpdate.
+     * @return A std:function<void()> handler.
+     */
+    const std::function<void(Node*)>& GetOnUpdateHandler() const { return _updateHandler; }
 
     /**
      * get & set camera mask, the node is visible by the camera whose camera flag & node's camera mask is true
@@ -1840,36 +1843,36 @@ private:
 
 protected:
 
-    float _rotationX;               ///< rotation on the X-axis
-    float _rotationY;               ///< rotation on the Y-axis
+    float _rotationX = 0.f;               ///< rotation on the X-axis
+    float _rotationY = 0.f;               ///< rotation on the Y-axis
 
     // rotation Z is decomposed in 2 to simulate Skew for Flash animations
-    float _rotationZ_X;             ///< rotation angle on Z-axis, component X
-    float _rotationZ_Y;             ///< rotation angle on Z-axis, component Y
+    float _rotationZ_X = 0.f;             ///< rotation angle on Z-axis, component X
+    float _rotationZ_Y = 0.f;             ///< rotation angle on Z-axis, component Y
 
-    Quaternion _rotationQuat;       ///rotation using quaternion, if _rotationZ_X == _rotationZ_Y, _rotationQuat = RotationZ_X * RotationY * RotationX, else _rotationQuat = RotationY * RotationX
+    Quaternion _rotationQuat = {};       ///rotation using quaternion, if _rotationZ_X == _rotationZ_Y, _rotationQuat = RotationZ_X * RotationY * RotationX, else _rotationQuat = RotationY * RotationX
 
-    float _scaleX;                  ///< scaling factor on x-axis
-    float _scaleY;                  ///< scaling factor on y-axis
-    float _scaleZ;                  ///< scaling factor on z-axis
+    float _scaleX = 1.f;                  ///< scaling factor on x-axis
+    float _scaleY = 1.f;                  ///< scaling factor on y-axis
+    float _scaleZ = 1.f;                  ///< scaling factor on z-axis
 
-    Vec2 _position;                 ///< position of the node
-    float _positionZ;               ///< OpenGL real Z position
-    Vec2 _normalizedPosition;
+    Vec2 _position = {};                 ///< position of the node
+    float _positionZ = 0.f;               ///< OpenGL real Z position
+    Vec2 _normalizedPosition = {};
 
-    float _skewX;                   ///< skew angle on x-axis
-    float _skewY;                   ///< skew angle on y-axis
+    float _skewX = 0.f;                   ///< skew angle on x-axis
+    float _skewY = 0.f;                   ///< skew angle on y-axis
 
-    Vec2 _anchorPointInPoints;      ///< anchor point in points
-    Vec2 _anchorPoint;              ///< anchor point normalized (NOT in points)
+    Vec2 _anchorPointInPoints = {};      ///< anchor point in points
+    Vec2 _anchorPoint = {};              ///< anchor point normalized (NOT in points)
 
-    Size _contentSize;              ///< untransformed size of the node
+    Size _contentSize = {};              ///< untransformed size of the node
 
-    Mat4 _modelViewTransform;       ///< ModelView transform of the Node.
+    Mat4 _modelViewTransform = {};       ///< ModelView transform of the Node.
     // "cache" variables are allowed to be mutable
-    mutable Mat4 _transform;        ///< transform
-    mutable Mat4 _inverse;          ///< inverse transform
-    mutable Mat4* _additionalTransform; ///< two transforms needed by additional transforms
+    mutable Mat4 _transform = {};        ///< transform
+    mutable Mat4 _inverse = {};          ///< inverse transform
+    mutable Mat4* _additionalTransform = nullptr; ///< two transforms needed by additional transforms
 
 #if CC_LITTLE_ENDIAN
     union {
@@ -1889,71 +1892,69 @@ protected:
     };
 #endif
 
-    float _globalZOrder;            ///< Global order used to sort the node
+    float _globalZOrder = 0.f;            ///< Global order used to sort the node
+    
+    // FIXME:: Yes, nodes might have a sort problem once every 30 days if the game runs at 60 FPS and each frame sprites are reordered.
+    inline static std::uint32_t s_globalOrderOfArrival = 0;
 
-    static std::uint32_t s_globalOrderOfArrival;
+    Vector<Node*> _children = {};        ///< array of children nodes
+    Node* _parent = nullptr;                  ///< weak reference to parent node
+    Director* _director = nullptr;            //cached director pointer to improve rendering performance
+    int _tag = INVALID_TAG;                       ///< a tag. Can be any number you assigned just to identify this node
 
-    Vector<Node*> _children;        ///< array of children nodes
-    Node *_parent;                  ///< weak reference to parent node
-    Director* _director;            //cached director pointer to improve rendering performance
-    int _tag;                       ///< a tag. Can be any number you assigned just to identify this node
+    std::string _name = {};              ///<a string label, an user defined string to identify this node
+    size_t _hashOfName = 0;             ///<hash value of _name, used for speed in getChildByName
 
-    std::string _name;              ///<a string label, an user defined string to identify this node
-    size_t _hashOfName;             ///<hash value of _name, used for speed in getChildByName
+    void* _userData = nullptr;                ///< A user assigned void pointer, Can be point to any cpp object
+    Ref* _userObject = nullptr;               ///< A user assigned Object
 
-    void *_userData;                ///< A user assigned void pointer, Can be point to any cpp object
-    Ref *_userObject;               ///< A user assigned Object
+    Scheduler* _scheduler = nullptr;          ///< scheduler used to schedule timers and updates
 
-    Scheduler *_scheduler;          ///< scheduler used to schedule timers and updates
+    ActionManager* _actionManager = nullptr;  ///< a pointer to ActionManager singleton, which is used to handle all the actions
 
-    ActionManager *_actionManager;  ///< a pointer to ActionManager singleton, which is used to handle all the actions
+    EventDispatcher* _eventDispatcher = nullptr;  ///< event dispatcher used to dispatch all kinds of events
 
-    EventDispatcher* _eventDispatcher;  ///< event dispatcher used to dispatch all kinds of events
-
-    bool _reorderChildDirty;          ///< children order dirty flag
-    bool _running;                  ///< is running
-    bool _visible;                  ///< is this node visible
-    bool _ignoreAnchorPointForPosition; ///< true if the Anchor Vec2 will be (0,0) when you position the Node, false otherwise.
+    bool _reorderChildDirty = false;          ///< children order dirty flag
+    bool _running = false;                  ///< is running
+    bool _visible = true;                  ///< is this node visible
+    bool _ignoreAnchorPointForPosition = false; ///< true if the Anchor Vec2 will be (0,0) when you position the Node, false otherwise.
                                           ///< Used by Layer and Scene.
 
-    bool _isTransitionFinished;       ///< flag to indicate whether the transition was finished
-    bool _cascadeColorEnabled;
-    bool _cascadeOpacityEnabled;
-    bool _contentSizeDirty;         ///< whether or not the contentSize is dirty
+    bool _isTransitionFinished = false;       ///< flag to indicate whether the transition was finished
+    bool _cascadeColorEnabled = false;
+    bool _cascadeOpacityEnabled = false;
+    bool _contentSizeDirty = true;         ///< whether or not the contentSize is dirty
 
-    mutable bool _transformDirty;   ///< transform dirty flag
-    mutable bool _inverseDirty;     ///< inverse transform dirty flag
-    mutable bool _additionalTransformDirty; ///< transform dirty ?
-    bool _transformUpdated;         ///< Whether or not the Transform object was updated since the last frame
+    mutable bool _transformDirty = true;   ///< transform dirty flag
+    mutable bool _inverseDirty = true;     ///< inverse transform dirty flag
+    mutable bool _additionalTransformDirty = false; ///< transform dirty ?
+    bool _transformUpdated = true;         ///< Whether or not the Transform object was updated since the last frame
 
-    bool _usingNormalizedPosition;
-    bool _normalizedPositionDirty;
+    bool _usingNormalizedPosition = false;
+    bool _normalizedPositionDirty = false;
     // camera mask, it is visible only when _cameraMask & current camera' camera flag is true
-    unsigned short _cameraMask;
+    unsigned short _cameraMask = 1;
 
-#if CC_ENABLE_SCRIPT_BINDING
-    int _scriptHandler;               ///< script handler for onEnter() & onExit(), used in Javascript binding and Lua binding.
-    int _updateScriptHandler;         ///< script handler for update() callback per frame, which is invoked from lua & javascript.
-#endif
-
-    ComponentContainer *_componentContainer;        ///< Dictionary of components
+    ComponentContainer* _componentContainer = nullptr;        ///< Dictionary of components
 
     // opacity controls
-    Color3B     _displayedColor;
-    uint8_t     _displayedOpacity;
-    Color3B     _realColor;
-    uint8_t     _realOpacity;
+    Color3B     _displayedColor = Color3B::WHITE;
+    uint8_t     _displayedOpacity = 255;
+    Color3B     _realColor = Color3B::WHITE;
+    uint8_t     _realOpacity = 255;
 
-    std::function<void()> _onEnterCallback;
-    std::function<void()> _onExitCallback;
-    std::function<void()> _onEnterTransitionDidFinishCallback;
-    std::function<void()> _onExitTransitionDidStartCallback;
+    std::function<void(Node*)> _enterHandler = nullptr;
+    std::function<void(Node*)> _exitHandler = nullptr;
+    std::function<void(Node*)> _enterTransitionDidFinishHandler = nullptr;
+    std::function<void(Node*)> _exitTransitionDidStartHandler = nullptr;
+    std::function<void(Node*)> _cleanUpHandler = nullptr;
+    std::function<void(Node*)> _updateHandler = nullptr;
 
     backend::ProgramState* _programState = nullptr;
 
 //Physics:remaining backwardly compatible
 #if CC_USE_PHYSICS
-    PhysicsBody* _physicsBody;
+    PhysicsBody* _physicsBody = nullptr;
 public:
     void setPhysicsBody(PhysicsBody* physicsBody)
     {
@@ -1969,7 +1970,7 @@ public:
     friend class PhysicsBody;
 #endif
 
-    static int __attachedNodeCount;
+    inline static int __attachedNodeCount = 0;
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(Node);

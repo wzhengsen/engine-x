@@ -219,9 +219,6 @@ THE SOFTWARE.
     #include "platform/linux/CCStdC-linux.h"
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 
-// script_support
-#include "base/CCScriptSupport.h"
-
 // sprite_nodes
 #include "2d/CCAnimation.h"
 #include "2d/CCAnimationCache.h"

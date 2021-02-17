@@ -1074,10 +1074,10 @@ class NativeClass(object):
             self.is_ref_class = self._is_ref_class()
 
         # config = self.generator.config
-        prelude_h = Template(file=os.path.join(self.generator.target, "templates", "prelude.h"),
-                            searchList=[{"current_class": self}])
-        prelude_c = Template(file=os.path.join(self.generator.target, "templates", "prelude.c"),
-                            searchList=[{"current_class": self}])
+        # prelude_h = Template(file=os.path.join(self.generator.target, "templates", "prelude.h"),
+        #                     searchList=[{"current_class": self}])
+        # prelude_c = Template(file=os.path.join(self.generator.target, "templates", "prelude.c"),
+        #                     searchList=[{"current_class": self}])
         # apidoc_classhead_script = Template(file=os.path.join(self.generator.target,
         #                                                  "templates",
         #                                                  "apidoc_classhead.script"),
@@ -1091,19 +1091,19 @@ class NativeClass(object):
         #                                searchList=[{"current_class": self}])
         #     self.doc_func_file.write(str(apidoc_fun_head_script))
 
-        self.generator.head_file.write(str(prelude_h))
-        self.generator.impl_file.write(str(prelude_c))
+        # self.generator.head_file.write(str(prelude_h))
+        # self.generator.impl_file.write(str(prelude_c))
         # self.generator.doc_file.write(str(apidoc_classhead_script))
-        for m in self.methods_clean():
-            m['impl'].generate_code(self)
-        for m in self.static_methods_clean():
-            m['impl'].generate_code(self)
-        if self.generator.script_type == "lua":
-            for m in self.override_methods_clean():
-                m['impl'].generate_code(self, is_override = True)
-        for m in self.public_fields:
-            if self.generator.should_bind_field(self.class_name, m.name):
-                m.generate_code(self)
+        # for m in self.methods_clean():
+        #     m['impl'].generate_code(self)
+        # for m in self.static_methods_clean():
+        #     m['impl'].generate_code(self)
+        # if self.generator.script_type == "lua":
+        #     for m in self.override_methods_clean():
+        #         m['impl'].generate_code(self, is_override = True)
+        # for m in self.public_fields:
+        #     if self.generator.should_bind_field(self.class_name, m.name):
+        #         m.generate_code(self)
         # generate register section
         register = Template(file=os.path.join(self.generator.target, "templates", "register.c"),
                             searchList=[{"current_class": self}])
@@ -1125,6 +1125,92 @@ class NativeClass(object):
             # print("%s%s - %s" % ("> " * depth, node.displayname, node.kind))
             if self._process_node(node):
                 self._deep_iterate(node, depth + 1)
+
+    def SolRegisterFunctionImpl(self,fn):
+        """生成适用于sol注册lua类的成员函数的每个不同实现c++代码。
+
+        返回：
+            str     该字符串用于在Cheetah Template中生成代码。
+            boolean 表示该成员函数是否是重载的（带默认参数的函数被认为可重载）
+        """
+        cxx = ""
+        overload = False
+        if not fn.is_overloaded:
+            argsLen = len(fn.arguments)
+            # 无重载函数。
+            if fn.min_args == argsLen:
+                # 无默认参数。
+                cxx += "static_cast<" + fn.ret_type.whole_name + "("
+                if not fn.static:
+                    cxx += self.namespaced_class_name + "::"
+                cxx += "*)("
+
+                idx = len(fn.arguments)
+                for i in range(idx):
+                    arg = fn.arguments[i]
+                    cxx += arg.whole_name + ("," if i < idx - 1 else "")
+                cxx += ")" + ("const>(&" if fn.const else ">(&") + self.namespaced_class_name + "::" + fn.func_name + ")"
+            else:
+                # 有默认参数。
+                overload = True
+                argsOffset = argsLen - fn.min_args + 1
+                for i in range(argsOffset):
+                    cxx += "[](" + self.namespaced_class_name + "* obj"
+                    for argIdx in range(fn.min_args + i):
+                        arg = fn.arguments[argIdx]
+                        cxx += "," + arg.whole_name + " arg" + str(argIdx)
+                    cxx += "){return obj->" + fn.func_name + "("
+                    for argIdx in range(fn.min_args + i):
+                        arg = fn.arguments[argIdx]
+                        cxx += "arg" + str(argIdx) + ("" if argIdx == fn.min_args + i - 1 else ",")
+                    cxx += ");}" + ("" if i == argsOffset - 1 else ",")
+        else:
+            # 有重载函数。
+            idx = len(fn.implementations)
+            for i in range(idx):
+                impl = fn.implementations[i]
+                # 递归每一个重载实现。
+                rCXX,rOverload = self.SolRegisterFunctionImpl(impl)
+                cxx += rCXX + ("" if i == idx - 1 else ",")
+                if rOverload:
+                    overload = rOverload
+
+        return cxx,overload
+
+    def SolRegisterFunction(self,fn):
+        """生成适用于sol注册lua类的成员函数的c++代码。
+
+        返回：
+            str 该字符串用于在Cheetah Template中生成代码。
+        """
+        cxx = "mt[\"" + fn.func_name +"\"]="
+        implStr,overload = self.SolRegisterFunctionImpl(fn)
+        if overload:
+            cxx += "sol::overload(" + implStr + ")"
+        else:
+            cxx += implStr
+        cxx += ";\n"
+        return cxx
+
+    def SolRegister(self):
+        """生成适用于sol注册lua类的c++代码。
+
+        返回：
+            str 该字符串用于在Cheetah Template中生成代码。
+        """
+
+        # 类与基类名组合
+        basesName = self.namespaced_class_name
+        for p in self.parents:
+            basesName += ","+ p.namespaced_class_name
+
+        cxx = "void lua_register_{}_{}(cocos2d::Lua& lua)".format(self.generator.prefix,self.class_name)
+        cxx += "{\n"
+        cxx += "auto mt=cocos2d::Lua::NewUserType<{basesName}>(lua.get_or(\"{target_ns}\",lua.create_named_table(\"{target_ns}\")),\"{class_name}\");\n".format(class_name = self.class_name,basesName = basesName,target_ns = self.generator.target_ns)
+        for m in self.methods_clean() + self.static_methods_clean():
+            cxx += self.SolRegisterFunction(m["impl"])
+        cxx += "}\n"
+        return cxx
 
     @staticmethod
     def _is_method_in_parents(current_class, method_name):

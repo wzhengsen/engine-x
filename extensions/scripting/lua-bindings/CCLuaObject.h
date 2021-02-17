@@ -21,6 +21,7 @@
  ****************************************************************************/
 #pragma once
 #include "platform/CCPlatformMacros.h"
+#include <functional>
 
 namespace cocos2d {
     /**
@@ -33,8 +34,6 @@ namespace cocos2d {
     protected:
         LuaObject() = default;
     private:
-        LuaObject(const LuaObject&) = delete;
-        LuaObject& operator=(const LuaObject&) = delete;
         std::function<void(LuaObject*)> _dtorHandler = nullptr;
     };
 } // namespace cocos2d

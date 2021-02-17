@@ -29,7 +29,6 @@ THE SOFTWARE.
 /// @cond DO_NOT_SHOW
 #include <string>
 #include "base/CCRef.h"
-#include "base/CCScriptSupport.h"
 
 NS_CC_BEGIN
 

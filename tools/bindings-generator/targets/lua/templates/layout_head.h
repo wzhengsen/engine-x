@@ -10,4 +10,4 @@ $macro_judgement
 \#include "${header}"
 #end for
 #end if 
-void register_all_${prefix}();
+void register_all_${prefix}(cocos2d::Lua&);

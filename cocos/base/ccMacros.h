@@ -38,14 +38,13 @@ THE SOFTWARE.
 
 #ifndef CCASSERT
 #if COCOS2D_DEBUG > 0
-    #if CC_ENABLE_SCRIPT_BINDING
+#if CC_ENABLE_LUA_BINDING
     extern bool CC_DLL cc_assert_script_compatible(const char *msg);
-    #define CCASSERT(cond, msg) do {                              \
-          if (!(cond)) {                                          \
-            if (!cc_assert_script_compatible(msg) && strlen(msg)) \
-              cocos2d::log("Assert failed: %s", msg);             \
-            CC_ASSERT(cond);                                      \
-          } \
+    #define CCASSERT(cond, msg) do {\
+          if (!(cond)) {\
+                cocos2d::log("Assert failed: %s", msg);\
+                CC_ASSERT(cond);\
+          }\
         } while (0)
     #else
     #define CCASSERT(cond, msg) CC_ASSERT(cond)

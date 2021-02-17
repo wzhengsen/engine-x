@@ -29,6 +29,9 @@ THE SOFTWARE.
 
 #include "platform/CCPlatformMacros.h"
 #include "base/ccConfig.h"
+#if CC_ENABLE_LUA_BINDING
+#include "scripting/lua-bindings/CCLuaObject.h"
+#endif
 
 #define CC_REF_LEAK_DETECTION 0
 
@@ -37,12 +40,6 @@ THE SOFTWARE.
  * @{
  */
 NS_CC_BEGIN
-
-enum {
-	kRefOnDestroy
-};
-class Ref;
-
 /** 
   * Interface that defines how to clone an Ref.
   * @lua NA
@@ -66,7 +63,11 @@ public:
  * then it is easy to be shared in different places.
  * @js NA
  */
+#if CC_ENABLE_LUA_BINDING
+class CC_DLL Ref : public LuaObject
+#else
 class CC_DLL Ref
+#endif
 {
 public:
     /**
@@ -137,25 +138,10 @@ public:
 
 protected:
     /// count of references
-    unsigned int _referenceCount;
+    // when the Ref is created, the reference count of it is 1
+    unsigned int _referenceCount = 1;
 
     friend class AutoreleasePool;
-
-#if CC_ENABLE_SCRIPT_BINDING
-public:
-    /// object id, ScriptSupport need public _ID
-    unsigned int        _ID;
-    /// Lua reference id
-    int                 _luaID;
-    /// scriptObject, support for swift
-    void* _scriptObject;
-
-    /**
-     When true, it means that the object was already rooted.
-     */
-    bool _rooted;
-#endif
-
     // Memory leak diagnostic data (only included when CC_REF_LEAK_DETECTION is defined and its value isn't zero)
 #if CC_REF_LEAK_DETECTION
 public:

@@ -197,9 +197,7 @@ if(BUILD_LUA_LIBS)
     add_subdirectory(lua/luasocket)
     add_subdirectory(lua/cjson)
     add_subdirectory(lua/lua-protobuf)
-    set_property(TARGET external APPEND PROPERTY 
-        CC_LUA_DEPEND plainlua tolua luasocket cjson lua-protobuf
-    )
+    target_link_libraries(external plainlua tolua luasocket cjson lua-protobuf)
 endif()
 
 if(NOT LINUX)

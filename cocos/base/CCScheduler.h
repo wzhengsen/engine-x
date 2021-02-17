@@ -49,7 +49,7 @@ typedef std::function<void(float)> ccSchedulerFunc;
 class CC_DLL Timer : public Ref
 {
 protected:
-    Timer();
+    Timer() = default;
 public:
     void setupTimerWithInterval(float seconds, unsigned int repeat, float delay);
     void setAborted() { _aborted = true; }
@@ -63,22 +63,22 @@ public:
     void update(float dt);
     
 protected:
-    Scheduler* _scheduler; // weak ref
-    float _elapsed;
-    bool _runForever;
-    bool _useDelay;
-    unsigned int _timesExecuted;
-    unsigned int _repeat; //0 = once, 1 is 2 x executed
-    float _delay;
-    float _interval;
-    bool _aborted;
+    Scheduler* _scheduler = nullptr; // weak ref
+    float _elapsed = -1.f;
+    bool _runForever = false;
+    bool _useDelay = false;
+    unsigned int _timesExecuted = 0;
+    unsigned int _repeat = 0; //0 = once, 1 is 2 x executed
+    float _delay = 0.f;
+    float _interval = 0.f;
+    bool _aborted = false;
 };
 
 
 class CC_DLL TimerTargetSelector : public Timer
 {
 public:
-    TimerTargetSelector();
+    TimerTargetSelector() = default;
 
     /** Initializes a timer with a target, a selector and an interval in seconds, repeat in number of times to repeat, delay in seconds. */
     bool initWithSelector(Scheduler* scheduler, SEL_SCHEDULE selector, Ref* target, float seconds, unsigned int repeat, float delay);
@@ -89,15 +89,15 @@ public:
     virtual void cancel() override;
     
 protected:
-    Ref* _target;
-    SEL_SCHEDULE _selector;
+    Ref* _target = nullptr;
+    SEL_SCHEDULE _selector = nullptr;
 };
 
 
 class CC_DLL TimerTargetCallback : public Timer
 {
 public:
-    TimerTargetCallback();
+    TimerTargetCallback() = default;
     
     // Initializes a timer with a target, a lambda and an interval in seconds, repeat in number of times to repeat, delay in seconds.
     bool initWithCallback(Scheduler* scheduler, const ccSchedulerFunc& callback, void *target, const std::string& key, float seconds, unsigned int repeat, float delay);
@@ -109,27 +109,10 @@ public:
     virtual void cancel() override;
     
 protected:
-    void* _target;
-    ccSchedulerFunc _callback;
-    std::string _key;
+    void* _target = nullptr;
+    ccSchedulerFunc _callback = nullptr;
+    std::string _key = {};
 };
-
-#if CC_ENABLE_SCRIPT_BINDING
-
-class CC_DLL TimerScriptHandler : public Timer
-{
-public:
-    bool initWithScriptHandler(int handler, float seconds);
-    int getScriptHandler() const { return _scriptHandler; }
-    
-    virtual void trigger(float dt) override;
-    virtual void cancel() override;
-    
-private:
-    int _scriptHandler;
-};
-
-#endif
 
 /**
  * @endcond
@@ -143,10 +126,6 @@ private:
 struct _listEntry;
 struct _hashSelectorEntry;
 struct _hashUpdateEntry;
-
-#if CC_ENABLE_SCRIPT_BINDING
-class SchedulerScriptHandlerEntry;
-#endif
 
 /** @brief Scheduler is responsible for triggering the scheduled callbacks.
 You should not use system timer for your game logic. Instead, use this class.
@@ -284,19 +263,6 @@ public:
         }, target, priority, paused);
     }
 
-#if CC_ENABLE_SCRIPT_BINDING
-    // Schedule for script bindings.
-    /** The scheduled script callback will be called every 'interval' seconds.
-     If paused is true, then it won't be called until it is resumed.
-     If 'interval' is 0, it will be called every frame.
-     return schedule script entry ID, used for unscheduleScriptFunc().
-     
-     @warn Don't invoke this function unless you know what you are doing.
-     @js NA
-     @lua NA
-     */
-    unsigned int scheduleScriptFunc(unsigned int handler, float interval, bool paused);
-#endif
     /////////////////////////////////////
     
     // unschedule
@@ -344,16 +310,7 @@ public:
      @since v2.0.0
      */
     void unscheduleAllWithMinPriority(int minPriority);
-    
-#if CC_ENABLE_SCRIPT_BINDING
-    /** Unschedule a script entry. 
-     * @warning Don't invoke this function unless you know what you are doing.
-     * @js NA
-     * @lua NA
-     */
-    void unscheduleScriptEntry(unsigned int scheduleScriptEntryID);
-#endif
-    
+
     /////////////////////////////////////
     
     // isScheduled
@@ -458,31 +415,27 @@ protected:
     void appendIn(struct _listEntry **list, const ccSchedulerFunc& callback, void *target, bool paused);
 
 
-    float _timeScale;
+    float _timeScale = 1.f;
 
     //
     // "updates with priority" stuff
     //
-    struct _listEntry *_updatesNegList;        // list of priority < 0
-    struct _listEntry *_updates0List;            // list priority == 0
-    struct _listEntry *_updatesPosList;        // list priority > 0
-    struct _hashUpdateEntry *_hashForUpdates; // hash used to fetch quickly the list entries for pause,delete,etc
-    std::vector<struct _listEntry *> _updateDeleteVector; // the vector holds list entries that needs to be deleted after update
+    struct _listEntry* _updatesNegList = nullptr;        // list of priority < 0
+    struct _listEntry* _updates0List = nullptr;            // list priority == 0
+    struct _listEntry* _updatesPosList = nullptr;        // list priority > 0
+    struct _hashUpdateEntry* _hashForUpdates = nullptr; // hash used to fetch quickly the list entries for pause,delete,etc
+    std::vector<struct _listEntry*> _updateDeleteVector = {}; // the vector holds list entries that needs to be deleted after update
 
     // Used for "selectors with interval"
-    struct _hashSelectorEntry *_hashForTimers;
-    struct _hashSelectorEntry *_currentTarget;
-    bool _currentTargetSalvaged;
+    struct _hashSelectorEntry* _hashForTimers = nullptr;
+    struct _hashSelectorEntry* _currentTarget = nullptr;
+    bool _currentTargetSalvaged = false;
     // If true unschedule will not remove anything from a hash. Elements will only be marked for deletion.
-    bool _updateHashLocked;
-    
-#if CC_ENABLE_SCRIPT_BINDING
-    Vector<SchedulerScriptHandlerEntry*> _scriptHandlerEntries;
-#endif
-    
+    bool _updateHashLocked = false;
+
     // Used for "perform Function"
-    std::vector<std::function<void()>> _functionsToPerform;
-    std::mutex _performMutex;
+    std::vector<std::function<void()>> _functionsToPerform = {};
+    std::mutex _performMutex = {};
 };
 
 // end of base group

@@ -23,9 +23,6 @@
  ****************************************************************************/
 
 #include "AppDelegate.h"
-#include "scripting/lua-bindings/manual/CCLuaEngine.h"
-#include "cocos2d.h"
-#include "scripting/lua-bindings/manual/lua_module_register.h"
 
 #include "cjson/LuaRegister_cjson.h"
 #include "crypto/LuaRegister_crypto.h"
@@ -37,9 +34,10 @@
 #include "ExtLib/LuaRegisterExtLib.h"
 
 #include "audio/include/AudioEngine.h"
+#include "scripting/lua-bindings/CCLua.h"
 
-// if you want to use the package manager to install more packages,
-// don't modify or remove this function
+ // if you want to use the package manager to install more packages,
+ // don't modify or remove this function
 static int register_all_packages() {
     return 0; //flag for packages manager
 }
@@ -59,78 +57,54 @@ static int register_custom_function(lua_State* L) noexcept {
 USING_NS_CC;
 using namespace std;
 
-AppDelegate::AppDelegate() {
-}
+AppDelegate::AppDelegate() {}
 
-AppDelegate::~AppDelegate()
-{
+AppDelegate::~AppDelegate() {
     AudioEngine::end();
-
-#if (COCOS2D_DEBUG > 0) && (CC_CODE_IDE_DEBUG_SUPPORT > 0)
-    // NOTE:Please don't remove this call if you want to debug with Cocos Code IDE
-    RuntimeEngine::getInstance()->end();
-#endif
-
 }
 
 // if you want a different context, modify the value of glContextAttrs
 // it will affect all platforms
-void AppDelegate::initGLContextAttrs()
-{
+void AppDelegate::initGLContextAttrs() {
     // set OpenGL context attributes: red,green,blue,alpha,depth,stencil,multisamplesCount
-    GLContextAttrs glContextAttrs = {8, 8, 8, 8, 24, 8, 0 };
+    GLContextAttrs glContextAttrs = { 8, 8, 8, 8, 24, 8, 0 };
 
     GLView::setGLContextAttrs(glContextAttrs);
 }
 
-bool AppDelegate::applicationDidFinishLaunching()
-{
+bool AppDelegate::applicationDidFinishLaunching() {
     // set default FPS
     Director::getInstance()->setAnimationInterval(1.0f / 60.0f);
     return RestartLuaEngine();
 }
 
 // This function will be called when the app is inactive. Note, when receiving a phone call it is invoked.
-void AppDelegate::applicationDidEnterBackground()
-{
-	auto dr = Director::getInstance();
-	dr->stopAnimation();
-	// ��ϣ�����ʹ����ͣ
+void AppDelegate::applicationDidEnterBackground() {
+    auto dr = Director::getInstance();
+    dr->stopAnimation();
+    // Block all sound.
     AudioEngine::BlockAll();
-	dr->getEventDispatcher()->dispatchCustomEvent("applicationDidEnterBackground");
+    dr->getEventDispatcher()->dispatchCustomEvent("applicationDidEnterBackground");
 }
 
 // this function will be called when the app is active again
-void AppDelegate::applicationWillEnterForeground()
-{
-	auto dr = Director::getInstance();
+void AppDelegate::applicationWillEnterForeground() {
+    auto dr = Director::getInstance();
     dr->startAnimation();
     AudioEngine::UnblockAll();
-	dr->getEventDispatcher()->dispatchCustomEvent("applicationWillEnterForeground");
+    dr->getEventDispatcher()->dispatchCustomEvent("applicationWillEnterForeground");
 }
-
 
 // Restart Lua engine and run with main.lua
 bool AppDelegate::RestartLuaEngine() {
-
-	FileUtils::getInstance()->addSearchPath(FileUtils::getInstance()->getWritablePath(), true);
-	// Release last Lua engine.
-	ScriptEngineManager::getInstance()->removeScriptEngine();
-
-	// New Lua engine
-	auto engine = LuaEngine::getInstance();
-	ScriptEngineManager::getInstance()->setScriptEngine(engine);
-
-	lua_State* L = engine->getLuaStack()->getLuaState();
-
-	// Register some module
-	lua_module_register(L);
-	register_all_packages();
-
-	LuaStack* stack = engine->getLuaStack();
-
-	// Register custom module
-	register_custom_function(stack->getLuaState());
-
-    return !stack->executeString(R"+*(require("src.main"))+*");
+    FileUtils::getInstance()->addSearchPath(FileUtils::getInstance()->getWritablePath(), true);
+    // Release last Lua engine.
+    Lua::Close();
+    // New Lua.
+    auto lua = Lua::GetInstance();
+    // Register some module
+    register_all_packages();
+    // Register custom module
+    register_custom_function(lua->lua_state());
+    return lua->script(R"+*(require("src.main"))+*").valid();
 }
