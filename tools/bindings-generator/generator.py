@@ -1126,71 +1126,100 @@ class NativeClass(object):
             if self._process_node(node):
                 self._deep_iterate(node, depth + 1)
 
-    def SolRegisterFunctionImpl(self,fn):
+    def SolRegisterFunctionImpl(self,fn,cxx = None):
         """生成适用于sol注册lua类的成员函数的每个不同实现c++代码。
 
+        参数：
+            fn      欲生成代码的函数。
+            cxx     当cxx不为空时，在cxx中追加。
         返回：
-            str     该字符串用于在Cheetah Template中生成代码。
             boolean 表示该成员函数是否是重载的（带默认参数的函数被认为可重载）
+            str     该字符串用于在Cheetah Template中生成代码。（当参数cxx不为空时，没有该返回值。）
         """
-        cxx = ""
+        returnOne = True
+        if cxx == None:
+            returnOne = False
+            cxx = []
         overload = False
         if not fn.is_overloaded:
             argsLen = len(fn.arguments)
             # 无重载函数。
             if fn.min_args == argsLen:
                 # 无默认参数。
-                cxx += "static_cast<" + fn.ret_type.whole_name + "("
+                cxx.append("static_cast<")
+                cxx.append(fn.ret_type.whole_name)
+                cxx.append("(")
                 if not fn.static:
-                    cxx += self.namespaced_class_name + "::"
-                cxx += "*)("
+                    cxx.append(self.namespaced_class_name)
+                    cxx.append("::")
+                cxx.append("*)(")
 
                 idx = len(fn.arguments)
                 for i in range(idx):
                     arg = fn.arguments[i]
-                    cxx += arg.whole_name + ("," if i < idx - 1 else "")
-                cxx += ")" + ("const>(&" if fn.const else ">(&") + self.namespaced_class_name + "::" + fn.func_name + ")"
+                    cxx.append(arg.whole_name)
+                    cxx.append("," if i < idx - 1 else "")
+                cxx.append(")")
+                cxx.append("const>(&" if fn.const else ">(&")
+                cxx.append(self.namespaced_class_name)
+                cxx.append("::")
+                cxx.append(fn.func_name)
+                cxx.append(")")
             else:
                 # 有默认参数。
                 overload = True
                 argsOffset = argsLen - fn.min_args + 1
                 for i in range(argsOffset):
-                    cxx += "[](" + self.namespaced_class_name + "* obj"
+                    cxx.append("[](")
+                    cxx.append(self.namespaced_class_name)
+                    cxx.append("* obj")
                     for argIdx in range(fn.min_args + i):
                         arg = fn.arguments[argIdx]
-                        cxx += "," + arg.whole_name + " arg" + str(argIdx)
-                    cxx += "){return obj->" + fn.func_name + "("
+                        cxx.append(",")
+                        cxx.append(arg.whole_name)
+                        cxx.append(" arg")
+                        cxx.append(str(argIdx))
+                    cxx.append("){return obj->")
+                    cxx.append(fn.func_name)
+                    cxx.append("(")
                     for argIdx in range(fn.min_args + i):
                         arg = fn.arguments[argIdx]
-                        cxx += "arg" + str(argIdx) + ("" if argIdx == fn.min_args + i - 1 else ",")
-                    cxx += ");}" + ("" if i == argsOffset - 1 else ",")
+                        cxx.append("arg")
+                        cxx.append(str(argIdx))
+                        cxx.append("" if argIdx == fn.min_args + i - 1 else ",")
+                    cxx.append(");}")
+                    cxx.append("" if i == argsOffset - 1 else ",")
         else:
             # 有重载函数。
             idx = len(fn.implementations)
             for i in range(idx):
                 impl = fn.implementations[i]
                 # 递归每一个重载实现。
-                rCXX,rOverload = self.SolRegisterFunctionImpl(impl)
-                cxx += rCXX + ("" if i == idx - 1 else ",")
+                rOverload = self.SolRegisterFunctionImpl(impl,cxx)
+                cxx.append("" if i == idx - 1 else ",")
                 if rOverload:
                     overload = rOverload
 
-        return cxx,overload
+        if returnOne:
+            return overload
+        return overload,"".join(cxx)
 
-    def SolRegisterFunction(self,fn):
+    def SolRegisterFunction(self,fn,cxx):
         """生成适用于sol注册lua类的成员函数的c++代码。
-
-        返回：
-            str 该字符串用于在Cheetah Template中生成代码。
+        
+        参数：
+            fn      欲生成代码的函数。
+            cxx     用于保存拼接字符串的列表。
         """
-        cxx = "mt[\"" + fn.func_name +"\"]="
-        implStr,overload = self.SolRegisterFunctionImpl(fn)
+        cxx.append("mt[\"" + fn.func_name +"\"]=")
+        overload,implStr = self.SolRegisterFunctionImpl(fn)
         if overload:
-            cxx += "sol::overload(" + implStr + ")"
+            cxx.append("sol::overload(")
+            cxx.append(implStr)
+            cxx.append(")")
         else:
-            cxx += implStr
-        cxx += ";\n"
-        return cxx
+            cxx.append(implStr)
+        cxx.append(";\n")
 
     def SolRegister(self):
         """生成适用于sol注册lua类的c++代码。
@@ -1203,14 +1232,15 @@ class NativeClass(object):
         basesName = self.namespaced_class_name
         for p in self.parents:
             basesName += ","+ p.namespaced_class_name
-
-        cxx = "void lua_register_{}_{}(cocos2d::Lua& lua)".format(self.generator.prefix,self.class_name)
-        cxx += "{\n"
-        cxx += "auto mt=cocos2d::Lua::NewUserType<{basesName}>(lua.get_or(\"{target_ns}\",lua.create_named_table(\"{target_ns}\")),\"{class_name}\");\n".format(class_name = self.class_name,basesName = basesName,target_ns = self.generator.target_ns)
+        cxx = [
+            "void lua_register_{}_{}(cocos2d::Lua& lua)".format(self.generator.prefix,self.class_name),
+            "{\n",
+            "auto mt=cocos2d::Lua::NewUserType<{basesName}>(lua.get_or(\"{target_ns}\",lua.create_named_table(\"{target_ns}\")),\"{class_name}\");\n".format(class_name = self.class_name,basesName = basesName,target_ns = self.generator.target_ns)
+        ]
         for m in self.methods_clean() + self.static_methods_clean():
-            cxx += self.SolRegisterFunction(m["impl"])
-        cxx += "}\n"
-        return cxx
+            self.SolRegisterFunction(m["impl"],cxx)
+        cxx.append("}\n")
+        return "".join(cxx)
 
     @staticmethod
     def _is_method_in_parents(current_class, method_name):
