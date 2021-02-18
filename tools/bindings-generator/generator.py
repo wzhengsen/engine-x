@@ -1191,14 +1191,13 @@ class NativeClass(object):
                     cxx.append("" if i == argsOffset - 1 else ",")
         else:
             # 有重载函数。
+            overload = True
             idx = len(fn.implementations)
             for i in range(idx):
                 impl = fn.implementations[i]
                 # 递归每一个重载实现。
-                rOverload = self.SolRegisterFunctionImpl(impl,cxx)
+                self.SolRegisterFunctionImpl(impl,cxx)
                 cxx.append("" if i == idx - 1 else ",")
-                if rOverload:
-                    overload = rOverload
 
         if returnOne:
             return overload
@@ -1211,7 +1210,7 @@ class NativeClass(object):
             m       欲生成代码的函数包装。
             cxx     用于保存拼接字符串的列表。
         """
-        cxx.append("mt[\"" + m["name"] +"\"]=")
+        cxx.append("\"" + m["name"] +"\",")
         overload,implStr = self.SolRegisterFunctionImpl(m["impl"])
         if overload:
             cxx.append("sol::overload(")
@@ -1219,7 +1218,7 @@ class NativeClass(object):
             cxx.append(")")
         else:
             cxx.append(implStr)
-        cxx.append(";\n")
+        cxx.append("\n")
 
     def SolRegister(self):
         """生成适用于sol注册lua类的c++代码。
@@ -1235,11 +1234,12 @@ class NativeClass(object):
         cxx = [
             "static void RegisterLua{}(cocos2d::Lua& lua)".format(self.class_name),
             "{\n",
-            "auto mt=cocos2d::Lua::NewUserType<{basesName}>(lua.get_or(\"{target_ns}\",lua.create_named_table(\"{target_ns}\")),\"{class_name}\");\n".format(class_name = self.class_name,basesName = basesName,target_ns = self.generator.target_ns)
+            "lua.NewUserType<{basesName}>(\"{target_ns}\",\"{class_name}\"\n".format(class_name = self.class_name,basesName = basesName,target_ns = self.generator.target_ns)
         ]
         for m in self.methods_clean() + self.static_methods_clean():
+            cxx.append(",")
             self.SolRegisterFunction(m,cxx)
-        cxx.append("}\n")
+        cxx.append(");}\n")
         return "".join(cxx)
 
     @staticmethod

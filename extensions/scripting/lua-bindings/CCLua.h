@@ -56,13 +56,15 @@ namespace cocos2d {
         *           The __newindex/__index/__pairs meta-method has been registered in advance.
         * @param    U The class or struct which want to be register into lua table.
         * @param    B All of base class of U,such as base's base,and so on.
-        * @param    t The sol::table that class want register into.
+        * @param    tName The name of the table in which the type being registered is located.
         * @param    name The class name in lua.
+        * @param    args Name and Function ...
         * @return   You can use it to register your own member-method or meta-method.
         */
-        template<typename U, typename ...B>
-        static sol::usertype<U> NewUserType(sol::table& t, const std::string& name) {
-            auto ut = t.new_usertype<U>(name,
+        template<typename U, typename ...B, typename... Args>
+        sol::usertype<U> NewUserType(const std::string_view& tName, const std::string_view& name, Args&& ...args) {
+            auto ut = get_or(tName, create_named_table(tName)).new_usertype<U>(name,
+                sol::no_constructor,
                 sol::base_classes, sol::bases<B...>(),
                 sol::meta_function::new_index, [](lua_State* L) {
                 if (LUA_TTABLE == lua_getuservalue(L, 1)) {//ud,k,v,table
@@ -93,7 +95,7 @@ namespace cocos2d {
                 lua_pushvalue(L, 1);// userdata,function,userdata
                 lua_pushnil(L);// userdata,function,userdata,nil
                 return 3;
-            });
+            }, std::forward<Args>(args)...);
             // Provides a way to register a meta-method in lua.
             ut["mtor"] = [ut](const std::string& name, const sol::function& method) mutable {
                 auto iter = MethodToSolMap.find(name);
