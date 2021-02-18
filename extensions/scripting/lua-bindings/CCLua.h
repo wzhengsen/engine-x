@@ -166,6 +166,9 @@ namespace cocos2d {
         };
     private:
         void Register();
+        void RegisterSol();
+        void RegisterAuto();
+        void RegisterManual();
     };
 } // namespace cocos2d
 

@@ -9,5 +9,5 @@ $macro_judgement
 #for header in $hpp_headers
 \#include "${header}"
 #end for
-#end if 
-void register_all_${prefix}(cocos2d::Lua&);
+#end if
+void RegisterLua${prefix}Auto(cocos2d::Lua&);

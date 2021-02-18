@@ -171,7 +171,6 @@ function(copy_thirdparty_dlls cocos_target destDir)
 
     if(BUILD_LUA_LIBS) # TODO: rename to BUILD_EXTENSION_LUA
         list(APPEND DEPENDENCIES plainlua)
-        list(APPEND DEPENDENCIES tolua)
     endif()
 
     if (DEPENDENCIES)

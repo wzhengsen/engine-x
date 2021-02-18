@@ -23,20 +23,24 @@
 #include "CCLua.h"
 #include "base/CCData.h"
 #include "platform/CCFileUtils.h"
-#include "auto/lua_cocos2dx_auto.hpp"
-#include "auto/lua_cocos2dx_3d_auto.hpp"
-#include "auto/lua_cocos2dx_audioengine_auto.hpp"
-#include "auto/lua_cocos2dx_backend_auto.hpp"
-#include "auto/lua_cocos2dx_controller_auto.hpp"
-#include "auto/lua_cocos2dx_csloader_auto.hpp"
-#include "auto/lua_cocos2dx_extension_auto.hpp"
-#include "auto/lua_cocos2dx_navmesh_auto.hpp"
-#include "auto/lua_cocos2dx_physics3d_auto.hpp"
-#include "auto/lua_cocos2dx_spine_auto.hpp"
-#include "auto/lua_cocos2dx_studio_auto.hpp"
-#include "auto/lua_cocos2dx_ui_auto.hpp"
-#include "auto/lua_cocos2dx_video_auto.hpp"
-#include "auto/lua_cocos2dx_webview_auto.hpp"
+ // Auto
+#include "auto/CCRegisterLua3DAuto.hpp"
+#include "auto/CCRegisterLuaCoreAuto.hpp"
+#include "auto/CCRegisterLuaControllerAuto.hpp"
+#include "auto/CCRegisterLuaExtensionAuto.hpp"
+#include "auto/CCRegisterLuaPhysicsAuto.hpp"
+#include "auto/CCRegisterLuaSpineAuto.hpp"
+#include "auto/CCRegisterLuaStudioAuto.hpp"
+#include "auto/CCRegisterLuaCSLoaderAuto.hpp"
+#include "auto/CCRegisterLuaUIAuto.hpp"
+#include "auto/CCRegisterLuaAudioEngineAuto.hpp"
+#include "auto/CCRegisterLuaPhysics3DAuto.hpp"
+#include "auto/CCRegisterLuaNavMeshAuto.hpp"
+#include "auto/CCRegisterLuaBackendAuto.hpp"
+#include "auto/CCRegisterLuaWebViewAuto.hpp"
+#include "auto/CCRegisterLuaVideoPlayerAuto.hpp"
+// Manual.
+#include "manual/CCRegisterLuaManual.h"
 
 using namespace cocos2d;
 namespace cocos2d {
@@ -55,6 +59,7 @@ namespace cocos2d {
             static const std::string ExtLua = ".lua";
             std::string searchName = fileName;
             std::string searchPath = (*lua)["package"]["path"];
+            searchPath.append(";");
             Data chunk = {};
             std::string chunkName = {};
             FileUtils* utils = FileUtils::getInstance();
@@ -77,7 +82,7 @@ namespace cocos2d {
             // search file in package.path
             size_t begin = 0;
             size_t next = 0;
-
+            bool foundFile = false;
             while (std::string::npos != (next = searchPath.find_first_of(';', begin))) {
                 std::string prefix = searchPath.substr(begin, next - begin);
                 if (prefix[0] == '.' && prefix[1] == '/') {
@@ -106,6 +111,7 @@ namespace cocos2d {
                     chunkName = prefix + ext;
                     if (utils->isFileExist(chunkName)) {
                         chunk = utils->getDataFromFile(chunkName);
+                        foundFile = true;
                         breakOut = true;
                         break;
                     }
@@ -125,7 +131,12 @@ namespace cocos2d {
                     cSize -= 3;
                 }
             }
-            return load_buffer(reinterpret_cast<const std::byte*>(cByte), cSize, chunkName);
+            sol::object ret = sol::nil;
+            if (foundFile) {
+                sol::function f = load_buffer(reinterpret_cast<const std::byte*>(cByte), cSize, chunkName);
+                ret = f;
+            }
+            return ret;
         });
 
         // Move the custom searcher to index 2.
@@ -169,9 +180,9 @@ namespace cocos2d {
         lua_pop(l, 1);// ...
     }
 
-    void Lua::Register() {
-        // Register sol function.
+    void Lua::RegisterSol() {
         create_named_table("sol",
+            // "Null" function,nil or userdata or the value pointed to by userdata is empty."
             "Null", [](lua_State* l) {
             if (1 != lua_gettop(l)) {
                 luaL_error(l, "sol.Null accept 1 param(s) but got %d param(s).", lua_gettop(l));
@@ -192,23 +203,39 @@ namespace cocos2d {
             lua_pushboolean(l, FALSE);
             return 1;
         });
+    }
 
-        // Register all auto code.
-        register_all_cocos2dx(*this);
-        register_all_cocos2dx_3d(*this);
-        register_all_cocos2dx_audioengine(*this);
-        register_all_cocos2dx_backend(*this);
+    void Lua::RegisterAuto() {
+        RegisterLua3DAuto(*this);
+        RegisterLuaCoreAuto(*this);
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-        register_all_cocos2dx_controller(*this);
+        RegisterLuaControllerAuto(*this);
 #endif
-        register_all_cocos2dx_csloader(*this);
-        register_all_cocos2dx_extension(*this);
-        register_all_cocos2dx_navmesh(*this);
-        register_all_cocos2dx_spine(*this);
-        register_all_cocos2dx_studio(*this);
-        register_all_cocos2dx_ui(*this);
-        register_all_cocos2dx_video(*this);
-        register_all_cocos2dx_webview(*this);
-        // Register all manual code.
+        RegisterLuaExtensionAuto(*this);
+#if CC_USE_PHYSICS
+        RegisterLuaPhysicsAuto(*this);
+#endif
+        RegisterLuaSpineAuto(*this);
+        RegisterLuaStudioAuto(*this);
+        RegisterLuaCSLoaderAuto(*this);
+        RegisterLuaUIAuto(*this);
+        RegisterLuaAudioEngineAuto(*this);
+#if CC_USE_3D_PHYSICS && CC_ENABLE_BULLET_INTEGRATION
+        RegisterLuaPhysics3DAuto(*this);
+#endif
+        RegisterLuaNavMeshAuto(*this);
+        RegisterLuaBackendAuto(*this);
+        RegisterLuaWebViewAuto(*this);
+        RegisterLuaVideoPlayerAuto(*this);
+    }
+
+    void Lua::RegisterManual() {
+        RegisterLuaManual(*this);
+    }
+
+    void Lua::Register() {
+        RegisterSol();
+        RegisterAuto();
+        RegisterManual();
     }
 }

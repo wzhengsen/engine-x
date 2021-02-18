@@ -4,6 +4,7 @@ set(lua_bindings_manual_headers
     # manual/3d/lua_cocos2dx_3d_manual.h
     # manual/lua_module_register.h
     manual/CCLuaBridge.h
+    manual/CCRegisterLuaManual.h
     # manual/extension/lua_cocos2dx_extension_manual.h
     # manual/spine/LuaSkeletonAnimation.h
     # manual/platform/ios/CCLuaObjcBridge.h
@@ -26,6 +27,7 @@ set(lua_bindings_manual_headers
 
 set(lua_bindings_manual_files
     manual/CCLuaBridge.cpp
+    manual/CCRegisterLuaManual.cpp
     # manual/lua_module_register.cpp
     # manual/cocos2d/lua_cocos2dx_manual.cpp
     # manual/cocos2d/lua_cocos2dx_physics_manual.cpp
@@ -52,39 +54,39 @@ set(lua_bindings_manual_files
     )
 
 set(lua_bindings_auto_headers
-    # auto/lua_cocos2dx_audioengine_auto.hpp
-    # auto/lua_cocos2dx_3d_auto.hpp
-    # auto/lua_cocos2dx_controller_auto.hpp
-    # auto/lua_cocos2dx_spine_auto.hpp
-    # auto/lua_cocos2dx_studio_auto.hpp
-    # auto/lua_cocos2dx_auto.hpp
-    # auto/lua_cocos2dx_navmesh_auto.hpp
-    # auto/lua_cocos2dx_csloader_auto.hpp
-    # auto/lua_cocos2dx_physics3d_auto.hpp
-    # auto/lua_cocos2dx_ui_auto.hpp
-    # auto/lua_cocos2dx_physics_auto.hpp
-    # auto/lua_cocos2dx_extension_auto.hpp
-    # auto/lua_cocos2dx_backend_auto.hpp
-    # auto/lua_cocos2dx_webview_auto.hpp
-    # auto/lua_cocos2dx_video_auto.hpp
+    auto/CCRegisterLua3DAuto.hpp
+    auto/CCRegisterLuaCoreAuto.hpp
+    auto/CCRegisterLuaControllerAuto.hpp
+    auto/CCRegisterLuaExtensionAuto.hpp
+    auto/CCRegisterLuaPhysicsAuto.hpp
+    auto/CCRegisterLuaSpineAuto.hpp
+    auto/CCRegisterLuaStudioAuto.hpp
+    auto/CCRegisterLuaCSLoaderAuto.hpp
+    auto/CCRegisterLuaUIAuto.hpp
+    auto/CCRegisterLuaAudioEngineAuto.hpp
+    auto/CCRegisterLuaPhysics3DAuto.hpp
+    auto/CCRegisterLuaNavMeshAuto.hpp
+    auto/CCRegisterLuaBackendAuto.hpp
+    auto/CCRegisterLuaWebViewAuto.hpp
+    auto/CCRegisterLuaVideoPlayerAuto.hpp
     )
 
 set(lua_bindings_auto_files
-    # auto/lua_cocos2dx_3d_auto.cpp
-    # auto/lua_cocos2dx_auto.cpp
-    # auto/lua_cocos2dx_controller_auto.cpp
-    # auto/lua_cocos2dx_extension_auto.cpp
-    # auto/lua_cocos2dx_physics_auto.cpp
-    # auto/lua_cocos2dx_spine_auto.cpp
-    # auto/lua_cocos2dx_studio_auto.cpp
-    # auto/lua_cocos2dx_csloader_auto.cpp
-    # auto/lua_cocos2dx_ui_auto.cpp
-    # auto/lua_cocos2dx_audioengine_auto.cpp
-    # auto/lua_cocos2dx_physics3d_auto.cpp
-    # auto/lua_cocos2dx_navmesh_auto.cpp
-    # auto/lua_cocos2dx_backend_auto.cpp
-    # auto/lua_cocos2dx_webview_auto.cpp
-    # auto/lua_cocos2dx_video_auto.cpp
+    auto/CCRegisterLua3DAuto.cpp
+    auto/CCRegisterLuaCoreAuto.cpp
+    auto/CCRegisterLuaControllerAuto.cpp
+    auto/CCRegisterLuaExtensionAuto.cpp
+    auto/CCRegisterLuaPhysicsAuto.cpp
+    auto/CCRegisterLuaSpineAuto.cpp
+    auto/CCRegisterLuaStudioAuto.cpp
+    auto/CCRegisterLuaCSLoaderAuto.cpp
+    auto/CCRegisterLuaUIAuto.cpp
+    auto/CCRegisterLuaAudioEngineAuto.cpp
+    auto/CCRegisterLuaPhysics3DAuto.cpp
+    auto/CCRegisterLuaNavMeshAuto.cpp
+    auto/CCRegisterLuaBackendAuto.cpp
+    auto/CCRegisterLuaWebViewAuto.cpp
+    auto/CCRegisterLuaVideoPlayerAuto.cpp
     )
 
 if(APPLE)

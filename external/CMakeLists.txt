@@ -193,11 +193,10 @@ endif(BUILD_EXT_MONGOOSE)
 # use lua/js specific libs by property to prevent conflict
 if(BUILD_LUA_LIBS)
     add_subdirectory(lua/plainlua)
-    add_subdirectory(lua/tolua)
     add_subdirectory(lua/luasocket)
     add_subdirectory(lua/cjson)
     add_subdirectory(lua/lua-protobuf)
-    target_link_libraries(external plainlua tolua luasocket cjson lua-protobuf)
+    target_link_libraries(external plainlua luasocket cjson lua-protobuf)
 endif()
 
 if(NOT LINUX)

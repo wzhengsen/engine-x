@@ -1204,15 +1204,15 @@ class NativeClass(object):
             return overload
         return overload,"".join(cxx)
 
-    def SolRegisterFunction(self,fn,cxx):
+    def SolRegisterFunction(self,m,cxx):
         """生成适用于sol注册lua类的成员函数的c++代码。
         
         参数：
-            fn      欲生成代码的函数。
+            m       欲生成代码的函数包装。
             cxx     用于保存拼接字符串的列表。
         """
-        cxx.append("mt[\"" + fn.func_name +"\"]=")
-        overload,implStr = self.SolRegisterFunctionImpl(fn)
+        cxx.append("mt[\"" + m["name"] +"\"]=")
+        overload,implStr = self.SolRegisterFunctionImpl(m["impl"])
         if overload:
             cxx.append("sol::overload(")
             cxx.append(implStr)
@@ -1233,12 +1233,12 @@ class NativeClass(object):
         for p in self.parents:
             basesName += ","+ p.namespaced_class_name
         cxx = [
-            "void lua_register_{}_{}(cocos2d::Lua& lua)".format(self.generator.prefix,self.class_name),
+            "static void RegisterLua{}(cocos2d::Lua& lua)".format(self.class_name),
             "{\n",
             "auto mt=cocos2d::Lua::NewUserType<{basesName}>(lua.get_or(\"{target_ns}\",lua.create_named_table(\"{target_ns}\")),\"{class_name}\");\n".format(class_name = self.class_name,basesName = basesName,target_ns = self.generator.target_ns)
         ]
         for m in self.methods_clean() + self.static_methods_clean():
-            self.SolRegisterFunction(m["impl"],cxx)
+            self.SolRegisterFunction(m,cxx)
         cxx.append("}\n")
         return "".join(cxx)
 
