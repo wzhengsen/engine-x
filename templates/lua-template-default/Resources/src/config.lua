@@ -32,7 +32,13 @@ local config = {
 
     -- 用于控制热更和应用升级是否可用。
     Update = true,
-    Upgrade = true
+    Upgrade = true,
+
+    -- 用于控制是否可直接从zip文件中获取lua/luac文件。
+    RequireZipEnabled = true,
+    -- 用于控制是否可直接从Http和Https中获取lua/luac文件。
+    -- 不建议使用，在网络上获取的一些lua文件如果是被精心炮制的，可能对程序运行产生影响。
+    RequireHttpEnabled = false
 }
 
 local mt = {
