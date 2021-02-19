@@ -1210,14 +1210,15 @@ class NativeClass(object):
             m       欲生成代码的函数包装。
             cxx     用于保存拼接字符串的列表。
         """
-        cxx.append("\"" + m["name"] +"\",")
+        cxx.append("mt[\"" + m["name"] +"\"]=")
         overload,implStr = self.SolRegisterFunctionImpl(m["impl"])
         if overload:
             cxx.append("sol::overload(")
             cxx.append(implStr)
-            cxx.append(")")
+            cxx.append(");")
         else:
             cxx.append(implStr)
+            cxx.append(";")
         cxx.append("\n")
 
     def SolRegister(self):
@@ -1232,14 +1233,13 @@ class NativeClass(object):
         for p in self.parents:
             basesName += ","+ p.namespaced_class_name
         cxx = [
-            "static void RegisterLua{}(cocos2d::Lua& lua)".format(self.class_name),
+            "static void RegisterLua{}{}(cocos2d::Lua& lua)".format(self.generator.prefix,self.class_name),
             "{\n",
-            "lua.NewUserType<{basesName}>(\"{target_ns}\",\"{class_name}\"\n".format(class_name = self.class_name,basesName = basesName,target_ns = self.generator.target_ns)
+            "auto mt=lua.NewUserType<{basesName}>(\"{target_ns}\",\"{class_name}\");\n".format(class_name = self.class_name,basesName = basesName,target_ns = self.generator.target_ns)
         ]
         for m in self.methods_clean() + self.static_methods_clean():
-            cxx.append(",")
             self.SolRegisterFunction(m,cxx)
-        cxx.append(");}\n")
+        cxx.append("}\n")
         return "".join(cxx)
 
     @staticmethod

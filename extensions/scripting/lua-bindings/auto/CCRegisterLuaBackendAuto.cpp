@@ -5,21 +5,21 @@
 #include "renderer/backend/VertexLayout.h"
 #include "renderer/backend/Device.h"
 #include "renderer/backend/RenderTarget.h"
-static void RegisterLuaBufferUsage(cocos2d::Lua& lua) {
+static void RegisterLuaBackendBufferUsage(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("BufferUsage"
 ,"STATIC", 0
 ,"DYNAMIC", 1
 );
 }
-static void RegisterLuaBufferType(cocos2d::Lua& lua) {
+static void RegisterLuaBackendBufferType(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("BufferType"
 ,"VERTEX", 0
 ,"INDEX", 1
 );
 }
-static void RegisterLuaShaderStage(cocos2d::Lua& lua) {
+static void RegisterLuaBackendShaderStage(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("ShaderStage"
 ,"VERTEX", 0
@@ -27,7 +27,7 @@ ccb.new_enum("ShaderStage"
 ,"VERTEX_AND_FRAGMENT", 2
 );
 }
-static void RegisterLuaVertexFormat(cocos2d::Lua& lua) {
+static void RegisterLuaBackendVertexFormat(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("VertexFormat"
 ,"FLOAT4", 0
@@ -43,7 +43,7 @@ ccb.new_enum("VertexFormat"
 ,"UBYTE4", 10
 );
 }
-static void RegisterLuaPixelFormat(cocos2d::Lua& lua) {
+static void RegisterLuaBackendPixelFormat(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("PixelFormat"
 ,"PVRTC4", 0
@@ -80,7 +80,7 @@ ccb.new_enum("PixelFormat"
 ,"NONE", 65535
 );
 }
-static void RegisterLuaTextureUsage(cocos2d::Lua& lua) {
+static void RegisterLuaBackendTextureUsage(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("TextureUsage"
 ,"READ", 0
@@ -88,21 +88,21 @@ ccb.new_enum("TextureUsage"
 ,"RENDER_TARGET", 2
 );
 }
-static void RegisterLuaIndexFormat(cocos2d::Lua& lua) {
+static void RegisterLuaBackendIndexFormat(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("IndexFormat"
 ,"U_SHORT", 0
 ,"U_INT", 1
 );
 }
-static void RegisterLuaVertexStepMode(cocos2d::Lua& lua) {
+static void RegisterLuaBackendVertexStepMode(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("VertexStepMode"
 ,"VERTEX", 0
 ,"INSTANCE", 1
 );
 }
-static void RegisterLuaPrimitiveType(cocos2d::Lua& lua) {
+static void RegisterLuaBackendPrimitiveType(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("PrimitiveType"
 ,"POINT", 0
@@ -112,14 +112,14 @@ ccb.new_enum("PrimitiveType"
 ,"TRIANGLE_STRIP", 4
 );
 }
-static void RegisterLuaTextureType(cocos2d::Lua& lua) {
+static void RegisterLuaBackendTextureType(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("TextureType"
 ,"TEXTURE_2D", 0
 ,"TEXTURE_CUBE", 1
 );
 }
-static void RegisterLuaSamplerAddressMode(cocos2d::Lua& lua) {
+static void RegisterLuaBackendSamplerAddressMode(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("SamplerAddressMode"
 ,"REPEAT", 0
@@ -128,7 +128,7 @@ ccb.new_enum("SamplerAddressMode"
 ,"DONT_CARE", 3
 );
 }
-static void RegisterLuaSamplerFilter(cocos2d::Lua& lua) {
+static void RegisterLuaBackendSamplerFilter(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("SamplerFilter"
 ,"NEAREST", 0
@@ -140,7 +140,7 @@ ccb.new_enum("SamplerFilter"
 ,"DONT_CARE", 6
 );
 }
-static void RegisterLuaStencilOperation(cocos2d::Lua& lua) {
+static void RegisterLuaBackendStencilOperation(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("StencilOperation"
 ,"KEEP", 0
@@ -151,7 +151,7 @@ ccb.new_enum("StencilOperation"
 ,"DECREMENT_WRAP", 5
 );
 }
-static void RegisterLuaCompareFunction(cocos2d::Lua& lua) {
+static void RegisterLuaBackendCompareFunction(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("CompareFunction"
 ,"NEVER", 0
@@ -164,7 +164,7 @@ ccb.new_enum("CompareFunction"
 ,"ALWAYS", 7
 );
 }
-static void RegisterLuaBlendOperation(cocos2d::Lua& lua) {
+static void RegisterLuaBackendBlendOperation(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("BlendOperation"
 ,"ADD", 0
@@ -172,7 +172,7 @@ ccb.new_enum("BlendOperation"
 ,"RESERVE_SUBTRACT", 2
 );
 }
-static void RegisterLuaBlendFactor(cocos2d::Lua& lua) {
+static void RegisterLuaBackendBlendFactor(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("BlendFactor"
 ,"ZERO", 0
@@ -191,7 +191,7 @@ ccb.new_enum("BlendFactor"
 ,"BLEND_CLOLOR", 13
 );
 }
-static void RegisterLuaColorWriteMask(cocos2d::Lua& lua) {
+static void RegisterLuaBackendColorWriteMask(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("ColorWriteMask"
 ,"RED_BIT", 0
@@ -206,7 +206,7 @@ ccb.new_enum("ColorWriteMask"
 ,"ALL", 15
 );
 }
-static void RegisterLuaCullMode(cocos2d::Lua& lua) {
+static void RegisterLuaBackendCullMode(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("CullMode"
 ,"NONE", 0
@@ -214,14 +214,14 @@ ccb.new_enum("CullMode"
 ,"FRONT", 2
 );
 }
-static void RegisterLuaWinding(cocos2d::Lua& lua) {
+static void RegisterLuaBackendWinding(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("Winding"
 ,"CLOCK_WISE", 0
 ,"COUNTER_CLOCK_WISE", 1
 );
 }
-static void RegisterLuaTextureCubeFace(cocos2d::Lua& lua) {
+static void RegisterLuaBackendTextureCubeFace(cocos2d::Lua& lua) {
 sol::table ccb = lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("TextureCubeFace"
 ,"POSITIVE_X", 0
@@ -232,99 +232,99 @@ ccb.new_enum("TextureCubeFace"
 ,"NEGATIVE_Z", 5
 );
 }
-static void RegisterLuaProgram(cocos2d::Lua& lua){
-lua.NewUserType<cocos2d::backend::Program,cocos2d::Ref,cocos2d::LuaObject>("ccb","Program"
-,"getUniformLocation",sol::overload(static_cast<cocos2d::backend::UniformLocation(cocos2d::backend::Program::*)(cocos2d::backend::Uniform)const>(&cocos2d::backend::Program::getUniformLocation),static_cast<cocos2d::backend::UniformLocation(cocos2d::backend::Program::*)(const std::string&)const>(&cocos2d::backend::Program::getUniformLocation))
-,"getAttributeLocation",sol::overload(static_cast<int(cocos2d::backend::Program::*)(cocos2d::backend::Attribute)const>(&cocos2d::backend::Program::getAttributeLocation),static_cast<int(cocos2d::backend::Program::*)(const std::string&)const>(&cocos2d::backend::Program::getAttributeLocation))
-,"getMaxVertexLocation",static_cast<int(cocos2d::backend::Program::*)()const>(&cocos2d::backend::Program::getMaxVertexLocation)
-,"getMaxFragmentLocation",static_cast<int(cocos2d::backend::Program::*)()const>(&cocos2d::backend::Program::getMaxFragmentLocation)
-,"getActiveAttributes",static_cast<const std::unordered_map<std::string, cocos2d::backend::AttributeBindInfo>(cocos2d::backend::Program::*)()const>(&cocos2d::backend::Program::getActiveAttributes)
-,"getVertexShader",static_cast<const std::string&(cocos2d::backend::Program::*)()const>(&cocos2d::backend::Program::getVertexShader)
-,"getFragmentShader",static_cast<const std::string&(cocos2d::backend::Program::*)()const>(&cocos2d::backend::Program::getFragmentShader)
-,"getProgramType",static_cast<uint32_t(cocos2d::backend::Program::*)()const>(&cocos2d::backend::Program::getProgramType)
-,"getUniformBufferSize",static_cast<size_t(cocos2d::backend::Program::*)(cocos2d::backend::ShaderStage)const>(&cocos2d::backend::Program::getUniformBufferSize)
-,"setProgramType",static_cast<void(cocos2d::backend::Program::*)(uint32_t)>(&cocos2d::backend::Program::setProgramType)
-,"getBuiltinProgram",static_cast<cocos2d::backend::Program*(*)(uint32_t)>(&cocos2d::backend::Program::getBuiltinProgram)
-);}
-static void RegisterLuaVertexLayout(cocos2d::Lua& lua){
-lua.NewUserType<cocos2d::backend::VertexLayout>("ccb","VertexLayout"
-,"setAttribute",static_cast<void(cocos2d::backend::VertexLayout::*)(const std::string&,size_t,cocos2d::backend::VertexFormat,size_t,bool)>(&cocos2d::backend::VertexLayout::setAttribute)
-,"setLayout",static_cast<void(cocos2d::backend::VertexLayout::*)(size_t)>(&cocos2d::backend::VertexLayout::setLayout)
-,"getStride",static_cast<size_t(cocos2d::backend::VertexLayout::*)()const>(&cocos2d::backend::VertexLayout::getStride)
-,"getVertexStepMode",static_cast<cocos2d::backend::VertexStepMode(cocos2d::backend::VertexLayout::*)()const>(&cocos2d::backend::VertexLayout::getVertexStepMode)
-,"isValid",static_cast<bool(cocos2d::backend::VertexLayout::*)()const>(&cocos2d::backend::VertexLayout::isValid)
-);}
-static void RegisterLuaProgramState(cocos2d::Lua& lua){
-lua.NewUserType<cocos2d::backend::ProgramState,cocos2d::Ref,cocos2d::LuaObject>("ccb","ProgramState"
-,"clone",static_cast<cocos2d::backend::ProgramState*(cocos2d::backend::ProgramState::*)()const>(&cocos2d::backend::ProgramState::clone)
-,"getProgram",static_cast<cocos2d::backend::Program*(cocos2d::backend::ProgramState::*)()const>(&cocos2d::backend::ProgramState::getProgram)
-,"getAttributeLocation",sol::overload(static_cast<int(cocos2d::backend::ProgramState::*)(cocos2d::backend::Attribute)const>(&cocos2d::backend::ProgramState::getAttributeLocation),static_cast<int(cocos2d::backend::ProgramState::*)(const std::string&)const>(&cocos2d::backend::ProgramState::getAttributeLocation))
-,"setTexture",sol::overload(static_cast<void(cocos2d::backend::ProgramState::*)(const cocos2d::backend::UniformLocation&,uint16_t,cocos2d::backend::TextureBackend*)>(&cocos2d::backend::ProgramState::setTexture),static_cast<void(cocos2d::backend::ProgramState::*)(cocos2d::backend::TextureBackend*)>(&cocos2d::backend::ProgramState::setTexture),static_cast<void(cocos2d::backend::ProgramState::*)(const cocos2d::backend::UniformLocation&,uint16_t,uint16_t,cocos2d::backend::TextureBackend*)>(&cocos2d::backend::ProgramState::setTexture))
-,"setParameterAutoBinding",static_cast<void(cocos2d::backend::ProgramState::*)(const std::string&,const std::string&)>(&cocos2d::backend::ProgramState::setParameterAutoBinding)
-,"getUniformID",static_cast<uint32_t(cocos2d::backend::ProgramState::*)()const>(&cocos2d::backend::ProgramState::getUniformID)
-,"updateUniformID",sol::overload([](cocos2d::backend::ProgramState* obj){return obj->updateUniformID();},[](cocos2d::backend::ProgramState* obj,int arg0){return obj->updateUniformID(arg0);})
-);}
-static void RegisterLuaTextureBackend(cocos2d::Lua& lua){
-lua.NewUserType<cocos2d::backend::TextureBackend,cocos2d::Ref,cocos2d::LuaObject>("ccb","TextureBackend"
-,"updateSamplerDescriptor",static_cast<void(cocos2d::backend::TextureBackend::*)(const cocos2d::backend::SamplerDescriptor&)>(&cocos2d::backend::TextureBackend::updateSamplerDescriptor)
-,"generateMipmaps",static_cast<void(cocos2d::backend::TextureBackend::*)()>(&cocos2d::backend::TextureBackend::generateMipmaps)
-,"updateTextureDescriptor",sol::overload([](cocos2d::backend::TextureBackend* obj,const cocos2d::backend::TextureDescriptor& arg0){return obj->updateTextureDescriptor(arg0);},[](cocos2d::backend::TextureBackend* obj,const cocos2d::backend::TextureDescriptor& arg0,int arg1){return obj->updateTextureDescriptor(arg0,arg1);})
-,"getTextureFormat",static_cast<cocos2d::backend::PixelFormat(cocos2d::backend::TextureBackend::*)()const>(&cocos2d::backend::TextureBackend::getTextureFormat)
-,"getTextureUsage",static_cast<cocos2d::backend::TextureUsage(cocos2d::backend::TextureBackend::*)()const>(&cocos2d::backend::TextureBackend::getTextureUsage)
-,"getTextureType",static_cast<cocos2d::backend::TextureType(cocos2d::backend::TextureBackend::*)()const>(&cocos2d::backend::TextureBackend::getTextureType)
-,"hasMipmaps",static_cast<bool(cocos2d::backend::TextureBackend::*)()const>(&cocos2d::backend::TextureBackend::hasMipmaps)
-,"getCount",static_cast<int(cocos2d::backend::TextureBackend::*)()const>(&cocos2d::backend::TextureBackend::getCount)
-,"getHandler",sol::overload([](cocos2d::backend::TextureBackend* obj){return obj->getHandler();},[](cocos2d::backend::TextureBackend* obj,int arg0){return obj->getHandler(arg0);})
-,"getWidth",static_cast<int(cocos2d::backend::TextureBackend::*)()const>(&cocos2d::backend::TextureBackend::getWidth)
-,"getHeight",static_cast<int(cocos2d::backend::TextureBackend::*)()const>(&cocos2d::backend::TextureBackend::getHeight)
-);}
-static void RegisterLuaTexture2DBackend(cocos2d::Lua& lua){
-lua.NewUserType<cocos2d::backend::Texture2DBackend,cocos2d::backend::TextureBackend,cocos2d::Ref,cocos2d::LuaObject>("ccb","Texture2DBackend"
-,"updateData",sol::overload([](cocos2d::backend::Texture2DBackend* obj,uint8_t* arg0,size_t arg1,size_t arg2,size_t arg3){return obj->updateData(arg0,arg1,arg2,arg3);},[](cocos2d::backend::Texture2DBackend* obj,uint8_t* arg0,size_t arg1,size_t arg2,size_t arg3,int arg4){return obj->updateData(arg0,arg1,arg2,arg3,arg4);})
-,"updateCompressedData",sol::overload([](cocos2d::backend::Texture2DBackend* obj,uint8_t* arg0,size_t arg1,size_t arg2,size_t arg3,size_t arg4){return obj->updateCompressedData(arg0,arg1,arg2,arg3,arg4);},[](cocos2d::backend::Texture2DBackend* obj,uint8_t* arg0,size_t arg1,size_t arg2,size_t arg3,size_t arg4,int arg5){return obj->updateCompressedData(arg0,arg1,arg2,arg3,arg4,arg5);})
-,"updateSubData",sol::overload([](cocos2d::backend::Texture2DBackend* obj,size_t arg0,size_t arg1,size_t arg2,size_t arg3,size_t arg4,uint8_t* arg5){return obj->updateSubData(arg0,arg1,arg2,arg3,arg4,arg5);},[](cocos2d::backend::Texture2DBackend* obj,size_t arg0,size_t arg1,size_t arg2,size_t arg3,size_t arg4,uint8_t* arg5,int arg6){return obj->updateSubData(arg0,arg1,arg2,arg3,arg4,arg5,arg6);})
-,"updateCompressedSubData",sol::overload([](cocos2d::backend::Texture2DBackend* obj,size_t arg0,size_t arg1,size_t arg2,size_t arg3,size_t arg4,size_t arg5,uint8_t* arg6){return obj->updateCompressedSubData(arg0,arg1,arg2,arg3,arg4,arg5,arg6);},[](cocos2d::backend::Texture2DBackend* obj,size_t arg0,size_t arg1,size_t arg2,size_t arg3,size_t arg4,size_t arg5,uint8_t* arg6,int arg7){return obj->updateCompressedSubData(arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7);})
-,"getWidth",static_cast<size_t(cocos2d::backend::Texture2DBackend::*)()const>(&cocos2d::backend::Texture2DBackend::getWidth)
-,"getHeight",static_cast<size_t(cocos2d::backend::Texture2DBackend::*)()const>(&cocos2d::backend::Texture2DBackend::getHeight)
-);}
-static void RegisterLuaTextureCubemapBackend(cocos2d::Lua& lua){
-lua.NewUserType<cocos2d::backend::TextureCubemapBackend,cocos2d::backend::TextureBackend,cocos2d::Ref,cocos2d::LuaObject>("ccb","TextureCubemapBackend"
-,"updateFaceData",sol::overload([](cocos2d::backend::TextureCubemapBackend* obj,cocos2d::backend::TextureCubeFace arg0,void* arg1){return obj->updateFaceData(arg0,arg1);},[](cocos2d::backend::TextureCubemapBackend* obj,cocos2d::backend::TextureCubeFace arg0,void* arg1,int arg2){return obj->updateFaceData(arg0,arg1,arg2);})
-);}
-static void RegisterLuaDevice(cocos2d::Lua& lua){
-lua.NewUserType<cocos2d::backend::Device,cocos2d::Ref,cocos2d::LuaObject>("ccb","Device"
-,"newDefaultRenderTarget",static_cast<cocos2d::backend::RenderTarget*(cocos2d::backend::Device::*)(cocos2d::backend::TargetBufferFlags)>(&cocos2d::backend::Device::newDefaultRenderTarget)
-,"newRenderTarget",sol::overload([](cocos2d::backend::Device* obj,cocos2d::backend::TargetBufferFlags arg0){return obj->newRenderTarget(arg0);},[](cocos2d::backend::Device* obj,cocos2d::backend::TargetBufferFlags arg0,cocos2d::backend::TextureBackend* arg1){return obj->newRenderTarget(arg0,arg1);},[](cocos2d::backend::Device* obj,cocos2d::backend::TargetBufferFlags arg0,cocos2d::backend::TextureBackend* arg1,cocos2d::backend::TextureBackend* arg2){return obj->newRenderTarget(arg0,arg1,arg2);},[](cocos2d::backend::Device* obj,cocos2d::backend::TargetBufferFlags arg0,cocos2d::backend::TextureBackend* arg1,cocos2d::backend::TextureBackend* arg2,cocos2d::backend::TextureBackend* arg3){return obj->newRenderTarget(arg0,arg1,arg2,arg3);})
-,"newDepthStencilState",static_cast<cocos2d::backend::DepthStencilState*(cocos2d::backend::Device::*)()>(&cocos2d::backend::Device::newDepthStencilState)
-,"newProgram",static_cast<cocos2d::backend::Program*(cocos2d::backend::Device::*)(const std::string&,const std::string&)>(&cocos2d::backend::Device::newProgram)
-,"getInstance",static_cast<cocos2d::backend::Device*(*)()>(&cocos2d::backend::Device::getInstance)
-);}
+static void RegisterLuaBackendProgram(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::backend::Program,cocos2d::Ref,cocos2d::LuaObject>("ccb","Program");
+mt["getUniformLocation"]=sol::overload(static_cast<cocos2d::backend::UniformLocation(cocos2d::backend::Program::*)(cocos2d::backend::Uniform)const>(&cocos2d::backend::Program::getUniformLocation),static_cast<cocos2d::backend::UniformLocation(cocos2d::backend::Program::*)(const std::string&)const>(&cocos2d::backend::Program::getUniformLocation));
+mt["getAttributeLocation"]=sol::overload(static_cast<int(cocos2d::backend::Program::*)(cocos2d::backend::Attribute)const>(&cocos2d::backend::Program::getAttributeLocation),static_cast<int(cocos2d::backend::Program::*)(const std::string&)const>(&cocos2d::backend::Program::getAttributeLocation));
+mt["getMaxVertexLocation"]=static_cast<int(cocos2d::backend::Program::*)()const>(&cocos2d::backend::Program::getMaxVertexLocation);
+mt["getMaxFragmentLocation"]=static_cast<int(cocos2d::backend::Program::*)()const>(&cocos2d::backend::Program::getMaxFragmentLocation);
+mt["getActiveAttributes"]=static_cast<const std::unordered_map<std::string, cocos2d::backend::AttributeBindInfo>(cocos2d::backend::Program::*)()const>(&cocos2d::backend::Program::getActiveAttributes);
+mt["getVertexShader"]=static_cast<const std::string&(cocos2d::backend::Program::*)()const>(&cocos2d::backend::Program::getVertexShader);
+mt["getFragmentShader"]=static_cast<const std::string&(cocos2d::backend::Program::*)()const>(&cocos2d::backend::Program::getFragmentShader);
+mt["getProgramType"]=static_cast<uint32_t(cocos2d::backend::Program::*)()const>(&cocos2d::backend::Program::getProgramType);
+mt["getUniformBufferSize"]=static_cast<size_t(cocos2d::backend::Program::*)(cocos2d::backend::ShaderStage)const>(&cocos2d::backend::Program::getUniformBufferSize);
+mt["setProgramType"]=static_cast<void(cocos2d::backend::Program::*)(uint32_t)>(&cocos2d::backend::Program::setProgramType);
+mt["getBuiltinProgram"]=static_cast<cocos2d::backend::Program*(*)(uint32_t)>(&cocos2d::backend::Program::getBuiltinProgram);
+}
+static void RegisterLuaBackendVertexLayout(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::backend::VertexLayout>("ccb","VertexLayout");
+mt["setAttribute"]=static_cast<void(cocos2d::backend::VertexLayout::*)(const std::string&,size_t,cocos2d::backend::VertexFormat,size_t,bool)>(&cocos2d::backend::VertexLayout::setAttribute);
+mt["setLayout"]=static_cast<void(cocos2d::backend::VertexLayout::*)(size_t)>(&cocos2d::backend::VertexLayout::setLayout);
+mt["getStride"]=static_cast<size_t(cocos2d::backend::VertexLayout::*)()const>(&cocos2d::backend::VertexLayout::getStride);
+mt["getVertexStepMode"]=static_cast<cocos2d::backend::VertexStepMode(cocos2d::backend::VertexLayout::*)()const>(&cocos2d::backend::VertexLayout::getVertexStepMode);
+mt["isValid"]=static_cast<bool(cocos2d::backend::VertexLayout::*)()const>(&cocos2d::backend::VertexLayout::isValid);
+}
+static void RegisterLuaBackendProgramState(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::backend::ProgramState,cocos2d::Ref,cocos2d::LuaObject>("ccb","ProgramState");
+mt["clone"]=static_cast<cocos2d::backend::ProgramState*(cocos2d::backend::ProgramState::*)()const>(&cocos2d::backend::ProgramState::clone);
+mt["getProgram"]=static_cast<cocos2d::backend::Program*(cocos2d::backend::ProgramState::*)()const>(&cocos2d::backend::ProgramState::getProgram);
+mt["getAttributeLocation"]=sol::overload(static_cast<int(cocos2d::backend::ProgramState::*)(cocos2d::backend::Attribute)const>(&cocos2d::backend::ProgramState::getAttributeLocation),static_cast<int(cocos2d::backend::ProgramState::*)(const std::string&)const>(&cocos2d::backend::ProgramState::getAttributeLocation));
+mt["setTexture"]=sol::overload(static_cast<void(cocos2d::backend::ProgramState::*)(const cocos2d::backend::UniformLocation&,uint16_t,cocos2d::backend::TextureBackend*)>(&cocos2d::backend::ProgramState::setTexture),static_cast<void(cocos2d::backend::ProgramState::*)(cocos2d::backend::TextureBackend*)>(&cocos2d::backend::ProgramState::setTexture),static_cast<void(cocos2d::backend::ProgramState::*)(const cocos2d::backend::UniformLocation&,uint16_t,uint16_t,cocos2d::backend::TextureBackend*)>(&cocos2d::backend::ProgramState::setTexture));
+mt["setParameterAutoBinding"]=static_cast<void(cocos2d::backend::ProgramState::*)(const std::string&,const std::string&)>(&cocos2d::backend::ProgramState::setParameterAutoBinding);
+mt["getUniformID"]=static_cast<uint32_t(cocos2d::backend::ProgramState::*)()const>(&cocos2d::backend::ProgramState::getUniformID);
+mt["updateUniformID"]=sol::overload([](cocos2d::backend::ProgramState* obj){return obj->updateUniformID();},[](cocos2d::backend::ProgramState* obj,int arg0){return obj->updateUniformID(arg0);});
+}
+static void RegisterLuaBackendTextureBackend(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::backend::TextureBackend,cocos2d::Ref,cocos2d::LuaObject>("ccb","TextureBackend");
+mt["updateSamplerDescriptor"]=static_cast<void(cocos2d::backend::TextureBackend::*)(const cocos2d::backend::SamplerDescriptor&)>(&cocos2d::backend::TextureBackend::updateSamplerDescriptor);
+mt["generateMipmaps"]=static_cast<void(cocos2d::backend::TextureBackend::*)()>(&cocos2d::backend::TextureBackend::generateMipmaps);
+mt["updateTextureDescriptor"]=sol::overload([](cocos2d::backend::TextureBackend* obj,const cocos2d::backend::TextureDescriptor& arg0){return obj->updateTextureDescriptor(arg0);},[](cocos2d::backend::TextureBackend* obj,const cocos2d::backend::TextureDescriptor& arg0,int arg1){return obj->updateTextureDescriptor(arg0,arg1);});
+mt["getTextureFormat"]=static_cast<cocos2d::backend::PixelFormat(cocos2d::backend::TextureBackend::*)()const>(&cocos2d::backend::TextureBackend::getTextureFormat);
+mt["getTextureUsage"]=static_cast<cocos2d::backend::TextureUsage(cocos2d::backend::TextureBackend::*)()const>(&cocos2d::backend::TextureBackend::getTextureUsage);
+mt["getTextureType"]=static_cast<cocos2d::backend::TextureType(cocos2d::backend::TextureBackend::*)()const>(&cocos2d::backend::TextureBackend::getTextureType);
+mt["hasMipmaps"]=static_cast<bool(cocos2d::backend::TextureBackend::*)()const>(&cocos2d::backend::TextureBackend::hasMipmaps);
+mt["getCount"]=static_cast<int(cocos2d::backend::TextureBackend::*)()const>(&cocos2d::backend::TextureBackend::getCount);
+mt["getHandler"]=sol::overload([](cocos2d::backend::TextureBackend* obj){return obj->getHandler();},[](cocos2d::backend::TextureBackend* obj,int arg0){return obj->getHandler(arg0);});
+mt["getWidth"]=static_cast<int(cocos2d::backend::TextureBackend::*)()const>(&cocos2d::backend::TextureBackend::getWidth);
+mt["getHeight"]=static_cast<int(cocos2d::backend::TextureBackend::*)()const>(&cocos2d::backend::TextureBackend::getHeight);
+}
+static void RegisterLuaBackendTexture2DBackend(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::backend::Texture2DBackend,cocos2d::backend::TextureBackend,cocos2d::Ref,cocos2d::LuaObject>("ccb","Texture2DBackend");
+mt["updateData"]=sol::overload([](cocos2d::backend::Texture2DBackend* obj,uint8_t* arg0,size_t arg1,size_t arg2,size_t arg3){return obj->updateData(arg0,arg1,arg2,arg3);},[](cocos2d::backend::Texture2DBackend* obj,uint8_t* arg0,size_t arg1,size_t arg2,size_t arg3,int arg4){return obj->updateData(arg0,arg1,arg2,arg3,arg4);});
+mt["updateCompressedData"]=sol::overload([](cocos2d::backend::Texture2DBackend* obj,uint8_t* arg0,size_t arg1,size_t arg2,size_t arg3,size_t arg4){return obj->updateCompressedData(arg0,arg1,arg2,arg3,arg4);},[](cocos2d::backend::Texture2DBackend* obj,uint8_t* arg0,size_t arg1,size_t arg2,size_t arg3,size_t arg4,int arg5){return obj->updateCompressedData(arg0,arg1,arg2,arg3,arg4,arg5);});
+mt["updateSubData"]=sol::overload([](cocos2d::backend::Texture2DBackend* obj,size_t arg0,size_t arg1,size_t arg2,size_t arg3,size_t arg4,uint8_t* arg5){return obj->updateSubData(arg0,arg1,arg2,arg3,arg4,arg5);},[](cocos2d::backend::Texture2DBackend* obj,size_t arg0,size_t arg1,size_t arg2,size_t arg3,size_t arg4,uint8_t* arg5,int arg6){return obj->updateSubData(arg0,arg1,arg2,arg3,arg4,arg5,arg6);});
+mt["updateCompressedSubData"]=sol::overload([](cocos2d::backend::Texture2DBackend* obj,size_t arg0,size_t arg1,size_t arg2,size_t arg3,size_t arg4,size_t arg5,uint8_t* arg6){return obj->updateCompressedSubData(arg0,arg1,arg2,arg3,arg4,arg5,arg6);},[](cocos2d::backend::Texture2DBackend* obj,size_t arg0,size_t arg1,size_t arg2,size_t arg3,size_t arg4,size_t arg5,uint8_t* arg6,int arg7){return obj->updateCompressedSubData(arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7);});
+mt["getWidth"]=static_cast<size_t(cocos2d::backend::Texture2DBackend::*)()const>(&cocos2d::backend::Texture2DBackend::getWidth);
+mt["getHeight"]=static_cast<size_t(cocos2d::backend::Texture2DBackend::*)()const>(&cocos2d::backend::Texture2DBackend::getHeight);
+}
+static void RegisterLuaBackendTextureCubemapBackend(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::backend::TextureCubemapBackend,cocos2d::backend::TextureBackend,cocos2d::Ref,cocos2d::LuaObject>("ccb","TextureCubemapBackend");
+mt["updateFaceData"]=sol::overload([](cocos2d::backend::TextureCubemapBackend* obj,cocos2d::backend::TextureCubeFace arg0,void* arg1){return obj->updateFaceData(arg0,arg1);},[](cocos2d::backend::TextureCubemapBackend* obj,cocos2d::backend::TextureCubeFace arg0,void* arg1,int arg2){return obj->updateFaceData(arg0,arg1,arg2);});
+}
+static void RegisterLuaBackendDevice(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::backend::Device,cocos2d::Ref,cocos2d::LuaObject>("ccb","Device");
+mt["newDefaultRenderTarget"]=static_cast<cocos2d::backend::RenderTarget*(cocos2d::backend::Device::*)(cocos2d::backend::TargetBufferFlags)>(&cocos2d::backend::Device::newDefaultRenderTarget);
+mt["newRenderTarget"]=sol::overload([](cocos2d::backend::Device* obj,cocos2d::backend::TargetBufferFlags arg0){return obj->newRenderTarget(arg0);},[](cocos2d::backend::Device* obj,cocos2d::backend::TargetBufferFlags arg0,cocos2d::backend::TextureBackend* arg1){return obj->newRenderTarget(arg0,arg1);},[](cocos2d::backend::Device* obj,cocos2d::backend::TargetBufferFlags arg0,cocos2d::backend::TextureBackend* arg1,cocos2d::backend::TextureBackend* arg2){return obj->newRenderTarget(arg0,arg1,arg2);},[](cocos2d::backend::Device* obj,cocos2d::backend::TargetBufferFlags arg0,cocos2d::backend::TextureBackend* arg1,cocos2d::backend::TextureBackend* arg2,cocos2d::backend::TextureBackend* arg3){return obj->newRenderTarget(arg0,arg1,arg2,arg3);});
+mt["newDepthStencilState"]=static_cast<cocos2d::backend::DepthStencilState*(cocos2d::backend::Device::*)()>(&cocos2d::backend::Device::newDepthStencilState);
+mt["newProgram"]=static_cast<cocos2d::backend::Program*(cocos2d::backend::Device::*)(const std::string&,const std::string&)>(&cocos2d::backend::Device::newProgram);
+mt["getInstance"]=static_cast<cocos2d::backend::Device*(*)()>(&cocos2d::backend::Device::getInstance);
+}
 void RegisterLuaBackendAuto(cocos2d::Lua& lua) {
-RegisterLuaBufferUsage(lua);
-RegisterLuaBufferType(lua);
-RegisterLuaShaderStage(lua);
-RegisterLuaVertexFormat(lua);
-RegisterLuaPixelFormat(lua);
-RegisterLuaTextureUsage(lua);
-RegisterLuaIndexFormat(lua);
-RegisterLuaVertexStepMode(lua);
-RegisterLuaPrimitiveType(lua);
-RegisterLuaTextureType(lua);
-RegisterLuaSamplerAddressMode(lua);
-RegisterLuaSamplerFilter(lua);
-RegisterLuaStencilOperation(lua);
-RegisterLuaCompareFunction(lua);
-RegisterLuaBlendOperation(lua);
-RegisterLuaBlendFactor(lua);
-RegisterLuaColorWriteMask(lua);
-RegisterLuaCullMode(lua);
-RegisterLuaWinding(lua);
-RegisterLuaTextureCubeFace(lua);
-RegisterLuaProgram(lua);
-RegisterLuaVertexLayout(lua);
-RegisterLuaProgramState(lua);
-RegisterLuaTextureBackend(lua);
-RegisterLuaTexture2DBackend(lua);
-RegisterLuaTextureCubemapBackend(lua);
-RegisterLuaDevice(lua);
+RegisterLuaBackendBufferUsage(lua);
+RegisterLuaBackendBufferType(lua);
+RegisterLuaBackendShaderStage(lua);
+RegisterLuaBackendVertexFormat(lua);
+RegisterLuaBackendPixelFormat(lua);
+RegisterLuaBackendTextureUsage(lua);
+RegisterLuaBackendIndexFormat(lua);
+RegisterLuaBackendVertexStepMode(lua);
+RegisterLuaBackendPrimitiveType(lua);
+RegisterLuaBackendTextureType(lua);
+RegisterLuaBackendSamplerAddressMode(lua);
+RegisterLuaBackendSamplerFilter(lua);
+RegisterLuaBackendStencilOperation(lua);
+RegisterLuaBackendCompareFunction(lua);
+RegisterLuaBackendBlendOperation(lua);
+RegisterLuaBackendBlendFactor(lua);
+RegisterLuaBackendColorWriteMask(lua);
+RegisterLuaBackendCullMode(lua);
+RegisterLuaBackendWinding(lua);
+RegisterLuaBackendTextureCubeFace(lua);
+RegisterLuaBackendProgram(lua);
+RegisterLuaBackendVertexLayout(lua);
+RegisterLuaBackendProgramState(lua);
+RegisterLuaBackendTextureBackend(lua);
+RegisterLuaBackendTexture2DBackend(lua);
+RegisterLuaBackendTextureCubemapBackend(lua);
+RegisterLuaBackendDevice(lua);
 }
