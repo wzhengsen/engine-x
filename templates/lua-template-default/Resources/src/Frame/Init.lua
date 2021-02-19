@@ -43,24 +43,20 @@ require("Module.Init");
 
 local config = require("config");
 
--- export global variable
-local __g = _G;
-cc.exports = {};
-setmetatable(cc.exports, {
-    __newindex = function(_, name, value)
-        rawset(__g, name, value);
-    end,
-
-    __index = function(_, name)
-        return rawget(__g, name);
-    end
-});
-
--- disable create unexpected global variable
 if config.DisableGlobal then
+    local __g = _G;
+    globals = setmetatable({}, {
+        __newindex = function(_, name, value)
+            rawset(__g, name, value);
+        end,
+
+        __index = function(_, name)
+            return rawget(__g, name);
+        end
+    });
     setmetatable(__g, {
         __newindex = function(_, name, value)
-            error(string.format("USE \" cc.exports.%s = value \" INSTEAD OF SET GLOBAL VARIABLE", name), 0);
+            error(string.format("USE \" globals.%s = value \" INSTEAD OF SET GLOBAL VARIABLE.", name), 0);
         end
     });
 end
