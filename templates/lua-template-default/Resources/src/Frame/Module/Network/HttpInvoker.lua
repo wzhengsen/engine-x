@@ -54,6 +54,10 @@
     Chg By:     wzhengsen
     Date:       2020.12.07
     Content:    构造时可以提供Content-Type了，默认使用application/x-www-form-urlencoded。
+
+    Chg By:     wzhengsen
+    Date:       2021.02.19
+    Content:    如果使用同步模式，将在Get/Post...等方法结束时返回值。
 ]]
 local HttpInvoker = class();
 
@@ -158,13 +162,19 @@ function HttpInvoker:_OnResponse(xhr,url,method,sendTime)
             ret.data = tab;
         else
             -- 返回值不能转换为json被认为是不成功的。
-            ret.data = {};
             suc = false;
         end
     else
         ret.data = data;
     end
 
+    if self._async then
+        -- 异步下，不记录最近返回的数据，没有意义。
+        self._lastData = nil;
+    else
+        -- 记录最近返回的data.
+        self._lastData = ret.data;
+    end
     if not self:OnResponse(suc,ret) then
         Event.Http(self,suc,ret);
     end
@@ -230,6 +240,10 @@ function HttpInvoker:_Send(url,method)
         xhr:open(method.name, url,self._async)
         xhr:send(pData)
     end
+
+    if not self._async then
+        return self._lastData;
+    end
 end
 
 --[[
@@ -248,19 +262,19 @@ function HttpInvoker:OnResponse(suc,ret)
 end
 
 function HttpInvoker:Get(url)
-    self:_Send(url,HttpInvoker.Method.Get);
+    return self:_Send(url,HttpInvoker.Method.Get);
 end
 
 function HttpInvoker:Post(url)
-    self:_Send(url,HttpInvoker.Method.Post);
+    return self:_Send(url,HttpInvoker.Method.Post);
 end
 
 function HttpInvoker:Put(url)
-    self:_Send(url,HttpInvoker.Method.Put);
+    return self:_Send(url,HttpInvoker.Method.Put);
 end
 
 function HttpInvoker:Delete(url)
-    self:_Send(url,HttpInvoker.Method.Delete);
+    return self:_Send(url,HttpInvoker.Method.Delete);
 end
 
 --[[

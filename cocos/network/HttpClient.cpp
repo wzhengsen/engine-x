@@ -148,7 +148,7 @@ void HttpClient::networkThread()
 }
 
 // Worker thread
-void HttpClient::networkThreadAlone(HttpRequest* request, HttpResponse* response)
+void HttpClient::networkThreadAlone(HttpRequest* request, HttpResponse* response,bool async)
 {
     increaseThreadCount();
 
@@ -173,7 +173,7 @@ void HttpClient::networkThreadAlone(HttpRequest* request, HttpResponse* response
         request->release();
     };
 
-    if (!_dispatchOnWorkThread) {
+    if (!_dispatchOnWorkThread && async) {
         std::lock_guard<std::recursive_mutex> lck(_schedulerMutex);
         if (_scheduler != nullptr)
             _scheduler->performFunctionInCocosThread(dispatchFunc);
@@ -505,11 +505,11 @@ void HttpClient::sendImmediate(HttpRequest* request)
     HttpResponse *response = new (std::nothrow) HttpResponse(request);
 
 	if (request->IsAsync()) {
-		auto t = std::thread(&HttpClient::networkThreadAlone, this, request, response);
+		auto t = std::thread(&HttpClient::networkThreadAlone, this, request, response, true);
 		t.detach();
 	}
 	else {
-		networkThreadAlone(request, response);
+		networkThreadAlone(request, response, false);
 	}
 }
 
