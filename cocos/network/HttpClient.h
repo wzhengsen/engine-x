@@ -191,7 +191,7 @@ private:
      */
     bool lazyInitThreadSemaphore();
     void networkThread();
-    void networkThreadAlone(HttpRequest* request, HttpResponse* response);
+    void networkThreadAlone(HttpRequest* request, HttpResponse* response,bool async = true);
     /** Poll function called from main thread to dispatch callbacks when http requests finished **/
     void dispatchResponseCallbacks();
 
