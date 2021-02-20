@@ -1,39 +1,56 @@
 #!/usr/bin/env python3
 
 import os
-import sys
-import getopt
 import shutil
-from ftplib import FTP,error_perm
 import Functions
 from Template import ConfigTemplate,ProjectManifestTemplate,VersionManifestTemplate
-from colorama import Fore,Back,Style
-import platform
 
 class Assistant():
     '''助理类，能帮助处理Lua编译/文件夹同步/加密/热更/上传/版本管理等。
     '''
-    _tempDir = "../.tempDir"
-    _versionManifest = "version.manifest.json"
-    _projectManifest = "project.manifest.json"
-    _versionDir = "Version"
+    _TempDir = "../.tempDir"
+    _VersionManifest = "version.manifest.json"
+    _ProjectManifest = "project.manifest.json"
+    _VersionDir = "Version"
+    _ModuleFileName = "Module.json"
 
-    def __init__(self,configFileName):
+    def __init__(self,srcPath):
         '''
         Param:
 
-        configFileName      配置文件名。该json文件提供了大多数初始配置。
-                            若该文件不存在，则将依照模板创建一个新的。
+        srcPath             源目录。
         '''
-        self._config = Functions.LoadJson(configFileName)
-        if self._config == None:
+
+        self._configFileName = os.path.join(srcPath,Assistant._ModuleFileName)
+        self._srcPath = srcPath
+        self._config = Functions.LoadJson(self._configFileName)
+        self._isDefault = self._config == None
+        if self._isDefault:
+            # 没有配置时，创建一个默认配置，但该配置并不保存，也不产生版本信息。
             self._config = ConfigTemplate.copy()
-            Functions.SaveJson(configFileName,self._config)
-        self._configFileName = os.path.realpath(configFileName)
+
 
     def __del__(self):
         if self._config.get("exitSave"):
             Functions.SaveJson(self._configFileName,self._config)
+
+    def GetModules(self):
+        return self._config["modules"].copy()
+
+    def CreateDefaultConfig(self):
+        """在当前源目录下创建一个默认的配置文件。
+
+        返回：
+
+            boolean     若当前目录下已有配置文件，返回False;
+                        否则返回True。
+        """
+        if not self._isDefault:
+            return False
+        self._config = ConfigTemplate.copy()
+        Functions.SaveJson(self._configFileName,self._config)
+        self._isDefault = False
+        return True
 
     @staticmethod
     def __SyncGet(m1,m2,key):
@@ -77,13 +94,8 @@ class Assistant():
             verList[i] = str(verNList[i])
         return ".".join(verList)
 
-    def GetModules(self):
-        l = []
-        for m in self._config["modules"]:
-            l.append(m["name"])
-        return l
-
-    def GetProjectManifest(self,pManifestPath,template):
+    @staticmethod
+    def __GetProjectManifest(pManifestPath,template):
         '''获取指定路径的projectManifest文件内容。
         若不存在，将以Template.ProjectManifestTemplate创建一个新的，并以template参数初始化。
         '''
@@ -107,39 +119,37 @@ class Assistant():
 
         Return:
 
-            tuple
+            dict
         '''
         if moduleName != None:
-            return (x for x in self._config["modules"] if x["name"] == moduleName)
-        else:
-            return (x for x in self._config["modules"])
+            return {moduleName,self._config["modules"][moduleName]}
+        return self._config["modules"]
 
-        return ()
 
-    def SyncModule(self,moduleName = None):
-        '''同步给定的模块名的文件到_tempDir/module["name"]中。
+    def __SyncModuleToTemp(self,moduleName = None):
+        '''同步给定的模块名的文件到_tempDir/module/moduleName中。
         若不提供模块名，将同步全部模块。
 
         Param:
 
             moduleName          模块名。
         '''
-        for m in self._config["modules"]:
-            if moduleName == None or m["name"] == moduleName:
-                for d in m["dirs"]:
-                    if not Functions.SyncDir(os.path.join(m["localRoot"],d),os.path.join(Assistant._tempDir,m["name"],d)):
-                        return False
-                for f in m["files"]:
-                    dstFileDir = os.path.dirname(os.path.join(Assistant._tempDir,m["name"],f))
-                    if not os.path.exists(dstFileDir):
-                        os.makedirs(dstFileDir)
-                    shutil.copy(os.path.join(m["localRoot"],f),os.path.join(Assistant._tempDir,m["name"],f))
-                if m["name"] == moduleName:
-                    break
+        mds = self._config["modules"] if moduleName == None else [self._config["modules"].get(moduleName)]
+        if mds == None:
+            return False
+        for name,m in mds.items():
+            for d in m["dirs"]:
+                if not Functions.SyncDir(d,os.path.join(Assistant._TempDir,name,d),[Assistant._ModuleFileName]):
+                    return False
+            for f in m["files"]:
+                dstFileDir = os.path.dirname(os.path.join(Assistant._TempDir,name,f))
+                if not os.path.exists(dstFileDir):
+                    os.makedirs(dstFileDir)
+                shutil.copy(f,os.path.join(Assistant._TempDir,name,f))
         return True
 
-    def CompileLua(self,moduleName = None,uniConfig = None,sync = False,**kw):
-        '''编译给定的模块名的lua文件到_tempDir/module["name"]中。
+    def __CompileLua(self,moduleName = None,uniConfig = None,sync = False,**kw):
+        '''编译给定的模块名的lua文件到_tempDir/name中。
         若不提供模块名，将编译全部模块。
 
         Param:
@@ -150,19 +160,19 @@ class Assistant():
             compileLua          编译lua的功能是否开启。
         '''
         if sync:
-            self.SyncModule(moduleName)
+            self.__SyncModuleToTemp(moduleName)
         if None == uniConfig:
             uniConfig = self._config.get("useUniConfig")
-        for module in self.__GetModule(moduleName):
-            opDir = os.path.join(Assistant._tempDir,module["name"])
+        for name,module in self.__GetModule(moduleName).items():
+            opDir = os.path.join(Assistant._TempDir,name)
             mConfig = module if not uniConfig else self._config["uniModule"]
             compileLua = Assistant.__SyncGet(kw,mConfig,"compileLua")
             if compileLua and not Functions.CompileLua(opDir):
                 return False
         return True
 
-    def CompressPng(self,moduleName = None,uniConfig = None,sync = False,**kw):
-        '''压缩给定的模块名的png文件到_tempDir/module["name"]中。
+    def __CompressPng(self,moduleName = None,uniConfig = None,sync = False,**kw):
+        '''压缩给定的模块名的png文件到_tempDir/name中。
         若不提供模块名，将压缩全部模块。
 
         Param:
@@ -175,11 +185,11 @@ class Assistant():
             compressQualityMax  最高接近质量。
         '''
         if sync:
-            self.SyncModule(moduleName)
+            self.__SyncModuleToTemp(moduleName)
         if None == uniConfig:
             uniConfig = self._config.get("useUniConfig")
-        for module in self.__GetModule(moduleName):
-            opDir = os.path.join(Assistant._tempDir,module["name"])
+        for name,module in self.__GetModule(moduleName).items():
+            opDir = os.path.join(Assistant._TempDir,name)
             mConfig = module if not uniConfig else self._config["uniModule"]
             compressQualityMin = Assistant.__SyncGet(kw,mConfig,"compressQualityMin")
             compressQualityMax = Assistant.__SyncGet(kw,mConfig,"compressQualityMax")
@@ -188,8 +198,8 @@ class Assistant():
                 return False
         return True
 
-    def EncryptRes(self,moduleName = None,uniConfig = None,sync = False,**kw):
-        '''加密给定的模块名的png/lua/luac文件到_tempDir/module["name"]中。
+    def __EncryptRes(self,moduleName = None,uniConfig = None,sync = False,**kw):
+        '''加密给定的模块名的png/lua/luac文件到_tempDir/name中。
         若不提供模块名，将加密全部模块。
 
         Param:
@@ -200,12 +210,15 @@ class Assistant():
             encryptRes          加密功能是否开启。
             encryptPassword     加密密码。
         '''
+        # 当使用默认配置时，不进行任何加密（由于默认配置未指定有效密码，且对用户不可见），直接返回。
+        if self._isDefault:
+            return True
         if sync:
-            self.SyncModule(moduleName)
+            self.__SyncModuleToTemp(moduleName)
         if None == uniConfig:
             uniConfig = self._config.get("useUniConfig")
-        for module in self.__GetModule(moduleName):
-            opDir = os.path.join(Assistant._tempDir,module["name"])
+        for name,module in self.__GetModule(moduleName).items():
+            opDir = os.path.join(Assistant._TempDir,name)
             mConfig = module if not uniConfig else self._config["uniModule"]
             encryptPassword = Assistant.__SyncGet(kw,mConfig,"encryptPassword")
             encryptRes = Assistant.__SyncGet(kw,mConfig,"encryptRes")
@@ -214,7 +227,7 @@ class Assistant():
                 return False
         return True
 
-    def HashModule(self,moduleName,uniConfig = None,sync = False,**kw):
+    def __HashModule(self,moduleName,uniConfig = None,sync = False,**kw):
         '''生成并返回给定的模块名的哈希描述。
 
         Param:
@@ -224,14 +237,16 @@ class Assistant():
             sync                操作前是否先同步文件夹。
             zipUncompress       是否将zip文件标识为需要解压。
         '''
-        if None == moduleName:
+
+        # 当使用默认配置时，哈希描述无生成意义（默认配置不进行任何热更操作，不需要比对哈希），直接返回。
+        if self._isDefault or None == moduleName:
             return {}
         if sync:
-            self.SyncModule(moduleName)
+            self.__SyncModuleToTemp(moduleName)
         if None == uniConfig:
                 uniConfig = self._config.get("useUniConfig")
-        for module in self.__GetModule(moduleName):
-            opDir = os.path.join(Assistant._tempDir,module["name"])
+        for name,module in self.__GetModule(moduleName).items():
+            opDir = os.path.join(Assistant._TempDir,name)
             mConfig = module if not uniConfig else self._config["uniModule"]
 
             zipUncompress = Assistant.__SyncGet(kw,mConfig,"zipUncompress")
@@ -246,10 +261,13 @@ class Assistant():
     ):
         '''见Upload
         '''
+        # 当使用默认配置时，不进行上传（默认配置不进行任何热更操作，不需要上传），直接返回。
+        if self._isDefault:
+            return True
         if None == uniConfig:
             uniConfig = self._config.get("useUniConfig")
-        for module in self.__GetModule(moduleName):
-            opDir = os.path.join(Assistant._tempDir,module["name"])
+        for name,module in self.__GetModule(moduleName).items():
+            opDir = os.path.join(Assistant._TempDir,name)
             mConfig = module if not uniConfig else self._config["uniModule"]
 
             versionType = kw.get("versionType")
@@ -276,14 +294,14 @@ class Assistant():
             Assistant.__SyncGet(kw,mConfig,"openFilterSize")
             Assistant.__SyncGet(kw,mConfig,"filterSize")
 
-            pManifestPath = os.path.join(module["localRoot"],Assistant._versionDir,module["name"],Assistant._projectManifest)
-            mpManifestPath = os.path.join(Assistant._tempDir,module["name"],Assistant._projectManifest)
-            mvManifestPath = os.path.join(Assistant._tempDir,module["name"],Assistant._versionManifest)
-            moduleZip = os.path.join(Assistant._tempDir,module["name"],module["name"] + ".zip")
+            pManifestPath = os.path.join(Assistant._VersionDir,name,Assistant._ProjectManifest)
+            mpManifestPath = os.path.join(Assistant._TempDir,name,Assistant._ProjectManifest)
+            mvManifestPath = os.path.join(Assistant._TempDir,name,Assistant._VersionManifest)
+            moduleZip = os.path.join(Assistant._TempDir,name,name + ".zip")
 
-            pManifest = self.GetProjectManifest(pManifestPath,module)
+            pManifest = Assistant.__GetProjectManifest(pManifestPath,module)
 
-            # 先删除version.manifest.json/project.manifest.json/module["name"].zip
+            # 先删除version.manifest.json/project.manifest.json/name.zip
             if os.path.isfile(mvManifestPath):
                 os.remove(mvManifestPath)
             if os.path.isfile(mpManifestPath):
@@ -291,7 +309,7 @@ class Assistant():
             if os.path.isfile(moduleZip):
                 os.remove(moduleZip)
             # 生成文件哈希描述。
-            pManifest["assets"] = self.HashModule(module["name"],uniConfig,False,**kw)
+            pManifest["assets"] = self.__HashModule(name,uniConfig,False,**kw)
 
             if versionType == 0:
                 # 远程版本+1操作。
@@ -299,7 +317,7 @@ class Assistant():
                 if remoteVM:
                     pManifest["version"] = Assistant.__VersionStrGrew(remoteVM["version"],1)
                 else:
-                    print(Fore.LIGHTRED_EX + "获取远程版本失败！" + Style.RESET_ALL)
+                    print("获取远程版本失败！")
                     return False
             elif versionType == 1:
                 # 本地版本+1操作。
@@ -325,7 +343,7 @@ class Assistant():
                     # 比对不同哈希文件。
                     rpManifest = Functions.LoadNetJson(module["remoteManifestUrl"])
                     if None == rpManifest:
-                        print(Fore.LIGHTRED_EX + "获取远程文件列表失败！" + Style.RESET_ALL)
+                        print("获取远程文件列表失败！")
                         return False
                     remoteFiles = rpManifest.get("assets",{})
                     uploadFiles = [
@@ -340,19 +358,19 @@ class Assistant():
                 os.chdir(opDir)
                 if compressUpload:
                     # 需要压缩再上传。
-                    ret = Functions.ZipFiles(module["name"] + ".zip",uploadFiles)
+                    ret = Functions.ZipFiles(name + ".zip",uploadFiles)
                     if not ret:
                         return False
-                    uploadFiles = [module["name"] + ".zip"]
+                    uploadFiles = [name + ".zip"]
 
                 # 追加version.manifest.json和project.manifest.json
-                uploadFiles.append(Assistant._versionManifest)
-                uploadFiles.append(Assistant._projectManifest)
+                uploadFiles.append(Assistant._VersionManifest)
+                uploadFiles.append(Assistant._ProjectManifest)
                 # ftp上传
                 ret = Functions.FtpUpload(module["uploadUrl"],ftpAccount,ftpPassword,uploadFiles)
                 os.chdir(oCWD)
                 if not ret:
-                    print(Fore.LIGHTRED_EX + "文件上传失败！" + Style.RESET_ALL)
+                    print("文件上传失败！")
                     return False
 
         return True
@@ -435,18 +453,44 @@ class Assistant():
         '''
 
         # 依次进行文件同步/编译lua/压缩图像/加密资源/生成描述文件和上传的步骤。
-        ret = self.SyncModule(moduleName) and\
-        self.CompileLua(moduleName,uniConfig,False,**kw) and\
-        self.CompressPng(moduleName,uniConfig,False,**kw) and\
-        self.EncryptRes(moduleName,uniConfig,False,**kw) and\
+        ret = self.__SyncModuleToTemp(moduleName) and\
+        self.__CompileLua(moduleName,uniConfig,False,**kw) and\
+        self.__CompressPng(moduleName,uniConfig,False,**kw) and\
+        self.__EncryptRes(moduleName,uniConfig,False,**kw) and\
         self.__Upload(moduleName,uniConfig,**kw)
         if not ret:
-            print(Fore.LIGHTRED_EX + "操作失败！" + Style.RESET_ALL)
+            print("操作失败！")
         else:
-            print(Fore.LIGHTGREEN_EX + "操作成功。" + Style.RESET_ALL)
+            print("操作成功。")
         return ret
 
-    def LocalDeploy(self,
+    def Sync(self,syncDir,moduleName = None):
+        """仅同步文件。
+        
+        参数：
+            syncDir             同步的目录。
+            moduleName          模块名。不提供该参数时，同步所以模块。
+
+        返回：
+
+            boolean             表示是否成功同步。
+        """
+
+        mds = self._config["modules"] if moduleName == None else [self._config["modules"].get(moduleName)]
+        if mds == None:
+            return False
+        for m in mds.values():
+            for d in m["dirs"]:
+                if not Functions.SyncDir(d,os.path.join(syncDir,d),[Assistant._ModuleFileName]):
+                    return False
+            for f in m["files"]:
+                dstFileDir = os.path.dirname(os.path.join(syncDir,f))
+                if not os.path.exists(dstFileDir):
+                    os.makedirs(dstFileDir)
+                shutil.copy(f,os.path.join(syncDir,f))
+        return True
+
+    def Deploy(self,
         deployDir,
         uniConfig = None,
         **kw
@@ -482,29 +526,33 @@ class Assistant():
                                 否则返回True。
         '''
         # 依次进行文件同步/编译lua/压缩图像/加密资源/生成描述文件的步骤。
-        ret = self.SyncModule() and\
-        self.CompileLua(None,uniConfig,False,compileLua = True,**kw) and\
-        self.CompressPng(None,uniConfig,False,compressPic = True,**kw) and\
-        self.EncryptRes(None,uniConfig,False,encryptRes = True,**kw) and\
-        self.__Upload(None,uniConfig,noUpload = True,**kw)
+        ret = self.__SyncModuleToTemp() and\
+        self.__CompileLua(None,uniConfig,False,compileLua = True,**kw) and\
+        self.__CompressPng(None,uniConfig,False,compressPic = True,**kw) and\
+        self.__EncryptRes(None,uniConfig,False,encryptRes = True,**kw) and\
+        self.__Upload(None,uniConfig,noUpload = True,**kw)# 此处并不真正上传，仅依靠该函数生成哈希描述。
 
-        if not os.path.exists(os.path.join(deployDir,Assistant._versionDir)):
-            os.makedirs(os.path.join(deployDir,Assistant._versionDir))
+        if not os.path.exists(os.path.join(deployDir,Assistant._VersionDir)) and not self._isDefault:
+            os.makedirs(os.path.join(deployDir,Assistant._VersionDir))
         if ret:
-            for m in self._config["modules"]:
+            for name,m in self._config["modules"].items():
                 for d in m["dirs"]:
-                    if not Functions.SyncDir(os.path.join(Assistant._tempDir,m["name"],d),os.path.join(deployDir,d)):
+                    if not Functions.SyncDir(os.path.join(Assistant._TempDir,name,d),os.path.join(deployDir,d),[Assistant._ModuleFileName]):
                         ret = False
                         break
                 for f in m["files"]:
                     dstFileDir = os.path.dirname(os.path.join(deployDir,f))
                     if not os.path.exists(dstFileDir):
                         os.makedirs(dstFileDir)
-                    shutil.copy(os.path.join(Assistant._tempDir,m["name"],f),os.path.join(deployDir,f))
-                vPath = os.path.join(Assistant._tempDir,m["name"],Assistant._versionManifest)
-                pPath = os.path.join(Assistant._tempDir,m["name"],Assistant._projectManifest)
-                dvPath = os.path.join(deployDir,Assistant._versionDir,m["name"],Assistant._versionManifest)
-                dpPath = os.path.join(deployDir,Assistant._versionDir,m["name"],Assistant._projectManifest)
+                    shutil.copy(os.path.join(Assistant._TempDir,name,f),os.path.join(deployDir,f))
+                
+                if self._isDefault:
+                    # 使用默认配置时，不生成版本信息（默认配置对用户不可见）。
+                    continue
+                vPath = os.path.join(Assistant._TempDir,name,Assistant._VersionManifest)
+                pPath = os.path.join(Assistant._TempDir,name,Assistant._ProjectManifest)
+                dvPath = os.path.join(deployDir,Assistant._VersionDir,name,Assistant._VersionManifest)
+                dpPath = os.path.join(deployDir,Assistant._VersionDir,name,Assistant._ProjectManifest)
                 dvPath = os.path.dirname(dvPath)
                 dpPath = os.path.dirname(dpPath)
                 if not os.path.exists(dvPath):
@@ -517,7 +565,7 @@ class Assistant():
                 if os.path.isfile(pPath):
                     shutil.copy(pPath,dpPath)
         if not ret:
-            print(Fore.LIGHTRED_EX + "操作失败！" + Style.RESET_ALL)
+            print("操作失败！")
         else:
-            print(Fore.LIGHTGREEN_EX + "操作成功。" + Style.RESET_ALL)
+            print("操作成功。")
         return ret
