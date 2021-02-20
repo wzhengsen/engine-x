@@ -22,7 +22,7 @@
                     "build/mac/."
                 ]
             },
-            "args":[
+            "args": [
                 "--build",
                 "build/."
             ],
@@ -44,22 +44,26 @@
             "label": "AllSync",
             "type": "shell",
             "command": "python3",
-            "windows":{
+            "windows": {
                 "args": [
                     "${env:ENGINEX_ROOT}/tools/StarryXTools/python/SyncDir.py",
                     "-s",
                     "${workspaceFolder}/Resources",
                     "-d",
-                    "${workspaceFolder}/build/bin/${workspaceFolderBasename}/Debug/Resources"
+                    "${workspaceFolder}/build/bin/${workspaceFolderBasename}/Debug/Resources",
+                    "-e",
+                    "Module.json"
                 ],
             },
-            "linux":{
+            "linux": {
                 "args": [
                     "${env:ENGINEX_ROOT}/tools/StarryXTools/python/SyncDir.py",
                     "-s",
                     "${workspaceFolder}/Resources",
                     "-d",
-                    "${workspaceFolder}/build/bin/${workspaceFolderBasename}/Resources"
+                    "${workspaceFolder}/build/bin/${workspaceFolderBasename}/Resources",
+                    "-e",
+                    "Module.json"
                 ],
             },
             "osx": {
@@ -72,7 +76,9 @@
                     "-e",
                     "Info.plist",
                     "-e",
-                    "Icon.icns"
+                    "Icon.icns",
+                    "-e",
+                    "Module.json"
                 ],
             },
             "presentation": {

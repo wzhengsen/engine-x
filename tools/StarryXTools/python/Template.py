@@ -27,7 +27,7 @@ ConfigTemplate = {
     # 是否使用通用配置。
     "useUniConfig" : True,
     # 退出时保存设置。
-    "exitSave" : True,
+    "exitSave" : False,
     "uniModule" : {
             "ftpAccount" : "",
             "ftpPassword" : "",
@@ -40,7 +40,7 @@ ConfigTemplate = {
             "openFilterSize": False,
             "filterSize": 0,
             "zipUncompress" : False,
-            "encryptRes" : True,
+            "encryptRes" : False,
             "encryptPassword" : "testpassword",
             "compressPic" : True,
             "compressQualityMin" : 50,
@@ -49,12 +49,8 @@ ConfigTemplate = {
             "versionType" : 2,
             "useVersion" : "0.0.0.0",
     },
-    "modules" : [
-        {
-            # 模块目录名
-            "name" : "",
-            # 模块本地文件目录
-            "localRoot" : "",
+    "modules" : {
+        "Default": {
             # 更新目录根Url
             "packageUrl" : "",
             # 远程版本文件Url
@@ -66,7 +62,7 @@ ConfigTemplate = {
             # 整包zip文件名
             "allZipFileName": "",
             # 模块包含目录
-            "dirs" : [],
+            "dirs" : ["."],
             # 模块包含文件
             "files" : [],
             # 上传ftp账号
@@ -94,7 +90,7 @@ ConfigTemplate = {
             # 标识zip文件是需要解压的
             "zipUncompress" : False,
             # 加密资源文件
-            "encryptRes" : True,
+            "encryptRes" : False,
             # 加密密码
             "encryptPassword" : "testpassword",
             # 压缩图像
@@ -114,5 +110,5 @@ ConfigTemplate = {
             # 指定的版本
             "useVersion" : "0.0.0.0"
         }
-    ]
+    }
 }

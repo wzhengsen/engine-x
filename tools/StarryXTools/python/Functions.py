@@ -236,11 +236,13 @@ def CompileLua(src, luac=None, remove=True):
     '''
 
     if not luac:
-        luac = "../trd/Mac/luac54"
+        egxRoot = os.environ["ENGINEX_ROOT"]
+        luac =  "tools/StarryXTools/trd/Mac/luac54"
         if platform.system() == 'Windows':
-            luac = "../trd/Windows/luac54.exe"
+            luac = "tools/StarryXTools/trd/Windows/luac54.exe"
         elif platform.system() == 'Linux':
-            luac = "../trd/Linux/luac54"
+            luac = "tools/StarryXTools/trd/Linux/luac54"
+        luac = os.path.join(egxRoot,luac)
 
     if platform.system() != 'Windows':
         os.chmod(luac, stat.S_IRWXO + stat.S_IRWXG + stat.S_IRWXU)
@@ -288,11 +290,13 @@ def CompressPng(src, pngquant=None, qMin=50, qMax=85):
     '''
 
     if not pngquant:
-        pngquant = "../trd/Mac/pngquant-openmp"
+        egxRoot = os.environ["ENGINEX_ROOT"]
+        pngquant = "tools/StarryXTools/trd/Mac/pngquant-openmp"
         if(platform.system() == 'Windows'):
-            pngquant = "../trd/Windows/pngquant.exe"
+            pngquant = "tools/StarryXTools/trd/Windows/pngquant.exe"
         elif(platform.system() == 'Linux'):
-            pngquant = "../trd/Linux/pngquant"
+            pngquant = "tools/StarryXTools/trd/Linux/pngquant"
+        pngquant = os.path.join(egxRoot,pngquant)
 
     if platform.system() != 'Windows':
         os.chmod(pngquant, stat.S_IRWXO + stat.S_IRWXG + stat.S_IRWXU)

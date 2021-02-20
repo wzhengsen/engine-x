@@ -2,37 +2,41 @@
 
 import os
 import sys
-import getopt
 import Functions
 from Assistant import Assistant
-from colorama import Fore,    Back,    Style
 
 
 def usage():
-    print(
-        """
-对给定模块进行lua编译/图像压缩/资源加密/上传/版本变更等操作。
-默认模块位于../config/moduleConfig.json
+    print(""""""
+"""对源目录下的给定模块进行lua编译/图像压缩/资源加密/上传/版本变更等操作。
+默认模块位于源目录下Module.json，各域值参照Template.py。
+操作结果将放置于目标目录。
 """)
 
-    print(
-        Fore.LIGHTGREEN_EX +
-        """
+    print("""
 -i                          交互式命令行。
-"""
-        + Style.RESET_ALL
-    )
+""")
 
     print(
         """
 -h | --help                 查看帮助。
--m <module1 module2 ...>    需要处理的模块名，不提供此参数，将默认处理所有模块。
+
+-s <string>                 源目录。
+                            若不使用此命令，则默认当前目录为源目录。
+
+-d string                   目标目录。
+
+-m <module1 module2 ...>    需要处理的模块名。
+                            若不使用此命令，将默认处理所有模块。
+
 -u <bool>                   使用此命令以启用通用配置（所有模块使用同一配置）。
                             若不使用此命令，每个模块的配置将以配置文件为准。
+
 --debug                     使用本地部署，部署到指定目录，只同步，不编译，不压缩，不加密，不上传。
+
 --release|minsizerel|relwithdebinfo     使用本地部署，部署到指定目录，不上传。
--s <string>                 源目录，release模式下可以不提供。
--d <string>                 指定目录。
+
+-c                          若源目录下没有Module.json，则将创建一个默认的Module.json。
 
 -=通用配置=-
 以下配置若为空，并不意味则该选项不启用；而是使用配置文件中的默认值。
@@ -43,6 +47,7 @@ def usage():
                             整数1表示使用本地版本号+1；
                             整数2表示版本不变；
                             字符串表示为："1.2.3.4"的格式。
+
 --zipUncompress <bool>      表示zip资源在project.manifest.json文件中是否标识为自动解压。
 
 --encryptRes <bool>         表示是否加密资源.
@@ -151,7 +156,7 @@ def ConfigByInteractive(ast):
         modules = None
     uniConfig = Functions.YesOrNo("使用通用配置吗？(y/n)", False)
 
-    print(Fore.LIGHTYELLOW_EX + "\n以下选项都可使用回车跳过以使用配置文件中的默认值。\n" + Style.RESET_ALL)
+    print("\n以下选项都可使用回车跳过以使用配置文件中的默认值。\n")
     kwArg = {}
     if uniConfig:
         kwArg["versionType"] = input(
@@ -211,8 +216,8 @@ def UniOpt(opts, tp):
         if p1 in opts:
             for p2 in tp:
                 if p2 != p1 and p2 in opts:
-                    print(Fore.LIGHTRED_EX + p1 + "不能和" +
-                          p2 + "同时使用。" + Style.RESET_ALL)
+                    print(p1 + "不能和" +
+                          p2 + "同时使用。")
                     return False
     return True
 
@@ -260,19 +265,31 @@ def main(argv):
     if not UniOpt(lowCaseOpt, ("debug", "release", "relwithdebinfo", "minsizerel")):
         return False
 
+    if "i" in opts.keys():
+        srcPath = input("请输入源目录（按回车使用当前目录）：")
+        srcPath = "." if srcPath == "" else srcPath
+    else:
+        srcPath = opts.get("s",".")
+
+    if os.path.isdir(srcPath):
+        ast = Assistant(srcPath)
+    else:
+        print("源目录不存在。")
+        return False
+
     oCwd = os.getcwd()
-    os.chdir(os.path.split(os.path.realpath(__file__))[0])
+    os.chdir(os.path.realpath(srcPath))
 
-    ast = Assistant("../config/moduleConfig.json")
-
+    if "c" in opts.keys():
+        ast.CreateDefaultConfig()
     if "i" in opts.keys():
         ret = ConfigByInteractive(ast)
     elif "debug" in lowCaseOpt:
-        ret = Functions.SyncDir(opts["s"], opts["d"])
+        ret = ast.Sync(opts["d"])
     elif "release" in lowCaseOpt\
-            or "relwithdebinfo" in lowCaseOpt\
-            or "minsizerel" in lowCaseOpt:
-        ret = ast.LocalDeploy(opts["d"], opts.get("u"), **opts)
+        or "relwithdebinfo" in lowCaseOpt\
+        or "minsizerel" in lowCaseOpt:
+        ret = ast.Deploy(opts["d"], opts.get("u"), **opts)
     else:
         modules = opts.get("m")
         uniConfig = opts.get("u")
