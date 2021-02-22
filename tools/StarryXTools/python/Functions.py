@@ -12,7 +12,7 @@ import hashlib
 import zipfile
 from ftplib import FTP, error_perm
 import sys
-from tempfile import NamedTemporaryFile
+import tempfile
 try:
     import requests
 except:
@@ -265,7 +265,7 @@ def CompileLua(src, luac=None, remove=True):
         elif remove:
             os.remove(lua)
 
-        sys.stdout.write("\r编译%s [%d%%]->%s" %
+        sys.stdout.write("\r编译<%s> [%d%%]->%s" %
                          (bName, int(num / count * 100), lua))
         sys.stdout.flush()
 
@@ -327,9 +327,8 @@ def CompressPng(src, pngquant=None, qMin=50, qMax=85):
         newName = ""
         for s in png:
             if ord(s) > 255:
-                newName = os.path.join(os.path.dirname(
-                    png), "pngquant..rename.." + str(random.randrange(1000)) + ".png")
-                os.rename(png, newName)
+                newName = tempfile.mktemp()
+                shutil.move(png, newName)
                 break
 
         cmd = ""
@@ -341,8 +340,8 @@ def CompressPng(src, pngquant=None, qMin=50, qMax=85):
                 pngquant, qMin, qMax, png)
         ret = os.system(cmd)
         if newName:
-            os.rename(newName, png)
-        sys.stdout.write("\r压缩%s [%d%%]->%s" %
+            shutil.move(newName, png)
+        sys.stdout.write("\r压缩<%s> [%d%%]->%s" %
                          (bName, int(num / count * 100), png))
         sys.stdout.flush()
         if ret:
@@ -396,7 +395,7 @@ def EncryptRes(src, pwd):
                 r.write(b)
         except:
             return False
-        sys.stdout.write("\r加密%s [%d%%]->%s" %
+        sys.stdout.write("\r加密<%s> [%d%%]->%s" %
                          (bName, int(num / count * 100), res))
         sys.stdout.flush()
     return True
@@ -450,7 +449,7 @@ def CalcDirHash(path, hashType=HashType.MD5, withSize=True, compressed=False):
         if compressed and f[-4:] == ".zip":
             m["compressed"] = True
         ret[os.path.relpath(f, path).replace("\\", "/")] = m
-        sys.stdout.write("\r哈希%s [%d%%]->%s" %
+        sys.stdout.write("\r哈希<%s> [%d%%]->%s" %
                          (bName, int(num / count * 100), f))
         sys.stdout.flush()
 
@@ -564,7 +563,7 @@ def SaveJson(path, obj, indent=4):
         os.makedirs(dn)
     if os.path.exists(path):
         os.chmod(path, stat.S_IRWXO + stat.S_IRWXG + stat.S_IRWXU)
-    with open(path, "w") as f:
+    with open(path, "w",encoding="utf-8") as f:
         f.write(json.dumps(obj, ensure_ascii=False, indent=indent))
 
 
