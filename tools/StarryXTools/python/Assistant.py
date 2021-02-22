@@ -8,7 +8,7 @@ from Template import ConfigTemplate,ProjectManifestTemplate,VersionManifestTempl
 class Assistant():
     '''助理类，能帮助处理Lua编译/文件夹同步/加密/热更/上传/版本管理等。
     '''
-    _TempDir = "../.tempDir"
+    _TempDir = os.path.join(os.path.split(os.path.realpath(__file__))[0],"../.tempDir")
     _VersionManifest = "version.manifest.json"
     _ProjectManifest = "project.manifest.json"
     _VersionDir = "Version"
@@ -122,7 +122,7 @@ class Assistant():
             dict
         '''
         if moduleName != None:
-            return {moduleName,self._config["modules"][moduleName]}
+            return {moduleName:self._config["modules"][moduleName]}
         return self._config["modules"]
 
 
@@ -134,7 +134,7 @@ class Assistant():
 
             moduleName          模块名。
         '''
-        mds = self._config["modules"] if moduleName == None else [self._config["modules"].get(moduleName)]
+        mds = self._config["modules"] if moduleName == None else {moduleName:self._config["modules"].get(moduleName)}
         if mds == None:
             return False
         for name,m in mds.items():
