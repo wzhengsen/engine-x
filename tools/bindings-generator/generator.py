@@ -6,18 +6,17 @@
 
 from clang import cindex
 import sys
-import yaml
 import re
 import os
 import inspect
 import traceback
-try:
-    import Cheetah
-except ModuleNotFoundError:
-    os.system("pip3 install -U Cheetah3 --ignore-installed --user Cheetah3")
-    import Cheetah
-finally:
-    from Cheetah.Template import Template
+# try:
+#     import Cheetah
+# except ModuleNotFoundError:
+#     os.system("pip3 install -U Cheetah3 --ignore-installed --user Cheetah3")
+#     import Cheetah
+# finally:
+#     from Cheetah.Template import Template
 
 if(sys.version_info.major >= 3):
     import configparser as ConfigParser
@@ -1006,6 +1005,7 @@ class NativeClass(object):
         self.override_methods = {}
         self.has_constructor  = False
         self.namespace_name   = ""
+        self.classFileIndex = 0
 
         registration_name = generator.get_class_or_rename_class(self.class_name)
         if generator.remove_prefix:
@@ -1064,7 +1064,7 @@ class NativeClass(object):
                 ret.append({"name": name, "impl": impl})
         return ret
 
-    def generate_code(self):
+    def GenerateCode(self):
         '''
         actually generate the code. it uses the current target templates/rules in order to
         generate the right code
@@ -1073,60 +1073,15 @@ class NativeClass(object):
         if not self.is_ref_class:
             self.is_ref_class = self._is_ref_class()
 
-        # config = self.generator.config
-        # prelude_h = Template(file=os.path.join(self.generator.target, "templates", "prelude.h"),
-        #                     searchList=[{"current_class": self}])
-        # prelude_c = Template(file=os.path.join(self.generator.target, "templates", "prelude.c"),
-        #                     searchList=[{"current_class": self}])
-        # apidoc_classhead_script = Template(file=os.path.join(self.generator.target,
-        #                                                  "templates",
-        #                                                  "apidoc_classhead.script"),
-        #                                searchList=[{"current_class": self}])
-        # if self.generator.script_type == "lua":
-        #     docfuncfilepath = os.path.join(self.generator.outdir + "/api", self.class_name + ".lua")
-        #     self.doc_func_file = open(docfuncfilepath, "w+")
-        #     apidoc_fun_head_script  = Template(file=os.path.join(self.generator.target,
-        #                                                  "templates",
-        #                                                  "apidoc_function_head.script"),
-        #                                searchList=[{"current_class": self}])
-        #     self.doc_func_file.write(str(apidoc_fun_head_script))
+        return self._SolRegister()
 
-        # self.generator.head_file.write(str(prelude_h))
-        # self.generator.impl_file.write(str(prelude_c))
-        # self.generator.doc_file.write(str(apidoc_classhead_script))
-        # for m in self.methods_clean():
-        #     m['impl'].generate_code(self)
-        # for m in self.static_methods_clean():
-        #     m['impl'].generate_code(self)
-        # if self.generator.script_type == "lua":
-        #     for m in self.override_methods_clean():
-        #         m['impl'].generate_code(self, is_override = True)
-        # for m in self.public_fields:
-        #     if self.generator.should_bind_field(self.class_name, m.name):
-        #         m.generate_code(self)
-        # generate register section
-        register = Template(file=os.path.join(self.generator.target, "templates", "register.c"),
-                            searchList=[{"current_class": self}])
-        # apidoc_classfoot_script = Template(file=os.path.join(self.generator.target,
-        #                                                  "templates",
-        #                                                  "apidoc_classfoot.script"),
-        #                                searchList=[{"current_class": self}])
-        self.generator.impl_file.write(str(register))
-        # self.generator.doc_file.write(str(apidoc_classfoot_script))
-        # if self.generator.script_type == "lua":
-        #     apidoc_fun_foot_script  = Template(file=os.path.join(self.generator.target,
-        #                                                  "templates",
-        #                                                  "apidoc_function_foot.script"),
-        #                                searchList=[{"current_class": self}])
-        #     self.doc_func_file.write(str(apidoc_fun_foot_script))
-        #     self.doc_func_file.close()
     def _deep_iterate(self, cursor=None, depth=0):
         for node in cursor.get_children():
             # print("%s%s - %s" % ("> " * depth, node.displayname, node.kind))
             if self._process_node(node):
                 self._deep_iterate(node, depth + 1)
 
-    def SolRegisterFunctionImpl(self,fn,cxx = None):
+    def _SolRegisterFunctionImpl(self,fn,cxx = None):
         """生成适用于sol注册lua类的成员函数的每个不同实现c++代码。
 
         参数：
@@ -1196,36 +1151,36 @@ class NativeClass(object):
             for i in range(idx):
                 impl = fn.implementations[i]
                 # 递归每一个重载实现。
-                self.SolRegisterFunctionImpl(impl,cxx)
+                self._SolRegisterFunctionImpl(impl,cxx)
                 cxx.append("" if i == idx - 1 else ",")
 
         if returnOne:
             return overload
         return overload,"".join(cxx)
 
-    def SolRegisterFunction(self,m,cxx):
+    def _SolRegisterFunction(self,m,cxx):
         """生成适用于sol注册lua类的成员函数的c++代码。
         
         参数：
             m       欲生成代码的函数包装。
             cxx     用于保存拼接字符串的列表。
         """
-        cxx.append("mt[\"" + m["name"] +"\"]=")
-        overload,implStr = self.SolRegisterFunctionImpl(m["impl"])
+        cxx.append("mt.set_function(\"" + m["name"] +"\",")
+        overload,implStr = self._SolRegisterFunctionImpl(m["impl"])
         if overload:
             cxx.append("sol::overload(")
             cxx.append(implStr)
-            cxx.append(");")
+            cxx.append("));")
         else:
             cxx.append(implStr)
-            cxx.append(";")
+            cxx.append(");")
         cxx.append("\n")
 
-    def SolRegister(self):
+    def _SolRegister(self):
         """生成适用于sol注册lua类的c++代码。
 
         返回：
-            str 该字符串用于在Cheetah Template中生成代码。
+            str     该字符串用于写入文件。
         """
 
         # 类与基类名组合
@@ -1233,12 +1188,12 @@ class NativeClass(object):
         for p in self.parents:
             basesName += ","+ p.namespaced_class_name
         cxx = [
-            "static void RegisterLua{}{}(cocos2d::Lua& lua)".format(self.generator.prefix,self.class_name),
+            "void RegisterLua{}{}Auto(cocos2d::Lua& lua)".format(self.generator.prefix,self.class_name),
             "{\n",
             "auto mt=lua.NewUserType<{basesName}>(\"{target_ns}\",\"{class_name}\");\n".format(class_name = self.class_name,basesName = basesName,target_ns = self.generator.target_ns)
         ]
         for m in self.methods_clean() + self.static_methods_clean():
-            self.SolRegisterFunction(m,cxx)
+            self._SolRegisterFunction(m,cxx)
         cxx.append("}\n")
         return "".join(cxx)
 
@@ -1281,7 +1236,7 @@ class NativeClass(object):
                     #if parent and self.generator.in_listed_classes(parent.displayname):
                     if parent.displayname not in self.generator.generated_classes.keys():
                         parent = NativeClass(parent, self.generator)
-                        self.generator.generated_classes[parent.class_name] = parent
+                        #self.generator.generated_classes[parent.class_name] = parent
                     else:
                         parent = self.generator.generated_classes[parent.displayname]
 
@@ -1379,6 +1334,7 @@ class NativeEnum(object):
         self.static_methods = {}
         self.generator = generator
         self._current_visibility = cindex.AccessSpecifier.PRIVATE
+        self.classFileIndex = 0
         #for generate lua api doc
 
         registration_name = generator.get_class_or_rename_class(self.class_name)
@@ -1407,15 +1363,18 @@ class NativeEnum(object):
             self.fields.append(field)
 
 
-    def generate_code(self):
+    def GenerateCode(self):
         '''
         actually generate the code. it uses the current target templates/rules in order to
         generate the right code
         '''
-        # generate register section
-        register = Template(file=os.path.join(self.generator.target, "templates", "enum.c"),
-                            searchList=[{"current_class": self, "generator": self.generator}])
-        self.generator.impl_file.write(str(register))
+        strList = ["void RegisterLua{}{}Auto(cocos2d::Lua& lua) {{\n".format(self.generator.prefix,self.class_name)]
+        strList.append('sol::table {0}=lua.get_or("{0}",lua.create_named_table("{0}"));\n'.format(self.generator.target_ns))
+        strList.append('{}.new_enum("{}"\n'.format(self.generator.target_ns,self.class_name))
+        for field in self.fields:
+            strList.append(',"{}",{}'.format(field["name"],field["value"]))
+        strList.append(");}\n")
+        return ''.join(strList)
 
 class Generator(object):
     def __init__(self, opts):
@@ -1450,6 +1409,10 @@ class Generator(object):
         self.hpp_headers = opts['hpp_headers']
         self.cpp_headers = opts['cpp_headers']
         self.win32_clang_flags = opts['win32_clang_flags']
+        self.classFileIndex = 0
+        self.codeTempStrList = []
+        # 每15个类一个文件。
+        self.groupCount = 15
 
         extend_clang_args = []
 
@@ -1634,54 +1597,104 @@ class Generator(object):
             sorted_parents.append(nclass.class_name)
         return sorted_parents
 
-    def generate_code(self):
-        # must read the yaml file first
-        stream = open(os.path.join(self.target, "conversions.yaml"), "r")
-        data = yaml.load(stream,Loader=yaml.FullLoader)
-        self.config = data
-        implfilepath = os.path.join(self.outdir, self.out_file + ".cpp")
-        headfilepath = os.path.join(self.outdir, self.out_file + ".hpp")
+    def _GenerateHeadCode(self):
+        """生成c++头文件。
+        """
+        with open(os.path.join(self.outdir, self.out_file + ".hpp"),"w") as hFile:
+            hFile.write((
+            '#pragma once\n'
+            '#include "base/ccConfig.h"\n'
+            '#include "scripting/lua-bindings/CCLua.h"\n'
+            'void RegisterLua{}Auto(cocos2d::Lua&);'
+            ).format(self.prefix))
+    
+    def _GenerateImplCode(self):
+        """生成c++实现文件。
+        """
+        with open(os.path.join(self.outdir,self.out_file + ".cpp"),"w") as iFile:
+            strList = []
+            strList.append('#include "scripting/lua-bindings/auto/{}.hpp"\n'.format(self.out_file))
+            for header in self.headers:
+                relative = '..'
+                for searchPath in self.search_paths:
+                    relative = os.path.relpath(header, searchPath)
+                    if not '..' in relative:
+                        break
+                if not '..' in relative:
+                    strList.append('#include "{}"\n'.format(relative.replace(os.path.sep, '/')))
+                else:
+                    strList.append('#include "{}"\n'.format(os.path.basename(header)))
+            if self.cpp_headers:
+                for header in self.cpp_headers:
+                    strList.append('#include "{}"\n'.format(header))
+            
+            for c in self.generated_classes.values():
+                strList.append("extern void RegisterLua{}{}Auto(cocos2d::Lua&);\n".format(self.prefix,c.class_name))
 
-        # docfiledir   = self.outdir + "/api"
-        # if not os.path.exists(docfiledir):
-        #     os.makedirs(docfiledir)
+            strList.append("void RegisterLua{}Auto(cocos2d::Lua& lua){{\n".format(self.prefix))
+            if self.macro_judgement:
+                strList.append(self.macro_judgement + "\n")
+            for c in self.generated_classes.values():
+                strList.append("RegisterLua{}{}Auto(lua);\n".format(self.prefix,c.class_name))
+            if self.macro_judgement:
+                strList.append("#endif\n")
+            strList.append("}")
+            iFile.write(''.join(strList))
 
-        # if self.script_type == "lua":
-        #     docfilepath = os.path.join(docfiledir, self.out_file + "_api.lua")
-        # else:
-        #     docfilepath = os.path.join(docfiledir, self.out_file + "_api.js")
-
-        self.impl_file = open(implfilepath, "w+")
-        self.head_file = open(headfilepath, "w+")
-        # self.doc_file = open(docfilepath, "w+")
-
-        layout_h = Template(file=os.path.join(self.target, "templates", "layout_head.h"),
-                            searchList=[self])
-        layout_c = Template(file=os.path.join(self.target, "templates", "layout_head.c"),
-                            searchList=[self])
-        # apidoc_ns_script = Template(file=os.path.join(self.target, "templates", "apidoc_ns.script"),
-        #                         searchList=[self])
-        self.head_file.write(str(layout_h))
-        self.impl_file.write(str(layout_c))
-        # self.doc_file.write(str(apidoc_ns_script))
-
+    def GenerateCode(self):
+        self._GenerateHeadCode()
         self._parse_headers()
+        self._GenerateImplCode()
 
-        layout_h = Template(file=os.path.join(self.target, "templates", "layout_foot.h"),
-                            searchList=[self])
-        layout_c = Template(file=os.path.join(self.target, "templates", "layout_foot.c"),
-                            searchList=[self])
-        self.head_file.write(str(layout_h))
-        self.impl_file.write(str(layout_c))
-        # if self.script_type == "lua":
-        #     apidoc_ns_foot_script = Template(file=os.path.join(self.target, "templates", "apidoc_ns_foot.script"),
-        #                         searchList=[self])
-        #     self.doc_file.write(str(apidoc_ns_foot_script))
+    def _GenerateCodeDoEnd(self):
+        """将self.codeTempStrList写入文件并清空self.codeTempStrList。
+        """
+        if not self.codeTempStrList:
+            return
+        if self.macro_judgement:
+            self.codeTempStrList.append("#endif\n")
+        with open(os.path.join(self.outdir,self.out_file + ("_%02d.cpp" % (self.classFileIndex // self.groupCount))),"w") as implFile:
+            strList = self.codeTempStrList
+            self.codeTempStrList = []
+            implFile.write(''.join(strList))
+            
 
-        self.impl_file.close()
-        self.head_file.close()
-        # self.doc_file.close()
+    def _PushClassToGeneratedClasses(self,c):
+        """将类保存至已生成类的字典，并以一定的索引为类编号。
+        同一个索引的类在生成代码时，将生成至同一文件中。
+        避免所有类生成在一个文件中导致模板代码过大引起编译器c1060错误。
+        
+        参数：
+            c       将生成的类。
+        """
+        self.generated_classes[c.class_name] = c
+        c.classFileIndex = self.classFileIndex // self.groupCount
 
+        if self.classFileIndex % self.groupCount == 0:
+            strList = self.codeTempStrList
+            strList.append('#include "scripting/lua-bindings/auto/{}.hpp"\n'.format(self.out_file))
+            for header in self.headers:
+                relative = '..'
+                for searchPath in self.search_paths:
+                    relative = os.path.relpath(header, searchPath)
+                    if not '..' in relative:
+                        break
+                if not '..' in relative:
+                    strList.append('#include "{}"\n'.format(relative.replace(os.path.sep, '/')))
+                else:
+                    strList.append('#include "{}"\n'.format(os.path.basename(header)))
+            if self.cpp_headers:
+                for header in self.cpp_headers:
+                    strList.append('#include "{}"\n'.format(header))
+            if self.macro_judgement:
+                strList.append(self.macro_judgement + "\n")
+
+        self.codeTempStrList.append(c.GenerateCode())
+
+        if self.classFileIndex % self.groupCount == self.groupCount - 1:
+            self._GenerateCodeDoEnd()
+
+        self.classFileIndex = self.classFileIndex + 1
 
     def _pretty_print(self, diagnostics):
         errors=[]
@@ -1711,6 +1724,7 @@ class Generator(object):
                     print("*** Found errors - can not continue")
                     raise Exception("Fatal error in parsing headers")
             self._deep_iterate(tu.cursor)
+        self._GenerateCodeDoEnd()
 
     def _deep_iterate(self, cursor, depth=0):
 
@@ -1737,8 +1751,7 @@ class Generator(object):
                 if is_targeted_class and self.in_listed_classes(cursor.displayname):
                     if cursor.displayname not in self.generated_classes.keys():
                         nclass = NativeClass(cursor, self)
-                        nclass.generate_code()
-                        self.generated_classes[cursor.displayname] = nclass
+                        self._PushClassToGeneratedClasses(nclass)
                     return
         elif cursor.kind == cindex.CursorKind.ENUM_DECL :
             if cursor == cursor.type.get_declaration() and len(get_children_array_from_iter(cursor.get_children())) > 0:
@@ -1754,186 +1767,13 @@ class Generator(object):
                 if is_targeted_class and  len(cursor.displayname) > 0 and self.in_listed_classes_exactly(cursor.displayname):
                     if cursor.displayname not in self.generated_classes.keys():
                         nclass = NativeEnum(cursor, self)
-                        nclass.generate_code()
-                        self.generated_classes[cursor.displayname] = nclass
+                        self._PushClassToGeneratedClasses(nclass)
                     return
 
         for node in cursor.get_children():
             # print("%s %s - %s" % (">" * depth, node.displayname, node.kind))
             self._deep_iterate(node, depth + 1)
-    def scriptname_from_native(self, namespace_class_name, namespace_name):
-        script_ns_dict = self.config['conversions']['ns_map']
-        for (k, v) in script_ns_dict.items():
-            if k == namespace_name:
-                return namespace_class_name.replace("*","").replace("const ", "").replace(k, v)
-        if namespace_class_name.find("::") >= 0:
-            if namespace_class_name.find("std::") == 0 or namespace_class_name.find("cxx17::") == 0:
-                return namespace_class_name
-            else:
-                raise Exception("The namespace (%s) conversion wasn't set in 'ns_map' section of the conversions.yaml" % namespace_class_name)
-        else:
-            return namespace_class_name.replace("*","").replace("const ", "")
 
-    def is_cocos_class(self, namespace_class_name):
-        script_ns_dict = self.config['conversions']['ns_map']
-        for (k, v) in script_ns_dict.items():
-            if namespace_class_name.find("std::") == 0 or namespace_class_name.find("cxx17::") == 0:
-                return False
-            if namespace_class_name.find(k) >= 0:
-                return True
-
-        return False
-
-    def scriptname_cocos_class(self, namespace_class_name):
-        script_ns_dict = self.config['conversions']['ns_map']
-        for (k, v) in script_ns_dict.items():
-            if namespace_class_name.find(k) >= 0:
-                return namespace_class_name.replace("*","").replace("const ", "").replace(k,v)
-        raise Exception("The namespace (%s) conversion wasn't set in 'ns_map' section of the conversions.yaml" % namespace_class_name)
-
-    def js_typename_from_natve(self, namespace_class_name):
-        script_ns_dict = self.config['conversions']['ns_map']
-        if namespace_class_name.find("std::") == 0 or namespace_class_name.find("cxx17::") == 0:
-            if namespace_class_name.find("std::string") == 0 or namespace_class_name.find("cxx17::string_view") == 0:
-                return "String"
-            if namespace_class_name.find("std::vector") == 0:
-                return "Array"
-            if namespace_class_name.find("std::map") == 0 or namespace_class_name.find("std::unordered_map") == 0:
-                return "map_object"
-            if namespace_class_name.find("std::function") == 0:
-                return "function"
-
-        for (k, v) in script_ns_dict.items():
-            if namespace_class_name.find(k) >= 0:
-                if namespace_class_name.find("cocos2d::Vec2") == 0:
-                    return "vec2_object"
-                if namespace_class_name.find("cocos2d::Vec3") == 0:
-                    return "vec3_object"
-                if namespace_class_name.find("cocos2d::Vec4") == 0:
-                    return "vec4_object"
-                if namespace_class_name.find("cocos2d::Mat4") == 0:
-                    return "mat4_object"
-                if namespace_class_name.find("cocos2d::Vector") == 0:
-                    return "Array"
-                if namespace_class_name.find("cocos2d::Map") == 0:
-                    return "map_object"
-                if namespace_class_name.find("cocos2d::Point")  == 0:
-                    return "point_object"
-                if namespace_class_name.find("cocos2d::Size")  == 0:
-                    return "size_object"
-                if namespace_class_name.find("cocos2d::Rect")  == 0:
-                    return "rect_object"
-                if namespace_class_name.find("cocos2d::Color3B") == 0:
-                    return "color3b_object"
-                if namespace_class_name.find("cocos2d::Color4B") == 0:
-                    return "color4b_object"
-                if namespace_class_name.find("cocos2d::Color4F") == 0:
-                    return "color4f_object"
-                else:
-                    return namespace_class_name.replace("*","").replace("const ", "").replace(k,v)
-        return namespace_class_name.replace("*","").replace("const ", "")
-
-    def lua_typename_from_natve(self, namespace_class_name, is_ret = False):
-        script_ns_dict = self.config['conversions']['ns_map']
-        if namespace_class_name.find("std::") == 0 or namespace_class_name.find("cxx17::") == 0:
-            if namespace_class_name.find("std::string") == 0:
-                return "string"
-            if namespace_class_name.find("cxx17::string_view") == 0:
-                return "string_view"
-            if namespace_class_name.find("std::vector") == 0:
-                return "array_table"
-            if namespace_class_name.find("std::map") == 0 or namespace_class_name.find("std::unordered_map") == 0:
-                return "map_table"
-            if namespace_class_name.find("std::function") == 0:
-                return "function"
-
-        for (k, v) in script_ns_dict.items():
-            if namespace_class_name.find(k) >= 0:
-                if namespace_class_name.find("cocos2d::Vec2") == 0:
-                    return "vec2_table"
-                if namespace_class_name.find("cocos2d::Vec3") == 0:
-                    return "vec3_table"
-                if namespace_class_name.find("cocos2d::Vec4") == 0:
-                    return "vec4_table"
-                if namespace_class_name.find("cocos2d::Vector") == 0:
-                    return "array_table"
-                if namespace_class_name.find("cocos2d::Mat4") == 0:
-                    return "mat4_table"
-                if namespace_class_name.find("cocos2d::Map") == 0:
-                    return "map_table"
-                if namespace_class_name.find("cocos2d::Point")  == 0:
-                    return "point_table"
-                if namespace_class_name.find("cocos2d::Size")  == 0:
-                    return "size_table"
-                if namespace_class_name.find("cocos2d::Rect")  == 0:
-                    return "rect_table"
-                if namespace_class_name.find("cocos2d::Color3B") == 0:
-                    return "color3b_table"
-                if namespace_class_name.find("cocos2d::Color4B") == 0:
-                    return "color4b_table"
-                if namespace_class_name.find("cocos2d::Color4F") == 0:
-                    return "color4f_table"
-                if is_ret == 1:
-                    return namespace_class_name.replace("*","").replace("const ", "").replace(k,"")
-                else:
-                    return namespace_class_name.replace("*","").replace("const ", "").replace(k,v)
-        return namespace_class_name.replace("*","").replace("const ","")
-
-
-    # def api_param_name_from_native(self,native_name):
-    #     lower_name = native_name.lower()
-    #     if lower_name == "std::string" or lower_name == 'string' or lower_name == 'basic_string' or lower_name == 'std::basic_string':
-    #         return "str"
-
-    #     if lower_name.find("unsigned ") >= 0 :
-    #         return native_name.replace("unsigned ","")
-
-    #     if lower_name.find("unordered_map") >= 0 or lower_name.find("map") >= 0:
-    #         return "map"
-
-    #     if lower_name.find("vector") >= 0 :
-    #         return "array"
-
-    #     if lower_name == "std::function":
-    #         return "func"
-    #     else:
-    #         return lower_name
-
-    def js_ret_name_from_native(self, namespace_class_name, is_enum) :
-        if self.is_cocos_class(namespace_class_name):
-            if namespace_class_name.find("cocos2d::Vector") >=0:
-                return "new Array()"
-            if namespace_class_name.find("cocos2d::Map") >=0:
-                return "map_object"
-            if is_enum:
-                return 0
-            else:
-                return self.scriptname_cocos_class(namespace_class_name)
-
-        lower_name = namespace_class_name.lower()
-
-        if lower_name.find("unsigned ") >= 0:
-            lower_name = lower_name.replace("unsigned ","")
-
-        if lower_name == "std::string" or lower_name == "cxx17::string_view":
-            return ""
-
-        if lower_name == "char" or lower_name == "short" or lower_name == "int" or lower_name == "float" or lower_name == "double" or lower_name == "long":
-            return 0
-
-        if lower_name == "bool":
-            return "false"
-
-        if lower_name.find("std::vector") >= 0 or lower_name.find("vector") >= 0:
-            return "new Array()"
-
-        if lower_name.find("std::map") >= 0 or lower_name.find("std::unordered_map") >= 0 or lower_name.find("unordered_map") >= 0 or lower_name.find("map") >= 0:
-            return "map_object"
-
-        if lower_name == "std::function":
-            return "func"
-        else:
-            return namespace_class_name
 def main():
 
     from optparse import OptionParser
@@ -2038,7 +1878,7 @@ def main():
                 'win32_clang_flags': (config.get(s, 'win32_clang_flags', raw = False, vars = dict(userconfig.items('DEFAULT'))) or "").split(" ") if config.has_option(s, 'win32_clang_flags') else None
                 }
             generator = Generator(gen_opts)
-            generator.generate_code()
+            generator.GenerateCode()
 
 if __name__ == '__main__':
     try:

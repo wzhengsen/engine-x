@@ -4,7 +4,6 @@
 
 import sys
 import os, os.path
-import shutil
 import subprocess
 import re
 from contextlib import contextmanager
@@ -216,7 +215,7 @@ def main():
                     'cocos2dx_audioengine.ini': ('AudioEngine', 'CCRegisterLuaAudioEngineAuto'), \
                     'cocos2dx_csloader.ini' : ('CSLoader', 'CCRegisterLuaCSLoaderAuto'), \
                     'cocos2dx_webview.ini' : ('WebView', 'CCRegisterLuaWebViewAuto'), \
-                    'cocos2dx_physics3d.ini' : ('Physics3d', 'CCRegisterLuaPhysics3DAuto'), \
+                    'cocos2dx_physics3d.ini' : ('Physics3D', 'CCRegisterLuaPhysics3DAuto'), \
                     'cocos2dx_navmesh.ini' : ('NavMesh', 'CCRegisterLuaNavMeshAuto'), \
                     }
         target = 'lua'

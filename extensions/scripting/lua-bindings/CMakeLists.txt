@@ -53,41 +53,41 @@ set(lua_bindings_manual_files
     # manual/ui/lua_cocos2dx_video_manual.cpp
     )
 
-set(lua_bindings_auto_headers
-    auto/CCRegisterLua3DAuto.hpp
-    auto/CCRegisterLuaCoreAuto.hpp
-    auto/CCRegisterLuaControllerAuto.hpp
-    auto/CCRegisterLuaExtensionAuto.hpp
-    auto/CCRegisterLuaPhysicsAuto.hpp
-    auto/CCRegisterLuaSpineAuto.hpp
-    auto/CCRegisterLuaStudioAuto.hpp
-    auto/CCRegisterLuaCSLoaderAuto.hpp
-    auto/CCRegisterLuaUIAuto.hpp
-    auto/CCRegisterLuaAudioEngineAuto.hpp
-    auto/CCRegisterLuaPhysics3DAuto.hpp
-    auto/CCRegisterLuaNavMeshAuto.hpp
-    auto/CCRegisterLuaBackendAuto.hpp
-    auto/CCRegisterLuaWebViewAuto.hpp
-    auto/CCRegisterLuaVideoPlayerAuto.hpp
-    )
+# set(lua_bindings_auto_headers
+#     auto/CCRegisterLua3DAuto.hpp
+#     #auto/CCRegisterLuaCoreAuto.hpp
+#     auto/CCRegisterLuaControllerAuto.hpp
+#     auto/CCRegisterLuaExtensionAuto.hpp
+#     auto/CCRegisterLuaPhysicsAuto.hpp
+#     auto/CCRegisterLuaSpineAuto.hpp
+#     auto/CCRegisterLuaStudioAuto.hpp
+#     auto/CCRegisterLuaCSLoaderAuto.hpp
+#     #auto/CCRegisterLuaUIAuto.hpp
+#     auto/CCRegisterLuaAudioEngineAuto.hpp
+#     auto/CCRegisterLuaPhysics3DAuto.hpp
+#     auto/CCRegisterLuaNavMeshAuto.hpp
+#     auto/CCRegisterLuaBackendAuto.hpp
+#     auto/CCRegisterLuaWebViewAuto.hpp
+#     auto/CCRegisterLuaVideoPlayerAuto.hpp
+#     )
 
-set(lua_bindings_auto_files
-    auto/CCRegisterLua3DAuto.cpp
-    auto/CCRegisterLuaCoreAuto.cpp
-    auto/CCRegisterLuaControllerAuto.cpp
-    auto/CCRegisterLuaExtensionAuto.cpp
-    auto/CCRegisterLuaPhysicsAuto.cpp
-    auto/CCRegisterLuaSpineAuto.cpp
-    auto/CCRegisterLuaStudioAuto.cpp
-    auto/CCRegisterLuaCSLoaderAuto.cpp
-    auto/CCRegisterLuaUIAuto.cpp
-    auto/CCRegisterLuaAudioEngineAuto.cpp
-    auto/CCRegisterLuaPhysics3DAuto.cpp
-    auto/CCRegisterLuaNavMeshAuto.cpp
-    auto/CCRegisterLuaBackendAuto.cpp
-    auto/CCRegisterLuaWebViewAuto.cpp
-    auto/CCRegisterLuaVideoPlayerAuto.cpp
-    )
+# set(lua_bindings_auto_files
+#     auto/CCRegisterLua3DAuto.cpp
+#     #auto/CCRegisterLuaCoreAuto.cpp
+#     auto/CCRegisterLuaControllerAuto.cpp
+#     auto/CCRegisterLuaExtensionAuto.cpp
+#     auto/CCRegisterLuaPhysicsAuto.cpp
+#     auto/CCRegisterLuaSpineAuto.cpp
+#     auto/CCRegisterLuaStudioAuto.cpp
+#     auto/CCRegisterLuaCSLoaderAuto.cpp
+#     #auto/CCRegisterLuaUIAuto.cpp
+#     auto/CCRegisterLuaAudioEngineAuto.cpp
+#     auto/CCRegisterLuaPhysics3DAuto.cpp
+#     auto/CCRegisterLuaNavMeshAuto.cpp
+#     auto/CCRegisterLuaBackendAuto.cpp
+#     auto/CCRegisterLuaWebViewAuto.cpp
+#     auto/CCRegisterLuaVideoPlayerAuto.cpp
+#     )
 
 if(APPLE)
     # CCLuaObjcBridge.mm needed by ios and mac
@@ -153,6 +153,7 @@ set(lua_bindings_files
     "${cocos_root}/external/yasio/bindings/yasio_cclua.cpp")
 
 list(APPEND lua_bindings_files ${lua_bindings_headers})
+aux_source_directory(auto lua_bindings_files)
 
 set(ENGINEX_LUA_LIB luacocos2d CACHE INTERNAL "The EGNX lua bindings lib name" )
 

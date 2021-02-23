@@ -208,21 +208,15 @@ namespace cocos2d {
     void Lua::RegisterAuto() {
         RegisterLua3DAuto(*this);
         RegisterLuaCoreAuto(*this);
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
         RegisterLuaControllerAuto(*this);
-#endif
         RegisterLuaExtensionAuto(*this);
-#if CC_USE_PHYSICS
         RegisterLuaPhysicsAuto(*this);
-#endif
         RegisterLuaSpineAuto(*this);
         RegisterLuaStudioAuto(*this);
         RegisterLuaCSLoaderAuto(*this);
         RegisterLuaUIAuto(*this);
         RegisterLuaAudioEngineAuto(*this);
-#if CC_USE_3D_PHYSICS && CC_ENABLE_BULLET_INTEGRATION
         RegisterLuaPhysics3DAuto(*this);
-#endif
         RegisterLuaNavMeshAuto(*this);
         RegisterLuaBackendAuto(*this);
         RegisterLuaWebViewAuto(*this);
