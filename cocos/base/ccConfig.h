@@ -333,7 +333,7 @@ THE SOFTWARE.
  */
 #ifndef CC_CONSTRUCTOR_ACCESS
 #ifdef CC_ENABLE_LUA_BINDING
-    #define CC_CONSTRUCTOR_ACCESS public
+    #define CC_CONSTRUCTOR_ACCESS protected
   #else
     #define CC_CONSTRUCTOR_ACCESS protected
   #endif

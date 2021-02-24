@@ -6,9 +6,11 @@ auto mt=lua.NewUserType<cocos2d::Controller>("cc","Controller");
 mt.set_function("getDeviceName",static_cast<const std::string&(cocos2d::Controller::*)()const>(&cocos2d::Controller::getDeviceName));
 mt.set_function("getDeviceId",static_cast<int(cocos2d::Controller::*)()const>(&cocos2d::Controller::getDeviceId));
 mt.set_function("isConnected",static_cast<bool(cocos2d::Controller::*)()const>(&cocos2d::Controller::isConnected));
+mt.set_function("getKeyStatus",static_cast<const cocos2d::Controller::KeyStatus&(cocos2d::Controller::*)(int)>(&cocos2d::Controller::getKeyStatus));
 mt.set_function("receiveExternalKeyEvent",static_cast<void(cocos2d::Controller::*)(int,bool)>(&cocos2d::Controller::receiveExternalKeyEvent));
 mt.set_function("setTag",static_cast<void(cocos2d::Controller::*)(int)>(&cocos2d::Controller::setTag));
 mt.set_function("getTag",static_cast<int(cocos2d::Controller::*)()const>(&cocos2d::Controller::getTag));
+mt.set_function("getAllController",static_cast<const std::vector<cocos2d::Controller *>&(*)()>(&cocos2d::Controller::getAllController));
 mt.set_function("getControllerByTag",static_cast<cocos2d::Controller*(*)(int)>(&cocos2d::Controller::getControllerByTag));
 mt.set_function("getControllerByDeviceId",static_cast<cocos2d::Controller*(*)(int)>(&cocos2d::Controller::getControllerByDeviceId));
 mt.set_function("startDiscoveryController",static_cast<void(*)()>(&cocos2d::Controller::startDiscoveryController));
@@ -28,5 +30,11 @@ auto mt=lua.NewUserType<cocos2d::EventListenerController,cocos2d::EventListener,
 mt.set_function("checkAvailable",static_cast<bool(cocos2d::EventListenerController::*)()>(&cocos2d::EventListenerController::checkAvailable));
 mt.set_function("clone",static_cast<cocos2d::EventListenerController*(cocos2d::EventListenerController::*)()>(&cocos2d::EventListenerController::clone));
 mt.set_function("new",static_cast<cocos2d::EventListenerController*(*)()>(&cocos2d::EventListenerController::create));
+mt["onConnected"] = &cocos2d::EventListenerController::onConnected;
+mt["onDisconnected"] = &cocos2d::EventListenerController::onDisconnected;
+mt["onKeyDown"] = &cocos2d::EventListenerController::onKeyDown;
+mt["onKeyUp"] = &cocos2d::EventListenerController::onKeyUp;
+mt["onKeyRepeat"] = &cocos2d::EventListenerController::onKeyRepeat;
+mt["onAxisEvent"] = &cocos2d::EventListenerController::onAxisEvent;
 }
 #endif

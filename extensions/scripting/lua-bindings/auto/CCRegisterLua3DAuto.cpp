@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLua3DAuto.hpp"
 #include "cocos2d.h"
 #include "3d/CCBundle3D.h"
+#include "renderer/backend/Buffer.h"
 extern void RegisterLua3DAnimation3DAuto(cocos2d::Lua&);
 extern void RegisterLua3DAnimate3DAuto(cocos2d::Lua&);
 extern void RegisterLua3DTextureCubeAuto(cocos2d::Lua&);

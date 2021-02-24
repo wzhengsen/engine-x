@@ -24,7 +24,8 @@ public:
     bool initWithScene(Scene* scene)
     {
 #ifdef CC_PLATFORM_PC
-        _trackLayer = utils::newInstance<Layer>();
+        _trackLayer = Layer::create();
+        _trackLayer->retain();
 
         // note: when at the first click to focus the window, this will not take effect
         auto listener = EventListenerTouchOneByOne::create();
@@ -89,7 +90,8 @@ public:
 
         auto eventDispatcher = Director::getInstance()->getEventDispatcher();
 
-        _touchListener = utils::newInstance<EventListenerTouchOneByOne>();
+        _touchListener = EventListenerTouchOneByOne::create();
+        _touchListener->retain();
         _touchListener->setSwallowTouches(true);
         _touchListener->onTouchBegan = [this](Touch* touch, Event*) -> bool {
             return ImGui::IsAnyWindowHovered();
@@ -102,7 +104,8 @@ public:
                 event->stopPropagation();
             }
         };
-        _mouseListener = utils::newInstance<EventListenerMouse>();
+        _mouseListener = EventListenerMouse::create();
+        _mouseListener->retain();
         _mouseListener->onMouseDown = _mouseListener->onMouseUp = stopAnyMouse;
         eventDispatcher->addEventListenerWithFixedPriority(_mouseListener, highestPriority);
 #endif

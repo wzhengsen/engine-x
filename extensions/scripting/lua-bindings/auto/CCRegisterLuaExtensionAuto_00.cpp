@@ -1,5 +1,9 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaExtensionAuto.hpp"
 #include "cocos-ext.h"
+#include "Particle3D/PU/CCPUEmitter.h"
+#include "Particle3D/PU/CCPUAffector.h"
+#include "Particle3D/PU/CCPUObserver.h"
+#include "Particle3D/CCParticle3DAffector.h"
 void RegisterLuaExtensionEventAssetsManagerExAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::extension::EventAssetsManagerEx,cocos2d::EventCustom,cocos2d::Event,cocos2d::Ref,cocos2d::LuaObject>("cc","EventAssetsManagerEx");
 mt.set_function("getEventCode",static_cast<cocos2d::extension::EventAssetsManagerEx::EventCode(cocos2d::extension::EventAssetsManagerEx::*)()const>(&cocos2d::extension::EventAssetsManagerEx::getEventCode));
@@ -40,7 +44,7 @@ void RegisterLuaExtensionEventListenerAssetsManagerExAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::extension::EventListenerAssetsManagerEx,cocos2d::EventListenerCustom,cocos2d::EventListener,cocos2d::Ref,cocos2d::LuaObject>("cc","EventListenerAssetsManagerEx");
 mt.set_function("checkAvailable",static_cast<bool(cocos2d::extension::EventListenerAssetsManagerEx::*)()>(&cocos2d::extension::EventListenerAssetsManagerEx::checkAvailable));
 mt.set_function("clone",static_cast<cocos2d::extension::EventListenerAssetsManagerEx*(cocos2d::extension::EventListenerAssetsManagerEx::*)()>(&cocos2d::extension::EventListenerAssetsManagerEx::clone));
-mt.set_function("init",static_cast<bool(cocos2d::extension::EventListenerAssetsManagerEx::*)(const cocos2d::extension::AssetsManagerEx*,const std::function<void (cocos2d::extension::EventAssetsManagerEx *)>&)>(&cocos2d::extension::EventListenerAssetsManagerEx::init));
+mt.set_function("new",static_cast<cocos2d::extension::EventListenerAssetsManagerEx*(*)(cocos2d::extension::AssetsManagerEx*,const std::function<void (cocos2d::extension::EventAssetsManagerEx *)>&)>(&cocos2d::extension::EventListenerAssetsManagerEx::create));
 }
 void RegisterLuaExtensionParticleSystem3DAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::ParticleSystem3D,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::BlendProtocol>("cc","ParticleSystem3D");
@@ -60,6 +64,8 @@ mt.set_function("removeAffector",static_cast<void(cocos2d::ParticleSystem3D::*)(
 mt.set_function("removeAllAffector",static_cast<void(cocos2d::ParticleSystem3D::*)()>(&cocos2d::ParticleSystem3D::removeAllAffector));
 mt.set_function("getParticleQuota",static_cast<unsigned int(cocos2d::ParticleSystem3D::*)()const>(&cocos2d::ParticleSystem3D::getParticleQuota));
 mt.set_function("setParticleQuota",static_cast<void(cocos2d::ParticleSystem3D::*)(unsigned int)>(&cocos2d::ParticleSystem3D::setParticleQuota));
+mt.set_function("getAffector",static_cast<cocos2d::Particle3DAffector*(cocos2d::ParticleSystem3D::*)(int)>(&cocos2d::ParticleSystem3D::getAffector));
+mt.set_function("getParticlePool",static_cast<const cocos2d::ParticlePool&(cocos2d::ParticleSystem3D::*)()>(&cocos2d::ParticleSystem3D::getParticlePool));
 mt.set_function("getAliveParticleCount",static_cast<int(cocos2d::ParticleSystem3D::*)()const>(&cocos2d::ParticleSystem3D::getAliveParticleCount));
 mt.set_function("getState",static_cast<cocos2d::ParticleSystem3D::State(cocos2d::ParticleSystem3D::*)()const>(&cocos2d::ParticleSystem3D::getState));
 mt.set_function("isKeepLocal",static_cast<bool(cocos2d::ParticleSystem3D::*)()const>(&cocos2d::ParticleSystem3D::isKeepLocal));
@@ -88,6 +94,7 @@ mt.set_function("setDefaultHeight",static_cast<void(cocos2d::PUParticleSystem3D:
 mt.set_function("getDefaultDepth",static_cast<float(cocos2d::PUParticleSystem3D::*)()const>(&cocos2d::PUParticleSystem3D::getDefaultDepth));
 mt.set_function("setDefaultDepth",static_cast<void(cocos2d::PUParticleSystem3D::*)(const float)>(&cocos2d::PUParticleSystem3D::setDefaultDepth));
 mt.set_function("getDerivedPosition",static_cast<cocos2d::Vec3(cocos2d::PUParticleSystem3D::*)()>(&cocos2d::PUParticleSystem3D::getDerivedPosition));
+mt.set_function("getDerivedOrientation",static_cast<cocos2d::Quaternion(cocos2d::PUParticleSystem3D::*)()>(&cocos2d::PUParticleSystem3D::getDerivedOrientation));
 mt.set_function("getDerivedScale",static_cast<cocos2d::Vec3(cocos2d::PUParticleSystem3D::*)()>(&cocos2d::PUParticleSystem3D::getDerivedScale));
 mt.set_function("getMaxVelocity",static_cast<float(cocos2d::PUParticleSystem3D::*)()const>(&cocos2d::PUParticleSystem3D::getMaxVelocity));
 mt.set_function("setMaxVelocity",static_cast<void(cocos2d::PUParticleSystem3D::*)(float)>(&cocos2d::PUParticleSystem3D::setMaxVelocity));
@@ -95,11 +102,14 @@ mt.set_function("setMaterialName",static_cast<void(cocos2d::PUParticleSystem3D::
 mt.set_function("getMaterialName",static_cast<const std::string&(cocos2d::PUParticleSystem3D::*)()const>(&cocos2d::PUParticleSystem3D::getMaterialName));
 mt.set_function("forceEmission",static_cast<void(cocos2d::PUParticleSystem3D::*)(cocos2d::PUEmitter*,unsigned int)>(&cocos2d::PUParticleSystem3D::forceEmission));
 mt.set_function("addEmitter",static_cast<void(cocos2d::PUParticleSystem3D::*)(cocos2d::PUEmitter*)>(&cocos2d::PUParticleSystem3D::addEmitter));
+mt.set_function("getAffector",static_cast<cocos2d::PUAffector*(cocos2d::PUParticleSystem3D::*)(const std::string&)>(&cocos2d::PUParticleSystem3D::getAffector));
+mt.set_function("getEmitter",static_cast<cocos2d::PUEmitter*(cocos2d::PUParticleSystem3D::*)(const std::string&)>(&cocos2d::PUParticleSystem3D::getEmitter));
 mt.set_function("removeAllEmitter",static_cast<void(cocos2d::PUParticleSystem3D::*)()>(&cocos2d::PUParticleSystem3D::removeAllEmitter));
 mt.set_function("addListener",static_cast<void(cocos2d::PUParticleSystem3D::*)(cocos2d::PUListener*)>(&cocos2d::PUParticleSystem3D::addListener));
 mt.set_function("removeListener",static_cast<void(cocos2d::PUParticleSystem3D::*)(cocos2d::PUListener*)>(&cocos2d::PUParticleSystem3D::removeListener));
 mt.set_function("removeAllListener",static_cast<void(cocos2d::PUParticleSystem3D::*)()>(&cocos2d::PUParticleSystem3D::removeAllListener));
 mt.set_function("addObserver",static_cast<void(cocos2d::PUParticleSystem3D::*)(cocos2d::PUObserver*)>(&cocos2d::PUParticleSystem3D::addObserver));
+mt.set_function("getObserver",static_cast<cocos2d::PUObserver*(cocos2d::PUParticleSystem3D::*)(const std::string&)>(&cocos2d::PUParticleSystem3D::getObserver));
 mt.set_function("removerAllObserver",static_cast<void(cocos2d::PUParticleSystem3D::*)()>(&cocos2d::PUParticleSystem3D::removerAllObserver));
 mt.set_function("addBehaviourTemplate",static_cast<void(cocos2d::PUParticleSystem3D::*)(cocos2d::PUBehaviour*)>(&cocos2d::PUParticleSystem3D::addBehaviourTemplate));
 mt.set_function("removeAllBehaviourTemplate",static_cast<void(cocos2d::PUParticleSystem3D::*)()>(&cocos2d::PUParticleSystem3D::removeAllBehaviourTemplate));
@@ -111,12 +121,12 @@ mt.set_function("setEmittedEmitterQuota",static_cast<void(cocos2d::PUParticleSys
 mt.set_function("getEmittedSystemQuota",static_cast<unsigned int(cocos2d::PUParticleSystem3D::*)()const>(&cocos2d::PUParticleSystem3D::getEmittedSystemQuota));
 mt.set_function("setEmittedSystemQuota",static_cast<void(cocos2d::PUParticleSystem3D::*)(unsigned int)>(&cocos2d::PUParticleSystem3D::setEmittedSystemQuota));
 mt.set_function("getParentParticleSystem",static_cast<cocos2d::PUParticleSystem3D*(cocos2d::PUParticleSystem3D::*)()const>(&cocos2d::PUParticleSystem3D::getParentParticleSystem));
+mt.set_function("getEmittedEmitterParticlePool",static_cast<const cocos2d::PUParticleSystem3D::ParticlePoolMap&(cocos2d::PUParticleSystem3D::*)()const>(&cocos2d::PUParticleSystem3D::getEmittedEmitterParticlePool));
+mt.set_function("getEmittedSystemParticlePool",static_cast<const cocos2d::PUParticleSystem3D::ParticlePoolMap&(cocos2d::PUParticleSystem3D::*)()const>(&cocos2d::PUParticleSystem3D::getEmittedSystemParticlePool));
 mt.set_function("makeParticleLocal",static_cast<bool(cocos2d::PUParticleSystem3D::*)(cocos2d::PUParticle3D*)>(&cocos2d::PUParticleSystem3D::makeParticleLocal));
 mt.set_function("calulateRotationOffset",static_cast<void(cocos2d::PUParticleSystem3D::*)()>(&cocos2d::PUParticleSystem3D::calulateRotationOffset));
 mt.set_function("clone",static_cast<cocos2d::PUParticleSystem3D*(cocos2d::PUParticleSystem3D::*)()>(&cocos2d::PUParticleSystem3D::clone));
 mt.set_function("copyAttributesTo",static_cast<void(cocos2d::PUParticleSystem3D::*)(cocos2d::PUParticleSystem3D*)>(&cocos2d::PUParticleSystem3D::copyAttributesTo));
 mt.set_function("initSystem",static_cast<bool(cocos2d::PUParticleSystem3D::*)(const std::string&)>(&cocos2d::PUParticleSystem3D::initSystem));
-mt.set_function("initWithFilePath",static_cast<bool(cocos2d::PUParticleSystem3D::*)(const std::string&)>(&cocos2d::PUParticleSystem3D::initWithFilePath));
-mt.set_function("initWithFilePathAndMaterialPath",static_cast<bool(cocos2d::PUParticleSystem3D::*)(const std::string&,const std::string&)>(&cocos2d::PUParticleSystem3D::initWithFilePathAndMaterialPath));
 mt.set_function("new",sol::overload(static_cast<cocos2d::PUParticleSystem3D*(*)(const std::string&)>(&cocos2d::PUParticleSystem3D::create),static_cast<cocos2d::PUParticleSystem3D*(*)()>(&cocos2d::PUParticleSystem3D::create),static_cast<cocos2d::PUParticleSystem3D*(*)(const std::string&,const std::string&)>(&cocos2d::PUParticleSystem3D::create)));
 }

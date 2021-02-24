@@ -5,10 +5,14 @@
 #include "renderer/CCRenderer.h"
 #include "renderer/CCPipelineDescriptor.h"
 #include "renderer/backend/RenderTarget.h"
+#include "navmesh/CCNavMesh.h"
+#include "ui/UIWidget.h"
+#include "base/TGAlib.h"
 void RegisterLuaCoreRefAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::Ref,cocos2d::LuaObject>("cc","Ref");
 mt.set_function("retain",static_cast<void(cocos2d::Ref::*)()>(&cocos2d::Ref::retain));
 mt.set_function("release",static_cast<void(cocos2d::Ref::*)()>(&cocos2d::Ref::release));
+mt.set_function("autorelease",static_cast<cocos2d::Ref*(cocos2d::Ref::*)()>(&cocos2d::Ref::autorelease));
 mt.set_function("getReferenceCount",static_cast<unsigned int(cocos2d::Ref::*)()const>(&cocos2d::Ref::getReferenceCount));
 }
 void RegisterLuaCoreConsoleAuto(cocos2d::Lua& lua){
@@ -16,10 +20,16 @@ auto mt=lua.NewUserType<cocos2d::Console,cocos2d::Ref,cocos2d::LuaObject>("cc","
 mt.set_function("listenOnTCP",static_cast<bool(cocos2d::Console::*)(int)>(&cocos2d::Console::listenOnTCP));
 mt.set_function("listenOnFileDescriptor",static_cast<bool(cocos2d::Console::*)(int)>(&cocos2d::Console::listenOnFileDescriptor));
 mt.set_function("stop",static_cast<void(cocos2d::Console::*)()>(&cocos2d::Console::stop));
+mt.set_function("addCommand",static_cast<void(cocos2d::Console::*)(const cocos2d::Console::Command&)>(&cocos2d::Console::addCommand));
+mt.set_function("addSubCommand",sol::overload(static_cast<void(cocos2d::Console::*)(cocos2d::Console::Command&,const cocos2d::Console::Command&)>(&cocos2d::Console::addSubCommand),static_cast<void(cocos2d::Console::*)(const std::string&,const cocos2d::Console::Command&)>(&cocos2d::Console::addSubCommand)));
+mt.set_function("getCommand",static_cast<const cocos2d::Console::Command*(cocos2d::Console::*)(const std::string&)>(&cocos2d::Console::getCommand));
+mt.set_function("getSubCommand",sol::overload(static_cast<const cocos2d::Console::Command*(cocos2d::Console::*)(const cocos2d::Console::Command&,const std::string&)>(&cocos2d::Console::getSubCommand),static_cast<const cocos2d::Console::Command*(cocos2d::Console::*)(const std::string&,const std::string&)>(&cocos2d::Console::getSubCommand)));
 mt.set_function("delCommand",static_cast<void(cocos2d::Console::*)(const std::string&)>(&cocos2d::Console::delCommand));
+mt.set_function("delSubCommand",sol::overload(static_cast<void(cocos2d::Console::*)(cocos2d::Console::Command&,const std::string&)>(&cocos2d::Console::delSubCommand),static_cast<void(cocos2d::Console::*)(const std::string&,const std::string&)>(&cocos2d::Console::delSubCommand)));
 mt.set_function("log",static_cast<void(cocos2d::Console::*)(const char*)>(&cocos2d::Console::log));
 mt.set_function("setBindAddress",static_cast<void(cocos2d::Console::*)(const std::string&)>(&cocos2d::Console::setBindAddress));
 mt.set_function("isIpv6Server",static_cast<bool(cocos2d::Console::*)()const>(&cocos2d::Console::isIpv6Server));
+mt.set_function("getCommandSeparator",static_cast<char(cocos2d::Console::*)()const>(&cocos2d::Console::getCommandSeparator));
 mt.set_function("setCommandSeparator",static_cast<void(cocos2d::Console::*)(char)>(&cocos2d::Console::setCommandSeparator));
 }
 void RegisterLuaCoreEventListenerAuto(cocos2d::Lua& lua){
@@ -33,6 +43,7 @@ void RegisterLuaCoreEventListenerCustomAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::EventListenerCustom,cocos2d::EventListener,cocos2d::Ref,cocos2d::LuaObject>("cc","EventListenerCustom");
 mt.set_function("checkAvailable",static_cast<bool(cocos2d::EventListenerCustom::*)()>(&cocos2d::EventListenerCustom::checkAvailable));
 mt.set_function("clone",static_cast<cocos2d::EventListenerCustom*(cocos2d::EventListenerCustom::*)()>(&cocos2d::EventListenerCustom::clone));
+mt.set_function("new",static_cast<cocos2d::EventListenerCustom*(*)(const std::string&,const std::function<void (cocos2d::EventCustom *)>&)>(&cocos2d::EventListenerCustom::create));
 }
 void RegisterLuaCoreShaderCacheAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::backend::ShaderCache,cocos2d::Ref,cocos2d::LuaObject>("cc","ShaderCache");
@@ -44,7 +55,10 @@ mt.set_function("newFragmentShaderModule",static_cast<cocos2d::backend::ShaderMo
 }
 void RegisterLuaCoreTexture2DAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::Texture2D,cocos2d::Ref,cocos2d::LuaObject>("cc","Texture2D");
+mt.set_function("initWithData",sol::overload([](cocos2d::Texture2D* obj,const void* arg0,ssize_t arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5,const cocos2d::Size& arg6){return obj->initWithData(arg0,arg1,arg2,arg3,arg4,arg5,arg6);},[](cocos2d::Texture2D* obj,const void* arg0,ssize_t arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5,const cocos2d::Size& arg6,bool arg7){return obj->initWithData(arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7);},[](cocos2d::Texture2D* obj,const void* arg0,ssize_t arg1,cocos2d::backend::PixelFormat arg2,int arg3,int arg4,const cocos2d::Size& arg5){return obj->initWithData(arg0,arg1,arg2,arg3,arg4,arg5);},[](cocos2d::Texture2D* obj,const void* arg0,ssize_t arg1,cocos2d::backend::PixelFormat arg2,int arg3,int arg4,const cocos2d::Size& arg5,bool arg6){return obj->initWithData(arg0,arg1,arg2,arg3,arg4,arg5,arg6);}));
+mt.set_function("initWithMipmaps",sol::overload([](cocos2d::Texture2D* obj,cocos2d::MipmapInfo* arg0,int arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5){return obj->initWithMipmaps(arg0,arg1,arg2,arg3,arg4,arg5);},[](cocos2d::Texture2D* obj,cocos2d::MipmapInfo* arg0,int arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5,bool arg6){return obj->initWithMipmaps(arg0,arg1,arg2,arg3,arg4,arg5,arg6);}));
 mt.set_function("updateWithImage",sol::overload([](cocos2d::Texture2D* obj,cocos2d::Image* arg0,cocos2d::backend::PixelFormat arg1){return obj->updateWithImage(arg0,arg1);},[](cocos2d::Texture2D* obj,cocos2d::Image* arg0,cocos2d::backend::PixelFormat arg1,int arg2){return obj->updateWithImage(arg0,arg1,arg2);},[](cocos2d::Texture2D* obj,cocos2d::Image* arg0,cocos2d::backend::PixelFormat arg1,int arg2,int arg3){return obj->updateWithImage(arg0,arg1,arg2,arg3);}));
+mt.set_function("updateWithData",sol::overload([](cocos2d::Texture2D* obj,const void* arg0,ssize_t arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5,const cocos2d::Size& arg6,bool arg7){return obj->updateWithData(arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7);},[](cocos2d::Texture2D* obj,const void* arg0,ssize_t arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5,const cocos2d::Size& arg6,bool arg7,int arg8){return obj->updateWithData(arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8);}));
 mt.set_function("updateWithMipmaps",sol::overload([](cocos2d::Texture2D* obj,cocos2d::MipmapInfo* arg0,int arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5){return obj->updateWithMipmaps(arg0,arg1,arg2,arg3,arg4,arg5);},[](cocos2d::Texture2D* obj,cocos2d::MipmapInfo* arg0,int arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5,bool arg6){return obj->updateWithMipmaps(arg0,arg1,arg2,arg3,arg4,arg5,arg6);},[](cocos2d::Texture2D* obj,cocos2d::MipmapInfo* arg0,int arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5,bool arg6,int arg7){return obj->updateWithMipmaps(arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7);}));
 mt.set_function("updateWithSubData",sol::overload([](cocos2d::Texture2D* obj,void* arg0,int arg1,int arg2,int arg3,int arg4){return obj->updateWithSubData(arg0,arg1,arg2,arg3,arg4);},[](cocos2d::Texture2D* obj,void* arg0,int arg1,int arg2,int arg3,int arg4,int arg5){return obj->updateWithSubData(arg0,arg1,arg2,arg3,arg4,arg5);}));
 mt.set_function("drawAtPoint",static_cast<void(cocos2d::Texture2D::*)(const cocos2d::Vec2&,float)>(&cocos2d::Texture2D::drawAtPoint));
@@ -54,10 +68,12 @@ mt.set_function("initWithString",sol::overload(static_cast<bool(cocos2d::Texture
 mt.set_function("updateTextureDescriptor",sol::overload([](cocos2d::Texture2D* obj,const cocos2d::backend::TextureDescriptor& arg0){return obj->updateTextureDescriptor(arg0);},[](cocos2d::Texture2D* obj,const cocos2d::backend::TextureDescriptor& arg0,bool arg1){return obj->updateTextureDescriptor(arg0,arg1);}));
 mt.set_function("setRenderTarget",static_cast<void(cocos2d::Texture2D::*)(bool)>(&cocos2d::Texture2D::setRenderTarget));
 mt.set_function("isRenderTarget",static_cast<bool(cocos2d::Texture2D::*)()const>(&cocos2d::Texture2D::isRenderTarget));
+mt.set_function("setTexParameters",static_cast<void(cocos2d::Texture2D::*)(const cocos2d::Texture2D::TexParams&)>(&cocos2d::Texture2D::setTexParameters));
 mt.set_function("generateMipmap",static_cast<void(cocos2d::Texture2D::*)()>(&cocos2d::Texture2D::generateMipmap));
 mt.set_function("setAntiAliasTexParameters",static_cast<void(cocos2d::Texture2D::*)()>(&cocos2d::Texture2D::setAntiAliasTexParameters));
 mt.set_function("setAliasTexParameters",static_cast<void(cocos2d::Texture2D::*)()>(&cocos2d::Texture2D::setAliasTexParameters));
 mt.set_function("getStringForFormat",static_cast<const char*(cocos2d::Texture2D::*)()const>(&cocos2d::Texture2D::getStringForFormat));
+mt.set_function("getBitsPerPixelForFormat",sol::overload(static_cast<unsigned int(cocos2d::Texture2D::*)(cocos2d::backend::PixelFormat)const>(&cocos2d::Texture2D::getBitsPerPixelForFormat),static_cast<unsigned int(cocos2d::Texture2D::*)()const>(&cocos2d::Texture2D::getBitsPerPixelForFormat)));
 mt.set_function("getContentSizeInPixels",static_cast<const cocos2d::Size&(cocos2d::Texture2D::*)()>(&cocos2d::Texture2D::getContentSizeInPixels));
 mt.set_function("hasPremultipliedAlpha",static_cast<bool(cocos2d::Texture2D::*)()const>(&cocos2d::Texture2D::hasPremultipliedAlpha));
 mt.set_function("setPremultipliedAlpha",static_cast<void(cocos2d::Texture2D::*)(bool)>(&cocos2d::Texture2D::setPremultipliedAlpha));
@@ -76,6 +92,11 @@ mt.set_function("getPath",static_cast<std::string(cocos2d::Texture2D::*)()const>
 mt.set_function("setDefaultAlphaPixelFormat",static_cast<void(*)(cocos2d::backend::PixelFormat)>(&cocos2d::Texture2D::setDefaultAlphaPixelFormat));
 mt.set_function("getDefaultAlphaPixelFormat",static_cast<cocos2d::backend::PixelFormat(*)()>(&cocos2d::Texture2D::getDefaultAlphaPixelFormat));
 }
+void RegisterLuaCoreLabelProtocolAuto(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::LabelProtocol>("cc","LabelProtocol");
+mt.set_function("setString",static_cast<void(cocos2d::LabelProtocol::*)(const std::string&)>(&cocos2d::LabelProtocol::setString));
+mt.set_function("getString",static_cast<const std::string&(cocos2d::LabelProtocol::*)()const>(&cocos2d::LabelProtocol::getString));
+}
 void RegisterLuaCoreComponentAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::Component,cocos2d::Ref,cocos2d::LuaObject>("cc","Component");
 mt.set_function("init",static_cast<bool(cocos2d::Component::*)()>(&cocos2d::Component::init));
@@ -86,6 +107,9 @@ mt.set_function("setName",static_cast<void(cocos2d::Component::*)(const std::str
 mt.set_function("getOwner",static_cast<cocos2d::Node*(cocos2d::Component::*)()const>(&cocos2d::Component::getOwner));
 mt.set_function("setOwner",static_cast<void(cocos2d::Component::*)(cocos2d::Node*)>(&cocos2d::Component::setOwner));
 mt.set_function("update",static_cast<void(cocos2d::Component::*)(float)>(&cocos2d::Component::update));
+mt.set_function("serialize",static_cast<bool(cocos2d::Component::*)(void*)>(&cocos2d::Component::serialize));
+mt.set_function("onEnter",static_cast<void(cocos2d::Component::*)()>(&cocos2d::Component::onEnter));
+mt.set_function("onExit",static_cast<void(cocos2d::Component::*)()>(&cocos2d::Component::onExit));
 mt.set_function("onAdd",static_cast<void(cocos2d::Component::*)()>(&cocos2d::Component::onAdd));
 mt.set_function("onRemove",static_cast<void(cocos2d::Component::*)()>(&cocos2d::Component::onRemove));
 mt.set_function("new",static_cast<cocos2d::Component*(*)()>(&cocos2d::Component::create));
@@ -110,6 +134,7 @@ mt.set_function("getScale",static_cast<float(cocos2d::Node::*)()const>(&cocos2d:
 mt.set_function("setPosition",sol::overload(static_cast<void(cocos2d::Node::*)(float,float)>(&cocos2d::Node::setPosition),static_cast<void(cocos2d::Node::*)(const cocos2d::Vec2&)>(&cocos2d::Node::setPosition)));
 mt.set_function("setPositionNormalized",static_cast<void(cocos2d::Node::*)(const cocos2d::Vec2&)>(&cocos2d::Node::setPositionNormalized));
 mt.set_function("setNormalizedPosition",static_cast<void(cocos2d::Node::*)(const cocos2d::Vec2&)>(&cocos2d::Node::setNormalizedPosition));
+mt.set_function("getPosition",sol::overload(static_cast<void(cocos2d::Node::*)(float*,float*)const>(&cocos2d::Node::getPosition),static_cast<const cocos2d::Vec2&(cocos2d::Node::*)()const>(&cocos2d::Node::getPosition)));
 mt.set_function("getPositionXY",static_cast<const cocos2d::Vec2&(cocos2d::Node::*)()const>(&cocos2d::Node::getPositionXY));
 mt.set_function("getPositionNormalized",static_cast<const cocos2d::Vec2&(cocos2d::Node::*)()const>(&cocos2d::Node::getPositionNormalized));
 mt.set_function("getNormalizedPosition",static_cast<const cocos2d::Vec2&(cocos2d::Node::*)()const>(&cocos2d::Node::getNormalizedPosition));
@@ -125,8 +150,10 @@ mt.set_function("setSkewX",static_cast<void(cocos2d::Node::*)(float)>(&cocos2d::
 mt.set_function("getSkewX",static_cast<float(cocos2d::Node::*)()const>(&cocos2d::Node::getSkewX));
 mt.set_function("setSkewY",static_cast<void(cocos2d::Node::*)(float)>(&cocos2d::Node::setSkewY));
 mt.set_function("getSkewY",static_cast<float(cocos2d::Node::*)()const>(&cocos2d::Node::getSkewY));
+mt.set_function("setAnchorPoint",static_cast<void(cocos2d::Node::*)(const cocos2d::Vec2&)>(&cocos2d::Node::setAnchorPoint));
 mt.set_function("getAnchorPoint",static_cast<const cocos2d::Vec2&(cocos2d::Node::*)()const>(&cocos2d::Node::getAnchorPoint));
 mt.set_function("getAnchorPointInPoints",static_cast<const cocos2d::Vec2&(cocos2d::Node::*)()const>(&cocos2d::Node::getAnchorPointInPoints));
+mt.set_function("setContentSize",static_cast<void(cocos2d::Node::*)(const cocos2d::Size&)>(&cocos2d::Node::setContentSize));
 mt.set_function("getContentSize",static_cast<const cocos2d::Size&(cocos2d::Node::*)()const>(&cocos2d::Node::getContentSize));
 mt.set_function("getContentWidth",static_cast<float(cocos2d::Node::*)()const>(&cocos2d::Node::getContentWidth));
 mt.set_function("getContentHeight",static_cast<float(cocos2d::Node::*)()const>(&cocos2d::Node::getContentHeight));
@@ -138,6 +165,8 @@ mt.set_function("setRotation",static_cast<void(cocos2d::Node::*)(float)>(&cocos2
 mt.set_function("getRotation",static_cast<float(cocos2d::Node::*)()const>(&cocos2d::Node::getRotation));
 mt.set_function("setRotation3D",static_cast<void(cocos2d::Node::*)(const cocos2d::Vec3&)>(&cocos2d::Node::setRotation3D));
 mt.set_function("getRotation3D",static_cast<cocos2d::Vec3(cocos2d::Node::*)()const>(&cocos2d::Node::getRotation3D));
+mt.set_function("setRotationQuat",static_cast<void(cocos2d::Node::*)(const cocos2d::Quaternion&)>(&cocos2d::Node::setRotationQuat));
+mt.set_function("getRotationQuat",static_cast<cocos2d::Quaternion(cocos2d::Node::*)()const>(&cocos2d::Node::getRotationQuat));
 mt.set_function("setRotationSkewX",static_cast<void(cocos2d::Node::*)(float)>(&cocos2d::Node::setRotationSkewX));
 mt.set_function("getRotationSkewX",static_cast<float(cocos2d::Node::*)()const>(&cocos2d::Node::getRotationSkewX));
 mt.set_function("setRotationSkewY",static_cast<void(cocos2d::Node::*)(float)>(&cocos2d::Node::setRotationSkewY));
@@ -147,6 +176,7 @@ mt.set_function("isIgnoreAnchorPointForPosition",static_cast<bool(cocos2d::Node:
 mt.set_function("addChild",sol::overload(static_cast<void(cocos2d::Node::*)(cocos2d::Node*,int)>(&cocos2d::Node::addChild),static_cast<void(cocos2d::Node::*)(cocos2d::Node*)>(&cocos2d::Node::addChild),static_cast<void(cocos2d::Node::*)(cocos2d::Node*,int,int)>(&cocos2d::Node::addChild),static_cast<void(cocos2d::Node::*)(cocos2d::Node*,int,const std::string&)>(&cocos2d::Node::addChild)));
 mt.set_function("getChildByTag",static_cast<cocos2d::Node*(cocos2d::Node::*)(int)const>(&cocos2d::Node::getChildByTag));
 mt.set_function("getChildByName",static_cast<cocos2d::Node*(cocos2d::Node::*)(const std::string&)const>(&cocos2d::Node::getChildByName));
+mt.set_function("enumerateChildren",static_cast<void(cocos2d::Node::*)(const std::string&,std::function<bool (cocos2d::Node *)>)const>(&cocos2d::Node::enumerateChildren));
 mt.set_function("getChildren",sol::overload(static_cast<const cocos2d::Vector<cocos2d::Node *>&(cocos2d::Node::*)()const>(&cocos2d::Node::getChildren),static_cast<cocos2d::Vector<cocos2d::Node *>&(cocos2d::Node::*)()>(&cocos2d::Node::getChildren)));
 mt.set_function("getChildrenCount",static_cast<ssize_t(cocos2d::Node::*)()const>(&cocos2d::Node::getChildrenCount));
 mt.set_function("setParent",static_cast<void(cocos2d::Node::*)(cocos2d::Node*)>(&cocos2d::Node::setParent));
@@ -164,8 +194,15 @@ mt.set_function("getTag",static_cast<int(cocos2d::Node::*)()const>(&cocos2d::Nod
 mt.set_function("setTag",static_cast<void(cocos2d::Node::*)(int)>(&cocos2d::Node::setTag));
 mt.set_function("getName",static_cast<const std::string&(cocos2d::Node::*)()const>(&cocos2d::Node::getName));
 mt.set_function("setName",static_cast<void(cocos2d::Node::*)(const std::string&)>(&cocos2d::Node::setName));
+mt.set_function("getUserData",sol::overload(static_cast<const void*(cocos2d::Node::*)()const>(&cocos2d::Node::getUserData),static_cast<void*(cocos2d::Node::*)()>(&cocos2d::Node::getUserData)));
+mt.set_function("setUserData",static_cast<void(cocos2d::Node::*)(void*)>(&cocos2d::Node::setUserData));
+mt.set_function("getUserObject",sol::overload(static_cast<const cocos2d::Ref*(cocos2d::Node::*)()const>(&cocos2d::Node::getUserObject),static_cast<cocos2d::Ref*(cocos2d::Node::*)()>(&cocos2d::Node::getUserObject)));
 mt.set_function("setUserObject",static_cast<void(cocos2d::Node::*)(cocos2d::Ref*)>(&cocos2d::Node::setUserObject));
 mt.set_function("isRunning",static_cast<bool(cocos2d::Node::*)()const>(&cocos2d::Node::isRunning));
+mt.set_function("onEnter",static_cast<void(cocos2d::Node::*)()>(&cocos2d::Node::onEnter));
+mt.set_function("onEnterTransitionDidFinish",static_cast<void(cocos2d::Node::*)()>(&cocos2d::Node::onEnterTransitionDidFinish));
+mt.set_function("onExit",static_cast<void(cocos2d::Node::*)()>(&cocos2d::Node::onExit));
+mt.set_function("onExitTransitionDidStart",static_cast<void(cocos2d::Node::*)()>(&cocos2d::Node::onExitTransitionDidStart));
 mt.set_function("cleanup",static_cast<void(cocos2d::Node::*)()>(&cocos2d::Node::cleanup));
 mt.set_function("draw",sol::overload(static_cast<void(cocos2d::Node::*)()>(&cocos2d::Node::draw),static_cast<void(cocos2d::Node::*)(cocos2d::Renderer*,const cocos2d::Mat4&,uint32_t)>(&cocos2d::Node::draw)));
 mt.set_function("visit",sol::overload(static_cast<void(cocos2d::Node::*)()>(&cocos2d::Node::visit),static_cast<void(cocos2d::Node::*)(cocos2d::Renderer*,const cocos2d::Mat4&,uint32_t)>(&cocos2d::Node::visit)));
@@ -187,6 +224,13 @@ mt.set_function("getNumberOfRunningActionsByTag",static_cast<ssize_t(cocos2d::No
 mt.set_function("setScheduler",static_cast<void(cocos2d::Node::*)(cocos2d::Scheduler*)>(&cocos2d::Node::setScheduler));
 mt.set_function("getScheduler",sol::overload(static_cast<const cocos2d::Scheduler*(cocos2d::Node::*)()const>(&cocos2d::Node::getScheduler),static_cast<cocos2d::Scheduler*(cocos2d::Node::*)()>(&cocos2d::Node::getScheduler)));
 mt.set_function("isScheduled",sol::overload(static_cast<bool(cocos2d::Node::*)(const std::string&)const>(&cocos2d::Node::isScheduled),static_cast<bool(cocos2d::Node::*)(cocos2d::SEL_SCHEDULE)const>(&cocos2d::Node::isScheduled)));
+mt.set_function("scheduleUpdate",static_cast<void(cocos2d::Node::*)()>(&cocos2d::Node::scheduleUpdate));
+mt.set_function("scheduleUpdateWithPriority",static_cast<void(cocos2d::Node::*)(int)>(&cocos2d::Node::scheduleUpdateWithPriority));
+mt.set_function("unscheduleUpdate",static_cast<void(cocos2d::Node::*)()>(&cocos2d::Node::unscheduleUpdate));
+mt.set_function("schedule",sol::overload(static_cast<void(cocos2d::Node::*)(cocos2d::SEL_SCHEDULE,float)>(&cocos2d::Node::schedule),static_cast<void(cocos2d::Node::*)(cocos2d::SEL_SCHEDULE,float,unsigned int,float)>(&cocos2d::Node::schedule),static_cast<void(cocos2d::Node::*)(cocos2d::SEL_SCHEDULE)>(&cocos2d::Node::schedule),static_cast<void(cocos2d::Node::*)(const std::function<void (float)>&,const std::string&)>(&cocos2d::Node::schedule),static_cast<void(cocos2d::Node::*)(const std::function<void (float)>&,float,const std::string&)>(&cocos2d::Node::schedule),static_cast<void(cocos2d::Node::*)(const std::function<void (float)>&,float,unsigned int,float,const std::string&)>(&cocos2d::Node::schedule)));
+mt.set_function("scheduleOnce",sol::overload(static_cast<void(cocos2d::Node::*)(const std::function<void (float)>&,float,const std::string&)>(&cocos2d::Node::scheduleOnce),static_cast<void(cocos2d::Node::*)(cocos2d::SEL_SCHEDULE,float)>(&cocos2d::Node::scheduleOnce)));
+mt.set_function("unschedule",sol::overload(static_cast<void(cocos2d::Node::*)(const std::string&)>(&cocos2d::Node::unschedule),static_cast<void(cocos2d::Node::*)(cocos2d::SEL_SCHEDULE)>(&cocos2d::Node::unschedule)));
+mt.set_function("unscheduleAllCallbacks",static_cast<void(cocos2d::Node::*)()>(&cocos2d::Node::unscheduleAllCallbacks));
 mt.set_function("resume",static_cast<void(cocos2d::Node::*)()>(&cocos2d::Node::resume));
 mt.set_function("pause",static_cast<void(cocos2d::Node::*)()>(&cocos2d::Node::pause));
 mt.set_function("update",static_cast<void(cocos2d::Node::*)(float)>(&cocos2d::Node::update));
@@ -206,6 +250,7 @@ mt.set_function("convertToNodeSpaceAR",static_cast<cocos2d::Vec2(cocos2d::Node::
 mt.set_function("convertToWorldSpaceAR",static_cast<cocos2d::Vec2(cocos2d::Node::*)(const cocos2d::Vec2&)const>(&cocos2d::Node::convertToWorldSpaceAR));
 mt.set_function("convertTouchToNodeSpace",static_cast<cocos2d::Vec2(cocos2d::Node::*)(cocos2d::Touch*)const>(&cocos2d::Node::convertTouchToNodeSpace));
 mt.set_function("convertTouchToNodeSpaceAR",static_cast<cocos2d::Vec2(cocos2d::Node::*)(cocos2d::Touch*)const>(&cocos2d::Node::convertTouchToNodeSpaceAR));
+mt.set_function("setAdditionalTransform",sol::overload(static_cast<void(cocos2d::Node::*)(const cocos2d::Mat4&)>(&cocos2d::Node::setAdditionalTransform),static_cast<void(cocos2d::Node::*)(const cocos2d::Mat4*)>(&cocos2d::Node::setAdditionalTransform),static_cast<void(cocos2d::Node::*)(const cocos2d::AffineTransform&)>(&cocos2d::Node::setAdditionalTransform)));
 mt.set_function("getComponent",static_cast<cocos2d::Component*(cocos2d::Node::*)(const std::string&)>(&cocos2d::Node::getComponent));
 mt.set_function("addComponent",static_cast<bool(cocos2d::Node::*)(cocos2d::Component*)>(&cocos2d::Node::addComponent));
 mt.set_function("removeComponent",sol::overload(static_cast<bool(cocos2d::Node::*)(cocos2d::Component*)>(&cocos2d::Node::removeComponent),static_cast<bool(cocos2d::Node::*)(const std::string&)>(&cocos2d::Node::removeComponent)));
@@ -242,7 +287,6 @@ mt.set_function("setProgramState",sol::overload([](cocos2d::Node* obj,cocos2d::b
 mt.set_function("setProgramStateWithRegistry",static_cast<void(cocos2d::Node::*)(uint32_t,cocos2d::Texture2D*)>(&cocos2d::Node::setProgramStateWithRegistry));
 mt.set_function("getProgramState",static_cast<cocos2d::backend::ProgramState*(cocos2d::Node::*)()const>(&cocos2d::Node::getProgramState));
 mt.set_function("updateProgramStateTexture",static_cast<void(cocos2d::Node::*)(cocos2d::Texture2D*)>(&cocos2d::Node::updateProgramStateTexture));
-mt.set_function("init",static_cast<bool(cocos2d::Node::*)()>(&cocos2d::Node::init));
 mt.set_function("setPhysicsBody",static_cast<void(cocos2d::Node::*)(cocos2d::PhysicsBody*)>(&cocos2d::Node::setPhysicsBody));
 mt.set_function("getPhysicsBody",static_cast<cocos2d::PhysicsBody*(cocos2d::Node::*)()const>(&cocos2d::Node::getPhysicsBody));
 mt.set_function("new",static_cast<cocos2d::Node*(*)()>(&cocos2d::Node::create));
@@ -251,151 +295,17 @@ mt.set_function("getAttachedNodeCount",static_cast<int(*)()>(&cocos2d::Node::get
 void RegisterLuaCoreSceneAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject>("cc","Scene");
 mt.set_function("getDescription",static_cast<std::string(cocos2d::Scene::*)()const>(&cocos2d::Scene::getDescription));
+mt.set_function("getCameras",static_cast<const std::vector<cocos2d::Camera *>&(cocos2d::Scene::*)()>(&cocos2d::Scene::getCameras));
 mt.set_function("getDefaultCamera",static_cast<cocos2d::Camera*(cocos2d::Scene::*)()const>(&cocos2d::Scene::getDefaultCamera));
+mt.set_function("getLights",static_cast<const std::vector<cocos2d::BaseLight *>&(cocos2d::Scene::*)()const>(&cocos2d::Scene::getLights));
 mt.set_function("render",sol::overload([](cocos2d::Scene* obj,cocos2d::Renderer* arg0,const cocos2d::Mat4& arg1){return obj->render(arg0,arg1);},[](cocos2d::Scene* obj,cocos2d::Renderer* arg0,const cocos2d::Mat4& arg1,const cocos2d::Mat4* arg2){return obj->render(arg0,arg1,arg2);}));
 mt.set_function("removeAllChildren",static_cast<void(cocos2d::Scene::*)()>(&cocos2d::Scene::removeAllChildren));
-mt.set_function("init",static_cast<bool(cocos2d::Scene::*)()>(&cocos2d::Scene::init));
-mt.set_function("initWithSize",static_cast<bool(cocos2d::Scene::*)(const cocos2d::Size&)>(&cocos2d::Scene::initWithSize));
-mt.set_function("setCameraOrderDirty",static_cast<void(cocos2d::Scene::*)()>(&cocos2d::Scene::setCameraOrderDirty));
-mt.set_function("onProjectionChanged",static_cast<void(cocos2d::Scene::*)(cocos2d::EventCustom*)>(&cocos2d::Scene::onProjectionChanged));
 mt.set_function("getPhysicsWorld",static_cast<cocos2d::PhysicsWorld*(cocos2d::Scene::*)()const>(&cocos2d::Scene::getPhysicsWorld));
-mt.set_function("initWithPhysics",static_cast<bool(cocos2d::Scene::*)()>(&cocos2d::Scene::initWithPhysics));
+mt.set_function("setNavMesh",static_cast<void(cocos2d::Scene::*)(cocos2d::NavMesh*)>(&cocos2d::Scene::setNavMesh));
+mt.set_function("getNavMesh",static_cast<cocos2d::NavMesh*(cocos2d::Scene::*)()const>(&cocos2d::Scene::getNavMesh));
+mt.set_function("setNavMeshDebugCamera",static_cast<void(cocos2d::Scene::*)(cocos2d::Camera*)>(&cocos2d::Scene::setNavMeshDebugCamera));
 mt.set_function("stepPhysicsAndNavigation",static_cast<void(cocos2d::Scene::*)(float)>(&cocos2d::Scene::stepPhysicsAndNavigation));
 mt.set_function("new",static_cast<cocos2d::Scene*(*)()>(&cocos2d::Scene::create));
 mt.set_function("createWithSize",static_cast<cocos2d::Scene*(*)(const cocos2d::Size&)>(&cocos2d::Scene::createWithSize));
 mt.set_function("createWithPhysics",static_cast<cocos2d::Scene*(*)()>(&cocos2d::Scene::createWithPhysics));
-}
-void RegisterLuaCoreEventAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Event,cocos2d::Ref,cocos2d::LuaObject>("cc","Event");
-mt.set_function("getType",static_cast<cocos2d::Event::Type(cocos2d::Event::*)()const>(&cocos2d::Event::getType));
-mt.set_function("stopPropagation",static_cast<void(cocos2d::Event::*)()>(&cocos2d::Event::stopPropagation));
-mt.set_function("isStopped",static_cast<bool(cocos2d::Event::*)()const>(&cocos2d::Event::isStopped));
-mt.set_function("getCurrentTarget",static_cast<cocos2d::Node*(cocos2d::Event::*)()>(&cocos2d::Event::getCurrentTarget));
-}
-void RegisterLuaCoreEventTouchAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventTouch,cocos2d::Event,cocos2d::Ref,cocos2d::LuaObject>("cc","EventTouch");
-mt.set_function("getEventCode",static_cast<cocos2d::EventTouch::EventCode(cocos2d::EventTouch::*)()const>(&cocos2d::EventTouch::getEventCode));
-mt.set_function("setEventCode",static_cast<void(cocos2d::EventTouch::*)(cocos2d::EventTouch::EventCode)>(&cocos2d::EventTouch::setEventCode));
-}
-void RegisterLuaCoreGLViewAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::GLView,cocos2d::Ref,cocos2d::LuaObject>("cc","GLView");
-mt.set_function("endToLua",static_cast<void(cocos2d::GLView::*)()>(&cocos2d::GLView::end));
-mt.set_function("isOpenGLReady",static_cast<bool(cocos2d::GLView::*)()>(&cocos2d::GLView::isOpenGLReady));
-mt.set_function("swapBuffers",static_cast<void(cocos2d::GLView::*)()>(&cocos2d::GLView::swapBuffers));
-mt.set_function("setIMEKeyboardState",static_cast<void(cocos2d::GLView::*)(bool)>(&cocos2d::GLView::setIMEKeyboardState));
-mt.set_function("windowShouldClose",static_cast<bool(cocos2d::GLView::*)()>(&cocos2d::GLView::windowShouldClose));
-mt.set_function("pollEvents",static_cast<void(cocos2d::GLView::*)()>(&cocos2d::GLView::pollEvents));
-mt.set_function("getFrameSize",static_cast<cocos2d::Size(cocos2d::GLView::*)()const>(&cocos2d::GLView::getFrameSize));
-mt.set_function("setFrameSize",sol::overload(static_cast<void(cocos2d::GLView::*)(const cocos2d::Size&)>(&cocos2d::GLView::setFrameSize),static_cast<void(cocos2d::GLView::*)(float,float)>(&cocos2d::GLView::setFrameSize)));
-mt.set_function("setFrameZoomFactor",static_cast<void(cocos2d::GLView::*)(float)>(&cocos2d::GLView::setFrameZoomFactor));
-mt.set_function("getFrameZoomFactor",static_cast<float(cocos2d::GLView::*)()const>(&cocos2d::GLView::getFrameZoomFactor));
-mt.set_function("setCursorVisible",static_cast<void(cocos2d::GLView::*)(bool)>(&cocos2d::GLView::setCursorVisible));
-mt.set_function("getRetinaFactor",static_cast<int(cocos2d::GLView::*)()const>(&cocos2d::GLView::getRetinaFactor));
-mt.set_function("setContentScaleFactor",static_cast<bool(cocos2d::GLView::*)(float)>(&cocos2d::GLView::setContentScaleFactor));
-mt.set_function("getContentScaleFactor",static_cast<float(cocos2d::GLView::*)()const>(&cocos2d::GLView::getContentScaleFactor));
-mt.set_function("isRetinaDisplay",static_cast<bool(cocos2d::GLView::*)()const>(&cocos2d::GLView::isRetinaDisplay));
-mt.set_function("getVisibleSize",static_cast<cocos2d::Size(cocos2d::GLView::*)()const>(&cocos2d::GLView::getVisibleSize));
-mt.set_function("getVisibleOrigin",static_cast<cocos2d::Vec2(cocos2d::GLView::*)()const>(&cocos2d::GLView::getVisibleOrigin));
-mt.set_function("getVisibleRect",static_cast<cocos2d::Rect(cocos2d::GLView::*)()const>(&cocos2d::GLView::getVisibleRect));
-mt.set_function("getSafeAreaRect",static_cast<cocos2d::Rect(cocos2d::GLView::*)()const>(&cocos2d::GLView::getSafeAreaRect));
-mt.set_function("setDesignResolutionSize",static_cast<void(cocos2d::GLView::*)(float,float,ResolutionPolicy)>(&cocos2d::GLView::setDesignResolutionSize));
-mt.set_function("getDesignResolutionSize",static_cast<const cocos2d::Size&(cocos2d::GLView::*)()const>(&cocos2d::GLView::getDesignResolutionSize));
-mt.set_function("setViewPortInPoints",static_cast<void(cocos2d::GLView::*)(float,float,float,float)>(&cocos2d::GLView::setViewPortInPoints));
-mt.set_function("setScissorInPoints",static_cast<void(cocos2d::GLView::*)(float,float,float,float)>(&cocos2d::GLView::setScissorInPoints));
-mt.set_function("isScissorEnabled",static_cast<bool(cocos2d::GLView::*)()>(&cocos2d::GLView::isScissorEnabled));
-mt.set_function("getScissorRect",static_cast<cocos2d::Rect(cocos2d::GLView::*)()const>(&cocos2d::GLView::getScissorRect));
-mt.set_function("setViewName",static_cast<void(cocos2d::GLView::*)(const std::string&)>(&cocos2d::GLView::setViewName));
-mt.set_function("getViewName",static_cast<const std::string&(cocos2d::GLView::*)()const>(&cocos2d::GLView::getViewName));
-mt.set_function("setIcon",sol::overload(static_cast<void(cocos2d::GLView::*)(const std::vector<std::string>&)const>(&cocos2d::GLView::setIcon),static_cast<void(cocos2d::GLView::*)(const std::string&)const>(&cocos2d::GLView::setIcon)));
-mt.set_function("setDefaultIcon",static_cast<void(cocos2d::GLView::*)()const>(&cocos2d::GLView::setDefaultIcon));
-mt.set_function("getViewPortRect",static_cast<const cocos2d::Rect&(cocos2d::GLView::*)()const>(&cocos2d::GLView::getViewPortRect));
-mt.set_function("getScaleX",static_cast<float(cocos2d::GLView::*)()const>(&cocos2d::GLView::getScaleX));
-mt.set_function("getScaleY",static_cast<float(cocos2d::GLView::*)()const>(&cocos2d::GLView::getScaleY));
-mt.set_function("getResolutionPolicy",static_cast<ResolutionPolicy(cocos2d::GLView::*)()const>(&cocos2d::GLView::getResolutionPolicy));
-mt.set_function("renderScene",static_cast<void(cocos2d::GLView::*)(cocos2d::Scene*,cocos2d::Renderer*)>(&cocos2d::GLView::renderScene));
-mt.set_function("setGLContextAttrs",static_cast<void(*)(GLContextAttrs&)>(&cocos2d::GLView::setGLContextAttrs));
-mt.set_function("getGLContextAttrs",static_cast<GLContextAttrs(*)()>(&cocos2d::GLView::getGLContextAttrs));
-}
-void RegisterLuaCoreDirectorAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Director>("cc","Director");
-mt.set_function("init",static_cast<bool(cocos2d::Director::*)()>(&cocos2d::Director::init));
-mt.set_function("getRunningScene",static_cast<cocos2d::Scene*(cocos2d::Director::*)()>(&cocos2d::Director::getRunningScene));
-mt.set_function("getAnimationInterval",static_cast<float(cocos2d::Director::*)()>(&cocos2d::Director::getAnimationInterval));
-mt.set_function("setAnimationInterval",static_cast<void(cocos2d::Director::*)(float)>(&cocos2d::Director::setAnimationInterval));
-mt.set_function("isDisplayStats",static_cast<bool(cocos2d::Director::*)()>(&cocos2d::Director::isDisplayStats));
-mt.set_function("setDisplayStats",static_cast<void(cocos2d::Director::*)(bool)>(&cocos2d::Director::setDisplayStats));
-mt.set_function("getSecondsPerFrame",static_cast<float(cocos2d::Director::*)()>(&cocos2d::Director::getSecondsPerFrame));
-mt.set_function("getOpenGLView",static_cast<cocos2d::GLView*(cocos2d::Director::*)()>(&cocos2d::Director::getOpenGLView));
-mt.set_function("setOpenGLView",static_cast<void(cocos2d::Director::*)(cocos2d::GLView*)>(&cocos2d::Director::setOpenGLView));
-mt.set_function("getTextureCache",static_cast<cocos2d::TextureCache*(cocos2d::Director::*)()const>(&cocos2d::Director::getTextureCache));
-mt.set_function("isNextDeltaTimeZero",static_cast<bool(cocos2d::Director::*)()>(&cocos2d::Director::isNextDeltaTimeZero));
-mt.set_function("setNextDeltaTimeZero",static_cast<void(cocos2d::Director::*)(bool)>(&cocos2d::Director::setNextDeltaTimeZero));
-mt.set_function("isPaused",static_cast<bool(cocos2d::Director::*)()>(&cocos2d::Director::isPaused));
-mt.set_function("getTotalFrames",static_cast<unsigned int(cocos2d::Director::*)()>(&cocos2d::Director::getTotalFrames));
-mt.set_function("setViewport",static_cast<void(cocos2d::Director::*)()>(&cocos2d::Director::setViewport));
-mt.set_function("isSendCleanupToScene",static_cast<bool(cocos2d::Director::*)()>(&cocos2d::Director::isSendCleanupToScene));
-mt.set_function("getNotificationNode",static_cast<cocos2d::Node*(cocos2d::Director::*)()const>(&cocos2d::Director::getNotificationNode));
-mt.set_function("setNotificationNode",static_cast<void(cocos2d::Director::*)(cocos2d::Node*)>(&cocos2d::Director::setNotificationNode));
-mt.set_function("getWinSize",static_cast<const cocos2d::Size&(cocos2d::Director::*)()const>(&cocos2d::Director::getWinSize));
-mt.set_function("getWinSizeInPixels",static_cast<cocos2d::Size(cocos2d::Director::*)()const>(&cocos2d::Director::getWinSizeInPixels));
-mt.set_function("getVisibleSize",static_cast<cocos2d::Size(cocos2d::Director::*)()const>(&cocos2d::Director::getVisibleSize));
-mt.set_function("getVisibleOrigin",static_cast<cocos2d::Vec2(cocos2d::Director::*)()const>(&cocos2d::Director::getVisibleOrigin));
-mt.set_function("getSafeAreaRect",static_cast<cocos2d::Rect(cocos2d::Director::*)()const>(&cocos2d::Director::getSafeAreaRect));
-mt.set_function("convertToGL",static_cast<cocos2d::Vec2(cocos2d::Director::*)(const cocos2d::Vec2&)>(&cocos2d::Director::convertToGL));
-mt.set_function("convertToUI",static_cast<cocos2d::Vec2(cocos2d::Director::*)(const cocos2d::Vec2&)>(&cocos2d::Director::convertToUI));
-mt.set_function("getZEye",static_cast<float(cocos2d::Director::*)()const>(&cocos2d::Director::getZEye));
-mt.set_function("runWithScene",static_cast<void(cocos2d::Director::*)(cocos2d::Scene*)>(&cocos2d::Director::runWithScene));
-mt.set_function("pushScene",static_cast<void(cocos2d::Director::*)(cocos2d::Scene*)>(&cocos2d::Director::pushScene));
-mt.set_function("popScene",static_cast<void(cocos2d::Director::*)()>(&cocos2d::Director::popScene));
-mt.set_function("popToRootScene",static_cast<void(cocos2d::Director::*)()>(&cocos2d::Director::popToRootScene));
-mt.set_function("popToSceneStackLevel",static_cast<void(cocos2d::Director::*)(int)>(&cocos2d::Director::popToSceneStackLevel));
-mt.set_function("replaceScene",static_cast<void(cocos2d::Director::*)(cocos2d::Scene*)>(&cocos2d::Director::replaceScene));
-mt.set_function("endToLua",static_cast<void(cocos2d::Director::*)()>(&cocos2d::Director::end));
-mt.set_function("pause",static_cast<void(cocos2d::Director::*)()>(&cocos2d::Director::pause));
-mt.set_function("resume",static_cast<void(cocos2d::Director::*)()>(&cocos2d::Director::resume));
-mt.set_function("restart",static_cast<void(cocos2d::Director::*)()>(&cocos2d::Director::restart));
-mt.set_function("stopAnimation",static_cast<void(cocos2d::Director::*)()>(&cocos2d::Director::stopAnimation));
-mt.set_function("startAnimation",static_cast<void(cocos2d::Director::*)()>(&cocos2d::Director::startAnimation));
-mt.set_function("drawScene",static_cast<void(cocos2d::Director::*)()>(&cocos2d::Director::drawScene));
-mt.set_function("purgeCachedData",static_cast<void(cocos2d::Director::*)()>(&cocos2d::Director::purgeCachedData));
-mt.set_function("setDefaultValues",static_cast<void(cocos2d::Director::*)()>(&cocos2d::Director::setDefaultValues));
-mt.set_function("setGLDefaultValues",static_cast<void(cocos2d::Director::*)()>(&cocos2d::Director::setGLDefaultValues));
-mt.set_function("setClearColor",static_cast<void(cocos2d::Director::*)(const cocos2d::Color4F&)>(&cocos2d::Director::setClearColor));
-mt.set_function("mainLoop",sol::overload(static_cast<void(cocos2d::Director::*)(float)>(&cocos2d::Director::mainLoop),static_cast<void(cocos2d::Director::*)()>(&cocos2d::Director::mainLoop)));
-mt.set_function("setContentScaleFactor",static_cast<void(cocos2d::Director::*)(float)>(&cocos2d::Director::setContentScaleFactor));
-mt.set_function("getContentScaleFactor",static_cast<float(cocos2d::Director::*)()const>(&cocos2d::Director::getContentScaleFactor));
-mt.set_function("getScheduler",static_cast<cocos2d::Scheduler*(cocos2d::Director::*)()const>(&cocos2d::Director::getScheduler));
-mt.set_function("setScheduler",static_cast<void(cocos2d::Director::*)(cocos2d::Scheduler*)>(&cocos2d::Director::setScheduler));
-mt.set_function("getActionManager",static_cast<cocos2d::ActionManager*(cocos2d::Director::*)()const>(&cocos2d::Director::getActionManager));
-mt.set_function("setActionManager",static_cast<void(cocos2d::Director::*)(cocos2d::ActionManager*)>(&cocos2d::Director::setActionManager));
-mt.set_function("getEventDispatcher",static_cast<cocos2d::EventDispatcher*(cocos2d::Director::*)()const>(&cocos2d::Director::getEventDispatcher));
-mt.set_function("setEventDispatcher",static_cast<void(cocos2d::Director::*)(cocos2d::EventDispatcher*)>(&cocos2d::Director::setEventDispatcher));
-mt.set_function("getConsole",static_cast<cocos2d::Console*(cocos2d::Director::*)()const>(&cocos2d::Director::getConsole));
-mt.set_function("getDeltaTime",static_cast<float(cocos2d::Director::*)()const>(&cocos2d::Director::getDeltaTime));
-mt.set_function("getFrameRate",static_cast<float(cocos2d::Director::*)()const>(&cocos2d::Director::getFrameRate));
-mt.set_function("pushMatrix",static_cast<void(cocos2d::Director::*)(cocos2d::MATRIX_STACK_TYPE)>(&cocos2d::Director::pushMatrix));
-mt.set_function("popMatrix",static_cast<void(cocos2d::Director::*)(cocos2d::MATRIX_STACK_TYPE)>(&cocos2d::Director::popMatrix));
-mt.set_function("loadIdentityMatrix",static_cast<void(cocos2d::Director::*)(cocos2d::MATRIX_STACK_TYPE)>(&cocos2d::Director::loadIdentityMatrix));
-mt.set_function("loadMatrix",static_cast<void(cocos2d::Director::*)(cocos2d::MATRIX_STACK_TYPE,const cocos2d::Mat4&)>(&cocos2d::Director::loadMatrix));
-mt.set_function("multiplyMatrix",static_cast<void(cocos2d::Director::*)(cocos2d::MATRIX_STACK_TYPE,const cocos2d::Mat4&)>(&cocos2d::Director::multiplyMatrix));
-mt.set_function("getMatrix",static_cast<const cocos2d::Mat4&(cocos2d::Director::*)(cocos2d::MATRIX_STACK_TYPE)const>(&cocos2d::Director::getMatrix));
-mt.set_function("resetMatrixStack",static_cast<void(cocos2d::Director::*)()>(&cocos2d::Director::resetMatrixStack));
-mt.set_function("isValid",static_cast<bool(cocos2d::Director::*)()const>(&cocos2d::Director::isValid));
-mt.set_function("getInstance",static_cast<cocos2d::Director*(*)()>(&cocos2d::Director::getInstance));
-}
-void RegisterLuaCoreTimerAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Timer,cocos2d::Ref,cocos2d::LuaObject>("cc","Timer");
-mt.set_function("setupTimerWithInterval",static_cast<void(cocos2d::Timer::*)(float,unsigned int,float)>(&cocos2d::Timer::setupTimerWithInterval));
-mt.set_function("setAborted",static_cast<void(cocos2d::Timer::*)()>(&cocos2d::Timer::setAborted));
-mt.set_function("isAborted",static_cast<bool(cocos2d::Timer::*)()const>(&cocos2d::Timer::isAborted));
-mt.set_function("isExhausted",static_cast<bool(cocos2d::Timer::*)()const>(&cocos2d::Timer::isExhausted));
-mt.set_function("trigger",static_cast<void(cocos2d::Timer::*)(float)>(&cocos2d::Timer::trigger));
-mt.set_function("cancel",static_cast<void(cocos2d::Timer::*)()>(&cocos2d::Timer::cancel));
-mt.set_function("update",static_cast<void(cocos2d::Timer::*)(float)>(&cocos2d::Timer::update));
-}
-void RegisterLuaCoreSchedulerAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Scheduler,cocos2d::Ref,cocos2d::LuaObject>("cc","Scheduler");
-mt.set_function("getTimeScale",static_cast<float(cocos2d::Scheduler::*)()>(&cocos2d::Scheduler::getTimeScale));
-mt.set_function("setTimeScale",static_cast<void(cocos2d::Scheduler::*)(float)>(&cocos2d::Scheduler::setTimeScale));
-mt.set_function("removeAllFunctionsToBePerformedInCocosThread",static_cast<void(cocos2d::Scheduler::*)()>(&cocos2d::Scheduler::removeAllFunctionsToBePerformedInCocosThread));
 }

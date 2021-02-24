@@ -1,11 +1,12 @@
 #include "scripting/lua-bindings/auto/CCRegisterLua3DAuto.hpp"
 #include "cocos2d.h"
 #include "3d/CCBundle3D.h"
+#include "renderer/backend/Buffer.h"
 void RegisterLua3DAnimation3DAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::Animation3D,cocos2d::Ref,cocos2d::LuaObject>("cc","Animation3D");
 mt.set_function("getDuration",static_cast<float(cocos2d::Animation3D::*)()const>(&cocos2d::Animation3D::getDuration));
-mt.set_function("init",static_cast<bool(cocos2d::Animation3D::*)(const cocos2d::Animation3DData&)>(&cocos2d::Animation3D::init));
-mt.set_function("initWithFile",static_cast<bool(cocos2d::Animation3D::*)(const std::string&,const std::string&)>(&cocos2d::Animation3D::initWithFile));
+mt.set_function("getBoneCurveByName",static_cast<cocos2d::Animation3D::Curve*(cocos2d::Animation3D::*)(const std::string&)const>(&cocos2d::Animation3D::getBoneCurveByName));
+mt.set_function("getBoneCurves",static_cast<const std::unordered_map<std::string, cocos2d::Animation3D::Curve *>&(cocos2d::Animation3D::*)()const>(&cocos2d::Animation3D::getBoneCurves));
 mt.set_function("new",sol::overload([](cocos2d::Animation3D* obj,const std::string& arg0){return obj->create(arg0);},[](cocos2d::Animation3D* obj,const std::string& arg0,const std::string& arg1){return obj->create(arg0,arg1);}));
 }
 void RegisterLua3DAnimate3DAuto(cocos2d::Lua& lua){
@@ -25,9 +26,7 @@ mt.set_function("getOriginInterval",static_cast<float(cocos2d::Animate3D::*)()co
 mt.set_function("setQuality",static_cast<void(cocos2d::Animate3D::*)(cocos2d::Animate3DQuality)>(&cocos2d::Animate3D::setQuality));
 mt.set_function("getQuality",static_cast<cocos2d::Animate3DQuality(cocos2d::Animate3D::*)()const>(&cocos2d::Animate3D::getQuality));
 mt.set_function("setKeyFrameUserInfo",static_cast<void(cocos2d::Animate3D::*)(int,const cocos2d::ValueMap&)>(&cocos2d::Animate3D::setKeyFrameUserInfo));
-mt.set_function("removeFromMap",static_cast<void(cocos2d::Animate3D::*)()>(&cocos2d::Animate3D::removeFromMap));
-mt.set_function("init",sol::overload(static_cast<bool(cocos2d::Animate3D::*)(cocos2d::Animation3D*,float,float)>(&cocos2d::Animate3D::init),static_cast<bool(cocos2d::Animate3D::*)(cocos2d::Animation3D*)>(&cocos2d::Animate3D::init)));
-mt.set_function("initWithFrames",static_cast<bool(cocos2d::Animate3D::*)(cocos2d::Animation3D*,int,int,float)>(&cocos2d::Animate3D::initWithFrames));
+mt.set_function("getKeyFrameUserInfo",sol::overload(static_cast<cocos2d::ValueMap*(cocos2d::Animate3D::*)(int)>(&cocos2d::Animate3D::getKeyFrameUserInfo),static_cast<const cocos2d::ValueMap*(cocos2d::Animate3D::*)(int)const>(&cocos2d::Animate3D::getKeyFrameUserInfo)));
 mt.set_function("new",sol::overload(static_cast<cocos2d::Animate3D*(*)(cocos2d::Animation3D*,float,float)>(&cocos2d::Animate3D::create),static_cast<cocos2d::Animate3D*(*)(cocos2d::Animation3D*)>(&cocos2d::Animate3D::create)));
 mt.set_function("createWithFrames",sol::overload([](cocos2d::Animate3D* obj,cocos2d::Animation3D* arg0,int arg1,int arg2){return obj->createWithFrames(arg0,arg1,arg2);},[](cocos2d::Animate3D* obj,cocos2d::Animation3D* arg0,int arg1,int arg2,float arg3){return obj->createWithFrames(arg0,arg1,arg2,arg3);}));
 mt.set_function("getTransitionTime",static_cast<float(*)()>(&cocos2d::Animate3D::getTransitionTime));
@@ -54,20 +53,32 @@ auto mt=lua.NewUserType<cocos2d::BillBoard,cocos2d::Sprite,cocos2d::Node,cocos2d
 mt.set_function("setMode",static_cast<void(cocos2d::BillBoard::*)(cocos2d::BillBoard::Mode)>(&cocos2d::BillBoard::setMode));
 mt.set_function("getMode",static_cast<cocos2d::BillBoard::Mode(cocos2d::BillBoard::*)()const>(&cocos2d::BillBoard::getMode));
 mt.set_function("visit",static_cast<void(cocos2d::BillBoard::*)(cocos2d::Renderer*,const cocos2d::Mat4&,uint32_t)>(&cocos2d::BillBoard::visit));
+mt.set_function("draw",static_cast<void(cocos2d::BillBoard::*)(cocos2d::Renderer*,const cocos2d::Mat4&,uint32_t)>(&cocos2d::BillBoard::draw));
 mt.set_function("new",sol::overload([](cocos2d::BillBoard* obj,const std::string& arg0){return obj->create(arg0);},[](cocos2d::BillBoard* obj,const std::string& arg0,cocos2d::BillBoard::Mode arg1){return obj->create(arg0,arg1);},[](cocos2d::BillBoard* obj){return obj->create();},[](cocos2d::BillBoard* obj,cocos2d::BillBoard::Mode arg0){return obj->create(arg0);},[](cocos2d::BillBoard* obj,const std::string& arg0,const cocos2d::Rect& arg1){return obj->create(arg0,arg1);},[](cocos2d::BillBoard* obj,const std::string& arg0,const cocos2d::Rect& arg1,cocos2d::BillBoard::Mode arg2){return obj->create(arg0,arg1,arg2);}));
 mt.set_function("createWithTexture",sol::overload([](cocos2d::BillBoard* obj,cocos2d::Texture2D* arg0){return obj->createWithTexture(arg0);},[](cocos2d::BillBoard* obj,cocos2d::Texture2D* arg0,cocos2d::BillBoard::Mode arg1){return obj->createWithTexture(arg0,arg1);}));
 }
 void RegisterLua3DMeshAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::Mesh,cocos2d::Ref,cocos2d::LuaObject>("cc","Mesh");
+mt.set_function("getVertexBuffer",static_cast<cocos2d::backend::Buffer*(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::getVertexBuffer));
+mt.set_function("hasVertexAttrib",static_cast<bool(cocos2d::Mesh::*)(cocos2d::shaderinfos::VertexKey)const>(&cocos2d::Mesh::hasVertexAttrib));
 mt.set_function("getMeshVertexAttribCount",static_cast<ssize_t(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::getMeshVertexAttribCount));
 mt.set_function("getMeshVertexAttribute",static_cast<const cocos2d::MeshVertexAttrib&(cocos2d::Mesh::*)(int)>(&cocos2d::Mesh::getMeshVertexAttribute));
 mt.set_function("getVertexSizeInBytes",static_cast<int(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::getVertexSizeInBytes));
+mt.set_function("setTexture",sol::overload(static_cast<void(cocos2d::Mesh::*)(cocos2d::Texture2D*)>(&cocos2d::Mesh::setTexture),static_cast<void(cocos2d::Mesh::*)(const std::string&)>(&cocos2d::Mesh::setTexture),[](cocos2d::Mesh* obj,cocos2d::Texture2D* arg0,cocos2d::NTextureData::Usage arg1){return obj->setTexture(arg0,arg1);},[](cocos2d::Mesh* obj,cocos2d::Texture2D* arg0,cocos2d::NTextureData::Usage arg1,bool arg2){return obj->setTexture(arg0,arg1,arg2);},static_cast<void(cocos2d::Mesh::*)(const std::string&,cocos2d::NTextureData::Usage)>(&cocos2d::Mesh::setTexture)));
+mt.set_function("getTexture",sol::overload(static_cast<cocos2d::Texture2D*(cocos2d::Mesh::*)(cocos2d::NTextureData::Usage)>(&cocos2d::Mesh::getTexture),static_cast<cocos2d::Texture2D*(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::getTexture)));
 mt.set_function("setVisible",static_cast<void(cocos2d::Mesh::*)(bool)>(&cocos2d::Mesh::setVisible));
 mt.set_function("isVisible",static_cast<bool(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::isVisible));
+mt.set_function("getSkin",static_cast<cocos2d::MeshSkin*(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::getSkin));
+mt.set_function("getMeshIndexData",static_cast<cocos2d::MeshIndexData*(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::getMeshIndexData));
 mt.set_function("getProgramState",static_cast<cocos2d::backend::ProgramState*(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::getProgramState));
 mt.set_function("getName",static_cast<const std::string&(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::getName));
 mt.set_function("setBlendFunc",static_cast<void(cocos2d::Mesh::*)(const cocos2d::BlendFunc&)>(&cocos2d::Mesh::setBlendFunc));
 mt.set_function("getBlendFunc",static_cast<const cocos2d::BlendFunc&(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::getBlendFunc));
+mt.set_function("getPrimitiveType",static_cast<cocos2d::CustomCommand::PrimitiveType(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::getPrimitiveType));
+mt.set_function("getIndexCount",static_cast<ssize_t(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::getIndexCount));
+mt.set_function("getIndexFormat",static_cast<cocos2d::CustomCommand::IndexFormat(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::getIndexFormat));
+mt.set_function("getIndexBuffer",static_cast<cocos2d::backend::Buffer*(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::getIndexBuffer));
+mt.set_function("getAABB",static_cast<const cocos2d::AABB&(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::getAABB));
 mt.set_function("setProgramState",static_cast<void(cocos2d::Mesh::*)(cocos2d::backend::ProgramState*)>(&cocos2d::Mesh::setProgramState));
 mt.set_function("setMaterial",static_cast<void(cocos2d::Mesh::*)(cocos2d::Material*)>(&cocos2d::Mesh::setMaterial));
 mt.set_function("getMaterial",static_cast<cocos2d::Material*(cocos2d::Mesh::*)()const>(&cocos2d::Mesh::getMaterial));
@@ -78,6 +89,7 @@ mt.set_function("setName",static_cast<void(cocos2d::Mesh::*)(const std::string&)
 mt.set_function("calculateAABB",static_cast<void(cocos2d::Mesh::*)()>(&cocos2d::Mesh::calculateAABB));
 mt.set_function("setForce2DQueue",static_cast<void(cocos2d::Mesh::*)(bool)>(&cocos2d::Mesh::setForce2DQueue));
 mt.set_function("getTextureFileName",static_cast<std::string(cocos2d::Mesh::*)()>(&cocos2d::Mesh::getTextureFileName));
+mt.set_function("new",sol::overload(static_cast<cocos2d::Mesh*(*)(const std::vector<float>&,int,const cocos2d::Mesh::IndexArray&,const std::vector<cocos2d::MeshVertexAttrib>&)>(&cocos2d::Mesh::create),static_cast<cocos2d::Mesh*(*)(const std::vector<float>&,const std::vector<float>&,const std::vector<float>&,const cocos2d::Mesh::IndexArray&)>(&cocos2d::Mesh::create),[](cocos2d::Mesh* obj,const std::string& arg0,cocos2d::MeshIndexData* arg1){return obj->create(arg0,arg1);},[](cocos2d::Mesh* obj,const std::string& arg0,cocos2d::MeshIndexData* arg1,cocos2d::MeshSkin* arg2){return obj->create(arg0,arg1,arg2);}));
 }
 void RegisterLua3DSkeleton3DAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::Skeleton3D,cocos2d::Ref,cocos2d::LuaObject>("cc","Skeleton3D");
@@ -88,15 +100,13 @@ mt.set_function("getRootCount",static_cast<ssize_t(cocos2d::Skeleton3D::*)()cons
 mt.set_function("getRootBone",static_cast<cocos2d::Bone3D*(cocos2d::Skeleton3D::*)(int)const>(&cocos2d::Skeleton3D::getRootBone));
 mt.set_function("getBoneIndex",static_cast<int(cocos2d::Skeleton3D::*)(cocos2d::Bone3D*)const>(&cocos2d::Skeleton3D::getBoneIndex));
 mt.set_function("updateBoneMatrix",static_cast<void(cocos2d::Skeleton3D::*)()>(&cocos2d::Skeleton3D::updateBoneMatrix));
-mt.set_function("removeAllBones",static_cast<void(cocos2d::Skeleton3D::*)()>(&cocos2d::Skeleton3D::removeAllBones));
-mt.set_function("addBone",static_cast<void(cocos2d::Skeleton3D::*)(cocos2d::Bone3D*)>(&cocos2d::Skeleton3D::addBone));
+mt.set_function("new",static_cast<cocos2d::Skeleton3D*(*)(const std::vector<cocos2d::NodeData *>&)>(&cocos2d::Skeleton3D::create));
 }
 void RegisterLua3DSkyboxAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::Skybox,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject>("cc","Skybox");
 mt.set_function("setTexture",static_cast<void(cocos2d::Skybox::*)(cocos2d::TextureCube*)>(&cocos2d::Skybox::setTexture));
 mt.set_function("draw",static_cast<void(cocos2d::Skybox::*)(cocos2d::Renderer*,const cocos2d::Mat4&,uint32_t)>(&cocos2d::Skybox::draw));
 mt.set_function("reload",static_cast<void(cocos2d::Skybox::*)()>(&cocos2d::Skybox::reload));
-mt.set_function("init",sol::overload(static_cast<bool(cocos2d::Skybox::*)(const std::string&,const std::string&,const std::string&,const std::string&,const std::string&,const std::string&)>(&cocos2d::Skybox::init),static_cast<bool(cocos2d::Skybox::*)()>(&cocos2d::Skybox::init)));
 mt.set_function("new",sol::overload(static_cast<cocos2d::Skybox*(*)(const std::string&,const std::string&,const std::string&,const std::string&,const std::string&,const std::string&)>(&cocos2d::Skybox::create),static_cast<cocos2d::Skybox*(*)()>(&cocos2d::Skybox::create)));
 }
 void RegisterLua3DSprite3DAuto(cocos2d::Lua& lua){
@@ -104,6 +114,7 @@ auto mt=lua.NewUserType<cocos2d::Sprite3D,cocos2d::Node,cocos2d::Ref,cocos2d::Lu
 mt.set_function("setTexture",sol::overload(static_cast<void(cocos2d::Sprite3D::*)(cocos2d::Texture2D*)>(&cocos2d::Sprite3D::setTexture),static_cast<void(cocos2d::Sprite3D::*)(const std::string&)>(&cocos2d::Sprite3D::setTexture)));
 mt.set_function("getMeshByIndex",static_cast<cocos2d::Mesh*(cocos2d::Sprite3D::*)(int)const>(&cocos2d::Sprite3D::getMeshByIndex));
 mt.set_function("getMeshByName",static_cast<cocos2d::Mesh*(cocos2d::Sprite3D::*)(const std::string&)const>(&cocos2d::Sprite3D::getMeshByName));
+mt.set_function("getMeshArrayByName",static_cast<std::vector<cocos2d::Mesh *>(cocos2d::Sprite3D::*)(const std::string&)const>(&cocos2d::Sprite3D::getMeshArrayByName));
 mt.set_function("getMesh",static_cast<cocos2d::Mesh*(cocos2d::Sprite3D::*)()const>(&cocos2d::Sprite3D::getMesh));
 mt.set_function("getMeshCount",static_cast<ssize_t(cocos2d::Sprite3D::*)()const>(&cocos2d::Sprite3D::getMeshCount));
 mt.set_function("getSkeleton",static_cast<cocos2d::Skeleton3D*(cocos2d::Sprite3D::*)()const>(&cocos2d::Sprite3D::getSkeleton));
@@ -113,6 +124,8 @@ mt.set_function("removeAllAttachNode",static_cast<void(cocos2d::Sprite3D::*)()>(
 mt.set_function("setBlendFunc",static_cast<void(cocos2d::Sprite3D::*)(const cocos2d::BlendFunc&)>(&cocos2d::Sprite3D::setBlendFunc));
 mt.set_function("getBlendFunc",static_cast<const cocos2d::BlendFunc&(cocos2d::Sprite3D::*)()const>(&cocos2d::Sprite3D::getBlendFunc));
 mt.set_function("setProgramState",sol::overload([](cocos2d::Sprite3D* obj,cocos2d::backend::ProgramState* arg0){return obj->setProgramState(arg0);},[](cocos2d::Sprite3D* obj,cocos2d::backend::ProgramState* arg0,bool arg1){return obj->setProgramState(arg0,arg1);}));
+mt.set_function("getAABB",static_cast<const cocos2d::AABB&(cocos2d::Sprite3D::*)()const>(&cocos2d::Sprite3D::getAABB));
+mt.set_function("getAABBRecursively",static_cast<cocos2d::AABB(cocos2d::Sprite3D::*)()>(&cocos2d::Sprite3D::getAABBRecursively));
 mt.set_function("runAction",static_cast<cocos2d::Action*(cocos2d::Sprite3D::*)(cocos2d::Action*)>(&cocos2d::Sprite3D::runAction));
 mt.set_function("setForceDepthWrite",static_cast<void(cocos2d::Sprite3D::*)(bool)>(&cocos2d::Sprite3D::setForceDepthWrite));
 mt.set_function("isForceDepthWrite",static_cast<bool(cocos2d::Sprite3D::*)()const>(&cocos2d::Sprite3D::isForceDepthWrite));
@@ -126,62 +139,16 @@ mt.set_function("setMaterial",sol::overload(static_cast<void(cocos2d::Sprite3D::
 mt.set_function("getMaterial",static_cast<cocos2d::Material*(cocos2d::Sprite3D::*)(int)const>(&cocos2d::Sprite3D::getMaterial));
 mt.set_function("setForce2DQueue",static_cast<void(cocos2d::Sprite3D::*)(bool)>(&cocos2d::Sprite3D::setForce2DQueue));
 mt.set_function("getMeshes",static_cast<const cocos2d::Vector<cocos2d::Mesh *>&(cocos2d::Sprite3D::*)()const>(&cocos2d::Sprite3D::getMeshes));
-mt.set_function("genMaterial",sol::overload([](cocos2d::Sprite3D* obj){return obj->genMaterial();},[](cocos2d::Sprite3D* obj,bool arg0){return obj->genMaterial(arg0);}));
+mt.set_function("visit",static_cast<void(cocos2d::Sprite3D::*)(cocos2d::Renderer*,const cocos2d::Mat4&,uint32_t)>(&cocos2d::Sprite3D::visit));
 mt.set_function("new",sol::overload(static_cast<cocos2d::Sprite3D*(*)(const std::string&)>(&cocos2d::Sprite3D::create),static_cast<cocos2d::Sprite3D*(*)()>(&cocos2d::Sprite3D::create),static_cast<cocos2d::Sprite3D*(*)(const std::string&,const std::string&)>(&cocos2d::Sprite3D::create)));
+mt.set_function("createAsync",sol::overload(static_cast<void(*)(const std::string&,const std::string&,const std::function<void (cocos2d::Sprite3D *, void *)>&,void*)>(&cocos2d::Sprite3D::createAsync),static_cast<void(*)(const std::string&,const std::function<void (cocos2d::Sprite3D *, void *)>&,void*)>(&cocos2d::Sprite3D::createAsync)));
 }
 void RegisterLua3DSprite3DCacheAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::Sprite3DCache>("cc","Sprite3DCache");
+mt.set_function("getSpriteData",static_cast<cocos2d::Sprite3DCache::Sprite3DData*(cocos2d::Sprite3DCache::*)(const std::string&)const>(&cocos2d::Sprite3DCache::getSpriteData));
+mt.set_function("addSprite3DData",static_cast<bool(cocos2d::Sprite3DCache::*)(const std::string&,cocos2d::Sprite3DCache::Sprite3DData*)>(&cocos2d::Sprite3DCache::addSprite3DData));
 mt.set_function("removeSprite3DData",static_cast<void(cocos2d::Sprite3DCache::*)(const std::string&)>(&cocos2d::Sprite3DCache::removeSprite3DData));
 mt.set_function("removeAllSprite3DData",static_cast<void(cocos2d::Sprite3DCache::*)()>(&cocos2d::Sprite3DCache::removeAllSprite3DData));
 mt.set_function("getInstance",static_cast<cocos2d::Sprite3DCache*(*)()>(&cocos2d::Sprite3DCache::getInstance));
 mt.set_function("destroyInstance",static_cast<void(*)()>(&cocos2d::Sprite3DCache::destroyInstance));
-}
-void RegisterLua3DSprite3DMaterialAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Sprite3DMaterial,cocos2d::Material,cocos2d::Ref,cocos2d::LuaObject>("cc","Sprite3DMaterial");
-mt.set_function("getMaterialType",static_cast<cocos2d::Sprite3DMaterial::MaterialType(cocos2d::Sprite3DMaterial::*)()const>(&cocos2d::Sprite3DMaterial::getMaterialType));
-mt.set_function("clone",static_cast<cocos2d::Material*(cocos2d::Sprite3DMaterial::*)()const>(&cocos2d::Sprite3DMaterial::clone));
-mt.set_function("createBuiltInMaterial",sol::overload(static_cast<void(*)()>(&cocos2d::Sprite3DMaterial::createBuiltInMaterial),static_cast<cocos2d::Sprite3DMaterial*(*)(cocos2d::Sprite3DMaterial::MaterialType,bool)>(&cocos2d::Sprite3DMaterial::createBuiltInMaterial)));
-mt.set_function("createWithFilename",static_cast<cocos2d::Sprite3DMaterial*(*)(const std::string&)>(&cocos2d::Sprite3DMaterial::createWithFilename));
-mt.set_function("createWithProgramState",static_cast<cocos2d::Sprite3DMaterial*(*)(cocos2d::backend::ProgramState*)>(&cocos2d::Sprite3DMaterial::createWithProgramState));
-mt.set_function("releaseBuiltInMaterial",static_cast<void(*)()>(&cocos2d::Sprite3DMaterial::releaseBuiltInMaterial));
-mt.set_function("releaseCachedMaterial",static_cast<void(*)()>(&cocos2d::Sprite3DMaterial::releaseCachedMaterial));
-}
-void RegisterLua3DTerrainAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Terrain,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject>("cc","Terrain");
-mt.set_function("setLightMap",static_cast<void(cocos2d::Terrain::*)(const std::string&)>(&cocos2d::Terrain::setLightMap));
-mt.set_function("setLightDir",static_cast<void(cocos2d::Terrain::*)(const cocos2d::Vec3&)>(&cocos2d::Terrain::setLightDir));
-mt.set_function("initProperties",static_cast<bool(cocos2d::Terrain::*)()>(&cocos2d::Terrain::initProperties));
-mt.set_function("initHeightMap",static_cast<bool(cocos2d::Terrain::*)(const std::string&)>(&cocos2d::Terrain::initHeightMap));
-mt.set_function("initTextures",static_cast<bool(cocos2d::Terrain::*)()>(&cocos2d::Terrain::initTextures));
-mt.set_function("getNormal",static_cast<cocos2d::Vec3(cocos2d::Terrain::*)(int,int)const>(&cocos2d::Terrain::getNormal));
-mt.set_function("getImageHeight",static_cast<float(cocos2d::Terrain::*)(int,int)const>(&cocos2d::Terrain::getImageHeight));
-mt.set_function("setDrawWire",static_cast<void(cocos2d::Terrain::*)(bool)>(&cocos2d::Terrain::setDrawWire));
-mt.set_function("setLODDistance",static_cast<void(cocos2d::Terrain::*)(float,float,float)>(&cocos2d::Terrain::setLODDistance));
-mt.set_function("setIsEnableFrustumCull",static_cast<void(cocos2d::Terrain::*)(bool)>(&cocos2d::Terrain::setIsEnableFrustumCull));
-mt.set_function("setAlphaMap",static_cast<void(cocos2d::Terrain::*)(cocos2d::Texture2D*)>(&cocos2d::Terrain::setAlphaMap));
-mt.set_function("setDetailMap",static_cast<void(cocos2d::Terrain::*)(unsigned int,cocos2d::Terrain::DetailMap)>(&cocos2d::Terrain::setDetailMap));
-mt.set_function("draw",static_cast<void(cocos2d::Terrain::*)(cocos2d::Renderer*,const cocos2d::Mat4&,uint32_t)>(&cocos2d::Terrain::draw));
-mt.set_function("setMaxDetailMapAmount",static_cast<void(cocos2d::Terrain::*)(int)>(&cocos2d::Terrain::setMaxDetailMapAmount));
-mt.set_function("convertToTerrainSpace",static_cast<cocos2d::Vec2(cocos2d::Terrain::*)(const cocos2d::Vec2&)const>(&cocos2d::Terrain::convertToTerrainSpace));
-mt.set_function("resetHeightMap",static_cast<void(cocos2d::Terrain::*)(const std::string&)>(&cocos2d::Terrain::resetHeightMap));
-mt.set_function("getMinHeight",static_cast<float(cocos2d::Terrain::*)()>(&cocos2d::Terrain::getMinHeight));
-mt.set_function("getMaxHeight",static_cast<float(cocos2d::Terrain::*)()>(&cocos2d::Terrain::getMaxHeight));
-mt.set_function("setSkirtHeightRatio",static_cast<void(cocos2d::Terrain::*)(float)>(&cocos2d::Terrain::setSkirtHeightRatio));
-mt.set_function("reload",static_cast<void(cocos2d::Terrain::*)()>(&cocos2d::Terrain::reload));
-mt.set_function("getTerrainSize",static_cast<cocos2d::Size(cocos2d::Terrain::*)()const>(&cocos2d::Terrain::getTerrainSize));
-mt.set_function("getHeightData",static_cast<std::vector<float>(cocos2d::Terrain::*)()const>(&cocos2d::Terrain::getHeightData));
-mt.set_function("initWithTerrainData",static_cast<bool(cocos2d::Terrain::*)(cocos2d::Terrain::TerrainData&,cocos2d::Terrain::CrackFixedType)>(&cocos2d::Terrain::initWithTerrainData));
-}
-void RegisterLua3DBundle3DAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Bundle3D>("cc","Bundle3D");
-mt.set_function("clear",static_cast<void(cocos2d::Bundle3D::*)()>(&cocos2d::Bundle3D::clear));
-mt.set_function("load",static_cast<bool(cocos2d::Bundle3D::*)(const std::string&)>(&cocos2d::Bundle3D::load));
-mt.set_function("loadSkinData",static_cast<bool(cocos2d::Bundle3D::*)(const std::string&,cocos2d::SkinData*)>(&cocos2d::Bundle3D::loadSkinData));
-mt.set_function("loadAnimationData",static_cast<bool(cocos2d::Bundle3D::*)(const std::string&,cocos2d::Animation3DData*)>(&cocos2d::Bundle3D::loadAnimationData));
-mt.set_function("loadNodes",static_cast<bool(cocos2d::Bundle3D::*)(cocos2d::NodeDatas&)>(&cocos2d::Bundle3D::loadNodes));
-mt.set_function("loadMaterials",static_cast<bool(cocos2d::Bundle3D::*)(cocos2d::MaterialDatas&)>(&cocos2d::Bundle3D::loadMaterials));
-mt.set_function("createBundle",static_cast<cocos2d::Bundle3D*(*)()>(&cocos2d::Bundle3D::createBundle));
-mt.set_function("destroyBundle",static_cast<void(*)(cocos2d::Bundle3D*)>(&cocos2d::Bundle3D::destroyBundle));
-mt.set_function("parseGLDataType",static_cast<cocos2d::backend::VertexFormat(*)(const std::string&,int)>(&cocos2d::Bundle3D::parseGLDataType));
-mt.set_function("parseSamplerAddressMode",static_cast<cocos2d::backend::SamplerAddressMode(*)(const std::string&)>(&cocos2d::Bundle3D::parseSamplerAddressMode));
 }

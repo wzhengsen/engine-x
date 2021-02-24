@@ -33,6 +33,7 @@ auto mt=lua.NewUserType<cocostudio::ActionRotationFrame,cocostudio::ActionFrame,
 mt.set_function("setRotation",static_cast<void(cocostudio::ActionRotationFrame::*)(float)>(&cocostudio::ActionRotationFrame::setRotation));
 mt.set_function("getRotation",static_cast<float(cocostudio::ActionRotationFrame::*)()>(&cocostudio::ActionRotationFrame::getRotation));
 mt.set_function("getAction",sol::overload(static_cast<cocos2d::ActionInterval*(cocostudio::ActionRotationFrame::*)(float,cocostudio::ActionFrame*)>(&cocostudio::ActionRotationFrame::getAction),static_cast<cocos2d::ActionInterval*(cocostudio::ActionRotationFrame::*)(float)>(&cocostudio::ActionRotationFrame::getAction)));
+mt["_rotation"] = &cocostudio::ActionRotationFrame::_rotation;
 }
 void RegisterLuaStudioActionFadeFrameAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocostudio::ActionFadeFrame,cocostudio::ActionFrame,cocos2d::Ref,cocos2d::LuaObject>("ccs","ActionFadeFrame");
@@ -64,6 +65,8 @@ mt.set_function("stop",static_cast<void(cocostudio::ActionObject::*)()>(&cocostu
 mt.set_function("addActionNode",static_cast<void(cocostudio::ActionObject::*)(cocostudio::ActionNode*)>(&cocostudio::ActionObject::addActionNode));
 mt.set_function("removeActionNode",static_cast<void(cocostudio::ActionObject::*)(cocostudio::ActionNode*)>(&cocostudio::ActionObject::removeActionNode));
 mt.set_function("updateToFrameByTime",static_cast<void(cocostudio::ActionObject::*)(float)>(&cocostudio::ActionObject::updateToFrameByTime));
+mt.set_function("initWithDictionary",static_cast<void(cocostudio::ActionObject::*)(const rapidjson::Value&,cocos2d::Ref*)>(&cocostudio::ActionObject::initWithDictionary));
+mt.set_function("initWithBinary",static_cast<void(cocostudio::ActionObject::*)(cocostudio::CocoLoader*,cocostudio::stExpCocoNode*,cocos2d::Ref*)>(&cocostudio::ActionObject::initWithBinary));
 mt.set_function("simulationActionUpdate",static_cast<void(cocostudio::ActionObject::*)(float)>(&cocostudio::ActionObject::simulationActionUpdate));
 }
 void RegisterLuaStudioActionManagerExAuto(cocos2d::Lua& lua){
@@ -71,6 +74,8 @@ auto mt=lua.NewUserType<cocostudio::ActionManagerEx,cocos2d::Ref,cocos2d::LuaObj
 mt.set_function("getActionByName",static_cast<cocostudio::ActionObject*(cocostudio::ActionManagerEx::*)(const char*,const char*)>(&cocostudio::ActionManagerEx::getActionByName));
 mt.set_function("playActionByName",sol::overload(static_cast<cocostudio::ActionObject*(cocostudio::ActionManagerEx::*)(const char*,const char*,cocos2d::CallFunc*)>(&cocostudio::ActionManagerEx::playActionByName),static_cast<cocostudio::ActionObject*(cocostudio::ActionManagerEx::*)(const char*,const char*)>(&cocostudio::ActionManagerEx::playActionByName)));
 mt.set_function("stopActionByName",static_cast<cocostudio::ActionObject*(cocostudio::ActionManagerEx::*)(const char*,const char*)>(&cocostudio::ActionManagerEx::stopActionByName));
+mt.set_function("initWithDictionary",sol::overload([](cocostudio::ActionManagerEx* obj,const char* arg0,const rapidjson::Value& arg1,cocos2d::Ref* arg2){return obj->initWithDictionary(arg0,arg1,arg2);},[](cocostudio::ActionManagerEx* obj,const char* arg0,const rapidjson::Value& arg1,cocos2d::Ref* arg2,int arg3){return obj->initWithDictionary(arg0,arg1,arg2,arg3);}));
+mt.set_function("initWithBinary",static_cast<void(cocostudio::ActionManagerEx::*)(const char*,cocos2d::Ref*,cocostudio::CocoLoader*,cocostudio::stExpCocoNode*)>(&cocostudio::ActionManagerEx::initWithBinary));
 mt.set_function("releaseActions",static_cast<void(cocostudio::ActionManagerEx::*)()>(&cocostudio::ActionManagerEx::releaseActions));
 mt.set_function("getStudioVersionNumber",static_cast<int(cocostudio::ActionManagerEx::*)()const>(&cocostudio::ActionManagerEx::getStudioVersionNumber));
 mt.set_function("getInstance",static_cast<cocostudio::ActionManagerEx*(*)()>(&cocostudio::ActionManagerEx::getInstance));
@@ -78,40 +83,30 @@ mt.set_function("destroyInstance",static_cast<void(*)()>(&cocostudio::ActionMana
 }
 void RegisterLuaStudioBaseDataAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocostudio::BaseData,cocos2d::Ref,cocos2d::LuaObject>("ccs","BaseData");
+mt.set_function("copy",static_cast<void(cocostudio::BaseData::*)(const cocostudio::BaseData*)>(&cocostudio::BaseData::copy));
+mt.set_function("subtract",static_cast<void(cocostudio::BaseData::*)(cocostudio::BaseData*,cocostudio::BaseData*,bool)>(&cocostudio::BaseData::subtract));
 mt.set_function("setColor",static_cast<void(cocostudio::BaseData::*)(const cocos2d::Color4B&)>(&cocostudio::BaseData::setColor));
 mt.set_function("getColor",static_cast<cocos2d::Color4B(cocostudio::BaseData::*)()>(&cocostudio::BaseData::getColor));
 mt.set_function("new",static_cast<cocostudio::BaseData*(*)()>(&cocostudio::BaseData::create));
+mt["x"] = &cocostudio::BaseData::x;
+mt["y"] = &cocostudio::BaseData::y;
+mt["zOrder"] = &cocostudio::BaseData::zOrder;
+mt["skewX"] = &cocostudio::BaseData::skewX;
+mt["skewY"] = &cocostudio::BaseData::skewY;
+mt["scaleX"] = &cocostudio::BaseData::scaleX;
+mt["scaleY"] = &cocostudio::BaseData::scaleY;
+mt["tweenRotate"] = &cocostudio::BaseData::tweenRotate;
+mt["isUseColorInfo"] = &cocostudio::BaseData::isUseColorInfo;
+mt["a"] = &cocostudio::BaseData::a;
+mt["r"] = &cocostudio::BaseData::r;
+mt["g"] = &cocostudio::BaseData::g;
+mt["b"] = &cocostudio::BaseData::b;
 }
 void RegisterLuaStudioDisplayDataAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocostudio::DisplayData,cocos2d::Ref,cocos2d::LuaObject>("ccs","DisplayData");
 mt.set_function("copy",static_cast<void(cocostudio::DisplayData::*)(cocostudio::DisplayData*)>(&cocostudio::DisplayData::copy));
 mt.set_function("new",static_cast<cocostudio::DisplayData*(*)()>(&cocostudio::DisplayData::create));
 mt.set_function("changeDisplayToTexture",static_cast<std::string(*)(const std::string&)>(&cocostudio::DisplayData::changeDisplayToTexture));
-}
-void RegisterLuaStudioSpriteDisplayDataAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocostudio::SpriteDisplayData,cocostudio::DisplayData,cocos2d::Ref,cocos2d::LuaObject>("ccs","SpriteDisplayData");
-mt.set_function("copy",static_cast<void(cocostudio::SpriteDisplayData::*)(cocostudio::DisplayData*)>(&cocostudio::SpriteDisplayData::copy));
-mt.set_function("new",static_cast<cocostudio::SpriteDisplayData*(*)()>(&cocostudio::SpriteDisplayData::create));
-}
-void RegisterLuaStudioArmatureDisplayDataAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocostudio::ArmatureDisplayData,cocostudio::DisplayData,cocos2d::Ref,cocos2d::LuaObject>("ccs","ArmatureDisplayData");
-mt.set_function("new",static_cast<cocostudio::ArmatureDisplayData*(*)()>(&cocostudio::ArmatureDisplayData::create));
-}
-void RegisterLuaStudioParticleDisplayDataAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocostudio::ParticleDisplayData,cocostudio::DisplayData,cocos2d::Ref,cocos2d::LuaObject>("ccs","ParticleDisplayData");
-mt.set_function("new",static_cast<cocostudio::ParticleDisplayData*(*)()>(&cocostudio::ParticleDisplayData::create));
-}
-void RegisterLuaStudioBoneDataAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocostudio::BoneData,cocostudio::BaseData,cocos2d::Ref,cocos2d::LuaObject>("ccs","BoneData");
-mt.set_function("init",static_cast<bool(cocostudio::BoneData::*)()>(&cocostudio::BoneData::init));
-mt.set_function("addDisplayData",static_cast<void(cocostudio::BoneData::*)(cocostudio::DisplayData*)>(&cocostudio::BoneData::addDisplayData));
-mt.set_function("getDisplayData",static_cast<cocostudio::DisplayData*(cocostudio::BoneData::*)(int)>(&cocostudio::BoneData::getDisplayData));
-mt.set_function("new",static_cast<cocostudio::BoneData*(*)()>(&cocostudio::BoneData::create));
-}
-void RegisterLuaStudioArmatureDataAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocostudio::ArmatureData,cocos2d::Ref,cocos2d::LuaObject>("ccs","ArmatureData");
-mt.set_function("init",static_cast<bool(cocostudio::ArmatureData::*)()>(&cocostudio::ArmatureData::init));
-mt.set_function("addBoneData",static_cast<void(cocostudio::ArmatureData::*)(cocostudio::BoneData*)>(&cocostudio::ArmatureData::addBoneData));
-mt.set_function("getBoneData",static_cast<cocostudio::BoneData*(cocostudio::ArmatureData::*)(const std::string&)>(&cocostudio::ArmatureData::getBoneData));
-mt.set_function("new",static_cast<cocostudio::ArmatureData*(*)()>(&cocostudio::ArmatureData::create));
+mt["displayType"] = &cocostudio::DisplayData::displayType;
+mt["displayName"] = &cocostudio::DisplayData::displayName;
 }

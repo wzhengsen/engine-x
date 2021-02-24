@@ -18,6 +18,10 @@ import traceback
 # finally:
 #     from Cheetah.Template import Template
 
+# import ptvsd
+# ptvsd.enable_attach(address = ('0.0.0.0', 5678))
+# ptvsd.wait_for_attach()
+
 if(sys.version_info.major >= 3):
     import configparser as ConfigParser
 else:
@@ -366,7 +370,9 @@ def build_namespace(cursor, namespaces=[]):
     if cursor:
         parent = cursor.semantic_parent
         if parent:
-            if parent.kind == cindex.CursorKind.NAMESPACE or parent.kind == cindex.CursorKind.CLASS_DECL:
+            if parent.kind == cindex.CursorKind.NAMESPACE\
+            or parent.kind == cindex.CursorKind.CLASS_DECL\
+            or parent.kind == cindex.CursorKind.STRUCT_DECL:
                 namespaces.append(parent.displayname)
                 build_namespace(parent, namespaces)
 
@@ -390,7 +396,9 @@ def generate_namespace_list(cursor, namespaces=[]):
     if cursor:
         parent = cursor.semantic_parent
         if parent:
-            if parent.kind == cindex.CursorKind.NAMESPACE or parent.kind == cindex.CursorKind.CLASS_DECL:
+            if parent.kind == cindex.CursorKind.NAMESPACE\
+            or parent.kind == cindex.CursorKind.CLASS_DECL\
+            or parent.kind == cindex.CursorKind.STRUCT_DECL:
                 if parent.kind == cindex.CursorKind.NAMESPACE:
                     namespaces.append(parent.displayname)
                 generate_namespace_list(parent, namespaces)
@@ -1026,6 +1034,19 @@ class NativeClass(object):
         '''
         self._deep_iterate(self.cursor)
 
+    def PublicFieldsClean(self):
+        '''
+        clean list of public fields (without the ones that should be skipped)
+        '''
+        ret = []
+        for field in self.public_fields:
+            should_skip = False
+            if self.generator.should_skip(self.class_name, field.name):
+                should_skip = True
+            if not should_skip:
+                ret.append(field)
+        return ret
+
     def methods_clean(self):
         '''
         clean list of methods (without the ones that should be skipped)
@@ -1176,6 +1197,12 @@ class NativeClass(object):
             cxx.append(");")
         cxx.append("\n")
 
+    def _SolRegisterPublicField(self,p,cxx):
+        """生成适用于sol注册lua类的公共成员的c++代码。
+        """
+        cxx.append('mt["{0}"] = &{1}::{0};\n'.format(p.name,self.namespaced_class_name))
+
+
     def _SolRegister(self):
         """生成适用于sol注册lua类的c++代码。
 
@@ -1192,8 +1219,13 @@ class NativeClass(object):
             "{\n",
             "auto mt=lua.NewUserType<{basesName}>(\"{target_ns}\",\"{class_name}\");\n".format(class_name = self.class_name,basesName = basesName,target_ns = self.generator.target_ns)
         ]
+        # 方法生成。
         for m in self.methods_clean() + self.static_methods_clean():
             self._SolRegisterFunction(m,cxx)
+        
+        # public域生成。
+        for public in self.PublicFieldsClean():
+            self._SolRegisterPublicField(public,cxx)
         cxx.append("}\n")
         return "".join(cxx)
 
@@ -1411,8 +1443,8 @@ class Generator(object):
         self.win32_clang_flags = opts['win32_clang_flags']
         self.classFileIndex = 0
         self.codeTempStrList = []
-        # 每15个类一个文件。
-        self.groupCount = 15
+        # 每10个类一个文件。
+        self.groupCount = 10
 
         extend_clang_args = []
 
@@ -1604,7 +1636,7 @@ class Generator(object):
             hFile.write((
             '#pragma once\n'
             '#include "base/ccConfig.h"\n'
-            '#include "scripting/lua-bindings/CCLua.h"\n'
+            '#include "scripting/lua-bindings/manual/CCLuaConvertSol.hpp"\n'
             'void RegisterLua{}Auto(cocos2d::Lua&);'
             ).format(self.prefix))
     

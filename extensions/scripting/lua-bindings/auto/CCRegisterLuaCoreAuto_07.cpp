@@ -5,112 +5,112 @@
 #include "renderer/CCRenderer.h"
 #include "renderer/CCPipelineDescriptor.h"
 #include "renderer/backend/RenderTarget.h"
-void RegisterLuaCoreEaseCubicActionInOutAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseCubicActionInOut,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","EaseCubicActionInOut");
-mt.set_function("clone",static_cast<cocos2d::EaseCubicActionInOut*(cocos2d::EaseCubicActionInOut::*)()const>(&cocos2d::EaseCubicActionInOut::clone));
-mt.set_function("update",static_cast<void(cocos2d::EaseCubicActionInOut::*)(float)>(&cocos2d::EaseCubicActionInOut::update));
-mt.set_function("reverse",static_cast<cocos2d::ActionEase*(cocos2d::EaseCubicActionInOut::*)()const>(&cocos2d::EaseCubicActionInOut::reverse));
-mt.set_function("new",static_cast<cocos2d::EaseCubicActionInOut*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseCubicActionInOut::create));
+#include "navmesh/CCNavMesh.h"
+#include "ui/UIWidget.h"
+#include "base/TGAlib.h"
+void RegisterLuaCoreEventListenerControllerAuto(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::EventListenerController,cocos2d::EventListener,cocos2d::Ref,cocos2d::LuaObject>("cc","EventListenerController");
+mt.set_function("checkAvailable",static_cast<bool(cocos2d::EventListenerController::*)()>(&cocos2d::EventListenerController::checkAvailable));
+mt.set_function("clone",static_cast<cocos2d::EventListenerController*(cocos2d::EventListenerController::*)()>(&cocos2d::EventListenerController::clone));
+mt.set_function("new",static_cast<cocos2d::EventListenerController*(*)()>(&cocos2d::EventListenerController::create));
+mt["onConnected"] = &cocos2d::EventListenerController::onConnected;
+mt["onDisconnected"] = &cocos2d::EventListenerController::onDisconnected;
+mt["onKeyDown"] = &cocos2d::EventListenerController::onKeyDown;
+mt["onKeyUp"] = &cocos2d::EventListenerController::onKeyUp;
+mt["onKeyRepeat"] = &cocos2d::EventListenerController::onKeyRepeat;
+mt["onAxisEvent"] = &cocos2d::EventListenerController::onAxisEvent;
 }
-void RegisterLuaCoreEaseInAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseIn,cocos2d::EaseRateAction,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","EaseIn");
-mt.set_function("clone",static_cast<cocos2d::EaseIn*(cocos2d::EaseIn::*)()const>(&cocos2d::EaseIn::clone));
-mt.set_function("update",static_cast<void(cocos2d::EaseIn::*)(float)>(&cocos2d::EaseIn::update));
-mt.set_function("reverse",static_cast<cocos2d::EaseRateAction*(cocos2d::EaseIn::*)()const>(&cocos2d::EaseIn::reverse));
-mt.set_function("new",static_cast<cocos2d::EaseIn*(*)(cocos2d::ActionInterval*,float)>(&cocos2d::EaseIn::create));
+void RegisterLuaCoreEventListenerTouchOneByOneAuto(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::EventListenerTouchOneByOne,cocos2d::EventListener,cocos2d::Ref,cocos2d::LuaObject>("cc","EventListenerTouchOneByOne");
+mt.set_function("setSwallowTouches",static_cast<void(cocos2d::EventListenerTouchOneByOne::*)(bool)>(&cocos2d::EventListenerTouchOneByOne::setSwallowTouches));
+mt.set_function("isSwallowTouches",static_cast<bool(cocos2d::EventListenerTouchOneByOne::*)()>(&cocos2d::EventListenerTouchOneByOne::isSwallowTouches));
+mt.set_function("clone",static_cast<cocos2d::EventListenerTouchOneByOne*(cocos2d::EventListenerTouchOneByOne::*)()>(&cocos2d::EventListenerTouchOneByOne::clone));
+mt.set_function("checkAvailable",static_cast<bool(cocos2d::EventListenerTouchOneByOne::*)()>(&cocos2d::EventListenerTouchOneByOne::checkAvailable));
+mt.set_function("new",static_cast<cocos2d::EventListenerTouchOneByOne*(*)()>(&cocos2d::EventListenerTouchOneByOne::create));
+mt["onTouchBegan"] = &cocos2d::EventListenerTouchOneByOne::onTouchBegan;
+mt["onTouchMoved"] = &cocos2d::EventListenerTouchOneByOne::onTouchMoved;
+mt["onTouchEnded"] = &cocos2d::EventListenerTouchOneByOne::onTouchEnded;
+mt["onTouchCancelled"] = &cocos2d::EventListenerTouchOneByOne::onTouchCancelled;
 }
-void RegisterLuaCoreEaseOutAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseOut,cocos2d::EaseRateAction,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","EaseOut");
-mt.set_function("clone",static_cast<cocos2d::EaseOut*(cocos2d::EaseOut::*)()const>(&cocos2d::EaseOut::clone));
-mt.set_function("update",static_cast<void(cocos2d::EaseOut::*)(float)>(&cocos2d::EaseOut::update));
-mt.set_function("reverse",static_cast<cocos2d::EaseRateAction*(cocos2d::EaseOut::*)()const>(&cocos2d::EaseOut::reverse));
-mt.set_function("new",static_cast<cocos2d::EaseOut*(*)(cocos2d::ActionInterval*,float)>(&cocos2d::EaseOut::create));
+void RegisterLuaCoreEventListenerTouchAllAtOnceAuto(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::EventListenerTouchAllAtOnce,cocos2d::EventListener,cocos2d::Ref,cocos2d::LuaObject>("cc","EventListenerTouchAllAtOnce");
+mt.set_function("clone",static_cast<cocos2d::EventListenerTouchAllAtOnce*(cocos2d::EventListenerTouchAllAtOnce::*)()>(&cocos2d::EventListenerTouchAllAtOnce::clone));
+mt.set_function("checkAvailable",static_cast<bool(cocos2d::EventListenerTouchAllAtOnce::*)()>(&cocos2d::EventListenerTouchAllAtOnce::checkAvailable));
+mt.set_function("new",static_cast<cocos2d::EventListenerTouchAllAtOnce*(*)()>(&cocos2d::EventListenerTouchAllAtOnce::create));
+mt["onTouchesBegan"] = &cocos2d::EventListenerTouchAllAtOnce::onTouchesBegan;
+mt["onTouchesMoved"] = &cocos2d::EventListenerTouchAllAtOnce::onTouchesMoved;
+mt["onTouchesEnded"] = &cocos2d::EventListenerTouchAllAtOnce::onTouchesEnded;
+mt["onTouchesCancelled"] = &cocos2d::EventListenerTouchAllAtOnce::onTouchesCancelled;
 }
-void RegisterLuaCoreEaseInOutAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseInOut,cocos2d::EaseRateAction,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","EaseInOut");
-mt.set_function("clone",static_cast<cocos2d::EaseInOut*(cocos2d::EaseInOut::*)()const>(&cocos2d::EaseInOut::clone));
-mt.set_function("update",static_cast<void(cocos2d::EaseInOut::*)(float)>(&cocos2d::EaseInOut::update));
-mt.set_function("reverse",static_cast<cocos2d::EaseRateAction*(cocos2d::EaseInOut::*)()const>(&cocos2d::EaseInOut::reverse));
-mt.set_function("new",static_cast<cocos2d::EaseInOut*(*)(cocos2d::ActionInterval*,float)>(&cocos2d::EaseInOut::create));
+void RegisterLuaCoreEventControllerAuto(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::EventController,cocos2d::Event,cocos2d::Ref,cocos2d::LuaObject>("cc","EventController");
+mt.set_function("getControllerEventType",static_cast<cocos2d::EventController::ControllerEventType(cocos2d::EventController::*)()const>(&cocos2d::EventController::getControllerEventType));
+mt.set_function("getController",static_cast<cocos2d::Controller*(cocos2d::EventController::*)()const>(&cocos2d::EventController::getController));
+mt.set_function("getKeyCode",static_cast<int(cocos2d::EventController::*)()const>(&cocos2d::EventController::getKeyCode));
+mt.set_function("setKeyCode",static_cast<void(cocos2d::EventController::*)(int)>(&cocos2d::EventController::setKeyCode));
+mt.set_function("setConnectStatus",static_cast<void(cocos2d::EventController::*)(bool)>(&cocos2d::EventController::setConnectStatus));
+mt.set_function("isConnected",static_cast<bool(cocos2d::EventController::*)()const>(&cocos2d::EventController::isConnected));
 }
-void RegisterLuaCoreEaseElasticAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseElastic,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","EaseElastic");
-mt.set_function("getPeriod",static_cast<float(cocos2d::EaseElastic::*)()const>(&cocos2d::EaseElastic::getPeriod));
-mt.set_function("setPeriod",static_cast<void(cocos2d::EaseElastic::*)(float)>(&cocos2d::EaseElastic::setPeriod));
-mt.set_function("initWithAction",sol::overload([](cocos2d::EaseElastic* obj,cocos2d::ActionInterval* arg0){return obj->initWithAction(arg0);},[](cocos2d::EaseElastic* obj,cocos2d::ActionInterval* arg0,float arg1){return obj->initWithAction(arg0,arg1);}));
+void RegisterLuaCoreActionCameraAuto(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::ActionCamera,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","ActionCamera");
+mt.set_function("startWithTarget",static_cast<void(cocos2d::ActionCamera::*)(cocos2d::Node*)>(&cocos2d::ActionCamera::startWithTarget));
+mt.set_function("reverse",static_cast<cocos2d::ActionCamera*(cocos2d::ActionCamera::*)()const>(&cocos2d::ActionCamera::reverse));
+mt.set_function("clone",static_cast<cocos2d::ActionCamera*(cocos2d::ActionCamera::*)()const>(&cocos2d::ActionCamera::clone));
+mt.set_function("setEye",sol::overload(static_cast<void(cocos2d::ActionCamera::*)(float,float,float)>(&cocos2d::ActionCamera::setEye),static_cast<void(cocos2d::ActionCamera::*)(const cocos2d::Vec3&)>(&cocos2d::ActionCamera::setEye)));
+mt.set_function("getEye",static_cast<const cocos2d::Vec3&(cocos2d::ActionCamera::*)()const>(&cocos2d::ActionCamera::getEye));
+mt.set_function("setCenter",static_cast<void(cocos2d::ActionCamera::*)(const cocos2d::Vec3&)>(&cocos2d::ActionCamera::setCenter));
+mt.set_function("getCenter",static_cast<const cocos2d::Vec3&(cocos2d::ActionCamera::*)()const>(&cocos2d::ActionCamera::getCenter));
+mt.set_function("setUp",static_cast<void(cocos2d::ActionCamera::*)(const cocos2d::Vec3&)>(&cocos2d::ActionCamera::setUp));
+mt.set_function("getUp",static_cast<const cocos2d::Vec3&(cocos2d::ActionCamera::*)()const>(&cocos2d::ActionCamera::getUp));
 }
-void RegisterLuaCoreEaseElasticInAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseElasticIn,cocos2d::EaseElastic,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","EaseElasticIn");
-mt.set_function("clone",static_cast<cocos2d::EaseElasticIn*(cocos2d::EaseElasticIn::*)()const>(&cocos2d::EaseElasticIn::clone));
-mt.set_function("update",static_cast<void(cocos2d::EaseElasticIn::*)(float)>(&cocos2d::EaseElasticIn::update));
-mt.set_function("reverse",static_cast<cocos2d::EaseElastic*(cocos2d::EaseElasticIn::*)()const>(&cocos2d::EaseElasticIn::reverse));
-mt.set_function("new",sol::overload([](cocos2d::EaseElasticIn* obj,cocos2d::ActionInterval* arg0){return obj->create(arg0);},[](cocos2d::EaseElasticIn* obj,cocos2d::ActionInterval* arg0,float arg1){return obj->create(arg0,arg1);}));
+void RegisterLuaCoreOrbitCameraAuto(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::OrbitCamera,cocos2d::ActionCamera,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","OrbitCamera");
+mt.set_function("sphericalRadius",static_cast<void(cocos2d::OrbitCamera::*)(float*,float*,float*)>(&cocos2d::OrbitCamera::sphericalRadius));
+mt.set_function("clone",static_cast<cocos2d::OrbitCamera*(cocos2d::OrbitCamera::*)()const>(&cocos2d::OrbitCamera::clone));
+mt.set_function("startWithTarget",static_cast<void(cocos2d::OrbitCamera::*)(cocos2d::Node*)>(&cocos2d::OrbitCamera::startWithTarget));
+mt.set_function("update",static_cast<void(cocos2d::OrbitCamera::*)(float)>(&cocos2d::OrbitCamera::update));
+mt.set_function("new",static_cast<cocos2d::OrbitCamera*(*)(float,float,float,float,float,float,float)>(&cocos2d::OrbitCamera::create));
 }
-void RegisterLuaCoreEaseElasticOutAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseElasticOut,cocos2d::EaseElastic,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","EaseElasticOut");
-mt.set_function("clone",static_cast<cocos2d::EaseElasticOut*(cocos2d::EaseElasticOut::*)()const>(&cocos2d::EaseElasticOut::clone));
-mt.set_function("update",static_cast<void(cocos2d::EaseElasticOut::*)(float)>(&cocos2d::EaseElasticOut::update));
-mt.set_function("reverse",static_cast<cocos2d::EaseElastic*(cocos2d::EaseElasticOut::*)()const>(&cocos2d::EaseElasticOut::reverse));
-mt.set_function("new",sol::overload([](cocos2d::EaseElasticOut* obj,cocos2d::ActionInterval* arg0){return obj->create(arg0);},[](cocos2d::EaseElasticOut* obj,cocos2d::ActionInterval* arg0,float arg1){return obj->create(arg0,arg1);}));
+void RegisterLuaCorePointArrayAuto(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::PointArray,cocos2d::Ref,cocos2d::LuaObject>("cc","PointArray");
+mt.set_function("initWithCapacity",static_cast<bool(cocos2d::PointArray::*)(ssize_t)>(&cocos2d::PointArray::initWithCapacity));
+mt.set_function("addControlPoint",static_cast<void(cocos2d::PointArray::*)(const cocos2d::Vec2&)>(&cocos2d::PointArray::addControlPoint));
+mt.set_function("insertControlPoint",static_cast<void(cocos2d::PointArray::*)(const cocos2d::Vec2&,ssize_t)>(&cocos2d::PointArray::insertControlPoint));
+mt.set_function("replaceControlPoint",static_cast<void(cocos2d::PointArray::*)(const cocos2d::Vec2&,ssize_t)>(&cocos2d::PointArray::replaceControlPoint));
+mt.set_function("getControlPointAtIndex",static_cast<const cocos2d::Vec2&(cocos2d::PointArray::*)(ssize_t)const>(&cocos2d::PointArray::getControlPointAtIndex));
+mt.set_function("removeControlPointAtIndex",static_cast<void(cocos2d::PointArray::*)(ssize_t)>(&cocos2d::PointArray::removeControlPointAtIndex));
+mt.set_function("count",static_cast<ssize_t(cocos2d::PointArray::*)()const>(&cocos2d::PointArray::count));
+mt.set_function("reverse",static_cast<cocos2d::PointArray*(cocos2d::PointArray::*)()const>(&cocos2d::PointArray::reverse));
+mt.set_function("reverseInline",static_cast<void(cocos2d::PointArray::*)()>(&cocos2d::PointArray::reverseInline));
+mt.set_function("clone",static_cast<cocos2d::PointArray*(cocos2d::PointArray::*)()const>(&cocos2d::PointArray::clone));
+mt.set_function("getControlPoints",static_cast<const std::vector<cocos2d::Vec2>&(cocos2d::PointArray::*)()const>(&cocos2d::PointArray::getControlPoints));
+mt.set_function("setControlPoints",static_cast<void(cocos2d::PointArray::*)(std::vector<cocos2d::Vec2>)>(&cocos2d::PointArray::setControlPoints));
+mt.set_function("new",static_cast<cocos2d::PointArray*(*)(ssize_t)>(&cocos2d::PointArray::create));
 }
-void RegisterLuaCoreEaseElasticInOutAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseElasticInOut,cocos2d::EaseElastic,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","EaseElasticInOut");
-mt.set_function("clone",static_cast<cocos2d::EaseElasticInOut*(cocos2d::EaseElasticInOut::*)()const>(&cocos2d::EaseElasticInOut::clone));
-mt.set_function("update",static_cast<void(cocos2d::EaseElasticInOut::*)(float)>(&cocos2d::EaseElasticInOut::update));
-mt.set_function("reverse",static_cast<cocos2d::EaseElastic*(cocos2d::EaseElasticInOut::*)()const>(&cocos2d::EaseElasticInOut::reverse));
-mt.set_function("new",sol::overload([](cocos2d::EaseElasticInOut* obj,cocos2d::ActionInterval* arg0){return obj->create(arg0);},[](cocos2d::EaseElasticInOut* obj,cocos2d::ActionInterval* arg0,float arg1){return obj->create(arg0,arg1);}));
+void RegisterLuaCoreCardinalSplineToAuto(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::CardinalSplineTo,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","CardinalSplineTo");
+mt.set_function("initWithDuration",static_cast<bool(cocos2d::CardinalSplineTo::*)(float,cocos2d::PointArray*,float)>(&cocos2d::CardinalSplineTo::initWithDuration));
+mt.set_function("updatePosition",static_cast<void(cocos2d::CardinalSplineTo::*)(const cocos2d::Vec2&)>(&cocos2d::CardinalSplineTo::updatePosition));
+mt.set_function("getPoints",static_cast<cocos2d::PointArray*(cocos2d::CardinalSplineTo::*)()>(&cocos2d::CardinalSplineTo::getPoints));
+mt.set_function("setPoints",static_cast<void(cocos2d::CardinalSplineTo::*)(cocos2d::PointArray*)>(&cocos2d::CardinalSplineTo::setPoints));
+mt.set_function("clone",static_cast<cocos2d::CardinalSplineTo*(cocos2d::CardinalSplineTo::*)()const>(&cocos2d::CardinalSplineTo::clone));
+mt.set_function("reverse",static_cast<cocos2d::CardinalSplineTo*(cocos2d::CardinalSplineTo::*)()const>(&cocos2d::CardinalSplineTo::reverse));
+mt.set_function("startWithTarget",static_cast<void(cocos2d::CardinalSplineTo::*)(cocos2d::Node*)>(&cocos2d::CardinalSplineTo::startWithTarget));
+mt.set_function("update",static_cast<void(cocos2d::CardinalSplineTo::*)(float)>(&cocos2d::CardinalSplineTo::update));
+mt.set_function("new",static_cast<cocos2d::CardinalSplineTo*(*)(float,cocos2d::PointArray*,float)>(&cocos2d::CardinalSplineTo::create));
 }
-void RegisterLuaCoreEaseBezierActionAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseBezierAction,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","EaseBezierAction");
-mt.set_function("update",static_cast<void(cocos2d::EaseBezierAction::*)(float)>(&cocos2d::EaseBezierAction::update));
-mt.set_function("clone",static_cast<cocos2d::EaseBezierAction*(cocos2d::EaseBezierAction::*)()const>(&cocos2d::EaseBezierAction::clone));
-mt.set_function("reverse",static_cast<cocos2d::EaseBezierAction*(cocos2d::EaseBezierAction::*)()const>(&cocos2d::EaseBezierAction::reverse));
-mt.set_function("setBezierParamer",static_cast<void(cocos2d::EaseBezierAction::*)(float,float,float,float)>(&cocos2d::EaseBezierAction::setBezierParamer));
-mt.set_function("new",static_cast<cocos2d::EaseBezierAction*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseBezierAction::create));
+void RegisterLuaCoreCardinalSplineByAuto(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::CardinalSplineBy,cocos2d::CardinalSplineTo,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","CardinalSplineBy");
+mt.set_function("startWithTarget",static_cast<void(cocos2d::CardinalSplineBy::*)(cocos2d::Node*)>(&cocos2d::CardinalSplineBy::startWithTarget));
+mt.set_function("updatePosition",static_cast<void(cocos2d::CardinalSplineBy::*)(const cocos2d::Vec2&)>(&cocos2d::CardinalSplineBy::updatePosition));
+mt.set_function("clone",static_cast<cocos2d::CardinalSplineBy*(cocos2d::CardinalSplineBy::*)()const>(&cocos2d::CardinalSplineBy::clone));
+mt.set_function("reverse",static_cast<cocos2d::CardinalSplineBy*(cocos2d::CardinalSplineBy::*)()const>(&cocos2d::CardinalSplineBy::reverse));
+mt.set_function("new",static_cast<cocos2d::CardinalSplineBy*(*)(float,cocos2d::PointArray*,float)>(&cocos2d::CardinalSplineBy::create));
 }
-void RegisterLuaCoreActionInstantAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","ActionInstant");
-mt.set_function("clone",static_cast<cocos2d::ActionInstant*(cocos2d::ActionInstant::*)()const>(&cocos2d::ActionInstant::clone));
-mt.set_function("reverse",static_cast<cocos2d::ActionInstant*(cocos2d::ActionInstant::*)()const>(&cocos2d::ActionInstant::reverse));
-mt.set_function("startWithTarget",static_cast<void(cocos2d::ActionInstant::*)(cocos2d::Node*)>(&cocos2d::ActionInstant::startWithTarget));
-mt.set_function("isDone",static_cast<bool(cocos2d::ActionInstant::*)()const>(&cocos2d::ActionInstant::isDone));
-mt.set_function("step",static_cast<void(cocos2d::ActionInstant::*)(float)>(&cocos2d::ActionInstant::step));
-mt.set_function("update",static_cast<void(cocos2d::ActionInstant::*)(float)>(&cocos2d::ActionInstant::update));
-}
-void RegisterLuaCoreShowAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Show,cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","Show");
-mt.set_function("update",static_cast<void(cocos2d::Show::*)(float)>(&cocos2d::Show::update));
-mt.set_function("reverse",static_cast<cocos2d::ActionInstant*(cocos2d::Show::*)()const>(&cocos2d::Show::reverse));
-mt.set_function("clone",static_cast<cocos2d::Show*(cocos2d::Show::*)()const>(&cocos2d::Show::clone));
-mt.set_function("new",static_cast<cocos2d::Show*(*)()>(&cocos2d::Show::create));
-}
-void RegisterLuaCoreHideAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Hide,cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","Hide");
-mt.set_function("update",static_cast<void(cocos2d::Hide::*)(float)>(&cocos2d::Hide::update));
-mt.set_function("reverse",static_cast<cocos2d::ActionInstant*(cocos2d::Hide::*)()const>(&cocos2d::Hide::reverse));
-mt.set_function("clone",static_cast<cocos2d::Hide*(cocos2d::Hide::*)()const>(&cocos2d::Hide::clone));
-mt.set_function("new",static_cast<cocos2d::Hide*(*)()>(&cocos2d::Hide::create));
-}
-void RegisterLuaCoreToggleVisibilityAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ToggleVisibility,cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","ToggleVisibility");
-mt.set_function("update",static_cast<void(cocos2d::ToggleVisibility::*)(float)>(&cocos2d::ToggleVisibility::update));
-mt.set_function("reverse",static_cast<cocos2d::ToggleVisibility*(cocos2d::ToggleVisibility::*)()const>(&cocos2d::ToggleVisibility::reverse));
-mt.set_function("clone",static_cast<cocos2d::ToggleVisibility*(cocos2d::ToggleVisibility::*)()const>(&cocos2d::ToggleVisibility::clone));
-mt.set_function("new",static_cast<cocos2d::ToggleVisibility*(*)()>(&cocos2d::ToggleVisibility::create));
-}
-void RegisterLuaCoreRemoveSelfAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::RemoveSelf,cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","RemoveSelf");
-mt.set_function("update",static_cast<void(cocos2d::RemoveSelf::*)(float)>(&cocos2d::RemoveSelf::update));
-mt.set_function("clone",static_cast<cocos2d::RemoveSelf*(cocos2d::RemoveSelf::*)()const>(&cocos2d::RemoveSelf::clone));
-mt.set_function("reverse",static_cast<cocos2d::RemoveSelf*(cocos2d::RemoveSelf::*)()const>(&cocos2d::RemoveSelf::reverse));
-mt.set_function("init",static_cast<bool(cocos2d::RemoveSelf::*)(bool)>(&cocos2d::RemoveSelf::init));
-mt.set_function("new",sol::overload([](cocos2d::RemoveSelf* obj){return obj->create();},[](cocos2d::RemoveSelf* obj,bool arg0){return obj->create(arg0);}));
-}
-void RegisterLuaCoreFlipXAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::FlipX,cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","FlipX");
-mt.set_function("update",static_cast<void(cocos2d::FlipX::*)(float)>(&cocos2d::FlipX::update));
-mt.set_function("reverse",static_cast<cocos2d::FlipX*(cocos2d::FlipX::*)()const>(&cocos2d::FlipX::reverse));
-mt.set_function("clone",static_cast<cocos2d::FlipX*(cocos2d::FlipX::*)()const>(&cocos2d::FlipX::clone));
-mt.set_function("initWithFlipX",static_cast<bool(cocos2d::FlipX::*)(bool)>(&cocos2d::FlipX::initWithFlipX));
-mt.set_function("new",static_cast<cocos2d::FlipX*(*)(bool)>(&cocos2d::FlipX::create));
+void RegisterLuaCoreCatmullRomToAuto(cocos2d::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::CatmullRomTo,cocos2d::CardinalSplineTo,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","CatmullRomTo");
+mt.set_function("initWithDuration",static_cast<bool(cocos2d::CatmullRomTo::*)(float,cocos2d::PointArray*)>(&cocos2d::CatmullRomTo::initWithDuration));
+mt.set_function("clone",static_cast<cocos2d::CatmullRomTo*(cocos2d::CatmullRomTo::*)()const>(&cocos2d::CatmullRomTo::clone));
+mt.set_function("reverse",static_cast<cocos2d::CatmullRomTo*(cocos2d::CatmullRomTo::*)()const>(&cocos2d::CatmullRomTo::reverse));
+mt.set_function("new",static_cast<cocos2d::CatmullRomTo*(*)(float,cocos2d::PointArray*)>(&cocos2d::CatmullRomTo::create));
 }

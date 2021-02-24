@@ -5,6 +5,9 @@
 #include "renderer/backend/VertexLayout.h"
 #include "renderer/backend/Device.h"
 #include "renderer/backend/RenderTarget.h"
+#include "renderer/backend/CommandBuffer.h"
+#include "renderer/backend/Buffer.h"
+#include "renderer/backend/RenderPipeline.h"
 void RegisterLuaBackendBufferUsageAuto(cocos2d::Lua& lua) {
 sol::table ccb=lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("BufferUsage"
@@ -45,23 +48,3 @@ void RegisterLuaBackendTextureTypeAuto(cocos2d::Lua& lua) {
 sol::table ccb=lua.get_or("ccb",lua.create_named_table("ccb"));
 ccb.new_enum("TextureType"
 ,"TEXTURE_2D",0,"TEXTURE_CUBE",1);}
-void RegisterLuaBackendSamplerAddressModeAuto(cocos2d::Lua& lua) {
-sol::table ccb=lua.get_or("ccb",lua.create_named_table("ccb"));
-ccb.new_enum("SamplerAddressMode"
-,"REPEAT",0,"MIRROR_REPEAT",1,"CLAMP_TO_EDGE",2,"DONT_CARE",3);}
-void RegisterLuaBackendSamplerFilterAuto(cocos2d::Lua& lua) {
-sol::table ccb=lua.get_or("ccb",lua.create_named_table("ccb"));
-ccb.new_enum("SamplerFilter"
-,"NEAREST",0,"NEAREST_MIPMAP_NEAREST",1,"NEAREST_MIPMAP_LINEAR",2,"LINEAR",3,"LINEAR_MIPMAP_LINEAR",4,"LINEAR_MIPMAP_NEAREST",5,"DONT_CARE",6);}
-void RegisterLuaBackendStencilOperationAuto(cocos2d::Lua& lua) {
-sol::table ccb=lua.get_or("ccb",lua.create_named_table("ccb"));
-ccb.new_enum("StencilOperation"
-,"KEEP",0,"ZERO",1,"REPLACE",2,"INVERT",3,"INCREMENT_WRAP",4,"DECREMENT_WRAP",5);}
-void RegisterLuaBackendCompareFunctionAuto(cocos2d::Lua& lua) {
-sol::table ccb=lua.get_or("ccb",lua.create_named_table("ccb"));
-ccb.new_enum("CompareFunction"
-,"NEVER",0,"LESS",1,"LESS_EQUAL",2,"GREATER",3,"GREATER_EQUAL",4,"EQUAL",5,"NOT_EQUAL",6,"ALWAYS",7);}
-void RegisterLuaBackendBlendOperationAuto(cocos2d::Lua& lua) {
-sol::table ccb=lua.get_or("ccb",lua.create_named_table("ccb"));
-ccb.new_enum("BlendOperation"
-,"ADD",0,"SUBTRACT",1,"RESERVE_SUBTRACT",2);}

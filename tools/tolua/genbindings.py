@@ -209,12 +209,10 @@ def main():
                     'cocos2dx_studio.ini' : ('Studio', 'CCRegisterLuaStudioAuto'), \
                     'cocos2dx_spine.ini' : ('Spine', 'CCRegisterLuaSpineAuto'), \
                     'cocos2dx_physics.ini' : ('Physics', 'CCRegisterLuaPhysicsAuto'), \
-                    'cocos2dx_videoplayer.ini' : ('VideoPlayer', 'CCRegisterLuaVideoPlayerAuto'), \
                     'cocos2dx_controller.ini' : ('Controller', 'CCRegisterLuaControllerAuto'), \
                     'cocos2dx_3d.ini': ('3D', 'CCRegisterLua3DAuto'), \
                     'cocos2dx_audioengine.ini': ('AudioEngine', 'CCRegisterLuaAudioEngineAuto'), \
                     'cocos2dx_csloader.ini' : ('CSLoader', 'CCRegisterLuaCSLoaderAuto'), \
-                    'cocos2dx_webview.ini' : ('WebView', 'CCRegisterLuaWebViewAuto'), \
                     'cocos2dx_physics3d.ini' : ('Physics3D', 'CCRegisterLuaPhysics3DAuto'), \
                     'cocos2dx_navmesh.ini' : ('NavMesh', 'CCRegisterLuaNavMeshAuto'), \
                     }

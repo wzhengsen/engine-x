@@ -5,6 +5,9 @@
 #include "renderer/backend/VertexLayout.h"
 #include "renderer/backend/Device.h"
 #include "renderer/backend/RenderTarget.h"
+#include "renderer/backend/CommandBuffer.h"
+#include "renderer/backend/Buffer.h"
+#include "renderer/backend/RenderPipeline.h"
 extern void RegisterLuaBackendBufferUsageAuto(cocos2d::Lua&);
 extern void RegisterLuaBackendBufferTypeAuto(cocos2d::Lua&);
 extern void RegisterLuaBackendShaderStageAuto(cocos2d::Lua&);

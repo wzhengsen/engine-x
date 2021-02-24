@@ -34,6 +34,8 @@ mt.set_function("setCollisionBitmask",static_cast<void(cocos2d::PhysicsShape::*)
 mt.set_function("getCollisionBitmask",static_cast<int(cocos2d::PhysicsShape::*)()const>(&cocos2d::PhysicsShape::getCollisionBitmask));
 mt.set_function("setGroup",static_cast<void(cocos2d::PhysicsShape::*)(int)>(&cocos2d::PhysicsShape::setGroup));
 mt.set_function("getGroup",static_cast<int(cocos2d::PhysicsShape::*)()>(&cocos2d::PhysicsShape::getGroup));
+mt.set_function("recenterPoints",sol::overload([](cocos2d::PhysicsShape* obj,cocos2d::Vec2* arg0,int arg1){return obj->recenterPoints(arg0,arg1);},[](cocos2d::PhysicsShape* obj,cocos2d::Vec2* arg0,int arg1,const cocos2d::Vec2& arg2){return obj->recenterPoints(arg0,arg1,arg2);}));
+mt.set_function("getPolygonCenter",static_cast<cocos2d::Vec2(*)(const cocos2d::Vec2*,int)>(&cocos2d::PhysicsShape::getPolygonCenter));
 }
 void RegisterLuaPhysicsPhysicsShapeCircleAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::PhysicsShapeCircle,cocos2d::PhysicsShape,cocos2d::Ref,cocos2d::LuaObject>("cc","PhysicsShapeCircle");
@@ -48,8 +50,12 @@ void RegisterLuaPhysicsPhysicsShapePolygonAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::PhysicsShapePolygon,cocos2d::PhysicsShape,cocos2d::Ref,cocos2d::LuaObject>("cc","PhysicsShapePolygon");
 mt.set_function("calculateDefaultMoment",static_cast<float(cocos2d::PhysicsShapePolygon::*)()>(&cocos2d::PhysicsShapePolygon::calculateDefaultMoment));
 mt.set_function("getPoint",static_cast<cocos2d::Vec2(cocos2d::PhysicsShapePolygon::*)(int)const>(&cocos2d::PhysicsShapePolygon::getPoint));
+mt.set_function("getPoints",static_cast<void(cocos2d::PhysicsShapePolygon::*)(cocos2d::Vec2*)const>(&cocos2d::PhysicsShapePolygon::getPoints));
 mt.set_function("getPointsCount",static_cast<int(cocos2d::PhysicsShapePolygon::*)()const>(&cocos2d::PhysicsShapePolygon::getPointsCount));
 mt.set_function("getCenter",static_cast<cocos2d::Vec2(cocos2d::PhysicsShapePolygon::*)()>(&cocos2d::PhysicsShapePolygon::getCenter));
+mt.set_function("new",sol::overload([](cocos2d::PhysicsShapePolygon* obj,const cocos2d::Vec2* arg0,int arg1){return obj->create(arg0,arg1);},[](cocos2d::PhysicsShapePolygon* obj,const cocos2d::Vec2* arg0,int arg1,const cocos2d::PhysicsMaterial& arg2){return obj->create(arg0,arg1,arg2);},[](cocos2d::PhysicsShapePolygon* obj,const cocos2d::Vec2* arg0,int arg1,const cocos2d::PhysicsMaterial& arg2,const cocos2d::Vec2& arg3){return obj->create(arg0,arg1,arg2,arg3);},[](cocos2d::PhysicsShapePolygon* obj,const cocos2d::Vec2* arg0,int arg1,const cocos2d::PhysicsMaterial& arg2,const cocos2d::Vec2& arg3,float arg4){return obj->create(arg0,arg1,arg2,arg3,arg4);}));
+mt.set_function("calculateArea",static_cast<float(*)(const cocos2d::Vec2*,int)>(&cocos2d::PhysicsShapePolygon::calculateArea));
+mt.set_function("calculateMoment",sol::overload([](cocos2d::PhysicsShapePolygon* obj,float arg0,const cocos2d::Vec2* arg1,int arg2){return obj->calculateMoment(arg0,arg1,arg2);},[](cocos2d::PhysicsShapePolygon* obj,float arg0,const cocos2d::Vec2* arg1,int arg2,const cocos2d::Vec2& arg3){return obj->calculateMoment(arg0,arg1,arg2,arg3);},[](cocos2d::PhysicsShapePolygon* obj,float arg0,const cocos2d::Vec2* arg1,int arg2,const cocos2d::Vec2& arg3,float arg4){return obj->calculateMoment(arg0,arg1,arg2,arg3,arg4);}));
 }
 void RegisterLuaPhysicsPhysicsShapeBoxAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::PhysicsShapeBox,cocos2d::PhysicsShapePolygon,cocos2d::PhysicsShape,cocos2d::Ref,cocos2d::LuaObject>("cc","PhysicsShapeBox");
@@ -67,7 +73,9 @@ mt.set_function("new",sol::overload([](cocos2d::PhysicsShapeEdgeSegment* obj,con
 void RegisterLuaPhysicsPhysicsShapeEdgePolygonAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::PhysicsShapeEdgePolygon,cocos2d::PhysicsShape,cocos2d::Ref,cocos2d::LuaObject>("cc","PhysicsShapeEdgePolygon");
 mt.set_function("getCenter",static_cast<cocos2d::Vec2(cocos2d::PhysicsShapeEdgePolygon::*)()>(&cocos2d::PhysicsShapeEdgePolygon::getCenter));
+mt.set_function("getPoints",static_cast<void(cocos2d::PhysicsShapeEdgePolygon::*)(cocos2d::Vec2*)const>(&cocos2d::PhysicsShapeEdgePolygon::getPoints));
 mt.set_function("getPointsCount",static_cast<int(cocos2d::PhysicsShapeEdgePolygon::*)()const>(&cocos2d::PhysicsShapeEdgePolygon::getPointsCount));
+mt.set_function("new",sol::overload([](cocos2d::PhysicsShapeEdgePolygon* obj,const cocos2d::Vec2* arg0,int arg1){return obj->create(arg0,arg1);},[](cocos2d::PhysicsShapeEdgePolygon* obj,const cocos2d::Vec2* arg0,int arg1,const cocos2d::PhysicsMaterial& arg2){return obj->create(arg0,arg1,arg2);},[](cocos2d::PhysicsShapeEdgePolygon* obj,const cocos2d::Vec2* arg0,int arg1,const cocos2d::PhysicsMaterial& arg2,float arg3){return obj->create(arg0,arg1,arg2,arg3);}));
 }
 void RegisterLuaPhysicsPhysicsShapeEdgeBoxAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::PhysicsShapeEdgeBox,cocos2d::PhysicsShapeEdgePolygon,cocos2d::PhysicsShape,cocos2d::Ref,cocos2d::LuaObject>("cc","PhysicsShapeEdgeBox");
@@ -77,7 +85,9 @@ mt.set_function("new",sol::overload([](cocos2d::PhysicsShapeEdgeBox* obj,const c
 void RegisterLuaPhysicsPhysicsShapeEdgeChainAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::PhysicsShapeEdgeChain,cocos2d::PhysicsShape,cocos2d::Ref,cocos2d::LuaObject>("cc","PhysicsShapeEdgeChain");
 mt.set_function("getCenter",static_cast<cocos2d::Vec2(cocos2d::PhysicsShapeEdgeChain::*)()>(&cocos2d::PhysicsShapeEdgeChain::getCenter));
+mt.set_function("getPoints",static_cast<void(cocos2d::PhysicsShapeEdgeChain::*)(cocos2d::Vec2*)const>(&cocos2d::PhysicsShapeEdgeChain::getPoints));
 mt.set_function("getPointsCount",static_cast<int(cocos2d::PhysicsShapeEdgeChain::*)()const>(&cocos2d::PhysicsShapeEdgeChain::getPointsCount));
+mt.set_function("new",sol::overload([](cocos2d::PhysicsShapeEdgeChain* obj,const cocos2d::Vec2* arg0,int arg1){return obj->create(arg0,arg1);},[](cocos2d::PhysicsShapeEdgeChain* obj,const cocos2d::Vec2* arg0,int arg1,const cocos2d::PhysicsMaterial& arg2){return obj->create(arg0,arg1,arg2);},[](cocos2d::PhysicsShapeEdgeChain* obj,const cocos2d::Vec2* arg0,int arg1,const cocos2d::PhysicsMaterial& arg2,float arg3){return obj->create(arg0,arg1,arg2,arg3);}));
 }
 void RegisterLuaPhysicsPhysicsBodyAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::PhysicsBody,cocos2d::Component,cocos2d::Ref,cocos2d::LuaObject>("cc","PhysicsBody");
@@ -103,6 +113,7 @@ mt.set_function("setAngularVelocityLimit",static_cast<void(cocos2d::PhysicsBody:
 mt.set_function("getAngularVelocityLimit",static_cast<float(cocos2d::PhysicsBody::*)()>(&cocos2d::PhysicsBody::getAngularVelocityLimit));
 mt.set_function("removeFromWorld",static_cast<void(cocos2d::PhysicsBody::*)()>(&cocos2d::PhysicsBody::removeFromWorld));
 mt.set_function("getWorld",static_cast<cocos2d::PhysicsWorld*(cocos2d::PhysicsBody::*)()const>(&cocos2d::PhysicsBody::getWorld));
+mt.set_function("getJoints",static_cast<const std::vector<cocos2d::PhysicsJoint *>&(cocos2d::PhysicsBody::*)()const>(&cocos2d::PhysicsBody::getJoints));
 mt.set_function("getNode",static_cast<cocos2d::Node*(cocos2d::PhysicsBody::*)()const>(&cocos2d::PhysicsBody::getNode));
 mt.set_function("setCategoryBitmask",static_cast<void(cocos2d::PhysicsBody::*)(int)>(&cocos2d::PhysicsBody::setCategoryBitmask));
 mt.set_function("setContactTestBitmask",static_cast<void(cocos2d::PhysicsBody::*)(int)>(&cocos2d::PhysicsBody::setContactTestBitmask));
@@ -148,47 +159,20 @@ mt.set_function("onRemove",static_cast<void(cocos2d::PhysicsBody::*)()>(&cocos2d
 mt.set_function("new",sol::overload(static_cast<cocos2d::PhysicsBody*(*)(float)>(&cocos2d::PhysicsBody::create),static_cast<cocos2d::PhysicsBody*(*)()>(&cocos2d::PhysicsBody::create),static_cast<cocos2d::PhysicsBody*(*)(float,float)>(&cocos2d::PhysicsBody::create)));
 mt.set_function("createCircle",sol::overload([](cocos2d::PhysicsBody* obj,float arg0){return obj->createCircle(arg0);},[](cocos2d::PhysicsBody* obj,float arg0,const cocos2d::PhysicsMaterial& arg1){return obj->createCircle(arg0,arg1);},[](cocos2d::PhysicsBody* obj,float arg0,const cocos2d::PhysicsMaterial& arg1,const cocos2d::Vec2& arg2){return obj->createCircle(arg0,arg1,arg2);}));
 mt.set_function("createBox",sol::overload([](cocos2d::PhysicsBody* obj,const cocos2d::Size& arg0){return obj->createBox(arg0);},[](cocos2d::PhysicsBody* obj,const cocos2d::Size& arg0,const cocos2d::PhysicsMaterial& arg1){return obj->createBox(arg0,arg1);},[](cocos2d::PhysicsBody* obj,const cocos2d::Size& arg0,const cocos2d::PhysicsMaterial& arg1,const cocos2d::Vec2& arg2){return obj->createBox(arg0,arg1,arg2);}));
+mt.set_function("createPolygon",sol::overload([](cocos2d::PhysicsBody* obj,const cocos2d::Vec2* arg0,int arg1){return obj->createPolygon(arg0,arg1);},[](cocos2d::PhysicsBody* obj,const cocos2d::Vec2* arg0,int arg1,const cocos2d::PhysicsMaterial& arg2){return obj->createPolygon(arg0,arg1,arg2);},[](cocos2d::PhysicsBody* obj,const cocos2d::Vec2* arg0,int arg1,const cocos2d::PhysicsMaterial& arg2,const cocos2d::Vec2& arg3){return obj->createPolygon(arg0,arg1,arg2,arg3);}));
 mt.set_function("createEdgeSegment",sol::overload([](cocos2d::PhysicsBody* obj,const cocos2d::Vec2& arg0,const cocos2d::Vec2& arg1){return obj->createEdgeSegment(arg0,arg1);},[](cocos2d::PhysicsBody* obj,const cocos2d::Vec2& arg0,const cocos2d::Vec2& arg1,const cocos2d::PhysicsMaterial& arg2){return obj->createEdgeSegment(arg0,arg1,arg2);},[](cocos2d::PhysicsBody* obj,const cocos2d::Vec2& arg0,const cocos2d::Vec2& arg1,const cocos2d::PhysicsMaterial& arg2,float arg3){return obj->createEdgeSegment(arg0,arg1,arg2,arg3);}));
 mt.set_function("createEdgeBox",sol::overload([](cocos2d::PhysicsBody* obj,const cocos2d::Size& arg0){return obj->createEdgeBox(arg0);},[](cocos2d::PhysicsBody* obj,const cocos2d::Size& arg0,const cocos2d::PhysicsMaterial& arg1){return obj->createEdgeBox(arg0,arg1);},[](cocos2d::PhysicsBody* obj,const cocos2d::Size& arg0,const cocos2d::PhysicsMaterial& arg1,float arg2){return obj->createEdgeBox(arg0,arg1,arg2);},[](cocos2d::PhysicsBody* obj,const cocos2d::Size& arg0,const cocos2d::PhysicsMaterial& arg1,float arg2,const cocos2d::Vec2& arg3){return obj->createEdgeBox(arg0,arg1,arg2,arg3);}));
+mt.set_function("createEdgePolygon",sol::overload([](cocos2d::PhysicsBody* obj,const cocos2d::Vec2* arg0,int arg1){return obj->createEdgePolygon(arg0,arg1);},[](cocos2d::PhysicsBody* obj,const cocos2d::Vec2* arg0,int arg1,const cocos2d::PhysicsMaterial& arg2){return obj->createEdgePolygon(arg0,arg1,arg2);},[](cocos2d::PhysicsBody* obj,const cocos2d::Vec2* arg0,int arg1,const cocos2d::PhysicsMaterial& arg2,float arg3){return obj->createEdgePolygon(arg0,arg1,arg2,arg3);}));
+mt.set_function("createEdgeChain",sol::overload([](cocos2d::PhysicsBody* obj,const cocos2d::Vec2* arg0,int arg1){return obj->createEdgeChain(arg0,arg1);},[](cocos2d::PhysicsBody* obj,const cocos2d::Vec2* arg0,int arg1,const cocos2d::PhysicsMaterial& arg2){return obj->createEdgeChain(arg0,arg1,arg2);},[](cocos2d::PhysicsBody* obj,const cocos2d::Vec2* arg0,int arg1,const cocos2d::PhysicsMaterial& arg2,float arg3){return obj->createEdgeChain(arg0,arg1,arg2,arg3);}));
 }
 void RegisterLuaPhysicsPhysicsContactAuto(cocos2d::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::PhysicsContact,cocos2d::EventCustom,cocos2d::Event,cocos2d::Ref,cocos2d::LuaObject>("cc","PhysicsContact");
 mt.set_function("getShapeA",static_cast<cocos2d::PhysicsShape*(cocos2d::PhysicsContact::*)()const>(&cocos2d::PhysicsContact::getShapeA));
 mt.set_function("getShapeB",static_cast<cocos2d::PhysicsShape*(cocos2d::PhysicsContact::*)()const>(&cocos2d::PhysicsContact::getShapeB));
+mt.set_function("getContactData",static_cast<const cocos2d::PhysicsContactData*(cocos2d::PhysicsContact::*)()const>(&cocos2d::PhysicsContact::getContactData));
+mt.set_function("getPreContactData",static_cast<const cocos2d::PhysicsContactData*(cocos2d::PhysicsContact::*)()const>(&cocos2d::PhysicsContact::getPreContactData));
+mt.set_function("getData",static_cast<void*(cocos2d::PhysicsContact::*)()const>(&cocos2d::PhysicsContact::getData));
+mt.set_function("setData",static_cast<void(cocos2d::PhysicsContact::*)(void*)>(&cocos2d::PhysicsContact::setData));
 mt.set_function("getEventCode",static_cast<cocos2d::PhysicsContact::EventCode(cocos2d::PhysicsContact::*)()const>(&cocos2d::PhysicsContact::getEventCode));
-}
-void RegisterLuaPhysicsPhysicsContactPreSolveAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::PhysicsContactPreSolve>("cc","PhysicsContactPreSolve");
-mt.set_function("getRestitution",static_cast<float(cocos2d::PhysicsContactPreSolve::*)()const>(&cocos2d::PhysicsContactPreSolve::getRestitution));
-mt.set_function("getFriction",static_cast<float(cocos2d::PhysicsContactPreSolve::*)()const>(&cocos2d::PhysicsContactPreSolve::getFriction));
-mt.set_function("getSurfaceVelocity",static_cast<cocos2d::Vec2(cocos2d::PhysicsContactPreSolve::*)()const>(&cocos2d::PhysicsContactPreSolve::getSurfaceVelocity));
-mt.set_function("setRestitution",static_cast<void(cocos2d::PhysicsContactPreSolve::*)(float)>(&cocos2d::PhysicsContactPreSolve::setRestitution));
-mt.set_function("setFriction",static_cast<void(cocos2d::PhysicsContactPreSolve::*)(float)>(&cocos2d::PhysicsContactPreSolve::setFriction));
-mt.set_function("setSurfaceVelocity",static_cast<void(cocos2d::PhysicsContactPreSolve::*)(const cocos2d::Vec2&)>(&cocos2d::PhysicsContactPreSolve::setSurfaceVelocity));
-mt.set_function("ignore",static_cast<void(cocos2d::PhysicsContactPreSolve::*)()>(&cocos2d::PhysicsContactPreSolve::ignore));
-}
-void RegisterLuaPhysicsPhysicsContactPostSolveAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::PhysicsContactPostSolve>("cc","PhysicsContactPostSolve");
-mt.set_function("getRestitution",static_cast<float(cocos2d::PhysicsContactPostSolve::*)()const>(&cocos2d::PhysicsContactPostSolve::getRestitution));
-mt.set_function("getFriction",static_cast<float(cocos2d::PhysicsContactPostSolve::*)()const>(&cocos2d::PhysicsContactPostSolve::getFriction));
-mt.set_function("getSurfaceVelocity",static_cast<cocos2d::Vec2(cocos2d::PhysicsContactPostSolve::*)()const>(&cocos2d::PhysicsContactPostSolve::getSurfaceVelocity));
-}
-void RegisterLuaPhysicsEventListenerPhysicsContactAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventListenerPhysicsContact,cocos2d::EventListenerCustom,cocos2d::EventListener,cocos2d::Ref,cocos2d::LuaObject>("cc","EventListenerPhysicsContact");
-mt.set_function("checkAvailable",static_cast<bool(cocos2d::EventListenerPhysicsContact::*)()>(&cocos2d::EventListenerPhysicsContact::checkAvailable));
-mt.set_function("clone",static_cast<cocos2d::EventListenerPhysicsContact*(cocos2d::EventListenerPhysicsContact::*)()>(&cocos2d::EventListenerPhysicsContact::clone));
-mt.set_function("new",static_cast<cocos2d::EventListenerPhysicsContact*(*)()>(&cocos2d::EventListenerPhysicsContact::create));
-}
-void RegisterLuaPhysicsEventListenerPhysicsContactWithBodiesAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventListenerPhysicsContactWithBodies,cocos2d::EventListenerPhysicsContact,cocos2d::EventListenerCustom,cocos2d::EventListener,cocos2d::Ref,cocos2d::LuaObject>("cc","EventListenerPhysicsContactWithBodies");
-mt.set_function("hitTest",static_cast<bool(cocos2d::EventListenerPhysicsContactWithBodies::*)(cocos2d::PhysicsShape*,cocos2d::PhysicsShape*)>(&cocos2d::EventListenerPhysicsContactWithBodies::hitTest));
-mt.set_function("clone",static_cast<cocos2d::EventListenerPhysicsContactWithBodies*(cocos2d::EventListenerPhysicsContactWithBodies::*)()>(&cocos2d::EventListenerPhysicsContactWithBodies::clone));
-mt.set_function("new",static_cast<cocos2d::EventListenerPhysicsContactWithBodies*(*)(cocos2d::PhysicsBody*,cocos2d::PhysicsBody*)>(&cocos2d::EventListenerPhysicsContactWithBodies::create));
-}
-void RegisterLuaPhysicsEventListenerPhysicsContactWithShapesAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventListenerPhysicsContactWithShapes,cocos2d::EventListenerPhysicsContact,cocos2d::EventListenerCustom,cocos2d::EventListener,cocos2d::Ref,cocos2d::LuaObject>("cc","EventListenerPhysicsContactWithShapes");
-mt.set_function("hitTest",static_cast<bool(cocos2d::EventListenerPhysicsContactWithShapes::*)(cocos2d::PhysicsShape*,cocos2d::PhysicsShape*)>(&cocos2d::EventListenerPhysicsContactWithShapes::hitTest));
-mt.set_function("clone",static_cast<cocos2d::EventListenerPhysicsContactWithShapes*(cocos2d::EventListenerPhysicsContactWithShapes::*)()>(&cocos2d::EventListenerPhysicsContactWithShapes::clone));
-mt.set_function("new",static_cast<cocos2d::EventListenerPhysicsContactWithShapes*(*)(cocos2d::PhysicsShape*,cocos2d::PhysicsShape*)>(&cocos2d::EventListenerPhysicsContactWithShapes::create));
 }
 #endif
