@@ -7,7 +7,7 @@ import os, os.path
 import subprocess
 import re
 from contextlib import contextmanager
-
+import shutil
 
 def _check_ndk_root_env():
     ''' Checking the environment ANDROID_NDK, which will be used for building
@@ -200,7 +200,9 @@ def main():
 
         tolua_root = '%s/tools/tolua' % project_root
         output_dir = '%s/extensions/scripting/lua-bindings/auto' % project_root
-
+        if os.path.exists(output_dir):
+            shutil.rmtree(output_dir)
+        os.makedirs(output_dir)
         cmd_args = {
                     'cocos2dx.ini' : ('Core', 'CCRegisterLuaCoreAuto'), \
                     'cocos2dx_backend.ini' : ('Backend', 'CCRegisterLuaBackendAuto'), \

@@ -1870,8 +1870,6 @@ def main():
         outdir = opts.outdir
     else:
         outdir = os.path.join(workingdir, "gen")
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
 
     for t in targets:
         # Fix for hidden '.svn', '.cvs' and '.git' etc. folders - these must be ignored or otherwise they will be interpreted as a target.
