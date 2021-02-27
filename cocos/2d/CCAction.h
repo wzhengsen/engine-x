@@ -36,10 +36,6 @@ NS_CC_BEGIN
 
 class Node;
 
-enum {
-    kActionUpdate
-};
-
 /**
  * @addtogroup actions
  * @{

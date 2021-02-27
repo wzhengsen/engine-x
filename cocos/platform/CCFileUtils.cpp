@@ -49,7 +49,7 @@ NS_CC_BEGIN
 
 // Implement DictMaker
 
-typedef enum
+enum SAXState
 {
     SAX_NONE = 0,
     SAX_KEY,
@@ -58,14 +58,14 @@ typedef enum
     SAX_REAL,
     SAX_STRING,
     SAX_ARRAY
-}SAXState;
+};
 
-typedef enum
+enum SAXResult
 {
     SAX_RESULT_NONE = 0,
     SAX_RESULT_DICT,
     SAX_RESULT_ARRAY
-}SAXResult;
+};
 
 class DictMaker : public SAXDelegator
 {

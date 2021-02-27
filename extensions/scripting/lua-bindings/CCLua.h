@@ -51,37 +51,28 @@ namespace cocos2d {
             COCOSTUDIO
         };
 
-        /**
-        * @brief    A wrapper of sol::table::new_usertype.
-        *           The __newindex/__index/__pairs meta-method has been registered in advance.
-        * @param    U The class or struct which want to be register into lua table.
-        * @param    B All of base class of U,such as base's base,and so on.
-        * @param    tName The name of the table in which the type being registered is located.
-        * @param    name The class name in lua.
-        * @param    args Name and Function ...
-        * @return   You can use it to register your own member-method or meta-method.
-        */
-        template<typename U, typename ...B, typename... Args>
-        sol::usertype<U> NewUserType(const std::string_view& tName, const std::string_view& name, Args&& ...args) {
-            auto ut = get_or(tName, create_named_table(tName)).new_usertype<U>(name,
-                sol::no_constructor,
-                sol::base_classes, sol::bases<B...>(),
-                sol::meta_function::new_index, [](lua_State* L) {
+
+        template<typename U, typename ...B>
+        sol::usertype<U> NewUserType(const std::string& name, bool no_ctor = false) {
+            auto ut = no_ctor ?
+                new_usertype<U>(name, sol::no_constructor, sol::base_classes, sol::bases<B...>()) :
+                new_usertype<U>(name, sol::base_classes, sol::bases<B...>());
+            ut[sol::meta_function::new_index] = [](lua_State* L) {
                 if (LUA_TTABLE == lua_getuservalue(L, 1)) {//ud,k,v,table
                     lua_insert(L, -3);//ud,table,k,v
                     lua_rawset(L, -3);//ud,table
                 }
                 return 0;
-            },
-                sol::meta_function::index, [](lua_State* L) {
+            };
+            ut[sol::meta_function::index] = [](lua_State* L) {
                 if (LUA_TTABLE == lua_getuservalue(L, 1)) {//ud,k,table
                     lua_insert(L, -2);//ud,table,k
                     lua_rawget(L, -2);//ud,table,v
                     return 1;
                 }
                 return 0;
-            },
-                sol::meta_function::pairs, [](lua_State* L) {
+            };
+            ut[sol::meta_function::pairs] = [](lua_State* L) {
                 lua_pushcfunction(L, [](lua_State* l) {
                     if (LUA_TTABLE == lua_getuservalue(l, 1)) {//ud,k,table
                         lua_insert(l, -2);//ud,table,k
@@ -95,7 +86,7 @@ namespace cocos2d {
                 lua_pushvalue(L, 1);// userdata,function,userdata
                 lua_pushnil(L);// userdata,function,userdata,nil
                 return 3;
-            }, std::forward<Args>(args)...);
+            };
             // Provides a way to register a meta-method in lua.
             ut["mtor"] = [ut](const std::string& name, const sol::function& method) mutable {
                 auto iter = MethodToSolMap.find(name);
@@ -124,6 +115,27 @@ namespace cocos2d {
                 });
             };
             return ut;
+        }
+        /**
+        * @brief    A wrapper of sol::table::new_usertype.
+        *           The __newindex/__index/__pairs meta-method has been registered in advance.
+        * @param    U The class or struct which want to be register into lua table.
+        * @param    B All of base class of U,such as base's base,and so on.
+        * @param    tName The name of the table in which the type being registered is located,split by ".".
+        * @param    name The class name in lua.
+        * @param    no_ctor default = false,means no "new" method.
+        * @return   You can use it to register your own member-method or meta-method.
+        */
+        template<typename U, typename ...B>
+        sol::usertype<U> NewUserType(const std::string& tName, const std::string& name, bool no_ctor = false) {
+            sol::object tObj = (*this)[tName];
+            if (sol::type::table != tObj.get_type()) {
+                tObj = create_named_table(tName);
+            }
+            auto mt = NewUserType<U, B...>(name, no_ctor);
+            tObj.as<sol::table>()[name] = mt;
+            set(name, sol::nil);
+            return mt;
         }
 
         /**

@@ -42,10 +42,10 @@ struct CC_DLL ResourceData;
 namespace ui {
     class Scale9Sprite;
     
-typedef enum
+enum SliderEventType
 {
     SLIDER_PERCENTCHANGED
-}SliderEventType;
+};
 
 typedef void (Ref::*SEL_SlidPercentChangedEvent)(Ref*,SliderEventType);
 #define sliderpercentchangedselector(_SELECTOR) (SEL_SlidPercentChangedEvent)(&_SELECTOR)

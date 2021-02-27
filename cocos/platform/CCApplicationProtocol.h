@@ -183,14 +183,9 @@ public:
             closeCallback   取消回调
     */
     virtual void Notify(
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-        // 只有win32才需要提供icon
-        uint16_t icon,
-#endif
         const std::string& title,
         const std::string& content,
-        const std::function<void()>& clickCallback = nullptr,
-        const std::function<void()>& closeCallback = nullptr
+        const std::function<void()>& clickCallback = nullptr
     ) = 0;
 };
 

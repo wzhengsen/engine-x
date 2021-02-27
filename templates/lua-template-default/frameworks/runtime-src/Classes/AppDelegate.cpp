@@ -36,6 +36,10 @@
 #include "audio/include/AudioEngine.h"
 #include "scripting/lua-bindings/CCLua.h"
 
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+#include "proj.windows/resource.h"
+#endif
+
  // if you want to use the package manager to install more packages,
  // don't modify or remove this function
 static int register_all_packages() {
@@ -57,7 +61,11 @@ static int register_custom_function(lua_State* L) noexcept {
 USING_NS_CC;
 using namespace std;
 
-AppDelegate::AppDelegate() {}
+AppDelegate::AppDelegate() {
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+    _iconRes = IDI_ICON1;
+#endif
+}
 
 AppDelegate::~AppDelegate() {
     AudioEngine::end();

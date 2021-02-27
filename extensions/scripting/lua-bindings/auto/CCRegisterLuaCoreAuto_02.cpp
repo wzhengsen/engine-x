@@ -9,14 +9,20 @@
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
 void RegisterLuaCoreFiniteTimeActionAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","FiniteTimeAction");
+sol::table ns = lua["cc"];
+auto mt=lua.NewUserType<cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("FiniteTimeAction",true);
+ns["FiniteTimeAction"] = mt;
+lua["FiniteTimeAction"] = sol::nil;
 mt.set_function("getDuration",static_cast<float(cocos2d::FiniteTimeAction::*)()const>(&cocos2d::FiniteTimeAction::getDuration));
 mt.set_function("setDuration",static_cast<void(cocos2d::FiniteTimeAction::*)(float)>(&cocos2d::FiniteTimeAction::setDuration));
 mt.set_function("reverse",static_cast<cocos2d::FiniteTimeAction*(cocos2d::FiniteTimeAction::*)()const>(&cocos2d::FiniteTimeAction::reverse));
 mt.set_function("clone",static_cast<cocos2d::FiniteTimeAction*(cocos2d::FiniteTimeAction::*)()const>(&cocos2d::FiniteTimeAction::clone));
 }
 void RegisterLuaCoreSpeedAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Speed,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","Speed");
+sol::table ns = lua["cc"];
+auto mt=lua.NewUserType<cocos2d::Speed,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("Speed",false);
+ns["Speed"] = mt;
+lua["Speed"] = sol::nil;
 mt.set_function("getSpeed",static_cast<float(cocos2d::Speed::*)()const>(&cocos2d::Speed::getSpeed));
 mt.set_function("setSpeed",static_cast<void(cocos2d::Speed::*)(float)>(&cocos2d::Speed::setSpeed));
 mt.set_function("setInnerAction",static_cast<void(cocos2d::Speed::*)(cocos2d::ActionInterval*)>(&cocos2d::Speed::setInnerAction));
@@ -27,10 +33,13 @@ mt.set_function("startWithTarget",static_cast<void(cocos2d::Speed::*)(cocos2d::N
 mt.set_function("stop",static_cast<void(cocos2d::Speed::*)()>(&cocos2d::Speed::stop));
 mt.set_function("step",static_cast<void(cocos2d::Speed::*)(float)>(&cocos2d::Speed::step));
 mt.set_function("isDone",static_cast<bool(cocos2d::Speed::*)()const>(&cocos2d::Speed::isDone));
-mt.set_function("new",static_cast<cocos2d::Speed*(*)(cocos2d::ActionInterval*,float)>(&cocos2d::Speed::create));
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::Speed*(*)(cocos2d::ActionInterval*,float)>(&cocos2d::Speed::create));
 }
 void RegisterLuaCoreFollowAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Follow,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","Follow");
+sol::table ns = lua["cc"];
+auto mt=lua.NewUserType<cocos2d::Follow,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("Follow",false);
+ns["Follow"] = mt;
+lua["Follow"] = sol::nil;
 mt.set_function("isBoundarySet",static_cast<bool(cocos2d::Follow::*)()const>(&cocos2d::Follow::isBoundarySet));
 mt.set_function("setBoundarySet",static_cast<void(cocos2d::Follow::*)(bool)>(&cocos2d::Follow::setBoundarySet));
 mt.set_function("clone",static_cast<cocos2d::Follow*(cocos2d::Follow::*)()const>(&cocos2d::Follow::clone));
@@ -38,11 +47,32 @@ mt.set_function("reverse",static_cast<cocos2d::Follow*(cocos2d::Follow::*)()cons
 mt.set_function("step",static_cast<void(cocos2d::Follow::*)(float)>(&cocos2d::Follow::step));
 mt.set_function("isDone",static_cast<bool(cocos2d::Follow::*)()const>(&cocos2d::Follow::isDone));
 mt.set_function("stop",static_cast<void(cocos2d::Follow::*)()>(&cocos2d::Follow::stop));
-mt.set_function("new",sol::overload([](cocos2d::Follow* obj,cocos2d::Node* arg0){return obj->create(arg0);},[](cocos2d::Follow* obj,cocos2d::Node* arg0,const cocos2d::Rect& arg1){return obj->create(arg0,arg1);}));
+mt.set_function(sol::meta_function::construct,sol::overload([](cocos2d::Follow* obj,cocos2d::Node* arg0){return obj->create(arg0);},[](cocos2d::Follow* obj,cocos2d::Node* arg0,const cocos2d::Rect& arg1){return obj->create(arg0,arg1);}));
 mt.set_function("createWithOffset",sol::overload([](cocos2d::Follow* obj,cocos2d::Node* arg0,float arg1,float arg2){return obj->createWithOffset(arg0,arg1,arg2);},[](cocos2d::Follow* obj,cocos2d::Node* arg0,float arg1,float arg2,const cocos2d::Rect& arg3){return obj->createWithOffset(arg0,arg1,arg2,arg3);}));
 }
+void RegisterLuaCoreImageFormatAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["cc"];
+pTable = pTable["Image"];
+pTable.new_enum("Format"
+,"JPG",0
+,"PNG",1
+,"BMP",2
+,"WEBP",3
+,"PVR",4
+,"ETC1",5
+,"ETC2",6
+,"S3TC",7
+,"ATITC",8
+,"TGA",9
+,"ASTC",10
+,"RAW_DATA",11
+,"UNKNOWN",12
+);}
 void RegisterLuaCoreImageAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Image,cocos2d::Ref,cocos2d::LuaObject>("cc","Image");
+sol::table ns = lua["cc"];
+auto mt=lua.NewUserType<cocos2d::Image,cocos2d::Ref,cocos2d::LuaObject>("Image",true);
+ns["Image"] = mt;
+lua["Image"] = sol::nil;
 mt.set_function("initWithImageFile",static_cast<bool(cocos2d::Image::*)(const std::string&)>(&cocos2d::Image::initWithImageFile));
 mt.set_function("initWithImageData",sol::overload([](cocos2d::Image* obj,const uint8_t* arg0,ssize_t arg1){return obj->initWithImageData(arg0,arg1);},[](cocos2d::Image* obj,const uint8_t* arg0,ssize_t arg1,bool arg2){return obj->initWithImageData(arg0,arg1,arg2);}));
 mt.set_function("initWithRawData",sol::overload([](cocos2d::Image* obj,const uint8_t* arg0,ssize_t arg1,int arg2,int arg3,int arg4){return obj->initWithRawData(arg0,arg1,arg2,arg3,arg4);},[](cocos2d::Image* obj,const uint8_t* arg0,ssize_t arg1,int arg2,int arg3,int arg4,bool arg5){return obj->initWithRawData(arg0,arg1,arg2,arg3,arg4,arg5);}));
@@ -65,9 +95,13 @@ mt.set_function("reversePremultipliedAlpha",static_cast<void(cocos2d::Image::*)(
 mt.set_function("setPNGPremultipliedAlphaEnabled",static_cast<void(*)(bool)>(&cocos2d::Image::setPNGPremultipliedAlphaEnabled));
 mt.set_function("setCompressedImagesHavePMA",static_cast<void(*)(uint32_t,bool)>(&cocos2d::Image::setCompressedImagesHavePMA));
 mt.set_function("isCompressedImageHavePMA",static_cast<bool(*)(uint32_t)>(&cocos2d::Image::isCompressedImageHavePMA));
+RegisterLuaCoreImageFormatAuto(lua);
 }
 void RegisterLuaCorePolygonInfoAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::PolygonInfo>("cc","PolygonInfo");
+sol::table ns = lua["cc"];
+auto mt=lua.NewUserType<cocos2d::PolygonInfo>("PolygonInfo",true);
+ns["PolygonInfo"] = mt;
+lua["PolygonInfo"] = sol::nil;
 mt.set_function("operator=",static_cast<cocos2d::PolygonInfo&(cocos2d::PolygonInfo::*)(const cocos2d::PolygonInfo&)>(&cocos2d::PolygonInfo::operator=));
 mt.set_function("setQuad",static_cast<void(cocos2d::PolygonInfo::*)(cocos2d::V3F_C4B_T2F_Quad*)>(&cocos2d::PolygonInfo::setQuad));
 mt.set_function("setQuads",static_cast<void(cocos2d::PolygonInfo::*)(cocos2d::V3F_C4B_T2F_Quad*,int)>(&cocos2d::PolygonInfo::setQuads));
@@ -82,7 +116,10 @@ mt.set_function("setFilename",static_cast<void(cocos2d::PolygonInfo::*)(const st
 mt["triangles"] = &cocos2d::PolygonInfo::triangles;
 }
 void RegisterLuaCoreAutoPolygonAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::AutoPolygon>("cc","AutoPolygon");
+sol::table ns = lua["cc"];
+auto mt=lua.NewUserType<cocos2d::AutoPolygon>("AutoPolygon",true);
+ns["AutoPolygon"] = mt;
+lua["AutoPolygon"] = sol::nil;
 mt.set_function("trace",sol::overload([](cocos2d::AutoPolygon* obj,const cocos2d::Rect& arg0){return obj->trace(arg0);},[](cocos2d::AutoPolygon* obj,const cocos2d::Rect& arg0,float arg1){return obj->trace(arg0,arg1);}));
 mt.set_function("reduce",sol::overload([](cocos2d::AutoPolygon* obj,const std::vector<cocos2d::Vec2>& arg0,const cocos2d::Rect& arg1){return obj->reduce(arg0,arg1);},[](cocos2d::AutoPolygon* obj,const std::vector<cocos2d::Vec2>& arg0,const cocos2d::Rect& arg1,float arg2){return obj->reduce(arg0,arg1,arg2);}));
 mt.set_function("expand",static_cast<std::vector<cocos2d::Vec2>(cocos2d::AutoPolygon::*)(const std::vector<cocos2d::Vec2>&,const cocos2d::Rect&,float)>(&cocos2d::AutoPolygon::expand));
@@ -92,7 +129,10 @@ mt.set_function("generateTriangles",sol::overload([](cocos2d::AutoPolygon* obj){
 mt.set_function("generatePolygon",sol::overload([](cocos2d::AutoPolygon* obj,const std::string& arg0){return obj->generatePolygon(arg0);},[](cocos2d::AutoPolygon* obj,const std::string& arg0,const cocos2d::Rect& arg1){return obj->generatePolygon(arg0,arg1);},[](cocos2d::AutoPolygon* obj,const std::string& arg0,const cocos2d::Rect& arg1,float arg2){return obj->generatePolygon(arg0,arg1,arg2);},[](cocos2d::AutoPolygon* obj,const std::string& arg0,const cocos2d::Rect& arg1,float arg2,float arg3){return obj->generatePolygon(arg0,arg1,arg2,arg3);}));
 }
 void RegisterLuaCoreSpriteFrameAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::SpriteFrame,cocos2d::Ref,cocos2d::LuaObject>("cc","SpriteFrame");
+sol::table ns = lua["cc"];
+auto mt=lua.NewUserType<cocos2d::SpriteFrame,cocos2d::Ref,cocos2d::LuaObject>("SpriteFrame",false);
+ns["SpriteFrame"] = mt;
+lua["SpriteFrame"] = sol::nil;
 mt.set_function("getRectInPixels",static_cast<const cocos2d::Rect&(cocos2d::SpriteFrame::*)()const>(&cocos2d::SpriteFrame::getRectInPixels));
 mt.set_function("setRectInPixels",static_cast<void(cocos2d::SpriteFrame::*)(const cocos2d::Rect&)>(&cocos2d::SpriteFrame::setRectInPixels));
 mt.set_function("isRotated",static_cast<bool(cocos2d::SpriteFrame::*)()const>(&cocos2d::SpriteFrame::isRotated));
@@ -119,11 +159,14 @@ mt.set_function("clone",static_cast<cocos2d::SpriteFrame*(cocos2d::SpriteFrame::
 mt.set_function("setPolygonInfo",static_cast<void(cocos2d::SpriteFrame::*)(const cocos2d::PolygonInfo&)>(&cocos2d::SpriteFrame::setPolygonInfo));
 mt.set_function("getPolygonInfo",static_cast<const cocos2d::PolygonInfo&(cocos2d::SpriteFrame::*)()const>(&cocos2d::SpriteFrame::getPolygonInfo));
 mt.set_function("hasPolygonInfo",static_cast<bool(cocos2d::SpriteFrame::*)()const>(&cocos2d::SpriteFrame::hasPolygonInfo));
-mt.set_function("new",sol::overload(static_cast<cocos2d::SpriteFrame*(*)(const std::string&,const cocos2d::Rect&,bool,const cocos2d::Vec2&,const cocos2d::Size&)>(&cocos2d::SpriteFrame::create),static_cast<cocos2d::SpriteFrame*(*)(const std::string&,const cocos2d::Rect&)>(&cocos2d::SpriteFrame::create)));
+mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::SpriteFrame*(*)(const std::string&,const cocos2d::Rect&,bool,const cocos2d::Vec2&,const cocos2d::Size&)>(&cocos2d::SpriteFrame::create),static_cast<cocos2d::SpriteFrame*(*)(const std::string&,const cocos2d::Rect&)>(&cocos2d::SpriteFrame::create)));
 mt.set_function("createWithTexture",sol::overload(static_cast<cocos2d::SpriteFrame*(*)(cocos2d::Texture2D*,const cocos2d::Rect&,bool,const cocos2d::Vec2&,const cocos2d::Size&)>(&cocos2d::SpriteFrame::createWithTexture),static_cast<cocos2d::SpriteFrame*(*)(cocos2d::Texture2D*,const cocos2d::Rect&)>(&cocos2d::SpriteFrame::createWithTexture)));
 }
 void RegisterLuaCoreAnimationFrameAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::AnimationFrame,cocos2d::Ref,cocos2d::LuaObject>("cc","AnimationFrame");
+sol::table ns = lua["cc"];
+auto mt=lua.NewUserType<cocos2d::AnimationFrame,cocos2d::Ref,cocos2d::LuaObject>("AnimationFrame",false);
+ns["AnimationFrame"] = mt;
+lua["AnimationFrame"] = sol::nil;
 mt.set_function("getSpriteFrame",static_cast<cocos2d::SpriteFrame*(cocos2d::AnimationFrame::*)()const>(&cocos2d::AnimationFrame::getSpriteFrame));
 mt.set_function("setSpriteFrame",static_cast<void(cocos2d::AnimationFrame::*)(cocos2d::SpriteFrame*)>(&cocos2d::AnimationFrame::setSpriteFrame));
 mt.set_function("getDelayUnits",static_cast<float(cocos2d::AnimationFrame::*)()const>(&cocos2d::AnimationFrame::getDelayUnits));
@@ -131,10 +174,13 @@ mt.set_function("setDelayUnits",static_cast<void(cocos2d::AnimationFrame::*)(flo
 mt.set_function("getUserInfo",sol::overload(static_cast<cocos2d::ValueMap&(cocos2d::AnimationFrame::*)()>(&cocos2d::AnimationFrame::getUserInfo),static_cast<const cocos2d::ValueMap&(cocos2d::AnimationFrame::*)()const>(&cocos2d::AnimationFrame::getUserInfo)));
 mt.set_function("setUserInfo",static_cast<void(cocos2d::AnimationFrame::*)(const cocos2d::ValueMap&)>(&cocos2d::AnimationFrame::setUserInfo));
 mt.set_function("clone",static_cast<cocos2d::AnimationFrame*(cocos2d::AnimationFrame::*)()const>(&cocos2d::AnimationFrame::clone));
-mt.set_function("new",static_cast<cocos2d::AnimationFrame*(*)(cocos2d::SpriteFrame*,float,const cocos2d::ValueMap&)>(&cocos2d::AnimationFrame::create));
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::AnimationFrame*(*)(cocos2d::SpriteFrame*,float,const cocos2d::ValueMap&)>(&cocos2d::AnimationFrame::create));
 }
 void RegisterLuaCoreAnimationAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Animation,cocos2d::Ref,cocos2d::LuaObject>("cc","Animation");
+sol::table ns = lua["cc"];
+auto mt=lua.NewUserType<cocos2d::Animation,cocos2d::Ref,cocos2d::LuaObject>("Animation",false);
+ns["Animation"] = mt;
+lua["Animation"] = sol::nil;
 mt.set_function("addSpriteFrame",static_cast<void(cocos2d::Animation::*)(cocos2d::SpriteFrame*)>(&cocos2d::Animation::addSpriteFrame));
 mt.set_function("addSpriteFrameWithFile",static_cast<void(cocos2d::Animation::*)(const std::string&)>(&cocos2d::Animation::addSpriteFrameWithFile));
 mt.set_function("addSpriteFrameWithTexture",static_cast<void(cocos2d::Animation::*)(cocos2d::Texture2D*,const cocos2d::Rect&)>(&cocos2d::Animation::addSpriteFrameWithTexture));
@@ -149,11 +195,14 @@ mt.set_function("setRestoreOriginalFrame",static_cast<void(cocos2d::Animation::*
 mt.set_function("getLoops",static_cast<unsigned int(cocos2d::Animation::*)()const>(&cocos2d::Animation::getLoops));
 mt.set_function("setLoops",static_cast<void(cocos2d::Animation::*)(unsigned int)>(&cocos2d::Animation::setLoops));
 mt.set_function("clone",static_cast<cocos2d::Animation*(cocos2d::Animation::*)()const>(&cocos2d::Animation::clone));
-mt.set_function("new",sol::overload([](cocos2d::Animation* obj,const cocos2d::Vector<cocos2d::AnimationFrame *>& arg0,float arg1){return obj->create(arg0,arg1);},[](cocos2d::Animation* obj,const cocos2d::Vector<cocos2d::AnimationFrame *>& arg0,float arg1,unsigned int arg2){return obj->create(arg0,arg1,arg2);},static_cast<cocos2d::Animation*(*)()>(&cocos2d::Animation::create)));
+mt.set_function(sol::meta_function::construct,sol::overload([](cocos2d::Animation* obj,const cocos2d::Vector<cocos2d::AnimationFrame *>& arg0,float arg1){return obj->create(arg0,arg1);},[](cocos2d::Animation* obj,const cocos2d::Vector<cocos2d::AnimationFrame *>& arg0,float arg1,unsigned int arg2){return obj->create(arg0,arg1,arg2);},static_cast<cocos2d::Animation*(*)()>(&cocos2d::Animation::create)));
 mt.set_function("createWithSpriteFrames",sol::overload([](cocos2d::Animation* obj,const cocos2d::Vector<cocos2d::SpriteFrame *>& arg0){return obj->createWithSpriteFrames(arg0);},[](cocos2d::Animation* obj,const cocos2d::Vector<cocos2d::SpriteFrame *>& arg0,float arg1){return obj->createWithSpriteFrames(arg0,arg1);},[](cocos2d::Animation* obj,const cocos2d::Vector<cocos2d::SpriteFrame *>& arg0,float arg1,unsigned int arg2){return obj->createWithSpriteFrames(arg0,arg1,arg2);}));
 }
 void RegisterLuaCoreActionIntervalAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("cc","ActionInterval");
+sol::table ns = lua["cc"];
+auto mt=lua.NewUserType<cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("ActionInterval",true);
+ns["ActionInterval"] = mt;
+lua["ActionInterval"] = sol::nil;
 mt.set_function("getElapsed",static_cast<float(cocos2d::ActionInterval::*)()>(&cocos2d::ActionInterval::getElapsed));
 mt.set_function("setAmplitudeRate",static_cast<void(cocos2d::ActionInterval::*)(float)>(&cocos2d::ActionInterval::setAmplitudeRate));
 mt.set_function("getAmplitudeRate",static_cast<float(cocos2d::ActionInterval::*)()>(&cocos2d::ActionInterval::getAmplitudeRate));

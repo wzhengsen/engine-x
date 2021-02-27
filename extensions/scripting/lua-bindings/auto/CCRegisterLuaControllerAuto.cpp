@@ -5,6 +5,7 @@ extern void RegisterLuaControllerEventControllerAuto(cocos2d::Lua&);
 extern void RegisterLuaControllerEventListenerControllerAuto(cocos2d::Lua&);
 void RegisterLuaControllerAuto(cocos2d::Lua& lua){
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+lua["cc"]=lua.get_or("cc",lua.create_table());
 RegisterLuaControllerControllerAuto(lua);
 RegisterLuaControllerEventControllerAuto(lua);
 RegisterLuaControllerEventListenerControllerAuto(lua);

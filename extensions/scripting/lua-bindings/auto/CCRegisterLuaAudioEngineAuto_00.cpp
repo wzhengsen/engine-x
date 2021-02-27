@@ -1,13 +1,28 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaAudioEngineAuto.hpp"
 #include "audio/include/AudioEngine.h"
 void RegisterLuaAudioEngineAudioProfileAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::AudioProfile>("cc","AudioProfile");
+sol::table ns = lua["cc"];
+auto mt=lua.NewUserType<cocos2d::AudioProfile>("AudioProfile",true);
+ns["AudioProfile"] = mt;
+lua["AudioProfile"] = sol::nil;
 mt["name"] = &cocos2d::AudioProfile::name;
 mt["maxInstances"] = &cocos2d::AudioProfile::maxInstances;
 mt["minDelay"] = &cocos2d::AudioProfile::minDelay;
 }
+void RegisterLuaAudioEngineAudioEngineAudioStateAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["cc"];
+pTable = pTable["AudioEngine"];
+pTable.new_enum("AudioState"
+,"ERROR",-1
+,"INITIALIZING",0
+,"PLAYING",1
+,"PAUSED",2
+);}
 void RegisterLuaAudioEngineAudioEngineAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::AudioEngine>("cc","AudioEngine");
+sol::table ns = lua["cc"];
+auto mt=lua.NewUserType<cocos2d::AudioEngine>("AudioEngine",true);
+ns["AudioEngine"] = mt;
+lua["AudioEngine"] = sol::nil;
 mt.set_function("lazyInit",static_cast<bool(*)()>(&cocos2d::AudioEngine::lazyInit));
 mt.set_function("endToLua",static_cast<void(*)()>(&cocos2d::AudioEngine::end));
 mt.set_function("getDefaultProfile",static_cast<cocos2d::AudioProfile*(*)()>(&cocos2d::AudioEngine::getDefaultProfile));
@@ -38,4 +53,5 @@ mt.set_function("preload",sol::overload(static_cast<void(*)(const std::string&,s
 mt.set_function("getPlayingAudioCount",static_cast<int(*)()>(&cocos2d::AudioEngine::getPlayingAudioCount));
 mt.set_function("setEnabled",static_cast<void(*)(bool)>(&cocos2d::AudioEngine::setEnabled));
 mt.set_function("isEnabled",static_cast<bool(*)()>(&cocos2d::AudioEngine::isEnabled));
+RegisterLuaAudioEngineAudioEngineAudioStateAuto(lua);
 }

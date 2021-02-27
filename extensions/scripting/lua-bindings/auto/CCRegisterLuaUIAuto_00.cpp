@@ -1,25 +1,83 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaUIAuto.hpp"
 #include "ui/CocosGUI.h"
+void RegisterLuaUILayoutParameterTypeAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["ccui"];
+pTable = pTable["LayoutParameter"];
+pTable.new_enum("Type"
+,"NONE",0
+,"LINEAR",1
+,"RELATIVE",2
+);}
 void RegisterLuaUILayoutParameterAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::LayoutParameter,cocos2d::Ref,cocos2d::LuaObject>("ccui","LayoutParameter");
+sol::table ns = lua["ccui"];
+auto mt=lua.NewUserType<cocos2d::ui::LayoutParameter,cocos2d::Ref,cocos2d::LuaObject>("LayoutParameter",false);
+ns["LayoutParameter"] = mt;
+lua["LayoutParameter"] = sol::nil;
 mt.set_function("setMargin",static_cast<void(cocos2d::ui::LayoutParameter::*)(const cocos2d::ui::Margin&)>(&cocos2d::ui::LayoutParameter::setMargin));
 mt.set_function("getMargin",static_cast<const cocos2d::ui::Margin&(cocos2d::ui::LayoutParameter::*)()const>(&cocos2d::ui::LayoutParameter::getMargin));
 mt.set_function("getLayoutType",static_cast<cocos2d::ui::LayoutParameter::Type(cocos2d::ui::LayoutParameter::*)()const>(&cocos2d::ui::LayoutParameter::getLayoutType));
 mt.set_function("clone",static_cast<cocos2d::ui::LayoutParameter*(cocos2d::ui::LayoutParameter::*)()>(&cocos2d::ui::LayoutParameter::clone));
 mt.set_function("createCloneInstance",static_cast<cocos2d::ui::LayoutParameter*(cocos2d::ui::LayoutParameter::*)()>(&cocos2d::ui::LayoutParameter::createCloneInstance));
 mt.set_function("copyProperties",static_cast<void(cocos2d::ui::LayoutParameter::*)(cocos2d::ui::LayoutParameter*)>(&cocos2d::ui::LayoutParameter::copyProperties));
-mt.set_function("new",static_cast<cocos2d::ui::LayoutParameter*(*)()>(&cocos2d::ui::LayoutParameter::create));
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::ui::LayoutParameter*(*)()>(&cocos2d::ui::LayoutParameter::create));
+RegisterLuaUILayoutParameterTypeAuto(lua);
 }
+void RegisterLuaUILinearLayoutParameterLinearGravityAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["ccui"];
+pTable = pTable["LinearLayoutParameter"];
+pTable.new_enum("LinearGravity"
+,"NONE",0
+,"LEFT",1
+,"TOP",2
+,"RIGHT",3
+,"BOTTOM",4
+,"CENTER_VERTICAL",5
+,"CENTER_HORIZONTAL",6
+);}
 void RegisterLuaUILinearLayoutParameterAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::LinearLayoutParameter,cocos2d::ui::LayoutParameter,cocos2d::Ref,cocos2d::LuaObject>("ccui","LinearLayoutParameter");
+sol::table ns = lua["ccui"];
+auto mt=lua.NewUserType<cocos2d::ui::LinearLayoutParameter,cocos2d::ui::LayoutParameter,cocos2d::Ref,cocos2d::LuaObject>("LinearLayoutParameter",false);
+ns["LinearLayoutParameter"] = mt;
+lua["LinearLayoutParameter"] = sol::nil;
 mt.set_function("setGravity",static_cast<void(cocos2d::ui::LinearLayoutParameter::*)(cocos2d::ui::LinearLayoutParameter::LinearGravity)>(&cocos2d::ui::LinearLayoutParameter::setGravity));
 mt.set_function("getGravity",static_cast<cocos2d::ui::LinearLayoutParameter::LinearGravity(cocos2d::ui::LinearLayoutParameter::*)()const>(&cocos2d::ui::LinearLayoutParameter::getGravity));
 mt.set_function("createCloneInstance",static_cast<cocos2d::ui::LayoutParameter*(cocos2d::ui::LinearLayoutParameter::*)()>(&cocos2d::ui::LinearLayoutParameter::createCloneInstance));
 mt.set_function("copyProperties",static_cast<void(cocos2d::ui::LinearLayoutParameter::*)(cocos2d::ui::LayoutParameter*)>(&cocos2d::ui::LinearLayoutParameter::copyProperties));
-mt.set_function("new",static_cast<cocos2d::ui::LinearLayoutParameter*(*)()>(&cocos2d::ui::LinearLayoutParameter::create));
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::ui::LinearLayoutParameter*(*)()>(&cocos2d::ui::LinearLayoutParameter::create));
+RegisterLuaUILinearLayoutParameterLinearGravityAuto(lua);
 }
+void RegisterLuaUIRelativeLayoutParameterRelativeAlignAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["ccui"];
+pTable = pTable["RelativeLayoutParameter"];
+pTable.new_enum("RelativeAlign"
+,"NONE",0
+,"PARENT_TOP_LEFT",1
+,"PARENT_TOP_CENTER_HORIZONTAL",2
+,"PARENT_TOP_RIGHT",3
+,"PARENT_LEFT_CENTER_VERTICAL",4
+,"CENTER_IN_PARENT",5
+,"PARENT_RIGHT_CENTER_VERTICAL",6
+,"PARENT_LEFT_BOTTOM",7
+,"PARENT_BOTTOM_CENTER_HORIZONTAL",8
+,"PARENT_RIGHT_BOTTOM",9
+,"LOCATION_ABOVE_LEFTALIGN",10
+,"LOCATION_ABOVE_CENTER",11
+,"LOCATION_ABOVE_RIGHTALIGN",12
+,"LOCATION_LEFT_OF_TOPALIGN",13
+,"LOCATION_LEFT_OF_CENTER",14
+,"LOCATION_LEFT_OF_BOTTOMALIGN",15
+,"LOCATION_RIGHT_OF_TOPALIGN",16
+,"LOCATION_RIGHT_OF_CENTER",17
+,"LOCATION_RIGHT_OF_BOTTOMALIGN",18
+,"LOCATION_BELOW_LEFTALIGN",19
+,"LOCATION_BELOW_CENTER",20
+,"LOCATION_BELOW_RIGHTALIGN",21
+);}
 void RegisterLuaUIRelativeLayoutParameterAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::RelativeLayoutParameter,cocos2d::ui::LayoutParameter,cocos2d::Ref,cocos2d::LuaObject>("ccui","RelativeLayoutParameter");
+sol::table ns = lua["ccui"];
+auto mt=lua.NewUserType<cocos2d::ui::RelativeLayoutParameter,cocos2d::ui::LayoutParameter,cocos2d::Ref,cocos2d::LuaObject>("RelativeLayoutParameter",false);
+ns["RelativeLayoutParameter"] = mt;
+lua["RelativeLayoutParameter"] = sol::nil;
 mt.set_function("setAlign",static_cast<void(cocos2d::ui::RelativeLayoutParameter::*)(cocos2d::ui::RelativeLayoutParameter::RelativeAlign)>(&cocos2d::ui::RelativeLayoutParameter::setAlign));
 mt.set_function("getAlign",static_cast<cocos2d::ui::RelativeLayoutParameter::RelativeAlign(cocos2d::ui::RelativeLayoutParameter::*)()const>(&cocos2d::ui::RelativeLayoutParameter::getAlign));
 mt.set_function("setRelativeToWidgetName",static_cast<void(cocos2d::ui::RelativeLayoutParameter::*)(const std::string&)>(&cocos2d::ui::RelativeLayoutParameter::setRelativeToWidgetName));
@@ -28,10 +86,61 @@ mt.set_function("setRelativeName",static_cast<void(cocos2d::ui::RelativeLayoutPa
 mt.set_function("getRelativeName",static_cast<const std::string&(cocos2d::ui::RelativeLayoutParameter::*)()const>(&cocos2d::ui::RelativeLayoutParameter::getRelativeName));
 mt.set_function("createCloneInstance",static_cast<cocos2d::ui::LayoutParameter*(cocos2d::ui::RelativeLayoutParameter::*)()>(&cocos2d::ui::RelativeLayoutParameter::createCloneInstance));
 mt.set_function("copyProperties",static_cast<void(cocos2d::ui::RelativeLayoutParameter::*)(cocos2d::ui::LayoutParameter*)>(&cocos2d::ui::RelativeLayoutParameter::copyProperties));
-mt.set_function("new",static_cast<cocos2d::ui::RelativeLayoutParameter*(*)()>(&cocos2d::ui::RelativeLayoutParameter::create));
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::ui::RelativeLayoutParameter*(*)()>(&cocos2d::ui::RelativeLayoutParameter::create));
+RegisterLuaUIRelativeLayoutParameterRelativeAlignAuto(lua);
 }
+void RegisterLuaUIWidgetFocusDirectionAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["ccui"];
+pTable = pTable["Widget"];
+pTable.new_enum("FocusDirection"
+,"LEFT",0
+,"RIGHT",1
+,"UP",2
+,"DOWN",3
+);}
+void RegisterLuaUIWidgetPositionTypeAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["ccui"];
+pTable = pTable["Widget"];
+pTable.new_enum("PositionType"
+,"ABSOLUTE",0
+,"PERCENT",1
+);}
+void RegisterLuaUIWidgetSizeTypeAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["ccui"];
+pTable = pTable["Widget"];
+pTable.new_enum("SizeType"
+,"ABSOLUTE",0
+,"PERCENT",1
+);}
+void RegisterLuaUIWidgetTouchEventTypeAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["ccui"];
+pTable = pTable["Widget"];
+pTable.new_enum("TouchEventType"
+,"BEGAN",0
+,"MOVED",1
+,"ENDED",2
+,"CANCELED",3
+);}
+void RegisterLuaUIWidgetTextureResTypeAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["ccui"];
+pTable = pTable["Widget"];
+pTable.new_enum("TextureResType"
+,"LOCAL",0
+,"PLIST",1
+);}
+void RegisterLuaUIWidgetBrightStyleAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["ccui"];
+pTable = pTable["Widget"];
+pTable.new_enum("BrightStyle"
+,"NONE",-1
+,"NORMAL",0
+,"HIGHLIGHT",1
+);}
 void RegisterLuaUIWidgetAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::ui::LayoutParameterProtocol>("ccui","Widget");
+sol::table ns = lua["ccui"];
+auto mt=lua.NewUserType<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::ui::LayoutParameterProtocol>("Widget",false);
+ns["Widget"] = mt;
+lua["Widget"] = sol::nil;
 mt.set_function("setEnabled",static_cast<void(cocos2d::ui::Widget::*)(bool)>(&cocos2d::ui::Widget::setEnabled));
 mt.set_function("isEnabled",static_cast<bool(cocos2d::ui::Widget::*)()const>(&cocos2d::ui::Widget::isEnabled));
 mt.set_function("setBright",static_cast<void(cocos2d::ui::Widget::*)(bool)>(&cocos2d::ui::Widget::setBright));
@@ -112,14 +221,48 @@ mt.set_function("setCallbackType",static_cast<void(cocos2d::ui::Widget::*)(const
 mt.set_function("getCallbackType",static_cast<const std::string&(cocos2d::ui::Widget::*)()const>(&cocos2d::ui::Widget::getCallbackType));
 mt.set_function("setLayoutComponentEnabled",static_cast<void(cocos2d::ui::Widget::*)(bool)>(&cocos2d::ui::Widget::setLayoutComponentEnabled));
 mt.set_function("isLayoutComponentEnabled",static_cast<bool(cocos2d::ui::Widget::*)()const>(&cocos2d::ui::Widget::isLayoutComponentEnabled));
-mt.set_function("new",static_cast<cocos2d::ui::Widget*(*)()>(&cocos2d::ui::Widget::create));
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::ui::Widget*(*)()>(&cocos2d::ui::Widget::create));
 mt.set_function("getCurrentFocusedWidget",static_cast<cocos2d::ui::Widget*(*)()>(&cocos2d::ui::Widget::getCurrentFocusedWidget));
 mt.set_function("enableDpadNavigation",static_cast<void(*)(bool)>(&cocos2d::ui::Widget::enableDpadNavigation));
 mt["onFocusChanged"] = &cocos2d::ui::Widget::onFocusChanged;
 mt["onNextFocusedWidget"] = &cocos2d::ui::Widget::onNextFocusedWidget;
+RegisterLuaUIWidgetFocusDirectionAuto(lua);
+RegisterLuaUIWidgetPositionTypeAuto(lua);
+RegisterLuaUIWidgetSizeTypeAuto(lua);
+RegisterLuaUIWidgetTouchEventTypeAuto(lua);
+RegisterLuaUIWidgetTextureResTypeAuto(lua);
+RegisterLuaUIWidgetBrightStyleAuto(lua);
 }
+void RegisterLuaUILayoutTypeAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["ccui"];
+pTable = pTable["Layout"];
+pTable.new_enum("Type"
+,"ABSOLUTE",0
+,"VERTICAL",1
+,"CENTER_VERTICAL",2
+,"HORIZONTAL",3
+,"RELATIVE",4
+);}
+void RegisterLuaUILayoutClippingTypeAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["ccui"];
+pTable = pTable["Layout"];
+pTable.new_enum("ClippingType"
+,"STENCIL",0
+,"SCISSOR",1
+);}
+void RegisterLuaUILayoutBackGroundColorTypeAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["ccui"];
+pTable = pTable["Layout"];
+pTable.new_enum("BackGroundColorType"
+,"NONE",0
+,"SOLID",1
+,"GRADIENT",2
+);}
 void RegisterLuaUILayoutAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::Layout,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::ui::LayoutParameterProtocol,cocos2d::ui::LayoutProtocol>("ccui","Layout");
+sol::table ns = lua["ccui"];
+auto mt=lua.NewUserType<cocos2d::ui::Layout,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::ui::LayoutParameterProtocol,cocos2d::ui::LayoutProtocol>("Layout",false);
+ns["Layout"] = mt;
+lua["Layout"] = sol::nil;
 mt.set_function("setBackGroundImage",sol::overload([](cocos2d::ui::Layout* obj,const std::string& arg0){return obj->setBackGroundImage(arg0);},[](cocos2d::ui::Layout* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->setBackGroundImage(arg0,arg1);}));
 mt.set_function("setBackGroundImageCapInsets",static_cast<void(cocos2d::ui::Layout::*)(const cocos2d::Rect&)>(&cocos2d::ui::Layout::setBackGroundImageCapInsets));
 mt.set_function("getBackGroundImageCapInsets",static_cast<const cocos2d::Rect&(cocos2d::ui::Layout::*)()const>(&cocos2d::ui::Layout::getBackGroundImageCapInsets));
@@ -166,11 +309,17 @@ mt.set_function("findNextFocusedWidget",static_cast<cocos2d::ui::Widget*(cocos2d
 mt.set_function("setCameraMask",sol::overload([](cocos2d::ui::Layout* obj,unsigned short arg0){return obj->setCameraMask(arg0);},[](cocos2d::ui::Layout* obj,unsigned short arg0,bool arg1){return obj->setCameraMask(arg0,arg1);}));
 mt.set_function("getRenderFile",static_cast<cocos2d::ResourceData(cocos2d::ui::Layout::*)()>(&cocos2d::ui::Layout::getRenderFile));
 mt.set_function("createInstance",static_cast<cocos2d::Ref*(*)()>(&cocos2d::ui::Layout::createInstance));
-mt.set_function("new",static_cast<cocos2d::ui::Layout*(*)()>(&cocos2d::ui::Layout::create));
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::ui::Layout*(*)()>(&cocos2d::ui::Layout::create));
 mt["onPassFocusToChild"] = &cocos2d::ui::Layout::onPassFocusToChild;
+RegisterLuaUILayoutTypeAuto(lua);
+RegisterLuaUILayoutClippingTypeAuto(lua);
+RegisterLuaUILayoutBackGroundColorTypeAuto(lua);
 }
 void RegisterLuaUIButtonAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::Button,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::ui::LayoutParameterProtocol>("ccui","Button");
+sol::table ns = lua["ccui"];
+auto mt=lua.NewUserType<cocos2d::ui::Button,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::ui::LayoutParameterProtocol>("Button",false);
+ns["Button"] = mt;
+lua["Button"] = sol::nil;
 mt.set_function("loadTextures",sol::overload([](cocos2d::ui::Button* obj,const std::string& arg0,const std::string& arg1){return obj->loadTextures(arg0,arg1);},[](cocos2d::ui::Button* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2){return obj->loadTextures(arg0,arg1,arg2);},[](cocos2d::ui::Button* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2,cocos2d::ui::Widget::TextureResType arg3){return obj->loadTextures(arg0,arg1,arg2,arg3);}));
 mt.set_function("loadTextureNormal",sol::overload([](cocos2d::ui::Button* obj,const std::string& arg0){return obj->loadTextureNormal(arg0);},[](cocos2d::ui::Button* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadTextureNormal(arg0,arg1);}));
 mt.set_function("loadTexturePressed",sol::overload([](cocos2d::ui::Button* obj,const std::string& arg0){return obj->loadTexturePressed(arg0);},[](cocos2d::ui::Button* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadTexturePressed(arg0,arg1);}));
@@ -213,10 +362,13 @@ mt.set_function("getNormalFile",static_cast<cocos2d::ResourceData(cocos2d::ui::B
 mt.set_function("getPressedFile",static_cast<cocos2d::ResourceData(cocos2d::ui::Button::*)()>(&cocos2d::ui::Button::getPressedFile));
 mt.set_function("getDisabledFile",static_cast<cocos2d::ResourceData(cocos2d::ui::Button::*)()>(&cocos2d::ui::Button::getDisabledFile));
 mt.set_function("createInstance",static_cast<cocos2d::Ref*(*)()>(&cocos2d::ui::Button::createInstance));
-mt.set_function("new",sol::overload([](cocos2d::ui::Button* obj,const std::string& arg0){return obj->create(arg0);},[](cocos2d::ui::Button* obj,const std::string& arg0,const std::string& arg1){return obj->create(arg0,arg1);},[](cocos2d::ui::Button* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2){return obj->create(arg0,arg1,arg2);},[](cocos2d::ui::Button* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2,cocos2d::ui::Widget::TextureResType arg3){return obj->create(arg0,arg1,arg2,arg3);},static_cast<cocos2d::ui::Button*(*)()>(&cocos2d::ui::Button::create)));
+mt.set_function(sol::meta_function::construct,sol::overload([](cocos2d::ui::Button* obj,const std::string& arg0){return obj->create(arg0);},[](cocos2d::ui::Button* obj,const std::string& arg0,const std::string& arg1){return obj->create(arg0,arg1);},[](cocos2d::ui::Button* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2){return obj->create(arg0,arg1,arg2);},[](cocos2d::ui::Button* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2,cocos2d::ui::Widget::TextureResType arg3){return obj->create(arg0,arg1,arg2,arg3);},static_cast<cocos2d::ui::Button*(*)()>(&cocos2d::ui::Button::create)));
 }
 void RegisterLuaUIAbstractCheckButtonAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::AbstractCheckButton,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::ui::LayoutParameterProtocol>("ccui","AbstractCheckButton");
+sol::table ns = lua["ccui"];
+auto mt=lua.NewUserType<cocos2d::ui::AbstractCheckButton,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::ui::LayoutParameterProtocol>("AbstractCheckButton",true);
+ns["AbstractCheckButton"] = mt;
+lua["AbstractCheckButton"] = sol::nil;
 mt.set_function("loadTextures",sol::overload([](cocos2d::ui::AbstractCheckButton* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2,const std::string& arg3,const std::string& arg4){return obj->loadTextures(arg0,arg1,arg2,arg3,arg4);},[](cocos2d::ui::AbstractCheckButton* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2,const std::string& arg3,const std::string& arg4,cocos2d::ui::Widget::TextureResType arg5){return obj->loadTextures(arg0,arg1,arg2,arg3,arg4,arg5);}));
 mt.set_function("loadTextureBackGround",sol::overload([](cocos2d::ui::AbstractCheckButton* obj,const std::string& arg0){return obj->loadTextureBackGround(arg0);},[](cocos2d::ui::AbstractCheckButton* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadTextureBackGround(arg0,arg1);}));
 mt.set_function("loadTextureBackGroundSelected",sol::overload([](cocos2d::ui::AbstractCheckButton* obj,const std::string& arg0){return obj->loadTextureBackGroundSelected(arg0);},[](cocos2d::ui::AbstractCheckButton* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadTextureBackGroundSelected(arg0,arg1);}));
@@ -240,23 +392,54 @@ mt.set_function("getBackDisabledFile",static_cast<cocos2d::ResourceData(cocos2d:
 mt.set_function("getCrossNormalFile",static_cast<cocos2d::ResourceData(cocos2d::ui::AbstractCheckButton::*)()>(&cocos2d::ui::AbstractCheckButton::getCrossNormalFile));
 mt.set_function("getCrossDisabledFile",static_cast<cocos2d::ResourceData(cocos2d::ui::AbstractCheckButton::*)()>(&cocos2d::ui::AbstractCheckButton::getCrossDisabledFile));
 }
+void RegisterLuaUICheckBoxEventTypeAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["ccui"];
+pTable = pTable["CheckBox"];
+pTable.new_enum("EventType"
+,"SELECTED",0
+,"UNSELECTED",1
+);}
 void RegisterLuaUICheckBoxAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::CheckBox,cocos2d::ui::AbstractCheckButton,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::ui::LayoutParameterProtocol>("ccui","CheckBox");
+sol::table ns = lua["ccui"];
+auto mt=lua.NewUserType<cocos2d::ui::CheckBox,cocos2d::ui::AbstractCheckButton,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::ui::LayoutParameterProtocol>("CheckBox",false);
+ns["CheckBox"] = mt;
+lua["CheckBox"] = sol::nil;
 mt.set_function("addEventListener",static_cast<void(cocos2d::ui::CheckBox::*)(const std::function<void (cocos2d::Ref *, cocos2d::ui::CheckBox::EventType)>&)>(&cocos2d::ui::CheckBox::addEventListener));
 mt.set_function("getDescription",static_cast<std::string(cocos2d::ui::CheckBox::*)()const>(&cocos2d::ui::CheckBox::getDescription));
 mt.set_function("onTouchEnded",static_cast<void(cocos2d::ui::CheckBox::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::ui::CheckBox::onTouchEnded));
 mt.set_function("createInstance",static_cast<cocos2d::Ref*(*)()>(&cocos2d::ui::CheckBox::createInstance));
-mt.set_function("new",sol::overload([](cocos2d::ui::CheckBox* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2,const std::string& arg3,const std::string& arg4){return obj->create(arg0,arg1,arg2,arg3,arg4);},[](cocos2d::ui::CheckBox* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2,const std::string& arg3,const std::string& arg4,cocos2d::ui::Widget::TextureResType arg5){return obj->create(arg0,arg1,arg2,arg3,arg4,arg5);},static_cast<cocos2d::ui::CheckBox*(*)()>(&cocos2d::ui::CheckBox::create),[](cocos2d::ui::CheckBox* obj,const std::string& arg0,const std::string& arg1){return obj->create(arg0,arg1);},[](cocos2d::ui::CheckBox* obj,const std::string& arg0,const std::string& arg1,cocos2d::ui::Widget::TextureResType arg2){return obj->create(arg0,arg1,arg2);}));
+mt.set_function(sol::meta_function::construct,sol::overload([](cocos2d::ui::CheckBox* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2,const std::string& arg3,const std::string& arg4){return obj->create(arg0,arg1,arg2,arg3,arg4);},[](cocos2d::ui::CheckBox* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2,const std::string& arg3,const std::string& arg4,cocos2d::ui::Widget::TextureResType arg5){return obj->create(arg0,arg1,arg2,arg3,arg4,arg5);},static_cast<cocos2d::ui::CheckBox*(*)()>(&cocos2d::ui::CheckBox::create),[](cocos2d::ui::CheckBox* obj,const std::string& arg0,const std::string& arg1){return obj->create(arg0,arg1);},[](cocos2d::ui::CheckBox* obj,const std::string& arg0,const std::string& arg1,cocos2d::ui::Widget::TextureResType arg2){return obj->create(arg0,arg1,arg2);}));
+RegisterLuaUICheckBoxEventTypeAuto(lua);
 }
+void RegisterLuaUIRadioButtonEventTypeAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["ccui"];
+pTable = pTable["RadioButton"];
+pTable.new_enum("EventType"
+,"SELECTED",0
+,"UNSELECTED",1
+);}
 void RegisterLuaUIRadioButtonAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::RadioButton,cocos2d::ui::AbstractCheckButton,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::ui::LayoutParameterProtocol>("ccui","RadioButton");
+sol::table ns = lua["ccui"];
+auto mt=lua.NewUserType<cocos2d::ui::RadioButton,cocos2d::ui::AbstractCheckButton,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::ui::LayoutParameterProtocol>("RadioButton",false);
+ns["RadioButton"] = mt;
+lua["RadioButton"] = sol::nil;
 mt.set_function("addEventListener",static_cast<void(cocos2d::ui::RadioButton::*)(const std::function<void (cocos2d::ui::RadioButton *, cocos2d::ui::RadioButton::EventType)>&)>(&cocos2d::ui::RadioButton::addEventListener));
 mt.set_function("getDescription",static_cast<std::string(cocos2d::ui::RadioButton::*)()const>(&cocos2d::ui::RadioButton::getDescription));
 mt.set_function("createInstance",static_cast<cocos2d::Ref*(*)()>(&cocos2d::ui::RadioButton::createInstance));
-mt.set_function("new",sol::overload([](cocos2d::ui::RadioButton* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2,const std::string& arg3,const std::string& arg4){return obj->create(arg0,arg1,arg2,arg3,arg4);},[](cocos2d::ui::RadioButton* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2,const std::string& arg3,const std::string& arg4,cocos2d::ui::Widget::TextureResType arg5){return obj->create(arg0,arg1,arg2,arg3,arg4,arg5);},static_cast<cocos2d::ui::RadioButton*(*)()>(&cocos2d::ui::RadioButton::create),[](cocos2d::ui::RadioButton* obj,const std::string& arg0,const std::string& arg1){return obj->create(arg0,arg1);},[](cocos2d::ui::RadioButton* obj,const std::string& arg0,const std::string& arg1,cocos2d::ui::Widget::TextureResType arg2){return obj->create(arg0,arg1,arg2);}));
+mt.set_function(sol::meta_function::construct,sol::overload([](cocos2d::ui::RadioButton* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2,const std::string& arg3,const std::string& arg4){return obj->create(arg0,arg1,arg2,arg3,arg4);},[](cocos2d::ui::RadioButton* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2,const std::string& arg3,const std::string& arg4,cocos2d::ui::Widget::TextureResType arg5){return obj->create(arg0,arg1,arg2,arg3,arg4,arg5);},static_cast<cocos2d::ui::RadioButton*(*)()>(&cocos2d::ui::RadioButton::create),[](cocos2d::ui::RadioButton* obj,const std::string& arg0,const std::string& arg1){return obj->create(arg0,arg1);},[](cocos2d::ui::RadioButton* obj,const std::string& arg0,const std::string& arg1,cocos2d::ui::Widget::TextureResType arg2){return obj->create(arg0,arg1,arg2);}));
+RegisterLuaUIRadioButtonEventTypeAuto(lua);
 }
+void RegisterLuaUIRadioButtonGroupEventTypeAuto(cocos2d::Lua& lua) {
+sol::table pTable = lua["ccui"];
+pTable = pTable["RadioButtonGroup"];
+pTable.new_enum("EventType"
+,"SELECT_CHANGED",0
+);}
 void RegisterLuaUIRadioButtonGroupAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::RadioButtonGroup,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::ui::LayoutParameterProtocol>("ccui","RadioButtonGroup");
+sol::table ns = lua["ccui"];
+auto mt=lua.NewUserType<cocos2d::ui::RadioButtonGroup,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::ui::LayoutParameterProtocol>("RadioButtonGroup",false);
+ns["RadioButtonGroup"] = mt;
+lua["RadioButtonGroup"] = sol::nil;
 mt.set_function("addEventListener",static_cast<void(cocos2d::ui::RadioButtonGroup::*)(const std::function<void (cocos2d::ui::RadioButton *, int, cocos2d::ui::RadioButtonGroup::EventType)>&)>(&cocos2d::ui::RadioButtonGroup::addEventListener));
 mt.set_function("getSelectedButtonIndex",static_cast<int(cocos2d::ui::RadioButtonGroup::*)()const>(&cocos2d::ui::RadioButtonGroup::getSelectedButtonIndex));
 mt.set_function("setSelectedButton",sol::overload(static_cast<void(cocos2d::ui::RadioButtonGroup::*)(cocos2d::ui::RadioButton*)>(&cocos2d::ui::RadioButtonGroup::setSelectedButton),static_cast<void(cocos2d::ui::RadioButtonGroup::*)(int)>(&cocos2d::ui::RadioButtonGroup::setSelectedButton)));
@@ -269,5 +452,6 @@ mt.set_function("getRadioButtonByIndex",static_cast<cocos2d::ui::RadioButton*(co
 mt.set_function("setAllowedNoSelection",static_cast<void(cocos2d::ui::RadioButtonGroup::*)(bool)>(&cocos2d::ui::RadioButtonGroup::setAllowedNoSelection));
 mt.set_function("isAllowedNoSelection",static_cast<bool(cocos2d::ui::RadioButtonGroup::*)()const>(&cocos2d::ui::RadioButtonGroup::isAllowedNoSelection));
 mt.set_function("getDescription",static_cast<std::string(cocos2d::ui::RadioButtonGroup::*)()const>(&cocos2d::ui::RadioButtonGroup::getDescription));
-mt.set_function("new",static_cast<cocos2d::ui::RadioButtonGroup*(*)()>(&cocos2d::ui::RadioButtonGroup::create));
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::ui::RadioButtonGroup*(*)()>(&cocos2d::ui::RadioButtonGroup::create));
+RegisterLuaUIRadioButtonGroupEventTypeAuto(lua);
 }

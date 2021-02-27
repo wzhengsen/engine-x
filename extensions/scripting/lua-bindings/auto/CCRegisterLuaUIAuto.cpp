@@ -39,6 +39,7 @@ extern void RegisterLuaUITabHeaderAuto(cocos2d::Lua&);
 extern void RegisterLuaUITabControlAuto(cocos2d::Lua&);
 extern void RegisterLuaUIQrCodeAuto(cocos2d::Lua&);
 void RegisterLuaUIAuto(cocos2d::Lua& lua){
+lua["ccui"]=lua.get_or("ccui",lua.create_table());
 RegisterLuaUILayoutParameterAuto(lua);
 RegisterLuaUILinearLayoutParameterAuto(lua);
 RegisterLuaUIRelativeLayoutParameterAuto(lua);

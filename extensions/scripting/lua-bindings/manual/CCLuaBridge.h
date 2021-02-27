@@ -42,7 +42,7 @@ using namespace std;
 
 NS_CC_BEGIN
 /** LuaBridge Error enum, with inline docs. */
-typedef enum {
+enum LuaBridgeError {
     kLuaBridgeErrorOk                   = 0,  /** &lt; value 0 */
     kLuaBridgeErrorInvalidParameters    = -1, /** &lt; value -1 */
     kLuaBridgeErrorClassNotFound        = -2, /** &lt; value -2 */
@@ -50,7 +50,7 @@ typedef enum {
     kLuaBridgeErrorExceptionOccurred    = -4, /** &lt; value -4 */
     kLuaBridgeErrorMethodSignature      = -5, /** &lt; value -5 */
     kLuaBridgeErrorJavaVMError          = -6, /** &lt; value -6 */
-} LuaBridgeError;
+};
 
 #define LUA_BRIDGE_REGISTRY_FUNCTION    "lua_bridge_function_id"        // table[function] = id
 

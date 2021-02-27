@@ -69,14 +69,6 @@ namespace backend{
  * @{
  */
 
-enum {
-    kNodeOnEnter,
-    kNodeOnExit,
-    kNodeOnEnterTransitionDidFinish,
-    kNodeOnExitTransitionDidStart,
-    kNodeOnCleanup
-};
-
 class EventListener;
 
 /** @class Node

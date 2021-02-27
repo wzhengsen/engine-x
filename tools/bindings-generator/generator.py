@@ -978,50 +978,53 @@ class NativeOverloadedFunction(object):
         if not is_override:
             gen.impl_file.write(str(tpl))
 
-        # if current_class != None and not is_ctor:
-        #     if gen.script_type == "lua":
-        #         apidoc_function_overload_script = Template(file=os.path.join(gen.target,
-        #                                                 "templates",
-        #                                                 "apidoc_function_overload.script"),
-        #                               searchList=[current_class, self])
-        #         current_class.doc_func_file.write(str(apidoc_function_overload_script))
-        #     else:
-        #         if gen.script_type == "spidermonkey":
-        #             apidoc_function_overload_script = Template(file=os.path.join(gen.target,
-        #                                                 "templates",
-        #                                                 "apidoc_function_overload.script"),
-        #                               searchList=[current_class, self])
-        #             gen.doc_file.write(str(apidoc_function_overload_script))
-
-
-class NativeClass(object):
+class NativeObject(object):
     def __init__(self, cursor, generator):
-        # the cursor to the implementation
         self.cursor = cursor
-        self.class_name = cursor.displayname
-        self.is_ref_class = self.class_name == "Ref"
-        self.namespaced_class_name = self.class_name
-        self.parents = []
+        self.generator = generator
+        self.classFileIndex = 0
         self.fields = []
+        self.parents = []
+
+        #原始名。
+        self.class_name = cursor.displayname
+
+        #重命名后的名字。
+        rename_name = generator.get_class_or_rename_class(self.class_name)
+        if generator.remove_prefix:
+            self.rename_class_name = re.sub('^' + generator.remove_prefix, '', rename_name)
+        else:
+            self.rename_class_name = rename_name
+
+        #带有命名空间的类型名（原始名）。
+        self.namespaced_class_name = get_namespaced_name(cursor)
+
+        # 注册名列表（可能简化命名空间）。
+        nsName = ""
+        for ns in generator.cpp_ns:
+            if self.namespaced_class_name.startswith(ns):
+                nsName = self.namespaced_class_name.replace(ns,generator.target_ns)
+                break
+        self.regNameList = nsName.split("::")
+        for i in range(len(self.regNameList)-1,-1,-1):
+            if not self.regNameList[i]:
+                self.regNameList.pop(i)
+
+class NativeClass(NativeObject):
+    def __init__(self, cursor, generator):
+        NativeObject.__init__(self,cursor,generator)
+        self.is_ref_class = self.class_name == "Ref"
         self.public_fields = []
         self.methods = {}
         self.static_methods = {}
-        self.generator = generator
         self.is_abstract = self.class_name in generator.abstract_classes
         self._current_visibility = cindex.AccessSpecifier.PRIVATE
         #for generate lua api doc
         self.override_methods = {}
         self.has_constructor  = False
-        self.namespace_name   = ""
-        self.classFileIndex = 0
 
-        registration_name = generator.get_class_or_rename_class(self.class_name)
-        if generator.remove_prefix:
-            self.target_class_name = re.sub('^' + generator.remove_prefix, '', registration_name)
-        else:
-            self.target_class_name = registration_name
-        self.namespaced_class_name = get_namespaced_name(cursor)
-        self.namespace_name        = get_namespace_name(cursor)
+        self.interClasses = []
+        self.interEnums = []
         self.parse()
 
     @property
@@ -1186,7 +1189,10 @@ class NativeClass(object):
             m       欲生成代码的函数包装。
             cxx     用于保存拼接字符串的列表。
         """
-        cxx.append("mt.set_function(\"" + m["name"] +"\",")
+        if m["name"] != "new":
+            cxx.append("mt.set_function(\"" + m["name"] +"\",")
+        else:
+            cxx.append("mt.set_function(sol::meta_function::construct,")
         overload,implStr = self._SolRegisterFunctionImpl(m["impl"])
         if overload:
             cxx.append("sol::overload(")
@@ -1209,23 +1215,49 @@ class NativeClass(object):
         返回：
             str     该字符串用于写入文件。
         """
+        cxx = []
+        # 优先生成内部枚举。
+        for iEnum in self.interEnums:
+            cxx.append(iEnum.GenerateCode())
+        # 优先生成内部类。
+        for iClass in self.interClasses:
+            cxx.append(iClass.GenerateCode())
 
+        allMethods = self.methods_clean() + self.static_methods_clean()
+        noCtor = "true"
+        for m in allMethods:
+            # 检查是否有new
+            if m["name"] == "new":
+                noCtor = "false"
+                break
         # 类与基类名组合
         basesName = self.namespaced_class_name
         for p in self.parents:
             basesName += ","+ p.namespaced_class_name
-        cxx = [
-            "void RegisterLua{}{}Auto(cocos2d::Lua& lua)".format(self.generator.prefix,self.class_name),
-            "{\n",
-            "auto mt=lua.NewUserType<{basesName}>(\"{target_ns}\",\"{class_name}\");\n".format(class_name = self.class_name,basesName = basesName,target_ns = self.generator.target_ns)
-        ]
+        cxx.append("void RegisterLua{}{}Auto(cocos2d::Lua& lua)".format(self.generator.prefix,"".join(self.regNameList[1:])))
+        cxx.append("{\n")
+        cxx.append('sol::table ns = lua["{}"];\n'.format(self.generator.target_ns))
+        cxx.append('auto mt=lua.NewUserType<{basesName}>("{class_name}",{noCtor});\n'.format(class_name = self.rename_class_name,basesName = basesName,noCtor = noCtor))
+
+        for nsName in self.regNameList[1:-1]:
+            # 不迭代命名空间和自己的类名。
+            cxx.append('ns = ns["{}"];\n'.format(nsName))
+        cxx.append('ns["{}"] = mt;\n'.format(self.rename_class_name))
+        cxx.append('lua["{}"] = sol::nil;\n'.format(self.rename_class_name))
         # 方法生成。
-        for m in self.methods_clean() + self.static_methods_clean():
+        for m in allMethods:
             self._SolRegisterFunction(m,cxx)
         
         # public域生成。
         for public in self.PublicFieldsClean():
             self._SolRegisterPublicField(public,cxx)
+
+        # 调用注册内部枚举。
+        for iEnum in self.interEnums:
+            cxx.append('RegisterLua{}{}Auto(lua);\n'.format(self.generator.prefix,"".join(iEnum.regNameList[1:])))
+        # 调用注册内部类。
+        for iClass in self.interClasses:
+            cxx.append('RegisterLua{}{}Auto(lua);\n'.format(self.generator.prefix,"".join(iClass.regNameList[1:])))
         cxx.append("}\n")
         return "".join(cxx)
 
@@ -1281,7 +1313,19 @@ class NativeClass(object):
 
             if parent_name == "Ref":
                 self.is_ref_class = True
-
+        elif cursor.kind == cindex.CursorKind.ENUM_DECL:
+            if self._current_visibility == cindex.AccessSpecifier.PUBLIC:
+                if not cursor.displayname:
+                    signName = self.generator._GenerateEnumSign(cursor)
+                    self.interEnums.append(AnonymousNativeEnum(cursor, self.generator, signName))
+                else:
+                    self.interEnums.append(NativeEnum(cursor, self.generator))
+        # elif cursor.kind == cindex.CursorKind.CLASS_DECL\
+        # or cursor.kind == cindex.CursorKind.STRUCT_DECL:
+        # 如果希望注册结构体类型，打开此注释，并注释下一行。
+        elif cursor.kind == cindex.CursorKind.CLASS_DECL:
+            if self._current_visibility == cindex.AccessSpecifier.PUBLIC:
+                self.interClasses.append(NativeClass(cursor, self.generator))
         elif cursor.kind == cindex.CursorKind.FIELD_DECL:
             self.fields.append(NativeField(cursor))
             if self._current_visibility == cindex.AccessSpecifier.PUBLIC and NativeField.can_parse(cursor.type):
@@ -1353,29 +1397,9 @@ class NativeClass(object):
             # print >> sys.stderr, "unknown cursor: %s - %s" % (cursor.kind, cursor.displayname)
         return False
 
-class NativeEnum(object):
+class NativeEnum(NativeObject):
     def __init__(self, cursor, generator):
-        # the cursor to the implementation
-        self.cursor = cursor
-        self.class_name = cursor.displayname
-        self.namespaced_class_name = self.class_name
-        self.parents = []
-        self.fields = []
-        self.public_fields = []
-        self.methods = {}
-        self.static_methods = {}
-        self.generator = generator
-        self._current_visibility = cindex.AccessSpecifier.PRIVATE
-        self.classFileIndex = 0
-        #for generate lua api doc
-
-        registration_name = generator.get_class_or_rename_class(self.class_name)
-        if generator.remove_prefix:
-            self.target_class_name = re.sub('^' + generator.remove_prefix, '', registration_name)
-        else:
-            self.target_class_name = registration_name
-        self.namespaced_class_name = get_namespaced_name(cursor)
-        self.namespace_name        = get_namespace_name(cursor)
+        NativeObject.__init__(self,cursor,generator)
         self.parse()
 
     def parse(self):
@@ -1396,16 +1420,38 @@ class NativeEnum(object):
 
 
     def GenerateCode(self):
+        '''具名枚举的生成。
+        依照 命名空间::类型名::类型名...::枚举名{...}的方式生成。
         '''
-        actually generate the code. it uses the current target templates/rules in order to
-        generate the right code
-        '''
-        strList = ["void RegisterLua{}{}Auto(cocos2d::Lua& lua) {{\n".format(self.generator.prefix,self.class_name)]
-        strList.append('sol::table {0}=lua.get_or("{0}",lua.create_named_table("{0}"));\n'.format(self.generator.target_ns))
-        strList.append('{}.new_enum("{}"\n'.format(self.generator.target_ns,self.class_name))
+        strList = ["void RegisterLua{}{}Auto(cocos2d::Lua& lua) {{\n".format(self.generator.prefix,"".join(self.regNameList[1:]))]
+        strList.append('sol::table pTable = lua["{}"];\n'.format(self.generator.target_ns))
+        for pField in self.regNameList[1:-1]:
+            strList.append('pTable = pTable["{}"];\n'.format(pField))
+
+        strList.append('pTable.new_enum("{}"\n'.format(self.rename_class_name))
         for field in self.fields:
-            strList.append(',"{}",{}'.format(field["name"],field["value"]))
+            strList.append(',"{}",{}\n'.format(field["name"],field["value"]))
         strList.append(");}\n")
+        return ''.join(strList)
+
+class AnonymousNativeEnum(NativeEnum):
+    def __init__(self,cursor,generator,signName):
+        NativeEnum.__init__(self,cursor,generator)
+        self.class_name = signName
+        self.regNameList.append(self.class_name)
+        
+    def GenerateCode(self):
+        '''匿名枚举的生成。
+        依照 命名空间::类型名::类型名...最后的类型名{...}的方式生成。
+        '''
+        strList = ["void RegisterLua{}{}Auto(cocos2d::Lua& lua) {{\n".format(self.generator.prefix,"".join(self.regNameList[1:]))]
+        strList.append('sol::table pTable = lua["{}"];\n'.format(self.generator.target_ns))
+        for pField in self.regNameList[1:-1]:
+            strList.append('pTable = pTable["{}"];\n'.format(pField))
+
+        for field in self.fields:
+            strList.append('pTable["{}"] = {};\n'.format(field["name"],field["value"]))
+        strList.append("}\n")
         return ''.join(strList)
 
 class Generator(object):
@@ -1441,10 +1487,14 @@ class Generator(object):
         self.hpp_headers = opts['hpp_headers']
         self.cpp_headers = opts['cpp_headers']
         self.win32_clang_flags = opts['win32_clang_flags']
+        self.allowAnonymous = opts["allow_anonymous"] == "true"
         self.classFileIndex = 0
         self.codeTempStrList = []
         # 每10个类一个文件。
         self.groupCount = 10
+        # self.cpp_ns必须配置。
+        if not self.cpp_ns:
+            raise Exception("No cpp_ns.")
 
         extend_clang_args = []
 
@@ -1589,6 +1639,8 @@ class Generator(object):
         """
         returns True if the class is in the list of required classes and it's not in the skip list
         """
+        if self.allowAnonymous and not class_name:
+            return True
         for key in self.classes:
             if key == class_name:
                 return True
@@ -1661,13 +1713,14 @@ class Generator(object):
                     strList.append('#include "{}"\n'.format(header))
             
             for c in self.generated_classes.values():
-                strList.append("extern void RegisterLua{}{}Auto(cocos2d::Lua&);\n".format(self.prefix,c.class_name))
+                strList.append("extern void RegisterLua{}{}Auto(cocos2d::Lua&);\n".format(self.prefix,"".join(c.regNameList[1:])))
 
             strList.append("void RegisterLua{}Auto(cocos2d::Lua& lua){{\n".format(self.prefix))
             if self.macro_judgement:
                 strList.append(self.macro_judgement + "\n")
+            strList.append('lua["{0}"]=lua.get_or("{0}",lua.create_table());\n'.format(self.target_ns))
             for c in self.generated_classes.values():
-                strList.append("RegisterLua{}{}Auto(lua);\n".format(self.prefix,c.class_name))
+                strList.append("RegisterLua{}{}Auto(lua);\n".format(self.prefix,"".join(c.regNameList[1:])))
             if self.macro_judgement:
                 strList.append("#endif\n")
             strList.append("}")
@@ -1728,7 +1781,8 @@ class Generator(object):
 
         self.classFileIndex = self.classFileIndex + 1
 
-    def _pretty_print(self, diagnostics):
+    @staticmethod
+    def _pretty_print(diagnostics):
         errors=[]
         for idx, d in enumerate(diagnostics):
             if d.severity > 2:
@@ -1747,7 +1801,7 @@ class Generator(object):
             print("parsing header => %s" % header)
             tu = self.index.parse(header, self.clang_args)
             if len(tu.diagnostics) > 0:
-                self._pretty_print(tu.diagnostics)
+                Generator._pretty_print(tu.diagnostics)
                 is_fatal = False
                 for d in tu.diagnostics:
                     if d.severity >= cindex.Diagnostic.Error:
@@ -1758,6 +1812,24 @@ class Generator(object):
             self._deep_iterate(tu.cursor)
         self._GenerateCodeDoEnd()
 
+    def _GenerateEnumSign(self,cursor):
+        if cursor.displayname:
+            return cursor.displayname
+        nsName = get_namespaced_name(cursor)
+        for ns in self.cpp_ns:
+            if nsName.startswith(ns):
+                nsName = nsName.replace(ns,self.target_ns)
+                break
+        signList = [nsName]
+        signList.append("<")
+        for node in cursor.get_children():
+            if node.kind == cindex.CursorKind.ENUM_CONSTANT_DECL:
+                signList.append(node.displayname)
+                signList.append(";")
+        signList.append(">")
+        retStr = ''.join(signList)
+        return ("AnonymousEnum_"+str(hash(retStr))+"_").replace("-","_")
+
     def _deep_iterate(self, cursor, depth=0):
 
         def get_children_array_from_iter(iter):
@@ -1766,41 +1838,42 @@ class Generator(object):
                 children.append(child)
             return children
 
-        #print("cursor kind is %s"%cursor.kind)
-
-        # get the canonical type
+        # if cursor.kind == cindex.CursorKind.CLASS_DECL\
+        # or cursor.kind == cindex.CursorKind.STRUCT_DECL:
+        # 如果希望注册结构体类型，打开此注释，并注释下一行。
         if cursor.kind == cindex.CursorKind.CLASS_DECL:
             if cursor == cursor.type.get_declaration() and len(get_children_array_from_iter(cursor.get_children())) > 0:
-                is_targeted_class = True
-                if self.cpp_ns:
-                    is_targeted_class = False
-                    namespaced_name = get_namespaced_name(cursor)
-                    for ns in self.cpp_ns:
-                        if namespaced_name.startswith(ns):
-                            is_targeted_class = True
-                            break
+                is_targeted_class = False
+                namespaced_name = get_namespaced_name(cursor)
+                for ns in self.cpp_ns:
+                    if namespaced_name.startswith(ns):
+                        is_targeted_class = True
+                        break
 
                 if is_targeted_class and self.in_listed_classes(cursor.displayname):
                     if cursor.displayname not in self.generated_classes.keys():
                         nclass = NativeClass(cursor, self)
                         self._PushClassToGeneratedClasses(nclass)
-                    return
+            return
         elif cursor.kind == cindex.CursorKind.ENUM_DECL :
             if cursor == cursor.type.get_declaration() and len(get_children_array_from_iter(cursor.get_children())) > 0:
-                is_targeted_class = True
-                if self.cpp_ns:
-                    is_targeted_class = False
-                    namespaced_name = get_namespaced_name(cursor)
-                    for ns in self.cpp_ns:
-                        if namespaced_name.startswith(ns):
-                            is_targeted_class = True
-                            break
+                is_targeted_class = False
+                namespaced_name = get_namespaced_name(cursor)
+                for ns in self.cpp_ns:
+                    if namespaced_name.startswith(ns):
+                        is_targeted_class = True
+                        break
 
-                if is_targeted_class and  len(cursor.displayname) > 0 and self.in_listed_classes_exactly(cursor.displayname):
-                    if cursor.displayname not in self.generated_classes.keys():
-                        nclass = NativeEnum(cursor, self)
-                        self._PushClassToGeneratedClasses(nclass)
-                    return
+                if is_targeted_class:
+                    signName = self._GenerateEnumSign(cursor)
+                    if self.in_listed_classes_exactly(cursor.displayname):
+                        if signName not in self.generated_classes.keys():
+                            if not cursor.displayname:
+                                nclass = AnonymousNativeEnum(cursor, self, signName)
+                            else:
+                                nclass = NativeEnum(cursor, self)
+                            self._PushClassToGeneratedClasses(nclass)
+            return
 
         for node in cursor.get_children():
             # print("%s %s - %s" % (">" * depth, node.displayname, node.kind))
@@ -1905,7 +1978,8 @@ def main():
                 'macro_judgement': config.get(s, 'macro_judgement') if config.has_option(s, 'macro_judgement') else None,
                 'hpp_headers': config.get(s, 'hpp_headers', raw = False, vars = dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'hpp_headers') else None,
                 'cpp_headers': config.get(s, 'cpp_headers', raw = False, vars = dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'cpp_headers') else None,
-                'win32_clang_flags': (config.get(s, 'win32_clang_flags', raw = False, vars = dict(userconfig.items('DEFAULT'))) or "").split(" ") if config.has_option(s, 'win32_clang_flags') else None
+                'win32_clang_flags': (config.get(s, 'win32_clang_flags', raw = False, vars = dict(userconfig.items('DEFAULT'))) or "").split(" ") if config.has_option(s, 'win32_clang_flags') else None,
+                "allow_anonymous": config.get(s, 'allow_anonymous')
                 }
             generator = Generator(gen_opts)
             generator.GenerateCode()

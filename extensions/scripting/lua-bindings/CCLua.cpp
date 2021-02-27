@@ -20,6 +20,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+#include <iostream>
 #include "CCLua.h"
 #include "base/CCData.h"
 #include "platform/CCFileUtils.h"
@@ -44,7 +45,14 @@ using namespace cocos2d;
 namespace cocos2d {
     Lua* Lua::GetInstance() {
         if (!lua) {
-            lua = new Lua();
+            lua = new Lua([](lua_State* L) {
+                const char* message = lua_tostring(L, -1);
+                if (message) {
+                    std::cerr << "[Lua Error]: " << message << std::endl;
+                }
+                lua_settop(L, 0);
+                return 0;
+            });
             lua->Init();
         }
         return lua;

@@ -61,6 +61,7 @@ extern void RegisterLuaStudioBoneNodeAuto(cocos2d::Lua&);
 extern void RegisterLuaStudioSkeletonNodeAuto(cocos2d::Lua&);
 extern void RegisterLuaStudioComExtensionDataAuto(cocos2d::Lua&);
 void RegisterLuaStudioAuto(cocos2d::Lua& lua){
+lua["ccs"]=lua.get_or("ccs",lua.create_table());
 RegisterLuaStudioActionFrameAuto(lua);
 RegisterLuaStudioActionMoveFrameAuto(lua);
 RegisterLuaStudioActionScaleFrameAuto(lua);

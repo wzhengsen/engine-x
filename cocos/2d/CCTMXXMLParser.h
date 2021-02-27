@@ -77,13 +77,13 @@ enum {
     TMXPropertyAnimation
 };
 
-typedef enum TMXTileFlags_ {
+enum TMXTileFlags {
     kTMXTileHorizontalFlag  = 0x80000000,
     kTMXTileVerticalFlag    = 0x40000000,
     kTMXTileDiagonalFlag    = 0x20000000,
     kTMXFlipedAll           = (kTMXTileHorizontalFlag|kTMXTileVerticalFlag|kTMXTileDiagonalFlag),
     kTMXFlippedMask         = ~(kTMXFlipedAll)
-} TMXTileFlags;
+};
 
 
 /**

@@ -1,8 +1,63 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaCSLoaderAuto.hpp"
 #include "cocostudio/ActionTimeline/CSLoader.h"
 #include "cocostudio/ActionTimeline/CCActionTimeline.h"
+void RegisterLuaCSLoaderbackendProgramTypeAnonymousEnum_7806005948016515557_Auto(cocos2d::Lua& lua) {
+sol::table pTable = lua["cc"];
+pTable = pTable["backend"];
+pTable = pTable["ProgramType"];
+pTable["POSITION_COLOR_LENGTH_TEXTURE"] = 0;
+pTable["POSITION_COLOR_TEXTURE_AS_POINTSIZE"] = 1;
+pTable["POSITION_COLOR"] = 2;
+pTable["POSITION_UCOLOR"] = 3;
+pTable["POSITION_TEXTURE"] = 4;
+pTable["POSITION_TEXTURE_COLOR"] = 5;
+pTable["POSITION_TEXTURE_COLOR_ALPHA_TEST"] = 6;
+pTable["LABEL_NORMAL"] = 7;
+pTable["LABLE_OUTLINE"] = 8;
+pTable["LABLE_DISTANCEFIELD_GLOW"] = 9;
+pTable["LABEL_DISTANCE_NORMAL"] = 10;
+pTable["LAYER_RADIA_GRADIENT"] = 11;
+pTable["ETC1"] = 12;
+pTable["ETC1_GRAY"] = 13;
+pTable["GRAY_SCALE"] = 14;
+pTable["CAMERA_CLEAR"] = 15;
+pTable["TERRAIN_3D"] = 16;
+pTable["LINE_COLOR_3D"] = 17;
+pTable["SKYBOX_3D"] = 18;
+pTable["SKINPOSITION_TEXTURE_3D"] = 19;
+pTable["SKINPOSITION_NORMAL_TEXTURE_3D"] = 20;
+pTable["POSITION_NORMAL_TEXTURE_3D"] = 21;
+pTable["POSITION_NORMAL_3D"] = 22;
+pTable["POSITION_TEXTURE_3D"] = 23;
+pTable["POSITION_3D"] = 24;
+pTable["POSITION_BUMPEDNORMAL_TEXTURE_3D"] = 25;
+pTable["SKINPOSITION_BUMPEDNORMAL_TEXTURE_3D"] = 26;
+pTable["PARTICLE_TEXTURE_3D"] = 27;
+pTable["PARTICLE_COLOR_3D"] = 28;
+pTable["HSV"] = 29;
+pTable["HSV_ETC1"] = 30;
+pTable["BUILTIN_COUNT"] = 31;
+pTable["CUSTOM_PROGRAM"] = 4096;
+}
+void RegisterLuaCSLoaderTextureFormatEXTAnonymousEnum_5937429663859482893_Auto(cocos2d::Lua& lua) {
+sol::table pTable = lua["cc"];
+pTable = pTable["TextureFormatEXT"];
+pTable["NONE"] = 0;
+pTable["ETC1_ALPHA"] = 1;
+}
+void RegisterLuaCSLoaderTextureFlagAnonymousEnum__1308082027129547088_Auto(cocos2d::Lua& lua) {
+sol::table pTable = lua["cc"];
+pTable = pTable["TextureFlag"];
+pTable["NONE"] = 0;
+pTable["ANTIALIAS_ENABLED"] = 65536;
+pTable["PREMULTIPLIEDALPHA"] = 131072;
+pTable["RENDERTARGET"] = 262144;
+}
 void RegisterLuaCSLoaderCSLoaderAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::CSLoader>("cc","CSLoader");
+sol::table ns = lua["cc"];
+auto mt=lua.NewUserType<cocos2d::CSLoader>("CSLoader",true);
+ns["CSLoader"] = mt;
+lua["CSLoader"] = sol::nil;
 mt.set_function("init",static_cast<void(cocos2d::CSLoader::*)()>(&cocos2d::CSLoader::init));
 mt.set_function("createNodeFromJson",static_cast<cocos2d::Node*(cocos2d::CSLoader::*)(const std::string&)>(&cocos2d::CSLoader::createNodeFromJson));
 mt.set_function("loadNodeWithFile",static_cast<cocos2d::Node*(cocos2d::CSLoader::*)(const std::string&)>(&cocos2d::CSLoader::loadNodeWithFile));

@@ -1,7 +1,10 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaSpineAuto.hpp"
 #include "spine/spine-cocos2dx.h"
 void RegisterLuaSpineSkeletonRendererAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<spine::SkeletonRenderer,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::BlendProtocol>("sp","SkeletonRenderer");
+sol::table ns = lua["sp"];
+auto mt=lua.NewUserType<spine::SkeletonRenderer,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::BlendProtocol>("SkeletonRenderer",false);
+ns["SkeletonRenderer"] = mt;
+lua["SkeletonRenderer"] = sol::nil;
 mt.set_function("update",static_cast<void(spine::SkeletonRenderer::*)(float)>(&spine::SkeletonRenderer::update));
 mt.set_function("draw",static_cast<void(spine::SkeletonRenderer::*)(cocos2d::Renderer*,const cocos2d::Mat4&,uint32_t)>(&spine::SkeletonRenderer::draw));
 mt.set_function("getBoundingBox",static_cast<cocos2d::Rect(spine::SkeletonRenderer::*)()const>(&spine::SkeletonRenderer::getBoundingBox));
@@ -35,13 +38,16 @@ mt.set_function("setBlendFunc",static_cast<void(spine::SkeletonRenderer::*)(cons
 mt.set_function("getBlendFunc",static_cast<const cocos2d::BlendFunc&(spine::SkeletonRenderer::*)()const>(&spine::SkeletonRenderer::getBlendFunc));
 mt.set_function("setOpacityModifyRGB",static_cast<void(spine::SkeletonRenderer::*)(bool)>(&spine::SkeletonRenderer::setOpacityModifyRGB));
 mt.set_function("isOpacityModifyRGB",static_cast<bool(spine::SkeletonRenderer::*)()const>(&spine::SkeletonRenderer::isOpacityModifyRGB));
-mt.set_function("new",static_cast<spine::SkeletonRenderer*(*)()>(&spine::SkeletonRenderer::create));
+mt.set_function(sol::meta_function::construct,static_cast<spine::SkeletonRenderer*(*)()>(&spine::SkeletonRenderer::create));
 mt.set_function("createWithSkeleton",sol::overload([](spine::SkeletonRenderer* obj,spine::Skeleton* arg0){return obj->createWithSkeleton(arg0);},[](spine::SkeletonRenderer* obj,spine::Skeleton* arg0,bool arg1){return obj->createWithSkeleton(arg0,arg1);},[](spine::SkeletonRenderer* obj,spine::Skeleton* arg0,bool arg1,bool arg2){return obj->createWithSkeleton(arg0,arg1,arg2);}));
 mt.set_function("createWithData",sol::overload([](spine::SkeletonRenderer* obj,spine::SkeletonData* arg0){return obj->createWithData(arg0);},[](spine::SkeletonRenderer* obj,spine::SkeletonData* arg0,bool arg1){return obj->createWithData(arg0,arg1);}));
 mt.set_function("createWithFile",sol::overload([](spine::SkeletonRenderer* obj,const std::string& arg0,const std::string& arg1){return obj->createWithFile(arg0,arg1);},[](spine::SkeletonRenderer* obj,const std::string& arg0,const std::string& arg1,float arg2){return obj->createWithFile(arg0,arg1,arg2);},[](spine::SkeletonRenderer* obj,const std::string& arg0,spine::Atlas* arg1){return obj->createWithFile(arg0,arg1);},[](spine::SkeletonRenderer* obj,const std::string& arg0,spine::Atlas* arg1,float arg2){return obj->createWithFile(arg0,arg1,arg2);}));
 }
 void RegisterLuaSpineSkeletonAnimationAuto(cocos2d::Lua& lua){
-auto mt=lua.NewUserType<spine::SkeletonAnimation,spine::SkeletonRenderer,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::BlendProtocol>("sp","SkeletonAnimation");
+sol::table ns = lua["sp"];
+auto mt=lua.NewUserType<spine::SkeletonAnimation,spine::SkeletonRenderer,cocos2d::Node,cocos2d::Ref,cocos2d::LuaObject,cocos2d::BlendProtocol>("SkeletonAnimation",false);
+ns["SkeletonAnimation"] = mt;
+lua["SkeletonAnimation"] = sol::nil;
 mt.set_function("update",static_cast<void(spine::SkeletonAnimation::*)(float)>(&spine::SkeletonAnimation::update));
 mt.set_function("draw",static_cast<void(spine::SkeletonAnimation::*)(cocos2d::Renderer*,const cocos2d::Mat4&,uint32_t)>(&spine::SkeletonAnimation::draw));
 mt.set_function("setAnimationStateData",static_cast<void(spine::SkeletonAnimation::*)(spine::AnimationStateData*)>(&spine::SkeletonAnimation::setAnimationStateData));
@@ -73,7 +79,7 @@ mt.set_function("onAnimationStateEvent",static_cast<void(spine::SkeletonAnimatio
 mt.set_function("onTrackEntryEvent",static_cast<void(spine::SkeletonAnimation::*)(spine::TrackEntry*,spine::EventType,spine::Event*)>(&spine::SkeletonAnimation::onTrackEntryEvent));
 mt.set_function("getState",static_cast<spine::AnimationState*(spine::SkeletonAnimation::*)()const>(&spine::SkeletonAnimation::getState));
 mt.set_function("setUpdateOnlyIfVisible",static_cast<void(spine::SkeletonAnimation::*)(bool)>(&spine::SkeletonAnimation::setUpdateOnlyIfVisible));
-mt.set_function("new",static_cast<spine::SkeletonAnimation*(*)()>(&spine::SkeletonAnimation::create));
+mt.set_function(sol::meta_function::construct,static_cast<spine::SkeletonAnimation*(*)()>(&spine::SkeletonAnimation::create));
 mt.set_function("createWithData",sol::overload([](spine::SkeletonAnimation* obj,spine::SkeletonData* arg0){return obj->createWithData(arg0);},[](spine::SkeletonAnimation* obj,spine::SkeletonData* arg0,bool arg1){return obj->createWithData(arg0,arg1);}));
 mt.set_function("createWithJsonFile",sol::overload([](spine::SkeletonAnimation* obj,const std::string& arg0,const std::string& arg1){return obj->createWithJsonFile(arg0,arg1);},[](spine::SkeletonAnimation* obj,const std::string& arg0,const std::string& arg1,float arg2){return obj->createWithJsonFile(arg0,arg1,arg2);},[](spine::SkeletonAnimation* obj,const std::string& arg0,spine::Atlas* arg1){return obj->createWithJsonFile(arg0,arg1);},[](spine::SkeletonAnimation* obj,const std::string& arg0,spine::Atlas* arg1,float arg2){return obj->createWithJsonFile(arg0,arg1,arg2);}));
 mt.set_function("createWithBinaryFile",sol::overload([](spine::SkeletonAnimation* obj,const std::string& arg0,const std::string& arg1){return obj->createWithBinaryFile(arg0,arg1);},[](spine::SkeletonAnimation* obj,const std::string& arg0,const std::string& arg1,float arg2){return obj->createWithBinaryFile(arg0,arg1,arg2);},[](spine::SkeletonAnimation* obj,const std::string& arg0,spine::Atlas* arg1){return obj->createWithBinaryFile(arg0,arg1);},[](spine::SkeletonAnimation* obj,const std::string& arg0,spine::Atlas* arg1,float arg2){return obj->createWithBinaryFile(arg0,arg1,arg2);}));

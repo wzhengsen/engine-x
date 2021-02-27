@@ -144,7 +144,7 @@ add_subdirectory(${RUNTIME_SRC_ROOT}/Classes)
 
 target_link_libraries(${APP_NAME} luacocos2d)
 target_link_libraries(${APP_NAME} derivative)
-target_include_directories(${APP_NAME} PRIVATE ${RUNTIME_SRC_ROOT}/Classes)
+target_include_directories(${APP_NAME} PRIVATE ${RUNTIME_SRC_ROOT}/Classes ${RUNTIME_SRC_ROOT})
 
 # mark app resources, resource will be copy auto after mark
 setup_cocos_app_config(${APP_NAME})

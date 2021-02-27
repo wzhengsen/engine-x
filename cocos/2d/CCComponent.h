@@ -34,14 +34,6 @@ NS_CC_BEGIN
 
 class Node;
 
-enum {
-    kComponentOnEnter,
-    kComponentOnExit,
-    kComponentOnAdd,
-    kComponentOnRemove,
-    kComponentOnUpdate
-};
-
 class CC_DLL Component : public Ref
 {
 public:

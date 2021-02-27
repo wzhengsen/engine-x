@@ -121,8 +121,7 @@ public:
     void Notify(
         const std::string& title,
         const std::string& content,
-        const std::function<void()>& clickCallback = nullptr,
-        const std::function<void()>& closeCallback = nullptr
+        const std::function<void()>& clickCallback = nullptr
     ) override;
 
 protected:

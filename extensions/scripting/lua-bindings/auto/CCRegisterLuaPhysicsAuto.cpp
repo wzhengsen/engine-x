@@ -1,5 +1,8 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaPhysicsAuto.hpp"
 #include "cocos2d.h"
+extern void RegisterLuaPhysicsbackendProgramTypeAnonymousEnum_6250464624676953325_Auto(cocos2d::Lua&);
+extern void RegisterLuaPhysicsTextureFormatEXTAnonymousEnum__3908417537970589657_Auto(cocos2d::Lua&);
+extern void RegisterLuaPhysicsTextureFlagAnonymousEnum__4586642565233315709_Auto(cocos2d::Lua&);
 extern void RegisterLuaPhysicsPhysicsShapeAuto(cocos2d::Lua&);
 extern void RegisterLuaPhysicsPhysicsShapeCircleAuto(cocos2d::Lua&);
 extern void RegisterLuaPhysicsPhysicsShapePolygonAuto(cocos2d::Lua&);
@@ -9,6 +12,7 @@ extern void RegisterLuaPhysicsPhysicsShapeEdgePolygonAuto(cocos2d::Lua&);
 extern void RegisterLuaPhysicsPhysicsShapeEdgeBoxAuto(cocos2d::Lua&);
 extern void RegisterLuaPhysicsPhysicsShapeEdgeChainAuto(cocos2d::Lua&);
 extern void RegisterLuaPhysicsPhysicsBodyAuto(cocos2d::Lua&);
+extern void RegisterLuaPhysicsAnonymousEnum__5467860361024739651_Auto(cocos2d::Lua&);
 extern void RegisterLuaPhysicsPhysicsContactAuto(cocos2d::Lua&);
 extern void RegisterLuaPhysicsPhysicsContactPreSolveAuto(cocos2d::Lua&);
 extern void RegisterLuaPhysicsPhysicsContactPostSolveAuto(cocos2d::Lua&);
@@ -29,8 +33,17 @@ extern void RegisterLuaPhysicsPhysicsJointRatchetAuto(cocos2d::Lua&);
 extern void RegisterLuaPhysicsPhysicsJointGearAuto(cocos2d::Lua&);
 extern void RegisterLuaPhysicsPhysicsJointMotorAuto(cocos2d::Lua&);
 extern void RegisterLuaPhysicsPhysicsWorldAuto(cocos2d::Lua&);
+extern void RegisterLuaPhysicsAnonymousEnum__2064568361537248434_Auto(cocos2d::Lua&);
+extern void RegisterLuaPhysicsAnonymousEnum_6176446865269678677_Auto(cocos2d::Lua&);
+extern void RegisterLuaPhysicsAnonymousEnum_6071847353538284064_Auto(cocos2d::Lua&);
+extern void RegisterLuaPhysicsAnonymousEnum_3937662979076660802_Auto(cocos2d::Lua&);
+extern void RegisterLuaPhysicsAnonymousEnum__1091098247105229482_Auto(cocos2d::Lua&);
 void RegisterLuaPhysicsAuto(cocos2d::Lua& lua){
 #if CC_USE_PHYSICS
+lua["cc"]=lua.get_or("cc",lua.create_table());
+RegisterLuaPhysicsbackendProgramTypeAnonymousEnum_6250464624676953325_Auto(lua);
+RegisterLuaPhysicsTextureFormatEXTAnonymousEnum__3908417537970589657_Auto(lua);
+RegisterLuaPhysicsTextureFlagAnonymousEnum__4586642565233315709_Auto(lua);
 RegisterLuaPhysicsPhysicsShapeAuto(lua);
 RegisterLuaPhysicsPhysicsShapeCircleAuto(lua);
 RegisterLuaPhysicsPhysicsShapePolygonAuto(lua);
@@ -40,6 +53,7 @@ RegisterLuaPhysicsPhysicsShapeEdgePolygonAuto(lua);
 RegisterLuaPhysicsPhysicsShapeEdgeBoxAuto(lua);
 RegisterLuaPhysicsPhysicsShapeEdgeChainAuto(lua);
 RegisterLuaPhysicsPhysicsBodyAuto(lua);
+RegisterLuaPhysicsAnonymousEnum__5467860361024739651_Auto(lua);
 RegisterLuaPhysicsPhysicsContactAuto(lua);
 RegisterLuaPhysicsPhysicsContactPreSolveAuto(lua);
 RegisterLuaPhysicsPhysicsContactPostSolveAuto(lua);
@@ -60,5 +74,10 @@ RegisterLuaPhysicsPhysicsJointRatchetAuto(lua);
 RegisterLuaPhysicsPhysicsJointGearAuto(lua);
 RegisterLuaPhysicsPhysicsJointMotorAuto(lua);
 RegisterLuaPhysicsPhysicsWorldAuto(lua);
+RegisterLuaPhysicsAnonymousEnum__2064568361537248434_Auto(lua);
+RegisterLuaPhysicsAnonymousEnum_6176446865269678677_Auto(lua);
+RegisterLuaPhysicsAnonymousEnum_6071847353538284064_Auto(lua);
+RegisterLuaPhysicsAnonymousEnum_3937662979076660802_Auto(lua);
+RegisterLuaPhysicsAnonymousEnum__1091098247105229482_Auto(lua);
 #endif
 }
