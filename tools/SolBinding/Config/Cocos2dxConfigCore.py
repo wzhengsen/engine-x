@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+# Copyright (c) 2021 - wzhengsen
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+from .Cocos2dxConfig import Cocos2dxConfig
+
+
+class Cocos2dxConfigCore(Cocos2dxConfig):
+    def __init__(self):
+        super().__init__()
+        self.TargetNamespace = "cc"
+        # 尽量确保嵌套层数较深的命名空间位于列表前端。
+        self.CppNamespace |= ["cocos2d"]
+        self.Headers |= [
+            "{}/cocos/cocos2d.h".format(self.CocosRoot),
+            "{}/cocos/2d/CCProtectedNode.h".format(self.CocosRoot),
+            "{}/cocos/base/CCAsyncTaskPool.h".format(self.CocosRoot),
+            "{}/cocos/renderer/CCRenderer.h".format(self.CocosRoot),
+            "{}/cocos/renderer/CCPipelineDescriptor.h".format(self.CocosRoot),
+            "{}/cocos/renderer/backend/RenderTarget.h".format(self.CocosRoot),
+            "{}/cocos/navmesh/CCNavMesh.h".format(self.CocosRoot),
+            "{}/cocos/ui/UIWidget.h".format(self.CocosRoot),
+            "{}/cocos/base/TGAlib.h".format(self.CocosRoot)
+        ]
+        self.Classes |= [
+            "New.*", "Sprite.*", "Scene", "Node.*", "Director", "Layer.*", "Menu.*", "Touch", ".*Action.*", "Move.*",
+            "Rotate.*", "Blink.*", "Tint.*", "Sequence", "Repeat.*", "Fade.*", "Ease.*", "Scale.*", "Transition.*", "Spawn",
+            "Animat((?!3D).)*", "Flip.*", "Delay.*", "Skew.*", "Jump.*", "Place.*", "Show.*", "Progress.*", "PointArray", "ToggleVisibility.*",
+            "RemoveSelf", "Hide", "Particle.*", "Label.*", "Atlas.*", "TextureCache.*", "Texture2D", "Cardinal.*", "CatmullRom.*", "ParallaxNode",
+            "TileMap.*", ".*TMX.*", "CallFunc", "RenderTexture", "GridAction", "Grid3DAction", "GridBase$", ".+Grid", "Shaky3D", "Waves3D",
+            "FlipX3D", "FlipY3D", "Speed", "ActionManager", "Set", "Scheduler", "Timer", "Orbit.*", "Follow.*", "Bezier.*",
+            "CardinalSpline.*", "Camera.*", "DrawNode", "Liquid$", "Waves$", "ShuffleTiles$", "TurnOffTiles$", "Split.*", "Twirl$", "FileUtils$",
+            "GLProgram", "Application", "ClippingNode", "MotionStreak", "^Ref$", "UserDefault", "GLViewImpl", "GLView", "Image", "Event(?!.*(Physics).*).*",
+            "Component", "ProtectedNode", "Console", "GLProgramCache", "GLProgramState", "Device", "ClippingRectangleNode", ".*Light$", "AsyncTaskPool", "RenderState",
+            "Material", "Properties", "Technique", "Pass", "PolygonInfo", "AutoPolygon", "BoneNode", "SkeletonNode", "ComponentLua", "PipelineDescriptor",
+            "Renderer", "FastTMXLayer", "FastTMXTiledMap"
+        ]
+        self.Skip |= {
+            "TMXMapInfo": ["startElement", "endElement"],
+            "Application": ["^application.*", "Notify", "Dialog"],
+            "Device": ["getTextureDataForText"],
+            "RenderTexture": ["newImage"],
+            "ParallaxNode": ["(s|g)etParallaxArray"]
+        }
+        self.RenameFunctions |= {
+            "SpriteFrameCache": {"addSpriteFramesWithFile": "addSpriteFrames", "getSpriteFrameByName": "getSpriteFrame"},
+            "ProgressTimer": {"setReverseProgress": "setReverseDirection"},
+            "AnimationCache": {"addAnimationsWithFile": "addAnimations"},
+            "GLProgram": {"setUniformLocationWith1i": "setUniformLocationI32"},
+            "LabelAtlas": {"create": "_create"},
+            "Touch": {"getID": "getId"},
+            "FileUtils": {"loadFilenameLookupDictionaryFromFile": "loadFilenameLookup"},
+            "Director": {"end": "endToLua"},
+            "GLView": {"end": "endToLua"},
+            "RenderTexture": {"end": "endToLua"}
+        }
+        self.RenameClasses |= {
+            "ParticleSystemQuad": "ParticleSystem"
+        }
+        self.ClassesNoParents |= [
+            "Director",
+            "FileUtils",
+            "Application",
+            "Downloader"
+        ]

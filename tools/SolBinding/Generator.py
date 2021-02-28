@@ -1,32 +1,141 @@
 #!/usr/bin/env python3
-# generator.py
-# simple C++ generator, originally targetted for Spidermonkey bindings
+# Generator.py
+# simple C++ generator, originally targetted for sol bindings
 #
 # Copyright (c) 2011 - Zynga Inc.
+# Copyright (c) 2021 - wzhengsen
 
 from clang import cindex
 import sys
 import re
 import os
 import inspect
-import traceback
 import hashlib
-# try:
-#     import Cheetah
-# except ModuleNotFoundError:
-#     os.system("pip3 install -U Cheetah3 --ignore-installed --user Cheetah3")
-#     import Cheetah
-# finally:
-#     from Cheetah.Template import Template
 
 # import ptvsd
 # ptvsd.enable_attach(address = ('0.0.0.0', 5678))
 # ptvsd.wait_for_attach()
 
-if(sys.version_info.major >= 3):
-    import configparser as ConfigParser
-else:
-    import ConfigParser
+import configparser as ConfigParser
+
+class _EnvFileChecker:
+    """用于检查环境变量、文件等的简单封装。
+    """
+    @staticmethod
+    def Check_NDK_RootEnv():
+        """检查并返回 ANDROID_NDK 环境变量。
+
+        返回：
+            str|None        未指定ANDROID_NDK时，返回None，而不是抛出错误。
+        """
+
+        try:
+            ANDROID_NDK = os.environ['ANDROID_NDK']
+        except Exception:
+            return None
+
+        return ANDROID_NDK
+
+    @staticmethod
+    def FindFirstFileInDir(dir,fn):
+        """查找并返回目录下第一个匹配的指定文件。
+
+        参数：
+            dir             <str>目录路径。
+            fn              <str>指定文件。
+        返回：
+            str|None        未找到文件返回None，否则返回文件路径。
+        """
+        if os.path.isfile(dir):
+            if os.path.basename(dir) == fn:
+                return os.path.join(os.path.dirname(dir), fn)
+            else:
+                return None
+        elif os.path.isdir(dir):
+            for subdir in os.listdir(dir):
+                searchPath = _EnvFileChecker.FindFirstFileInDir(os.path.join(dir, subdir), fn)
+                if searchPath is not None:
+                    return searchPath
+            else:
+                return None
+
+    @staticmethod
+    def FindAllFilesMatch(dir, cond, all = None):
+        """查找并返回目录下所有符合条件的文件。
+
+        参数：
+            dir             <str>目录路径。
+            cond            <funtion|lambda>指定条件。
+            all             <list|None>可指定一个用于返回值的列表。
+        返回：
+            list            返回列表。
+        """
+        if all is None:
+            all = []
+        if cond(dir):
+            all.append(dir)
+        elif os.path.isdir(dir):
+            for subdir in os.listdir(dir):
+                _EnvFileChecker.FindAllFilesMatch(os.path.join(dir, subdir), cond, all)
+
+        return all
+
+    @staticmethod
+    def FindToolChainIncludePath():
+        """查找 gcc 的包含路径。
+        见实例:"$ANDROID_NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/include"
+
+        返回：
+            str|None             返回None表示未找到路径。
+        """
+        _NDK_Root = _EnvFileChecker.Check_NDK_RootEnv()
+        if _NDK_Root is None:
+            return None
+        foundFiles = _EnvFileChecker.FindAllFilesMatch(os.path.join(_NDK_Root, "toolchains"),lambda x : os.path.basename(x) == "stdarg.h" and "arm-linux-androideabi" in x)
+        if not foundFiles:
+            return None
+        else:
+            return "-I" + os.path.dirname(foundFiles[0])
+
+    @staticmethod
+    def Find_LLVM_IncludePath():
+        '''查找 llvm 的包含路径。
+        见实例:"$ANDROID_NDK/toolchains/llvm/prebuilt/windows-x86_64/lib64/clang/6.0.2/include"
+
+        返回：
+            str|None             返回None表示未找到路径。
+        '''
+        _NDK_Root = _EnvFileChecker.Check_NDK_RootEnv()
+        if _NDK_Root is None:
+            return None
+        versionFile = _EnvFileChecker.FindFirstFileInDir(_NDK_Root, "AndroidVersion.txt")
+        if versionFile is None:
+            return None
+        versionDir = os.path.dirname(versionFile)
+        includeDir = _EnvFileChecker.FindFirstFileInDir(versionDir, "stdarg.h")
+        if includeDir is None:
+            return None
+        llvmIncludePath = os.path.dirname(includeDir)
+        return "-I" + llvmIncludePath
+
+
+    @staticmethod
+    def DefaultIncludePath():
+        '''libclang, llvm & gcc 的默认包含路径。
+
+        返回：
+            str|None             返回None表示未找到路径。
+        '''
+        llvmInclude = _EnvFileChecker.Find_LLVM_IncludePath()
+        if llvmInclude is None:
+            return None
+        toolchainInclude = _EnvFileChecker.FindToolChainIncludePath()
+        if toolchainInclude is None:
+            return None
+        exactIncludes = llvmInclude + " " + toolchainInclude
+        return exactIncludes
+
+
 type_map = {
     cindex.TypeKind.VOID        : "void",
     cindex.TypeKind.BOOL        : "bool",
@@ -744,18 +853,6 @@ class NativeField(object):
             return False
         return True
 
-    def generate_code(self, current_class = None, generator = None):
-        gen = current_class.generator if current_class else generator
-        config = gen.config
-
-        if 'public_field' in config['definitions'].keys():
-            tpl = Template(config['definitions']['public_field'],
-                                    searchList=[current_class, self])
-            self.signature_name = str(tpl)
-        tpl = Template(file=os.path.join(gen.target, "templates", "public_field.c"),
-                       searchList=[current_class, self])
-        gen.impl_file.write(str(tpl))
-
 # return True if found default argument.
 def iterate_param_node(param_node, depth=1):
     for node in param_node.get_children():
@@ -783,7 +880,6 @@ class NativeFunction(object):
         self.not_supported = False
         self.is_override = False
         self.ret_type = NativeType.from_type(cursor.result_type)
-        self.comment = self.get_comment(cursor.raw_comment)
 
         # parse the arguments
         # if self.func_name == "spriteWithFile":
@@ -812,89 +908,6 @@ class NativeFunction(object):
 
         self.min_args = index if found_default_arg else len(self.arguments)
 
-    def get_comment(self, comment):
-        replaceStr = comment
-
-        if comment is None:
-            return ""
-
-        regular_replace_list = [
-            (r"(\s)*//!",""),
-            (r"(\s)*//",""),
-            (r"(\s)*/\*\*",""),
-            (r"(\s)*/\*",""),
-            (r"\*/",""),
-            ("\r\n", "\n"),
-            (r"\n(\s)*\*", "\n"),
-            (r"\n(\s)*@","\n"),
-            (r"\n(\s)*","\n"),
-            (r"\n(\s)*\n", "\n"),
-            (r"^(\s)*\n",""),
-            (r"\n(\s)*$", ""),
-            ("\n","<br>\n"),
-            ("\n", "\n-- ")
-        ]
-
-        for item in regular_replace_list:
-            replaceStr = re.sub(item[0], item[1], replaceStr)
-
-
-        return replaceStr
-
-    def generate_code(self, current_class=None, generator=None, is_override=False, is_ctor=False):
-        self.is_ctor = is_ctor
-        gen = current_class.generator if current_class else generator
-        config = gen.config
-        if not is_ctor:
-            tpl = Template(file=os.path.join(gen.target, "templates", "function.h"),
-                        searchList=[current_class, self])
-            if not is_override:
-                gen.head_file.write(str(tpl))
-        if self.static:
-            if 'sfunction' in config['definitions'].keys():
-                tpl = Template(config['definitions']['sfunction'],
-                                    searchList=[current_class, self])
-                self.signature_name = str(tpl)
-            tpl = Template(file=os.path.join(gen.target, "templates", "sfunction.c"),
-                            searchList=[current_class, self])
-        else:
-            if not self.is_constructor:
-                if 'ifunction' in config['definitions'].keys():
-                    tpl = Template(config['definitions']['ifunction'],
-                                    searchList=[current_class, self])
-                    self.signature_name = str(tpl)
-            else:
-                if 'constructor' in config['definitions'].keys():
-                    if not is_ctor:
-                        tpl = Template(config['definitions']['constructor'],
-                                    searchList=[current_class, self])
-                    else:
-                        tpl = Template(config['definitions']['ctor'],
-                                    searchList=[current_class, self])
-                    self.signature_name = str(tpl)
-            if self.is_constructor and gen.script_type == "spidermonkey" :
-                if not is_ctor:
-                    tpl = Template(file=os.path.join(gen.target, "templates", "constructor.c"),
-                                                searchList=[current_class, self])
-                else:
-                    tpl = Template(file=os.path.join(gen.target, "templates", "ctor.c"),
-                                                searchList=[current_class, self])
-            else :
-                tpl = Template(file=os.path.join(gen.target, "templates", "ifunction.c"),
-                                searchList=[current_class, self])
-        if not is_override:
-            gen.impl_file.write(str(tpl))
-        # if not is_ctor:
-        #     apidoc_function_script = Template(file=os.path.join(gen.target,
-        #                                                     "templates",
-        #                                                     "apidoc_function.script"),
-        #                                   searchList=[current_class, self])
-        #     if gen.script_type == "spidermonkey":
-        #         gen.doc_file.write(str(apidoc_function_script))
-        #     else:
-        #         if gen.script_type == "lua" and current_class != None :
-        #             current_class.doc_func_file.write(str(apidoc_function_script))
-
 
 class NativeOverloadedFunction(object):
     def __init__(self, func_array):
@@ -908,76 +921,9 @@ class NativeOverloadedFunction(object):
         for m in func_array:
             self.min_args = min(self.min_args, m.min_args)
 
-        self.comment = self.get_comment(func_array[0].cursor.raw_comment)
-
-    def get_comment(self, comment):
-        replaceStr = comment
-
-        if comment is None:
-            return ""
-
-        regular_replace_list = [
-            (r"(\s)*//!",""),
-            (r"(\s)*//",""),
-            (r"(\s)*/\*\*",""),
-            (r"(\s)*/\*",""),
-            (r"\*/",""),
-            ("\r\n", "\n"),
-            (r"\n(\s)*\*", "\n"),
-            (r"\n(\s)*@","\n"),
-            (r"\n(\s)*","\n"),
-            (r"\n(\s)*\n", "\n"),
-            (r"^(\s)*\n",""),
-            (r"\n(\s)*$", ""),
-            ("\n","<br>\n"),
-            ("\n", "\n-- ")
-        ]
-
-        for item in regular_replace_list:
-            replaceStr = re.sub(item[0], item[1], replaceStr)
-
-        return replaceStr
-
     def append(self, func):
         self.min_args = min(self.min_args, func.min_args)
         self.implementations.append(func)
-
-    def generate_code(self, current_class=None, is_override=False, is_ctor=False):
-        self.is_ctor = is_ctor
-        gen = current_class.generator
-        config = gen.config
-        static = self.implementations[0].static
-        if not is_ctor:
-            tpl = Template(file=os.path.join(gen.target, "templates", "function.h"),
-                        searchList=[current_class, self])
-            if not is_override:
-                gen.head_file.write(str(tpl))
-        if static:
-            if 'sfunction' in config['definitions'].keys():
-                tpl = Template(config['definitions']['sfunction'],
-                                searchList=[current_class, self])
-                self.signature_name = str(tpl)
-            tpl = Template(file=os.path.join(gen.target, "templates", "sfunction_overloaded.c"),
-                            searchList=[current_class, self])
-        else:
-            if not self.is_constructor:
-                if 'ifunction' in config['definitions'].keys():
-                    tpl = Template(config['definitions']['ifunction'],
-                                    searchList=[current_class, self])
-                    self.signature_name = str(tpl)
-            else:
-                if 'constructor' in config['definitions'].keys():
-                    if not is_ctor:
-                        tpl = Template(config['definitions']['constructor'],
-                                        searchList=[current_class, self])
-                    else:
-                        tpl = Template(config['definitions']['ctor'],
-                                        searchList=[current_class, self])
-                    self.signature_name = str(tpl)
-            tpl = Template(file=os.path.join(gen.target, "templates", "ifunction_overloaded.c"),
-                            searchList=[current_class, self])
-        if not is_override:
-            gen.impl_file.write(str(tpl))
 
 class NativeObject(object):
     def __init__(self, cursor, generator):
@@ -1882,9 +1828,51 @@ class Generator(object):
 
     @staticmethod
     def Generate(configArgs,toluaRoot,outputRoot):
-        userconfig = ConfigParser.ConfigParser()
-        userconfig.read('userconf.ini')
-        print('Using userconfig \n ', userconfig.items('DEFAULT'))
+        ndkRoot = _EnvFileChecker.Check_NDK_RootEnv()
+        if ndkRoot is None:
+            print("ANDROID_NDK 未指定。请在你的环境变量中指定 ANDROID_NDK。")
+            sys.exit(1)
+        # del the " in the path
+        ndkRoot = ndkRoot.replace("\"","")
+
+        curPlatform= '??'
+        for k,v in {"win32":"windows","darwin":"darwin","linux":"linux"}.items():
+            if k in sys.platform:
+                curPlatform = v
+                break
+        else:
+            print('你的系统不受支持！')
+            sys.exit(1)
+
+        findPaths = []
+        for subfix in ["toolchains/llvm/prebuilt","toolchains/arm-linux-androideabi-4.9/prebuilt"]:
+            invalidPath = []
+            for p in ["{}-{}".format(curPlatform, "x86_64"),curPlatform,"{}-{}".format(curPlatform, "x86")]:
+                findPath = os.path.abspath(os.path.join(ndkRoot,subfix,p))
+                if os.path.isdir(findPath):
+                    findPaths.append(findPath)
+                    break
+                invalidPath.append(findPath)
+            else:
+                print("工具链未找到！\n路径不可用：{}".format("\n".join(invalidPath)))
+                sys.exit(1)
+
+        llvmPath = findPaths[0]
+        gccToolchainPath = findPaths[1]
+
+
+        cocosRoot = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+        cxxGeneratorRoot = os.path.abspath(os.path.join(cocosRoot, 'tools/SolBinding'))
+        extraFlags = _EnvFileChecker.DefaultIncludePath()
+
+
+        # set proper environment variables
+        if "linux" == curPlatform or "darwin" == curPlatform:
+            os.environ["LD_LIBRARY_PATH"] = "{}/libclang".format(cxxGeneratorRoot)
+        elif curPlatform == 'windows':
+            pathEnv = os.environ['PATH']
+            os.environ['PATH'] = r"{0};{1}\libclang;{1}\tools\win32;".format(pathEnv,cxxGeneratorRoot)
+
         for key,value in configArgs.items():
             config = ConfigParser.ConfigParser()
             config.read(key)
@@ -1913,13 +1901,13 @@ class Generator(object):
             print( "\n.... .... Processing section", s, "\n")
             gen_opts = {
                 'prefix': config.get(s, 'prefix'),
-                'headers':    (config.get(s, 'headers'        , raw = False, vars = dict(userconfig.items('DEFAULT')))),
+                'headers': (config.get(s, 'headers')),
                 'replace_headers': config.get(s, 'replace_headers') if config.has_option(s, 'replace_headers') else None,
                 'classes': config.get(s, 'classes').split(' '),
                 'classes_need_extend': config.get(s, 'classes_need_extend').split(' ') if config.has_option(s, 'classes_need_extend') else [],
-                'clang_args': (config.get(s, 'extra_arguments', raw = False, vars = dict(userconfig.items('DEFAULT'))) or "").split(" "),
+                'clang_args': config.get(s, 'extra_arguments').split(" "),
                 'outdir': outdir,
-                'search_paths': os.path.abspath(os.path.join(userconfig.get('DEFAULT', 'cocosdir'), 'cocos')) + ";" + os.path.abspath(os.path.join(userconfig.get('DEFAULT', 'cocosdir'), 'extensions')),
+                'search_paths': os.path.abspath(os.path.join(cocosRoot, 'cocos')) + ";" + os.path.abspath(os.path.join(cocosRoot, 'extensions')),
                 'remove_prefix': config.get(s, 'remove_prefix'),
                 'target_ns': config.get(s, 'target_namespace'),
                 'cpp_ns': config.get(s, 'cpp_namespace').split(' ') if config.has_option(s, 'cpp_namespace') else None,
@@ -1933,123 +1921,10 @@ class Generator(object):
                 'out_file': value[1] or config.get(s, 'prefix'),
                 'script_control_cpp': config.get(s, 'script_control_cpp') if config.has_option(s, 'script_control_cpp') else 'no',
                 'macro_judgement': config.get(s, 'macro_judgement') if config.has_option(s, 'macro_judgement') else None,
-                'hpp_headers': config.get(s, 'hpp_headers', raw = False, vars = dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'hpp_headers') else None,
-                'cpp_headers': config.get(s, 'cpp_headers', raw = False, vars = dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'cpp_headers') else None,
-                'win32_clang_flags': (config.get(s, 'win32_clang_flags', raw = False, vars = dict(userconfig.items('DEFAULT'))) or "").split(" ") if config.has_option(s, 'win32_clang_flags') else None,
+                'hpp_headers': config.get(s, 'hpp_headers').split(' ') if config.has_option(s, 'hpp_headers') else None,
+                'cpp_headers': config.get(s, 'cpp_headers').split(' ') if config.has_option(s, 'cpp_headers') else None,
+                'win32_clang_flags': config.get(s, 'win32_clang_flags').split(" ") if config.has_option(s, 'win32_clang_flags') else None,
                 "allow_anonymous": config.get(s, 'allow_anonymous')
                 }
             generator = Generator(gen_opts)
             generator.GenerateCode()
-
-
-def main():
-
-    from optparse import OptionParser
-
-    parser = OptionParser("usage: %prog [options] {configfile}")
-    parser.add_option("-s", action="store", type="string", dest="section",
-                        help="sets a specific section to be converted")
-    parser.add_option("-t", action="store", type="string", dest="target",
-                        help="specifies the target vm. Will search for TARGET.yaml")
-    parser.add_option("-o", action="store", type="string", dest="outdir",
-                        help="specifies the output directory for generated C++ code")
-    parser.add_option("-n", action="store", type="string", dest="out_file",
-                        help="specifcies the name of the output file, defaults to the prefix in the .ini file")
-
-    (opts, args) = parser.parse_args()
-
-    # script directory
-    workingdir = os.path.dirname(inspect.getfile(inspect.currentframe()))
-
-    if len(args) == 0:
-        parser.error('invalid number of arguments')
-
-    userconfig = ConfigParser.ConfigParser()
-    userconfig.read('userconf.ini')
-    print('Using userconfig \n ', userconfig.items('DEFAULT'))
-
-    clang_lib_path = os.path.join(userconfig.get('DEFAULT', 'cxxgeneratordir'), 'libclang')
-    cindex.Config.set_library_path(clang_lib_path)
-
-    config = ConfigParser.ConfigParser()
-    config.read(args[0])
-
-    if (0 == len(config.sections())):
-        raise Exception("No sections defined in config file")
-
-    sections = []
-    if opts.section:
-        if (opts.section in config.sections()):
-            sections = []
-            sections.append(opts.section)
-        else:
-            raise Exception("Section not found in config file")
-    else:
-        print("processing all sections")
-        sections = config.sections()
-
-    # find available targets
-    targetdir = os.path.join(workingdir, "targets")
-    targets = []
-    if (os.path.isdir(targetdir)):
-        targets = [entry for entry in os.listdir(targetdir)
-                    if (os.path.isdir(os.path.join(targetdir, entry)))]
-    if 0 == len(targets):
-        raise Exception("No targets defined")
-
-    if opts.target:
-        if (opts.target in targets):
-            targets = []
-            targets.append(opts.target)
-
-    if opts.outdir:
-        outdir = opts.outdir
-    else:
-        outdir = os.path.join(workingdir, "gen")
-
-    for t in targets:
-        # Fix for hidden '.svn', '.cvs' and '.git' etc. folders - these must be ignored or otherwise they will be interpreted as a target.
-        if t == ".svn" or t == ".cvs" or t == ".git" or t == ".gitignore":
-            continue
-
-        print( "\n.... Generating bindings for target", t)
-        for s in sections:
-            print( "\n.... .... Processing section", s, "\n")
-            gen_opts = {
-                'prefix': config.get(s, 'prefix'),
-                'headers':    (config.get(s, 'headers'        , raw = False, vars = dict(userconfig.items('DEFAULT')))),
-                'replace_headers': config.get(s, 'replace_headers') if config.has_option(s, 'replace_headers') else None,
-                'classes': config.get(s, 'classes').split(' '),
-                'classes_need_extend': config.get(s, 'classes_need_extend').split(' ') if config.has_option(s, 'classes_need_extend') else [],
-                'clang_args': (config.get(s, 'extra_arguments', raw = False, vars = dict(userconfig.items('DEFAULT'))) or "").split(" "),
-                'target': os.path.join(workingdir, "targets", t),
-                'outdir': outdir,
-                'search_paths': os.path.abspath(os.path.join(userconfig.get('DEFAULT', 'cocosdir'), 'cocos')) + ";" + os.path.abspath(os.path.join(userconfig.get('DEFAULT', 'cocosdir'), 'extensions')),
-                'remove_prefix': config.get(s, 'remove_prefix'),
-                'target_ns': config.get(s, 'target_namespace'),
-                'cpp_ns': config.get(s, 'cpp_namespace').split(' ') if config.has_option(s, 'cpp_namespace') else None,
-                'classes_have_no_parents': config.get(s, 'classes_have_no_parents'),
-                'base_classes_to_skip': config.get(s, 'base_classes_to_skip'),
-                'abstract_classes': config.get(s, 'abstract_classes'),
-                'skip': config.get(s, 'skip'),
-                'field': config.get(s, 'field') if config.has_option(s, 'field') else None,
-                'rename_functions': config.get(s, 'rename_functions'),
-                'rename_classes': config.get(s, 'rename_classes'),
-                'out_file': opts.out_file or config.get(s, 'prefix'),
-                'script_control_cpp': config.get(s, 'script_control_cpp') if config.has_option(s, 'script_control_cpp') else 'no',
-                'script_type': t,
-                'macro_judgement': config.get(s, 'macro_judgement') if config.has_option(s, 'macro_judgement') else None,
-                'hpp_headers': config.get(s, 'hpp_headers', raw = False, vars = dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'hpp_headers') else None,
-                'cpp_headers': config.get(s, 'cpp_headers', raw = False, vars = dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'cpp_headers') else None,
-                'win32_clang_flags': (config.get(s, 'win32_clang_flags', raw = False, vars = dict(userconfig.items('DEFAULT'))) or "").split(" ") if config.has_option(s, 'win32_clang_flags') else None,
-                "allow_anonymous": config.get(s, 'allow_anonymous')
-                }
-            generator = Generator(gen_opts)
-            generator.GenerateCode()
-
-if __name__ == '__main__':
-    try:
-        main()
-    except Exception as e:
-        traceback.print_exc()
-        sys.exit(1)
