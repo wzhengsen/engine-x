@@ -128,12 +128,31 @@ namespace cocos2d {
         */
         template<typename U, typename ...B>
         sol::usertype<U> NewUserType(const std::string& tName, const std::string& name, bool no_ctor = false) {
-            sol::object tObj = (*this)[tName];
-            if (sol::type::table != tObj.get_type()) {
-                tObj = create_named_table(tName);
+            std::vector<std::string> vecNS = {};
+            do {
+                size_t pos = 0;
+                size_t begin = 0;
+                while (true) {
+                    pos = tName.find(".", pos);
+                    if (pos == std::string::npos) {
+                        vecNS.emplace_back(tName.substr(begin));
+                        break
+                    }
+                    vecNS.emplace_back(tName.substr(begin, pos - begin));
+                    begin = ++pos;
+                };
+            }
+            sol::table nsTable = (*this)["_G"];
+            for (const auto& ns : vecNs) {
+                sol::object nsObj = nsTable[ns];
+                if (!nsObj.vaild()) {
+                    nsTable = nsTable.create_named_table(ns);
+                    continue;
+                }
+                nsTable = nsObj.as<sol::table>();
             }
             auto mt = NewUserType<U, B...>(name, no_ctor);
-            tObj.as<sol::table>()[name] = mt;
+            nsTable[name] = mt;
             set(name, sol::nil);
             return mt;
         }

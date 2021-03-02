@@ -19,22 +19,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from .Cocos2dxConfig import Cocos2dxConfig
+from Generator.Cocos2dxGenerator import Cocos2dxGenerator
 
 
-class Cocos2dxConfigUI(Cocos2dxConfig):
+class Cocos2dxGenerator3D(Cocos2dxGenerator):
     def __init__(self):
         super().__init__()
-        self.TargetNamespace = "ccui"
+        self.TargetNamespace = "cc"
         # 尽量确保嵌套层数较深的命名空间位于列表前端。
-        self.CppNamespace |= ["cocos2d::ui"]
-        self.Headers |= [
-            "{}/cocos/ui/CocosGUI.h".format(self.CocosRoot)
+        self.CppNameSpace += ["cocos2d"]
+        self.Headers += [
+            "{}/cocos/cocos2d.h".format(self.CocosRoot),
+            "{}/cocos/3d/CCBundle3D.h".format(self.CocosRoot),
+            "{}/cocos/renderer/backend/Buffer.h".format(self.CocosRoot)
         ]
-        self.Classes |= [
-            "Helper", "Widget", "Layout", "Button", "CheckBox", "ImageView", "Text", "TextAtlas", "TextBMFont", "LoadingBar",
-            "Slider", "TextField", "ScrollView", "ListView", "PageView", "LayoutParameter", "LinearLayoutParameter", "RelativeLayoutParameter", "Rich.*", "HBox",
-            "VBox", "RelativeBox", "Scale9Sprite", "EditBox", "LayoutComponent", "AbstractCheckButton", "RadioButton", "RadioButtonGroup", "TabControl", "TabHeader",
-            "QrCode", "WebView", "VideoPlayer"
+        self.ExtraArgs += [
+            "-I{}/cocos/platform/android".format(self.CocosRoot),
+            "-I{}/external".format(self.CocosRoot)
         ]
-        self.ClassesNoParents = ["Helper"]
+        self.Classes += [
+            "Animate3D", "Sprite3D", "Animation3D", "Skeleton3D", "^Mesh$", "AttachNode", "BillBoard", "Sprite3DCache", "TextureCube", "Skybox",
+            "Terrain", "Bundle3D", "Sprite3DMaterial"
+        ]
+        self.Skip |= {
+            "Terrain": "getQuadTree"
+        }

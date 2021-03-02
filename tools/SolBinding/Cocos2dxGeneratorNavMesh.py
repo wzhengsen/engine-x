@@ -19,25 +19,30 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from .Cocos2dxConfig import Cocos2dxConfig
+from Generator.Cocos2dxGenerator import Cocos2dxGenerator
 
 
-class Cocos2dxConfigAudioEngine(Cocos2dxConfig):
+class Cocos2dxGeneratorNavMesh(Cocos2dxGenerator):
     def __init__(self):
         super().__init__()
         self.TargetNamespace = "cc"
         # 尽量确保嵌套层数较深的命名空间位于列表前端。
-        self.CppNamespace |= ["cocos2d"]
-        self.Headers |= [
-            "{}/cocos/audio/include/AudioEngine.h".format(self.CocosRoot)
+        self.CppNameSpace += ["cocos2d"]
+        self.MacroJudgement = "#if CC_USE_NAVMESH"
+        self.Win32ClangFlags += ["-U", "__SSE__"]
+        self.Headers += [
+            "{}/cocos/navmesh/CCNavMesh.h".format(self.CocosRoot)
         ]
-        self.Classes |= [
-            "AudioEngine", "AudioProfile"
+        self.ExtraArgs += [
+            "-I{}/cocos/platform/android".format(self.CocosRoot),
+            "-I{}/external".format(self.CocosRoot),
+            "-I{}/external/recast/Detour".format(self.CocosRoot),
+            "-I{}/external/recast/DetourCrowd".format(self.CocosRoot),
+            "-I{}/external/recast/DetourTileCache".format(self.CocosRoot),
+            "-I{}/external/recast/DebugUtils".format(self.CocosRoot),
+            "-I{}/external/recast/fastlz".format(self.CocosRoot),
+            "-I{}/external/recast/Recast".format(self.CocosRoot)
         ]
-        self.RenameFunctions |= {
-            "AudioEngine": {"end": "endToLua"}
-        }
-        self.ClassesNoParents |= [
-            "AudioEngine",
-            "AudioProfile"
+        self.Classes += [
+            "NavMesh", "NavMeshAgent", "NavMeshObstacle"
         ]

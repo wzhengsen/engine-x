@@ -19,20 +19,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from .Cocos2dxConfig import Cocos2dxConfig
+from Generator.Cocos2dxGenerator import Cocos2dxGenerator
 
 
-class Cocos2dxConfigStudio(Cocos2dxConfig):
+class Cocos2dxGeneratorStudio(Cocos2dxGenerator):
     def __init__(self):
         super().__init__()
         self.TargetNamespace = "ccs"
         # 尽量确保嵌套层数较深的命名空间位于列表前端。
-        self.CppNamespace |= ["cocostudio::timeline", "cocostudio"]
-        self.Headers |= [
+        self.CppNameSpace += ["cocostudio::timeline", "cocostudio"]
+        self.Headers += [
             "{}/extensions/cocostudio/CocoStudio.h".format(self.CocosRoot),
             "{}/extensions/cocostudio/CCComExtensionData.h".format(self.CocosRoot)
         ]
-        self.Classes |= [
+        self.ExtraArgs += [
+            "-I{}/cocos/platform/android".format(self.CocosRoot),
+            "-I{}/external".format(self.CocosRoot),
+            "-I{}/extensions/cocostudio".format(self.CocosRoot)
+        ]
+        self.Classes += [
             "Armature", "ArmatureAnimation", "Skin", "Bone", "ArmatureDataManager", "\w+Data$", "ActionManagerEx", "ComAudio", "ComController", "ComAttribute",
             "ComRender", "BatchNode", "SceneReader", "GUIReader", "ActionObject", "Tween", "DisplayManager", "NodeReader", "ActionTimeline.*", ".*Frame$",
             "Timeline", "ActionTimelineNode", "ComExtensionData", "BoneNode", "SkeletonNode"
@@ -47,7 +52,7 @@ class Cocos2dxConfigStudio(Cocos2dxConfig):
             "TextureData": ["contourDataList"],
             "MovementData": ["movBoneDataDic"]
         }
-        self.RenameFunctions = {
+        self.RenameMembers = {
             "ActionManagerEx": {
                 "shareManager": "getInstance",
                 "purgeActionManager": "destroyInstance"

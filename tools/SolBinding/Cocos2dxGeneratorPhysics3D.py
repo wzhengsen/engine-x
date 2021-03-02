@@ -19,18 +19,26 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from .Cocos2dxConfig import Cocos2dxConfig
+from Generator.Cocos2dxGenerator import Cocos2dxGenerator
 
 
-class Cocos2dxConfigSpine(Cocos2dxConfig):
+class Cocos2dxGeneratorPhysics3D(Cocos2dxGenerator):
     def __init__(self):
         super().__init__()
-        self.TargetNamespace = "sp"
+        self.TargetNamespace = "cc"
         # 尽量确保嵌套层数较深的命名空间位于列表前端。
-        self.CppNamespace |= ["spine"]
-        self.Headers |= [
-            "{}/extensions/spine/spine-cocos2dx.h".format(self.CocosRoot)
+        self.CppNameSpace += ["cocos2d"]
+        self.MacroJudgement = "#if CC_USE_3D_PHYSICS && CC_ENABLE_BULLET_INTEGRATION"
+        self.Win32ClangFlags += ["-U", "__SSE__"]
+        self.Headers += [
+            "{}/cocos/physics3d/CCPhysics3D.h".format(self.CocosRoot)
         ]
-        self.Classes |= [
-            "SkeletonRenderer", "SkeletonAnimation"
+        self.ExtraArgs += [
+            "-I{}/cocos/platform/android".format(self.CocosRoot),
+            "-I{}/external".format(self.CocosRoot),
+            "-I{}/external/bullet".format(self.CocosRoot)
+        ]
+        self.Classes += [
+            "Physics3DWorld", "Physics3DShape", "PhysicsSprite3D", "Physics3DObject", "Physics3DRigidBody", "Physics3DShapesk", "Physics3DComponent", "Physics3DConstraint", "Physics3DPointToPointConstraint", "Physics3DHingeConstraint",
+            "Physics3DSliderConstraint", "Physics3DConeTwistConstraint", "Physics3D6DofConstraint"
         ]

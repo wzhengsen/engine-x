@@ -19,23 +19,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from .Cocos2dxConfig import Cocos2dxConfig
+from Generator.Cocos2dxGenerator import Cocos2dxGenerator
 
 
-class Cocos2dxConfigExtension(Cocos2dxConfig):
+class Cocos2dxGeneratorUI(Cocos2dxGenerator):
     def __init__(self):
         super().__init__()
-        self.TargetNamespace = "cc"
+        self.TargetNamespace = "ccui"
         # 尽量确保嵌套层数较深的命名空间位于列表前端。
-        self.CppNamespace |= ["cocos2d::extension"]
-        self.Headers |= [
-            "{}/extensions/cocos-ext.h".format(self.CocosRoot),
-            "{}/extensions/Particle3D/PU/CCPUEmitter.h".format(self.CocosRoot),
-            "{}/extensions/Particle3D/PU/CCPUAffector.h".format(self.CocosRoot),
-            "{}/extensions/Particle3D/PU/CCPUObserver.h".format(self.CocosRoot),
-            "{}/extensions/Particle3D/CCParticle3DAffector.h".format(self.CocosRoot)
+        self.CppNameSpace += ["cocos2d::ui"]
+        self.Headers += [
+            "{}/cocos/ui/CocosGUI.h".format(self.CocosRoot)
         ]
-        self.Classes |= [
-            "Control.*", "ControlButton.*", "ScrollView$", "TableView$", "TableViewCell$", "AssetsManager", "AssetsManagerEx", "Manifest", "EventAssetsManagerEx", "EventListenerAssetsManagerEx",
-            "PUParticleSystem3D", "ParticleSystem3D", "ParticlePool"
+        self.ExtraArgs += [
+            "-I{}/cocos/platform/android".format(self.CocosRoot)
         ]
+        self.Classes += [
+            "Helper", "Widget", "Layout", "Button", "CheckBox", "ImageView", "Text", "TextAtlas", "TextBMFont", "LoadingBar",
+            "Slider", "TextField", "ScrollView", "ListView", "PageView", "LayoutParameter", "LinearLayoutParameter", "RelativeLayoutParameter", "Rich.*", "HBox",
+            "VBox", "RelativeBox", "Scale9Sprite", "EditBox", "LayoutComponent", "AbstractCheckButton", "RadioButton", "RadioButtonGroup", "TabControl", "TabHeader",
+            "QrCode", "WebView", "VideoPlayer"
+        ]
+        self.ClassesNoParents = ["Helper"]

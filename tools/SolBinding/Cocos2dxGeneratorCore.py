@@ -19,16 +19,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from .Cocos2dxConfig import Cocos2dxConfig
+from Generator.Cocos2dxGenerator import Cocos2dxGenerator
 
 
-class Cocos2dxConfigCore(Cocos2dxConfig):
+class Cocos2dxGeneratorCore(Cocos2dxGenerator):
     def __init__(self):
         super().__init__()
         self.TargetNamespace = "cc"
         # 尽量确保嵌套层数较深的命名空间位于列表前端。
-        self.CppNamespace |= ["cocos2d"]
-        self.Headers |= [
+        self.CppNameSpace += ["cocos2d"]
+        self.Headers += [
             "{}/cocos/cocos2d.h".format(self.CocosRoot),
             "{}/cocos/2d/CCProtectedNode.h".format(self.CocosRoot),
             "{}/cocos/base/CCAsyncTaskPool.h".format(self.CocosRoot),
@@ -39,7 +39,11 @@ class Cocos2dxConfigCore(Cocos2dxConfig):
             "{}/cocos/ui/UIWidget.h".format(self.CocosRoot),
             "{}/cocos/base/TGAlib.h".format(self.CocosRoot)
         ]
-        self.Classes |= [
+        self.ExtraArgs += [
+            "-I{}/cocos/platform/android".format(self.CocosRoot),
+            "-I{}/external".format(self.CocosRoot)
+        ]
+        self.Classes += [
             "New.*", "Sprite.*", "Scene", "Node.*", "Director", "Layer.*", "Menu.*", "Touch", ".*Action.*", "Move.*",
             "Rotate.*", "Blink.*", "Tint.*", "Sequence", "Repeat.*", "Fade.*", "Ease.*", "Scale.*", "Transition.*", "Spawn",
             "Animat((?!3D).)*", "Flip.*", "Delay.*", "Skew.*", "Jump.*", "Place.*", "Show.*", "Progress.*", "PointArray", "ToggleVisibility.*",
@@ -59,7 +63,7 @@ class Cocos2dxConfigCore(Cocos2dxConfig):
             "RenderTexture": ["newImage"],
             "ParallaxNode": ["(s|g)etParallaxArray"]
         }
-        self.RenameFunctions |= {
+        self.RenameMembers |= {
             "SpriteFrameCache": {"addSpriteFramesWithFile": "addSpriteFrames", "getSpriteFrameByName": "getSpriteFrame"},
             "ProgressTimer": {"setReverseProgress": "setReverseDirection"},
             "AnimationCache": {"addAnimationsWithFile": "addAnimations"},
@@ -74,7 +78,7 @@ class Cocos2dxConfigCore(Cocos2dxConfig):
         self.RenameClasses |= {
             "ParticleSystemQuad": "ParticleSystem"
         }
-        self.ClassesNoParents |= [
+        self.ClassesNoParents += [
             "Director",
             "FileUtils",
             "Application",

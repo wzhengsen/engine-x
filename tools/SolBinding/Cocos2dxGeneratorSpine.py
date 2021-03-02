@@ -19,19 +19,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from .Cocos2dxConfig import Cocos2dxConfig
+from Generator.Cocos2dxGenerator import Cocos2dxGenerator
 
 
-class Cocos2dxConfigCSLoader(Cocos2dxConfig):
+class Cocos2dxGeneratorSpine(Cocos2dxGenerator):
     def __init__(self):
         super().__init__()
-        self.TargetNamespace = "cc"
+        self.TargetNamespace = "sp"
         # 尽量确保嵌套层数较深的命名空间位于列表前端。
-        self.CppNamespace |= ["cocos2d"]
-        self.Headers |= [
-            "{}/extensions/cocostudio/ActionTimeline/CSLoader.h".format(self.CocosRoot),
-            "{}/extensions/cocostudio/ActionTimeline/CCActionTimeline.h".format(self.CocosRoot)
+        self.CppNameSpace += ["spine"]
+        self.Headers += [
+            "{}/extensions/spine/spine-cocos2dx.h".format(self.CocosRoot)
         ]
-        self.Classes |= [
-            "CSLoader"
+        self.ExtraArgs += [
+            "-I{}/cocos/platform/android".format(self.CocosRoot),
+            "-I{}/external".format(self.CocosRoot),
+            "-I{}/extensions/spine".format(self.CocosRoot),
+            "-I{}/extensions/spine/runtime/include".format(self.CocosRoot)
+        ]
+        self.Classes += [
+            "SkeletonRenderer", "SkeletonAnimation"
         ]

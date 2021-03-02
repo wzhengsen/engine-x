@@ -19,28 +19,30 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from .Cocos2dxConfig import Cocos2dxConfig
+from Generator.Cocos2dxGenerator import Cocos2dxGenerator
 
 
-class Cocos2dxConfigPhysics(Cocos2dxConfig):
+class Cocos2dxGeneratorAudioEngine(Cocos2dxGenerator):
     def __init__(self):
         super().__init__()
         self.TargetNamespace = "cc"
         # 尽量确保嵌套层数较深的命名空间位于列表前端。
-        self.CppNamespace |= ["cocos2d"]
-        self.MacroJudgement = "#if CC_USE_PHYSICS"
-        self.Headers |= [
-            "{}/cocos/cocos2d.h".format(self.CocosRoot)
+        self.CppNameSpace += ["cocos2d"]
+        self.Headers += [
+            "{}/cocos/audio/include/AudioEngine.h".format(self.CocosRoot)
         ]
-        self.Classes |= [
-            "Event(.*(Physics).*)", "Physics.*"
+        self.ExtraArgs += [
+            "-I{}".format(self.CocosRoot),
+            "-I{}/cocos/platform/android".format(self.CocosRoot),
+            "-I{}/external".format(self.CocosRoot)
         ]
-        self.Skip |= {
-            "PhysicsBody": ["getCPBody"]
+        self.Classes += [
+            "AudioEngine", "AudioProfile"
+        ]
+        self.RenameMembers |= {
+            "AudioEngine": {"end": "endToLua"}
         }
-        self.ClassesNoParents |= [
-            "PhysicsWorld",
-            "PhysicsJoint",
-            "PhysicsContactPreSolve",
-            "PhysicsContactPostSolve"
+        self.ClassesNoParents += [
+            "AudioEngine",
+            "AudioProfile"
         ]

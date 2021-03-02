@@ -19,16 +19,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from .Cocos2dxConfig import Cocos2dxConfig
+from Generator.Cocos2dxGenerator import Cocos2dxGenerator
 
 
-class Cocos2dxConfigBackend(Cocos2dxConfig):
+class Cocos2dxGeneratorBackend(Cocos2dxGenerator):
     def __init__(self):
         super().__init__()
         self.TargetNamespace = "ccb"
         # 尽量确保嵌套层数较深的命名空间位于列表前端。
-        self.CppNamespace |= ["cocos2d::backend"]
-        self.Headers |= [
+        self.CppNameSpace += ["cocos2d::backend"]
+        self.Headers += [
             "{}/cocos/renderer/backend/Types.h".format(self.CocosRoot),
             "{}/cocos/renderer/backend/ProgramState.h".format(self.CocosRoot),
             "{}/cocos/renderer/backend/Texture.h".format(self.CocosRoot),
@@ -39,7 +39,11 @@ class Cocos2dxConfigBackend(Cocos2dxConfig):
             "{}/cocos/renderer/backend/Buffer.h".format(self.CocosRoot),
             "{}/cocos/renderer/backend/RenderPipeline.h".format(self.CocosRoot)
         ]
-        self.Classes |= [
+        self.ExtraArgs += [
+            "-I{}/cocos/platform/android".format(self.CocosRoot),
+            "-I{}/external".format(self.CocosRoot)
+        ]
+        self.Classes += [
             "VertexLayout", "BufferUsage", "BufferType", "ShaderStage", "VertexFormat", "PixelFormat", "TextureUsage", "IndexFormat", "VertexStepMode", "PrimitiveType",
             "TextureType", "SamplerAddressMode", "SamplerFilter", "StencilOperation", "CompareFunction", "BlendOperation", "BlendFactor", "ColorWriteMask", "SamplerDescriptor", "CullMode",
             "Winding", "UniformInfo", "UniformLocation", "AttributeBindInfo", "TextureCubeFace", "ProgramState", "TextureBackend", "Program", "Texture2DBackend", "TextureCubemapBackend",

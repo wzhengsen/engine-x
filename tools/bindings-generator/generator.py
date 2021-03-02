@@ -28,30 +28,30 @@ if(sys.version_info.major >= 3):
 else:
     import ConfigParser
 type_map = {
-    cindex.TypeKind.VOID        : "void",
-    cindex.TypeKind.BOOL        : "bool",
-    cindex.TypeKind.CHAR_U      : "unsigned char",
-    cindex.TypeKind.UCHAR       : "unsigned char",
-    cindex.TypeKind.CHAR16      : "char",
-    cindex.TypeKind.CHAR32      : "char",
-    cindex.TypeKind.USHORT      : "unsigned short",
-    cindex.TypeKind.UINT        : "unsigned int",
-    cindex.TypeKind.ULONG       : "unsigned long",
-    cindex.TypeKind.ULONGLONG   : "unsigned long long",
-    cindex.TypeKind.CHAR_S      : "char",
-    cindex.TypeKind.SCHAR       : "char",
-    cindex.TypeKind.WCHAR       : "wchar_t",
-    cindex.TypeKind.SHORT       : "short",
-    cindex.TypeKind.INT         : "int",
-    cindex.TypeKind.LONG        : "long",
-    cindex.TypeKind.LONGLONG    : "long long",
-    cindex.TypeKind.FLOAT       : "float",
-    cindex.TypeKind.DOUBLE      : "double",
-    cindex.TypeKind.LONGDOUBLE  : "long double",
-    cindex.TypeKind.NULLPTR     : "NULL",
-    cindex.TypeKind.OBJCID      : "id",
-    cindex.TypeKind.OBJCCLASS   : "class",
-    cindex.TypeKind.OBJCSEL     : "SEL",
+    cindex.TypeKind.VOID: "void",
+    cindex.TypeKind.BOOL: "bool",
+    cindex.TypeKind.CHAR_U: "unsigned char",
+    cindex.TypeKind.UCHAR: "unsigned char",
+    cindex.TypeKind.CHAR16: "char",
+    cindex.TypeKind.CHAR32: "char",
+    cindex.TypeKind.USHORT: "unsigned short",
+    cindex.TypeKind.UINT: "unsigned int",
+    cindex.TypeKind.ULONG: "unsigned long",
+    cindex.TypeKind.ULONGLONG: "unsigned long long",
+    cindex.TypeKind.CHAR_S: "char",
+    cindex.TypeKind.SCHAR: "char",
+    cindex.TypeKind.WCHAR: "wchar_t",
+    cindex.TypeKind.SHORT: "short",
+    cindex.TypeKind.INT: "int",
+    cindex.TypeKind.LONG: "long",
+    cindex.TypeKind.LONGLONG: "long long",
+    cindex.TypeKind.FLOAT: "float",
+    cindex.TypeKind.DOUBLE: "double",
+    cindex.TypeKind.LONGDOUBLE: "long double",
+    cindex.TypeKind.NULLPTR: "NULL",
+    cindex.TypeKind.OBJCID: "id",
+    cindex.TypeKind.OBJCCLASS: "class",
+    cindex.TypeKind.OBJCSEL: "SEL",
     # cindex.TypeKind.ENUM        : "int"
 }
 
@@ -59,32 +59,32 @@ INVALID_NATIVE_TYPE = "??"
 
 default_arg_type_arr = [
 
-# An integer literal.
-cindex.CursorKind.INTEGER_LITERAL,
+    # An integer literal.
+    cindex.CursorKind.INTEGER_LITERAL,
 
-# A floating point number literal.
-cindex.CursorKind.FLOATING_LITERAL,
+    # A floating point number literal.
+    cindex.CursorKind.FLOATING_LITERAL,
 
-# An imaginary number literal.
-cindex.CursorKind.IMAGINARY_LITERAL,
+    # An imaginary number literal.
+    cindex.CursorKind.IMAGINARY_LITERAL,
 
-# A string literal.
-cindex.CursorKind.STRING_LITERAL,
+    # A string literal.
+    cindex.CursorKind.STRING_LITERAL,
 
-# A character literal.
-cindex.CursorKind.CHARACTER_LITERAL,
+    # A character literal.
+    cindex.CursorKind.CHARACTER_LITERAL,
 
-# [C++ 2.13.5] C++ Boolean Literal.
-cindex.CursorKind.CXX_BOOL_LITERAL_EXPR,
+    # [C++ 2.13.5] C++ Boolean Literal.
+    cindex.CursorKind.CXX_BOOL_LITERAL_EXPR,
 
-# [C++0x 2.14.7] C++ Pointer Literal.
-cindex.CursorKind.CXX_NULL_PTR_LITERAL_EXPR,
+    # [C++0x 2.14.7] C++ Pointer Literal.
+    cindex.CursorKind.CXX_NULL_PTR_LITERAL_EXPR,
 
-cindex.CursorKind.GNU_NULL_EXPR,
+    cindex.CursorKind.GNU_NULL_EXPR,
 
-# An expression that refers to some value declaration, such as a function,
-# varible, or enumerator.
-cindex.CursorKind.DECL_REF_EXPR
+    # An expression that refers to some value declaration, such as a function,
+    # varible, or enumerator.
+    cindex.CursorKind.DECL_REF_EXPR
 ]
 
 stl_type_map = {
@@ -124,6 +124,7 @@ stl_type_map = {
     'array': 1
 }
 
+
 def find_sub_string_count(s, start, end, substr):
     count = 0
     pos = s.find(substr, start, end)
@@ -131,6 +132,7 @@ def find_sub_string_count(s, start, end, substr):
         next_count = find_sub_string_count(s, pos + 1, end, substr)
         count = next_count + 1
     return count
+
 
 def split_container_name(name):
     name = name.strip()
@@ -150,7 +152,6 @@ def split_container_name(name):
     if comma == -1:
         results.append(name[left+1:right].strip())
         return results
-
 
     left += 1
     while comma != -1:
@@ -203,10 +204,10 @@ def normalize_type_str(s, depth=1):
     if s.find('std::function') == 0 or s.find('function') == 0:
         start = s.find('<')
         assert(start > 0)
-        sections = [s[:start]] # std::function
+        sections = [s[:start]]  # std::function
         start += 1
         ret_pos = s.find('(', start)
-        sections.append(s[start:ret_pos].strip()) # return type
+        sections.append(s[start:ret_pos].strip())  # return type
         end = s.find(')', ret_pos + 1)
         sections.append('std_function_args<' + s[ret_pos+1:end].strip() + '>')
     else:
@@ -231,7 +232,7 @@ def normalize_type_str(s, depth=1):
             return 'std::string' + last_section
         else:
             return 'std::string'
-           
+
     # for string_view
     if sections[0] == 'const cxx17::basic_string_view' or sections[0] == 'const basic_string_view':
         last_section = sections[len(sections) - 1]
@@ -279,7 +280,6 @@ class BaseEnumeration(object):
         self.__class__._kinds[value] = self
         self.__class__._name_map = None
 
-
     def from_param(self):
         return self.value
 
@@ -304,8 +304,10 @@ class BaseEnumeration(object):
 
 ### Availability Kinds ###
 
+
 def cmp(a, b):
     return (a > b) - (a < b)
+
 
 class AvailabilityKind(BaseEnumeration):
     """
@@ -319,10 +321,12 @@ class AvailabilityKind(BaseEnumeration):
     def __repr__(self):
         return 'AvailabilityKind.%s' % (self.name,)
 
+
 AvailabilityKind.AVAILABLE = AvailabilityKind(0)
 AvailabilityKind.DEPRECATED = AvailabilityKind(1)
 AvailabilityKind.NOT_AVAILABLE = AvailabilityKind(2)
 AvailabilityKind.NOT_ACCESSIBLE = AvailabilityKind(3)
+
 
 def get_availability(cursor):
     """
@@ -335,8 +339,8 @@ def get_availability(cursor):
 
 
 def native_name_from_type(ntype, underlying=False):
-    kind = ntype.kind #get_canonical().kind
-    const = "" #"const " if ntype.is_const_qualified() else ""
+    kind = ntype.kind  # get_canonical().kind
+    const = ""  # "const " if ntype.is_const_qualified() else ""
     if not underlying and kind == cindex.TypeKind.ENUM:
         decl = ntype.get_declaration()
         return get_namespaced_name(decl)
@@ -372,8 +376,8 @@ def build_namespace(cursor, namespaces=[]):
         parent = cursor.semantic_parent
         if parent:
             if parent.kind == cindex.CursorKind.NAMESPACE\
-            or parent.kind == cindex.CursorKind.CLASS_DECL\
-            or parent.kind == cindex.CursorKind.STRUCT_DECL:
+                    or parent.kind == cindex.CursorKind.CLASS_DECL\
+                    or parent.kind == cindex.CursorKind.STRUCT_DECL:
                 namespaces.append(parent.displayname)
                 build_namespace(parent, namespaces)
 
@@ -390,6 +394,7 @@ def get_namespaced_name(declaration_cursor):
         return ns + "::" + display_name
     return display_name
 
+
 def generate_namespace_list(cursor, namespaces=[]):
     '''
     build the full namespace for a specific cursor
@@ -398,12 +403,13 @@ def generate_namespace_list(cursor, namespaces=[]):
         parent = cursor.semantic_parent
         if parent:
             if parent.kind == cindex.CursorKind.NAMESPACE\
-            or parent.kind == cindex.CursorKind.CLASS_DECL\
-            or parent.kind == cindex.CursorKind.STRUCT_DECL:
+                    or parent.kind == cindex.CursorKind.CLASS_DECL\
+                    or parent.kind == cindex.CursorKind.STRUCT_DECL:
                 if parent.kind == cindex.CursorKind.NAMESPACE:
                     namespaces.append(parent.displayname)
                 generate_namespace_list(parent, namespaces)
     return namespaces
+
 
 def get_namespace_name(declaration_cursor):
     ns_list = generate_namespace_list(declaration_cursor, [])
@@ -426,8 +432,8 @@ class NativeType(object):
         self.not_supported = False
         self.param_types = []
         self.ret_type = None
-        self.namespaced_name = "" # with namespace and class name
-        self.namespace_name  = "" # only contains namespace
+        self.namespaced_name = ""  # with namespace and class name
+        self.namespace_name = ""  # only contains namespace
         self.name = ""
         self.whole_name = None
         self.is_const = False
@@ -469,11 +475,11 @@ class NativeType(object):
             nt.namespaced_name = get_namespaced_name(decl).replace('::__ndk1', '')
 
             if decl.kind == cindex.CursorKind.CLASS_DECL \
-                and not nt.namespaced_name.startswith('std::function') \
-                and not nt.namespaced_name.startswith('std::string') \
-                and not nt.namespaced_name.startswith('std::basic_string') \
-                and not nt.namespaced_name.startswith('cxx17::string_view') \
-                and not nt.namespaced_name.startswith('cxx17::basic_string_view'):
+                    and not nt.namespaced_name.startswith('std::function') \
+                    and not nt.namespaced_name.startswith('std::string') \
+                    and not nt.namespaced_name.startswith('std::basic_string') \
+                    and not nt.namespaced_name.startswith('cxx17::string_view') \
+                    and not nt.namespaced_name.startswith('cxx17::basic_string_view'):
                 nt.is_object = True
                 displayname = decl.displayname.replace('::__ndk1', '')
                 nt.name = normalize_type_str(displayname)
@@ -642,16 +648,15 @@ class NativeType(object):
 
         if self.is_function:
             tpl = Template(file=os.path.join(generator.target, "templates", "lambda.c"),
-                searchList=[convert_opts, self])
+                           searchList=[convert_opts, self])
             indent = convert_opts['level'] * "\t"
             return str(tpl).replace("\n", "\n" + indent)
-
 
         if NativeType.dict_has_key_re(to_native_dict, keys):
             tpl = NativeType.dict_get_value_re(to_native_dict, keys)
             tpl = Template(tpl, searchList=[convert_opts])
             return str(tpl).rstrip()
-        return "#pragma warning NO CONVERSION TO NATIVE FOR " + self.name + "\n" + convert_opts['level'] * "\t" +  "ok = false"
+        return "#pragma warning NO CONVERSION TO NATIVE FOR " + self.name + "\n" + convert_opts['level'] * "\t" + "ok = false"
 
     def to_string(self, generator):
         conversions = generator.config['conversions']
@@ -701,10 +706,10 @@ class NativeType(object):
 
         return name
 
-    def object_can_convert(self, generator, is_to_native = True):
+    def object_can_convert(self, generator, is_to_native=True):
         if self.is_object:
             keys = []
-            if  self.canonical_type != None:
+            if self.canonical_type != None:
                 keys.append(self.canonical_type.name)
             keys.append(self.name)
             if is_to_native:
@@ -719,7 +724,8 @@ class NativeType(object):
         return False
 
     def __str__(self):
-        return  self.canonical_type.whole_name if None != self.canonical_type else self.whole_name
+        return self.canonical_type.whole_name if None != self.canonical_type else self.whole_name
+
 
 class NativeField(object):
     def __init__(self, cursor):
@@ -731,7 +737,7 @@ class NativeField(object):
         member_field_re = re.compile(r'm_(\w+)')
         match = member_field_re.match(self.name)
         self.signature_name = self.name
-        self.ntype  = NativeType.from_type(cursor.type)
+        self.ntype = NativeType.from_type(cursor.type)
         if match:
             self.pretty_name = match.group(1)
         else:
@@ -744,19 +750,21 @@ class NativeField(object):
             return False
         return True
 
-    def generate_code(self, current_class = None, generator = None):
+    def generate_code(self, current_class=None, generator=None):
         gen = current_class.generator if current_class else generator
         config = gen.config
 
         if 'public_field' in config['definitions'].keys():
             tpl = Template(config['definitions']['public_field'],
-                                    searchList=[current_class, self])
+                           searchList=[current_class, self])
             self.signature_name = str(tpl)
         tpl = Template(file=os.path.join(gen.target, "templates", "public_field.c"),
                        searchList=[current_class, self])
         gen.impl_file.write(str(tpl))
 
 # return True if found default argument.
+
+
 def iterate_param_node(param_node, depth=1):
     for node in param_node.get_children():
         # print(">"*depth+" "+str(node.kind))
@@ -767,6 +775,7 @@ def iterate_param_node(param_node, depth=1):
             return True
 
     return False
+
 
 class NativeFunction(object):
     def __init__(self, cursor):
@@ -819,25 +828,24 @@ class NativeFunction(object):
             return ""
 
         regular_replace_list = [
-            (r"(\s)*//!",""),
-            (r"(\s)*//",""),
-            (r"(\s)*/\*\*",""),
-            (r"(\s)*/\*",""),
-            (r"\*/",""),
+            (r"(\s)*//!", ""),
+            (r"(\s)*//", ""),
+            (r"(\s)*/\*\*", ""),
+            (r"(\s)*/\*", ""),
+            (r"\*/", ""),
             ("\r\n", "\n"),
             (r"\n(\s)*\*", "\n"),
-            (r"\n(\s)*@","\n"),
-            (r"\n(\s)*","\n"),
+            (r"\n(\s)*@", "\n"),
+            (r"\n(\s)*", "\n"),
             (r"\n(\s)*\n", "\n"),
-            (r"^(\s)*\n",""),
+            (r"^(\s)*\n", ""),
             (r"\n(\s)*$", ""),
-            ("\n","<br>\n"),
+            ("\n", "<br>\n"),
             ("\n", "\n-- ")
         ]
 
         for item in regular_replace_list:
             replaceStr = re.sub(item[0], item[1], replaceStr)
-
 
         return replaceStr
 
@@ -847,41 +855,41 @@ class NativeFunction(object):
         config = gen.config
         if not is_ctor:
             tpl = Template(file=os.path.join(gen.target, "templates", "function.h"),
-                        searchList=[current_class, self])
+                           searchList=[current_class, self])
             if not is_override:
                 gen.head_file.write(str(tpl))
         if self.static:
             if 'sfunction' in config['definitions'].keys():
                 tpl = Template(config['definitions']['sfunction'],
-                                    searchList=[current_class, self])
+                               searchList=[current_class, self])
                 self.signature_name = str(tpl)
             tpl = Template(file=os.path.join(gen.target, "templates", "sfunction.c"),
-                            searchList=[current_class, self])
+                           searchList=[current_class, self])
         else:
             if not self.is_constructor:
                 if 'ifunction' in config['definitions'].keys():
                     tpl = Template(config['definitions']['ifunction'],
-                                    searchList=[current_class, self])
+                                   searchList=[current_class, self])
                     self.signature_name = str(tpl)
             else:
                 if 'constructor' in config['definitions'].keys():
                     if not is_ctor:
                         tpl = Template(config['definitions']['constructor'],
-                                    searchList=[current_class, self])
+                                       searchList=[current_class, self])
                     else:
                         tpl = Template(config['definitions']['ctor'],
-                                    searchList=[current_class, self])
+                                       searchList=[current_class, self])
                     self.signature_name = str(tpl)
-            if self.is_constructor and gen.script_type == "spidermonkey" :
+            if self.is_constructor and gen.script_type == "spidermonkey":
                 if not is_ctor:
                     tpl = Template(file=os.path.join(gen.target, "templates", "constructor.c"),
-                                                searchList=[current_class, self])
+                                   searchList=[current_class, self])
                 else:
                     tpl = Template(file=os.path.join(gen.target, "templates", "ctor.c"),
-                                                searchList=[current_class, self])
-            else :
+                                   searchList=[current_class, self])
+            else:
                 tpl = Template(file=os.path.join(gen.target, "templates", "ifunction.c"),
-                                searchList=[current_class, self])
+                               searchList=[current_class, self])
         if not is_override:
             gen.impl_file.write(str(tpl))
         # if not is_ctor:
@@ -917,19 +925,19 @@ class NativeOverloadedFunction(object):
             return ""
 
         regular_replace_list = [
-            (r"(\s)*//!",""),
-            (r"(\s)*//",""),
-            (r"(\s)*/\*\*",""),
-            (r"(\s)*/\*",""),
-            (r"\*/",""),
+            (r"(\s)*//!", ""),
+            (r"(\s)*//", ""),
+            (r"(\s)*/\*\*", ""),
+            (r"(\s)*/\*", ""),
+            (r"\*/", ""),
             ("\r\n", "\n"),
             (r"\n(\s)*\*", "\n"),
-            (r"\n(\s)*@","\n"),
-            (r"\n(\s)*","\n"),
+            (r"\n(\s)*@", "\n"),
+            (r"\n(\s)*", "\n"),
             (r"\n(\s)*\n", "\n"),
-            (r"^(\s)*\n",""),
+            (r"^(\s)*\n", ""),
             (r"\n(\s)*$", ""),
-            ("\n","<br>\n"),
+            ("\n", "<br>\n"),
             ("\n", "\n-- ")
         ]
 
@@ -949,35 +957,36 @@ class NativeOverloadedFunction(object):
         static = self.implementations[0].static
         if not is_ctor:
             tpl = Template(file=os.path.join(gen.target, "templates", "function.h"),
-                        searchList=[current_class, self])
+                           searchList=[current_class, self])
             if not is_override:
                 gen.head_file.write(str(tpl))
         if static:
             if 'sfunction' in config['definitions'].keys():
                 tpl = Template(config['definitions']['sfunction'],
-                                searchList=[current_class, self])
+                               searchList=[current_class, self])
                 self.signature_name = str(tpl)
             tpl = Template(file=os.path.join(gen.target, "templates", "sfunction_overloaded.c"),
-                            searchList=[current_class, self])
+                           searchList=[current_class, self])
         else:
             if not self.is_constructor:
                 if 'ifunction' in config['definitions'].keys():
                     tpl = Template(config['definitions']['ifunction'],
-                                    searchList=[current_class, self])
+                                   searchList=[current_class, self])
                     self.signature_name = str(tpl)
             else:
                 if 'constructor' in config['definitions'].keys():
                     if not is_ctor:
                         tpl = Template(config['definitions']['constructor'],
-                                        searchList=[current_class, self])
+                                       searchList=[current_class, self])
                     else:
                         tpl = Template(config['definitions']['ctor'],
-                                        searchList=[current_class, self])
+                                       searchList=[current_class, self])
                     self.signature_name = str(tpl)
             tpl = Template(file=os.path.join(gen.target, "templates", "ifunction_overloaded.c"),
-                            searchList=[current_class, self])
+                           searchList=[current_class, self])
         if not is_override:
             gen.impl_file.write(str(tpl))
+
 
 class NativeObject(object):
     def __init__(self, cursor, generator):
@@ -987,42 +996,43 @@ class NativeObject(object):
         self.fields = []
         self.parents = []
 
-        #原始名。
+        # 原始名。
         self.class_name = cursor.displayname
 
-        #重命名后的名字。
+        # 重命名后的名字。
         rename_name = generator.get_class_or_rename_class(self.class_name)
         if generator.remove_prefix:
             self.rename_class_name = re.sub('^' + generator.remove_prefix, '', rename_name)
         else:
             self.rename_class_name = rename_name
 
-        #带有命名空间的类型名（原始名）。
+        # 带有命名空间的类型名（原始名）。
         self.namespaced_class_name = get_namespaced_name(cursor)
 
         # 注册名列表（可能简化命名空间）。
         nsName = ""
         for ns in generator.cpp_ns:
             if self.namespaced_class_name.startswith(ns):
-                nsName = self.namespaced_class_name.replace(ns,generator.target_ns)
+                nsName = self.namespaced_class_name.replace(ns, generator.target_ns)
                 break
         self.regNameList = nsName.split("::")
-        for i in range(len(self.regNameList)-1,-1,-1):
+        for i in range(len(self.regNameList)-1, -1, -1):
             if not self.regNameList[i]:
                 self.regNameList.pop(i)
 
+
 class NativeClass(NativeObject):
     def __init__(self, cursor, generator):
-        NativeObject.__init__(self,cursor,generator)
+        NativeObject.__init__(self, cursor, generator)
         self.is_ref_class = self.class_name == "Ref"
         self.public_fields = []
         self.methods = {}
         self.static_methods = {}
         self.is_abstract = self.class_name in generator.abstract_classes
         self._current_visibility = cindex.AccessSpecifier.PRIVATE
-        #for generate lua api doc
+        # for generate lua api doc
         self.override_methods = {}
-        self.has_constructor  = False
+        self.has_constructor = False
 
         self.interClasses = []
         self.interEnums = []
@@ -1106,7 +1116,7 @@ class NativeClass(NativeObject):
             if self._process_node(node):
                 self._deep_iterate(node, depth + 1)
 
-    def _SolRegisterFunctionImpl(self,fn,cxx = None):
+    def _SolRegisterFunctionImpl(self, fn, cxx=None):
         """生成适用于sol注册lua类的成员函数的每个不同实现c++代码。
 
         参数：
@@ -1176,25 +1186,25 @@ class NativeClass(NativeObject):
             for i in range(idx):
                 impl = fn.implementations[i]
                 # 递归每一个重载实现。
-                self._SolRegisterFunctionImpl(impl,cxx)
+                self._SolRegisterFunctionImpl(impl, cxx)
                 cxx.append("" if i == idx - 1 else ",")
 
         if returnOne:
             return overload
-        return overload,"".join(cxx)
+        return overload, "".join(cxx)
 
-    def _SolRegisterFunction(self,m,cxx):
+    def _SolRegisterFunction(self, m, cxx):
         """生成适用于sol注册lua类的成员函数的c++代码。
-        
+
         参数：
             m       欲生成代码的函数包装。
             cxx     用于保存拼接字符串的列表。
         """
         if m["name"] != "new":
-            cxx.append("mt.set_function(\"" + m["name"] +"\",")
+            cxx.append("mt.set_function(\"" + m["name"] + "\",")
         else:
             cxx.append("mt.set_function(sol::meta_function::construct,")
-        overload,implStr = self._SolRegisterFunctionImpl(m["impl"])
+        overload, implStr = self._SolRegisterFunctionImpl(m["impl"])
         if overload:
             cxx.append("sol::overload(")
             cxx.append(implStr)
@@ -1204,11 +1214,10 @@ class NativeClass(NativeObject):
             cxx.append(");")
         cxx.append("\n")
 
-    def _SolRegisterPublicField(self,p,cxx):
+    def _SolRegisterPublicField(self, p, cxx):
         """生成适用于sol注册lua类的公共成员的c++代码。
         """
-        cxx.append('mt["{0}"] = &{1}::{0};\n'.format(p.name,self.namespaced_class_name))
-
+        cxx.append('mt["{0}"] = &{1}::{0};\n'.format(p.name, self.namespaced_class_name))
 
     def _SolRegister(self):
         """生成适用于sol注册lua类的c++代码。
@@ -1234,11 +1243,12 @@ class NativeClass(NativeObject):
         # 类与基类名组合
         basesName = self.namespaced_class_name
         for p in self.parents:
-            basesName += ","+ p.namespaced_class_name
-        cxx.append("void RegisterLua{}{}Auto(cocos2d::Lua& lua)".format(self.generator.prefix,"".join(self.regNameList[1:])))
+            basesName += "," + p.namespaced_class_name
+        cxx.append("void RegisterLua{}{}Auto(cocos2d::Lua& lua)".format(self.generator.prefix, "".join(self.regNameList[1:])))
         cxx.append("{\n")
         cxx.append('sol::table ns = lua["{}"];\n'.format(self.generator.target_ns))
-        cxx.append('auto mt=lua.NewUserType<{basesName}>("{class_name}",{noCtor});\n'.format(class_name = self.rename_class_name,basesName = basesName,noCtor = noCtor))
+        cxx.append('auto mt=lua.NewUserType<{basesName}>("{class_name}",{noCtor});\n'.format(
+            class_name=self.rename_class_name, basesName=basesName, noCtor=noCtor))
 
         for nsName in self.regNameList[1:-1]:
             # 不迭代命名空间和自己的类名。
@@ -1247,18 +1257,18 @@ class NativeClass(NativeObject):
         cxx.append('lua["{}"] = sol::nil;\n'.format(self.rename_class_name))
         # 方法生成。
         for m in allMethods:
-            self._SolRegisterFunction(m,cxx)
-        
+            self._SolRegisterFunction(m, cxx)
+
         # public域生成。
         for public in self.PublicFieldsClean():
-            self._SolRegisterPublicField(public,cxx)
+            self._SolRegisterPublicField(public, cxx)
 
         # 调用注册内部枚举。
         for iEnum in self.interEnums:
-            cxx.append('RegisterLua{}{}Auto(lua);\n'.format(self.generator.prefix,"".join(iEnum.regNameList[1:])))
+            cxx.append('RegisterLua{}{}Auto(lua);\n'.format(self.generator.prefix, "".join(iEnum.regNameList[1:])))
         # 调用注册内部类。
         for iClass in self.interClasses:
-            cxx.append('RegisterLua{}{}Auto(lua);\n'.format(self.generator.prefix,"".join(iClass.regNameList[1:])))
+            cxx.append('RegisterLua{}{}Auto(lua);\n'.format(self.generator.prefix, "".join(iClass.regNameList[1:])))
         cxx.append("}\n")
         return "".join(cxx)
 
@@ -1270,7 +1280,7 @@ class NativeClass(NativeObject):
             return NativeClass._is_method_in_parents(current_class.parents[0], method_name)
         return False
 
-    def _is_ref_class(self, depth = 0):
+    def _is_ref_class(self, depth=0):
         """
         Mark the class as 'cocos2d::Ref' or its subclass.
         """
@@ -1298,7 +1308,7 @@ class NativeClass(NativeObject):
 
             if not self.class_name in self.generator.classes_have_no_parents:
                 if parent_name and parent_name not in self.generator.base_classes_to_skip:
-                    #if parent and self.generator.in_listed_classes(parent.displayname):
+                    # if parent and self.generator.in_listed_classes(parent.displayname):
                     if parent.displayname not in self.generator.generated_classes.keys():
                         parent = NativeClass(parent, self.generator)
                         #self.generator.generated_classes[parent.class_name] = parent
@@ -1310,7 +1320,6 @@ class NativeClass(NativeObject):
                     for p_parent in parent.parents:
                         if p_parent not in self.parents:
                             self.parents.append(p_parent)
-
 
             if parent_name == "Ref":
                 self.is_ref_class = True
@@ -1351,7 +1360,7 @@ class NativeClass(NativeObject):
                                 previous_m.append(m)
                             else:
                                 self.override_methods[registration_name] = NativeOverloadedFunction([m, previous_m])
-                        #return False
+                        # return False
 
                 if m.static:
                     if registration_name not in self.static_methods.keys():
@@ -1397,9 +1406,10 @@ class NativeClass(NativeObject):
             # print >> sys.stderr, "unknown cursor: %s - %s" % (cursor.kind, cursor.displayname)
         return False
 
+
 class NativeEnum(NativeObject):
     def __init__(self, cursor, generator):
-        NativeObject.__init__(self,cursor,generator)
+        NativeObject.__init__(self, cursor, generator)
         self.parse()
 
     def parse(self):
@@ -1418,41 +1428,44 @@ class NativeEnum(NativeObject):
             field["value"] = node.enum_value
             self.fields.append(field)
 
-
     def GenerateCode(self):
         '''具名枚举的生成。
         依照 命名空间::类型名::类型名...::枚举名{...}的方式生成。
         '''
-        strList = ["void RegisterLua{}{}Auto(cocos2d::Lua& lua) {{\n".format(self.generator.prefix,"".join(self.regNameList[1:]))]
+        strList = ["void RegisterLua{}{}Auto(cocos2d::Lua& lua) {{\n".format(
+            self.generator.prefix, "".join(self.regNameList[1:]))]
         strList.append('sol::table pTable = lua["{}"];\n'.format(self.generator.target_ns))
         for pField in self.regNameList[1:-1]:
             strList.append('pTable = pTable["{}"];\n'.format(pField))
 
         strList.append('pTable.new_enum("{}"\n'.format(self.rename_class_name))
         for field in self.fields:
-            strList.append(',"{}",{}\n'.format(field["name"],field["value"]))
+            strList.append(',"{}",{}\n'.format(field["name"], field["value"]))
         strList.append(");}\n")
         return ''.join(strList)
 
+
 class AnonymousNativeEnum(NativeEnum):
-    def __init__(self,cursor,generator,signName):
-        NativeEnum.__init__(self,cursor,generator)
+    def __init__(self, cursor, generator, signName):
+        NativeEnum.__init__(self, cursor, generator)
         self.class_name = signName
         self.regNameList.append(self.class_name)
-        
+
     def GenerateCode(self):
         '''匿名枚举的生成。
         依照 命名空间::类型名::类型名...最后的类型名{...}的方式生成。
         '''
-        strList = ["void RegisterLua{}{}Auto(cocos2d::Lua& lua) {{\n".format(self.generator.prefix,"".join(self.regNameList[1:]))]
+        strList = ["void RegisterLua{}{}Auto(cocos2d::Lua& lua) {{\n".format(
+            self.generator.prefix, "".join(self.regNameList[1:]))]
         strList.append('sol::table pTable = lua["{}"];\n'.format(self.generator.target_ns))
         for pField in self.regNameList[1:-1]:
             strList.append('pTable = pTable["{}"];\n'.format(pField))
 
         for field in self.fields:
-            strList.append('pTable["{}"] = {};\n'.format(field["name"],field["value"]))
+            strList.append('pTable["{}"] = {};\n'.format(field["name"], field["value"]))
         strList.append("}\n")
         return ''.join(strList)
+
 
 class Generator(object):
     def __init__(self, opts):
@@ -1497,11 +1510,11 @@ class Generator(object):
         extend_clang_args = []
 
         for clang_arg in self.clang_args:
-            if not os.path.exists(clang_arg.replace("-I","")):
+            if not os.path.exists(clang_arg.replace("-I", "")):
                 pos = clang_arg.find("lib/clang/3.3/include")
                 if -1 != pos:
                     extend_clang_arg = clang_arg.replace("3.3", "3.4")
-                    if os.path.exists(extend_clang_arg.replace("-I","")):
+                    if os.path.exists(extend_clang_arg.replace("-I", "")):
                         extend_clang_args.append(extend_clang_arg)
 
         if len(extend_clang_args) > 0:
@@ -1556,12 +1569,11 @@ class Generator(object):
                 header, replaced_header = replace.split("::")
                 self.replace_headers[header] = replaced_header
 
-        for i,sp in enumerate(self.search_paths):
-            self.search_paths[i] = sp.replace(r"-I",r"",1)
-
+        for i, sp in enumerate(self.search_paths):
+            self.search_paths[i] = sp.replace(r"-I", r"", 1)
 
     def should_rename_function(self, class_name, method_name):
-        for key,val in self.rename_functions.items():
+        for key, val in self.rename_functions.items():
             if key == "*" or re.match("^" + key + "$", class_name):
                 if method_name in val:
                     return val[method_name]
@@ -1682,18 +1694,18 @@ class Generator(object):
     def _GenerateHeadCode(self):
         """生成c++头文件。
         """
-        with open(os.path.join(self.outdir, self.out_file + ".hpp"),"w") as hFile:
+        with open(os.path.join(self.outdir, self.out_file + ".hpp"), "w") as hFile:
             hFile.write((
-            '#pragma once\n'
-            '#include "base/ccConfig.h"\n'
-            '#include "scripting/lua-bindings/manual/CCLuaConvertSol.hpp"\n'
-            'void RegisterLua{}Auto(cocos2d::Lua&);'
+                '#pragma once\n'
+                '#include "base/ccConfig.h"\n'
+                '#include "scripting/lua-bindings/manual/CCLuaConvertSol.hpp"\n'
+                'void RegisterLua{}Auto(cocos2d::Lua&);'
             ).format(self.prefix))
-    
+
     def _GenerateImplCode(self):
         """生成c++实现文件。
         """
-        with open(os.path.join(self.outdir,self.out_file + ".cpp"),"w") as iFile:
+        with open(os.path.join(self.outdir, self.out_file + ".cpp"), "w") as iFile:
             strList = []
             strList.append('#include "scripting/lua-bindings/auto/{}.hpp"\n'.format(self.out_file))
             for header in self.headers:
@@ -1709,16 +1721,17 @@ class Generator(object):
             if self.cpp_headers:
                 for header in self.cpp_headers:
                     strList.append('#include "{}"\n'.format(header))
-            
+
             for c in self.generated_classes.values():
-                strList.append("extern void RegisterLua{}{}Auto(cocos2d::Lua&);\n".format(self.prefix,"".join(c.regNameList[1:])))
+                strList.append("extern void RegisterLua{}{}Auto(cocos2d::Lua&);\n".format(
+                    self.prefix, "".join(c.regNameList[1:])))
 
             strList.append("void RegisterLua{}Auto(cocos2d::Lua& lua){{\n".format(self.prefix))
             if self.macro_judgement:
                 strList.append(self.macro_judgement + "\n")
             strList.append('lua["{0}"]=lua.get_or("{0}",lua.create_table());\n'.format(self.target_ns))
             for c in self.generated_classes.values():
-                strList.append("RegisterLua{}{}Auto(lua);\n".format(self.prefix,"".join(c.regNameList[1:])))
+                strList.append("RegisterLua{}{}Auto(lua);\n".format(self.prefix, "".join(c.regNameList[1:])))
             if self.macro_judgement:
                 strList.append("#endif\n")
             strList.append("}")
@@ -1736,17 +1749,16 @@ class Generator(object):
             return
         if self.macro_judgement:
             self.codeTempStrList.append("#endif\n")
-        with open(os.path.join(self.outdir,self.out_file + ("_%02d.cpp" % (self.classFileIndex // self.groupCount))),"w") as implFile:
+        with open(os.path.join(self.outdir, self.out_file + ("_%02d.cpp" % (self.classFileIndex // self.groupCount))), "w") as implFile:
             strList = self.codeTempStrList
             self.codeTempStrList = []
             implFile.write(''.join(strList))
-            
 
-    def _PushClassToGeneratedClasses(self,c):
+    def _PushClassToGeneratedClasses(self, c):
         """将类保存至已生成类的字典，并以一定的索引为类编号。
         同一个索引的类在生成代码时，将生成至同一文件中。
         避免所有类生成在一个文件中导致模板代码过大引起编译器c1060错误。
-        
+
         参数：
             c       将生成的类。
         """
@@ -1781,14 +1793,14 @@ class Generator(object):
 
     @staticmethod
     def _pretty_print(diagnostics):
-        errors=[]
+        errors = []
         for idx, d in enumerate(diagnostics):
             if d.severity > 2:
                 errors.append(d)
         if len(errors) == 0:
             return
         print("====\nErrors in parsing headers:")
-        severities=['Ignored', 'Note', 'Warning', 'Error', 'Fatal']
+        severities = ['Ignored', 'Note', 'Warning', 'Error', 'Fatal']
         for idx, d in enumerate(errors):
             print("%s. <severity = %s,\n    location = %r,\n    details = %r>" % (
                 idx+1, severities[d.severity], d.location, d.spelling))
@@ -1810,13 +1822,13 @@ class Generator(object):
             self._deep_iterate(tu.cursor)
         self._GenerateCodeDoEnd()
 
-    def _GenerateEnumSign(self,cursor):
+    def _GenerateEnumSign(self, cursor):
         if cursor.displayname:
             return cursor.displayname
         nsName = get_namespaced_name(cursor)
         for ns in self.cpp_ns:
             if nsName.startswith(ns):
-                nsName = nsName.replace(ns,self.target_ns)
+                nsName = nsName.replace(ns, self.target_ns)
                 break
         signList = [nsName]
         signList.append("<")
@@ -1828,7 +1840,7 @@ class Generator(object):
         retStr = ''.join(signList)
         md5 = hashlib.md5()
         md5.update(retStr.encode())
-        return ("AnonymousEnum_"+ md5.hexdigest() +"_")
+        return ("AnonymousEnum_" + md5.hexdigest() + "_")
 
     def _deep_iterate(self, cursor, depth=0):
 
@@ -1855,7 +1867,7 @@ class Generator(object):
                         nclass = NativeClass(cursor, self)
                         self._PushClassToGeneratedClasses(nclass)
             return
-        elif cursor.kind == cindex.CursorKind.ENUM_DECL :
+        elif cursor.kind == cindex.CursorKind.ENUM_DECL:
             if cursor == cursor.type.get_declaration() and len(get_children_array_from_iter(cursor.get_children())) > 0:
                 is_targeted_class = False
                 namespaced_name = get_namespaced_name(cursor)
@@ -1879,13 +1891,12 @@ class Generator(object):
             # print("%s %s - %s" % (">" * depth, node.displayname, node.kind))
             self._deep_iterate(node, depth + 1)
 
-
     @staticmethod
-    def Generate(configArgs,toluaRoot,outputRoot):
+    def Generate(configArgs, toluaRoot, outputRoot):
         userconfig = ConfigParser.ConfigParser()
         userconfig.read('userconf.ini')
         print('Using userconfig \n ', userconfig.items('DEFAULT'))
-        for key,value in configArgs.items():
+        for key, value in configArgs.items():
             config = ConfigParser.ConfigParser()
             config.read(key)
 
@@ -1908,16 +1919,16 @@ class Generator(object):
             else:
                 outdir = os.path.join(os.path.dirname(inspect.getfile(inspect.currentframe())), "gen")
 
-        print( "\n.... Generating bindings for target Lua.\n")
+        print("\n.... Generating bindings for target Lua.\n")
         for s in sections:
-            print( "\n.... .... Processing section", s, "\n")
+            print("\n.... .... Processing section", s, "\n")
             gen_opts = {
                 'prefix': config.get(s, 'prefix'),
-                'headers':    (config.get(s, 'headers'        , raw = False, vars = dict(userconfig.items('DEFAULT')))),
+                'headers':    (config.get(s, 'headers', raw=False, vars=dict(userconfig.items('DEFAULT')))),
                 'replace_headers': config.get(s, 'replace_headers') if config.has_option(s, 'replace_headers') else None,
                 'classes': config.get(s, 'classes').split(' '),
                 'classes_need_extend': config.get(s, 'classes_need_extend').split(' ') if config.has_option(s, 'classes_need_extend') else [],
-                'clang_args': (config.get(s, 'extra_arguments', raw = False, vars = dict(userconfig.items('DEFAULT'))) or "").split(" "),
+                'clang_args': (config.get(s, 'extra_arguments', raw=False, vars=dict(userconfig.items('DEFAULT'))) or "").split(" "),
                 'outdir': outdir,
                 'search_paths': os.path.abspath(os.path.join(userconfig.get('DEFAULT', 'cocosdir'), 'cocos')) + ";" + os.path.abspath(os.path.join(userconfig.get('DEFAULT', 'cocosdir'), 'extensions')),
                 'remove_prefix': config.get(s, 'remove_prefix'),
@@ -1933,11 +1944,11 @@ class Generator(object):
                 'out_file': value[1] or config.get(s, 'prefix'),
                 'script_control_cpp': config.get(s, 'script_control_cpp') if config.has_option(s, 'script_control_cpp') else 'no',
                 'macro_judgement': config.get(s, 'macro_judgement') if config.has_option(s, 'macro_judgement') else None,
-                'hpp_headers': config.get(s, 'hpp_headers', raw = False, vars = dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'hpp_headers') else None,
-                'cpp_headers': config.get(s, 'cpp_headers', raw = False, vars = dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'cpp_headers') else None,
-                'win32_clang_flags': (config.get(s, 'win32_clang_flags', raw = False, vars = dict(userconfig.items('DEFAULT'))) or "").split(" ") if config.has_option(s, 'win32_clang_flags') else None,
+                'hpp_headers': config.get(s, 'hpp_headers', raw=False, vars=dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'hpp_headers') else None,
+                'cpp_headers': config.get(s, 'cpp_headers', raw=False, vars=dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'cpp_headers') else None,
+                'win32_clang_flags': (config.get(s, 'win32_clang_flags', raw=False, vars=dict(userconfig.items('DEFAULT'))) or "").split(" ") if config.has_option(s, 'win32_clang_flags') else None,
                 "allow_anonymous": config.get(s, 'allow_anonymous')
-                }
+            }
             generator = Generator(gen_opts)
             generator.GenerateCode()
 
@@ -1948,13 +1959,13 @@ def main():
 
     parser = OptionParser("usage: %prog [options] {configfile}")
     parser.add_option("-s", action="store", type="string", dest="section",
-                        help="sets a specific section to be converted")
+                      help="sets a specific section to be converted")
     parser.add_option("-t", action="store", type="string", dest="target",
-                        help="specifies the target vm. Will search for TARGET.yaml")
+                      help="specifies the target vm. Will search for TARGET.yaml")
     parser.add_option("-o", action="store", type="string", dest="outdir",
-                        help="specifies the output directory for generated C++ code")
+                      help="specifies the output directory for generated C++ code")
     parser.add_option("-n", action="store", type="string", dest="out_file",
-                        help="specifcies the name of the output file, defaults to the prefix in the .ini file")
+                      help="specifcies the name of the output file, defaults to the prefix in the .ini file")
 
     (opts, args) = parser.parse_args()
 
@@ -1993,7 +2004,7 @@ def main():
     targets = []
     if (os.path.isdir(targetdir)):
         targets = [entry for entry in os.listdir(targetdir)
-                    if (os.path.isdir(os.path.join(targetdir, entry)))]
+                   if (os.path.isdir(os.path.join(targetdir, entry)))]
     if 0 == len(targets):
         raise Exception("No targets defined")
 
@@ -2012,16 +2023,16 @@ def main():
         if t == ".svn" or t == ".cvs" or t == ".git" or t == ".gitignore":
             continue
 
-        print( "\n.... Generating bindings for target", t)
+        print("\n.... Generating bindings for target", t)
         for s in sections:
-            print( "\n.... .... Processing section", s, "\n")
+            print("\n.... .... Processing section", s, "\n")
             gen_opts = {
                 'prefix': config.get(s, 'prefix'),
-                'headers':    (config.get(s, 'headers'        , raw = False, vars = dict(userconfig.items('DEFAULT')))),
+                'headers':    (config.get(s, 'headers', raw=False, vars=dict(userconfig.items('DEFAULT')))),
                 'replace_headers': config.get(s, 'replace_headers') if config.has_option(s, 'replace_headers') else None,
                 'classes': config.get(s, 'classes').split(' '),
                 'classes_need_extend': config.get(s, 'classes_need_extend').split(' ') if config.has_option(s, 'classes_need_extend') else [],
-                'clang_args': (config.get(s, 'extra_arguments', raw = False, vars = dict(userconfig.items('DEFAULT'))) or "").split(" "),
+                'clang_args': (config.get(s, 'extra_arguments', raw=False, vars=dict(userconfig.items('DEFAULT'))) or "").split(" "),
                 'target': os.path.join(workingdir, "targets", t),
                 'outdir': outdir,
                 'search_paths': os.path.abspath(os.path.join(userconfig.get('DEFAULT', 'cocosdir'), 'cocos')) + ";" + os.path.abspath(os.path.join(userconfig.get('DEFAULT', 'cocosdir'), 'extensions')),
@@ -2039,13 +2050,14 @@ def main():
                 'script_control_cpp': config.get(s, 'script_control_cpp') if config.has_option(s, 'script_control_cpp') else 'no',
                 'script_type': t,
                 'macro_judgement': config.get(s, 'macro_judgement') if config.has_option(s, 'macro_judgement') else None,
-                'hpp_headers': config.get(s, 'hpp_headers', raw = False, vars = dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'hpp_headers') else None,
-                'cpp_headers': config.get(s, 'cpp_headers', raw = False, vars = dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'cpp_headers') else None,
-                'win32_clang_flags': (config.get(s, 'win32_clang_flags', raw = False, vars = dict(userconfig.items('DEFAULT'))) or "").split(" ") if config.has_option(s, 'win32_clang_flags') else None,
+                'hpp_headers': config.get(s, 'hpp_headers', raw=False, vars=dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'hpp_headers') else None,
+                'cpp_headers': config.get(s, 'cpp_headers', raw=False, vars=dict(userconfig.items('DEFAULT'))).split(' ') if config.has_option(s, 'cpp_headers') else None,
+                'win32_clang_flags': (config.get(s, 'win32_clang_flags', raw=False, vars=dict(userconfig.items('DEFAULT'))) or "").split(" ") if config.has_option(s, 'win32_clang_flags') else None,
                 "allow_anonymous": config.get(s, 'allow_anonymous')
-                }
+            }
             generator = Generator(gen_opts)
             generator.GenerateCode()
+
 
 if __name__ == '__main__':
     try:

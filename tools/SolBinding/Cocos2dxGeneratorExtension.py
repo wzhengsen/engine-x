@@ -19,19 +19,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from .Cocos2dxConfig import Cocos2dxConfig
+from Generator.Cocos2dxGenerator import Cocos2dxGenerator
 
 
-class Cocos2dxConfigController(Cocos2dxConfig):
+class Cocos2dxGeneratorExtension(Cocos2dxGenerator):
     def __init__(self):
         super().__init__()
         self.TargetNamespace = "cc"
         # 尽量确保嵌套层数较深的命名空间位于列表前端。
-        self.CppNamespace |= ["cocos2d"]
-        self.MacroJudgement = "#if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)"
-        self.Headers |= [
-            "{}/cocos/base/CCGameController.h".format(self.CocosRoot)
+        self.CppNameSpace += ["cocos2d::extension"]
+        self.Headers += [
+            "{}/extensions/cocos-ext.h".format(self.CocosRoot),
+            "{}/extensions/Particle3D/PU/CCPUEmitter.h".format(self.CocosRoot),
+            "{}/extensions/Particle3D/PU/CCPUAffector.h".format(self.CocosRoot),
+            "{}/extensions/Particle3D/PU/CCPUObserver.h".format(self.CocosRoot),
+            "{}/extensions/Particle3D/CCParticle3DAffector.h".format(self.CocosRoot)
         ]
-        self.Classes |= [
-            "Controller", "EventController", "EventListenerController"
+        self.ExtraArgs += [
+            "-I{}/cocos/platform/android".format(self.CocosRoot),
+            "-I{}/external".format(self.CocosRoot),
+            "-I{}/extensions/cocostudio".format(self.CocosRoot),
+            "-I{}".format(self.CocosRoot)
+        ]
+        self.Classes += [
+            "Control.*", "ControlButton.*", "ScrollView$", "TableView$", "TableViewCell$", "AssetsManager", "AssetsManagerEx", "Manifest", "EventAssetsManagerEx", "EventListenerAssetsManagerEx",
+            "PUParticleSystem3D", "ParticleSystem3D", "ParticlePool"
         ]

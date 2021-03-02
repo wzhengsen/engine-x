@@ -20,26 +20,36 @@
 # THE SOFTWARE.
 
 import os
-from .BaseConfig import BaseConfig
+from .BaseGenerator import BaseGenerator
 
 
-class Cocos2dxConfig(BaseConfig):
-    def __init__(self):
-        super().__init__()
-
-        self.Prefix = self.__class__.__name__.replace("Cocos2dxConfig", "")
+class Cocos2dxGenerator(BaseGenerator):
+    def __init__(self, clearOldFile: bool = True):
         self.CocosRoot = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-        self.CocosHeaders = [
-            "-I{}/cocos".format(self.CocosRoot),
-            "-I{}/cocos/platform/android".format(self.CocosRoot),
-            "-I{}/extensions".format(self.CocosRoot),
-            "-I{}/external".format(self.CocosRoot)
-        ],
-        self.CocosFlags = ["-DANDROID"]
-        self.ExtraArguments = "{} {} {}".format(
-            self.ExtraArguments, " ".join(self.CocosHeaders), " ".join(self.CocosFlags))
+        # 由当前类名获取生成的文件名。
+        suffix = self.__class__.__name__.removeprefix(__class__.__name__)
+        fileName = "CCRegisterLua" + suffix + "Auto"
+        outputPath = "{}/extensions/scripting/lua-bindings/auto".format(self.CocosRoot)
+        super().__init__(outputPath, fileName, clearOldFile)
 
-        self.RenameFunctions |= {
+        self.Tag = suffix
+        self.SearchPaths += [
+            os.path.join(self.CocosRoot, "cocos"),
+            os.path.join(self.CocosRoot, "cocos", "extensions")
+        ]
+
+        self.InstanceMethods |= {
+            ".*": "(g|G)etInstance"
+        }
+
+        # 解析时的依赖头文件路径等。
+        self.ExtraArgs += [
+            "-I{}/cocos".format(self.CocosRoot),
+            "-I{}/extensions".format(self.CocosRoot),
+            "-DANDROID"
+        ]
+
+        self.RenameMembers |= {
             ".*": {"create": "new"}
         }
-        self.ParentsClassesSkip |= ["Clonable"]
+        self.ParentsClassesSkip += ["Clonable"]

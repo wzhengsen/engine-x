@@ -230,13 +230,13 @@ protected:
 
 class VolatileTexture
 {
-    enum ccCachedImageType {
+    typedef enum {
         kInvalid = 0,
         kImageFile,
         kImageData,
         kString,
         kImage,
-    };
+    }ccCachedImageType;
 
 private:
     VolatileTexture(Texture2D *t);
