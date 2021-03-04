@@ -53,6 +53,8 @@ class BaseGenerator(BaseConfig):
         self._outputFile = outputFile
         self._clearOldFile = clearOldFile
         self._nativeObjects = {}
+        # 缓存的所有父级节点，这些节点不一定会被生成代码。
+        self.TempParentObjects = {}
 
         self.__inited = False
 

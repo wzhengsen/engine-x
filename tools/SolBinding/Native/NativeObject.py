@@ -46,10 +46,11 @@ class NativeMethod(NativeMember, NativeFunction):
         self._isOverride = False
         self._instanceProperty = False
 
-        for node in cursor.get_children():
-            if node.kind == cindex.CursorKind.CXX_OVERRIDE_ATTR:
-                self._isOverride = True
-                break
+        if not self._pureVirtual:
+            for node in cursor.get_children():
+                if node.kind == cindex.CursorKind.CXX_OVERRIDE_ATTR:
+                    self._isOverride = True
+                    break
 
         # 判定是否有单例属性。
         if self._static:
@@ -63,6 +64,10 @@ class NativeMethod(NativeMember, NativeFunction):
     @property
     def Override(self):
         return self._isOverride
+
+    @property
+    def PureVirtual(self):
+        return self._pureVirtual
 
     def GetImplStr(self) -> str:
         """获取实现主体字符串。"""
@@ -197,6 +202,8 @@ class NativeObject(NativeWrapper):
         self.__onlyParent = True
         self.__usingParent = False
         self._methods = {}
+        # 纯虚函数字典。
+        self._pvMethods = {}
         self._fileds = []
         self._ctor = NativeConstructor(cursor, generator)
         # 所含的内部类，包括枚举/结构体。
@@ -228,13 +235,17 @@ class NativeObject(NativeWrapper):
                 # 基类。
                 parentDef = cursor.get_definition()
                 if self._name not in self._generator.ClassesNoParents and\
-                        parentDef.displayname not in self._generator.ParentsClassesSkip and\
-                        not self._generator.ShouldSkip(parentDef.displayname):
+                        parentDef.displayname not in self._generator.ParentsClassesSkip:
                     pWholeName = CursorHelper.GetWholeName(parentDef)
-                    if pWholeName not in self._generator.NativeObjects.keys():
-                        self._generator.NativeObjects[pWholeName] = NativeClass(parentDef, self._generator)
 
-                    parent: NativeClass = self._generator.NativeObjects[pWholeName]
+                    if pWholeName not in self._generator.TempParentObjects.keys():
+                        self._generator.TempParentObjects[pWholeName] = NativeClass(parentDef, self._generator)
+
+                    parent: NativeClass = self._generator.TempParentObjects[pWholeName]
+                    if not self._generator.ShouldSkip(parentDef.displayname):
+                        if pWholeName not in self._generator.NativeObjects.keys():
+                            self._generator.NativeObjects[pWholeName] = parent
+
                     if parent not in self._parents:
                         # 添加父级。
                         self._parents.append(parent)
@@ -243,6 +254,8 @@ class NativeObject(NativeWrapper):
                         # Sol要求c++绑定时明确指示所有父级。
                         if pParent not in self._parents:
                             self._parents.append(pParent)
+                            # 统计所有父级的纯虚函数。
+                            self._pvMethods |= pParent._pvMethods
                     if self.__onlyParent:
                         self._parent = parent
                         self.__onlyParent = False
@@ -280,12 +293,20 @@ class NativeObject(NativeWrapper):
             elif cursor.kind == cindex.CursorKind.FIELD_DECL:
                 # 成员变量。
                 self._fileds.append(NativeField(cursor, self._generator))
-            elif cursor.kind == cindex.CursorKind.CXX_METHOD and\
-                    not cursor.type.is_function_variadic() and\
-                    CursorHelper.GetAvailability(cursor) != CursorHelper.Availability.DEPRECATED:
-                # 成员函数，且跳过函数变量和弃用函数。
-                method = NativeMethod(cursor, self._generator)
-                if method.Override or not method.Supported:
+        if cursor.kind == cindex.CursorKind.CXX_METHOD and\
+                not cursor.type.is_function_variadic():
+            # 成员函数，且跳过函数变量。
+            method = NativeMethod(cursor, self._generator)
+            if method.PureVirtual:
+                # 统计纯虚函数。
+                if method._wholeName not in self._pvMethods:
+                    self._pvMethods[method._wholeName] = method
+            else:
+                # 消减已实现的纯虚函数。
+                if method._wholeName in self._pvMethods:
+                    self._pvMethods.pop(method._wholeName)
+            if cursor.access_specifier == cindex.AccessSpecifier.PUBLIC:
+                if method.Override or not method.Supported or CursorHelper.GetAvailability(cursor) == CursorHelper.Availability.DEPRECATED:
                     return
 
                 if method.NewName == "new":
@@ -304,7 +325,7 @@ class NativeObject(NativeWrapper):
                         nom.AddMethod(method)
                         nom.AddMethod(preMethod)
                         self._methods[method.WholeFuncName] = nom
-        if cursor.kind == cindex.CursorKind.CONSTRUCTOR:
+        elif cursor.kind == cindex.CursorKind.CONSTRUCTOR:
             self._defaultCtor = False
             if cursor.access_specifier == cindex.AccessSpecifier.PUBLIC:
                 # 构造函数。
@@ -346,15 +367,17 @@ class NativeObject(NativeWrapper):
             cxx.append(str(method))
             cxx.append("\n")
 
-        # 默认构造。
-        if self._defaultCtor:
-            cxx.append("mt[sol::call_constructor]=sol::constructors<{}()>();\n".format(self._wholeName))
-        else:
-            # 手动指定的构造函数。
-            ctorStr = str(self._ctor)
-            if ctorStr:
-                cxx.append(ctorStr)
-                cxx.append("\n")
+        if len(self._pvMethods) == 0:
+            # 没有可用的纯虚函数，才允许使用构造。
+            if self._defaultCtor:
+                # 默认构造。
+                cxx.append("mt[sol::call_constructor]=sol::constructors<{}()>();\n".format(self._wholeName))
+            else:
+                # 手动指定的构造函数。
+                ctorStr = str(self._ctor)
+                if ctorStr:
+                    cxx.append(ctorStr)
+                    cxx.append("\n")
 
         # public域生成。
         for field in self._fileds:
