@@ -35,7 +35,7 @@ class Cocos2dxGenerator(BaseGenerator):
         self.Tag = suffix
         self.SearchPaths += [
             os.path.join(self.CocosRoot, "cocos"),
-            os.path.join(self.CocosRoot, "cocos", "extensions")
+            os.path.join(self.CocosRoot, "extensions")
         ]
 
         self.InstanceMethods |= {
