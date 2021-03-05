@@ -68,6 +68,8 @@ class BaseGenerator(BaseConfig):
             if sys.platform == "win32":
                 self.ClangArgs += self.ExtraArgs
                 self.ClangArgs += self.Win32ClangFlags
+            self.CppNameSpace.sort()
+            self.CppNameSpace.reverse()
 
     @property
     def NativeObjects(self) -> dict:
@@ -111,14 +113,14 @@ class BaseGenerator(BaseConfig):
 
             for c in self._nativeObjects.values():
                 strList.append("extern void RegisterLua{}{}Auto(cocos2d::Lua&);\n".format(
-                    self.Tag, "".join(c._sNameList[1:])))
+                    self.Tag, "".join(c.NameList[1:])))
 
             strList.append("void RegisterLua{}Auto(cocos2d::Lua& lua){{\n".format(self.Tag))
             if self.MacroJudgement:
                 strList.append(self.MacroJudgement + "\n")
             strList.append('lua["{0}"]=lua.get_or("{0}",lua.create_table());\n'.format(self.TargetNamespace))
             for c in self._nativeObjects.values():
-                strList.append("RegisterLua{}{}Auto(lua);\n".format(self.Tag, "".join(c._sNameList[1:])))
+                strList.append("RegisterLua{}{}Auto(lua);\n".format(self.Tag, "".join(c.NameList[1:])))
             if self.MacroJudgement:
                 strList.append("#endif\n")
             strList.append("}")
@@ -204,7 +206,7 @@ class BaseGenerator(BaseConfig):
 
         参数：
 
-            className           <str>类名，可也以是结构体/枚举名。
+            className           类名，可也以是结构体/枚举名。
 
         返回：
             若没有对应的重命名规则，返回原类型名。
@@ -220,7 +222,7 @@ class BaseGenerator(BaseConfig):
         参数：
 
             className           类名，可也以是结构体名或枚举名。
-            funcName            成员函数名，可以为空，此时只检查类名。
+            funcName            成员函数名/成员变量名，可以为空，此时只检查类名。
         """
         if not className:
             return True
@@ -229,15 +231,13 @@ class BaseGenerator(BaseConfig):
                 break
         else:
             return True
-        for k in self.Skip.keys():
-            if re.match("^" + k + "$", className):
-                return True
 
         if funcName:
-            for v in self.Skip.values():
-                for skipFunc in v:
-                    if re.match("^" + skipFunc + "$", funcName):
-                        return True
+            for skipCls, skipFuncs in self.Skip.items():
+                if re.match("^" + skipCls + "$", className):
+                    for skipFunc in skipFuncs:
+                        if re.match("^" + skipFunc + "$", funcName):
+                            return True
 
         return False
 
@@ -274,7 +274,6 @@ class BaseGenerator(BaseConfig):
             if cursor == cursor.type.get_declaration() and CursorHelper.GetNameSpace(cursor) in self.CppNameSpace:
                 name = CursorHelper.GetName(cursor)
                 # 匿名判断不使用cursor.is_anonymous()获取，此处直接简单判断名字作为匿名标准。
-                # 注意：typedef enum{Zero = 0,One = 1} Num;这种将名字直接声明在后的，也被认为匿名。
                 if name:
                     # 具名枚举和类。
                     if not self.ShouldSkip(name):
@@ -288,10 +287,14 @@ class BaseGenerator(BaseConfig):
                                 self._nativeObjects[wholeName] = NativeStruct(cursor, self)
                 else:
                     # 匿名枚举。
-                    # 生成一个假设的名字来作为临时名。
-                    wholeName = CursorHelper.AssumeEnumName(cursor)
-                    if wholeName not in self._nativeObjects.keys():
-                        self._nativeObjects[wholeName] = NativeAnonymousEnum(cursor, self)
+                    # 要求该匿名枚举的父级必须是被包含在生成列表中的。
+                    ae = NativeAnonymousEnum(cursor, self)
+                    for clsName in ae.NameList[1:-1]:
+                        if self.ShouldSkip(clsName):
+                            return
+
+                    if ae._name not in self._nativeObjects.keys():
+                        self._nativeObjects[ae._name] = ae
             return
 
         for node in cursor.get_children():

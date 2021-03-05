@@ -87,6 +87,25 @@ class CursorHelper:
         return "::".join(ns)
 
     @staticmethod
+    def GetClassesNameList(cursor, l=None) -> list:
+        """获得所属类的全名列表，不包括命名空间名。"""
+        if l is None:
+            l = []
+        parent = cursor.semantic_parent
+        if parent and\
+                parent.kind == cindex.CursorKind.CLASS_DECL or parent.kind == cindex.CursorKind.STRUCT_DECL:
+            name = parent.displayname
+            if name != "__ndk1":
+                l.append(name)
+            CursorHelper.GetClassesNameList(parent, l)
+        return l
+
+    @staticmethod
+    def GetClassesName(cursor) -> str:
+        """获得所属类的全名，不包括命名空间名。"""
+        return "::".join(CursorHelper.GetClassesNameList())
+
+    @staticmethod
     def GetPrefixName(cursor) -> str:
         """获得前缀名，包含命名空间名和所属类名。"""
         return "::".join(CursorHelper._BuildNameSpace(cursor))

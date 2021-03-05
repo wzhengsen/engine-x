@@ -125,8 +125,5 @@ class BaseConfig(object):
         # local inst = MyTest.Instance;
         self.InstanceMethods = {}
 
-        # 那些希望不再生成父类继承关系的类型列表。
-        self.ClassesNoParents = []
-
         # 当一个类在作为父类时，希望被跳过的类型列表。
         self.ParentsClassesSkip = []

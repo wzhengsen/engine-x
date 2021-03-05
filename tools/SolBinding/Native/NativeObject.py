@@ -234,21 +234,22 @@ class NativeObject(NativeWrapper):
             if cursor.kind == cindex.CursorKind.CXX_BASE_SPECIFIER:
                 # 基类。
                 parentDef = cursor.get_definition()
-                if self._name not in self._generator.ClassesNoParents and\
-                        parentDef.displayname not in self._generator.ParentsClassesSkip:
+                if parentDef.displayname not in self._generator.ParentsClassesSkip:
                     pWholeName = CursorHelper.GetWholeName(parentDef)
 
                     if pWholeName not in self._generator.TempParentObjects.keys():
                         self._generator.TempParentObjects[pWholeName] = NativeClass(parentDef, self._generator)
 
                     parent: NativeClass = self._generator.TempParentObjects[pWholeName]
-                    if not self._generator.ShouldSkip(parentDef.displayname):
+                    if parent.Generatable:
                         if pWholeName not in self._generator.NativeObjects.keys():
                             self._generator.NativeObjects[pWholeName] = parent
 
                     if parent not in self._parents:
                         # 添加父级。
                         self._parents.append(parent)
+                        # 统计所有父级的纯虚函数。
+                        self._pvMethods |= parent._pvMethods
                     for pParent in parent._parents:
                         # 添加父级的父级...。
                         # Sol要求c++绑定时明确指示所有父级。
@@ -281,18 +282,22 @@ class NativeObject(NativeWrapper):
             elif cursor.kind == cindex.CursorKind.ENUM_DECL:
                 # 内部枚举类型。
                 # 匿名判断不使用cursor.is_anonymous()获取，此处直接简单判断名字作为匿名标准。
-                self._classes.append(NativeEnum(cursor, self._generator)
-                                     if CursorHelper.GetName(cursor) else NativeAnonymousEnum(cursor, self._generator))
+                gEnum = NativeEnum(cursor, self._generator) if CursorHelper.GetName(
+                    cursor) else NativeAnonymousEnum(cursor, self._generator)
+                if gEnum.Generatable:
+                    self._classes.append(gEnum)
             elif cursor.kind == cindex.CursorKind.CLASS_DECL\
                     or (self._generator.AllowStruct and cursor.kind == cindex.CursorKind.STRUCT_DECL):
                 # 内部类和内部结构体。
-                if cursor.kind == cindex.CursorKind.CLASS_DECL:
-                    self._classes.append(NativeClass(cursor, self._generator))
-                else:
-                    self._classes.append(NativeStruct(cursor, self._generator))
+                gObj = NativeClass(cursor, self._generator) if cursor.kind == cindex.CursorKind.CLASS_DECL else NativeStruct(
+                    cursor, self._generator)
+                if gObj.Generatable:
+                    self._classes.append(gObj)
             elif cursor.kind == cindex.CursorKind.FIELD_DECL:
                 # 成员变量。
-                self._fileds.append(NativeField(cursor, self._generator))
+                gField = NativeField(cursor, self._generator)
+                if gField.Generatable:
+                    self._fileds.append(gField)
         if cursor.kind == cindex.CursorKind.CXX_METHOD and\
                 not cursor.type.is_function_variadic():
             # 成员函数，且跳过函数变量。
@@ -306,7 +311,8 @@ class NativeObject(NativeWrapper):
                 if method._wholeName in self._pvMethods:
                     self._pvMethods.pop(method._wholeName)
             if cursor.access_specifier == cindex.AccessSpecifier.PUBLIC:
-                if method.Override or not method.Supported or CursorHelper.GetAvailability(cursor) == CursorHelper.Availability.DEPRECATED:
+                if method.Override or not method.Supported or not method.Generatable or\
+                        CursorHelper.GetAvailability(cursor) == CursorHelper.Availability.DEPRECATED:
                     return
 
                 if method.NewName == "new":
@@ -357,10 +363,10 @@ class NativeObject(NativeWrapper):
 
         noCtor = "true" if not self._newCtor and not self._callCtor else "false"
 
-        cxx.append("void RegisterLua{}{}Auto(cocos2d::Lua& lua)".format(self._generator.Tag, "".join(self._sNameList[1:])))
+        cxx.append("void RegisterLua{}{}Auto(cocos2d::Lua& lua)".format(self._generator.Tag, "".join(self._nameList[1:])))
         cxx.append("{\n")
         cxx.append('auto mt=lua.NewUserType<{wholeName}>("{nsName}","{class_name}",{noCtor});\n'.format(
-            nsName=".".join(self._sNameList[:-1]), class_name=self._newName, wholeName=self._wholeName, noCtor=noCtor))
+            nsName=".".join(self._nNameList[:-1]), class_name=self._newName, wholeName=self._wholeName, noCtor=noCtor))
 
         # 方法生成。
         for method in self._methods.values():
@@ -386,7 +392,7 @@ class NativeObject(NativeWrapper):
 
         # 调用注册内部枚举和内部类。
         for c in self._classes:
-            cxx.append('RegisterLua{}{}Auto(lua);\n'.format(self._generator.Tag, "".join(c._sNameList[1:])))
+            cxx.append('RegisterLua{}{}Auto(lua);\n'.format(self._generator.Tag, "".join(c._nameList[1:])))
 
         # 类与基类名组合
         basesName = ""

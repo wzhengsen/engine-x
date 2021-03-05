@@ -38,10 +38,16 @@ class NativeType(object):
         # 原始全名。
         self._wholeName = CursorHelper.GetWholeName(cursor)
         self._newName = self._name
+        # 可生成。
+        self._generatable = False
 
     @property
     def WholeName(self):
         return self._wholeName
+
+    @property
+    def Generatable(self):
+        return self._generatable
 
 
 class NativeMember(NativeType):
@@ -50,7 +56,9 @@ class NativeMember(NativeType):
     def __init__(self, cursor, generator: BaseConfig) -> None:
         super().__init__(cursor, generator)
         # 获取可能的重命名。
-        self._newName = generator.RenameMember(CursorHelper.GetParentName(cursor), cursor.spelling)
+        pName = CursorHelper.GetParentName(cursor)
+        self._newName = generator.RenameMember(pName, cursor.spelling)
+        self._generatable = not generator.ShouldSkip(pName, cursor.spelling)
 
     @property
     def NewName(self):
@@ -134,15 +142,30 @@ class NativeWrapper(NativeType):
         # 获取可能的重命名。
         self._newName = generator.RenameClass(self._name)
 
-        # 区分标签名。
-        self._tag = generator.Tag
         # 简化命名空间名。
         self._simpleNS = generator.TargetNamespace
 
-        # 含有简化命名空间名的列表。
-        nsName = self._wholeName.replace(CursorHelper.GetNameSpace(cursor), self._simpleNS)
-        self._sNameList = nsName.split("::")
-        for i in range(len(self._sNameList)-1, -1, -1):
-            # 匿名枚举可能有空名字，去除。
-            if not self._sNameList[i]:
-                self._sNameList.pop(i)
+        pList = CursorHelper.GetClassesNameList(cursor)
+        for pClass in pList:
+            if generator.ShouldSkip(pClass):
+                self._generatable = False
+                break
+
+        listName = self._wholeName
+        for rNS in self._generator.CppNameSpace:
+            if listName.startswith(rNS):
+                listName = listName.replace(rNS, self._simpleNS, 1)
+                break
+
+        # 含有全名称的列表。
+        self._nameList = listName.split("::")
+        # 含有新名称的列表。
+        self._nNameList = self._nameList.copy()
+        # 重命名列表中的类名为新名称。
+        for idx, name in enumerate(self._nNameList[1:]):
+            self._nNameList[idx+1] = generator.RenameClass(name)
+
+    @property
+    def NameList(self):
+        # 从命名空间开始的一系列名称列表。
+        return self._nameList

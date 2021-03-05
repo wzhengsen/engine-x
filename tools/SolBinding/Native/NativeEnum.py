@@ -38,9 +38,9 @@ class NativeEnum(NativeWrapper):
         if not self._cxxStr:
             kvMap = self._GetKeyValue()
             strList = ["void RegisterLua{}{}Auto(cocos2d::Lua& lua) {{\n".format(
-                self._tag, "".join(self._sNameList[1:]))]
+                self._generator.Tag, "".join(self._nameList[1:]))]
             strList.append('sol::table pTable = lua["{}"];\n'.format(self._simpleNS))
-            for pField in self._sNameList[1:-1]:
+            for pField in self._nNameList[1:-1]:
                 strList.append('pTable = pTable["{}"];\n'.format(pField))
 
             strList.append('pTable.new_enum("{}"\n'.format(self._newName))
@@ -55,7 +55,12 @@ class NativeAnonymousEnum(NativeEnum):
     def __init__(self, cursor, generator) -> None:
         super().__init__(cursor, generator)
         # 匿名枚举追加一个生成的名字。
-        self._sNameList.append(CursorHelper.AssumeEnumName(cursor))
+        aeName = CursorHelper.AssumeEnumName(cursor)
+        self._name = aeName
+        self._newName = aeName
+        self._nameList[len(self._nameList)-1] = aeName
+        self._nNameList[len(self._nNameList)-1] = aeName
+        self._generatable = True
 
     def __str__(self) -> str:
         """匿名枚举的生成。
@@ -63,9 +68,10 @@ class NativeAnonymousEnum(NativeEnum):
         """
         if not self._cxxStr:
             kvMap = self._GetKeyValue()
-            strList = ["void RegisterLua{}{}Auto(cocos2d::Lua& lua) {{\n".format(self._tag, "".join(self._sNameList[1:]))]
+            strList = ["void RegisterLua{}{}Auto(cocos2d::Lua& lua) {{\n".format(
+                self._generator.Tag, "".join(self._nameList[1:]))]
             strList.append('sol::table pTable = lua["{}"];\n'.format(self._simpleNS))
-            for pField in self._sNameList[1:-1]:
+            for pField in self._nNameList[1:-1]:
                 strList.append('pTable = pTable["{}"];\n'.format(pField))
 
             for key, value in kvMap.items():
