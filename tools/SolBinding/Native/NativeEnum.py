@@ -37,7 +37,7 @@ class NativeEnum(NativeWrapper):
         """
         if not self._cxxStr:
             kvMap = self._GetKeyValue()
-            strList = ["void RegisterLua{}{}Auto(cocos2d::Lua& lua) {{\n".format(
+            strList = ["void RegisterLua{}{}Auto(cocos2d::extension::Lua& lua) {{\n".format(
                 self._generator.Tag, "".join(self._nameList[1:]))]
             strList.append('sol::table pTable = lua["{}"];\n'.format(self._simpleNS))
             for pField in self._nNameList[1:-1]:
@@ -68,7 +68,7 @@ class NativeAnonymousEnum(NativeEnum):
         """
         if not self._cxxStr:
             kvMap = self._GetKeyValue()
-            strList = ["void RegisterLua{}{}Auto(cocos2d::Lua& lua) {{\n".format(
+            strList = ["void RegisterLua{}{}Auto(cocos2d::extension::Lua& lua) {{\n".format(
                 self._generator.Tag, "".join(self._nameList[1:]))]
             strList.append('sol::table pTable = lua["{}"];\n'.format(self._simpleNS))
             for pField in self._nNameList[1:-1]:

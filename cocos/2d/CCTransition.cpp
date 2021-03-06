@@ -192,7 +192,7 @@ void TransitionScene::onExit()
     _inScene->onEnterTransitionDidFinish();
 
 #if CC_ENABLE_LUA_BINDING
-    Lua::GetInstance()->collect_garbage();
+    extension::Lua::GetInstance()->collect_garbage();
 #endif // CC_ENABLE_LUA_BINDING
 }
 

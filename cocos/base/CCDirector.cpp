@@ -193,7 +193,7 @@ Director::~Director()
     s_SharedDirector = nullptr;
 
 #if CC_ENABLE_LUA_BINDING
-    Lua::Close();
+    extension::Lua::Close();
 #endif
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)

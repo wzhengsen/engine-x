@@ -83,7 +83,7 @@ void TriggerMng::parse(const rapidjson::Value &root)
     
 #if CC_ENABLE_LUA_BINDING
     if (count > 0) {
-        auto& lua = *Lua::GetInstance();
+        auto& lua = *extension::Lua::GetInstance();
         const rapidjson::Value& subDict = DICTOOL->getSubDictionary_json(root, "Triggers");
         rapidjson::StringBuffer buffer;
         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
@@ -91,7 +91,7 @@ void TriggerMng::parse(const rapidjson::Value &root)
         
         sol::function __onParseConfig = lua["__onParseConfig"];
         if (__onParseConfig.valid()) {
-            __onParseConfig(Lua::ConfigType::COCOSTUDIO, buffer.GetString());
+            __onParseConfig(extension::Lua::ConfigType::COCOSTUDIO, buffer.GetString());
         }
     }
     else
@@ -118,7 +118,7 @@ void TriggerMng::parse(cocostudio::CocoLoader *pCocoLoader, cocostudio::stExpCoc
 
 #if CC_ENABLE_LUA_BINDING
     if (count > 0) {
-        auto& lua = *Lua::GetInstance();
+        auto& lua = *extension::Lua::GetInstance();
         rapidjson::Document document;
         buildJson(document, pCocoLoader, pCocoNode);
         rapidjson::StringBuffer buffer;
@@ -127,7 +127,7 @@ void TriggerMng::parse(cocostudio::CocoLoader *pCocoLoader, cocostudio::stExpCoc
         
         sol::function __onParseConfig = lua["__onParseConfig"];
         if (__onParseConfig.valid()) {
-            __onParseConfig(Lua::ConfigType::COCOSTUDIO, buffer.GetString());
+            __onParseConfig(extension::Lua::ConfigType::COCOSTUDIO, buffer.GetString());
         }
     }
     else

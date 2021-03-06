@@ -23,13 +23,19 @@
 #include "CCLua.h"
 
 namespace cocos2d {
-    LuaObject::~LuaObject() {
-        if (_dtorHandler) {
-            _dtorHandler(this);
+    namespace extension {
+        LuaObject::~LuaObject() {
+            if (_dtorHandler) {
+                _dtorHandler(this);
+            }
+            Lua::GetInstance()->ReleaseInLua(this);
         }
-        Lua::GetInstance()->ReleaseInLua(this);
-    }
-    void LuaObject::SetDtorHandler(std::function<void(LuaObject*)>& dh) {
-        _dtorHandler = dh;
-    }
+        void LuaObject::SetDtorHandler(std::function<void(LuaObject*)>& dh) {
+            _dtorHandler = dh;
+        }
+
+        void LuaObject::__delete__() {
+            delete this;
+        }
+    }// namespace cocos2d::extension
 } // namespace cocos2d

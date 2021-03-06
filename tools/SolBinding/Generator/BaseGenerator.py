@@ -91,7 +91,7 @@ class BaseGenerator(BaseConfig):
                 '#pragma once\n'
                 '#include "base/ccConfig.h"\n'
                 '#include "scripting/lua-bindings/manual/CCLuaConvertSol.hpp"\n'
-                'void RegisterLua{}Auto(cocos2d::Lua&);'
+                'void RegisterLua{}Auto(cocos2d::extension::Lua&);'
             ).format(self.Tag))
 
     def _GenerateImplCode(self):
@@ -112,10 +112,10 @@ class BaseGenerator(BaseConfig):
                     strList.append('#include "{}"\n'.format(os.path.basename(header)))
 
             for c in self._nativeObjects.values():
-                strList.append("extern void RegisterLua{}{}Auto(cocos2d::Lua&);\n".format(
+                strList.append("extern void RegisterLua{}{}Auto(cocos2d::extension::Lua&);\n".format(
                     self.Tag, "".join(c.NameList[1:])))
 
-            strList.append("void RegisterLua{}Auto(cocos2d::Lua& lua){{\n".format(self.Tag))
+            strList.append("void RegisterLua{}Auto(cocos2d::extension::Lua& lua){{\n".format(self.Tag))
             if self.MacroJudgement:
                 strList.append(self.MacroJudgement + "\n")
             strList.append('lua["{0}"]=lua.get_or("{0}",lua.create_table());\n'.format(self.TargetNamespace))

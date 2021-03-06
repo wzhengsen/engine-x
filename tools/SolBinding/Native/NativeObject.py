@@ -363,7 +363,8 @@ class NativeObject(NativeWrapper):
 
         noCtor = "true" if not self._newCtor and not self._callCtor else "false"
 
-        cxx.append("void RegisterLua{}{}Auto(cocos2d::Lua& lua)".format(self._generator.Tag, "".join(self._nameList[1:])))
+        cxx.append("void RegisterLua{}{}Auto(cocos2d::extension::Lua& lua)".format(
+            self._generator.Tag, "".join(self._nameList[1:])))
         cxx.append("{\n")
         cxx.append('auto mt=lua.NewUserType<{wholeName}>("{nsName}","{class_name}",{noCtor});\n'.format(
             nsName=".".join(self._nNameList[:-1]), class_name=self._newName, wholeName=self._wholeName, noCtor=noCtor))

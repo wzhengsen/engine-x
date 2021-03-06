@@ -23,15 +23,15 @@
 #include "scripting/lua-bindings/CCLua.h"
 
  /**
-  * @brief       Any class which base of cocos2d::LuaObject will trigger this function when it be pushed into lua stack.
+  * @brief       Any class which base of cocos2d::extension::LuaObject will trigger this function when it be pushed into lua stack.
   *              Shound not be called by manual.
   */
-template<typename T, typename = typename std::enable_if<std::is_base_of<cocos2d::LuaObject, T>::value>::type>
+template<typename T, typename = typename std::enable_if<std::is_base_of<cocos2d::extension::LuaObject, T>::value>::type>
 int sol_lua_push(lua_State* L, const T* obj) {
     if (nullptr == obj) {
         return 0;
     }
-    bool udExist = LUA_TTABLE == lua_getfield(L, LUA_REGISTRYINDEX, cocos2d::Lua::UserDataKey);// table?
+    bool udExist = LUA_TTABLE == lua_getfield(L, LUA_REGISTRYINDEX, cocos2d::extension::Lua::UserDataKey);// table?
 
     if (udExist) {
         // Try to get exist userdata from registry["SolWrapper.UD"].
@@ -44,11 +44,11 @@ int sol_lua_push(lua_State* L, const T* obj) {
         *static_cast<const T**>(lua_newuserdata(L, sizeof(const T*))) = obj;// ud
 
         // Make sure the registry["SolWrapper.UD"] is a table.
-        if (LUA_TTABLE != lua_getfield(L, LUA_REGISTRYINDEX, cocos2d::Lua::UserDataKey)) {// ud,table?
+        if (LUA_TTABLE != lua_getfield(L, LUA_REGISTRYINDEX, cocos2d::extension::Lua::UserDataKey)) {// ud,table?
             lua_pop(L, 1);// ud
             lua_newtable(L);// ud,table
             lua_pushvalue(L, -1);// ud,table,table
-            lua_setfield(L, LUA_REGISTRYINDEX, cocos2d::Lua::UserDataKey);// ud,table
+            lua_setfield(L, LUA_REGISTRYINDEX, cocos2d::extension::Lua::UserDataKey);// ud,table
         }
 
         // Save object into registry["SolWrapper.UD"] with light_ud pointer as key.

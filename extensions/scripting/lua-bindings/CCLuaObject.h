@@ -24,16 +24,30 @@
 #include <functional>
 
 namespace cocos2d {
-    /**
-    * @brief Any c++ class that wants to automatically manage the allocation behavior of userdata in lua, please inherit from me.
-    */
-    class CC_DLL LuaObject {
-    public:
-        virtual ~LuaObject();
-        void SetDtorHandler(std::function<void(LuaObject*)>& dh);
-    protected:
-        LuaObject() = default;
-    private:
-        std::function<void(LuaObject*)> _dtorHandler = nullptr;
-    };
+    namespace extension {
+        /**
+        * @brief Any c++ class that wants to automatically manage the allocation behavior of userdata in lua, please inherit from me.
+        */
+        class CC_DLL LuaObject {
+        public:
+            virtual ~LuaObject();
+            void SetDtorHandler(std::function<void(LuaObject*)>& dh);
+            /**
+            * Note:
+            * Only used in lua code to free pointers.
+            * Example:
+            * local e1 = Example.new();
+            * e1:delete();--ok
+            * local e2 = Example();
+            * e2:delete();--Don't do this.
+            * else:
+            * Don't __delete__ cocos2d::Ref.
+            */
+            void __delete__();
+        protected:
+            LuaObject() = default;
+        private:
+            std::function<void(LuaObject*)> _dtorHandler = nullptr;
+        };
+    }// namespace cocos2d::extension
 } // namespace cocos2d

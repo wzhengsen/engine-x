@@ -64,7 +64,7 @@ public:
  * @js NA
  */
 #if CC_ENABLE_LUA_BINDING
-class CC_DLL Ref : public LuaObject
+class CC_DLL Ref : public cocos2d::extension::LuaObject
 #else
 class CC_DLL Ref
 #endif

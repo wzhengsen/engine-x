@@ -32,7 +32,7 @@ extern "C" {
 
 using namespace cocos2d;
 
-static void RegisterLuaSocketManual(Lua& lua) {
+static void RegisterLuaSocketManual(extension::Lua& lua) {
     static constexpr luaL_Reg luax_exts[] = {
     {"socket.core", luaopen_socket_core},
     {"mime.core", luaopen_mime_core}
@@ -45,7 +45,7 @@ static void RegisterLuaSocketManual(Lua& lua) {
     luaopen_luasocket_scripts(lua.lua_state());
 }
 
-static void RegisterLuaCoreTMXMapInfoManual(Lua& lua) {
+static void RegisterLuaCoreTMXMapInfoManual(extension::Lua& lua) {
     sol::usertype<TMXMapInfo> tmi = lua["cc"]["TMXMapInfo"];
     tmi["startElement"] = [](TMXMapInfo* tmi, const std::string_view& sv, const sol::table t) {
         const auto size = t.size();
@@ -63,7 +63,7 @@ static void RegisterLuaCoreTMXMapInfoManual(Lua& lua) {
     };
 }
 
-static void RegisterLuaCoreApplicationManual(Lua& lua) {
+static void RegisterLuaCoreApplicationManual(extension::Lua& lua) {
     sol::usertype<Application> app = lua["cc"]["Application"];
 #if CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID
     app["Dialog"] = [](Application* app, const std::string& title, const std::string& content, sol::variadic_args va) {
@@ -101,7 +101,7 @@ static void RegisterLuaCoreApplicationManual(Lua& lua) {
 #endif
 }
 
-static void RegisterLuaCoreDeviceManual(Lua& lua) {
+static void RegisterLuaCoreDeviceManual(extension::Lua& lua) {
     sol::usertype<cocos2d::Device> device = lua["cc"]["Device"];
     device["getTextureDataForText"] = [](const std::string& text, const FontDefinition& fd, lua_Integer align) {
         int width = 0;
@@ -113,7 +113,7 @@ static void RegisterLuaCoreDeviceManual(Lua& lua) {
     };
 }
 
-static void RegisterLuaCoreRenderTextureManual(Lua& lua) {
+static void RegisterLuaCoreRenderTextureManual(extension::Lua& lua) {
     sol::usertype<RenderTexture> renderTexture = lua["cc"]["RenderTexture"];
     renderTexture["newImage"] = [](RenderTexture* renderTexture, sol::function f, sol::variadic_args va) {
         renderTexture->newImage([f](RefPtr<Image> refPtr) {
@@ -122,7 +122,7 @@ static void RegisterLuaCoreRenderTextureManual(Lua& lua) {
     };
 }
 
-static void RegisterLuaCoreParallaxNodeManual(Lua& lua) {
+static void RegisterLuaCoreParallaxNodeManual(extension::Lua& lua) {
     sol::usertype<ParallaxNode> parallaxNode = lua["cc"]["ParallaxNode"];
     parallaxNode["setParallaxArray"] = [](ParallaxNode* parallaxNode, sol::table t) {
         const auto size = static_cast<ssize_t>(t.size());
@@ -149,7 +149,7 @@ static void RegisterLuaCoreParallaxNodeManual(Lua& lua) {
     };
 }
 
-static void RegisterLuaBackendProgramStateManual(Lua& lua) {
+static void RegisterLuaBackendProgramStateManual(extension::Lua& lua) {
     sol::usertype<backend::ProgramState> programState = lua["ccb"]["ProgramState"];
     programState["getCallbackUniforms"] = [&lua](backend::ProgramState* programState) {
         const auto& m = programState->getCallbackUniforms();
@@ -174,7 +174,7 @@ static void RegisterLuaBackendProgramStateManual(Lua& lua) {
     };
 }
 
-static void RegisterLuaPhysicsPhysicsBodyManual(Lua& lua) {
+static void RegisterLuaPhysicsPhysicsBodyManual(extension::Lua& lua) {
 #if CC_USE_PHYSICS
     sol::usertype<PhysicsBody> physicsBody = lua["cc"]["PhysicsBody"];
 #if CC_ENABLE_CHIPMUNK_INTEGRATION
@@ -191,7 +191,7 @@ static void RegisterLuaPhysicsPhysicsBodyManual(Lua& lua) {
 
 template<typename T, typename MT>
 static void Cocos2dxVectorToTable(
-    Lua& lua,
+    extension::Lua& lua,
     const std::string_view& svNameSpace,
     const std::string_view& svClassName,
     const std::string_view& svMethodName,
@@ -211,7 +211,7 @@ static void Cocos2dxVectorToTable(
 
 template<typename T, typename MT>
 static void Cocos2dxMapToTable(
-    Lua& lua,
+    extension::Lua& lua,
     const std::string_view& svNameSpace,
     const std::string_view& svClassName,
     const std::string_view& svMethodName,
@@ -228,19 +228,19 @@ static void Cocos2dxMapToTable(
     });
 }
 
-inline static void RegisterLuaStudioBoneDataManual(Lua& lua) {
+inline static void RegisterLuaStudioBoneDataManual(extension::Lua& lua) {
     Cocos2dxVectorToTable<cocostudio::BoneData>(lua, "ccs", "BoneData", "displayDataList", &cocostudio::BoneData::displayDataList);
 }
 
-inline static void RegisterLuaStudioArmatureDataManual(Lua& lua) {
+inline static void RegisterLuaStudioArmatureDataManual(extension::Lua& lua) {
     Cocos2dxMapToTable<cocostudio::ArmatureData>(lua, "ccs", "ArmatureData", "boneDataDic", &cocostudio::ArmatureData::boneDataDic);
 }
 
-inline static void RegisterLuaStudioMovementBoneDataManual(Lua& lua) {
+inline static void RegisterLuaStudioMovementBoneDataManual(extension::Lua& lua) {
     Cocos2dxVectorToTable<cocostudio::MovementBoneData>(lua, "ccs", "MovementBoneData", "frameList", &cocostudio::MovementBoneData::frameList);
 }
 
-static void RegisterLuaStudioSkeletonNodeManual(Lua& lua) {
+static void RegisterLuaStudioSkeletonNodeManual(extension::Lua& lua) {
     sol::usertype<cocostudio::timeline::SkeletonNode> skeletonNode = lua["ccs"]["SkeletonNode"];
     skeletonNode["getAllSubBonesMap"] = [&lua](cocostudio::timeline::SkeletonNode* skeletonNode) {
         // The returned table does not hold data.
@@ -252,19 +252,23 @@ static void RegisterLuaStudioSkeletonNodeManual(Lua& lua) {
     };
 }
 
-inline static void RegisterLuaStudioAnimationDataManual(Lua& lua) {
+inline static void RegisterLuaStudioAnimationDataManual(extension::Lua& lua) {
     Cocos2dxMapToTable<cocostudio::AnimationData>(lua, "ccs", "AnimationData", "movementDataDic", &cocostudio::AnimationData::movementDataDic);
 }
 
-inline static void RegisterLuaStudioTextureDataManual(Lua& lua) {
+inline static void RegisterLuaStudioTextureDataManual(extension::Lua& lua) {
     Cocos2dxVectorToTable<cocostudio::TextureData>(lua, "ccs", "TextureData", "contourDataList", &cocostudio::TextureData::contourDataList);
 }
 
-inline static void RegisterLuaStudioMovementDataManual(Lua& lua) {
+inline static void RegisterLuaStudioMovementDataManual(extension::Lua& lua) {
     Cocos2dxMapToTable<cocostudio::MovementData>(lua, "ccs", "MovementData", "movBoneDataDic", &cocostudio::MovementData::movBoneDataDic);
 }
 
-void RegisterLuaManual(Lua& lua) {
+inline static void RegisterLuaCoreTMXTilesetInfoManual(extension::Lua& lua) {
+    Cocos2dxMapToTable<cocos2d::TMXTilesetInfo>(lua, "cc", "TMXTilesetInfo", "_animationInfo", &cocos2d::TMXTilesetInfo::_animationInfo);
+}
+
+void RegisterLuaManual(extension::Lua& lua) {
     RegisterLuaSocketManual(lua);
     RegisterLuaCoreTMXMapInfoManual(lua);
     RegisterLuaCoreApplicationManual(lua);
