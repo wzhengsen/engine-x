@@ -133,6 +133,10 @@ class NativeFunction(NativeType):
     def Supported(self):
         return not self._notSupported
 
+    @property
+    def Static(self):
+        return self._static
+
 
 class NativeWrapper(NativeType):
     """类，结构体，枚举等的基类。"""

@@ -116,13 +116,15 @@ class BaseConfig(object):
         # 欲将单例方法变更为单例属性的对应关系。
         # 格式：
         # self.InstanceMethods = {
-        #   ".*Test.*" : "getInstance"
+        #   ".*Test.*" : ("getInstance","destroyInstance"),
+        #   ".*NoDestroyTest.*" : ("getInstance",None)
         # }
         # 类名和方法名均可使用正则表达式。
         # 只有静态方法才生效。
         # 变换后，可直接使用单例属性访问单例（原单例方法仍然可以使用），如：
         # local inst = MyTest.getInstance();
         # local inst = MyTest.Instance;
+        # MyTest.Instance = nil;--相当于调用MyTest.destroyInstance();
         self.InstanceMethods = {}
 
         # 当一个类在作为父类时，希望被跳过的类型列表。

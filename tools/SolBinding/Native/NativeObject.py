@@ -44,7 +44,10 @@ class NativeMethod(NativeMember, NativeFunction):
         self._const = cursor.is_const_method()
         self._pureVirtual = cursor.is_pure_virtual_method()
         self._isOverride = False
-        self._instanceProperty = False
+        # -1-表示没有单例属性。
+        # 0-表示该方法是获取单例方法。
+        # 1-表示该方法是销毁单例方法。
+        self._instanceProperty = -1
 
         if not self._pureVirtual:
             for node in cursor.get_children():
@@ -55,10 +58,15 @@ class NativeMethod(NativeMember, NativeFunction):
         # 判定是否有单例属性。
         if self._static:
             parentName = CursorHelper.GetParentName(cursor)
-            for matchParent, instanceMethod in generator.InstanceMethods.items():
-                if re.match("^" + matchParent + "$", parentName) and\
-                        re.match("^" + instanceMethod + "$", self._funcName):
-                    self._instanceProperty = True
+            for matchParent, instanceMethods in generator.InstanceMethods.items():
+                breakMe = False
+                if re.match("^" + matchParent + "$", parentName):
+                    for idx in range(2):
+                        if instanceMethods[idx] and re.match("^" + instanceMethods[idx] + "$", self._funcName):
+                            self._instanceProperty = idx
+                            breakMe = True
+                            break
+                if breakMe:
                     break
 
     @property
@@ -68,6 +76,10 @@ class NativeMethod(NativeMember, NativeFunction):
     @property
     def PureVirtual(self):
         return self._pureVirtual
+
+    @property
+    def InstanceProperty(self):
+        return self._instanceProperty
 
     def GetImplStr(self) -> str:
         """获取实现主体字符串。"""
@@ -129,10 +141,6 @@ class NativeMethod(NativeMember, NativeFunction):
             if self._minArgs < len(self._args):
                 cxx.append(")")
             cxx.append(");")
-
-            if self._instanceProperty:
-                # 添加单例属性实现。
-                cxx.append('\nmt["Instance"]=sol::readonly_property(&{});'.format(self._wholeFuncName))
 
             self._cxxStr = "".join(cxx)
         return self._cxxStr
@@ -215,6 +223,8 @@ class NativeObject(NativeWrapper):
         self._defaultCtor = True
         # 如果还有名为"new"的函数（包括重命名的函数），那么，该类或结构体有new构造。
         self._newCtor = False
+        # 存放具有获取和销毁单例方法的列表。
+        self._instanceMethodList = [None, None]
         self.__DeepIterate(self._cursor)
 
         for p in self._parents:
@@ -319,6 +329,10 @@ class NativeObject(NativeWrapper):
                         CursorHelper.GetAvailability(cursor) == CursorHelper.Availability.DEPRECATED:
                     return
 
+                if method.Static:
+                    if method.InstanceProperty >= 0 and self._instanceMethodList[method.InstanceProperty] is None:
+                        self._instanceMethodList[method.InstanceProperty] = method
+
                 if method.NewName == "new":
                     self._newCtor = True
                 if method.WholeFuncName not in self._methods.keys():
@@ -405,6 +419,18 @@ class NativeObject(NativeWrapper):
         # 调用注册内部枚举和内部类。
         for c in self._classes:
             cxx.append('RegisterLua{}{}Auto(lua);\n'.format(self._generator.Tag, "".join(c._nameList[1:])))
+
+        # 单例属性。
+        if self._instanceMethodList[0] and self._instanceMethodList[1]:
+            cxx.append('mt["Instance"]=sol::property(&{},[](std::nullptr_t){{{}();}});\n'.format(
+                self._instanceMethodList[0]._wholeFuncName,
+                self._instanceMethodList[1]._wholeFuncName))
+        elif self._instanceMethodList[0]:
+            cxx.append('mt["Instance"]=sol::readonly_property(&{});\n'.format(
+                self._instanceMethodList[0]._wholeFuncName))
+        elif self._instanceMethodList[1]:
+            cxx.append('mt["Instance"]=sol::writeonly_property([](std::nullptr_t){{{}();}});\n'.format(
+                self._instanceMethodList[1]._wholeFuncName))
 
         cxx.append("}")
         self._cxxStr = "".join(cxx)

@@ -39,7 +39,7 @@ class Cocos2dxGenerator(BaseGenerator):
         ]
 
         self.InstanceMethods |= {
-            ".*": "(g|G)etInstance"
+            ".*": ("(g|G)etInstance", "(d|D)estroyInstance")
         }
 
         # 解析时的依赖头文件路径等。
