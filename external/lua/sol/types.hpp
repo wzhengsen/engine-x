@@ -2,7 +2,7 @@
 
 // The MIT License (MIT)
 
-// Copyright (c) 2013-2020 Rapptz, ThePhD and contributors
+// Copyright (c) 2013-2021 Rapptz, ThePhD and contributors
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
@@ -45,6 +45,15 @@
 #endif // variant shenanigans (thanks, Mac OSX)
 
 namespace sol {
+	namespace d {
+		// shortest possible hidden detail namespace
+		// when types are transcribed, this saves
+		// quite a bit of space, actually.
+		// it's a little unfortunate, but here we are?
+		template <typename T>
+		struct u { };
+	} // namespace d
+
 	namespace detail {
 #if SOL_IS_ON(SOL_USE_NOEXCEPT_FUNCTION_TYPE_I_)
 		typedef int (*lua_CFunction_noexcept)(lua_State* L) noexcept;
@@ -53,25 +62,26 @@ namespace sol {
 #endif // noexcept function type for lua_CFunction
 
 		template <typename T>
-		struct unique_usertype { };
-
-		template <typename T>
 		struct implicit_wrapper {
-			T& item;
-			implicit_wrapper(T* item) : item(*item) {
+			T& value;
+
+			implicit_wrapper(T* value_) : value(*value_) {
 			}
-			implicit_wrapper(T& item) : item(item) {
+
+			implicit_wrapper(T& value_) : value(value_) {
 			}
+
 			operator T&() {
-				return item;
+				return value;
 			}
+
 			operator T*() {
-				return std::addressof(item);
+				return std::addressof(value);
 			}
 		};
 
 		struct yield_tag_t { };
-		const yield_tag_t yield_tag = yield_tag_t {};
+		inline constexpr yield_tag_t yield_tag {};
 	} // namespace detail
 
 	struct lua_nil_t { };
@@ -92,13 +102,17 @@ namespace sol {
 	} // namespace detail
 
 	struct metatable_key_t { };
-	const metatable_key_t metatable_key = {};
+	inline constexpr metatable_key_t metatable_key {};
+
+	struct global_tag_t {
+	} inline constexpr global_tag {};
+
 
 	struct env_key_t { };
-	const env_key_t env_key = {};
+	inline constexpr env_key_t env_key {};
 
 	struct no_metatable_t { };
-	const no_metatable_t no_metatable = {};
+	inline constexpr no_metatable_t no_metatable {};
 
 	template <typename T>
 	struct yielding_t {
@@ -189,29 +203,49 @@ namespace sol {
 	};
 
 	struct userdata_value {
-		void* value;
-		userdata_value(void* data) : value(data) {
+	private:
+		void* m_value;
+
+	public:
+		userdata_value(void* data) : m_value(data) {
 		}
+
+		void* value() const {
+			return m_value;
+		}
+
 		operator void*() const {
-			return value;
+			return value();
 		}
 	};
 
-	template <typename L>
+	template <typename T>
 	struct light {
-		L* value;
+	private:
+		static_assert(!std::is_void_v<T>, "the type for light will never be void");
+		T* m_value;
 
-		light(L& x) : value(std::addressof(x)) {
+	public:
+		light(T& x) : m_value(std::addressof(x)) {
 		}
-		light(L* x) : value(x) {
+		light(T* x) : m_value(x) {
 		}
-		light(void* x) : value(static_cast<L*>(x)) {
+		explicit light(void* x) : m_value(static_cast<T*>(x)) {
 		}
-		operator L*() const {
-			return value;
+
+		T* value() const {
+			return m_value;
 		}
-		operator L&() const {
-			return *value;
+
+		operator T*() const {
+			return m_value;
+		}
+		operator T&() const {
+			return *m_value;
+		}
+
+		void* void_value() const {
+			return m_value;
 		}
 	};
 
@@ -221,20 +255,30 @@ namespace sol {
 		return light<L>(l);
 	}
 
-	template <typename U>
-	struct user {
-		U value;
+	template <typename T>
+	struct user : private detail::ebco<T> {
+	private:
+		using base_t = detail::ebco<T>;
 
-		user(U&& x) : value(std::forward<U>(x)) {
+	public:
+		using base_t::base_t;
+
+		using base_t::value;
+
+		operator std::add_pointer_t<std::remove_reference_t<T>>() {
+			return std::addressof(this->base_t::value());
 		}
-		operator std::add_pointer_t<std::remove_reference_t<U>>() {
-			return std::addressof(value);
+
+		operator std::add_pointer_t<std::add_const_t<std::remove_reference_t<T>>>() const {
+			return std::addressof(this->base_t::value());
 		}
-		operator std::add_lvalue_reference_t<U>() {
-			return value;
+
+		operator std::add_lvalue_reference_t<T>() {
+			return this->base_t::value();
 		}
-		operator std::add_const_t<std::add_lvalue_reference_t<U>> &() const {
-			return value;
+
+		operator std::add_const_t<std::add_lvalue_reference_t<T>>&() const {
+			return this->base_t::value();
 		}
 	};
 
@@ -245,11 +289,14 @@ namespace sol {
 	}
 
 	template <typename T>
-	struct metatable_registry_key {
-		T key;
+	struct metatable_registry_key : private detail::ebco<T> {
+	private:
+		using base_t = detail::ebco<T>;
 
-		metatable_registry_key(T key) : key(std::forward<T>(key)) {
-		}
+	public:
+		using base_t::base_t;
+
+		using base_t::value;
 	};
 
 	template <typename T>
@@ -300,9 +347,9 @@ namespace sol {
 	}
 
 	template <typename T>
-	struct as_table_t {
+	struct as_table_t : private detail::ebco<T> {
 	private:
-		T value_;
+		using base_t = detail::ebco<T>;
 
 	public:
 		as_table_t() = default;
@@ -310,36 +357,24 @@ namespace sol {
 		as_table_t(as_table_t&&) = default;
 		as_table_t& operator=(const as_table_t&) = default;
 		as_table_t& operator=(as_table_t&&) = default;
-		template <typename Arg,
-		     meta::enable<meta::neg<std::is_same<meta::unqualified_t<Arg>, as_table_t>>,
-		          meta::neg<std::is_base_of<proxy_base_tag, meta::unqualified_t<Arg>>>> = meta::enabler>
-		as_table_t(Arg&& arg) : value_(std::forward<Arg>(arg)) {
-		}
-		template <typename Arg0, typename Arg1, typename... Args>
-		as_table_t(Arg0&& arg0, Arg1&& arg1, Args&&... args) : value_(std::forward<Arg0>(arg0), std::forward<Arg1>(arg1), std::forward<Args>(args)...) {
-		}
 
-		T& value() & {
-			return value_;
-		}
+		using base_t::base_t;
 
-		T&& value() && {
-			return std::move(value_);
-		}
-
-		const T& value() const& {
-			return value_;
-		}
+		using base_t::value;
 
 		operator std::add_lvalue_reference_t<T>() {
-			return value_;
+			return this->base_t::value();
+		}
+
+		operator std::add_const_t<std::add_lvalue_reference_t<T>>() const {
+			return this->base_t::value();
 		}
 	};
 
 	template <typename T>
-	struct nested {
+	struct nested : private detail::ebco<T> {
 	private:
-		T value_;
+		using base_t = detail::ebco<T>;
 
 	public:
 		using nested_type = T;
@@ -349,29 +384,17 @@ namespace sol {
 		nested(nested&&) = default;
 		nested& operator=(const nested&) = default;
 		nested& operator=(nested&&) = default;
-		template <typename Arg,
-		     meta::enable<meta::neg<std::is_same<meta::unqualified_t<Arg>, nested>>,
-		          meta::neg<std::is_base_of<proxy_base_tag, meta::unqualified_t<Arg>>>> = meta::enabler>
-		nested(Arg&& arg) : value_(std::forward<Arg>(arg)) {
-		}
-		template <typename Arg0, typename Arg1, typename... Args>
-		nested(Arg0&& arg0, Arg1&& arg1, Args&&... args) : value_(std::forward<Arg0>(arg0), std::forward<Arg1>(arg1), std::forward<Args>(args)...) {
-		}
 
-		T& value() & {
-			return value_;
-		}
+		using base_t::base_t;
 
-		T&& value() && {
-			return std::move(value_);
-		}
-
-		const T& value() const& {
-			return value_;
-		}
+		using base_t::value;
 
 		operator std::add_lvalue_reference_t<T>() {
-			return value_;
+			return this->base_t::value();
+		}
+
+		operator std::add_const_t<std::add_lvalue_reference_t<T>>() const {
+			return this->base_t::value();
 		}
 	};
 
@@ -399,9 +422,9 @@ namespace sol {
 	}
 
 	template <typename T>
-	struct as_container_t {
+	struct as_container_t : private detail::ebco<T> {
 	private:
-		T value_;
+		using base_t = detail::ebco<T>;
 
 	public:
 		using type = T;
@@ -411,42 +434,12 @@ namespace sol {
 		as_container_t(as_container_t&&) = default;
 		as_container_t& operator=(const as_container_t&) = default;
 		as_container_t& operator=(as_container_t&&) = default;
-		template <typename Arg,
-		     meta::enable<meta::neg<std::is_same<meta::unqualified_t<Arg>, as_container_t>>,
-		          meta::neg<std::is_base_of<proxy_base_tag, meta::unqualified_t<Arg>>>> = meta::enabler>
-		as_container_t(Arg&& arg) : value_(std::forward<Arg>(arg)) {
-		}
-		template <typename Arg0, typename Arg1, typename... Args>
-		as_container_t(Arg0&& arg0, Arg1&& arg1, Args&&... args) : value_(std::forward<Arg0>(arg0), std::forward<Arg1>(arg1), std::forward<Args>(args)...) {
-		}
 
-		T& value() & {
-			return value_;
-		}
+		using base_t::base_t;
 
-		T&& value() && {
-			return std::move(value_);
-		}
+		using base_t::value;
 
-		const T& value() const& {
-			return value_;
-		}
-	};
-
-	template <typename T>
-	struct as_container_t<T&> {
-	private:
-		std::reference_wrapper<T> value_;
-
-	public:
-		as_container_t(T& value) : value_(value) {
-		}
-
-		T& value() {
-			return value_;
-		}
-
-		operator T&() {
+		operator std::add_lvalue_reference_t<T>() {
 			return value();
 		}
 	};
@@ -457,9 +450,9 @@ namespace sol {
 	}
 
 	template <typename T>
-	struct push_invoke_t {
+	struct push_invoke_t : private detail::ebco<T> {
 	private:
-		T value_;
+		using base_t = detail::ebco<T>;
 
 	public:
 		push_invoke_t() = default;
@@ -467,43 +460,37 @@ namespace sol {
 		push_invoke_t(push_invoke_t&&) = default;
 		push_invoke_t& operator=(const push_invoke_t&) = default;
 		push_invoke_t& operator=(push_invoke_t&&) = default;
-		template <typename Arg,
-		     meta::enable<meta::neg<std::is_same<meta::unqualified_t<Arg>, push_invoke_t>>,
-		          meta::neg<std::is_base_of<proxy_base_tag, meta::unqualified_t<Arg>>>> = meta::enabler>
-		push_invoke_t(Arg&& arg) : value_(std::forward<Arg>(arg)) {
-		}
-		template <typename Arg0, typename Arg1, typename... Args>
-		push_invoke_t(Arg0&& arg0, Arg1&& arg1, Args&&... args) : value_(std::forward<Arg0>(arg0), std::forward<Arg1>(arg1), std::forward<Args>(args)...) {
-		}
 
-		T& value() & {
-			return value_;
-		}
+		using base_t::base_t;
 
-		T&& value() && {
-			return std::move(value_);
-		}
-
-		const T& value() const& {
-			return value_;
-		}
-	};
-
-	template <typename T>
-	struct push_invoke_t<T&> {
-		std::reference_wrapper<T> value_;
-
-		push_invoke_t(T& value) : value_(value) {
-		}
-
-		T& value() {
-			return value_;
-		}
+		using base_t::value;
 	};
 
 	template <typename Fx>
 	auto push_invoke(Fx&& fx) {
 		return push_invoke_t<Fx>(std::forward<Fx>(fx));
+	}
+
+	template <typename T>
+	struct forward_as_value_t : private detail::ebco<T> {
+	private:
+		using base_t = detail::ebco<T>;
+
+	public:
+		forward_as_value_t() = default;
+		forward_as_value_t(const forward_as_value_t&) = default;
+		forward_as_value_t(forward_as_value_t&&) = default;
+		forward_as_value_t& operator=(const forward_as_value_t&) = default;
+		forward_as_value_t& operator=(forward_as_value_t&&) = default;
+
+		using base_t::base_t;
+
+		using base_t::value;
+	};
+
+	template <typename T>
+	auto pass_as_value(T& value_ref_) {
+		return forward_as_value_t<T>(value_ref_);
 	}
 
 	struct override_value_t { };
@@ -572,13 +559,13 @@ namespace sol {
 		new_table& operator=(const new_table&) = default;
 		new_table& operator=(new_table&&) = default;
 
-		new_table(int sequence_hint, int map_hint = 0) : sequence_hint(sequence_hint), map_hint(map_hint) {
+		new_table(int sequence_hint_, int map_hint_ = 0) noexcept : sequence_hint(sequence_hint_), map_hint(map_hint_) {
 		}
 	};
 
 	const new_table create = {};
 
-	enum class lib : char {
+	enum class lib : unsigned char {
 		// print, assert, and other base functions
 		base,
 		// require and other package functions
@@ -752,7 +739,7 @@ namespace sol {
 		return names[static_cast<std::size_t>(c)];
 	}
 
-	enum class meta_function {
+	enum class meta_function : unsigned {
 		construct,
 		index,
 		new_index,
@@ -841,7 +828,7 @@ namespace sol {
 	}
 
 	inline const std::string& to_string(meta_function mf) {
-		return meta_function_names()[static_cast<int>(mf)];
+		return meta_function_names()[static_cast<std::size_t>(mf)];
 	}
 
 	inline type type_of(lua_State* L, int index) {
@@ -853,8 +840,20 @@ namespace sol {
 	}
 
 	template <typename T>
+	struct is_stateless_lua_reference
+	: std::integral_constant<bool,
+	       (std::is_base_of_v<stateless_stack_reference, T> || std::is_base_of_v<stateless_reference, T>)&&(
+	            !std::is_base_of_v<stack_reference, T> && !std::is_base_of_v<reference, T> && !std::is_base_of_v<main_reference, T>)> { };
+
+	template <typename T>
+	inline constexpr bool is_stateless_lua_reference_v = is_stateless_lua_reference<T>::value;
+
+	template <typename T>
 	struct is_lua_reference
-	: std::integral_constant<bool, std::is_base_of_v<reference, T> || std::is_base_of_v<main_reference, T> || std::is_base_of_v<stack_reference, T>> { };
+	: std::integral_constant<bool,
+	       std::is_base_of_v<reference,
+	            T> || std::is_base_of_v<main_reference, T> || std::is_base_of_v<stack_reference, T> || std::is_base_of_v<stateless_stack_reference, T> || std::is_base_of_v<stateless_reference, T>> {
+	};
 
 	template <typename T>
 	inline constexpr bool is_lua_reference_v = is_lua_reference<T>::value;
@@ -866,21 +865,17 @@ namespace sol {
 	inline constexpr bool is_lua_reference_or_proxy_v = is_lua_reference_or_proxy<T>::value;
 
 	template <typename T>
-	struct is_transparent_argument : std::false_type { };
+	struct is_transparent_argument
+	: std::integral_constant<bool,
+	       std::is_same_v<meta::unqualified_t<T>,
+	            this_state> || std::is_same_v<meta::unqualified_t<T>, this_main_state> || std::is_same_v<meta::unqualified_t<T>, this_environment> || std::is_same_v<meta::unqualified_t<T>, variadic_args>> {
+	};
 
 	template <typename T>
 	constexpr inline bool is_transparent_argument_v = is_transparent_argument<T>::value;
 
-	template <>
-	struct is_transparent_argument<this_state> : std::true_type { };
-	template <>
-	struct is_transparent_argument<this_main_state> : std::true_type { };
-	template <>
-	struct is_transparent_argument<this_environment> : std::true_type { };
-	template <>
-	struct is_transparent_argument<variadic_args> : std::true_type { };
 	template <typename T>
-	struct is_variadic_arguments : std::is_same<T, variadic_args> { };
+	struct is_variadic_arguments : meta::any<std::is_same<T, variadic_args>, meta::is_optional<T>> { };
 
 	template <typename T>
 	struct is_container
@@ -912,6 +907,11 @@ namespace sol {
 		template <std::size_t N>
 		struct lua_type_of<wchar_t[N]> : std::integral_constant<type, type::string> { };
 
+#if SOL_IS_ON(SOL_CHAR8_T_I_)
+		template <std::size_t N>
+		struct lua_type_of<char8_t[N]> : std::integral_constant<type, type::string> { };
+#endif
+
 		template <std::size_t N>
 		struct lua_type_of<char16_t[N]> : std::integral_constant<type, type::string> { };
 
@@ -924,6 +924,11 @@ namespace sol {
 		template <>
 		struct lua_type_of<wchar_t> : std::integral_constant<type, type::string> { };
 
+#if SOL_IS_ON(SOL_CHAR8_T_I_)
+		template <>
+		struct lua_type_of<char8_t> : std::integral_constant<type, type::string> { };
+#endif
+
 		template <>
 		struct lua_type_of<char16_t> : std::integral_constant<type, type::string> { };
 
@@ -932,6 +937,14 @@ namespace sol {
 
 		template <>
 		struct lua_type_of<const char*> : std::integral_constant<type, type::string> { };
+
+		template <>
+		struct lua_type_of<const wchar_t*> : std::integral_constant<type, type::string> { };
+
+#if SOL_IS_ON(SOL_CHAR8_T_I_)
+		template <>
+		struct lua_type_of<const char8_t*> : std::integral_constant<type, type::string> { };
+#endif
 
 		template <>
 		struct lua_type_of<const char16_t*> : std::integral_constant<type, type::string> { };
@@ -1142,20 +1155,16 @@ namespace sol {
 	inline constexpr int lua_size_v = lua_size<T>::value;
 
 	namespace detail {
-		template <typename...>
-		struct void_ {
-			typedef void type;
-		};
-		template <typename T, typename = void>
-		struct has_internal_marker_impl : std::false_type { };
+		// MSVC's decltype detection is broken, which breaks other
+		// parts of the code. So we add more workarounds. The moment it's fixed,
+		// we take it away and break everyone that doesn't upgrade.
 		template <typename T>
-		struct has_internal_marker_impl<T, typename void_<typename T::SOL_INTERNAL_UNSPECIALIZED_MARKER_>::type> : std::true_type { };
+		using is_msvc_callable_rigged = meta::any<meta::is_specialization_of<T, push_invoke_t>, meta::is_specialization_of<T, as_table_t>,
+		     meta::is_specialization_of<T, forward_as_value_t>, meta::is_specialization_of<T, as_container_t>, meta::is_specialization_of<T, nested>,
+		     meta::is_specialization_of<T, yielding_t>>;
 
 		template <typename T>
-		using has_internal_marker = has_internal_marker_impl<T>;
-
-		template <typename T>
-		constexpr inline bool has_internal_marker_v = has_internal_marker<T>::value;
+		inline constexpr bool is_msvc_callable_rigged_v = is_msvc_callable_rigged<T>::value;
 	} // namespace detail
 
 	template <typename T>
@@ -1163,14 +1172,30 @@ namespace sol {
 	: std::integral_constant<bool,
 	       type::userdata
 	                 != lua_type_of_v<
-	                      T> || ((type::userdata == lua_type_of_v<T>)&&detail::has_internal_marker_v<lua_type_of<T>> && !detail::has_internal_marker_v<lua_size<T>>)
+	                      T> || ((type::userdata == lua_type_of_v<T>)&&meta::meta_detail::has_internal_marker_v<lua_type_of<T>> && !meta::meta_detail::has_internal_marker_v<lua_size<T>>)
 	            || is_lua_reference_or_proxy_v<T> || meta::is_specialization_of_v<T, std::tuple> || meta::is_specialization_of_v<T, std::pair>> { };
 
 	template <typename T>
 	constexpr inline bool is_lua_primitive_v = is_lua_primitive<T>::value;
 
 	template <typename T>
+	struct is_value_semantic_for_function
+#if SOL_IS_ON(SOL_FUNCTION_CALL_VALUE_SEMANTICS_I_)
+	: std::true_type {
+	};
+#else
+	: std::false_type {
+	};
+#endif
+
+	template <typename T>
+	constexpr inline bool is_value_semantic_for_function_v = is_value_semantic_for_function<T>::value;
+
+	template <typename T>
 	struct is_main_threaded : std::is_base_of<main_reference, T> { };
+
+	template <typename T>
+	inline constexpr bool is_main_threaded_v = is_main_threaded<T>::value;
 
 	template <typename T>
 	struct is_stack_based : std::is_base_of<stack_reference, T> { };
@@ -1256,6 +1281,14 @@ namespace sol {
 
 	template <typename T>
 	inline constexpr bool is_table_v = is_table<T>::value;
+
+	template <typename T>
+	struct is_global_table : std::false_type { };
+	template <typename T>
+	struct is_global_table<basic_table_core<true, T>> : std::true_type { };
+
+	template <typename T>
+	inline constexpr bool is_global_table_v = is_global_table<T>::value;
 
 	template <typename T>
 	struct is_stack_table : std::false_type { };
@@ -1368,6 +1401,56 @@ namespace sol {
 	template <typename T>
 	inline constexpr bool is_lua_c_function_v = is_lua_c_function<T>::value;
 
+	enum class automagic_flags : unsigned {
+		none = 0x000u,
+		default_constructor = 0x001,
+		destructor = 0x002u,
+		pairs_operator = 0x004u,
+		to_string_operator = 0x008u,
+		call_operator = 0x010u,
+		less_than_operator = 0x020u,
+		less_than_or_equal_to_operator = 0x040u,
+		length_operator = 0x080u,
+		equal_to_operator = 0x100u,
+		all = default_constructor | destructor | pairs_operator | to_string_operator | call_operator | less_than_operator | less_than_or_equal_to_operator
+		     | length_operator | equal_to_operator
+	};
+
+	inline constexpr automagic_flags operator|(automagic_flags left, automagic_flags right) noexcept {
+		return static_cast<automagic_flags>(
+		     static_cast<std::underlying_type_t<automagic_flags>>(left) | static_cast<std::underlying_type_t<automagic_flags>>(right));
+	}
+
+	inline constexpr automagic_flags operator&(automagic_flags left, automagic_flags right) noexcept {
+		return static_cast<automagic_flags>(
+		     static_cast<std::underlying_type_t<automagic_flags>>(left) & static_cast<std::underlying_type_t<automagic_flags>>(right));
+	}
+
+	inline constexpr automagic_flags& operator|=(automagic_flags& left, automagic_flags right) noexcept {
+		left = left | right;
+		return left;
+	}
+
+	inline constexpr automagic_flags& operator&=(automagic_flags& left, automagic_flags right) noexcept {
+		left = left & right;
+		return left;
+	}
+
+	template <typename Left, typename Right>
+	constexpr bool has_flag(Left left, Right right) noexcept {
+		return (left & right) == right;
+	}
+
+	template <typename Left, typename Right>
+	constexpr bool has_any_flag(Left left, Right right) noexcept {
+		return (left & right) != static_cast<Left>(static_cast<std::underlying_type_t<Left>>(0));
+	}
+
+	template <typename Left, typename Right>
+	constexpr auto clear_flags(Left left, Right right) noexcept {
+		return static_cast<Left>(static_cast<std::underlying_type_t<Left>>(left) & ~static_cast<std::underlying_type_t<Right>>(right));
+	}
+
 	struct automagic_enrollments {
 		bool default_constructor = true;
 		bool destructor = true;
@@ -1380,6 +1463,8 @@ namespace sol {
 		bool equal_to_operator = true;
 	};
 
+	template <automagic_flags compile_time_defaults = automagic_flags::all>
+	struct constant_automagic_enrollments : public automagic_enrollments { };
 
 } // namespace sol
 

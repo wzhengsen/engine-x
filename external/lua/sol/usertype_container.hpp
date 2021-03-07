@@ -2,7 +2,7 @@
 
 // The MIT License (MIT)
 
-// Copyright (c) 2013-2020 Rapptz, ThePhD and contributors
+// Copyright (c) 2013-2021 Rapptz, ThePhD and contributors
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
@@ -355,10 +355,10 @@ namespace sol {
 		using has_traits_erase = meta::boolean<has_traits_erase_test<T>::value>;
 
 		template <typename T>
-		struct is_forced_container : is_container<T> {};
+		struct is_forced_container : is_container<T> { };
 
 		template <typename T>
-		struct is_forced_container<as_container_t<T>> : std::true_type {};
+		struct is_forced_container<as_container_t<T>> : std::true_type { };
 
 		template <typename T>
 		struct container_decay {
@@ -514,9 +514,9 @@ namespace sol {
 			struct iter {
 				T& source;
 				iterator it;
-				std::size_t i;
+				std::size_t index;
 
-				iter(T& source, iterator it) : source(source), it(std::move(it)), i(0) {
+				iter(T& source_, iterator it_) : source(source_), it(std::move(it_)), index(0) {
 				}
 
 				~iter() {
@@ -587,7 +587,7 @@ namespace sol {
 			}
 
 			static detail::error_result get_category(std::input_iterator_tag, lua_State* L, T& self, K& key) {
-				key += deferred_uc::index_adjustment(L, self);
+				key = static_cast<K>(key + deferred_uc::index_adjustment(L, self));
 				if (key < 0) {
 					return stack::push(L, lua_nil);
 				}
@@ -608,7 +608,7 @@ namespace sol {
 
 			static detail::error_result get_category(std::random_access_iterator_tag, lua_State* L, T& self, K& key) {
 				std::ptrdiff_t len = static_cast<std::ptrdiff_t>(size_start(L, self));
-				key += deferred_uc::index_adjustment(L, self);
+				key = static_cast<K>(static_cast<std::ptrdiff_t>(key) + deferred_uc::index_adjustment(L, self));
 				if (key < 0 || key >= len) {
 					return stack::push(L, lua_nil);
 				}
@@ -663,7 +663,7 @@ namespace sol {
 
 			static detail::error_result set_category(std::input_iterator_tag, lua_State* L, T& self, stack_object okey, stack_object value) {
 				decltype(auto) key = okey.as<K>();
-				key += deferred_uc::index_adjustment(L, self);
+				key = static_cast<K>(static_cast<std::ptrdiff_t>(key) + deferred_uc::index_adjustment(L, self));
 				auto e = deferred_uc::end(L, self);
 				auto it = deferred_uc::begin(L, self);
 				auto backit = it;
@@ -681,7 +681,7 @@ namespace sol {
 
 			static detail::error_result set_category(std::random_access_iterator_tag, lua_State* L, T& self, stack_object okey, stack_object value) {
 				decltype(auto) key = okey.as<K>();
-				key += deferred_uc::index_adjustment(L, self);
+				key = static_cast<K>(static_cast<std::ptrdiff_t>(key) + deferred_uc::index_adjustment(L, self));
 				if (key < 0) {
 					return detail::error_result("sol: out of bounds (too small) for set on '%s'", detail::demangle<T>().c_str());
 				}
@@ -719,8 +719,12 @@ namespace sol {
 
 			template <typename Iter>
 			static detail::error_result set_associative_insert(std::true_type, lua_State*, T& self, Iter& it, K& key, stack_object value) {
-				if constexpr (meta::has_insert<T>::value) {
+				if constexpr (meta::has_insert_with_iterator<T>::value) {
 					self.insert(it, value_type(key, value.as<V>()));
+					return {};
+				}
+				else if constexpr (meta::has_insert<T>::value) {
+					self.insert(value_type(key, value.as<V>()));
 					return {};
 				}
 				else {
@@ -734,8 +738,12 @@ namespace sol {
 
 			template <typename Iter>
 			static detail::error_result set_associative_insert(std::false_type, lua_State*, T& self, Iter& it, K& key, stack_object) {
-				if constexpr (meta::has_insert<T>::value) {
+				if constexpr (meta::has_insert_with_iterator<T>::value) {
 					self.insert(it, key);
+					return {};
+				}
+				else if constexpr (meta::has_insert<T>::value) {
+					self.insert(key);
 					return {};
 				}
 				else {
@@ -828,7 +836,7 @@ namespace sol {
 
 			template <typename Iter>
 			static detail::error_result find_associative_lookup(std::false_type, lua_State* L, T& self, Iter&, std::size_t idx) {
-				idx -= deferred_uc::index_adjustment(L, self);
+				idx = static_cast<std::size_t>(static_cast<std::ptrdiff_t>(idx) - deferred_uc::index_adjustment(L, self));
 				return stack::push(L, idx);
 			}
 
@@ -879,8 +887,7 @@ namespace sol {
 				auto backit = self.before_begin();
 				{
 					auto e = deferred_uc::end(L, self);
-					for (auto it = deferred_uc::begin(L, self); it != e; ++backit, ++it) {
-					}
+					for (auto it = deferred_uc::begin(L, self); it != e; ++backit, ++it) { }
 				}
 				return add_insert_after(std::true_type(), L, self, value, backit);
 			}
@@ -918,17 +925,23 @@ namespace sol {
 
 			template <typename Iter>
 			static detail::error_result add_push_back(std::false_type, lua_State* L, T& self, stack_object value, Iter& pos) {
-				return add_insert(meta::has_insert<T>(), L, self, value, pos);
+				return add_insert(
+				     std::integral_constant < bool, meta::has_insert<T>::value || meta::has_insert_with_iterator<T>::value > (), L, self, value, pos);
 			}
 
 			static detail::error_result add_push_back(std::false_type, lua_State* L, T& self, stack_object value) {
-				return add_insert(meta::has_insert<T>(), L, self, value);
+				return add_insert(
+				     std::integral_constant < bool, meta::has_insert<T>::value || meta::has_insert_with_iterator<T>::value > (), L, self, value);
 			}
 
 			template <typename Iter>
 			static detail::error_result add_associative(std::true_type, lua_State* L, T& self, stack_object key, Iter& pos) {
-				if constexpr (meta::has_insert<T>::value) {
+				if constexpr (meta::has_insert_with_iterator<T>::value) {
 					self.insert(pos, value_type(key.as<K>(), stack::unqualified_get<V>(L, 3)));
+					return {};
+				}
+				else if constexpr (meta::has_insert<T>::value) {
+					self.insert(value_type(key.as<K>(), stack::unqualified_get<V>(L, 3)));
 					return {};
 				}
 				else {
@@ -981,7 +994,7 @@ namespace sol {
 			static detail::error_result insert_lookup(std::false_type, lua_State* L, T& self, stack_object where, stack_object value) {
 				auto it = deferred_uc::begin(L, self);
 				auto key = where.as<K>();
-				key += deferred_uc::index_adjustment(L, self);
+				key = static_cast<K>(static_cast<std::ptrdiff_t>(key) + deferred_uc::index_adjustment(L, self));
 				std::advance(it, key);
 				self.insert(it, value.as<V>());
 				return {};
@@ -991,7 +1004,7 @@ namespace sol {
 				auto key = where.as<K>();
 				auto backit = self.before_begin();
 				{
-					key += deferred_uc::index_adjustment(L, self);
+					key = static_cast<K>(static_cast<std::ptrdiff_t>(key) + deferred_uc::index_adjustment(L, self));
 					auto e = deferred_uc::end(L, self);
 					for (auto it = deferred_uc::begin(L, self); key > 0; ++backit, ++it, --key) {
 						if (backit == e) {
@@ -1017,7 +1030,12 @@ namespace sol {
 			}
 
 			static detail::error_result insert_copyable(std::true_type, lua_State* L, T& self, stack_object key, stack_object value) {
-				return insert_has(meta::has_insert<T>(), L, self, std::move(key), std::move(value));
+				return insert_has(std::integral_constant < bool,
+				     meta::has_insert<T>::value || meta::has_insert_with_iterator<T>::value > (),
+				     L,
+				     self,
+				     std::move(key),
+				     std::move(value));
 			}
 
 			static detail::error_result insert_copyable(std::false_type, lua_State*, T&, stack_object, stack_object) {
@@ -1026,7 +1044,7 @@ namespace sol {
 
 			static detail::error_result erase_integral(std::true_type, lua_State* L, T& self, K& key) {
 				auto it = deferred_uc::begin(L, self);
-				key += deferred_uc::index_adjustment(L, self);
+				key = (static_cast<std::ptrdiff_t>(key) + deferred_uc::index_adjustment(L, self));
 				std::advance(it, key);
 				self.erase(it);
 
@@ -1057,7 +1075,7 @@ namespace sol {
 			static detail::error_result erase_after_has(std::true_type, lua_State* L, T& self, K& key) {
 				auto backit = self.before_begin();
 				{
-					key += deferred_uc::index_adjustment(L, self);
+					key = static_cast<K>(static_cast<std::ptrdiff_t>(key) + deferred_uc::index_adjustment(L, self));
 					auto e = deferred_uc::end(L, self);
 					for (auto it = deferred_uc::begin(L, self); key > 0; ++backit, ++it, --key) {
 						if (backit == e) {
@@ -1135,7 +1153,7 @@ namespace sol {
 			}
 
 			static std::size_t size_start(lua_State* L, T& self) {
-				return size_has(meta::has_size<T>(), L, self);
+				return static_cast<std::size_t>(size_has(meta::has_size<T>(), L, self));
 			}
 
 			static void clear_start(lua_State* L, T& self) {
@@ -1160,8 +1178,8 @@ namespace sol {
 				}
 				int p;
 				if constexpr (ip) {
-					++i.i;
-					p = stack::push_reference(L, i.i);
+					++i.index;
+					p = stack::push_reference(L, i.index);
 				}
 				else {
 					p = stack::push_reference(L, it->first);
@@ -1402,7 +1420,7 @@ namespace sol {
 					using v_t = std::add_const_t<decltype(self[idx])>;
 					v_t v = self[idx];
 					if (v == value) {
-						idx -= deferred_uc::index_adjustment(L, self);
+						idx = static_cast<std::size_t>(static_cast<std::ptrdiff_t>(idx) - deferred_uc::index_adjustment(L, self));
 						return stack::push(L, idx);
 					}
 				}
@@ -1527,11 +1545,11 @@ namespace sol {
 		};
 
 		template <typename X>
-		struct usertype_container_default<usertype_container<X>> : usertype_container_default<X> {};
+		struct usertype_container_default<usertype_container<X>> : usertype_container_default<X> { };
 	} // namespace container_detail
 
 	template <typename T>
-	struct usertype_container : container_detail::usertype_container_default<T> {};
+	struct usertype_container : container_detail::usertype_container_default<T> { };
 
 } // namespace sol
 

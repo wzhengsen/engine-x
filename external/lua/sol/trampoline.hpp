@@ -2,7 +2,7 @@
 
 // The MIT License (MIT)
 
-// Copyright (c) 2013-2020 Rapptz, ThePhD and contributors
+// Copyright (c) 2013-2021 Rapptz, ThePhD and contributors
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
@@ -49,7 +49,7 @@ namespace sol {
 		inline int default_exception_handler(lua_State* L, optional<const std::exception&>, string_view what) {
 #if SOL_IS_ON(SOL_PRINT_ERRORS_I_)
 			std::cerr << "[sol3] An exception occurred: ";
-			std::cerr.write(what.data(), what.size());
+			std::cerr.write(what.data(), static_cast<std::streamsize>(what.size()));
 			std::cerr << std::endl;
 #endif
 			lua_pushlstring(L, what.data(), what.size());
@@ -103,7 +103,6 @@ namespace sol {
 		inline int lua_cfunction_trampoline(lua_State* L, lua_CFunction f) {
 #if SOL_IS_ON(SOL_PROPAGATE_EXCEPTIONS_I_)
 			return f(L);
-
 #else
 			try {
 				return f(L);
@@ -117,7 +116,7 @@ namespace sol {
 			catch (const std::exception& e) {
 				call_exception_handler(L, optional<const std::exception&>(e), e.what());
 			}
-#if SOL_IS_OFF(SOL_USE_LUAJIT_I_)
+#if SOL_IS_ON(SOL_EXCEPTIONS_CATCH_ALL_I_)
 			// LuaJIT cannot have the catchall when the safe propagation is on
 			// but LuaJIT will swallow all C++ errors
 			// if we don't at least catch std::exception ones
@@ -167,7 +166,7 @@ namespace sol {
 				catch (const std::exception& e) {
 					call_exception_handler(L, optional<const std::exception&>(e), e.what());
 				}
-#if SOL_IS_OFF(SOL_USE_LUAJIT_I_)
+#if SOL_IS_ON(SOL_EXCEPTIONS_CATCH_ALL_I_)
 				// LuaJIT cannot have the catchall when the safe propagation is on
 				// but LuaJIT will swallow all C++ errors
 				// if we don't at least catch std::exception ones
@@ -187,12 +186,18 @@ namespace sol {
 
 		template <typename F, F fx>
 		inline int typed_static_trampoline(lua_State* L) {
+#if 0
+			// TODO: you must evaluate the get/check_get of every
+			// argument, to ensure it doesn't throw
+			// (e.g., for the sol_lua_check_access extension point!)
+			// This incluudes properly noexcept-ing all the above
+			// trampolines / safety nets
 			if constexpr (meta::bind_traits<F>::is_noexcept) {
 				return static_trampoline_noexcept<fx>(L);
 			}
-			else {
-				return static_trampoline<fx>(L);
-			}
+			else
+#endif
+			{ return static_trampoline<fx>(L); }
 		}
 	} // namespace detail
 
