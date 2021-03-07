@@ -61,7 +61,8 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "Application": ["^application.*", "Notify", "Dialog"],
             "Device": ["getTextureDataForText"],
             "RenderTexture": ["newImage"],
-            "ParallaxNode": ["(s|g)etParallaxArray"]
+            "ParallaxNode": ["(s|g)etParallaxArray"],
+            "TMXTilesetInfo": ["_animationInfo"]
         }
         self.RenameMembers |= {
             "SpriteFrameCache": {"addSpriteFramesWithFile": "addSpriteFrames", "getSpriteFrameByName": "getSpriteFrame"},
@@ -78,9 +79,3 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
         self.RenameClasses |= {
             "ParticleSystemQuad": "ParticleSystem"
         }
-        self.ClassesNoParents += [
-            "Director",
-            "FileUtils",
-            "Application",
-            "Downloader"
-        ]

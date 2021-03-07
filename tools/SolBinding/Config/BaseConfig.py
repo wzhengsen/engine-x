@@ -40,7 +40,7 @@ class BaseConfig(object):
         # 比如："cocos2d::Label" <-> "cocos2d::ui::Label"
         self.CppNameSpace = []
         # 允许生成匿名枚举。
-        self.AllowAnonymous = True
+        self.AllowAnonymous = False
         # 允许生成结构体类型。
         self.AllowStruct = False
         # 宏判断，用于某些情况下的条件编译。

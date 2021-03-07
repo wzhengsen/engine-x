@@ -28,7 +28,7 @@ class NativeEnum(NativeWrapper):
         """获取枚举的键值对字典。"""
         kv = {}
         for node in self._cursor.get_children():
-            kv[node.displayname] = node.enum_value
+            kv[node.displayname] = CursorHelper.GetWholeName(node)
         return kv
 
     def __str__(self) -> str:
@@ -43,10 +43,12 @@ class NativeEnum(NativeWrapper):
             for pField in self._nNameList[1:-1]:
                 strList.append('pTable = pTable["{}"];\n'.format(pField))
 
-            strList.append('pTable.new_enum("{}"\n'.format(self._newName))
+            strList.append('pTable.new_enum<{}>("{}",{{\n'.format(self._wholeName, self._newName))
+            enumList = []
             for key, value in kvMap.items():
-                strList.append(',"{}",{}\n'.format(key, value))
-            strList.append(");}")
+                enumList.append('{{"{}",{}}}\n'.format(key, value))
+            strList.append(",".join(enumList))
+            strList.append("});}")
             self._cxxStr = ''.join(strList)
         return self._cxxStr
 

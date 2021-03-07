@@ -42,9 +42,11 @@ class CursorHelper:
         parent = cursor.semantic_parent
         if parent:
             if parent.kind == cindex.CursorKind.NAMESPACE or\
-                    (parent.kind == cindex.CursorKind.CLASS_DECL or parent.kind == cindex.CursorKind.STRUCT_DECL):
+                    (parent.kind == cindex.CursorKind.CLASS_DECL or
+                     parent.kind == cindex.CursorKind.STRUCT_DECL or
+                     parent.kind == cindex.CursorKind.ENUM_DECL):
                 CursorHelper._BuildNameSpace(parent, includeClassName, nameSpace)
-                if (parent.kind == cindex.CursorKind.NAMESPACE or includeClassName) and parent.displayname != "__ndk1":
+                if parent.displayname and (parent.kind == cindex.CursorKind.NAMESPACE or includeClassName) and parent.displayname != "__ndk1":
                     nameSpace.append(parent.displayname)
         return nameSpace
 

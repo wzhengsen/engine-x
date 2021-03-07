@@ -40,4 +40,3 @@ class Cocos2dxGeneratorUI(Cocos2dxGenerator):
             "VBox", "RelativeBox", "Scale9Sprite", "EditBox", "LayoutComponent", "AbstractCheckButton", "RadioButton", "RadioButtonGroup", "TabControl", "TabHeader",
             "QrCode", "WebView", "VideoPlayer"
         ]
-        self.ClassesNoParents = ["Helper"]

@@ -282,9 +282,13 @@ class NativeObject(NativeWrapper):
             elif cursor.kind == cindex.CursorKind.ENUM_DECL:
                 # 内部枚举类型。
                 # 匿名判断不使用cursor.is_anonymous()获取，此处直接简单判断名字作为匿名标准。
-                gEnum = NativeEnum(cursor, self._generator) if CursorHelper.GetName(
-                    cursor) else NativeAnonymousEnum(cursor, self._generator)
-                if gEnum.Generatable:
+                name = CursorHelper.GetName(cursor)
+                gEnum = None
+                if name:
+                    gEnum = NativeEnum(cursor, self._generator)
+                elif self._generator.AllowAnonymous:
+                    gEnum = NativeAnonymousEnum(cursor, self._generator)
+                if (not gEnum is None) and gEnum.Generatable:
                     self._classes.append(gEnum)
             elif cursor.kind == cindex.CursorKind.CLASS_DECL\
                     or (self._generator.AllowStruct and cursor.kind == cindex.CursorKind.STRUCT_DECL):
@@ -324,7 +328,7 @@ class NativeObject(NativeWrapper):
                     preMethod: NativeMethod = self._methods[method.WholeFuncName]
                     if isinstance(preMethod, NativeOverloadMethod):
                         # 重载方法追加该方法作为实现。
-                        preMethod: NativeOverloadMethod.AddMethod(method)
+                        preMethod.AddMethod(method)
                     else:
                         # 替换普通方法为重载方法，并追加当前方法和原方法。
                         nom = NativeOverloadMethod(cursor, self._generator)
@@ -369,6 +373,13 @@ class NativeObject(NativeWrapper):
         cxx.append('auto mt=lua.NewUserType<{wholeName}>("{nsName}","{class_name}",{noCtor});\n'.format(
             nsName=".".join(self._nNameList[:-1]), class_name=self._newName, wholeName=self._wholeName, noCtor=noCtor))
 
+        # 类与基类名组合
+        basesName = ""
+        for p in self._parents:
+            basesName += (p._wholeName + ",")
+        if basesName:
+            cxx.append("mt[sol::base_classes]=sol::bases<{}>();\n".format(basesName[:-1]))
+
         # 方法生成。
         for method in self._methods.values():
             cxx.append(str(method))
@@ -395,13 +406,6 @@ class NativeObject(NativeWrapper):
         for c in self._classes:
             cxx.append('RegisterLua{}{}Auto(lua);\n'.format(self._generator.Tag, "".join(c._nameList[1:])))
 
-        # 类与基类名组合
-        basesName = ""
-        for p in self._parents:
-            basesName += (p._wholeName + ",")
-        if basesName:
-            # 继承关系暂时放到最后，见https://github.com/ThePhD/sol2/issues/1146。
-            cxx.append("mt[sol::base_classes]=sol::bases<{}>();\n".format(basesName[:-1]))
         cxx.append("}")
         self._cxxStr = "".join(cxx)
         return self._cxxStr

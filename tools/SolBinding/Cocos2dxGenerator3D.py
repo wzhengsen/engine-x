@@ -42,5 +42,5 @@ class Cocos2dxGenerator3D(Cocos2dxGenerator):
             "Terrain", "Bundle3D", "Sprite3DMaterial"
         ]
         self.Skip |= {
-            "Terrain": "getQuadTree"
+            "Terrain": ["getQuadTree"]
         }

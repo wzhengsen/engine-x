@@ -285,7 +285,7 @@ class BaseGenerator(BaseConfig):
                                 self._nativeObjects[wholeName] = NativeClass(cursor, self)
                             else:
                                 self._nativeObjects[wholeName] = NativeStruct(cursor, self)
-                else:
+                elif self.AllowAnonymous:
                     # 匿名枚举。
                     # 要求该匿名枚举的父级必须是被包含在生成列表中的。
                     ae = NativeAnonymousEnum(cursor, self)

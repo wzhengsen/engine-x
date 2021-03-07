@@ -42,9 +42,3 @@ class Cocos2dxGeneratorPhysics(Cocos2dxGenerator):
         self.Skip |= {
             "PhysicsBody": ["getCPBody"]
         }
-        self.ClassesNoParents += [
-            "PhysicsWorld",
-            "PhysicsJoint",
-            "PhysicsContactPreSolve",
-            "PhysicsContactPostSolve"
-        ]
