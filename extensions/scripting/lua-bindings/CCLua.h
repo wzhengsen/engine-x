@@ -20,7 +20,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 #pragma once
-#include <map>
+#include <vector>
 #include "sol/sol.hpp"
 #include "CCLuaObject.h"
 #include "platform/CCPlatformMacros.h"
@@ -73,46 +73,46 @@ namespace cocos2d {
                     }
                     return 0;
                 };
-                ut[sol::meta_function::pairs] = [](lua_State* L) {
-                    lua_pushcfunction(L, [](lua_State* l) {
-                        if (LUA_TTABLE == lua_getuservalue(l, 1)) {//ud,k,table
-                            lua_insert(l, -2);//ud,table,k
-                            if (lua_next(l, -2) != 0) {
-                                //ud,table,nextK,nextV
-                                return 2;
-                            }
-                        }
-                        return 0;
-                    });// userdata,function
-                    lua_pushvalue(L, 1);// userdata,function,userdata
-                    lua_pushnil(L);// userdata,function,userdata,nil
-                    return 3;
-                };
                 // Provides a way to register a meta-method in lua.
-                ut["mtor"] = [ut](const std::string& name, const sol::function& method) mutable {
-                    auto iter = MethodToSolMap.find(name);
-                    if (iter == MethodToSolMap.cend()) {
-                        auto L = ut.lua_state();
-                        luaL_error(L, "Unsupported %s metamethod!", name.c_str());
-                        return;
-                    }
-                    ut[iter->second] = method;
-                };
+                for (auto& val : MethodToSol) {
+                    ut[val.second] = [&val](sol::userdata& ud, sol::variadic_args& args)->sol::unsafe_function_result {
+                        sol::object obj = ud[val.first];
+                        if (obj.get_type() == sol::type::nil) {
+                            luaL_error(ud.lua_state(), "No meta-method named \"%s\",make sure you implemented it.", val.first);
+                        }
+                        sol::function userFunc = obj;
+                        return userFunc(ud, args);
+                    };
+                }
                 // Provides a way to register property in lua.
-                ut["stor"] = [ut](const sol::table& stor) mutable {
-                    stor.for_each([ut](const sol::object& o1, const sol::object& o2) mutable {
-                        sol::function f = o2.as<sol::function>();
-                        ut[o1.as<std::string>()] = sol::writeonly_property([f](U* self, sol::object& v) {
-                            f(self, v);
-                        });
-                    });
-                };
-                ut["gtor"] = [ut](const sol::table& gtor) mutable {
-                    gtor.for_each([ut](const sol::object& o1, const sol::object& o2) mutable {
-                        sol::function f = o2.as<sol::function>();
-                        ut[o1.as<std::string>()] = sol::readonly_property([f](U* self) {
-                            return f(self);
-                        });
+                ut["ptor"] = [ut](const sol::table& properties) mutable {
+                    properties.for_each([ut](const sol::object& objK, const sol::object& objV) mutable {
+                        if (sol::type::string != objK.get_type() ||
+                            sol::type::table != objV.get_type()) {
+                            return;
+                        }
+                        std::string pName = objK.as<std::string>();
+                        sol::table pFunc = objV.as<sol::table>();
+                        sol::function pO1 = pFunc[1];
+                        sol::function pO2 = pFunc[2];
+                        if (pO1.valid() && pO2.valid()) {
+                            ut[pName] = sol::property([pO1](U* self) {
+                                return pO1(self);
+                            }, [pO2](U* self, const sol::object& val) {
+                                pO2(self, val);
+                            });
+                            return;
+                        }
+                        if (pO1.valid()) {
+                            ut[pName] = sol::readonly_property([pO1](U* self) {
+                                return pO1(self);
+                            });
+                        }
+                        else if (pO2.valid()) {
+                            ut[pName] = sol::writeonly_property([pO2](U* self, const sol::object& val) {
+                                pO2(self, val);
+                            });
+                        }
                     });
                 };
                 return ut;
@@ -167,34 +167,35 @@ namespace cocos2d {
             virtual void Init();
             using sol::state::state;
             inline static Lua* lua = nullptr;
-            inline static const std::map<std::string, sol::meta_function> MethodToSolMap = {
-                {"__index",sol::meta_function::index},
-                {"__newindex",sol::meta_function::new_index},
-                {"__gc",sol::meta_function::garbage_collect},
-                {"__mode",sol::meta_function::mode},
-                {"__len",sol::meta_function::length},
-                {"__eq",sol::meta_function::equal_to},
-                {"__add",sol::meta_function::addition},
-                {"__sub",sol::meta_function::subtraction},
-                {"__mul",sol::meta_function::multiplication},
-                {"__mod",sol::meta_function::modulus},
-                {"__pow",sol::meta_function::power_of},
-                {"__div",sol::meta_function::division},
-                {"__idiv",sol::meta_function::floor_division},
-                {"__band",sol::meta_function::bitwise_and},
-                {"__bor",sol::meta_function::bitwise_or},
-                {"__bxor",sol::meta_function::bitwise_xor},
-                {"__shl",sol::meta_function::bitwise_left_shift},
-                {"__shr",sol::meta_function::bitwise_right_shift},
-                {"__unm",sol::meta_function::unary_minus},
-                {"__bnot",sol::meta_function::bitwise_not},
-                {"__lt",sol::meta_function::less_than},
-                {"__le",sol::meta_function::less_than_or_equal_to},
-                {"__concat",sol::meta_function::concatenation},
-                {"__call",sol::meta_function::call},
-                {"__tostring",sol::meta_function::to_string},
-                {"__pairs",sol::meta_function::pairs},
-                {"__metatable",sol::meta_function::metatable}
+            inline static const std::vector<std::pair<const char*, sol::meta_function>> MethodToSol = {
+                // Don't use __index and __newindex metamethod,used for NewUserType already.
+                // {".index",sol::meta_function::index},
+                // {".newindex",sol::meta_function::new_index},
+                {".gc",sol::meta_function::garbage_collect},
+                {".mode",sol::meta_function::mode},
+                {".len",sol::meta_function::length},
+                {".eq",sol::meta_function::equal_to},
+                {".add",sol::meta_function::addition},
+                {".sub",sol::meta_function::subtraction},
+                {".mul",sol::meta_function::multiplication},
+                {".mod",sol::meta_function::modulus},
+                {".pow",sol::meta_function::power_of},
+                {".div",sol::meta_function::division},
+                {".idiv",sol::meta_function::floor_division},
+                {".band",sol::meta_function::bitwise_and},
+                {".bor",sol::meta_function::bitwise_or},
+                {".bxor",sol::meta_function::bitwise_xor},
+                {".shl",sol::meta_function::bitwise_left_shift},
+                {".shr",sol::meta_function::bitwise_right_shift},
+                {".unm",sol::meta_function::unary_minus},
+                {".bnot",sol::meta_function::bitwise_not},
+                {".lt",sol::meta_function::less_than},
+                {".le",sol::meta_function::less_than_or_equal_to},
+                {".concat",sol::meta_function::concatenation},
+                {".call",sol::meta_function::call},
+                {".tostring",sol::meta_function::to_string},
+                {".pairs",sol::meta_function::pairs},
+                {".metatable",sol::meta_function::metatable}
             };
         private:
             void Register();
