@@ -2,7 +2,7 @@
 using namespace cocos2d;
 
 // Convert cocos2d::Vec2
-int sol_lua_push(lua_State* L, const cocos2d::Vec2& val) {
+int sol_lua_push(sol::types<cocos2d::Vec2>, lua_State* L, const cocos2d::Vec2& val) {
     lua_createtable(L, 0, 2);
     sol::stack::raw_set_field(L, "x", val.x);
     sol::stack::raw_set_field(L, "y", val.y);
@@ -16,7 +16,7 @@ cocos2d::Vec2 sol_lua_get(sol::types<cocos2d::Vec2>, lua_State* L, int idx, sol:
 }
 
 // Convert cocos2d::Vec3
-int sol_lua_push(lua_State* L, const cocos2d::Vec3& val) {
+int sol_lua_push(sol::types<cocos2d::Vec3>, lua_State* L, const cocos2d::Vec3& val) {
     lua_createtable(L, 0, 3);
     sol::stack::raw_set_field(L, "x", val.x);
     sol::stack::raw_set_field(L, "y", val.y);
@@ -31,7 +31,7 @@ cocos2d::Vec3 sol_lua_get(sol::types<cocos2d::Vec3>, lua_State* L, int idx, sol:
 }
 
 // Convert cocos2d::Vec4
-int sol_lua_push(lua_State* L, const cocos2d::Vec4& val) {
+int sol_lua_push(sol::types<cocos2d::Vec4>, lua_State* L, const cocos2d::Vec4& val) {
     lua_createtable(L, 0, 4);
     sol::stack::raw_set_field(L, "x", val.x);
     sol::stack::raw_set_field(L, "y", val.y);
@@ -48,7 +48,7 @@ cocos2d::Vec4 sol_lua_get(sol::types<cocos2d::Vec4>, lua_State* L, int idx, sol:
 }
 
 // Convert cocos2d::BlendFunc
-int sol_lua_push(lua_State* L, const cocos2d::BlendFunc& val) {
+int sol_lua_push(sol::types<cocos2d::BlendFunc>, lua_State* L, const cocos2d::BlendFunc& val) {
     lua_createtable(L, 0, 2);
     sol::stack::raw_set_field(L, "src", val.src);
     sol::stack::raw_set_field(L, "dst", val.dst);
@@ -64,7 +64,7 @@ cocos2d::BlendFunc sol_lua_get(sol::types<cocos2d::BlendFunc>, lua_State* L, int
 
 #if CC_USE_PHYSICS
 // Convert cocos2d::PhysicsMaterial
-int sol_lua_push(lua_State* L, const cocos2d::PhysicsMaterial& val) {
+int sol_lua_push(sol::types<cocos2d::PhysicsMaterial>, lua_State* L, const cocos2d::PhysicsMaterial& val) {
     lua_createtable(L, 0, 3);
     sol::stack::raw_set_field(L, "density", val.density);
     sol::stack::raw_set_field(L, "restitution", val.restitution);
@@ -81,7 +81,7 @@ cocos2d::PhysicsMaterial sol_lua_get(sol::types<cocos2d::PhysicsMaterial>, lua_S
 }
 
 // Convert cocos2d::PhysicsRayCastInfo
-int sol_lua_push(lua_State* L, const cocos2d::PhysicsRayCastInfo& val) {
+int sol_lua_push(sol::types<cocos2d::PhysicsRayCastInfo>, lua_State* L, const cocos2d::PhysicsRayCastInfo& val) {
     lua_createtable(L, 0, 7);
     sol::stack::raw_set_field(L, "shape", val.shape);
     sol::stack::raw_set_field(L, "start", val.start);
@@ -96,9 +96,9 @@ int sol_lua_push(lua_State* L, const cocos2d::PhysicsRayCastInfo& val) {
     }
     return 1;
 }
-int sol_lua_push(lua_State* L, const cocos2d::PhysicsRayCastInfo* val) {
+int sol_lua_push(sol::types<cocos2d::PhysicsRayCastInfo*>, lua_State* L, const cocos2d::PhysicsRayCastInfo* val) {
     if (val) {
-        sol_lua_push(L, *val);
+        sol_lua_push(sol::types<cocos2d::PhysicsRayCastInfo>(), L, *val);
     }
     else {
         lua_pushnil(L);
@@ -125,7 +125,7 @@ cocos2d::PhysicsRayCastInfo sol_lua_get(sol::types<cocos2d::PhysicsRayCastInfo>,
 }
 
 // Convert cocos2d::PhysicsContactData
-int sol_lua_push(lua_State* L, const cocos2d::PhysicsContactData& val) {
+int sol_lua_push(sol::types<cocos2d::PhysicsContactData>, lua_State* L, const cocos2d::PhysicsContactData& val) {
     lua_createtable(L, 0, 2);// table
     lua_pushliteral(L, "points");// table,"point",subTable
     lua_createtable(L, 0, val.count);// table,"point",subTable
@@ -136,12 +136,12 @@ int sol_lua_push(lua_State* L, const cocos2d::PhysicsContactData& val) {
     sol::stack::raw_set_field(L, "normal", val.normal);
     return 1;
 }
-int sol_lua_push(lua_State* L, const cocos2d::PhysicsContactData* val) {
+int sol_lua_push(sol::types<cocos2d::PhysicsContactData*>, lua_State* L, const cocos2d::PhysicsContactData* val) {
     if (!val) {
         lua_pushnil(L);
     }
     else {
-        sol_lua_push(L, *val);
+        sol_lua_push(sol::types<cocos2d::PhysicsContactData>(), L, *val);
     }
     return 1;
 }
@@ -161,7 +161,7 @@ cocos2d::PhysicsContactData sol_lua_get(sol::types<cocos2d::PhysicsContactData>,
 #endif
 
 // Convert cocos2d::Size
-int sol_lua_push(lua_State* L, const cocos2d::Size& val) {
+int sol_lua_push(sol::types<cocos2d::Size>, lua_State* L, const cocos2d::Size& val) {
     lua_createtable(L, 0, 2);
     sol::stack::raw_set_field(L, "width", val.width);
     sol::stack::raw_set_field(L, "height", val.height);
@@ -175,7 +175,7 @@ cocos2d::Size sol_lua_get(sol::types<cocos2d::Size>, lua_State* L, int idx, sol:
 }
 
 // Convert cocos2d::Rect
-int sol_lua_push(lua_State* L, const cocos2d::Rect& val) {
+int sol_lua_push(sol::types<cocos2d::Rect>, lua_State* L, const cocos2d::Rect& val) {
     lua_createtable(L, 0, 4);
     sol::stack::raw_set_field(L, "x", val.origin.x);
     sol::stack::raw_set_field(L, "y", val.origin.y);
@@ -192,7 +192,7 @@ cocos2d::Rect sol_lua_get(sol::types<cocos2d::Rect>, lua_State* L, int idx, sol:
 }
 
 // Convert cocos2d::Color4B
-int sol_lua_push(lua_State* L, const cocos2d::Color4B& val) {
+int sol_lua_push(sol::types<cocos2d::Color4B>, lua_State* L, const cocos2d::Color4B& val) {
     lua_createtable(L, 0, 4);
     sol::stack::raw_set_field(L, "r", val.r);
     sol::stack::raw_set_field(L, "g", val.g);
@@ -208,7 +208,7 @@ cocos2d::Color4B sol_lua_get(sol::types<cocos2d::Color4B>, lua_State* L, int idx
 }
 
 // Convert cocos2d::Color4F
-int sol_lua_push(lua_State* L, const cocos2d::Color4F& val) {
+int sol_lua_push(sol::types<cocos2d::Color4F>, lua_State* L, const cocos2d::Color4F& val) {
     lua_createtable(L, 0, 4);
     sol::stack::raw_set_field(L, "r", val.r);
     sol::stack::raw_set_field(L, "g", val.g);
@@ -224,7 +224,7 @@ cocos2d::Color4F sol_lua_get(sol::types<cocos2d::Color4F>, lua_State* L, int idx
 }
 
 // Convert cocos2d::Color3B
-int sol_lua_push(lua_State* L, const cocos2d::Color3B& val) {
+int sol_lua_push(sol::types<cocos2d::Color3B>, lua_State* L, const cocos2d::Color3B& val) {
     lua_createtable(L, 0, 3);
     sol::stack::raw_set_field(L, "r", val.r);
     sol::stack::raw_set_field(L, "g", val.g);
@@ -239,7 +239,7 @@ cocos2d::Color3B sol_lua_get(sol::types<cocos2d::Color3B>, lua_State* L, int idx
 }
 
 // Convert cocos2d::AffineTransform
-int sol_lua_push(lua_State* L, const cocos2d::AffineTransform& val) {
+int sol_lua_push(sol::types<cocos2d::AffineTransform>, lua_State* L, const cocos2d::AffineTransform& val) {
     lua_createtable(L, 0, 6);
     sol::stack::raw_set_field(L, "a", val.a);
     sol::stack::raw_set_field(L, "b", val.b);
@@ -258,7 +258,7 @@ cocos2d::AffineTransform sol_lua_get(sol::types<cocos2d::AffineTransform>, lua_S
 }
 
 // Convert cocos2d::FontDefinition
-int sol_lua_push(lua_State* L, const cocos2d::FontDefinition& val) {
+int sol_lua_push(sol::types<cocos2d::FontDefinition>, lua_State* L, const cocos2d::FontDefinition& val) {
     lua_createtable(L, 0, 11);//table
 
     lua_pushliteral(L, "shadow");//table,"shadow"
@@ -323,7 +323,7 @@ cocos2d::FontDefinition sol_lua_get(sol::types<cocos2d::FontDefinition>, lua_Sta
 }
 
 // Convert cocos2d::TTFConfig
-int sol_lua_push(lua_State* L, const cocos2d::TTFConfig& val) {
+int sol_lua_push(sol::types<cocos2d::TTFConfig>, lua_State* L, const cocos2d::TTFConfig& val) {
     lua_createtable(L, 0, 10);
     sol::stack::raw_set_field(L, "fontFilePath", val.fontFilePath);
     sol::stack::raw_set_field(L, "fontSize", val.fontSize);
@@ -356,7 +356,7 @@ cocos2d::TTFConfig sol_lua_get(sol::types<cocos2d::TTFConfig>, lua_State* L, int
 }
 
 // Convert cocos2d::Mat4
-int sol_lua_push(lua_State* L, const cocos2d::Mat4& val) {
+int sol_lua_push(sol::types<cocos2d::Mat4>, lua_State* L, const cocos2d::Mat4& val) {
     lua_createtable(L, 16, 0);
     for (int i = 0; i < 16; i++) {
         sol::stack::raw_set_field(L, i + 1, val.m[i]);
@@ -374,7 +374,7 @@ cocos2d::Mat4 sol_lua_get(sol::types<cocos2d::Mat4>, lua_State* L, int idx, sol:
 }
 
 // Convert cocos2d::MeshVertexAttrib
-int sol_lua_push(lua_State* L, const cocos2d::MeshVertexAttrib& val) {
+int sol_lua_push(sol::types<cocos2d::MeshVertexAttrib>, lua_State* L, const cocos2d::MeshVertexAttrib& val) {
     lua_createtable(L, 0, 2);
     sol::stack::raw_set_field(L, "type", val.type);
     sol::stack::raw_set_field(L, "vertexAttrib", val.vertexAttrib);
@@ -389,8 +389,8 @@ cocos2d::MeshVertexAttrib sol_lua_get(sol::types<cocos2d::MeshVertexAttrib>, lua
 }
 
 // Convert cocos2d::Quaternion
-int sol_lua_push(lua_State* L, const cocos2d::Quaternion& val) {
-    return sol_lua_push(L, (const Vec4&)val);
+int sol_lua_push(sol::types<cocos2d::Quaternion>, lua_State* L, const cocos2d::Quaternion& val) {
+    return sol_lua_push(sol::types<cocos2d::Vec4>(), L, (const Vec4&)val);
 }
 cocos2d::Quaternion sol_lua_get(sol::types<cocos2d::Quaternion>, lua_State* L, int idx, sol::stack::record& tracking) {
     Vec4 val = sol_lua_get(sol::types<cocos2d::Vec4>(), L, idx, tracking);
@@ -399,7 +399,7 @@ cocos2d::Quaternion sol_lua_get(sol::types<cocos2d::Quaternion>, lua_State* L, i
 }
 
 // Convert cocos2d::Texture2D::TexParams
-int sol_lua_push(lua_State* L, const cocos2d::Texture2D::TexParams& val) {
+int sol_lua_push(sol::types<cocos2d::Texture2D::TexParams>, lua_State* L, const cocos2d::Texture2D::TexParams& val) {
     lua_createtable(L, 0, 4);
     sol::stack::raw_set_field(L, "magFilter", val.magFilter);
     sol::stack::raw_set_field(L, "minFilter", val.minFilter);
@@ -418,7 +418,7 @@ cocos2d::Texture2D::TexParams sol_lua_get(sol::types<cocos2d::Texture2D::TexPara
 }
 
 // Convert cocos2d::Tex2F
-int sol_lua_push(lua_State* L, const cocos2d::Tex2F& val) {
+int sol_lua_push(sol::types<cocos2d::Tex2F>, lua_State* L, const cocos2d::Tex2F& val) {
     lua_createtable(L, 0, 2);
     sol::stack::raw_set_field(L, "u", val.u);
     sol::stack::raw_set_field(L, "v", val.v);
@@ -432,7 +432,7 @@ cocos2d::Tex2F sol_lua_get(sol::types<cocos2d::Tex2F>, lua_State* L, int idx, so
 }
 
 // Convert cocos2d::V3F_C4B_T2F
-int sol_lua_push(lua_State* L, const cocos2d::V3F_C4B_T2F& val) {
+int sol_lua_push(sol::types<cocos2d::V3F_C4B_T2F>, lua_State* L, const cocos2d::V3F_C4B_T2F& val) {
     lua_createtable(L, 0, 3);
     sol::stack::raw_set_field(L, "vertices", val.vertices);
     sol::stack::raw_set_field(L, "colors", val.colors);
@@ -449,7 +449,7 @@ cocos2d::V3F_C4B_T2F sol_lua_get(sol::types<cocos2d::V3F_C4B_T2F>, lua_State* L,
 }
 
 // Convert cocos2d::backend::UniformLocation
-int sol_lua_push(lua_State* L, const cocos2d::backend::UniformLocation& val) {
+int sol_lua_push(sol::types<cocos2d::backend::UniformLocation>, lua_State* L, const cocos2d::backend::UniformLocation& val) {
     lua_createtable(L, 0, 2);// table
     lua_pushliteral(L, "location");// table,"location"
     lua_createtable(L, 2, 0);//table,"location",locationTable
@@ -472,7 +472,7 @@ cocos2d::backend::UniformLocation sol_lua_get(sol::types<cocos2d::backend::Unifo
 }
 
 // Convert cocos2d::backend::AttributeBindInfo
-int sol_lua_push(lua_State* L, const cocos2d::backend::AttributeBindInfo& val) {
+int sol_lua_push(sol::types<cocos2d::backend::AttributeBindInfo>, lua_State* L, const cocos2d::backend::AttributeBindInfo& val) {
     lua_createtable(L, 0, 4);
     sol::stack::raw_set_field(L, "attributeName", val.attributeName);
     sol::stack::raw_set_field(L, "location", val.location);

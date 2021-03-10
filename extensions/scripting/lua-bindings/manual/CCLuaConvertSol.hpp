@@ -28,9 +28,10 @@
   *              Shound not be called by manual.
   */
 template<typename T, typename = typename std::enable_if<std::is_base_of<cocos2d::extension::LuaObject, T>::value>::type>
-int sol_lua_push(lua_State* L, const T* obj) {
+int sol_lua_push(sol::types<T*>, lua_State* L, const T* obj) {
     if (nullptr == obj) {
-        return 0;
+        lua_pushnil(L);
+        return 1;
     }
     bool udExist = LUA_TTABLE == lua_getfield(L, LUA_REGISTRYINDEX, cocos2d::extension::Lua::UserDataKey);// table?
 
@@ -71,97 +72,197 @@ int sol_lua_push(lua_State* L, const T* obj) {
     return 1;
 }
 
+template <typename Handler>
+inline static bool CheckSimpleTable(lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    bool success = sol::stack::check<sol::table>(L, index, handler);
+    tracking.use(1);
+    return success;
+}
+
 // Convert cocos2d::Vec2
-int sol_lua_push(lua_State* L, const cocos2d::Vec2& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::Vec2>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::Vec2>, lua_State* L, const cocos2d::Vec2& val);
 cocos2d::Vec2 sol_lua_get(sol::types<cocos2d::Vec2>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::Vec3
-int sol_lua_push(lua_State* L, const cocos2d::Vec3& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::Vec3>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::Vec3>, lua_State* L, const cocos2d::Vec3& val);
 cocos2d::Vec3 sol_lua_get(sol::types<cocos2d::Vec3>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::Vec4
-int sol_lua_push(lua_State* L, const cocos2d::Vec4& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::Vec4>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::Vec4>, lua_State* L, const cocos2d::Vec4& val);
 cocos2d::Vec4 sol_lua_get(sol::types<cocos2d::Vec4>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::BlendFunc
-int sol_lua_push(lua_State* L, const cocos2d::BlendFunc& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::BlendFunc>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::BlendFunc>, lua_State* L, const cocos2d::BlendFunc& val);
 cocos2d::BlendFunc sol_lua_get(sol::types<cocos2d::BlendFunc>, lua_State* L, int idx, sol::stack::record& tracking);
 
 #if CC_USE_PHYSICS
 // Convert cocos2d::PhysicsMaterial
-int sol_lua_push(lua_State* L, const cocos2d::PhysicsMaterial& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::PhysicsMaterial>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::PhysicsMaterial>, lua_State* L, const cocos2d::PhysicsMaterial& val);
 cocos2d::PhysicsMaterial sol_lua_get(sol::types<cocos2d::PhysicsMaterial>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::PhysicsRayCastInfo
-int sol_lua_push(lua_State* L, const cocos2d::PhysicsRayCastInfo& val);
-int sol_lua_push(lua_State* L, const cocos2d::PhysicsRayCastInfo* val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::PhysicsRayCastInfo>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::PhysicsRayCastInfo>, lua_State* L, const cocos2d::PhysicsRayCastInfo& val);
+int sol_lua_push(sol::types<cocos2d::PhysicsRayCastInfo*>, lua_State* L, const cocos2d::PhysicsRayCastInfo* val);
 cocos2d::PhysicsRayCastInfo sol_lua_get(sol::types<cocos2d::PhysicsRayCastInfo>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::PhysicsContactData
-int sol_lua_push(lua_State* L, const cocos2d::PhysicsContactData& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::PhysicsContactData>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::PhysicsContactData>, lua_State* L, const cocos2d::PhysicsContactData& val);
+int sol_lua_push(sol::types<cocos2d::PhysicsContactData*>, lua_State* L, const cocos2d::PhysicsContactData& val);
 cocos2d::PhysicsContactData sol_lua_get(sol::types<cocos2d::PhysicsContactData>, lua_State* L, int idx, sol::stack::record& tracking);
 #endif
 
 // Convert cocos2d::Size
-int sol_lua_push(lua_State* L, const cocos2d::Size& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::Size>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::Size>, lua_State* L, const cocos2d::Size& val);
 cocos2d::Size sol_lua_get(sol::types<cocos2d::Size>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::Rect
-int sol_lua_push(lua_State* L, const cocos2d::Rect& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::Rect>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::Rect>, lua_State* L, const cocos2d::Rect& val);
 cocos2d::Rect sol_lua_get(sol::types<cocos2d::Rect>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::Color4B
-int sol_lua_push(lua_State* L, const cocos2d::Color4B& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::Color4B>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::Color4B>, lua_State* L, const cocos2d::Color4B& val);
 cocos2d::Color4B sol_lua_get(sol::types<cocos2d::Color4B>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::Color4F
-int sol_lua_push(lua_State* L, const cocos2d::Color4F& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::Color4F>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::Color4F>, lua_State* L, const cocos2d::Color4F& val);
 cocos2d::Color4F sol_lua_get(sol::types<cocos2d::Color4F>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::Color3B
-int sol_lua_push(lua_State* L, const cocos2d::Color3B& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::Color3B>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::Color3B>, lua_State* L, const cocos2d::Color3B& val);
 cocos2d::Color3B sol_lua_get(sol::types<cocos2d::Color3B>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::AffineTransform
-int sol_lua_push(lua_State* L, const cocos2d::AffineTransform& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::AffineTransform>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::AffineTransform>, lua_State* L, const cocos2d::AffineTransform& val);
 cocos2d::AffineTransform sol_lua_get(sol::types<cocos2d::AffineTransform>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::FontDefinition
-int sol_lua_push(lua_State* L, const cocos2d::FontDefinition& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::FontDefinition>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::FontDefinition>, lua_State* L, const cocos2d::FontDefinition& val);
 cocos2d::FontDefinition sol_lua_get(sol::types<cocos2d::FontDefinition>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::TTFConfig
-int sol_lua_push(lua_State* L, const cocos2d::TTFConfig& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::TTFConfig>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::TTFConfig>, lua_State* L, const cocos2d::TTFConfig& val);
 cocos2d::TTFConfig sol_lua_get(sol::types<cocos2d::TTFConfig>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::Mat4
-int sol_lua_push(lua_State* L, const cocos2d::Mat4& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::Mat4>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::Mat4>, lua_State* L, const cocos2d::Mat4& val);
 cocos2d::Mat4 sol_lua_get(sol::types<cocos2d::Mat4>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::MeshVertexAttrib
-int sol_lua_push(lua_State* L, const cocos2d::MeshVertexAttrib& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::MeshVertexAttrib>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::MeshVertexAttrib>, lua_State* L, const cocos2d::MeshVertexAttrib& val);
 cocos2d::MeshVertexAttrib sol_lua_get(sol::types<cocos2d::MeshVertexAttrib>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::Quaternion
-int sol_lua_push(lua_State* L, const cocos2d::Quaternion& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::Quaternion>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::Quaternion>, lua_State* L, const cocos2d::Quaternion& val);
 cocos2d::Quaternion sol_lua_get(sol::types<cocos2d::Quaternion>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::Texture2D::TexParams
-int sol_lua_push(lua_State* L, const cocos2d::Texture2D::TexParams& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::Texture2D::TexParams>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::Texture2D::TexParams>, lua_State* L, const cocos2d::Texture2D::TexParams& val);
 cocos2d::Texture2D::TexParams sol_lua_get(sol::types<cocos2d::Texture2D::TexParams>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::Tex2F
-int sol_lua_push(lua_State* L, const cocos2d::Tex2F& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::Tex2F>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::Tex2F>, lua_State* L, const cocos2d::Tex2F& val);
 cocos2d::Tex2F sol_lua_get(sol::types<cocos2d::Tex2F>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::V3F_C4B_T2F
-int sol_lua_push(lua_State* L, const cocos2d::V3F_C4B_T2F& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::V3F_C4B_T2F>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::V3F_C4B_T2F>, lua_State* L, const cocos2d::V3F_C4B_T2F& val);
 cocos2d::V3F_C4B_T2F sol_lua_get(sol::types<cocos2d::V3F_C4B_T2F>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::backend::UniformLocation
-int sol_lua_push(lua_State* L, const cocos2d::backend::UniformLocation& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::backend::UniformLocation>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::backend::UniformLocation>, lua_State* L, const cocos2d::backend::UniformLocation& val);
 cocos2d::backend::UniformLocation sol_lua_get(sol::types<cocos2d::backend::UniformLocation>, lua_State* L, int idx, sol::stack::record& tracking);
 
 // Convert cocos2d::backend::AttributeBindInfo
-int sol_lua_push(lua_State* L, const cocos2d::backend::AttributeBindInfo& val);
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::backend::AttributeBindInfo>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::backend::AttributeBindInfo>, lua_State* L, const cocos2d::backend::AttributeBindInfo& val);
 cocos2d::backend::AttributeBindInfo sol_lua_get(sol::types<cocos2d::backend::AttributeBindInfo>, lua_State* L, int idx, sol::stack::record& tracking);

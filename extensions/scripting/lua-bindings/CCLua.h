@@ -21,6 +21,7 @@
  ****************************************************************************/
 #pragma once
 #include <vector>
+#include <map>
 #include "sol/sol.hpp"
 #include "CCLuaObject.h"
 #include "platform/CCPlatformMacros.h"
@@ -71,50 +72,29 @@ namespace cocos2d {
                         lua_rawget(L, -2);//ud,table,v
                         return 1;
                     }
-                    return 0;
+                    lua_pushnil(L);
+                    return 1;
                 };
-                // Provides a way to register a meta-method in lua.
-                for (auto& val : MethodToSol) {
-                    ut[val.second] = [&val](sol::userdata& ud, sol::variadic_args& args)->sol::unsafe_function_result {
-                        sol::object obj = ud[val.first];
-                        if (obj.get_type() == sol::type::nil) {
-                            luaL_error(ud.lua_state(), "No meta-method named \"%s\",make sure you implemented it.", val.first);
-                        }
-                        sol::function userFunc = obj;
-                        return userFunc(ud, args);
-                    };
-                }
                 // Provides a way to register property in lua.
-                ut["ptor"] = [ut](const sol::table& properties) mutable {
-                    properties.for_each([ut](const sol::object& objK, const sol::object& objV) mutable {
-                        if (sol::type::string != objK.get_type() ||
-                            sol::type::table != objV.get_type()) {
-                            return;
+                ut["__properties__"] = sol::writeonly_property([ut](const sol::table& properties) mutable {
+                    std::map<std::string, gsPair<U>> pMap = {};
+                    // For "r" key(read).
+                    GS_Pair<true>(properties["r"], rObj);
+                    // For "w" key(write).
+                    GS_Pair<false>(properties["w"], wObj);
+                    for (auto& gs : pMap) {
+                        const auto& funcs = gs.second;
+                        if (funcs.first && funcs.second) {
+                            ut[gs.first] = sol::property(funcs.first, funcs.second);
                         }
-                        std::string pName = objK.as<std::string>();
-                        sol::table pFunc = objV.as<sol::table>();
-                        sol::function pO1 = pFunc[1];
-                        sol::function pO2 = pFunc[2];
-                        if (pO1.valid() && pO2.valid()) {
-                            ut[pName] = sol::property([pO1](U* self) {
-                                return pO1(self);
-                            }, [pO2](U* self, const sol::object& val) {
-                                pO2(self, val);
-                            });
-                            return;
+                        else if (funcs.first) {
+                            ut[gs.first] = sol::readonly_property(funcs.first);
                         }
-                        if (pO1.valid()) {
-                            ut[pName] = sol::readonly_property([pO1](U* self) {
-                                return pO1(self);
-                            });
+                        else if (funcs.second) {
+                            ut[gs.first] = sol::writeonly_property(funcs.second);
                         }
-                        else if (pO2.valid()) {
-                            ut[pName] = sol::writeonly_property([pO2](U* self, const sol::object& val) {
-                                pO2(self, val);
-                            });
-                        }
-                    });
-                };
+                    }
+                });
                 return ut;
             }
             /**
@@ -150,10 +130,10 @@ namespace cocos2d {
                     }
                     nsTable = nsObj.as<sol::table>();
                 }
-                auto mt = NewUserType<U, B...>(name, no_ctor);
-                nsTable[name] = mt;
+                auto ut = NewUserType<U, B...>(name, no_ctor);
+                nsTable[name] = ut;
                 set(name, sol::nil);
-                return mt;
+                return ut;
             }
 
             /**
@@ -169,39 +149,65 @@ namespace cocos2d {
             inline static Lua* lua = nullptr;
             inline static const std::vector<std::pair<const char*, sol::meta_function>> MethodToSol = {
                 // Don't use __index and __newindex metamethod,used for NewUserType already.
-                // {".index",sol::meta_function::index},
-                // {".newindex",sol::meta_function::new_index},
-                {".gc",sol::meta_function::garbage_collect},
-                {".mode",sol::meta_function::mode},
-                {".len",sol::meta_function::length},
-                {".eq",sol::meta_function::equal_to},
-                {".add",sol::meta_function::addition},
-                {".sub",sol::meta_function::subtraction},
-                {".mul",sol::meta_function::multiplication},
-                {".mod",sol::meta_function::modulus},
-                {".pow",sol::meta_function::power_of},
-                {".div",sol::meta_function::division},
-                {".idiv",sol::meta_function::floor_division},
-                {".band",sol::meta_function::bitwise_and},
-                {".bor",sol::meta_function::bitwise_or},
-                {".bxor",sol::meta_function::bitwise_xor},
-                {".shl",sol::meta_function::bitwise_left_shift},
-                {".shr",sol::meta_function::bitwise_right_shift},
-                {".unm",sol::meta_function::unary_minus},
-                {".bnot",sol::meta_function::bitwise_not},
-                {".lt",sol::meta_function::less_than},
-                {".le",sol::meta_function::less_than_or_equal_to},
-                {".concat",sol::meta_function::concatenation},
-                {".call",sol::meta_function::call},
-                {".tostring",sol::meta_function::to_string},
-                {".pairs",sol::meta_function::pairs},
-                {".metatable",sol::meta_function::metatable}
+                // {"__index__",sol::meta_function::index},
+                // {"__newindex__",sol::meta_function::new_index},
+                {"__gc__",sol::meta_function::garbage_collect},
+                {"__mode__",sol::meta_function::mode},
+                {"__len__",sol::meta_function::length},
+                {"__eq__",sol::meta_function::equal_to},
+                {"__add__",sol::meta_function::addition},
+                {"__sub__",sol::meta_function::subtraction},
+                {"__mul__",sol::meta_function::multiplication},
+                {"__mod__",sol::meta_function::modulus},
+                {"__pow__",sol::meta_function::power_of},
+                {"__div__",sol::meta_function::division},
+                {"__idiv__",sol::meta_function::floor_division},
+                {"__band__",sol::meta_function::bitwise_and},
+                {"__bor__",sol::meta_function::bitwise_or},
+                {"__bxor__",sol::meta_function::bitwise_xor},
+                {"__shl__",sol::meta_function::bitwise_left_shift},
+                {"__shr__",sol::meta_function::bitwise_right_shift},
+                {"__unm__",sol::meta_function::unary_minus},
+                {"__bnot__",sol::meta_function::bitwise_not},
+                {"__lt__",sol::meta_function::less_than},
+                {"__le__",sol::meta_function::less_than_or_equal_to},
+                {"__concat__",sol::meta_function::concatenation},
+                {"__call__",sol::meta_function::call},
+                {"__tostring__",sol::meta_function::to_string},
+                {"__pairs__",sol::meta_function::pairs},
+                {"__metatable__",sol::meta_function::metatable}
             };
         private:
             void Register();
             void RegisterSol();
             void RegisterAuto();
             void RegisterManual();
+
+            template<typename U>
+            using gsPair = std::pair<std::function<sol::object(const U*)>, std::function<void(const U*, const sol::object&)>>;
+            template<bool isGetter, typename U>
+            static void GS_Pair(std::map<std::string, gsPair<U>>& pMap, const sol::object& solObj) {
+                if (sol::type::table == solObj.get_type()) {
+                    sol::table table = solObj;
+                    table.for_each([&pMap](const sol::object& key, const sol::object& val) {
+                        if (sol::type::string == key.get_type() && sol::type::function == val.get_type()) {
+                            const std::string sKey = key.as<std::string>();
+                            if (pMap.cend() == pMap.find(sKey)) {
+                                pMap.emplace(sKey, std::pair{ nullptr,nullptr });
+                            }
+                            auto& pair = pMap[sKey];
+                            if constexpr (isGetter) {
+                                auto func = val.as<std::function<sol::object(const U*)>>();
+                                pair.first = func;
+                            }
+                            else {
+                                auto func = val.as<std::function<void(const U*, const sol::object&)>>();
+                                pair.second = func;
+                            }
+                        }
+                    });
+                }
+            }
         };
     }// namespace cocos2d::extension
 } // namespace cocos2d
