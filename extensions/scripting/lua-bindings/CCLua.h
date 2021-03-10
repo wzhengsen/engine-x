@@ -55,8 +55,8 @@ namespace cocos2d {
 
 
             template<typename U, typename ...B>
-            sol::usertype<U> NewUserType(const std::string& name, bool no_ctor = false) {
-                auto ut = no_ctor ?
+            sol::usertype<U> NewUserType(const std::string& name, bool noCtor = false) {
+                auto ut = noCtor ?
                     new_usertype<U>(name, sol::no_constructor, sol::base_classes, sol::bases<B...>()) :
                     new_usertype<U>(name, sol::base_classes, sol::bases<B...>());
                 ut[sol::meta_function::new_index] = [](lua_State* L) {
@@ -75,13 +75,41 @@ namespace cocos2d {
                     lua_pushnil(L);
                     return 1;
                 };
+                ut[sol::meta_function::garbage_collect] = [](const sol::userdata& ud) {
+                    sol::object __gc = ud["__gc__"];
+                    // Force the non-nil value to be recognized as a function and throw an error early.
+                    if (sol::type::nil != __gc.get_type()) {
+                        __gc.as<sol::function>()(ud);
+                    }
+                };
+                ut[sol::meta_function::equal_to] = [](const sol::userdata& ud1, const sol::userdata& ud2)->bool {
+                    for (const auto& ud : { ud1,ud2 }) {
+                        sol::object __eq = ud["__eq__"];
+                        // Force the non-nil value to be recognized as a function and throw an error early.
+                        if (sol::type::nil != __eq.get_type()) {
+                            return __eq.as<sol::function>()(ud1, ud2);
+                        }
+                    }
+                    return false;
+                };
+                // Provides a way to register meta-method in lua.
+                // You can implement __metaname__ on a usertype or it's bases.
+                for (const auto& meta : MetaNeedImpl) {
+                    ut[meta.second] = [&meta](const sol::userdata ud, const sol::variadic_args& args) {
+                        sol::object __meta = ud[meta.first];
+                        if (sol::type::function == __meta.get_type()) {
+                            return __meta.as<sol::function>()(ud, args);
+                        }
+                        throw sol::error(sol::detail::direct_error, "You must implement the " + std::string(meta.first) + " meta-method.");
+                    };
+                }
                 // Provides a way to register property in lua.
                 ut["__properties__"] = sol::writeonly_property([ut](const sol::table& properties) mutable {
                     std::map<std::string, gsPair<U>> pMap = {};
                     // For "r" key(read).
-                    GS_Pair<true>(properties["r"], rObj);
+                    GS_Pair<true>(pMap, properties["r"]);
                     // For "w" key(write).
-                    GS_Pair<false>(properties["w"], wObj);
+                    GS_Pair<false>(pMap, properties["w"]);
                     for (auto& gs : pMap) {
                         const auto& funcs = gs.second;
                         if (funcs.first && funcs.second) {
@@ -104,11 +132,11 @@ namespace cocos2d {
             * @param    B All of base class of U,such as base's base,and so on.
             * @param    tName The name of the table in which the type being registered is located,split by ".".
             * @param    name The class name in lua.
-            * @param    no_ctor default = false,means no "new" method.
+            * @param    noCtor default = false,means no "new" method.
             * @return   You can use it to register your own member-method or meta-method.
             */
             template<typename U, typename ...B>
-            sol::usertype<U> NewUserType(const std::string& tName, const std::string& name, bool no_ctor = false) {
+            sol::usertype<U> NewUserType(const std::string& tName, const std::string& name, bool noCtor = false) {
                 std::vector<std::string> vecNS = {};
                 size_t pos = 0;
                 size_t begin = 0;
@@ -130,7 +158,7 @@ namespace cocos2d {
                     }
                     nsTable = nsObj.as<sol::table>();
                 }
-                auto ut = NewUserType<U, B...>(name, no_ctor);
+                auto ut = NewUserType<U, B...>(name, noCtor);
                 nsTable[name] = ut;
                 set(name, sol::nil);
                 return ut;
@@ -138,7 +166,7 @@ namespace cocos2d {
 
             /**
             * @brief    This method should be called when a c++ instance registered in lua is destroyed.
-            *           This method releases the userdata bound to the c++ instance pointer from the registry["SolWrapper.UD"] and points the userdata to the nullptr.
+            *           This method releases the userdata bound to the c++ instance pointer from the registry[UserDataKey] and points the userdata to the nullptr.
             * @param    obj Any c++ pointer.
             */
             void ReleaseInLua(void* obj);
@@ -147,14 +175,8 @@ namespace cocos2d {
             virtual void Init();
             using sol::state::state;
             inline static Lua* lua = nullptr;
-            inline static const std::vector<std::pair<const char*, sol::meta_function>> MethodToSol = {
-                // Don't use __index and __newindex metamethod,used for NewUserType already.
-                // {"__index__",sol::meta_function::index},
-                // {"__newindex__",sol::meta_function::new_index},
-                {"__gc__",sol::meta_function::garbage_collect},
-                {"__mode__",sol::meta_function::mode},
+            inline static const std::vector<std::pair<const char*, sol::meta_function>> MetaNeedImpl = {
                 {"__len__",sol::meta_function::length},
-                {"__eq__",sol::meta_function::equal_to},
                 {"__add__",sol::meta_function::addition},
                 {"__sub__",sol::meta_function::subtraction},
                 {"__mul__",sol::meta_function::multiplication},
@@ -173,9 +195,7 @@ namespace cocos2d {
                 {"__le__",sol::meta_function::less_than_or_equal_to},
                 {"__concat__",sol::meta_function::concatenation},
                 {"__call__",sol::meta_function::call},
-                {"__tostring__",sol::meta_function::to_string},
-                {"__pairs__",sol::meta_function::pairs},
-                {"__metatable__",sol::meta_function::metatable}
+                {"__pairs__",sol::meta_function::pairs}
             };
         private:
             void Register();
@@ -188,22 +208,17 @@ namespace cocos2d {
             template<bool isGetter, typename U>
             static void GS_Pair(std::map<std::string, gsPair<U>>& pMap, const sol::object& solObj) {
                 if (sol::type::table == solObj.get_type()) {
-                    sol::table table = solObj;
-                    table.for_each([&pMap](const sol::object& key, const sol::object& val) {
-                        if (sol::type::string == key.get_type() && sol::type::function == val.get_type()) {
-                            const std::string sKey = key.as<std::string>();
-                            if (pMap.cend() == pMap.find(sKey)) {
-                                pMap.emplace(sKey, std::pair{ nullptr,nullptr });
-                            }
-                            auto& pair = pMap[sKey];
-                            if constexpr (isGetter) {
-                                auto func = val.as<std::function<sol::object(const U*)>>();
-                                pair.first = func;
-                            }
-                            else {
-                                auto func = val.as<std::function<void(const U*, const sol::object&)>>();
-                                pair.second = func;
-                            }
+                    solObj.as<sol::table>().for_each([&pMap](const sol::object& key, const sol::object& val) {
+                        const std::string sKey = key.as<std::string>();
+                        if (pMap.cend() == pMap.find(sKey)) {
+                            pMap.emplace(sKey, std::pair{ nullptr,nullptr });
+                        }
+                        auto& pair = pMap[sKey];
+                        if constexpr (isGetter) {
+                            pair.first = val.as<std::function<sol::object(const U*)>>();
+                        }
+                        else {
+                            pair.second = val.as<std::function<void(const U*, const sol::object&)>>();
                         }
                     });
                 }

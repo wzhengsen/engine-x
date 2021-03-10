@@ -167,7 +167,7 @@ namespace cocos2d {
         void Lua::ReleaseInLua(void* obj) {
             // Get lua_State*.
             auto l = lua_state();// ...
-            // Get registry["SolWrapper.UD"] as a table.
+            // Get registry[UserDataKey] as a table.
             if (LUA_TTABLE == lua_getfield(l, LUA_REGISTRYINDEX, UserDataKey)) {// ...table?
                 lua_pushlightuserdata(l, obj);// ...table,light_ud
                 lua_pushvalue(l, -1);// ...table,light_ud,light_ud

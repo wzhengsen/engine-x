@@ -36,7 +36,7 @@ int sol_lua_push(sol::types<T*>, lua_State* L, const T* obj) {
     bool udExist = LUA_TTABLE == lua_getfield(L, LUA_REGISTRYINDEX, cocos2d::extension::Lua::UserDataKey);// table?
 
     if (udExist) {
-        // Try to get exist userdata from registry["SolWrapper.UD"].
+        // Try to get exist userdata from registry[UserDataKey].
         udExist = LUA_TUSERDATA == lua_rawgetp(L, 1, obj); // table,userdata?
     }
     if (!udExist) {
@@ -44,7 +44,7 @@ int sol_lua_push(sol::types<T*>, lua_State* L, const T* obj) {
         // New userdata.
         *static_cast<const T**>(lua_newuserdata(L, sizeof(const T*))) = obj;// ud
 
-        // Make sure the registry["SolWrapper.UD"] is a table.
+        // Make sure the registry[UserDataKey] is a table.
         if (LUA_TTABLE != lua_getfield(L, LUA_REGISTRYINDEX, cocos2d::extension::Lua::UserDataKey)) {// ud,table?
             lua_pop(L, 1);// ud
             lua_newtable(L);// ud,table
@@ -52,7 +52,7 @@ int sol_lua_push(sol::types<T*>, lua_State* L, const T* obj) {
             lua_setfield(L, LUA_REGISTRYINDEX, cocos2d::extension::Lua::UserDataKey);// ud,table
         }
 
-        // Save object into registry["SolWrapper.UD"] with light_ud pointer as key.
+        // Save object into registry[UserDataKey] with light_ud pointer as key.
         lua_pushvalue(L, -2);// ud,table,ud
         lua_rawsetp(L, -2, obj);// ud,table
         lua_pop(L, 1);//ud
