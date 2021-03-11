@@ -1,6 +1,7 @@
 --[[
 
 Copyright (c) 2014-2017 Chukong Technologies Inc.
+Copyright (c) 2021 wzhengsen.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,15 +25,102 @@ THE SOFTWARE.
 local getmetatable = getmetatable;
 local setmetatable = setmetatable;
 local rawset = rawset;
-local tolua = tolua;
 local pairs = pairs;
 local ipairs = ipairs;
 local assert = assert;
-local error = error;
 local type = type;
 local Handler = require("Handler");
 
-class = {};
+_G.class = {};
+
+-- 该表中的元方法，必须实现对应的处理函数，才能使用。
+local MetaNeedImpl = {
+    __add__ = "__add",
+    __sub__ = "__sub",
+    __mul__ = "__mul",
+    __mod__ = "__mod",
+    __pow__ = "__pow",
+    __div__ = "__div",
+    __idiv__ = "__idiv",
+    __band__ = "__band",
+    __bor__ = "__bor",
+    __bxor__ = "__bxor",
+    __shl__ = "__shl",
+    __shr__ = "__shr",
+    __unm__ = "__unm",
+    __bnot__ = "__bnot",
+    __lt__ = "__lt",
+    __le__ = "__le",
+    __concat__ = "__concat",
+    __call__ = "__call"
+};
+
+local ObjMeta = {};
+-- __eq元方法，可以不实现。
+ObjMeta.__eq = function (...)
+    for _,sender in {...} do
+        local __eq = sender.__eq__;
+        if __eq then
+            return __eq(...);
+        end
+    end
+    return false;
+end
+-- __gc元方法，可以不实现。
+ObjMeta.__gc = function (sender)
+    local __gc = sender.__gc__;
+    if __gc then
+        __gc(sender);
+    end
+end
+-- __pairs元方法，可以不实现，采用默认实现。
+ObjMeta.__pairs = function (sender)
+    local __pairs = sender.__pairs__;
+    if __pairs then
+        return __pairs(sender);
+    end
+    return function(t,key)
+        local value = nil;
+        key,value = next(t,key);
+        return key,value;
+    end,sender,nil
+end
+-- __len元方法，可以不实现，采用默认实现。
+ObjMeta.__len = function (sender)
+    local __len = sender.__len__;
+    if __len then
+        return __len(sender);
+    end
+    return rawlen(sender);
+end
+for key, value in pairs(MetaNeedImpl)do
+    ObjMeta[value] = function (sender,...)
+        local meta = sender[key];
+        if "function" == type(meta) then
+            return meta(sender,...);
+        end
+        error("You must implement the " .. key .. " meta-method.");
+    end
+end
+local function MakeObjMetaTable_T(cls)
+    local meta = {};
+    for k,v in ObjMeta do
+        meta[k] = v
+    end
+    meta.__index = function (sender,key)
+        local ret = rawget(cls,key);
+        if ret then
+            return ret;
+        end
+        local cMeta = getmetatable(cls);
+        return cMeta.__index(sender,key);
+    end;
+    meta.__newindex = function (sender,key,value)
+        local cMeta = getmetatable(cls);
+        cMeta.__newindex(sender,key,value);
+    end;
+    return meta;
+end
 
 -- 在cls中查找gtor的对应值。
 local function seekIn_get_set(cls,key,stackSuper,method)
@@ -128,7 +216,7 @@ local function _setmetatable(t, cls)
         end
         setmetatable_U(t,cls,peer,peer);
     else
-        setmetatable_T(t,cls,t);
+        setmetatable(t,MakeObjMetaTable_T(cls));
     end
     return t;
 end
@@ -152,148 +240,130 @@ local handlerMetaTable = {
 
 local deleteFunction = function(self)
     local dtor = self.dtor;
-    local ret = nil;
     if dtor then
-        ret = dtor(self);
+        dtor(self);
     end
-    if type(self) == "userdata" then
-        if not ret then
-            -- dtor返回true时，跳过原delete的调用。
-            local mt = getmetatable(self);
-            if mt then
-                local d = mt.delete;
-                if d then
-                    d(self);
-                end
-            end
-        end
-    else
-        self["._isnull"] = true;
-    end
+    self["._isnull"] = true;
 end
 
 local classCreateLayer = 0;
-local Singleton = {};
-class.Singleton = Singleton;
 function class.New(...)
-    local className = "";
     local args = {...};
-    if "string" == type(args[1]) then
-        className = table.remove(args,1);
+    local cls = {
+        -- 表示事件处理表。
+        Handler = sol.Debug and setmetatable({},handlerMetaTable) or {},
+        -- 表示该类的所有直接基类（已排序）。
+        __bases__ = {},
+        -- 表示该类的sol::usertype基类（也是唯一的sol::usertype基类）。
+        __cpp_base__ = nil
+    };
+    -- 检查只读只写属性。
+    for _,rw in pairs({"__r__","__w__"}) do
+        cls[rw] = setmetatable({},{
+            __index = function (_,key)
+                local cppBase = rawget(cls,"__cpp_base__");
+                for __,bCls in cls.__bases__ do
+                    if bCls ~= cppBase then
+                        local ret = bCls[rw][key];
+                        if ret then
+                            return ret
+                        end
+                    end
+                end
+                -- todo 检查__cpp_base__？
+                return nil;
+            end
+        });
     end
 
-    local cls = {
-        __cname = className,
-        __supers = {},
-        [".get"] = {},
-        [".set"] = {},
-
-        __allSupers = {},
-
-        -- 事件处理表。
-        Handler = {},
-        isSingleton = false
-    };
-    local cStor = cls[".set"];
-    local cGtor = cls[".get"];
-    for _, super in ipairs(args) do
-        local superType = type(super);
+    for _, base in ipairs(args) do
+        local baseType = type(base);
         -- 基类只能是table或function。
-        assert(
-            superType == "table" or superType == "function",
-            ([[class() - create class "%s" with invalid super class type "%s"]]):
-            format(className,superType)
-        );
-        if super == Singleton then
-            cls[".call"] = function(_,...)
-                local obj = Singleton[cls];
-                if class.IsNull(obj) then
-                    obj = cls.__new__(...);
-                    Singleton[cls] = obj;
-                end
-                return obj;
-            end;
-            cls.isSingleton = true;
+        assert(baseType == "table" or baseType == "function","Base classes must be a table or function!");
+        if baseType == "function" then
+            -- 只能拥有一个__create函数。
+            assert(cls.__create == nil,"Class with more than one creating function!");
+            cls.__create = base;
         else
-            if superType == "function" then
-                -- 只能拥有一个__create函数。
-                assert(
-                    cls.__create == nil,
-                    ([[class() - create class "%s" with more than one creating function]]):
-                    format(className)
-                );
-                -- if super is function, set it to __create
-                cls.__create = super;
-            elseif superType == "table" then
-                if super[".isclass"] then
-                    -- 基类并非当前函数生成，只将其create函数设置为类的__create函数，
-                    -- 并保证只能拥有一个__create函数。
-                    -- super is native class
-                    assert(
-                        cls.__create == nil,
-                        ([[class() - create class "%s" with more than one creating function or native class]]):
-                        format(className)
-                    );
-                    cls.__create = super.new;
+            local __name = rawget(base,"__name")
+            -- sol::usertype名字中带有"sol."
+            if __name and name:find("sol.") then
+                -- 基类并非当前函数生成（可能是sol::usertype类型），只将其new函数设置为类的__create函数，
+                -- 并保证只能拥有一个__create函数。
+                assert(cls.__create == nil,"Class with more than one creating function or native class!");
+                local new = base.new;
+                if new then
+                    cls.__create = new;
                 end
-                -- super is pure lua class
-                cls.__supers[#cls.__supers + 1] = super;
-
-                -- 加入__allSupres，以快速查找所有基类。
-                if super.__allSupers then
-                    for k,v in pairs(super.__allSupers) do
-                        cls.__allSupers[k] = v;
-                    end
-                end
-                local sStor = super[".set"];
-                if sStor then
-                    for k,v in pairs(sStor) do
-                        cStor[k] = v;
-                    end
-                end
-                local gGtor = super[".get"];
-                if gGtor then
-                    for k,v in pairs(gGtor) do
-                        cGtor[k] = v;
-                    end
-                end
-                cls.__allSupers[super] = true;
-
-                local h = rawget(super,"Handler");
-                if h then
-                    for hdr,func in pairs(h) do
-                        cls.Handler[hdr] = func;
-                    end
-                end
+                cls.__cpp_base__ = base
             else
-                error(([[class() - create class "%s" with invalid super type]]):format(className),0);
+                local __create = rawget(base,"__create")
+                if __create then
+                    assert(cls.__create == nil,"Class with more than one creating function!");
+                    cls.__create = __create;
+                end
+
+                -- 继承基类的Handler处理函数。
+                for hdr,func in pairs(base.Handler) do
+                    cls.Handler[hdr] = func;
+                end
             end
+
+            -- 只要基类有任意的sol::usertype类型，都将传递下去。
+            local __cpp_base__ = rawget(base,"__cpp_base__")
+            if __cpp_base__ then
+                cls.__cpp_base__ = __cpp_base__;
+            end
+            -- 加入多继承表。
+            table.insert(cls.__bases__,base)
         end
     end
 
-    cls.__index = cls;
-    setmetatable(
-        cls,
-        {
-            __index = function(_, key)
-                for _, super in ipairs(cls.__supers) do
-                    local ret = super[key];
-                    if ret ~= nil then
-                        rawset(cls,key,ret);
-                        return ret;
-                    end
-                end
-            end,
-            __call = cls.isSingleton and function(self,...)
-                return rawget(self,".call")(self,...);
-            end or nil
-        }
-    );
-
     if not cls.ctor then
-        -- add default constructor
+        -- 添加默认构造（空构造）。
         cls.ctor = defaultEmptyCtor;
     end
+    if not cls.__cpp_base__ then
+        -- 只为纯lua类提供delete的实现。
+        cls.delete = deleteFunction;
+    end
+
+    setmetatable(cls,{
+        __index = function(sender, key)
+            local property = cls.__r__[key];
+            if property then
+                return property(sender);
+            end
+            for _, base in ipairs(cls.__bases__) do
+                local ret = base[key];
+                if ret ~= nil then
+                    -- 此处缓存，加快下次访问。
+                    rawset(sender,key,ret);
+                    return ret;
+                end
+            end
+        end,
+        __newindex = function (sender,key,value)
+            if key == "__properties__" then
+                if "function" == type(value) then
+                    value = value(cls);
+                end
+                for __rw__,rw in pairs({__r__ = "r",__w__ = "w"}) do
+                    for k,v in pairs(value[rw]) do
+                        cls[__rw__][k] = v;
+                    end
+                end
+            else
+                local property = cls.__w__[key];
+                if property then
+                    property(sender,value);
+                    return
+                end
+                rawset(sender,key,value);
+            end
+        end
+    });
+
     cls.new = function(...)
         classCreateLayer = classCreateLayer + 1;
         local instance = cls.__create and cls.__create(...) or {};
@@ -301,83 +371,17 @@ function class.New(...)
 
         if classCreateLayer == 1 then
             _setmetatable(instance,cls);
-            local regHandler = {};
             for key,func in pairs(cls.Handler) do
-                if not regHandler[key] then
-                    Handler.On(key:sub(3),instance,func);
-                    regHandler[key] = true;
-                end
+                -- 自动监听事件。
+                Handler.On(key:sub(3),instance,func);
             end
-            for super,_ in pairs(cls.__allSupers) do
-                local handler = rawget(super,"Handler");
-                if handler then
-                    for key,func in pairs(handler) do
-                        if not regHandler[key] then
-                            Handler.On(key:sub(3),instance,func);
-                            regHandler[key] = true;
-                        end
-                    end
-                end
-            end
-        else
-            instance.__stackSupers = instance.__stackSupers or {};
-            table.insert(instance.__stackSupers,1,cls);
         end
         local tempCreateLayer = classCreateLayer;
         classCreateLayer = 0;
-        if type(instance) == "userdata" then
-            local peer = tolua.getpeer(instance);
-            if not peer then
-                peer = {};
-                tolua.setpeer(instance, peer);
-            end
-            local sS = instance.__stackSupers;
-            if sS then
-                -- 若以function为构造继承一个pure lua class，".cls.set"不能使用引用，而是使用复制，且将不能
-                -- 直接继承的类的".set"赋值到peer的".cls.set"。
-                local cT = {};
-                for m,st in pairs(cls[".set"]) do
-                    cT[m] = st;
-                end
-                for _,sp in ipairs(sS) do
-                    for m,st in pairs(sp[".set"]) do
-                        cT[m] = st;
-                    end
-                end
-                rawset(peer,".cls.set",cT);
-            else
-                rawset(peer,".cls.set",cls[".set"]);
-            end
-        end
         cls.ctor(instance,...);
         classCreateLayer = classCreateLayer + tempCreateLayer - 1;
         return instance;
     end;
-    if cls.isSingleton then
-        cls.__new__ = cls.new;
-    end
-    cls.delete = deleteFunction;
-    cls.gtor = function(tFunc)
-        for k,v in pairs(tFunc) do
-            rawset(cls[".get"],k,v);
-        end
-    end;
-    cls.stor = function(tFunc)
-        for k,v in pairs(tFunc) do
-            rawset(cls[".set"],k,v);
-        end
-    end;
-    cls.is = function(obj_cls,_cls)
-        if nil == _cls then
-            _cls = obj_cls;
-        end
-        return _cls == cls or cls.__allSupers[_cls];
-    end;
-    cls.class = function(_)
-        return cls;
-    end;
-
-    setmetatable(cls.Handler,handlerMetaTable);
 
     return cls;
 end
@@ -388,7 +392,7 @@ function class.Handler(obj, method)
     end
 end
 
-local isnull = tolua.isnull;
+local isnull = sol.Null;
 class.IsNull = function(t)
     if type(t) == "table" then
         return rawget(t,"._isnull");

@@ -2,103 +2,6 @@ local cc = cc;
 local ccb = ccb;
 local ccs = ccs;
 
-ScriptHandlerMgr = ScriptHandlerMgr or {};
-ScriptHandlerMgr.HandlerType = {
-    NODE            = 0,
-    MENU_CLICKED    = 1,
-    CALLFUNC        = 2,
-    SCHEDULE        = 3,
-    TOUCHES         = 4,
-    KEYPAD          = 5,
-    ACCELEROMETER   = 6,
-
-    CONTROL_TOUCH_DOWN = 7,
-    CONTROL_TOUCH_DRAG_INSIDE = 8,
-    CONTROL_TOUCH_DRAG_OUTSIDE = 9,
-    CONTROL_TOUCH_DRAG_ENTER = 10,
-    CONTROL_TOUCH_DRAG_EXIT  = 11,
-    CONTROL_TOUCH_UP_INSIDE  = 12,
-    CONTROL_TOUCH_UP_OUTSIDE = 13,
-    CONTROL_TOUCH_UP_CANCEL  = 14,
-    CONTROL_VALUE_CHANGED    = 15,
-
-    WEBSOCKET_OPEN           = 16,
-    WEBSOCKET_MESSAGE        = 17,
-    WEBSOCKET_CLOSE          = 18,
-    WEBSOCKET_ERROR          = 19,
-
-    GL_NODE_DRAW             = 20,
-
-    SCROLLVIEW_SCROLL        = 21,
-    SCROLLVIEW_ZOOM          = 22,
-
-    TABLECELL_TOUCHED        = 23,
-    TABLECELL_HIGHLIGHT      = 24,
-    TABLECELL_UNHIGHLIGHT    = 25,
-    TABLECELL_WILL_RECYCLE   = 26,
-    TABLECELL_SIZE_FOR_INDEX = 27,
-    TABLECELL_AT_INDEX       = 28,
-    TABLEVIEW_NUMS_OF_CELLS  = 29,
-
-    XMLHTTPREQUEST_READY_STATE_CHANGE = 30,
-
-    ASSETSMANAGER_PROGRESS = 31,
-    ASSETSMANAGER_SUCCESS  = 32,
-    ASSETSMANAGER_ERROR    = 33,
-
-    STUDIO_EVENT_LISTENER  = 34,
-    ARMATURE_EVENT         = 35,
-
-    EVENT_ACC              = 36,
-    EVENT_CUSTIOM          = 37,
-
-    EVENT_KEYBOARD_PRESSED = 38,
-    EVENT_KEYBOARD_RELEASED = 39,
-
-    EVENT_TOUCH_BEGAN      = 40,
-    EVENT_TOUCH_MOVED      = 41,
-    EVENT_TOUCH_ENDED      = 42,
-    EVENT_TOUCH_CANCELLED  = 43,
-
-    EVENT_TOUCHES_BEGAN    = 44,
-    EVENT_TOUCHES_MOVED    = 45,
-    EVENT_TOUCHES_ENDED    = 46,
-    EVENT_TOUCHES_CANCELLED = 47,
-
-    EVENT_MOUSE_DOWN       = 48,
-    EVENT_MOUSE_UP         = 49,
-    EVENT_MOUSE_MOVE       = 50,
-    EVENT_MOUSE_SCROLL     = 51,
-
-    EVENT_SPINE            = 52,
-
-    EVENT_PHYSICS_CONTACT_BEGIN = 53,
-    EVENT_PHYSICS_CONTACT_PRESOLVE = 54,
-    EVENT_PHYSICS_CONTACT_POSTSOLVE = 5,
-    EVENT_PHYSICS_CONTACT_SEPARATE = 56,
-
-    EVENT_FOCUS = 57,
-
-    EVENT_CONTROLLER_CONNECTED = 58,
-    EVENT_CONTROLLER_DISCONNECTED = 59,
-    EVENT_CONTROLLER_KEYDOWN = 60,
-    EVENT_CONTROLLER_KEYUP = 61,
-    EVENT_CONTROLLER_KEYREPEAT = 62,
-    EVENT_CONTROLLER_AXIS = 63,
-
-    EVENT_SPINE_ANIMATION_START = 64,
-    EVENT_SPINE_ANIMATION_INTERRUPT = 65,
-    EVENT_SPINE_ANIMATION_END = 66,
-    EVENT_SPINE_ANIMATION_DISPOSE = 67,
-    EVENT_SPINE_ANIMATION_COMPLETE = 68,
-    EVENT_SPINE_ANIMATION_EVENT = 69,
-
-    REF = 70,
-
-    EVENT_TOUCH = 71,
-    EVENT_CLICK = 72,
-};
-
 cc.CC_EDIT_BOX_PADDING = 5;
 cc.Sprite.INDEX_NOT_INITIALIZED = -1;
 
@@ -165,14 +68,6 @@ cc.LanguageType = {
     BULGARIAN  = 18,
     BELARUSIAN = 19
 };
-
-cc.kNodeOnEnter       = 0;
-cc.kNodeOnExit        = 1;
-cc.kNodeOnEnterTransitionDidFinish = 2;
-cc.kNodeOnExitTransitionDidStart   = 3;
-cc.kNodeOnCleanup    = 4;
-
-cc.HandlerType = ScriptHandlerMgr.HandlerType;
 
 cc.EventListener.Type = {
     UNKNOWN = 0,

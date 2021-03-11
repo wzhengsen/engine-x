@@ -8,7 +8,7 @@ local Event = {
     __eventOrder = {},
     __eventLayer = {}
 };
-local isnull = tolua.isnull;
+local isnull = sol.Null;
 local ipairs = ipairs;
 local setmetatable = setmetatable;
 local rawget = rawget;

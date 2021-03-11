@@ -21,17 +21,12 @@
     "files.trimTrailingWhitespace": true,
     "files.eol": "\n",
     "files.autoGuessEncoding": true,
-
     "editor.autoClosingQuotes": "never",
     "editor.autoClosingBrackets": "never",
-
     "lua_analyzer.codeLinting.checkWhileTyping": false,
     "lua_analyzer.codeLinting.enable": false,
-
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
-
     "lua_analyzer.codeLinting.checkAfterSave": false,
-
     "cmake.configureOnOpen": false,
     "Lua.diagnostics.globals": [
         "Event",
@@ -41,8 +36,8 @@
         "gl",
         "LuaObjcBridge",
         "LuaJavaBridge",
-        "tolua",
-        "ccs"
+        "ccs",
+        "sol"
     ],
     "Lua.runtime.version": "Lua 5.4",
     "Lua.workspace.ignoreDir": [
