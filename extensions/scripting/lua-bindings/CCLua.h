@@ -104,30 +104,17 @@ namespace cocos2d {
                     };
                 }
                 // Provides a way to register property in lua.
-                ut["__properties__"] = sol::writeonly_property([ut](const sol::table& properties) mutable {
-                    std::map<std::string, gsPair<U>> pMap = {};
-                    // For "r" key(read).
-                    GS_Pair<true>(pMap, properties["r"]);
-                    // For "w" key(write).
-                    GS_Pair<false>(pMap, properties["w"]);
-                    for (auto& gs : pMap) {
-                        const auto& funcs = gs.second;
-                        if (funcs.first && funcs.second) {
-                            ut[gs.first] = sol::property(funcs.first, funcs.second);
-                        }
-                        else if (funcs.first) {
-                            ut[gs.first] = sol::readonly_property(funcs.first);
-                        }
-                        else if (funcs.second) {
-                            ut[gs.first] = sol::writeonly_property(funcs.second);
-                        }
+                ut["__properties__"] = sol::writeonly_property([ut](sol::object properties) mutable {
+                    if (sol::type::function == properties.get_type()) {
+                        properties = properties.as<sol::function>()(ut);
                     }
+                    SetProperties(ut, properties.as<sol::table>());
                 });
                 return ut;
             }
             /**
             * @brief    A wrapper of sol::table::new_usertype.
-            *           The __newindex/__index/__pairs meta-method has been registered in advance.
+            *           The __newindex/__index meta-method has been registered in advance.
             * @param    U The class or struct which want to be register into lua table.
             * @param    B All of base class of U,such as base's base,and so on.
             * @param    tName The name of the table in which the type being registered is located,split by ".".
@@ -221,6 +208,27 @@ namespace cocos2d {
                             pair.second = val.as<std::function<void(const U*, const sol::object&)>>();
                         }
                     });
+                }
+            }
+
+            template<typename U>
+            static void SetProperties(sol::usertype<U>& ut, const sol::table& properties) {
+                std::map<std::string, gsPair<U>> pMap = {};
+                // For "r" key(read).
+                GS_Pair<true>(pMap, properties["r"]);
+                // For "w" key(write).
+                GS_Pair<false>(pMap, properties["w"]);
+                for (auto& gs : pMap) {
+                    const auto& funcs = gs.second;
+                    if (funcs.first && funcs.second) {
+                        ut[gs.first] = sol::property(funcs.first, funcs.second);
+                    }
+                    else if (funcs.first) {
+                        ut[gs.first] = sol::readonly_property(funcs.first);
+                    }
+                    else if (funcs.second) {
+                        ut[gs.first] = sol::writeonly_property(funcs.second);
+                    }
                 }
             }
         };
