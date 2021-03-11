@@ -325,7 +325,13 @@ class NativeObject(NativeWrapper):
                 if method._wholeName in self._pvMethods:
                     self._pvMethods.pop(method._wholeName)
             if cursor.access_specifier == cindex.AccessSpecifier.PUBLIC:
-                if method.Override or not method.Supported or not method.Generatable or\
+                # Override函数到底要不要跳过？需要研究。
+                # 如果跳过，类似于cc.Sprite.setTexture的函数实现将会遇到麻烦，
+                # 不会重载基类的setTexture。
+                # 如果不跳过，将重复绑定一次基类的虚函数。
+                # if method.Override:
+                #     return
+                if not method.Supported or not method.Generatable or\
                         CursorHelper.GetAvailability(cursor) == CursorHelper.Availability.DEPRECATED:
                     return
 
