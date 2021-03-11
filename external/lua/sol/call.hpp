@@ -1,4 +1,4 @@
-// sol3
+// sol2
 
 // The MIT License (MIT)
 
@@ -125,14 +125,20 @@ namespace sol {
 		template <typename T, bool checked, bool clean_stack>
 		struct constructor_match {
 			T* obj_;
+			stack::stack_detail::undefined_metatable* p_umf_;
 
-			constructor_match(T* o) : obj_(o) {
+			constructor_match(T* obj_ptr, stack::stack_detail::undefined_metatable& umf) : obj_(obj_ptr), p_umf_(&umf) {
 			}
 
 			template <typename Fx, std::size_t I, typename... R, typename... Args>
 			int operator()(types<Fx>, meta::index_value<I>, types<R...> r, types<Args...> a, lua_State* L, int, int start) const {
 				detail::default_construct func {};
-				return stack::call_into_lua<checked, clean_stack>(r, a, L, start, func, obj_);
+				int result = stack::call_into_lua<checked, clean_stack>(r, a, L, start, func, this->obj_);
+				// construct userdata table
+				// SPECIFICALLY, after we've created it successfully.
+				// If the constructor exits for any reason we have to break things down...
+				(*this->p_umf_)();
+				return result;
 			}
 		};
 
@@ -317,11 +323,10 @@ namespace sol {
 			T* obj = detail::usertype_allocate<T>(L);
 			reference userdataref(L, -1);
 			stack::stack_detail::undefined_metatable umf(L, &meta[0], &stack::stack_detail::set_undefined_methods_on<T>);
-			umf();
 
 			// put userdata at the first index
 			lua_insert(L, 1);
-			construct_match<T, TypeLists...>(constructor_match<T, checked, clean_stack>(obj), L, argcount, 1 + static_cast<int>(syntax));
+			construct_match<T, TypeLists...>(constructor_match<T, checked, clean_stack>(obj, umf), L, argcount, 1 + static_cast<int>(syntax));
 
 			userdataref.push();
 			return 1;
@@ -649,13 +654,16 @@ namespace sol {
 				argcount -= static_cast<int>(syntax);
 
 				T* obj = detail::usertype_allocate<T>(L);
-				reference userdataref(L, -1);
+				stack_reference userdataref(L, -1);
 				stack::stack_detail::undefined_metatable umf(L, &meta[0], &stack::stack_detail::set_undefined_methods_on<T>);
-				umf();
 
 				// put userdata at the first index
 				lua_insert(L, 1);
-				construct_match<T, Args...>(constructor_match<T, checked, clean_stack>(obj), L, argcount, boost + 1 + 1 + static_cast<int>(syntax));
+				// Because of the way constructors work,
+				// we have to kill the data, but only if the cosntructor is successfulyl invoked...
+				// if it's not successfully invoked and we panic,
+				// we cannot actually deallcoate/delete the data.
+				construct_match<T, Args...>(constructor_match<T, checked, clean_stack>(obj, umf), L, argcount, boost + 1 + 1 + static_cast<int>(syntax));
 
 				userdataref.push();
 				return 1;
@@ -860,6 +868,11 @@ namespace sol {
 		template <typename T, typename Sig, typename P, bool is_index, bool is_variable, bool checked, int boost, bool clean_stack, typename C>
 		struct lua_call_wrapper<T, function_arguments<Sig, P>, is_index, is_variable, checked, boost, clean_stack, C> {
 			static int call(lua_State* L, const function_arguments<Sig, P>& f) {
+				lua_call_wrapper<T, meta::unqualified_t<P>, is_index, is_variable, checked, boost, clean_stack> lcw {};
+				return lcw.call(L, std::get<0>(f.arguments));
+			}
+
+			static int call(lua_State* L, function_arguments<Sig, P>& f) {
 				lua_call_wrapper<T, meta::unqualified_t<P>, is_index, is_variable, checked, boost, clean_stack> lcw {};
 				return lcw.call(L, std::get<0>(f.arguments));
 			}

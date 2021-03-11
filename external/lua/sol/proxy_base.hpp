@@ -1,4 +1,4 @@
-// sol3
+// sol2
 
 // The MIT License (MIT)
 
@@ -36,25 +36,6 @@ namespace sol {
 		using proxy_key_t = meta::conditional_t<meta::is_specialization_of_v<meta::unqualified_t<T>, std::tuple>, T,
 		     std::tuple<meta::conditional_t<std::is_array_v<meta::unqualified_t<T>>, std::remove_reference_t<T>&, meta::unqualified_t<T>>>>;
 	}
-
-#define SOL_PROXY_BASE_IMPL_MSVC_IS_TRASH_I_(Super)                                                                                                          \
-	operator std::string() const {                                                                                                                          \
-		const Super& super = *static_cast<const Super*>(static_cast<const void*>(this));                                                                   \
-		return super.template get<std::string>();                                                                                                          \
-	}                                                                                                                                                       \
-                                                                                                                                                             \
-	template <typename T, meta::enable<meta::neg<meta::is_string_constructible<T>>, is_proxy_primitive<meta::unqualified_t<T>>> = meta::enabler>            \
-	operator T() const {                                                                                                                                    \
-		const Super& super = *static_cast<const Super*>(static_cast<const void*>(this));                                                                   \
-		return super.template get<T>();                                                                                                                    \
-	}                                                                                                                                                       \
-                                                                                                                                                             \
-	template <typename T, meta::enable<meta::neg<meta::is_string_constructible<T>>, meta::neg<is_proxy_primitive<meta::unqualified_t<T>>>> = meta::enabler> \
-	operator T&() const {                                                                                                                                   \
-		const Super& super = *static_cast<const Super*>(static_cast<const void*>(this));                                                                   \
-		return super.template get<T&>();                                                                                                                   \
-	}                                                                                                                                                       \
-	static_assert(true, "This is ridiculous and I hate MSVC.")
 
 	template <typename Super>
 	struct proxy_base : public proxy_base_tag {
