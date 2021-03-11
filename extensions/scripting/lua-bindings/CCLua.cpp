@@ -188,9 +188,11 @@ namespace cocos2d {
         }
 
         void Lua::RegisterSol() {
-            sol::table _sol = create_named_table("sol");
+            sol::table meta = create_table(0, 2);
+            meta[sol::meta_function::index] = meta;
+            meta[sol::meta_function::new_index] = [] () {};
             // "Null" function,nil or userdata or the value pointed to by userdata is empty."
-            _sol["Null"] = [](lua_State* l) {
+            meta["Null"] = [](lua_State* l) {
                 if (1 != lua_gettop(l)) {
                     luaL_error(l, "sol.Null accept 1 param(s) but got %d param(s).", lua_gettop(l));
                     return 0;
@@ -210,6 +212,10 @@ namespace cocos2d {
                 lua_pushboolean(l, FALSE);
                 return 1;
             };
+            meta["Debug"] = static_cast<bool>(COCOS2D_DEBUG);
+
+            sol::table _sol = create_named_table("sol");
+            _sol[sol::metatable_key] = meta;
         }
 
         void Lua::RegisterAuto() {
