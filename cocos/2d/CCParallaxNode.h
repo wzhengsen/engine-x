@@ -71,7 +71,7 @@ public:
      *
      * @param parallaxArray An array of layers for the Parallax node.
      */
-    void setParallaxArray( struct _ccArray *parallaxArray) { _parallaxArray = parallaxArray; }
+    void setParallaxArray(struct _ccArray* parallaxArray);
     /** Returns the array of layers of the Parallax node.
      *
      * @return An array of layers for the Parallax node.
@@ -117,5 +117,3 @@ private:
 NS_CC_END
 
 #endif //__CCPARALLAX_NODE_H__
-
-

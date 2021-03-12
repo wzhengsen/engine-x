@@ -451,13 +451,6 @@ void EventDispatcher::addEventListener(EventListener* listener)
     {
         _toAddedListeners.push_back(listener);
     }
-#if CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-    auto sEngine = ScriptEngineManager::getInstance()->getScriptEngine();
-    if (sEngine)
-    {
-        sEngine->retainScriptObject(this, listener);
-    }
-#endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
     listener->retain();
 }
 
@@ -1616,13 +1609,6 @@ void EventDispatcher::cleanToRemovedListeners()
 
 void EventDispatcher::releaseListener(EventListener* listener)
 {
-#if CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-    auto sEngine = ScriptEngineManager::getInstance()->getScriptEngine();
-    if (listener && sEngine)
-    {
-        sEngine->releaseScriptObject(this, listener);
-    }
-#endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
     CC_SAFE_RELEASE(listener);
 }
 

@@ -62,7 +62,6 @@ set(COCOS_BASE_HEADER
     base/ZipUtils.h
     base/CCMap.h
     base/ccUTF8.h
-    base/CCScriptSupport.h
     base/CCEventFocus.h
     base/CCConfiguration.h
     base/CCProtocols.h
@@ -114,7 +113,6 @@ set(COCOS_BASE_SRC
     base/CCProperties.cpp
     base/CCRef.cpp
     base/CCScheduler.cpp
-    base/CCScriptSupport.cpp
     base/CCTouch.cpp
     base/CCUserDefault.cpp
     base/CCValue.cpp

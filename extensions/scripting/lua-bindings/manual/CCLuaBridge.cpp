@@ -23,7 +23,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+#include "base/CCConsole.h"
 #include "scripting/lua-bindings/manual/CCLuaBridge.h"
+
 
 NS_CC_BEGIN
 

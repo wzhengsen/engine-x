@@ -29,6 +29,9 @@ THE SOFTWARE.
 
 #include "2d/CCNode.h"
 #include "base/CCProtocols.h"
+#include "base/CCTouch.h"
+#include "base/CCEventTouch.h"
+#include "base/CCEventKeyboard.h"
 #include "renderer/CCCustomCommand.h"
 
 #include <vector>
@@ -165,12 +168,27 @@ CC_CONSTRUCTOR_ACCESS:
     virtual ~Layer();
 
     virtual bool init() override;
+    
+#if CC_ENABLE_LUA_BINDING
+    typedef std::function<bool(Layer*, EventTouch::EventCode, Touch*)> LayerTouchHandlerType;
+    typedef std::function<void(Layer*, EventTouch::EventCode, const std::vector<Touch*>&)> LayerTouchesHandlerType;
+    typedef std::function<void(Layer*, EventKeyboard::KeyCode, bool)> LayerKeyHandlerType;
+    typedef std::function<void(Layer*, Acceleration*)> LayerAccelerationHandlerType;
+    void SetTouchHandler(const LayerTouchHandlerType& handler) {
+        _touchHandler = handler;
+    };
+    void SetTouchesHandler(const LayerTouchesHandlerType& handler) {
+        _touchesHandler = handler;
+    };
+    void SetKeyHandler(const LayerKeyHandlerType& handler) {
+        _keyHandler = handler;
+    };
+    void SetAccelerationHandler(const LayerAccelerationHandlerType& handler) {
+        _accelerationHandler = handler;
+    };
+#endif
 
 protected:
-    
-    int executeScriptTouchHandler(EventTouch::EventCode eventType, Touch* touch, Event* event);
-    int executeScriptTouchesHandler(EventTouch::EventCode eventType, const std::vector<Touch*>& touches, Event* event);
-
     bool _touchEnabled;
     bool _accelerometerEnabled;
     bool _keyboardEnabled;
@@ -180,7 +198,12 @@ protected:
 
     Touch::DispatchMode _touchMode;
     bool _swallowsTouches;
-
+#if CC_ENABLE_LUA_BINDING
+    LayerTouchHandlerType _touchHandler = nullptr;
+    LayerTouchesHandlerType _touchesHandler = nullptr;
+    LayerKeyHandlerType _keyHandler = nullptr;
+    LayerAccelerationHandlerType _accelerationHandler = nullptr;
+#endif
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(Layer);
 

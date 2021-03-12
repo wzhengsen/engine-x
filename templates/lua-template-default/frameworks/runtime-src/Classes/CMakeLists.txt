@@ -78,7 +78,6 @@ endif()
 target_link_libraries(${target_name}
     cocos2d
     plainlua
-    tolua
     cjson
 )
 

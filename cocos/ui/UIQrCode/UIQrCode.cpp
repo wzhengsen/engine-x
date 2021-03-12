@@ -34,7 +34,7 @@ void QrCode::copySpecialProperties(Widget* widget) {
     if (qr) {
         const auto imageSprite = qr->codeRenderer;
         if (imageSprite) {
-            codeRenderer->initWithSpriteFrame(imageSprite->getSpriteFrame());
+            codeRenderer->setSpriteFrame(imageSprite->getSpriteFrame());
         }
     }
 }
@@ -73,8 +73,10 @@ bool QrCode::LoadCodeByString(const std::string& code) {
 
         const Size s = Size(width, width);
         //使用RGBA8888格式以支持截图png
-        texture->initWithData(imageData, width * width, backend::PixelFormat::RGBA8, width, width, s);
-        flag = codeRenderer->initWithTexture(texture);
+        flag = texture->initWithData(imageData, width * width, backend::PixelFormat::RGBA8, width, width, s);
+        if(flag) {
+            codeRenderer->setTexture(texture);
+        }
         originSize = width;
         QRcode_free(_qrcode);
         codeRendererAdaptDirty = true;

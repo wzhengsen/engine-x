@@ -175,7 +175,13 @@ public:
     // Overrides
     virtual bool isOpacityModifyRGB() const override;
     virtual void setOpacityModifyRGB(bool bOpacityModifyRGB) override;
-    
+#if CC_ENABLE_LUA_BINDING
+    /**
+    * @brief    Set a event handler for lua.
+    *           It will be export to lua by sol.
+    */
+    void SetEventHandler(const std::function<void(Control*, Control::EventType)>& handler) { _eventHandler = handler; };
+#endif
 CC_CONSTRUCTOR_ACCESS:
     /**
      * @js ctor
@@ -264,6 +270,10 @@ protected:
 
     /** The current control state constant. */
     CC_SYNTHESIZE_READONLY(State, _state, State);
+    
+#if CC_ENABLE_LUA_BINDING
+    std::function<void(Control*, EventType)> _eventHandler = nullptr;
+#endif
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(Control);

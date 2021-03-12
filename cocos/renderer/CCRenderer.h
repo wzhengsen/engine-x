@@ -171,11 +171,11 @@ public:
     /* returns the number of drawn batches in the last frame */
     ssize_t getDrawnBatches() const { return _drawnBatches; }
     /* RenderCommands (except) TrianglesCommand should update this value */
-    void addDrawnBatches(ssize_t number) { _drawnBatches += number; };
+    void addDrawnBatches(ssize_t number) { _drawnBatches += static_cast<unsigned int>(number); };
     /* returns the number of drawn triangles in the last frame */
     ssize_t getDrawnVertices() const { return _drawnVertices; }
     /* RenderCommands (except) TrianglesCommand should update this value */
-    void addDrawnVertices(ssize_t number) { _drawnVertices += number; };
+    void addDrawnVertices(ssize_t number) { _drawnVertices += static_cast<unsigned int>(number); };
     /* clear draw stats */
     void clearDrawStats() { _drawnBatches = _drawnVertices = 0; }
 

@@ -38,6 +38,9 @@ THE SOFTWARE.
 #include "2d/CCNodeGrid.h"
 #include "base/CCDirector.h"
 #include "base/CCEventDispatcher.h"
+#if CC_ENABLE_LUA_BINDING
+#include "scripting/lua-bindings/CCLua.h"
+#endif // CC_ENABLE_LUA_BINDING
 
 NS_CC_BEGIN
 
@@ -79,13 +82,6 @@ bool TransitionScene::initWithDuration(float t, Scene *scene)
         _duration = t;
 
         // retain
-#if CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-        auto sEngine = ScriptEngineManager::getInstance()->getScriptEngine();
-        if (sEngine)
-        {
-            sEngine->retainScriptObject(this, scene);
-        }
-#endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
         _inScene = scene;
         _inScene->retain();
         _outScene = _director->getRunningScene();
@@ -155,13 +151,6 @@ void TransitionScene::setNewScene(float /*dt*/)
     _isSendCleanupToScene = _director->isSendCleanupToScene();
     
     _director->replaceScene(_inScene);
-#if CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-    auto sEngine = ScriptEngineManager::getInstance()->getScriptEngine();
-    if (sEngine)
-    {
-        sEngine->releaseScriptObject(this, _inScene);
-    }
-#endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
     
     // issue #267
     _outScene->setVisible(true);
@@ -202,10 +191,9 @@ void TransitionScene::onExit()
     // only the onEnterTransitionDidFinish
     _inScene->onEnterTransitionDidFinish();
 
-#if CC_ENABLE_SCRIPT_BINDING
-    if (ScriptEngineManager::getInstance()->getScriptEngine())
-        ScriptEngineManager::getInstance()->getScriptEngine()->garbageCollect();
-#endif // CC_ENABLE_SCRIPT_BINDING
+#if CC_ENABLE_LUA_BINDING
+    extension::Lua::GetInstance()->collect_garbage();
+#endif // CC_ENABLE_LUA_BINDING
 }
 
 // custom cleanup

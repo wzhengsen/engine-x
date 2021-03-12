@@ -31,15 +31,10 @@ THE SOFTWARE.
 
 #include "base/CCRef.h"
 #include "math/CCGeometry.h"
-#include "base/CCScriptSupport.h"
 
 NS_CC_BEGIN
 
 class Node;
-
-enum {
-    kActionUpdate
-};
 
 /**
  * @addtogroup actions

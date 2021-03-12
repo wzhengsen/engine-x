@@ -10,7 +10,7 @@ local cpath = package.cpath;
 package.cpath = cpath;
 
 -- Initialize global.
-cjson = require("cjson");
+_G.cjson = require("cjson");
 
 require("Lua.MathEx");
 require("Lua.StringEx");
@@ -45,7 +45,7 @@ local config = require("config");
 
 if config.DisableGlobal then
     local __g = _G;
-    globals = setmetatable({}, {
+    _G.globals = setmetatable({}, {
         __newindex = function(_, name, value)
             rawset(__g, name, value);
         end,

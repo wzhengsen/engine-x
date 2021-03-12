@@ -262,18 +262,15 @@ struct NotifyWrapper {
     std::string title = std::string();
     std::string content = std::string();
     std::function<void()> clickCallback = nullptr;
-    std::function<void()> closeCallback = nullptr;
     bool callOnce = false;
     NotifyWrapper(
         const std::string& title,
         const std::string& content,
-        const std::function<void()>& clickCallback,
-        const std::function<void()>& closeCallback
+        const std::function<void()>& clickCallback
     ):
     title(title),
     content(content),
-    clickCallback(clickCallback),
-    closeCallback(closeCallback){}
+        clickCallback(clickCallback) {}
 };
 
 static void NotificationClicked(NotifyNotification* notification, char* action,gpointer gp) {
@@ -286,29 +283,18 @@ static void NotificationClicked(NotifyNotification* notification, char* action,g
     }
 }
 
-static void NotificationClosed(NotifyNotification* notification, gpointer gp) {
-    NotifyWrapper* nw = reinterpret_cast<NotifyWrapper*>(gp);
-    if (nw->closeCallback && !nw->callOnce) {
-        nw->callOnce = true;
-        cocos2d::Director::getInstance()->getScheduler()->performFunctionInCocosThread([ccb = nw->closeCallback](){
-            ccb();
-        });
-    }
-}
-
 /*
     @brief 创建一个通知。
 */
 void Application::Notify(
     const std::string& title,
     const std::string& content,
-    const std::function<void()>& clickCallback,
-    const std::function<void()>& closeCallback
+    const std::function<void()>& clickCallback
 ) {
     // Static
     static auto iconPath = std::string();
     static auto nwQueue = std::queue<NotifyWrapper>();
-    static std::mutex ntyMutex;
+    static std::mutex ntyMutex = {};
     static std::thread* ntyThread = nullptr;
     if (iconPath.empty()) {
         auto fu = cocos2d::FileUtils::getInstance();
@@ -328,7 +314,7 @@ void Application::Notify(
 
     // Lock and pushback notify info to queue.
     const std::lock_guard<std::mutex> lg(ntyMutex);
-    nwQueue.emplace(std::move(title),std::move(content),std::move(clickCallback),std::move(closeCallback));
+    nwQueue.emplace(std::move(title), std::move(content), std::move(clickCallback));
 
     if (!ntyThread) {
         ntyThread = new std::thread([](){
@@ -352,7 +338,6 @@ void Application::Notify(
                     (NotifyActionCallback)NotificationClicked, (gpointer)&nw,
                     nullptr
                 );
-                g_signal_connect(G_OBJECT(nty),"closed",G_CALLBACK(NotificationClosed),(gpointer)&nw);
 
                 bool failed = !notify_notification_show(nty, nullptr);
                 if (!failed) {
@@ -367,13 +352,6 @@ void Application::Notify(
                         }
                         g_main_context_iteration(nullptr, false);
                     }
-                }
-                if (failed && nw.closeCallback){
-                    // Notify show failed,call close callback directly.
-                    nw.callOnce = true;
-                    cocos2d::Director::getInstance()->getScheduler()->performFunctionInCocosThread([ccb = nw.closeCallback](){
-                        ccb();
-                    });
                 }
                 g_object_unref(G_OBJECT(nty));
                 while(g_main_context_iteration(nullptr, false));

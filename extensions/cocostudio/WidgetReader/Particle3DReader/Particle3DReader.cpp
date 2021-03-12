@@ -147,12 +147,7 @@ namespace cocostudio
         auto fileData = options->fileData();
         std::string path = fileData->path()->c_str();
         
-        PUParticleSystem3D* ret = PUParticleSystem3D::create();
-        if (FileUtils::getInstance()->isFileExist(path))
-        {
-            ret->initWithFilePath(path);
-        }
-        
+        PUParticleSystem3D* ret = FileUtils::getInstance()->isFileExist(path) ? PUParticleSystem3D::create() : PUParticleSystem3D::create(path);
         setPropsWithFlatBuffers(ret, particle3DOptions);
         
         if(ret)

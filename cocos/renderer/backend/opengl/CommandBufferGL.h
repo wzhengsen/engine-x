@@ -29,7 +29,7 @@
 #include "base/CCEventListenerCustom.h"
 #include "platform/CCGL.h"
 
-#include "CCStdC.h"
+#include "platform/CCStdC.h"
 
 #include <vector>
 

@@ -85,8 +85,8 @@ bool GObject::init()
     {
         _displayObject->setAnchorPoint(Vec2(0, 1));
         _displayObject->setCascadeOpacityEnabled(true);
-        _displayObject->setOnEnterCallback(CC_CALLBACK_0(GObject::onEnter, this));
-        _displayObject->setOnExitCallback(CC_CALLBACK_0(GObject::onExit, this));
+        _displayObject->SetOnEnterHandler(CC_CALLBACK_0(GObject::onEnter, this));
+        _displayObject->SetOnExitHandler(CC_CALLBACK_0(GObject::onExit, this));
     }
     return true;
 }

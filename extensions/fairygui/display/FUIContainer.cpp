@@ -121,17 +121,6 @@ void FUIContainer::setStencil(cocos2d::Node * stencil)
     if (_stencilClippingSupport->_stencil == stencil)
         return;
 
-#if CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-    auto sEngine = ScriptEngineManager::getInstance()->getScriptEngine();
-    if (sEngine)
-    {
-        if (_stencilClippingSupport->_stencil)
-            sEngine->releaseScriptObject(this, _stencilClippingSupport->_stencil);
-        if (stencil)
-            sEngine->retainScriptObject(this, stencil);
-    }
-#endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-
     //cleanup current stencil
     if (_stencilClippingSupport->_stencil != nullptr && _stencilClippingSupport->_stencil->isRunning())
     {
@@ -211,7 +200,7 @@ void FUIContainer::setInverted(bool inverted)
 
 void FUIContainer::onEnter()
 {
-#if CC_ENABLE_SCRIPT_BINDING && COCOS2D_VERSION < 0x00040000
+#if CC_ENABLE_LUA_BINDING && COCOS2D_VERSION < 0x00040000
     if (_scriptType == kScriptTypeJavascript)
     {
         if (ScriptEngineManager::sendNodeEventToJSExtended(this, kNodeOnEnter))
@@ -230,7 +219,7 @@ void FUIContainer::onEnter()
 
 void FUIContainer::onEnterTransitionDidFinish()
 {
-#if CC_ENABLE_SCRIPT_BINDING && COCOS2D_VERSION < 0x00040000
+#if CC_ENABLE_LUA_BINDING && COCOS2D_VERSION < 0x00040000
     if (_scriptType == kScriptTypeJavascript)
     {
         if (ScriptEngineManager::sendNodeEventToJSExtended(this, kNodeOnEnterTransitionDidFinish))
@@ -248,7 +237,7 @@ void FUIContainer::onEnterTransitionDidFinish()
 
 void FUIContainer::onExitTransitionDidStart()
 {
-#if CC_ENABLE_SCRIPT_BINDING && COCOS2D_VERSION < 0x00040000
+#if CC_ENABLE_LUA_BINDING && COCOS2D_VERSION < 0x00040000
     if (_scriptType == kScriptTypeJavascript)
     {
         if (ScriptEngineManager::sendNodeEventToJSExtended(this, kNodeOnExitTransitionDidStart))
@@ -263,7 +252,7 @@ void FUIContainer::onExitTransitionDidStart()
 
 void FUIContainer::onExit()
 {
-#if CC_ENABLE_SCRIPT_BINDING && COCOS2D_VERSION < 0x00040000
+#if CC_ENABLE_LUA_BINDING && COCOS2D_VERSION < 0x00040000
     if (_scriptType == kScriptTypeJavascript)
     {
         if (ScriptEngineManager::sendNodeEventToJSExtended(this, kNodeOnExit))

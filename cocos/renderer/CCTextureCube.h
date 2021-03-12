@@ -71,16 +71,17 @@ public:
 
     /** reload texture cube after GLESContext reconstructed.*/
     bool reloadTexture();
+
+    /**
+    * Destructor.
+    */
+    virtual ~TextureCube();
 CC_CONSTRUCTOR_ACCESS:
     /**
     * Constructor.
     */
     TextureCube();
 
-    /**
-    * Destructor.
-    */
-    virtual ~TextureCube();
 protected:
 
     bool init(const std::string& positive_x, const std::string& negative_x,

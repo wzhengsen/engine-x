@@ -2,7 +2,7 @@
 
 // The MIT License (MIT)
 
-// Copyright (c) 2013-2020 Rapptz, ThePhD and contributors
+// Copyright (c) 2013-2021 Rapptz, ThePhD and contributors
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
@@ -49,7 +49,7 @@
 		#define SOL_USE_LUAJIT_I_ SOL_OFF
 	#endif
 #elif defined(LUAJIT_VERSION)
-	#define SOL_USE_LUAJIT_I_ SOL_OFF
+	#define SOL_USE_LUAJIT_I_ SOL_ON
 #else
 	#define SOL_USE_LUAJIT_I_ SOL_DEFAULT_OFF
 #endif // luajit
@@ -125,7 +125,27 @@
 	// shoving exceptions through Lua and errors should
 	// always be serialized
 	#define SOL_PROPAGATE_EXCEPTIONS_I_ SOL_DEFAULT_OFF
-#endif // LuaJIT beta 02.01.00 have better exception handling on all platforms since beta3
+#endif
+
+// Some configurations work with exceptions,
+// but cannot catch-all everything...
+#if defined(SOL_EXCEPTIONS_CATCH_ALL)
+	#if (SOL_EXCEPTIONS_CATCH_ALL != 0)
+		#define SOL_EXCEPTIONS_CATCH_ALL_I_ SOL_ON
+	#else
+		#define SOL_EXCEPTIONS_CATCH_ALL_I_ SOL_OFF
+	#endif
+#else
+	#if SOL_IS_ON(SOL_USE_LUAJIT_I_)
+		#define SOL_EXCEPTIONS_CATCH_ALL_I_ SOL_DEFAULT_OFF
+	#elif SOL_IS_ON(SOL_USE_CXX_LUAJIT_I_)
+		#define SOL_EXCEPTIONS_CATCH_ALL_I_ SOL_DEFAULT_OFF
+	#elif SOL_IS_ON(SOL_USE_CXX_LUA_I_)
+		#define SOL_EXCEPTIONS_CATCH_ALL_I_ SOL_DEFAULT_OFF
+	#else
+		#define SOL_EXCEPTIONS_CATCH_ALL_I_ SOL_DEFAULT_ON
+	#endif
+#endif
 
 #if defined(SOL_LUAJIT_USE_EXCEPTION_TRAMPOLINE)
 	#if (SOL_LUAJIT_USE_EXCEPTION_TRAMPOLINE != 0)
@@ -152,6 +172,36 @@
 		#define SOL_LUAL_STREAM_USE_CLOSE_FUNCTION_I_ SOL_ON
 	#else
 		#define SOL_LUAL_STREAM_USE_CLOSE_FUNCTION_I_ SOL_DEFAULT_OFF
+	#endif
+#endif
+
+#if defined (SOL_LUA_BIT32_LIB)
+	#if SOL_LUA_BIT32_LIB != 0
+		#define SOL_LUA_BIT32_LIB_I_ SOL_ON
+	#else
+		#define SOL_LUA_BIT32_LIB_I_ SOL_OFF
+	#endif
+#else
+	// Lua 5.2 only (deprecated in 5.3 (503)) (Can be turned on with Compat flags)
+	// Lua 5.2, or other versions of Lua with the compat flag, or Lua that is not 5.2 with the specific define (5.4.1 either removed it entirely or broke it)
+	#if (SOL_LUA_VESION_I_ == 502) || (defined(LUA_COMPAT_BITLIB) && (LUA_COMPAT_BITLIB != 0)) || (SOL_LUA_VESION_I_ < 504 && (defined(LUA_COMPAT_5_2) && (LUA_COMPAT_5_2 != 0)))
+		#define SOL_LUA_BIT32_LIB_I_ SOL_ON
+	#else
+		#define SOL_LUA_BIT32_LIB_I_ SOL_DEFAULT_OFF
+	#endif
+#endif
+
+#if defined (SOL_LUA_NIL_IN_TABLES)
+	#if SOL_LUA_NIL_IN_TABLES != 0
+		#define SOL_LUA_NIL_IN_TABLES_I_ SOL_ON
+	#else
+		#define SOL_LUA_NIL_IN_TABLES_I_ SOL_OFF
+	#endif
+#else
+	#if defined(LUA_NILINTABLE) && (LUA_NILINTABLE != 0)
+		#define SOL_LUA_NIL_IN_TABLES_I_ SOL_DEFAULT_ON
+	#else
+		#define SOL_LUA_NIL_IN_TABLES_I_ SOL_DEFAULT_OFF
 	#endif
 #endif
 

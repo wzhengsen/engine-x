@@ -49,8 +49,6 @@ NS_CC_BEGIN
 
 // sharedApplication pointer
 Application* Application::sm_pSharedApplication = nullptr;
-std::map<uint16_t, Application::NotifyWrapper> Application::MapNotifyWrapper = std::map<uint16_t, Application::NotifyWrapper>();
-uint16_t Application::NotifyID = 0;
 
 LRESULT CALLBACK Application::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
@@ -88,11 +86,8 @@ void Application::NotifyProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
 
         Shell_NotifyIcon(NIM_DELETE, &nd);
 
-        if (msg == NIN_BALLOONUSERCLICK && (*it).second.clickCallback) {
-            (*it).second.clickCallback();
-        }
-        if (msg == NIN_BALLOONTIMEOUT && (*it).second.closeCallback) {
-            (*it).second.closeCallback();
+        if (msg == NIN_BALLOONUSERCLICK && it->second) {
+            it->second();
         }
         MapNotifyWrapper.erase(uID);
     }
@@ -146,11 +141,9 @@ void Application::Dialog(
 }
 
 void Application::Notify(
-    uint16_t icon,
     const std::string& title,
     const std::string& content,
-    const std::function<void()>& clickCallback,
-    const std::function<void()>& closeCallback
+    const std::function<void()>& clickCallback
 ) {
     const std::wstring wstrT = ntcvt::from_chars(title);
     const std::wstring wstrC = ntcvt::from_chars(content);
@@ -165,15 +158,15 @@ void Application::Notify(
     wcscpy_s(nd.szTip, wstrT.c_str());
     wcscpy_s(nd.szInfo, wstrC.c_str());
     wcscpy_s(nd.szInfoTitle, wstrT.c_str());
-    nd.hIcon = LoadIcon(_instance, MAKEINTRESOURCE(icon));
-    nd.hBalloonIcon = LoadIcon(_instance, MAKEINTRESOURCE(icon));
+    nd.hIcon = LoadIcon(_instance, MAKEINTRESOURCE(_iconRes));
+    nd.hBalloonIcon = LoadIcon(_instance, MAKEINTRESOURCE(_iconRes));
     nd.dwInfoFlags = NIIF_USER | NIIF_LARGE_ICON;
     nd.uVersion = NOTIFYICON_VERSION_4;
 
     Shell_NotifyIcon(NIM_ADD, &nd);
     Shell_NotifyIcon(NIM_SETVERSION, &nd);
 
-    MapNotifyWrapper.emplace(NotifyID, NotifyWrapper{ clickCallback,closeCallback });
+    MapNotifyWrapper.emplace(NotifyID, clickCallback);
     NotifyID++;
 }
 

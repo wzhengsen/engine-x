@@ -518,7 +518,7 @@ struct CC_DLL AnimationFrameData
 struct CC_DLL FontShadow
 {
     /// shadow x and y offset
-    Size   _shadowOffset;
+    Size   _shadowOffset = Size::ZERO;
     /// shadow blurriness
     float  _shadowBlur = 0.f;
     /// shadow opacity
@@ -550,7 +550,7 @@ struct CC_DLL FontStroke
 struct CC_DLL FontDefinition
 {
     /// font name
-    std::string           _fontName;
+    std::string           _fontName = {};
     /// font size
     int                   _fontSize = 0;
     /// horizontal alignment
@@ -564,9 +564,9 @@ struct CC_DLL FontDefinition
     /// font alpha
     uint8_t               _fontAlpha = 255;
     /// font shadow
-    FontShadow            _shadow;
+    FontShadow            _shadow = {};
     /// font stroke
-    FontStroke            _stroke;
+    FontStroke            _stroke = {};
     /// enable text wrap
     bool                  _enableWrap = true;
     /** There are 4 overflows: none, clamp, shrink and resize_height.

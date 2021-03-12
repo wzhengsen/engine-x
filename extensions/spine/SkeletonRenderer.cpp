@@ -850,18 +850,12 @@ bool SkeletonRenderer::getDebugBoundingRectEnabled() const {
 	return _debugBoundingRect;
 }
 
-void SkeletonRenderer::onEnter () {
-#if CC_ENABLE_SCRIPT_BINDING && COCOS2D_VERSION < 0x00040000
-	if (_scriptType == kScriptTypeJavascript && ScriptEngineManager::sendNodeEventToJSExtended(this, kNodeOnEnter)) return;
-#endif
+void SkeletonRenderer::onEnter() {
 	Node::onEnter();
 	scheduleUpdate();
 }
 
-void SkeletonRenderer::onExit () {
-#if CC_ENABLE_SCRIPT_BINDING && COCOS2D_VERSION < 0x00040000
-	if (_scriptType == kScriptTypeJavascript && ScriptEngineManager::sendNodeEventToJSExtended(this, kNodeOnExit)) return;
-#endif
+void SkeletonRenderer::onExit() {
 	Node::onExit();
 	unscheduleUpdate();
 }

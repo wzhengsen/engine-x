@@ -514,6 +514,10 @@ public:
     int getResourceType() const { return _fileType; }
     const std::string& getResourceName() const { return _fileName; }
 
+    virtual void setVertexLayout();
+
+    void setProgramState(uint32_t type) override;
+
 CC_CONSTRUCTOR_ACCESS :
 	/**
      * @js ctor
@@ -616,11 +620,6 @@ CC_CONSTRUCTOR_ACCESS :
      * @lua     init
      */
     virtual bool initWithFile(const std::string& filename, const Rect& rect);
-
-    virtual void setVertexLayout();
-    
-    void setProgramState(uint32_t type) override;
-
 protected:
     virtual void updateColor() override;
     virtual void setTextureCoords(const Rect& rect);

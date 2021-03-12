@@ -29,19 +29,10 @@ THE SOFTWARE.
 /// @cond DO_NOT_SHOW
 #include <string>
 #include "base/CCRef.h"
-#include "base/CCScriptSupport.h"
 
 NS_CC_BEGIN
 
 class Node;
-
-enum {
-    kComponentOnEnter,
-    kComponentOnExit,
-    kComponentOnAdd,
-    kComponentOnRemove,
-    kComponentOnUpdate
-};
 
 class CC_DLL Component : public Ref
 {

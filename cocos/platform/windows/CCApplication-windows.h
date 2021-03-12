@@ -120,11 +120,9 @@ public:
      @brief 创建一个通知。
     */
     void Notify(
-        uint16_t icon,
         const std::string& title,
         const std::string& content,
-        const std::function<void()>& clickCallback = nullptr,
-        const std::function<void()>& closeCallback = nullptr
+        const std::function<void()>& clickCallback = nullptr
     ) override;
 
     void SetCefClose(bool b) { cefClose = b; }
@@ -135,14 +133,9 @@ protected:
     LARGE_INTEGER       _animationInterval;
     std::string         _resourceRootPath;
     std::string         _startupScriptFilename;
-
-    struct NotifyWrapper {
-        NotifyWrapper(const std::function<void()>& clickCallback, const std::function<void()>& closeCallback) :
-            clickCallback(clickCallback),
-            closeCallback(closeCallback) {}
-        std::function<void()> clickCallback = nullptr;
-        std::function<void()> closeCallback = nullptr;
-    };
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+    uint16_t            _iconRes = 0;
+#endif
 
     static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -150,9 +143,9 @@ protected:
     static void NotifyProc(HWND hwnd, WPARAM wParam, LPARAM lParam);
 
     // 用于临时存放通知信息。
-    static std::map<uint16_t,NotifyWrapper> MapNotifyWrapper;
+    inline static std::map<uint16_t, std::function<void()>> MapNotifyWrapper = {};
     // 通知ID
-    static uint16_t NotifyID;
+    inline static uint16_t NotifyID = 0;
 
     // CefCloseFlag
     bool cefClose = true;

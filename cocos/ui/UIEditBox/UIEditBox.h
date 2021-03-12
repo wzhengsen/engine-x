@@ -104,6 +104,15 @@ namespace ui {
         , public IMEDelegate
     {
     public:
+        /**
+         * The event.
+         */
+        enum class EventType {
+            Began,
+            Ended,
+            Changed,
+            Return
+        };
 
         /**
          * The popup keyboard return type.
@@ -382,49 +391,21 @@ namespace ui {
          */
         EditBoxDelegate* getDelegate();
 
-#if CC_ENABLE_SCRIPT_BINDING
+#if CC_ENABLE_LUA_BINDING
         /**
-         * Registers a script function that will be called for EditBox events.
-         *
-         * This handler will be removed automatically after onExit() called.
-         * @code
-         * -- lua sample
-         * local function editboxEventHandler(eventType)
-         *     if eventType == "began" then
-         *         -- triggered when an edit box gains focus after keyboard is shown
-         *     elseif eventType == "ended" then
-         *         -- triggered when an edit box loses focus after keyboard is hidden.
-         *     elseif eventType == "changed" then
-         *         -- triggered when the edit box text was changed.
-         *     elseif eventType == "return" then
-         *         -- triggered when the return button was pressed or the outside area of keyboard was touched.
-         *     end
-         * end
-         *
-         * local editbox = EditBox:create(Size(...), Scale9Sprite:create(...))
-         * editbox = registerScriptEditBoxHandler(editboxEventHandler)
-         * @endcode
-         *
-         * @param handler A number that indicates a lua function.
-         * @js NA
-         * @lua NA
+         * Registers a function that will be called for EditBox events.
+         * @param handler A std::function<EditBox*, EditBox::Event> function.
          */
-        void registerScriptEditBoxHandler(int handler);
+        void SetEventHandler(const std::function<void(EditBox*, EditBox::EventType)>& handler) { _eventHandler = handler; };
 
         /**
-         * Unregisters a script function that will be called for EditBox events.
+         * get a event Handler
          * @js NA
          * @lua NA
          */
-        void unregisterScriptEditBoxHandler();
-        /**
-         * get a script Handler
-         * @js NA
-         * @lua NA
-         */
-        int  getScriptEditBoxHandler(){ return _scriptEditBoxHandler ;}
+        const std::function<void(EditBox*, EditBox::EventType)>& GetEventHandler() const { return _eventHandler; }
 
-#endif // #if CC_ENABLE_SCRIPT_BINDING
+#endif // #if CC_ENABLE_LUA_BINDING
 
         /**
          * Set the text entered in the edit box.
@@ -707,8 +688,8 @@ namespace ui {
         EditBoxDelegate*  _delegate = nullptr;
 
         float _adjustHeight = 0.f;
-#if CC_ENABLE_SCRIPT_BINDING
-        int   _scriptEditBoxHandler = 0;
+#if CC_ENABLE_LUA_BINDING
+        std::function<void(EditBox*, EditBox::EventType)> _eventHandler = nullptr;
 #endif
     };
 }
@@ -718,4 +699,3 @@ namespace ui {
 NS_CC_END
 
 #endif /* __UIEDITTEXT_H__ */
-

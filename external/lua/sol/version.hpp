@@ -2,7 +2,7 @@
 
 // The MIT License (MIT)
 
-// Copyright (c) 2013-2020 Rapptz, ThePhD and contributors
+// Copyright (c) 2013-2021 Rapptz, ThePhD and contributors
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy of
 // this software and associated documentation files (the "Software"), to deal in
@@ -47,25 +47,38 @@
 #define SOL_DEFAULT_OFF -
 
 #if defined(_MSC_VER)
-	#define SOL_COMPILER_CLANG_I_ SOL_OFF
-	#define SOL_COMPILER_GCC_I_   SOL_OFF
-	#define SOL_COMPILER_EDG_I_   SOL_OFF
-	#define SOL_COMPILER_VCXX_I_  SOL_ON
+	#if defined(__clang__)
+		#define SOL_COMPILER_CLANG_I_      SOL_OFF
+		#define SOL_COMPILER_GCC_I_        SOL_OFF
+		#define SOL_COMPILER_EDG_I_        SOL_OFF
+		#define SOL_COMPILER_VCXX_I_       SOL_ON
+		#define SOL_COMPILER_VCXX_CLANG_I_ SOL_ON
+	#else
+		#define SOL_COMPILER_VCXX_CLANG_I_ SOL_OFF
+		#define SOL_COMPILER_CLANG_I_      SOL_OFF
+		#define SOL_COMPILER_GCC_I_        SOL_OFF
+		#define SOL_COMPILER_EDG_I_        SOL_OFF
+		#define SOL_COMPILER_VCXX_I_       SOL_ON
+		#define SOL_COMPILER_VCXX_CLANG_I_ SOL_OFF
+	#endif
 #elif defined(__clang__)
 	#define SOL_COMPILER_CLANG_I_ SOL_ON
 	#define SOL_COMPILER_GCC_I_   SOL_OFF
 	#define SOL_COMPILER_EDG_I_   SOL_OFF
 	#define SOL_COMPILER_VCXX_I_  SOL_OFF
+	#define SOL_COMPILER_VCXX_CLANG_I_ SOL_OFF
 #elif defined(__GNUC__)
 	#define SOL_COMPILER_CLANG_I_ SOL_OFF
 	#define SOL_COMPILER_GCC_I_   SOL_ON
 	#define SOL_COMPILER_EDG_I_   SOL_OFF
 	#define SOL_COMPILER_VCXX_I_  SOL_OFF
+	#define SOL_COMPILER_VCXX_CLANG_I_ SOL_OFF
 #else
 	#define SOL_COMPILER_CLANG_I_ SOL_OFF
 	#define SOL_COMPILER_GCC_I_   SOL_OFF
 	#define SOL_COMPILER_EDG_I_   SOL_OFF
 	#define SOL_COMPILER_VCXX_I_  SOL_OFF
+	#define SOL_COMPILER_VCXX_CLANG_I_ SOL_OFF
 #endif
 
 #if defined(__MINGW32__)
@@ -193,7 +206,7 @@
 	#if SOL_ALL_SAFETIES_ON != 0
 		#define SOL_ALL_SAFETIES_ON_I_ SOL_ON
 	#else
-		#define SOL_ALL_SAFETIES_ON_I_ SOL_FF
+		#define SOL_ALL_SAFETIES_ON_I_ SOL_OFF
 	#endif
 #else
 	#define SOL_ALL_SAFETIES_ON_I_ SOL_DEFAULT_OFF
@@ -634,12 +647,72 @@
 	#define SOL_GET_FUNCTION_POINTER_UNSAFE_I_ SOL_DEFAULT_OFF
 #endif
 
+#if defined(SOL_FUNCTION_CALL_VALUE_SEMANTICS)
+	#if (SOL_FUNCTION_CALL_VALUE_SEMANTICS != 0)
+		#define SOL_FUNCTION_CALL_VALUE_SEMANTICS_I_ SOL_ON
+	#else
+		#define SOL_FUNCTION_CALL_VALUE_SEMANTICS_I_ SOL_OFF
+	#endif
+#else
+	#define SOL_FUNCTION_CALL_VALUE_SEMANTICS_I_ SOL_DEFAULT_OFF
+#endif
+
 #if SOL_IS_ON(SOL_COMPILER_FRONTEND_MINGW_I_) && defined(__GNUC__) && (__GNUC__ < 6)
 	// MinGW is off its rocker in some places...
 	#define SOL_MINGW_CCTYPE_IS_POISONED_I_ SOL_ON
 #else
 	#define SOL_MINGW_CCTYPE_IS_POISONED_I_ SOL_DEFAULT_OFF
 #endif
+
+#if defined(SOL_CHAR8_T)
+	#if (SOL_CHAR8_T != 0)
+		#define SOL_CHAR8_T_I_ SOL_ON
+	#else
+		#define SOL_CHAR8_T_I_ SOL_OFF
+	#endif
+#else
+	#ifdef __cpp_char8_t
+		#define SOL_CHAR8_T_I_ SOL_DEFAULT_ON
+	#else
+		#define SOL_CHAR8_T_I_ SOL_DEFAULT_OFF
+	#endif
+#endif
+
+#if SOL_IS_ON(SOL_USE_BOOST_I_)
+	#include <boost/version.hpp>
+
+	#if BOOST_VERSION >= 107500 // Since Boost 1.75.0 boost::none is constexpr
+		#define SOL_BOOST_NONE_CONSTEXPR_I_ constexpr
+	#else
+		#define SOL_BOOST_NONE_CONSTEXPR_I_ const
+	#endif // BOOST_VERSION
+#else
+	// assume boost isn't using a garbage version
+	#define SOL_BOOST_NONE_CONSTEXPR_I_ constexpr
+#endif
+
+#if defined(SOL2_CI)
+	#if (SOL2_CI != 0)
+		#define SOL2_CI_I_ SOL_ON
+	#else
+		#define SOL2_CI_I_ SOL_OFF
+	#endif
+#else
+	#define SOL2_CI_I_ SOL_OFF
+#endif
+
+#if defined(SOL_C_ASSERT)
+	#define SOL_USER_C_ASSERT_I_ SOL_ON
+#else
+	#define SOL_USER_C_ASSERT_I_ SOL_DEFAULT_OFF
+#endif
+
+#if defined(SOL_M_ASSERT)
+	#define SOL_USER_M_ASSERT_I_ SOL_ON
+#else
+	#define SOL_USER_M_ASSERT_I_ SOL_DEFAULT_OFF
+#endif
+
 // clang-format on
 
 #endif // SOL_VERSION_HPP

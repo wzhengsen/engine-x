@@ -102,7 +102,7 @@
             "type": "shell",
             "command": "python3",
             "args": [
-                "${env:ENGINEX_ROOT}/tools/tolua/genbindings.py"
+                "${env:ENGINEX_ROOT}/tools/SolBinding/RunMe.py"
             ],
             "presentation": {
                 "echo": false,
@@ -113,7 +113,7 @@
                 "clear": false
             },
             "options": {
-                "cwd": "${env:ENGINEX_ROOT}/tools/tolua",
+                "cwd": "${env:ENGINEX_ROOT}/tools/SolBinding",
                 "statusbar": {
                     "label": "$(file-code)",
                     "tooltip": "LuaGen",

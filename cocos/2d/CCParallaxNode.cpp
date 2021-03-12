@@ -79,6 +79,13 @@ ParallaxNode::~ParallaxNode()
     }
 }
 
+void ParallaxNode::setParallaxArray(struct _ccArray* parallaxArray) {
+    if (_parallaxArray) {
+        ccArrayFree(_parallaxArray);
+    }
+    _parallaxArray = parallaxArray;
+}
+
 ParallaxNode * ParallaxNode::create()
 {
     ParallaxNode *ret = new (std::nothrow) ParallaxNode();

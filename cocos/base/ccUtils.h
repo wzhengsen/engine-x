@@ -35,6 +35,7 @@ THE SOFTWARE.
 #include "base/CCData.h"
 #include "renderer/backend/Types.h"
 #include "math/Mat4.h"
+#include "platform/CCCommon.h"
 
 #define CC_HEX2CHAR(hex) (hex < 0xa ? (hex + '0') : (hex + 'a' - 10))
 

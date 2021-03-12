@@ -29,6 +29,9 @@ THE SOFTWARE.
 #include "base/CCEventDispatcher.h"
 #include "base/ccUtils.h"
 #include "base/CCEventCustom.h"
+#if CC_ENABLE_LUA_BINDING
+#include "scripting/lua-bindings/CCLua.h"
+#endif
 
 using namespace cocos2d;
 
@@ -78,24 +81,21 @@ void TriggerMng::parse(const rapidjson::Value &root)
     CCLOG("%s", triggerMngVersion());
     int count = DICTOOL->getArrayCount_json(root, "Triggers");
     
-#if CC_ENABLE_SCRIPT_BINDING
-    ScriptEngineProtocol* engine = ScriptEngineManager::getInstance()->getScriptEngine();
-    bool useBindings = engine != nullptr;
-
-    if (useBindings)
-    {
-        if (count > 0)
-        {
-            const rapidjson::Value &subDict = DICTOOL->getSubDictionary_json(root, "Triggers");
-            rapidjson::StringBuffer buffer;
-            rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-            subDict.Accept(writer);
-            
-            engine->parseConfig(ScriptEngineProtocol::ConfigType::COCOSTUDIO, buffer.GetString());
+#if CC_ENABLE_LUA_BINDING
+    if (count > 0) {
+        auto& lua = *extension::Lua::GetInstance();
+        const rapidjson::Value& subDict = DICTOOL->getSubDictionary_json(root, "Triggers");
+        rapidjson::StringBuffer buffer;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+        subDict.Accept(writer);
+        
+        sol::function __onParseConfig = lua["__onParseConfig"];
+        if (__onParseConfig.valid()) {
+            __onParseConfig(extension::Lua::ConfigType::COCOSTUDIO, buffer.GetString());
         }
     }
     else
-#endif // #if CC_ENABLE_SCRIPT_BINDING
+#endif // #if CC_ENABLE_LUA_BINDING
     {
         for (int i = 0; i < count; ++i)
         {
@@ -116,25 +116,22 @@ void TriggerMng::parse(cocostudio::CocoLoader *pCocoLoader, cocostudio::stExpCoc
     int count = pCocoNode[13].GetChildNum();
     stExpCocoNode *pTriggersArray = pCocoNode[13].GetChildArray(pCocoLoader);
 
-#if CC_ENABLE_SCRIPT_BINDING
-    ScriptEngineProtocol* engine = ScriptEngineManager::getInstance()->getScriptEngine();
-    bool useBindings = engine != nullptr;
-    
-    if (useBindings)
-    {
-        if (count > 0 )
-        {
-            rapidjson::Document document;
-            buildJson(document, pCocoLoader, pCocoNode);
-            rapidjson::StringBuffer buffer;
-            rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-            document.Accept(writer);
-            
-            engine->parseConfig(ScriptEngineProtocol::ConfigType::COCOSTUDIO, buffer.GetString());
+#if CC_ENABLE_LUA_BINDING
+    if (count > 0) {
+        auto& lua = *extension::Lua::GetInstance();
+        rapidjson::Document document;
+        buildJson(document, pCocoLoader, pCocoNode);
+        rapidjson::StringBuffer buffer;
+        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+        document.Accept(writer);
+        
+        sol::function __onParseConfig = lua["__onParseConfig"];
+        if (__onParseConfig.valid()) {
+            __onParseConfig(extension::Lua::ConfigType::COCOSTUDIO, buffer.GetString());
         }
     }
     else
-#endif // #if CC_ENABLE_SCRIPT_BINDING
+#endif // #if CC_ENABLE_LUA_BINDING
     {
         for (int i = 0; i < count; ++i)
         {
@@ -522,4 +519,3 @@ ArmatureMovementDispatcher::~ArmatureMovementDispatcher(void)
   }
   
 }
-
