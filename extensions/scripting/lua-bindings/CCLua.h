@@ -60,16 +60,20 @@ namespace cocos2d {
                     new_usertype<U>(name, sol::no_constructor, sol::base_classes, sol::bases<B...>()) :
                     new_usertype<U>(name, sol::base_classes, sol::bases<B...>());
                 ut[sol::meta_function::new_index] = [](lua_State* L) {
-                    if (LUA_TTABLE == lua_getuservalue(L, 1)) {//ud,k,v,table
-                        lua_insert(L, -3);//ud,table,k,v
-                        lua_rawset(L, -3);//ud,table
+                    const auto top = lua_gettop(L);
+                    //ud,k,v...
+                    if (LUA_TTABLE == lua_getuservalue(L, 1)) {//ud,k,v...table
+                        lua_pushvalue(L, 2);//ud,k,v...table,k
+                        lua_pushvalue(L, 3);//ud,k,v...table,k,v
+                        lua_settable(L, -3);//ud,k,v...table
                     }
+                    lua_settop(L, top);
                     return 0;
                 };
                 ut[sol::meta_function::index] = [](lua_State* L) {
-                    if (LUA_TTABLE == lua_getuservalue(L, 1)) {//ud,k,table
-                        lua_insert(L, -2);//ud,table,k
-                        lua_rawget(L, -2);//ud,table,v
+                    if (LUA_TTABLE == lua_getuservalue(L, 1)) {//ud,k...table
+                        lua_pushvalue(L, 2);//ud,k...table,k
+                        lua_gettable(L, -2);//ud,k...table,v
                         return 1;
                     }
                     lua_pushnil(L);
