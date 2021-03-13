@@ -102,123 +102,31 @@ for key, value in pairs(MetaNeedImpl)do
         error("You must implement the " .. key .. " meta-method.");
     end
 end
+--[[为纯lua类产生的table类型的对象指定一个元表。
+]]
 local function MakeObjMetaTable_T(cls)
-    local meta = {};
-    for k,v in ObjMeta do
-        meta[k] = v
-    end
-    meta.__index = function (sender,key)
-        local ret = rawget(cls,key);
-        if ret then
-            return ret;
+    local meta = {
+        __cls__ = cls,
+        __index = function (sender,key)
+            -- 先检查当前类型的对应键。
+            local ret = rawget(cls,key);
+            if ret then
+                return ret;
+            end
+            -- 再将sender作为参数调用当前类型原表的__index方法，
+            -- 以自动处理属性和基类查找。
+            local cMeta = getmetatable(cls);
+            return cMeta.__index(sender,key);
+        end,
+        __newindex = function (sender,key,value)
+            local cMeta = getmetatable(cls);
+            cMeta.__newindex(sender,key,value);
         end
-        local cMeta = getmetatable(cls);
-        return cMeta.__index(sender,key);
-    end;
-    meta.__newindex = function (sender,key,value)
-        local cMeta = getmetatable(cls);
-        cMeta.__newindex(sender,key,value);
-    end;
+    };
+    for k,v in pairs(ObjMeta) do
+        meta[k] = v;
+    end
     return meta;
-end
-
--- 在cls中查找gtor的对应值。
-local function seekIn_get_set(cls,key,stackSuper,method)
-    local gs = cls[method];
-    local ret = gs[key];
-    if ret then
-        return ret;
-    end
-    if stackSuper then
-        for _,sp in ipairs(stackSuper) do
-            ret = sp[method];
-            if ret then
-                ret = ret[key];
-                if ret then
-                    return ret;
-                end
-            end
-        end
-    end
-end
-
-local function setmetatable_T(t,cls,ori_t)
-    local mt = getmetatable(t) or {};
-    if not mt.__index then
-        mt.__index = function(_,key)
-            local sS = rawget(ori_t,"__stackSupers");
-            local ret = seekIn_get_set(cls,key,sS,".get");
-            if ret then
-                return ret(t);
-            end
-            ret = cls[key];
-            if ret then
-                return ret;
-            end
-            if sS then
-                for _,sp in ipairs(sS) do
-                    ret = sp[key];
-                    if ret then
-                        return ret;
-                    end
-                end
-            end
-        end
-        mt.__newindex = function(_,key,value)
-            local sS = rawget(ori_t,"__stackSupers");
-            local ret = seekIn_get_set(cls,key,sS,".set");
-            if ret then
-                ret(t,value);
-            else
-                rawset(t,key,value);
-            end
-        end
-        setmetatable(t,mt);
-    elseif mt.__index ~= cls then
-        setmetatable_T(mt,cls,t);
-    end
-end
-
-local function setmetatable_U(u,cls,peer,ori_peer)
-    local mt = getmetatable(peer) or {};
-    if not mt.__index then
-        mt.__index = function(_,key)
-            local sS = rawget(ori_peer,"__stackSupers");
-            local ret = seekIn_get_set(cls,key,sS,".get");
-            if ret then
-                return ret(u);
-            end
-            ret = cls[key];
-            if ret then
-                return ret;
-            end
-            if sS then
-                for _,sp in ipairs(sS) do
-                    ret = sp[key];
-                    if ret then
-                        return ret;
-                    end
-                end
-            end
-        end
-        setmetatable(peer, mt)
-    elseif mt.__index ~= cls then
-        setmetatable_U(u,cls,mt,ori_peer);
-    end
-end
-
-local function _setmetatable(t, cls)
-    if type(t) == "userdata" then
-        local peer = tolua.getpeer(t);
-        if not peer then
-            peer = {};
-            tolua.setpeer(t, peer);
-        end
-        setmetatable_U(t,cls,peer,peer);
-    else
-        setmetatable(t,MakeObjMetaTable_T(cls));
-    end
-    return t;
 end
 
 setmetatable(class,{
@@ -227,8 +135,6 @@ setmetatable(class,{
 		return c.New(...)
 	end
 })
-
-local defaultEmptyCtor = function()end
 
 local handlerMetaTable = {
     __newindex = function(t,key,value)
@@ -243,6 +149,7 @@ local deleteFunction = function(self)
     if dtor then
         dtor(self);
     end
+    setmetatable(self,nil);
     self["._isnull"] = true;
 end
 
@@ -255,28 +162,27 @@ function class.New(...)
         -- 表示该类的所有直接基类（已排序）。
         __bases__ = {},
         -- 表示该类的sol::usertype基类（也是唯一的sol::usertype基类）。
-        __cpp_base__ = nil
+        __cpp_base__ = nil,
+
+        -- function构造器在继承列表的索引，一旦该类型被构造过一次，
+        -- 这个字段将失效。
+        __fCtorIdx__ = nil
     };
     -- 检查只读只写属性。
     for _,rw in pairs({"__r__","__w__"}) do
         cls[rw] = setmetatable({},{
             __index = function (_,key)
-                local cppBase = rawget(cls,"__cpp_base__");
-                for __,bCls in cls.__bases__ do
-                    if bCls ~= cppBase then
-                        local ret = bCls[rw][key];
-                        if ret then
-                            return ret
-                        end
+                for __,bCls in pairs(cls.__bases__) do
+                    local ret = bCls[rw][key];
+                    if ret then
+                        return ret
                     end
                 end
-                -- todo 检查__cpp_base__？
-                return nil;
             end
         });
     end
 
-    for _, base in ipairs(args) do
+    for idx, base in ipairs(args) do
         local baseType = type(base);
         -- 基类只能是table或function。
         assert(baseType == "table" or baseType == "function","Base classes must be a table or function!");
@@ -284,6 +190,7 @@ function class.New(...)
             -- 只能拥有一个__create函数。
             assert(cls.__create == nil,"Class with more than one creating function!");
             cls.__create = base;
+            cls.__fCtorIdx__ = idx;
         else
             local __name = rawget(base,"__name")
             -- sol::usertype名字中带有"sol."
@@ -295,38 +202,129 @@ function class.New(...)
                 if new then
                     cls.__create = new;
                 end
-                cls.__cpp_base__ = base
+                cls.__cpp_base__ = base;
             else
                 local __create = rawget(base,"__create")
                 if __create then
                     assert(cls.__create == nil,"Class with more than one creating function!");
-                    cls.__create = __create;
+                    -- 当具有__fCtorIdx__值时，表示基类使用了function构造器，
+                    -- 将cls.__create赋值为base.new，以递归调用，以便将function构造器的所属类返回到base。
+                    if rawget(base,"__fCtorIdx__") then
+                        cls.__create = base.new;
+                    else
+                        cls.__create = __create;
+                    end
                 end
 
                 -- 继承基类的Handler处理函数。
                 for hdr,func in pairs(base.Handler) do
                     cls.Handler[hdr] = func;
                 end
-            end
 
-            -- 只要基类有任意的sol::usertype类型，都将传递下去。
-            local __cpp_base__ = rawget(base,"__cpp_base__")
-            if __cpp_base__ then
-                cls.__cpp_base__ = __cpp_base__;
+                -- 加入多继承表。
+                table.insert(cls.__bases__,base)
             end
-            -- 加入多继承表。
-            table.insert(cls.__bases__,base)
         end
     end
 
-    if not cls.ctor then
-        -- 添加默认构造（空构造）。
-        cls.ctor = defaultEmptyCtor;
-    end
     if not cls.__cpp_base__ then
         -- 只为纯lua类提供delete的实现。
         cls.delete = deleteFunction;
     end
+
+    local tableMeta = MakeObjMetaTable_T(cls);
+    -- is方法，可以用于判断对象是否继承于某类。
+    -- 如果不传入参数，返回当前所属类。
+    cls.is = function(owner)
+        local tOwner = type(owner);
+        if "nil" == tOwner then
+            return cls;
+        elseif "table" == tOwner then
+            if owner == cls then
+                return true;
+            end
+            for _,bCls in pairs(cls.__bases__) do
+                if bCls.is(owner) then
+                    return true;
+                end
+            end
+            return false;
+        elseif "userdata" == tOwner then
+            --对userdata的判断？
+        end
+        return false;
+    end;
+    cls.new = function(...)
+        classCreateLayer = classCreateLayer + 1;
+        --[[
+            此处，需要考虑多重function构造的情况，如：
+            local C1 = class();
+            local C2 = class(function()return C1.new();end);
+            local C3 = class(C2);
+            local C4 = class(function()return C3.new();end);
+            在此继承关系下，由于没有明确指明C4和C2的基类，
+            所以不能直接按__bases__字段查询，需要获取返回的基类类型，将其加入到__bases__。
+
+            由于一个function构造器被设计为返回同一种类型，所以，不要使用如下继承方式：
+            local E1 = class();
+            local E2 = class();
+            local E3 = class(function(case)
+                if case == 1 then
+                    reutrn E1.new();
+                else
+                    return E2.new();
+                end
+            );--在这种情况下，可能引起奇怪的问题。
+        ]]
+        local instance = nil;
+        local __create = cls.__create;
+        if __create then
+            instance = cls.__create(...);
+            local __fCtorIdx__ = rawget(cls,"__fCtorIdx__");
+            if __fCtorIdx__ then
+                local preCls = instance.__cls__;
+                if preCls then
+                    -- 将function构造器所属类插入多继承表后，__fCtorIdx__便可以不再使用。
+                    rawset(cls,"__fCtorIdx__",nil);
+                    table.insert(cls.__bases__,__fCtorIdx__,preCls);
+                end
+            end
+        else
+            instance = {};
+        end
+        assert(instance,"Invalid Creator.");
+
+        local instType = type(instance);
+        if classCreateLayer == 1 then
+            instance.__cls__ = nil;
+            if "table" == instType then
+                setmetatable(instance,tableMeta);
+            else
+                --todo 用户数据的元表？
+            end
+            for key,func in pairs(cls.Handler) do
+                -- 自动监听事件。
+                Handler.On(key:sub(3),instance,func);
+            end
+        else
+            -- 将cls一并返回，可以指示function构造器所属类。
+            instance.__cls__ = cls;
+        end
+
+        local ctor = cls.ctor;
+        if ctor then
+            -- 避免在ctor中再次new一个新的对象时递归污染classCreateLayer变量，
+            -- 在此缓存，调用后，将其设置为classCreateLayer+tempCreateLayer
+            -- 最终调用结束，将值-1。
+            local tempCreateLayer = classCreateLayer;
+            classCreateLayer = 0;
+            cls.ctor(instance,...);
+            classCreateLayer = classCreateLayer + tempCreateLayer - 1;
+        else
+            classCreateLayer = classCreateLayer - 1;
+        end
+        return instance;
+    end;
 
     setmetatable(cls,{
         __index = function(sender, key)
@@ -349,8 +347,11 @@ function class.New(...)
                     value = value(cls);
                 end
                 for __rw__,rw in pairs({__r__ = "r",__w__ = "w"}) do
-                    for k,v in pairs(value[rw]) do
-                        cls[__rw__][k] = v;
+                    local subT = value[rw];
+                    if subT then
+                        for k,v in pairs(subT) do
+                            cls[__rw__][k] = v;
+                        end
                     end
                 end
             else
@@ -363,25 +364,6 @@ function class.New(...)
             end
         end
     });
-
-    cls.new = function(...)
-        classCreateLayer = classCreateLayer + 1;
-        local instance = cls.__create and cls.__create(...) or {};
-        assert(instance,"Invalid Creator.");
-
-        if classCreateLayer == 1 then
-            _setmetatable(instance,cls);
-            for key,func in pairs(cls.Handler) do
-                -- 自动监听事件。
-                Handler.On(key:sub(3),instance,func);
-            end
-        end
-        local tempCreateLayer = classCreateLayer;
-        classCreateLayer = 0;
-        cls.ctor(instance,...);
-        classCreateLayer = classCreateLayer + tempCreateLayer - 1;
-        return instance;
-    end;
 
     return cls;
 end

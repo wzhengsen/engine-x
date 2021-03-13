@@ -212,7 +212,11 @@ namespace cocos2d {
                 lua_pushboolean(l, FALSE);
                 return 1;
             };
-            meta["Debug"] = static_cast<bool>(COCOS2D_DEBUG);
+#ifdef COCOS2D_DEBUG
+            meta["Debug"] = true;
+#else
+            meta["Debug"] = false;
+#endif
 
             sol::table _sol = create_named_table("sol");
             _sol[sol::metatable_key] = meta;
