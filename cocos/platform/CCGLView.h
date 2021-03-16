@@ -49,9 +49,30 @@ typedef void* id;
 #define CC_ICON_SET_SUPPORT true
 #endif /* (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) || (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX) */
 
+/** @struct GLContextAttrs
+ *
+ * There are six opengl Context Attrs.
+ */
+struct GLContextAttrs {
+    int redBits;
+    int greenBits;
+    int blueBits;
+    int alphaBits;
+    int depthBits;
+    int stencilBits;
+    int multisamplingCount;
+    bool visible = true;
+    bool decorated = true;
+#if defined(_WIN32)
+    bool vsync = false;
+    void* viewParent = nullptr;
+#endif
+};
+
+NS_CC_BEGIN
+
 /** There are some Resolution Policy for Adapt to the screen. */
-enum class ResolutionPolicy
-{
+enum class ResolutionPolicy {
     /** The entire application is visible in the specified area without trying to preserve the original aspect ratio.
      * Distortion can occur, and the application may appear stretched or compressed.
      */
@@ -71,37 +92,14 @@ enum class ResolutionPolicy
      */
     FIXED_HEIGHT,
     /** The application takes the width of the design resolution size and modifies the height of the internal
-     * canvas so that it fits the aspect ratio of the device.
-     * No distortion will occur however you must make sure your application works on different
-     * aspect ratios.
-     */
+    * canvas so that it fits the aspect ratio of the device.
+    * No distortion will occur however you must make sure your application works on different
+    * aspect ratios.
+    */
     FIXED_WIDTH,
 
-    UNKNOWN,
+    UNKNOWN
 };
-
-/** @struct GLContextAttrs
- *
- * There are six opengl Context Attrs.
- */
-struct GLContextAttrs
-{
-    int redBits;
-    int greenBits;
-    int blueBits;
-    int alphaBits;
-    int depthBits;
-    int stencilBits;
-    int multisamplingCount;
-    bool visible = true;
-    bool decorated = true;
-#if defined(_WIN32)
-    bool vsync = false;
-    void* viewParent = nullptr;
-#endif
-};
-
-NS_CC_BEGIN
 
 class Scene;
 class Renderer;
