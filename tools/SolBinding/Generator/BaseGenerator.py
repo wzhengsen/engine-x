@@ -28,6 +28,7 @@ from Util.CursorHelper import CursorHelper
 from Config.BaseConfig import BaseConfig
 from Native.NativeObject import *
 from Native.NativeEnum import *
+from Native.NativeBase import NativeGlobal
 
 
 class BaseGenerator(BaseConfig):
@@ -53,6 +54,9 @@ class BaseGenerator(BaseConfig):
         self._outputFile = outputFile
         self._clearOldFile = clearOldFile
         self._nativeObjects = {}
+
+        # 缓存的所有访问过的节点，避免重复访问。
+        self._allNativeObjects = {}
         # 缓存的所有父级节点，这些节点不一定会被生成代码。
         self.TempParentObjects = {}
 
@@ -269,32 +273,39 @@ class BaseGenerator(BaseConfig):
         if next(cursor.get_children(), None) is None:
             return
 
-        if ((cursor.kind == cindex.CursorKind.CLASS_DECL or (self.AllowStruct and cursor.kind == cindex.CursorKind.STRUCT_DECL))
-                or cursor.kind == cindex.CursorKind.ENUM_DECL):
-            if cursor == cursor.type.get_declaration() and CursorHelper.GetNameSpace(cursor) in self.CppNameSpace:
+        if (cursor.kind == cindex.CursorKind.CLASS_DECL or (self.AllowStruct and cursor.kind == cindex.CursorKind.STRUCT_DECL))\
+                or cursor.kind == cindex.CursorKind.ENUM_DECL\
+                or cursor.kind == cindex.CursorKind.VAR_DECL:
+            if (cursor.kind == cindex.CursorKind.VAR_DECL or cursor == cursor.type.get_declaration())\
+                    and CursorHelper.GetNameSpace(cursor) in self.CppNameSpace:
                 name = CursorHelper.GetName(cursor)
                 # 匿名判断不使用cursor.is_anonymous()获取，此处直接简单判断名字作为匿名标准。
                 if name:
                     # 具名枚举和类。
-                    if not self.ShouldSkip(name):
-                        wholeName = CursorHelper.GetWholeName(cursor)
-                        if wholeName not in self._nativeObjects.keys():
-                            if cursor.kind == cindex.CursorKind.ENUM_DECL:
-                                self._nativeObjects[wholeName] = NativeEnum(cursor, self)
-                            elif cursor.kind == cindex.CursorKind.CLASS_DECL:
-                                self._nativeObjects[wholeName] = NativeClass(cursor, self)
-                            else:
-                                self._nativeObjects[wholeName] = NativeStruct(cursor, self)
-                elif self.AllowAnonymous:
+                    wholeName = CursorHelper.GetWholeName(cursor)
+                    if wholeName not in self._allNativeObjects.keys():
+                        self._allNativeObjects[wholeName] = True
+                    else:
+                        return
+                    if wholeName not in self._nativeObjects.keys():
+                        nativeWrapper = None
+                        if cursor.kind == cindex.CursorKind.ENUM_DECL:
+                            nativeWrapper = NativeEnum(cursor, self)
+                        elif cursor.kind == cindex.CursorKind.CLASS_DECL:
+                            nativeWrapper = NativeClass(cursor, self)
+                        elif cursor.kind == cindex.CursorKind.VAR_DECL:
+                            nativeWrapper = NativeGlobal(cursor, self)
+                        else:
+                            nativeWrapper = NativeStruct(cursor, self)
+                        if nativeWrapper and nativeWrapper.Generatable:
+                            self._nativeObjects[wholeName] = nativeWrapper
+                else:
                     # 匿名枚举。
                     # 要求该匿名枚举的父级必须是被包含在生成列表中的。
                     ae = NativeAnonymousEnum(cursor, self)
-                    for clsName in ae.NameList[1:-1]:
-                        if self.ShouldSkip(clsName):
-                            return
-
-                    if ae._name not in self._nativeObjects.keys():
-                        self._nativeObjects[ae._name] = ae
+                    if ae.Generatable:
+                        if ae._name not in self._nativeObjects.keys():
+                            self._nativeObjects[ae._name] = ae
             return
 
         for node in cursor.get_children():

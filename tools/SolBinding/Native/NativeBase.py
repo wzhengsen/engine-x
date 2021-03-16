@@ -39,7 +39,7 @@ class NativeType(object):
         self._wholeName = CursorHelper.GetWholeName(cursor)
         self._newName = self._name
         # 可生成。
-        self._generatable = False
+        self._generatable = True
 
     @property
     def WholeName(self):
@@ -139,7 +139,7 @@ class NativeFunction(NativeType):
 
 
 class NativeWrapper(NativeType):
-    """类，结构体，枚举等的基类。"""
+    """类，结构体，枚举，全局变量等的基类。"""
 
     def __init__(self, cursor, generator: BaseConfig) -> None:
         super().__init__(cursor, generator)
@@ -150,10 +150,13 @@ class NativeWrapper(NativeType):
         self._simpleNS = generator.TargetNamespace
 
         pList = CursorHelper.GetClassesNameList(cursor)
-        for pClass in pList:
-            if generator.ShouldSkip(pClass):
-                self._generatable = False
-                break
+        self._generatable = not generator.ShouldSkip("::".join([*pList, self._name]))
+
+        if self._generatable:
+            for pClass in pList:
+                if generator.ShouldSkip(pClass):
+                    self._generatable = False
+                    break
 
         listName = self._wholeName
         for rNS in self._generator.CppNameSpace:
@@ -173,3 +176,19 @@ class NativeWrapper(NativeType):
     def NameList(self):
         # 从命名空间开始的一系列名称列表。
         return self._nameList
+
+
+class NativeGlobal(NativeWrapper):
+    """全局变量。"""
+
+    def __str__(self) -> str:
+        if not self._cxxStr:
+            strList = ["void RegisterLua{}{}Auto(cocos2d::extension::Lua& lua) {{\n".format(
+                self._generator.Tag, "".join(self._nameList[1:]))]
+            strList.append('sol::table pTable = lua["{}"];\n'.format(self._simpleNS))
+            for pField in self._nNameList[1:-1]:
+                strList.append('pTable = pTable["{}"];\n'.format(pField))
+
+            strList.append('pTable["{}"] = std::ref({});\n}}\n'.format(self._newName, self._wholeName))
+            self._cxxStr = ''.join(strList)
+        return self._cxxStr

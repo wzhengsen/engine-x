@@ -38,6 +38,17 @@ class NativeField(NativeMember):
         return self._cxxStr
 
 
+class NativeStaticField(NativeMember):
+    def __str__(self) -> str:
+        """静态成员变量的生成。
+        依照 mt["self._newName"] = sol::var(std::ref(self._wholeName));的方式生成。
+        """
+        if not self._cxxStr:
+            strList = ['mt["{}"]=sol::var(std::ref({}));'.format(self._newName, self._wholeName)]
+            self._cxxStr = ''.join(strList)
+        return self._cxxStr
+
+
 class NativeMethod(NativeMember, NativeFunction):
     def __init__(self, cursor, generator: BaseConfig) -> None:
         super().__init__(cursor, generator)
@@ -293,12 +304,8 @@ class NativeObject(NativeWrapper):
                 # 内部枚举类型。
                 # 匿名判断不使用cursor.is_anonymous()获取，此处直接简单判断名字作为匿名标准。
                 name = CursorHelper.GetName(cursor)
-                gEnum = None
-                if name:
-                    gEnum = NativeEnum(cursor, self._generator)
-                elif self._generator.AllowAnonymous:
-                    gEnum = NativeAnonymousEnum(cursor, self._generator)
-                if (not gEnum is None) and gEnum.Generatable:
+                gEnum = NativeEnum(cursor, self._generator) if name else NativeAnonymousEnum(cursor, self._generator)
+                if gEnum.Generatable:
                     self._classes.append(gEnum)
             elif cursor.kind == cindex.CursorKind.CLASS_DECL\
                     or (self._generator.AllowStruct and cursor.kind == cindex.CursorKind.STRUCT_DECL):
@@ -307,9 +314,13 @@ class NativeObject(NativeWrapper):
                     cursor, self._generator)
                 if gObj.Generatable:
                     self._classes.append(gObj)
-            elif cursor.kind == cindex.CursorKind.FIELD_DECL:
-                # 成员变量。
-                gField = NativeField(cursor, self._generator)
+            elif cursor.kind == cindex.CursorKind.FIELD_DECL or cursor.kind == cindex.CursorKind.VAR_DECL:
+                if cursor.kind == cindex.CursorKind.FIELD_DECL:
+                    # 成员变量。
+                    gField = NativeField(cursor, self._generator)
+                else:
+                    # 静态成员变量。
+                    gField = NativeStaticField(cursor, self._generator)
                 if gField.Generatable:
                     self._fileds.append(gField)
         if cursor.kind == cindex.CursorKind.CXX_METHOD and\

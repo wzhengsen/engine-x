@@ -44,5 +44,5 @@ class Cocos2dxGeneratorNavMesh(Cocos2dxGenerator):
             "-I{}/external/recast/Recast".format(self.CocosRoot)
         ]
         self.Classes += [
-            "NavMesh", "NavMeshAgent", "NavMeshObstacle"
+            "NavMesh", "NavMeshAgent.*", "NavMeshObstacle.*"
         ]

@@ -51,10 +51,11 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "TileMap.*", ".*TMX.*", "CallFunc", "RenderTexture", "GridAction", "Grid3DAction", "GridBase$", ".+Grid", "Shaky3D", "Waves3D",
             "FlipX3D", "FlipY3D", "Speed", "ActionManager", "Set", "Scheduler", "Timer", "Orbit.*", "Follow.*", "Bezier.*",
             "CardinalSpline.*", "Camera.*", "DrawNode", "Liquid$", "Waves$", "ShuffleTiles$", "TurnOffTiles$", "Split.*", "Twirl$", "FileUtils$",
-            "GLProgram", "Application", "ClippingNode", "MotionStreak", "^Ref$", "UserDefault", "GLViewImpl", "GLView", "Image", "Event(?!.*(Physics).*).*",
-            "Component", "ProtectedNode", "Console", "GLProgramCache", "GLProgramState", "Device", "ClippingRectangleNode", ".*Light$", "AsyncTaskPool", "RenderState",
+            "GLProgram", "Application.*", "ClippingNode", "MotionStreak", "^Ref$", "UserDefault", "GLViewImpl", "GLView", "Image", "Event(?!.*(Physics).*).*",
+            "Component", "ProtectedNode", "Console", "GLProgramCache", "GLProgramState", "Device", "ClippingRectangleNode", ".*Light$", "AsyncTaskPool.*", "RenderState",
             "Material", "Properties", "Technique", "Pass", "PolygonInfo", "AutoPolygon", "BoneNode", "SkeletonNode", "ComponentLua", "PipelineDescriptor",
-            "Renderer", "FastTMXLayer", "FastTMXTiledMap"
+            "Renderer", "FastTMXLayer", "FastTMXTiledMap", "LanguageType", "PHYSICS.*_MATERIAL_DEFAULT", "GlyphCollection", "MATRIX_STACK_TYPE", "LightType", "LightFlag", "Image::Format",
+            "Text(H|V)Alignment", "ResolutionPolicy", "Touch::DispatchMode"
         ]
         self.Skip |= {
             "TMXMapInfo": ["startElement", "endElement"],
@@ -62,7 +63,8 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "Device": ["getTextureDataForText"],
             "RenderTexture": ["newImage"],
             "ParallaxNode": ["(s|g)etParallaxArray"],
-            "TMXTilesetInfo": ["_animationInfo"]
+            "TMXTilesetInfo": ["_animationInfo"],
+            "AsyncTaskPool": ["enqueue"]
         }
         self.RenameMembers |= {
             "SpriteFrameCache": {"addSpriteFramesWithFile": "addSpriteFrames", "getSpriteFrameByName": "getSpriteFrame"},
@@ -77,5 +79,6 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "RenderTexture": {"end": "endToLua"}
         }
         self.RenameClasses |= {
-            "ParticleSystemQuad": "ParticleSystem"
+            "ParticleSystemQuad": "ParticleSystem",
+            "TMXTileFlags_": "TMXTileFlags"
         }

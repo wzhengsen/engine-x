@@ -42,7 +42,7 @@ class Cocos2dxGeneratorExtension(Cocos2dxGenerator):
             "-I{}".format(self.CocosRoot)
         ]
         self.Classes += [
-            "LuaObject", "Control.*", "ControlButton.*", "ScrollView$", "TableView$", "TableViewCell$", "AssetsManager", "AssetsManagerEx", "Manifest", "EventAssetsManagerEx",
+            "LuaObject", "Control.*", "ControlButton.*", "ScrollView$", "TableView$", "TableViewCell$", "AssetsManager", "AssetsManagerEx", "Manifest", "EventAssetsManagerEx.*",
             "EventListenerAssetsManagerEx", "PUParticleSystem3D", "ParticleSystem3D", "ParticlePool"
         ]
         self.RenameMembers |= {

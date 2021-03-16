@@ -105,7 +105,7 @@ class CursorHelper:
     @staticmethod
     def GetClassesName(cursor) -> str:
         """获得所属类的全名，不包括命名空间名。"""
-        return "::".join(CursorHelper.GetClassesNameList())
+        return "::".join(CursorHelper.GetClassesNameList(cursor))
 
     @staticmethod
     def GetPrefixName(cursor) -> str:

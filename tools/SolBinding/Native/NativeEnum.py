@@ -62,7 +62,7 @@ class NativeAnonymousEnum(NativeEnum):
         self._newName = aeName
         self._nameList[len(self._nameList)-1] = aeName
         self._nNameList[len(self._nNameList)-1] = aeName
-        self._generatable = True
+        self._generatable = generator.AllowAnonymous
 
     def __str__(self) -> str:
         """匿名枚举的生成。
