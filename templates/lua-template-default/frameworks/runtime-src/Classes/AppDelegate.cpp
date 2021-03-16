@@ -105,14 +105,19 @@ void AppDelegate::applicationWillEnterForeground() {
 
 // Restart Lua engine and run with main.lua
 bool AppDelegate::RestartLuaEngine() {
-    FileUtils::getInstance()->addSearchPath(FileUtils::getInstance()->getWritablePath(), true);
+    auto fu = FileUtils::getInstance();
+    fu->addSearchPath(fu->getWritablePath(), true);
     // Release last Lua engine.
-    Lua::Close();
+    extension::Lua::Close();
     // New Lua.
-    auto lua = Lua::GetInstance();
+    auto lua = extension::Lua::GetInstance();
     // Register some module
     register_all_packages();
     // Register custom module
     register_custom_function(lua->lua_state());
-    return lua->script(R"+*(require("src.main"))+*").valid();
+    auto fullPath = fu->fullPathForFilename("src/main.luac");
+    if (fullPath.empty()) {
+        fullPath = fu->fullPathForFilename("src/main.lua");
+    }
+    return lua->script_file(fullPath).valid();
 }
