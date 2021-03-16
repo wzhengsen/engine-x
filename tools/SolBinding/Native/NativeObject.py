@@ -398,7 +398,7 @@ class NativeObject(NativeWrapper):
         for p in self._parents:
             basesName += (p._wholeName + ",")
         if basesName:
-            cxx.append("mt[sol::base_classes]=sol::bases<{}>();\n".format(basesName[:-1]))
+            cxx.append("cocos2d::extension::Lua::SetBases(mt,sol::bases<{}>());\n".format(basesName[:-1]))
 
         # 方法生成。
         for method in self._methods.values():

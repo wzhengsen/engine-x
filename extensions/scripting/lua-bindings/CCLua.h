@@ -54,18 +54,16 @@ namespace cocos2d {
             };
 
 
-            template<typename U, typename ...B>
+            template<typename U>
             sol::usertype<U> NewUserType(const std::string& name, bool noCtor = false) {
-                auto ut = noCtor ?
-                    new_usertype<U>(name, sol::no_constructor, sol::base_classes, sol::bases<B...>()) :
-                    new_usertype<U>(name, sol::base_classes, sol::bases<B...>());
+                auto ut = noCtor ? new_usertype<U>(name, sol::no_constructor) : new_usertype<U>(name);
                 ut[sol::meta_function::new_index] = [](lua_State* L) {
                     const auto top = lua_gettop(L);
                     //ud,k,v...
                     if (LUA_TTABLE == lua_getuservalue(L, 1)) {//ud,k,v...table
                         lua_pushvalue(L, 2);//ud,k,v...table,k
                         lua_pushvalue(L, 3);//ud,k,v...table,k,v
-                        lua_settable(L, -3);//ud,k,v...table
+                        lua_rawset(L, -3);//ud,k,v...table
                     }
                     lua_settop(L, top);
                     return 0;
@@ -73,7 +71,7 @@ namespace cocos2d {
                 ut[sol::meta_function::index] = [](lua_State* L) {
                     if (LUA_TTABLE == lua_getuservalue(L, 1)) {//ud,k...table
                         lua_pushvalue(L, 2);//ud,k...table,k
-                        lua_gettable(L, -2);//ud,k...table,v
+                        lua_rawget(L, -2);//ud,k...table,v
                         return 1;
                     }
                     lua_pushnil(L);
@@ -114,19 +112,43 @@ namespace cocos2d {
                     }
                     SetProperties(ut, properties.as<sol::table>());
                 });
+
+                // Save bases name for "is" function,include U type.
+                sol::table bNames = create_table();
+                bNames[sol::usertype_traits<U>::user_metatable()] = true;
+                ut["__bases_name__"] = bNames;
+
+                ut["is"] = [ut] (const sol::object& obj) {
+                    lua_State* L = obj.lua_state();
+                    if(sol::type::nil == obj.get_type()) {
+                        sol::stack::push(L, ut);
+                        sol::object ret = sol::object(L);
+                        return ret;
+                    }
+                    sol::object name = obj.as<sol::table>()["__name"];
+                    if(sol::type::nil == name.get_type()) {
+                        lua_pushboolean(L, false);
+                        return sol::object(L);
+                    }
+                    sol::object ret = ut["__bases_name__"][name];
+                    if(sol::type::nil == ret.get_type()) {
+                        lua_pushboolean(L, false);
+                        return sol::object(L);
+                    }
+                    return ret;
+                };
                 return ut;
             }
             /**
             * @brief    A wrapper of sol::table::new_usertype.
             *           The __newindex/__index meta-method has been registered in advance.
             * @param    U The class or struct which want to be register into lua table.
-            * @param    B All of base class of U,such as base's base,and so on.
             * @param    tName The name of the table in which the type being registered is located,split by ".".
             * @param    name The class name in lua.
             * @param    noCtor default = false,means no "new" method.
             * @return   You can use it to register your own member-method or meta-method.
             */
-            template<typename U, typename ...B>
+            template<typename U>
             sol::usertype<U> NewUserType(const std::string& tName, const std::string& name, bool noCtor = false) {
                 std::vector<std::string> vecNS = {};
                 size_t pos = 0;
@@ -149,10 +171,21 @@ namespace cocos2d {
                     }
                     nsTable = nsObj.as<sol::table>();
                 }
-                auto ut = NewUserType<U, B...>(name, noCtor);
+                auto ut = NewUserType<U>(name, noCtor);
                 nsTable[name] = ut;
                 set(name, sol::nil);
                 return ut;
+            }
+
+            /**
+            * @brief    Set bases of a type.
+            * @param    B All of base class of U,such as base's base,and so on.
+            */
+            template<typename U, typename ...B>
+            inline static void SetBases(sol::usertype<U>& ut, sol::bases<B...>&& bases) {
+                ut[sol::base_classes] = bases;
+                sol::table bNames = ut["__bases_name__"];
+                BaseName(bNames, bases);
             }
 
             /**
@@ -193,6 +226,14 @@ namespace cocos2d {
             void RegisterSol();
             void RegisterAuto();
             void RegisterManual();
+
+            static void BaseName(sol::table& bNames, const sol::bases<>& bases) {
+            }
+            template<typename T, typename... B>
+            static void BaseName(sol::table& bNames,const sol::bases<T,B...>& bases) {
+                bNames[sol::usertype_traits<T>::user_metatable()] = true;
+                BaseName(bNames,sol::bases<B...>());
+            }
 
             template<typename U>
             using gsPair = std::pair<std::function<sol::object(const U*)>, std::function<void(const U*, const sol::object&)>>;

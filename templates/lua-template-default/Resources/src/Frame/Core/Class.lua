@@ -33,6 +33,22 @@ local Handler = require("Handler");
 
 _G.class = {};
 
+--[[
+    级联获取某个类及其基类的对应键的值（忽略元方法）。
+]]
+local function CascadeGet(cls,key)
+    local ret = rawget(cls,key);
+    if nil ~= ret then
+        return ret;
+    end
+    for _,base in pairs(cls.__bases__) do
+        ret = CascadeGet(base,key);
+        if nil ~= ret then
+            return ret;
+        end
+    end
+end
+
 -- 该表中的元方法，必须实现对应的处理函数，才能使用。
 local MetaNeedImpl = {
     __add__ = "__add",
@@ -102,25 +118,39 @@ for key, value in pairs(MetaNeedImpl)do
         error("You must implement the " .. key .. " meta-method.");
     end
 end
+
 --[[为纯lua类产生的table类型的对象指定一个元表。
 ]]
-local function MakeObjMetaTable_T(cls)
+local function MakeLuaObjMetaTable(cls)
     local meta = {
-        __cls__ = cls,
         __index = function (sender,key)
             -- 先检查当前类型的对应键。
             local ret = rawget(cls,key);
-            if ret then
+            if nil ~= ret then
                 return ret;
             end
-            -- 再将sender作为参数调用当前类型原表的__index方法，
-            -- 以自动处理属性和基类查找。
-            local cMeta = getmetatable(cls);
-            return cMeta.__index(sender,key);
+            -- 检查属性。
+            local property = cls.__r__[key];
+            if property then
+                return property(sender);
+            end
+            -- 检查基类。
+            for _, base in ipairs(cls.__bases__) do
+                ret = CascadeGet(base,key);
+                if nil ~= ret then
+                    -- 此处缓存，加快下次访问。
+                    rawset(sender,key,ret);
+                    return ret;
+                end
+            end
         end,
         __newindex = function (sender,key,value)
-            local cMeta = getmetatable(cls);
-            cMeta.__newindex(sender,key,value);
+            local property = cls.__w__[key];
+            if property then
+                property(sender,key,value);
+                return
+            end
+            rawset(sender,key,value);
         end
     };
     for k,v in pairs(ObjMeta) do
@@ -129,11 +159,70 @@ local function MakeObjMetaTable_T(cls)
     return meta;
 end
 
+--[[
+    改造sol::usertype的元表，以适应lua-class的混合继承模式。
+]]
+local function RetrofitMeta(ud)
+    local meta = getmetatable(ud);
+    local retrofited = rawget(meta,"__lua_retrofit");
+    -- 已改造过，跳过。
+    if retrofited then
+        return
+    end
+    local index = rawget(meta,"__index");
+    local newIndex = rawget(meta,"__newindex");
+    rawset(meta,"__index",function (sender,key)
+        local uv,_ = debug.getuservalue(sender);
+        -- 获取预先保存的lua类信息。
+        local cls = uv.__cls__;
+        if cls then
+            -- 如果存在lua类的继承。
+            --检查直接类的普通方法和成员等。
+            local ret = rawget(cls,key);
+            if nil ~= ret then
+                return ret;
+            end
+            -- 检查属性。
+            local property = cls.__r__[key];
+            if property then
+                return property(sender);
+            end
+            -- 检查基类。
+            for _, base in ipairs(cls.__bases__) do
+                ret = CascadeGet(base,key);
+                if nil ~= ret then
+                    -- 此处缓存，加快下次访问。
+                    rawset(uv,key,ret);
+                    return ret;
+                end
+            end
+        end
+        -- 最后检查sol::usertype定义的元方法。
+        return index(sender,key);
+    end);
+    rawset(meta,"__newindex",function (sender,key,val)
+        local uv,_ = debug.getuservalue(sender);
+        -- 获取预先保存的lua类信息。
+        local cls = uv.__cls__;
+        if cls then
+            local property = cls.__w__[key];
+            if property then
+                property(sender,key,val);
+                return
+            end
+        end
+        -- 最后检查sol::usertype定义的元方法。
+        newIndex(sender,key,val);
+    end);
+
+    rawset(meta,"__lua_retrofit",true);
+end
+
 setmetatable(class,{
     __metatable = "Can't visit the metatable.",
     __call = function(c,...)
-		return c.New(...)
-	end
+        return c.New(...)
+    end
 })
 
 local handlerMetaTable = {
@@ -172,9 +261,9 @@ function class.New(...)
     for _,rw in pairs({"__r__","__w__"}) do
         cls[rw] = setmetatable({},{
             __index = function (_,key)
-                for __,bCls in pairs(cls.__bases__) do
-                    local ret = bCls[rw][key];
-                    if ret then
+                for __,base in pairs(cls.__bases__) do
+                    local ret = base[rw][key];
+                    if nil ~= ret then
                         return ret
                     end
                 end
@@ -192,9 +281,9 @@ function class.New(...)
             cls.__create = base;
             cls.__fCtorIdx__ = idx;
         else
-            local __name = rawget(base,"__name")
+            local __name = rawget(base,"__name");
             -- sol::usertype名字中带有"sol."
-            if __name and name:find("sol.") then
+            if __name and __name:find("sol.") then
                 -- 基类并非当前函数生成（可能是sol::usertype类型），只将其new函数设置为类的__create函数，
                 -- 并保证只能拥有一个__create函数。
                 assert(cls.__create == nil,"Class with more than one creating function or native class!");
@@ -204,7 +293,7 @@ function class.New(...)
                 end
                 cls.__cpp_base__ = base;
             else
-                local __create = rawget(base,"__create")
+                local __create = rawget(base,"__create");
                 if __create then
                     assert(cls.__create == nil,"Class with more than one creating function!");
                     -- 当具有__fCtorIdx__值时，表示基类使用了function构造器，
@@ -232,14 +321,14 @@ function class.New(...)
         cls.delete = deleteFunction;
     end
 
-    local tableMeta = MakeObjMetaTable_T(cls);
+    local meta = MakeLuaObjMetaTable(cls);
     -- is方法，可以用于判断对象是否继承于某类。
     -- 如果不传入参数，返回当前所属类。
     cls.is = function(owner)
         local tOwner = type(owner);
         if "nil" == tOwner then
             return cls;
-        elseif "table" == tOwner then
+        else
             if owner == cls then
                 return true;
             end
@@ -248,97 +337,114 @@ function class.New(...)
                     return true;
                 end
             end
-            return false;
-        elseif "userdata" == tOwner then
-            --对userdata的判断？
+            if cls.__cpp_base__ then
+                return cls.__cpp_base__.is(owner);
+            end
         end
         return false;
     end;
-    cls.new = function(...)
-        classCreateLayer = classCreateLayer + 1;
-        --[[
-            此处，需要考虑多重function构造的情况，如：
-            local C1 = class();
-            local C2 = class(function()return C1.new();end);
-            local C3 = class(C2);
-            local C4 = class(function()return C3.new();end);
-            在此继承关系下，由于没有明确指明C4和C2的基类，
-            所以不能直接按__bases__字段查询，需要获取返回的基类类型，将其加入到__bases__。
+    if not cls.__cpp_base__ or cls.__create then
+        -- 一个没有new方法的sol::usertype类型，不能接受实例化。
+        cls.new = function(...)
+            classCreateLayer = classCreateLayer + 1;
+            --[[
+                此处，需要考虑多重function构造的情况，如：
+                local C1 = class();
+                local C2 = class(function()return C1.new();end);
+                local C3 = class(C2);
+                local C4 = class(function()return C3.new();end);
+                在此继承关系下，由于没有明确指明C4和C2的基类，
+                所以不能直接按__bases__字段查询，需要获取返回的基类类型，将其加入到__bases__。
 
-            由于一个function构造器被设计为返回同一种类型，所以，不要使用如下继承方式：
-            local E1 = class();
-            local E2 = class();
-            local E3 = class(function(case)
-                if case == 1 then
-                    reutrn E1.new();
-                else
-                    return E2.new();
+                由于一个function构造器被设计为返回同一种类型，所以，不要使用如下继承方式：
+                local E1 = class();
+                local E2 = class();
+                local E3 = class(function(case)
+                    if case == 1 then
+                        reutrn E1.new();
+                    else
+                        return E2.new();
+                    end
+                );--在这种情况下，可能引起奇怪的问题。
+            ]]
+            local instance = nil;
+            local __create = cls.__create;
+            if __create then
+                instance = cls.__create(...);
+                local __fCtorIdx__ = rawget(cls,"__fCtorIdx__");
+                if __fCtorIdx__ then
+                    local preCls = instance.__cls__;
+                    if preCls then
+                        -- 将function构造器所属类插入多继承表后，__fCtorIdx__便可以不再使用。
+                        rawset(cls,"__fCtorIdx__",nil);
+                        table.insert(cls.__bases__,__fCtorIdx__,preCls);
+                    end
                 end
-            );--在这种情况下，可能引起奇怪的问题。
-        ]]
-        local instance = nil;
-        local __create = cls.__create;
-        if __create then
-            instance = cls.__create(...);
-            local __fCtorIdx__ = rawget(cls,"__fCtorIdx__");
-            if __fCtorIdx__ then
-                local preCls = instance.__cls__;
-                if preCls then
-                    -- 将function构造器所属类插入多继承表后，__fCtorIdx__便可以不再使用。
-                    rawset(cls,"__fCtorIdx__",nil);
-                    table.insert(cls.__bases__,__fCtorIdx__,preCls);
-                end
-            end
-        else
-            instance = {};
-        end
-        assert(instance,"Invalid Creator.");
-
-        local instType = type(instance);
-        if classCreateLayer == 1 then
-            instance.__cls__ = nil;
-            if "table" == instType then
-                setmetatable(instance,tableMeta);
             else
-                --todo 用户数据的元表？
+                instance = {};
             end
-            for key,func in pairs(cls.Handler) do
-                -- 自动监听事件。
-                Handler.On(key:sub(3),instance,func);
-            end
-        else
-            -- 将cls一并返回，可以指示function构造器所属类。
-            instance.__cls__ = cls;
-        end
+            assert(instance,"Invalid Creator.");
 
-        local ctor = cls.ctor;
-        if ctor then
-            -- 避免在ctor中再次new一个新的对象时递归污染classCreateLayer变量，
-            -- 在此缓存，调用后，将其设置为classCreateLayer+tempCreateLayer
-            -- 最终调用结束，将值-1。
-            local tempCreateLayer = classCreateLayer;
-            classCreateLayer = 0;
-            cls.ctor(instance,...);
-            classCreateLayer = classCreateLayer + tempCreateLayer - 1;
-        else
-            classCreateLayer = classCreateLayer - 1;
-        end
-        return instance;
-    end;
+            local instType = type(instance);
+            if classCreateLayer == 1 then
+                if "table" == instType then
+                    -- able返回类型的实例不需要最后的cls信息（metatable中和upvalue中已包含）。
+                    instance.__cls__ = nil;
+                    setmetatable(instance,meta);
+                else
+                    -- userdata返回类型的实例需要最后的cls信息。
+                    local uv,_ = debug.getuservalue(instance);
+                    uv.__cls__ = cls;
+                    uv.is = cls.is;
+                    RetrofitMeta(instance);
+                end
+                for key,func in pairs(cls.Handler) do
+                    -- 自动监听事件。
+                    Handler.On(key:sub(3),instance,func);
+                end
+            else
+                if "table" == instType then
+                    -- 将cls一并返回，可以指示function构造器所属类。
+                    instance.__cls__ = cls;
+                end
+            end
+
+            local ctor = cls.ctor;
+            if ctor then
+                -- 避免在ctor中再次new一个新的对象时递归污染classCreateLayer变量，
+                -- 在此缓存，调用后，将其设置为classCreateLayer+tempCreateLayer
+                -- 最终调用结束，将值-1。
+                local tempCreateLayer = classCreateLayer;
+                classCreateLayer = 0;
+                cls.ctor(instance,...);
+                classCreateLayer = classCreateLayer + tempCreateLayer - 1;
+            else
+                classCreateLayer = classCreateLayer - 1;
+            end
+            return instance;
+        end;
+    end
 
     setmetatable(cls,{
         __index = function(sender, key)
+            -- 检查属性。
             local property = cls.__r__[key];
             if property then
                 return property(sender);
             end
+            -- 检查基类。
             for _, base in ipairs(cls.__bases__) do
-                local ret = base[key];
-                if ret ~= nil then
+                local ret = CascadeGet(base,key);
+                if nil ~= ret then
                     -- 此处缓存，加快下次访问。
                     rawset(sender,key,ret);
                     return ret;
                 end
+            end
+            -- 此时可以尝试查找__cpp_base__
+            local __cpp_base__ = rawget(cls,"__cpp_base__");
+            if __cpp_base__ then
+                return __cpp_base__[key];
             end
         end,
         __newindex = function (sender,key,value)
@@ -357,7 +463,7 @@ function class.New(...)
             else
                 local property = cls.__w__[key];
                 if property then
-                    property(sender,value);
+                    property(sender,key,value);
                     return
                 end
                 rawset(sender,key,value);
