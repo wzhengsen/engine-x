@@ -45,8 +45,8 @@ class Cocos2dxGeneratorExtension(Cocos2dxGenerator):
             "LuaObject", "Control.*", "ControlButton.*", "ScrollView$", "TableView$", "TableViewCell$", "AssetsManager", "AssetsManagerEx", "Manifest", "EventAssetsManagerEx.*",
             "EventListenerAssetsManagerEx", "PUParticleSystem3D", "ParticleSystem3D", "ParticlePool"
         ]
-        self.RenameMembers |= {
+        self.RenameMembers.update({
             "LuaObject": {
                 "__delete__": "delete"
             }
-        }
+        })

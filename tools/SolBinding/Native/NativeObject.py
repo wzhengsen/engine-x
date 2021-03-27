@@ -270,14 +270,14 @@ class NativeObject(NativeWrapper):
                         # 添加父级。
                         self._parents.append(parent)
                         # 统计所有父级的纯虚函数。
-                        self._pvMethods |= parent._pvMethods
+                        self._pvMethods.update(parent._pvMethods)
                     for pParent in parent._parents:
                         # 添加父级的父级...。
                         # Sol要求c++绑定时明确指示所有父级。
                         if pParent not in self._parents:
                             self._parents.append(pParent)
                             # 统计所有父级的纯虚函数。
-                            self._pvMethods |= pParent._pvMethods
+                            self._pvMethods.update(pParent._pvMethods)
                     if self.__onlyParent:
                         self._parent = parent
                         self.__onlyParent = False

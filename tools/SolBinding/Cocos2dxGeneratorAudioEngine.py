@@ -39,6 +39,6 @@ class Cocos2dxGeneratorAudioEngine(Cocos2dxGenerator):
         self.Classes += [
             "AudioEngine", "AudioProfile"
         ]
-        self.RenameMembers |= {
+        self.RenameMembers.update({
             "AudioEngine": {"end": "endToLua"}
-        }
+        })

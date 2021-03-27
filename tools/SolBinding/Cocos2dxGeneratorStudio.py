@@ -42,7 +42,7 @@ class Cocos2dxGeneratorStudio(Cocos2dxGenerator):
             "ComRender", "BatchNode", "SceneReader", "GUIReader", "ActionObject", "Tween", "DisplayManager", "NodeReader", "ActionTimeline.*", ".*Frame$",
             "Timeline", "ActionTimelineNode", "ComExtensionData", "BoneNode", "SkeletonNode"
         ]
-        self.Skip |= {
+        self.Skip.update({
             "GUIReader": ["getParseCallBackMap", "getParseObjectMap"],
             "BoneData": ["displayDataList"],
             "ArmatureData": ["boneDataDic"],
@@ -51,8 +51,8 @@ class Cocos2dxGeneratorStudio(Cocos2dxGenerator):
             "AnimationData": ["movementDataDic"],
             "TextureData": ["contourDataList"],
             "MovementData": ["movBoneDataDic"]
-        }
-        self.RenameMembers = {
+        })
+        self.RenameMembers.update({
             "ActionManagerEx": {
                 "shareManager": "getInstance",
                 "purgeActionManager": "destroyInstance"
@@ -63,4 +63,4 @@ class Cocos2dxGeneratorStudio(Cocos2dxGenerator):
             "ComAudio": {
                 "end": "endToLua"
             }
-        }
+        })
