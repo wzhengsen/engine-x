@@ -31,7 +31,7 @@
 #include <stdio.h>
 
 #define KEY_VERSION             "version"
-#define KEY_PACKAGE_URL         "packageUrl"
+#define KEY_PACKAGE_URL         "downloadUrl"
 #define KEY_MANIFEST_URL        "remoteManifestUrl"
 #define KEY_VERSION_URL         "remoteVersionUrl"
 #define KEY_GROUP_VERSIONS      "groupVersions"
@@ -39,13 +39,11 @@
 #define KEY_ASSETS              "assets"
 #define KEY_COMPRESSED_FILES    "compressedFiles"
 #define KEY_SEARCH_PATHS        "searchPaths"
-constexpr char KeyModuleName[]       = "moduleName";
 constexpr char KeyFilterType[]       = "filterType";
 constexpr char KeyOpenFilterNum[]    = "openFilterNum";
 constexpr char KeyFilterNum[]        = "filterNum";
 constexpr char KeyOpenFilterSize[]   = "openFilterSize";
-constexpr char KeyFilterSize[]       = "filterSize";
-constexpr char KeyAllZipFileName[]   = "allZipFileName";
+constexpr char KeyFilterSize[] = "filterSize";
 
 #define KEY_PATH                "path"
 #define KEY_MD5                 "md5"
@@ -275,10 +273,10 @@ std::unordered_map<std::string, Manifest::AssetDiff> Manifest::genDiff(const Man
         if (fSuc) {
             diff_map.clear();
 
-            diff_map.emplace(b->_allZipFileName, AssetDiff{
+            diff_map.emplace(Manifest::ValZipFileName, AssetDiff{
                 {
                     "",
-                    b->_allZipFileName,
+                    Manifest::ValZipFileName,
                     true,
                     0,
                     3
@@ -301,7 +299,7 @@ void Manifest::genResumeAssetsList(DownloadUnits *units) const
         {
             DownloadUnit unit;
             unit.customId = it->first;
-            unit.srcUrl = _packageUrl + asset.path;
+            unit.srcUrl = _downloadUrl + asset.path;
             unit.storagePath = _manifestRoot + asset.path;
             unit.size = asset.size;
             units->emplace(unit.customId, unit);
@@ -355,7 +353,7 @@ void Manifest::prependSearchPaths()
 
 const std::string& Manifest::getPackageUrl() const
 {
-    return _packageUrl;
+    return _downloadUrl;
 }
 
 const std::string& Manifest::getManifestFileUrl() const
@@ -542,24 +540,12 @@ void Manifest::loadManifest(const rapidjson::Document &json)
     // Retrieve package url
     if ( json.HasMember(KEY_PACKAGE_URL) && json[KEY_PACKAGE_URL].IsString() )
     {
-        _packageUrl = json[KEY_PACKAGE_URL].GetString();
+        _downloadUrl = json[KEY_PACKAGE_URL].GetString();
         // Append automatically "/"
-        if (!_packageUrl.empty() && _packageUrl[_packageUrl.size() - 1] != '/')
+        if (!_downloadUrl.empty() && _downloadUrl[_downloadUrl.size() - 1] != '/')
         {
-            _packageUrl.push_back('/');
+            _downloadUrl.push_back('/');
         }
-        if (json.HasMember(KeyModuleName) && json[KeyModuleName].IsString()) {
-            _moduleName = json[KeyModuleName].GetString();
-            _packageUrl.append(_moduleName);
-            // Append automatically "/"
-            if (!_packageUrl.empty() && _packageUrl[_packageUrl.size() - 1] != '/') {
-                _packageUrl.push_back('/');
-            }
-        }
-    }
-
-    if (json.HasMember(KeyAllZipFileName) && json[KeyAllZipFileName].IsString()) {
-        _allZipFileName = json[KeyAllZipFileName].GetString();
     }
 
     // Retrieve all assets

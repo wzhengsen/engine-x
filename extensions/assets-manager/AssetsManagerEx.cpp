@@ -729,7 +729,7 @@ void AssetsManagerEx::startUpdate()
         else
         {
             // Generate download units for all assets that need to be updated or added
-            std::string packageUrl = _remoteManifest->getPackageUrl();
+            std::string downloadUrl = _remoteManifest->getPackageUrl();
             // Save current download manifest information for resuming
             _tempManifest->saveToFile(_tempManifestPath);
             // Preprocessing local files in previous version and creating download folders
@@ -741,7 +741,7 @@ void AssetsManagerEx::startUpdate()
                     std::string path = diff.asset.path;
                     DownloadUnit unit;
                     unit.customId = it->first;
-                    unit.srcUrl = packageUrl + path;
+                    unit.srcUrl = downloadUrl + path;
                     unit.storagePath = _tempStoragePath + path;
                     unit.size = diff.asset.size;
                     _downloadUnits.emplace(unit.customId, unit);
@@ -1132,7 +1132,7 @@ void AssetsManagerEx::onSuccess(const std::string &/*srcUrl*/, const std::string
         
         if (ok)
         {
-            bool compressed = assetIt != assets.end() ? assetIt->second.compressed : customId == _remoteManifest->_allZipFileName;
+            bool compressed = assetIt != assets.end() ? assetIt->second.compressed : customId == Manifest::ValZipFileName;
             if (compressed)
             {
                 decompressDownloadedZip(customId, storagePath);

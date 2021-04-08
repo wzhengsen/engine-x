@@ -60,7 +60,7 @@ typedef std::unordered_map<std::string, DownloadUnit> DownloadUnits;
 class CC_EX_DLL Manifest : public Ref
 {
 public:
-    
+    inline static const std::string ValZipFileName = "__Cocos2dx_Package__";
     friend class AssetsManagerEx;
     
     //! The type of difference
@@ -215,13 +215,7 @@ private:
     std::string _manifestRoot;
     
     //! The remote package url
-    std::string _packageUrl;
-
-    // 模块名
-    std::string _moduleName = std::string();
-
-    // 整包更新文件名
-    std::string _allZipFileName = std::string();
+    std::string _downloadUrl;
     
     //! The remote path of manifest file
     std::string _remoteManifestUrl;
