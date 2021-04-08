@@ -33,7 +33,7 @@ def usage():
 """)
 
     print("""
---gui                       Gui工具。
+--gui <string>              Gui工具，并指定根目录。
 -i                          交互式命令行。
 """)
 
@@ -247,7 +247,7 @@ def main(argv):
         argv,
         "im:u:d:s:",
         [
-            "gui",
+            "gui=",
             "versionType=",
             "zipUncompress=",
             "encryptRes=",
@@ -277,9 +277,9 @@ def main(argv):
         ],
         usage
     )
-    if len(opts) == 0:
+    if not opts or len(opts) == 0:
         usage()
-        return True
+        return False
     opts = ConvertArgs(opts)
     oKeys = opts.keys()
     lowCaseOpt = [x.lower() for x in oKeys]
@@ -291,7 +291,7 @@ def main(argv):
         from ToolForm import ToolForm
         from PyQt5.QtWidgets import QApplication
         _ = QApplication(sys.argv)
-        ToolForm()
+        ToolForm(opts["gui"])
         ret = QApplication.exec()
         return True
     elif "i" in oKeys:

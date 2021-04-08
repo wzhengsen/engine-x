@@ -34,6 +34,7 @@ class Assistant():
     _ProjectManifest = "project.manifest.json"
     _VersionDir = "Version"
     _ModuleFileName = "Module.json"
+    _Cocos2dxPackage = "__Cocos2dx_Package__"
 
     def __init__(self, srcPath, config: ConfigTemplate = None):
         '''
@@ -388,6 +389,13 @@ class Assistant():
                     if not ret:
                         return False
                     uploadFiles = [name + ".zip"]
+
+                # 准备一个zip文件，其中包含所有文件。
+                allFiles = _uploadFiles.keys()
+                ret = Functions.ZipFiles(Assistant._Cocos2dxPackage, allFiles)
+                if not ret:
+                    return False
+                uploadFiles.append(Assistant._Cocos2dxPackage)
 
                 # 追加version.manifest.json和project.manifest.json
                 uploadFiles.append(Assistant._VersionManifest)

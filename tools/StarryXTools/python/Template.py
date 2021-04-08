@@ -10,7 +10,7 @@ ProjectManifestTemplate = {
     "filterNum": 0,
     "openFilterSize": False,
     "filterSize": 0,
-    "packageUrl": "",
+    "downloadUrl": "",
     "allZipFileName": "",
     "assets": {}
 }
@@ -52,7 +52,7 @@ ConfigTemplate = {
     "modules" : {
         "Default": {
             # 更新目录根Url
-            "packageUrl" : "",
+            "downloadUrl" : "",
             # 远程版本文件Url
             "remoteVersionUrl" : "",
             # 远程清单文件Url

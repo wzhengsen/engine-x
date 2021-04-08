@@ -51,8 +51,7 @@ class ProjectManifestTemplate(VersionManifestTemplate):
         self.filterNum = 0
         self.openFilterSize = False
         self.filterSize = 0
-        self.packageUrl = ""
-        self.allZipFileName = ""
+        self.downloadUrl = ""
         self.assets: Dict[str, Asset] = {}
 
     @staticmethod
@@ -86,15 +85,13 @@ class ProjectManifestTemplate(VersionManifestTemplate):
 class Module:
     def __init__(self) -> None:
         # 更新目录根Url
-        self.packageUrl = ""
+        self.downloadUrl = ""
         # 远程版本文件Url
         self.remoteVersionUrl = ""
         # 远程清单文件Url
         self.remoteManifestUrl = ""
         # 上传目录根Url
         self.uploadUrl = ""
-        # 整包zip文件名
-        self.allZipFileName = ""
         # 模块包含目录
         self.dirs: List[str] = ["."]
         # 模块包含文件
@@ -151,7 +148,9 @@ class ConfigTemplate:
         # 是否使用通用配置。
         self.useUniConfig = True
         # 退出时保存设置。
-        self.exitSave = False
+        self.exitSave = True
+        # 配置文件根目录。
+        self.configRoot = "Resources"
         self.uniModule = Module()
         self.modules: Dict[str, Module] = {
             "Default": Module()
@@ -162,7 +161,7 @@ class ConfigTemplate:
         ret = None
         if isinstance(data, dict):
             keys = data.keys()
-            if "engineVersion" in keys:
+            if "configRoot" in keys:
                 ret = ConfigTemplate()
                 ret.__dict__ = data
             elif "ftpAccount" in keys:
