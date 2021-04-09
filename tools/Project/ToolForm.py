@@ -25,14 +25,14 @@ from Scripts.Assistant import Assistant
 import os
 import sys
 from enum import Enum, auto
-from typing import Dict, List
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtCore import QFileInfo, QObject, QThread, QTimer, QUrl, Qt, pyqtSignal
-from PyQt5.QtWidgets import QComboBox, QDialog, QDoubleSpinBox, QFileIconProvider, QLabel, QLineEdit, QListWidgetItem, QProgressBar, QRadioButton, QSpinBox, QTableWidget, QTableWidgetItem, QTreeWidgetItem, QTreeWidget, QWidget, QFileDialog, QMessageBox, QTextBrowser
-from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer, QMediaPlaylist
-from PyQt5.QtMultimediaWidgets import QVideoWidget
+from typing import List
+from PySide2 import QtCore
+from PySide2 import QtGui
+from PySide2.QtGui import QIcon, QPixmap
+from PySide2.QtCore import QFileInfo, QObject, QThread, QTimer, QUrl, Qt, Signal
+from PySide2.QtWidgets import QDialog, QFileIconProvider, QLabel, QListWidgetItem, QRadioButton, QSpinBox, QTableWidgetItem, QTreeWidgetItem, QTreeWidget, QWidget, QFileDialog, QMessageBox, QTextBrowser
+from PySide2.QtMultimedia import QMediaContent, QMediaPlayer, QMediaPlaylist
+from PySide2.QtMultimediaWidgets import QVideoWidget
 from UI_ToolForm import Ui_ToolForm
 from UI_ModuleMgrDlg import Ui_ModuleMgrDlg
 from Scripts import Functions, Template
@@ -666,7 +666,7 @@ class ToolForm(QWidget, Ui_ToolForm):
 
 
 class HotUpdateWorkThread(QThread):
-    __ProgressSignal = pyqtSignal(int)
+    __ProgressSignal = Signal(int)
 
     def __init__(self, parent: typing.Optional[QObject], assistant: Assistant, config: Template.ConfigTemplate) -> None:
         super().__init__(parent=parent)

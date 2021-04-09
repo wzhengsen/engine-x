@@ -289,10 +289,10 @@ def main(argv):
 
     if "gui" in oKeys:
         from ToolForm import ToolForm
-        from PyQt5.QtWidgets import QApplication
+        from PySide2.QtWidgets import QApplication
         _ = QApplication(sys.argv)
         ToolForm(opts["gui"])
-        ret = QApplication.exec()
+        ret = QApplication.exec_()
         return True
     elif "i" in oKeys:
         srcPath = input("请输入源目录（按回车使用当前目录）：")
