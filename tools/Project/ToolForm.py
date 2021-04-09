@@ -66,6 +66,7 @@ class ToolForm(QWidget, Ui_ToolForm):
             cwd = None
         self.__modulePath = ""
         self.__moduleConfig = None
+        self.__workDir = os.getcwd()
 
         if not self.__ReadConfig(cwd):
             sys.exit()
@@ -80,6 +81,7 @@ class ToolForm(QWidget, Ui_ToolForm):
 
         self.__hotUpdateTimer = QTimer(self)
         self.__hotUpdateTimer.timeout.connect(self.__HotUpdateTimerElapsed)
+        HotUpdateWorkThread.setTerminationEnabled(True)
         self.__hotUpdateWorker = HotUpdateWorkThread(self, self.__assistant, self.__moduleConfig)
 
         self.__SetupUiByManual()
@@ -124,6 +126,7 @@ class ToolForm(QWidget, Ui_ToolForm):
             configRoot = os.path.join(os.path.dirname(ToolForm.ModuleFileName), self.__moduleConfig.configRoot)
             if not os.path.isdir(configRoot):
                 os.makedirs(configRoot)
+            self.__workDir = os.path.abspath(configRoot)
             os.chdir(configRoot)
             self.__modulePath = os.path.abspath("..")
             return True
@@ -391,7 +394,8 @@ class ToolForm(QWidget, Ui_ToolForm):
                 QMessageBox.Yes | QMessageBox.No, QMessageBox.No
             ):
                 if self.__hotUpdateWorker.isRunning():
-                    self.__hotUpdateWorker.exit(1)
+                    self.__hotUpdateWorker.terminate()
+                    self.OnHotUpdatePercent(-1)
 
     def __StartHotUpdateWorkThread(self):
         self.__hotUpdateWorker.ModuleNames = self.__GetModuleNames()
@@ -403,6 +407,7 @@ class ToolForm(QWidget, Ui_ToolForm):
         self.TabWidget.setEnabled(True)
         self.StartButton.setText("开始")
         self.__workType = ToolForm.WorkType.Idle
+        os.chdir(self.__workDir)
 
     def OnHotUpdatePercent(self, percent: int):
         if percent < 0:
