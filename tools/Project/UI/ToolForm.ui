@@ -817,6 +817,17 @@
              </property>
             </spacer>
            </item>
+           <item>
+            <widget class="QPushButton" name="ClearTempButton">
+             <property name="text">
+              <string>清理缓存</string>
+             </property>
+             <property name="icon">
+              <iconset resource="UI.qrc">
+               <normaloff>:/res/ImgClear.png</normaloff>:/res/ImgClear.png</iconset>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>

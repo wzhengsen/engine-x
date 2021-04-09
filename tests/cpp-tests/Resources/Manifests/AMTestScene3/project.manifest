@@ -1,5 +1,5 @@
 {
-	"packageUrl" : "http://tools.itharbors.com/assets_manager/AMTestScene3/",
+	"downloadUrl" : "http://tools.itharbors.com/assets_manager/AMTestScene3/",
 	"remoteManifestUrl" : "http://tools.itharbors.com/assets_manager/AMTestScene3/project_dev.manifest",
 	"remoteVersionUrl" : "http://tools.itharbors.com/assets_manager/AMTestScene3/version_dev.manifest",
 	"version" : "1.0.0",

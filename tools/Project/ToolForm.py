@@ -62,10 +62,12 @@ class ToolForm(QWidget, Ui_ToolForm):
         self.setupUi(self)
         if cwd and os.path.isdir(cwd):
             os.chdir(cwd)
+        else:
+            cwd = None
         self.__modulePath = ""
         self.__moduleConfig = None
 
-        if not self.__ReadConfig():
+        if not self.__ReadConfig(cwd):
             sys.exit()
 
         self.__verRBtn: List[QRadioButton] = []
@@ -78,35 +80,40 @@ class ToolForm(QWidget, Ui_ToolForm):
 
         self.__hotUpdateTimer = QTimer(self)
         self.__hotUpdateTimer.timeout.connect(self.__HotUpdateTimerElapsed)
-        self.__hotUpdateWorker = HotUpdateWorkThread(self, self.__assistant)
+        self.__hotUpdateWorker = HotUpdateWorkThread(self, self.__assistant, self.__moduleConfig)
 
         self.__SetupUiByManual()
         self.show()
         self.UpdateTreeView()
 
-    def __ReadConfig(self) -> bool:
+    def __ReadConfig(self, cwd=None) -> bool:
         if not os.path.isfile(ToolForm.ModuleFileName):
-            fName, _ = QFileDialog.getOpenFileName(
-                self, "选择模块配置文件",
-                os.getcwd(), "模块配置文件 ({})".format(ToolForm.ModuleFileName)
-            )
-            if fName:
-                ToolForm.ModuleFileName = fName
+            if cwd:
+                self.__moduleConfig = Template.ConfigTemplate()
+                if not Functions.SaveJson(ToolForm.ModuleFileName, self.__moduleConfig):
+                    return False
             else:
-                if QMessageBox.Yes == QMessageBox.information(
-                    self,
-                    "提示",
-                    "没有找到指定的Module.json文件，是否选择一个文件夹以创建一个默认的Module.json文件？",
-                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No
-                ):
-                    fPath = QFileDialog.getExistingDirectory(
-                        self, "选择一个工作目录，以创建新的Module.json配置文件：",
-                        os.getcwd())
-                    if fPath:
-                        ToolForm.ModuleFileName = os.path.join(fPath, ToolForm.ModuleFileName)
-                        self.__moduleConfig = Template.ConfigTemplate()
-                        if not Functions.SaveJson(ToolForm.ModuleFileName, self.__moduleConfig):
-                            return False
+                fName, _ = QFileDialog.getOpenFileName(
+                    self, "选择模块配置文件",
+                    os.getcwd(), "模块配置文件 ({})".format(ToolForm.ModuleFileName)
+                )
+                if fName:
+                    ToolForm.ModuleFileName = fName
+                else:
+                    if QMessageBox.Yes == QMessageBox.information(
+                        self,
+                        "提示",
+                        "没有找到指定的Module.json文件，是否选择一个文件夹以创建一个默认的Module.json文件？",
+                        QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+                    ):
+                        fPath = QFileDialog.getExistingDirectory(
+                            self, "选择一个工作目录，以创建新的Module.json配置文件：",
+                            os.getcwd())
+                        if fPath:
+                            ToolForm.ModuleFileName = os.path.join(fPath, ToolForm.ModuleFileName)
+                            self.__moduleConfig = Template.ConfigTemplate()
+                            if not Functions.SaveJson(ToolForm.ModuleFileName, self.__moduleConfig):
+                                return False
 
         if not self.__moduleConfig:
             self.__moduleConfig: Template.ConfigTemplate = Functions.LoadJson(
@@ -345,6 +352,9 @@ class ToolForm(QWidget, Ui_ToolForm):
     def __OnSaveOnExitCheckBoxCheckedEvent(self, state: int):
         self.__moduleConfig.exitSave = state == 2
 
+    def __OnClearTempBuutonClickedEvent(self, _):
+        self.__assistant.ClearTempDir()
+
     def __OnStartButtonClickedEvent(self, _):
         if self.__workType == ToolForm.WorkType.Idle:
             self.__StartHotUpdate()
@@ -392,8 +402,37 @@ class ToolForm(QWidget, Ui_ToolForm):
         self.__hotUpdateTimer.stop()
         self.TabWidget.setEnabled(True)
         self.StartButton.setText("开始")
-        self.ProgressBar.setValue(0)
         self.__workType = ToolForm.WorkType.Idle
+
+    def OnHotUpdatePercent(self, percent: int):
+        if percent < 0:
+            self.__SetProgressBarErrorState(True)
+            self.ProgressBar.setValue(100)
+            return
+        elif percent == 100:
+            self.OnHotUpdateFinished()
+
+        self.__SetProgressBarErrorState(False)
+        self.ProgressBar.setValue(percent)
+
+    def __SetProgressBarErrorState(self, isErr: bool):
+        if isErr:
+            brush = QtGui.QBrush(QtGui.QColor(255, 0, 0))
+            brush.setStyle(QtCore.Qt.SolidPattern)
+            palette = QtGui.QPalette()
+            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Highlight, brush)
+            self.ProgressBar.setPalette(palette)
+        else:
+            self.ProgressBar.setPalette(self.ProgressBar.originPalette)
+
+    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
+        if self.__workType == ToolForm.WorkType.HotUpdate:
+            if QMessageBox.No == QMessageBox.warning(
+                self, "警告", "除非你明确知道你在做什么，否则不建议停止当前的操作，仍然要停止吗？",
+                QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+            ):
+                return a0.ignore()
+        return super().closeEvent(a0)
 
     @staticmethod
     def __GetTreeItemPath(item: QTreeWidgetItem) -> str:
@@ -418,6 +457,8 @@ class ToolForm(QWidget, Ui_ToolForm):
         self.__verSBox.append(self.V2SpinBox)
         self.__verSBox.append(self.V3SpinBox)
         self.__verSBox.append(self.V4SpinBox)
+
+        self.ProgressBar.originPalette = self.ProgressBar.palette()
 
         # 一些预览文本、图像、压缩文件的控件。
         self.TextBrowser = QTextBrowser(self.TabHotUpdate)
@@ -472,6 +513,7 @@ class ToolForm(QWidget, Ui_ToolForm):
         self.UniqueConfigCheckBox.stateChanged.connect(self.__OnUniqueConfigCheckBoxCheckedEvent)
         self.SaveOnExitCheckBox.stateChanged.connect(self.__OnSaveOnExitCheckBoxCheckedEvent)
 
+        self.ClearTempButton.clicked.connect(self.__OnClearTempBuutonClickedEvent)
         self.StartButton.clicked.connect(self.__OnStartButtonClickedEvent)
 
     def UpdateTreeView(self):
@@ -619,16 +661,34 @@ class ToolForm(QWidget, Ui_ToolForm):
 
 
 class HotUpdateWorkThread(QThread):
-    progressSignal = pyqtSignal(int)
+    __ProgressSignal = pyqtSignal(int)
 
-    def __init__(self, parent: typing.Optional[QObject], assistant: Assistant) -> None:
+    def __init__(self, parent: typing.Optional[QObject], assistant: Assistant, config: Template.ConfigTemplate) -> None:
         super().__init__(parent=parent)
         self.__assistant = assistant
         self.__moduleNames: List[str] = []
+        self.__moduleConfig = config
+        self.__workStep = 0
         self.finished.connect(parent.OnHotUpdateFinished)
+        self.__ProgressSignal.connect(parent.OnHotUpdatePercent)
+
+    def __OnPercentRet(self, percent: int):
+        if percent < 0:
+            self.__ProgressSignal.emit(percent)
+        else:
+            mLen = len(self.__moduleNames)
+            self.__ProgressSignal.emit(percent / mLen * self.__workStep)
 
     def run(self):
-        pass
+        for idx, name in enumerate(self.__moduleNames):
+            self.__workStep = idx+1
+            if not self.__assistant.Upload(
+                name,
+                self.__moduleConfig.useUniConfig,
+                self.__OnPercentRet
+            ):
+                return
+        self.__ProgressSignal.emit(100)
 
     @property
     def ModuleNames(self):

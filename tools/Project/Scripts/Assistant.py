@@ -116,18 +116,19 @@ class Assistant():
         return ".".join(verList)
 
     @staticmethod
-    def __GetProjectManifest(pManifestPath, template):
+    def __GetProjectManifest(pManifestPath: ProjectManifestTemplate, template: Module):
         '''获取指定路径的projectManifest文件内容。
         若不存在，将以Template.ProjectManifestTemplate创建一个新的，并以template参数初始化。
         '''
 
         if os.path.isfile(pManifestPath):
-            return Functions.LoadJson(pManifestPath)
+            return Functions.LoadJson(pManifestPath, object_hook=ProjectManifestTemplate.FromJson)
 
         pManifest = ProjectManifestTemplate()
-        for k in pManifest.keys():
-            if k in template.keys():
-                pManifest[k] = template[k]
+        tDict = template.__dict__.copy()
+        for k in pManifest.__dict__.keys():
+            if k in tDict.keys():
+                pManifest.__dict__[k] = tDict[k]
         Functions.SaveJson(pManifestPath, pManifest, 0)
         return pManifest
 
@@ -159,9 +160,11 @@ class Assistant():
         mds = self._config.modules if moduleName == None else {moduleName: self._config.modules.get(moduleName)}
         for name, m in mds.items():
             for d in m.dirs:
-                if not Functions.SyncDir(d, os.path.join(Assistant._TempDir, name, d), [Assistant._ModuleFileName]):
+                if not Functions.SyncDir(d, os.path.join(Assistant._TempDir, name, d)):
                     return False
             for f in m.files:
+                if not os.path.exists(f):
+                    continue
                 dstFileDir = os.path.dirname(os.path.join(Assistant._TempDir, name, f))
                 if not os.path.exists(dstFileDir):
                     os.makedirs(dstFileDir)
@@ -185,8 +188,8 @@ class Assistant():
             uniConfig = self._config.get("useUniConfig")
         for name, module in self.__GetModule(moduleName).items():
             opDir = os.path.join(Assistant._TempDir, name)
-            mConfig = module if not uniConfig else self._config["uniModule"]
-            compileLua = Assistant.__SyncGet(kw, mConfig, "compileLua")
+            mConfig = module if not uniConfig else self._config.uniModule
+            compileLua = Assistant.__SyncGet(kw, mConfig.__dict__, "compileLua")
             if compileLua and not Functions.CompileLua(opDir):
                 return False
         return True
@@ -210,10 +213,10 @@ class Assistant():
             uniConfig = self._config.useUniConfig
         for name, module in self.__GetModule(moduleName).items():
             opDir = os.path.join(Assistant._TempDir, name)
-            mConfig = module if not uniConfig else self._config["uniModule"]
-            compressQualityMin = Assistant.__SyncGet(kw, mConfig, "compressQualityMin")
-            compressQualityMax = Assistant.__SyncGet(kw, mConfig, "compressQualityMax")
-            compressPic = Assistant.__SyncGet(kw, mConfig, "compressPic")
+            mConfig = module if not uniConfig else self._config.uniModule
+            compressQualityMin = Assistant.__SyncGet(kw, mConfig.__dict__, "compressQualityMin")
+            compressQualityMax = Assistant.__SyncGet(kw, mConfig.__dict__, "compressQualityMax")
+            compressPic = Assistant.__SyncGet(kw, mConfig.__dict__, "compressPic")
             if compressPic and not Functions.CompressPng(opDir, qMin=compressQualityMin, qMax=compressQualityMax):
                 return False
         return True
@@ -267,9 +270,9 @@ class Assistant():
             uniConfig = self._config.useUniConfig
         for name, module in self.__GetModule(moduleName).items():
             opDir = os.path.join(Assistant._TempDir, name)
-            mConfig = module if not uniConfig else self._config.useUniConfig
+            mConfig = module if not uniConfig else self._config.uniModule
 
-            zipUncompress = Assistant.__SyncGet(kw, mConfig, "zipUncompress")
+            zipUncompress = Assistant.__SyncGet(kw, mConfig.__dict__, "zipUncompress")
             return Functions.CalcDirHash(opDir, compress=zipUncompress)
         return {}
 
@@ -318,16 +321,19 @@ class Assistant():
             mpManifestPath = os.path.join(Assistant._TempDir, name, Assistant._ProjectManifest)
             mvManifestPath = os.path.join(Assistant._TempDir, name, Assistant._VersionManifest)
             moduleZip = os.path.join(Assistant._TempDir, name, name + ".zip")
+            package = os.path.join(Assistant._TempDir, name, Assistant._Cocos2dxPackage)
 
             pManifest = Assistant.__GetProjectManifest(pManifestPath, module)
 
-            # 先删除version.manifest.json/project.manifest.json/name.zip
+            # 先删除version.manifest.json/project.manifest.json/name.zip/Assistant._Cocos2dxPackage
             if os.path.isfile(mvManifestPath):
                 os.remove(mvManifestPath)
             if os.path.isfile(mpManifestPath):
                 os.remove(mpManifestPath)
             if os.path.isfile(moduleZip):
                 os.remove(moduleZip)
+            if os.path.isfile(package):
+                os.remove(package)
             # 生成文件哈希描述。
             pManifest.assets = self.__HashModule(name, uniConfig, False, **kw)
 
@@ -409,10 +415,20 @@ class Assistant():
 
         return True
 
+    @staticmethod
+    def __PercentRet(percentCB, percent: int, ret: bool) -> bool:
+        if callable(percentCB):
+            if ret:
+                percentCB(percent)
+            else:
+                percentCB(-1)
+        return ret
+
     def Upload(
         self,
         moduleName=None,
         uniConfig=None,
+        percentCallBack=None,
         **kw
     ):
         '''在本地完成部署后上传。
@@ -426,6 +442,8 @@ class Assistant():
             moduleName          模块名。
 
             uniConfig           是否使用统一配置。
+
+            percentCallBack     将以百分比进度为参数回调（-1表示错误）。
 
             versionType         版本配置类型，可以为整数或字符串。
                                 整数0表示使用远程版本号+1；
@@ -487,11 +505,13 @@ class Assistant():
         '''
 
         # 依次进行文件同步/编译lua/压缩图像/加密资源/生成描述文件和上传的步骤。
-        ret = self.__SyncModuleToTemp(moduleName) and\
-            self.__CompileLua(moduleName, uniConfig, False, **kw) and\
-            self.__CompressPng(moduleName, uniConfig, False, **kw) and\
-            self.__EncryptRes(moduleName, uniConfig, False, **kw) and\
-            self.__Upload(moduleName, uniConfig, **kw)
+        if percentCallBack:
+            percentCallBack(0)
+        ret = Assistant.__PercentRet(percentCallBack, 20, self.__SyncModuleToTemp(moduleName)) and\
+            Assistant.__PercentRet(percentCallBack, 40, self.__CompileLua(moduleName, uniConfig, False, **kw)) and\
+            Assistant.__PercentRet(percentCallBack, 60, self.__CompressPng(moduleName, uniConfig, False, **kw)) and\
+            Assistant.__PercentRet(percentCallBack, 80, self.__EncryptRes(moduleName, uniConfig, False, **kw)) and\
+            Assistant.__PercentRet(percentCallBack, 100, self.__Upload(moduleName, uniConfig, **kw))
         if not ret:
             print("操作失败！")
         else:
@@ -514,7 +534,7 @@ class Assistant():
         mds = self._config.modules if moduleName == None else {moduleName: self._config.modules.get(moduleName)}
         for m in mds.values():
             for d in m.dirs:
-                if not Functions.SyncDir(d, os.path.join(syncDir, d), [Assistant._ModuleFileName]):
+                if not Functions.SyncDir(d, os.path.join(syncDir, d)):
                     return False
             for f in m.files:
                 dstFileDir = os.path.dirname(os.path.join(syncDir, f))
@@ -570,7 +590,7 @@ class Assistant():
         if ret:
             for name, m in self._config.modules.items():
                 for d in m.dirs:
-                    if not Functions.SyncDir(os.path.join(Assistant._TempDir, name, d), os.path.join(deployDir, d), [Assistant._ModuleFileName]):
+                    if not Functions.SyncDir(os.path.join(Assistant._TempDir, name, d), os.path.join(deployDir, d)):
                         ret = False
                         break
                 for f in m.files:
@@ -602,3 +622,11 @@ class Assistant():
         else:
             print("操作成功。")
         return ret
+
+    def ClearTempDir(self):
+        if os.path.isdir(Assistant._TempDir):
+            try:
+                shutil.rmtree(Assistant._TempDir)
+            except:
+                print("无法清理缓存目录。")
+                return

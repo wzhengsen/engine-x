@@ -24,7 +24,6 @@ from typing import Dict, List
 
 class Asset:
     def __init__(self, size=None, md5=None, sha=None, compress=None) -> None:
-        assert md5 or sha
         if md5:
             self.md5 = md5
         if sha:
@@ -41,6 +40,25 @@ class VersionManifestTemplate:
         self.remoteManifestUrl = ""
         self.version = "0.0.0.0"
         self.engineVersion = "Cocos2dx-Lua 4.0"
+
+    @staticmethod
+    def FromJson(data):
+        ret = None
+        if isinstance(data, dict):
+            keys = data.keys()
+            if "remoteVersionUrl" in keys:
+                ret = VersionManifestTemplate()
+                ret.__dict__ = data
+
+        return ret
+
+    @staticmethod
+    def ToJson(data):
+        ret = {}
+        if isinstance(data, VersionManifestTemplate):
+            ret = data.__dict__.copy()
+
+        return ret
 
 
 class ProjectManifestTemplate(VersionManifestTemplate):
@@ -74,9 +92,8 @@ class ProjectManifestTemplate(VersionManifestTemplate):
     def ToJson(data):
         ret = {}
         if isinstance(data, ProjectManifestTemplate):
-            obj = ProjectManifestTemplate()
-            ret = obj.__dict__.copy()
-            assets = {k: v.__dict__.copy() for k, v in obj.assets.items()}
+            ret = data.__dict__.copy()
+            assets = {k: v.__dict__.copy() for k, v in data.assets.items()}
             ret["assets"] = assets
 
         return ret
@@ -93,9 +110,9 @@ class Module:
         # 上传目录根Url
         self.uploadUrl = ""
         # 模块包含目录
-        self.dirs: List[str] = ["."]
+        self.dirs: List[str] = ["res", "src"]
         # 模块包含文件
-        self.files: List[str] = []
+        self.files: List[str] = ["config.json"]
         # 上传ftp账号
         self.ftpAccount = ""
         # 上传ftp密码
@@ -152,6 +169,8 @@ class ConfigTemplate:
         # 配置文件根目录。
         self.configRoot = "Resources"
         self.uniModule = Module()
+        self.uniModule.dirs = []
+        self.uniModule.files = []
         self.modules: Dict[str, Module] = {
             "Default": Module()
         }

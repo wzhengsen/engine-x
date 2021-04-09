@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="res">
+    <file>ImgClear.png</file>
     <file>IcoModule.ico</file>
     <file>ImgPlus.png</file>
     <file>IcoMain.ico</file>

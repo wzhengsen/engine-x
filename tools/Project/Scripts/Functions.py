@@ -134,7 +134,10 @@ def CopyDir(src, dst, ct=CopyType.Override):
         bool    发生错误，返回False；否则返回True。
     '''
 
-    if (os.path.exists(src) and os.path.exists(dst) and os.path.samefile(src, dst)) and os.path.isfile(src) or os.path.isfile(dst):
+    if not os.path.exists(src):
+        return True
+
+    if os.path.relpath(src, dst) == ".":
         return False
 
     if (not os.path.isdir(dst)):
@@ -194,7 +197,7 @@ def SyncDir(src, dst, eList=None):
         bool    发生错误，返回False；否则返回True。
     '''
     ret = CopyDir(src, dst, CopyType.Diff)
-    if ret:
+    if os.path.exists(src) and ret:
         dList = ListDirsFiles(dst)
         for item in dList:
             relPath = os.path.relpath(item, dst)
@@ -230,11 +233,11 @@ def CompileLua(src, luac=None, remove=True):
 
     if not luac:
         egxRoot = os.environ["ENGINEX_ROOT"]
-        luac = "tools/StarryXTools/trd/Mac/luac54"
+        luac = "tools/Project/ThirdParty/Mac/luac54"
         if platform.system() == 'Windows':
-            luac = "tools/StarryXTools/trd/Windows/luac54.exe"
+            luac = "tools/Project/ThirdParty/Windows/luac54.exe"
         elif platform.system() == 'Linux':
-            luac = "tools/StarryXTools/trd/Linux/luac54"
+            luac = "tools/Project/ThirdParty/Linux/luac54"
         luac = os.path.join(egxRoot, luac)
 
     if platform.system() != 'Windows':
@@ -258,9 +261,8 @@ def CompileLua(src, luac=None, remove=True):
         elif remove:
             os.remove(lua)
 
-        sys.stdout.write("\r编译<%s> [%d%%]->%s" %
-                         (bName, int(num / count * 100), lua))
-        sys.stdout.flush()
+        print("编译<%s> [%d%%]->%s" %
+              (bName, int(num / count * 100), lua), end="\r")
 
     os.chdir(oldCWD)
     return True
@@ -284,11 +286,11 @@ def CompressPng(src, pngquant=None, qMin=50, qMax=85):
 
     if not pngquant:
         egxRoot = os.environ["ENGINEX_ROOT"]
-        pngquant = "tools/StarryXTools/trd/Mac/pngquant-openmp"
+        pngquant = "tools/Project/ThirdParty/Mac/pngquant-openmp"
         if(platform.system() == 'Windows'):
-            pngquant = "tools/StarryXTools/trd/Windows/pngquant.exe"
+            pngquant = "tools/Project/ThirdParty/Windows/pngquant.exe"
         elif(platform.system() == 'Linux'):
-            pngquant = "tools/StarryXTools/trd/Linux/pngquant"
+            pngquant = "tools/Project/ThirdParty/Linux/pngquant"
         pngquant = os.path.join(egxRoot, pngquant)
 
     if platform.system() != 'Windows':
@@ -334,9 +336,10 @@ def CompressPng(src, pngquant=None, qMin=50, qMax=85):
         ret = os.system(cmd)
         if newName:
             shutil.move(newName, png)
-        sys.stdout.write("\r压缩<%s> [%d%%]->%s" %
-                         (bName, int(num / count * 100), png))
-        sys.stdout.flush()
+
+        printName = os.path.relpath(png, src)
+        print("压缩<%s> [%d%%]->%s" %
+              (bName, int(num / count * 100), printName), end="\r")
         if ret:
             return False
     return True
@@ -388,9 +391,9 @@ def EncryptRes(src, pwd):
                 r.write(b)
         except:
             return False
-        sys.stdout.write("\r加密<%s> [%d%%]->%s" %
-                         (bName, int(num / count * 100), res))
-        sys.stdout.flush()
+        printName = os.path.relpath(res, src)
+        print("加密<%s> [%d%%]->%s" %
+              (bName, int(num / count * 100), printName), end="\r")
     return True
 
 
@@ -442,9 +445,9 @@ def CalcDirHash(path, hashType=HashType.MD5, withSize=True, compress=False) -> D
             compress=True if compress and f[-4:] == ".zip" else None
         )
         ret[os.path.relpath(f, path).replace("\\", "/")] = m
-        sys.stdout.write("\r哈希<%s> [%d%%]->%s" %
-                         (bName, int(num / count * 100), f))
-        sys.stdout.flush()
+        printName = os.path.relpath(f, path)
+        print("哈希<%s> [%d%%]->%s" %
+              (bName, int(num / count * 100), printName), end="\r")
 
     return ret
 
@@ -490,9 +493,8 @@ def FtpUpload(addr, account, pwd, fList):
                 with open(file, "rb") as fp:
                     _ftpMakeDirs(ftp, os.path.dirname(file))
                     ftp.storbinary("STOR " + file, fp)
-                sys.stdout.write("\r上传 [%d%%]->%s" %
-                                 (int(num / count * 100), file))
-                sys.stdout.flush()
+                print("上传 [%d%%]->%s" %
+                      (int(num / count * 100), file), end="\r")
     except:
         return False
     return True
