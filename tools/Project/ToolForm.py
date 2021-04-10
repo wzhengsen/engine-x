@@ -521,6 +521,10 @@ class ToolForm(QWidget, Ui_ToolForm):
         self.ClearTempButton.clicked.connect(self.__OnClearTempBuutonClickedEvent)
         self.StartButton.clicked.connect(self.__OnStartButtonClickedEvent)
 
+    def UpdateManifestFiles(self):
+        for name in self.__moduleConfig.modules.keys():
+            self.__assistant.UpdateManifestFile(name)
+
     def UpdateTreeView(self):
         self.ModuleTreeWidget.clear()
         for name, module in self.__moduleConfig.modules.items():
@@ -733,7 +737,9 @@ class ModuleMgrDlg(QDialog, Ui_ModuleMgrDlg):
 
     def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
         super().closeEvent(a0)
-        self.parent().UpdateTreeView()
+        parent: ToolForm = self.parent()
+        parent.UpdateTreeView()
+        parent.UpdateManifestFiles()
 
     def __OnModuleListItemChangedEvent(self, item: QListWidgetItem):
         for idx in range(0, self.ModuleListWidget.count()):

@@ -337,7 +337,7 @@ def CompressPng(src, pngquant=None, qMin=50, qMax=85):
         if newName:
             shutil.move(newName, png)
 
-        printName = os.path.relpath(png, src)
+        printName = os.path.relpath(png, src).replace("\\", "/")
         print("压缩<%s> [%d%%]->%s" %
               (bName, int(num / count * 100), printName), end="\r")
         if ret:
@@ -391,7 +391,7 @@ def EncryptRes(src, pwd):
                 r.write(b)
         except:
             return False
-        printName = os.path.relpath(res, src)
+        printName = os.path.relpath(res, src).replace("\\", "/")
         print("加密<%s> [%d%%]->%s" %
               (bName, int(num / count * 100), printName), end="\r")
     return True
@@ -444,10 +444,10 @@ def CalcDirHash(path, hashType=HashType.MD5, withSize=True, compress=False) -> D
             size=os.path.getsize(f) if withSize else None,
             compress=True if compress and f[-4:] == ".zip" else None
         )
-        ret[os.path.relpath(f, path).replace("\\", "/")] = m
-        printName = os.path.relpath(f, path)
+        rel = os.path.relpath(f, path).replace("\\", "/")
+        ret[rel] = m
         print("哈希<%s> [%d%%]->%s" %
-              (bName, int(num / count * 100), printName), end="\r")
+              (bName, int(num / count * 100), rel), end="\r")
 
     return ret
 

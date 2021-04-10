@@ -116,19 +116,15 @@ class Assistant():
         return ".".join(verList)
 
     @staticmethod
-    def __GetProjectManifest(pManifestPath: ProjectManifestTemplate, template: Module):
+    def __GetProjectManifest(pManifestPath: ProjectManifestTemplate):
         '''获取指定路径的projectManifest文件内容。
-        若不存在，将以Template.ProjectManifestTemplate创建一个新的，并以template参数初始化。
+        若不存在，将以Template.ProjectManifestTemplate创建一个新的。
         '''
 
         if os.path.isfile(pManifestPath):
             return Functions.LoadJson(pManifestPath, object_hook=ProjectManifestTemplate.FromJson)
 
         pManifest = ProjectManifestTemplate()
-        tDict = template.__dict__.copy()
-        for k in pManifest.__dict__.keys():
-            if k in tDict.keys():
-                pManifest.__dict__[k] = tDict[k]
         Functions.SaveJson(pManifestPath, pManifest, 0)
         return pManifest
 
@@ -276,6 +272,28 @@ class Assistant():
             return Functions.CalcDirHash(opDir, compress=zipUncompress)
         return {}
 
+    def UpdateManifestFile(self, name: str, uniConfig: bool = False):
+        """更新模块对应的project.manifest.json文件。
+        参数：
+            name        对应的模块名。
+            uniConfig   是否使用统一配置（并不是所有项都使用统一配置）。
+        """
+        if name not in self._config.modules:
+            return
+        module = self._config.modules[name]
+        uniModule = module if not uniConfig else self._config.uniModule
+        manifestFile = os.path.join(Assistant._VersionDir, name, Assistant._ProjectManifest)
+        manifest: ProjectManifestTemplate = Assistant.__GetProjectManifest(manifestFile)
+        manifest.downloadUrl = module.downloadUrl
+        manifest.remoteManifestUrl = module.remoteManifestUrl
+        manifest.remoteVersionUrl = module.remoteVersionUrl
+        manifest.filterType = uniModule.filterType
+        manifest.openFilterNum = uniModule.openFilterNum
+        manifest.filterNum = uniModule.filterNum
+        manifest.openFilterSize = uniModule.openFilterSize
+        manifest.filterSize = uniModule.filterSize
+        Functions.SaveJson(manifestFile, manifest, 0)
+
     def __Upload(
         self,
         moduleName=None,
@@ -311,11 +329,11 @@ class Assistant():
             compressUpload = Assistant.__SyncGet(kw, mConfig.__dict__, "compressUpload")
             ftpAccount = Assistant.__SyncGet(kw, mConfig.__dict__, "ftpAccount")
             ftpPassword = Assistant.__SyncGet(kw, mConfig.__dict__, "ftpPassword")
-            Assistant.__SyncGet(kw, mConfig.__dict__, "filterType")
-            Assistant.__SyncGet(kw, mConfig.__dict__, "openFilterNum")
-            Assistant.__SyncGet(kw, mConfig.__dict__, "filterNum")
-            Assistant.__SyncGet(kw, mConfig.__dict__, "openFilterSize")
-            Assistant.__SyncGet(kw, mConfig.__dict__, "filterSize")
+            filterType = Assistant.__SyncGet(kw, mConfig.__dict__, "filterType")
+            openFilterNum = Assistant.__SyncGet(kw, mConfig.__dict__, "openFilterNum")
+            filterNum = Assistant.__SyncGet(kw, mConfig.__dict__, "filterNum")
+            openFilterSize = Assistant.__SyncGet(kw, mConfig.__dict__, "openFilterSize")
+            filterSize = Assistant.__SyncGet(kw, mConfig.__dict__, "filterSize")
 
             pManifestPath = os.path.join(Assistant._VersionDir, name, Assistant._ProjectManifest)
             mpManifestPath = os.path.join(Assistant._TempDir, name, Assistant._ProjectManifest)
@@ -323,7 +341,15 @@ class Assistant():
             moduleZip = os.path.join(Assistant._TempDir, name, name + ".zip")
             package = os.path.join(Assistant._TempDir, name, Assistant._Cocos2dxPackage)
 
-            pManifest = Assistant.__GetProjectManifest(pManifestPath, module)
+            pManifest: ProjectManifestTemplate = Assistant.__GetProjectManifest(pManifestPath)
+            pManifest.downloadUrl = module.downloadUrl
+            pManifest.remoteManifestUrl = module.remoteManifestUrl
+            pManifest.remoteVersionUrl = module.remoteVersionUrl
+            pManifest.filterType = filterType
+            pManifest.openFilterNum = openFilterNum
+            pManifest.filterNum = filterNum
+            pManifest.openFilterSize = openFilterSize
+            pManifest.filterSize = filterSize
 
             # 先删除version.manifest.json/project.manifest.json/name.zip/Assistant._Cocos2dxPackage
             if os.path.isfile(mvManifestPath):
@@ -341,7 +367,7 @@ class Assistant():
                 # 远程版本+1操作。
                 remoteVM: VersionManifestTemplate = Functions.LoadNetJson(
                     module.remoteVersionUrl,
-                    object_hook=VersionManifestTemplate
+                    object_hook=VersionManifestTemplate.FromJson
                 )
                 if remoteVM:
                     pManifest.version = Assistant.__VersionStrGrew(remoteVM.version, 1)
@@ -371,7 +397,10 @@ class Assistant():
                 uploadFiles = []
                 if onlyHashDiff:
                     # 比对不同哈希文件。
-                    rpManifest: ProjectManifestTemplate = Functions.LoadNetJson(module.remoteManifestUrl)
+                    rpManifest: ProjectManifestTemplate = Functions.LoadNetJson(
+                        module.remoteManifestUrl,
+                        object_hook=ProjectManifestTemplate.FromJson
+                    )
                     if None == rpManifest:
                         print("获取远程文件列表失败！")
                         return False
