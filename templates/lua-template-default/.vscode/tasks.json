@@ -46,7 +46,7 @@
             "command": "python3",
             "windows": {
                 "args": [
-                    "${env:ENGINEX_ROOT}/tools/StarryXTools/python/SyncDir.py",
+                    "${env:ENGINEX_ROOT}/tools/Project/Scripts/SyncDir.py",
                     "-s",
                     "${workspaceFolder}/Resources",
                     "-d",
@@ -57,7 +57,7 @@
             },
             "linux": {
                 "args": [
-                    "${env:ENGINEX_ROOT}/tools/StarryXTools/python/SyncDir.py",
+                    "${env:ENGINEX_ROOT}/tools/Project/Scripts/SyncDir.py",
                     "-s",
                     "${workspaceFolder}/Resources",
                     "-d",
@@ -68,7 +68,7 @@
             },
             "osx": {
                 "args": [
-                    "${env:ENGINEX_ROOT}/tools/StarryXTools/python/SyncDir.py",
+                    "${env:ENGINEX_ROOT}/tools/Project/Scripts/SyncDir.py",
                     "-s",
                     "${workspaceFolder}/Resources",
                     "-d",
@@ -124,39 +124,26 @@
         },
         {
             "label": "GUI",
-            "type": "process",
-            "command": "${env:ENGINEX_ROOT}/tools/StarryXTools/c#/项目工具.exe",
+            "type": "shell",
+            "command": "python3",
+            "args": [
+                "${env:ENGINEX_ROOT}/tools/Project/RunMe.py",
+                "--gui",
+                "${workspaceFolder}"
+            ],
             "presentation": {
                 "echo": false,
-                "reveal": "never",
+                "reveal": "always",
                 "focus": false,
                 "panel": "shared",
-                "showReuseMessage": false,
                 "clear": true
             },
-            "windows": {
-                "options": {
-                    "cwd": "${workspaceFolder}/Resources",
-                    "statusbar": {
-                        "label": "$(window)",
-                        "tooltip": "GUI",
-                        "color": "#2f57a1",
-                        "hide": false,
-                    }
-                }
-            },
-            "linux": {
-                "options": {
-                    "statusbar": {
-                        "hide": true
-                    }
-                }
-            },
-            "osx": {
-                "options": {
-                    "statusbar": {
-                        "hide": true
-                    }
+            "options": {
+                "statusbar": {
+                    "label": "$(window)",
+                    "tooltip": "GUI",
+                    "color": "#2f57a1",
+                    "hide": false,
                 }
             }
         },
@@ -165,7 +152,7 @@
             "type": "shell",
             "command": "python3",
             "args": [
-                "${env:ENGINEX_ROOT}/tools/StarryXTools/python/AppleCMakeBuild.py",
+                "${env:ENGINEX_ROOT}/tools/Project/Scripts/AppleCMakeBuild.py",
                 "--type",
                 "${input:appleType}"
             ],
