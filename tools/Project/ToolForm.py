@@ -20,22 +20,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import importlib
 import typing
+from Scripts import Functions, Template
 from Scripts.Assistant import Assistant
 import os
 import sys
 from enum import Enum, auto
-from typing import Dict, List
+from typing import List
+try:
+    from PyQt5 import QtCore
+except:
+    PyQt5 = Functions.ExceptImport("PyQt5", reload=True)
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QFileInfo, QObject, QThread, QTimer, QUrl, Qt, pyqtSignal
-from PyQt5.QtWidgets import QComboBox, QDialog, QDoubleSpinBox, QFileIconProvider, QLabel, QLineEdit, QListWidgetItem, QProgressBar, QRadioButton, QSpinBox, QTableWidget, QTableWidgetItem, QTreeWidgetItem, QTreeWidget, QWidget, QFileDialog, QMessageBox, QTextBrowser
+from PyQt5.QtWidgets import QDialog, QFileIconProvider, QLabel, QListWidgetItem, QRadioButton, QSpinBox, QTableWidgetItem, QTreeWidgetItem, QTreeWidget, QWidget, QFileDialog, QMessageBox, QTextBrowser
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer, QMediaPlaylist
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from UI_ToolForm import Ui_ToolForm
 from UI_ModuleMgrDlg import Ui_ModuleMgrDlg
-from Scripts import Functions, Template
 
 
 class ToolForm(QWidget, Ui_ToolForm):

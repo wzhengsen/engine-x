@@ -14,23 +14,32 @@ import zipfile
 from ftplib import FTP
 import sys
 import tempfile
+import importlib
+
+
+def ExceptImport(name, install=None, reload=False):
+    if not install:
+        install = name
+    cmd = "pip3 install {} {}".format(install, "--user" if platform.system() != "Windows" else "").strip()
+    if 0 != os.system(cmd):
+        print("Install {} failed!".format(install))
+        exit(1)
+    else:
+        module = importlib.import_module(name)
+        if reload:
+            module = importlib.reload(module)
+        return module
+
+
 try:
     import requests
 except:
-    import os
-    if 0 != os.system('pip3 install requests --user'):
-        print("run pip3 failed.")
-        exit(1)
-    else:
-        import requests
+    requests = ExceptImport("requests")
+
 try:
     from Crypto.Cipher import AES
 except:
-    if 0 != os.system("pip3 install pycryptodome --user"):
-        print("run pip3 failed.")
-        exit(1)
-    else:
-        from Crypto.Cipher import AES
+    AES = ExceptImport("Crypto.Cipher.AES", install="pycryptodome")
 
 
 class ListType(Enum):
