@@ -45,6 +45,7 @@
             "type": "shell",
             "command": "python3",
             "windows": {
+                "command": "py",
                 "args": [
                     "${env:ENGINEX_ROOT}/tools/Project/Scripts/SyncDir.py",
                     "-s",
@@ -101,8 +102,11 @@
             "label": "LuaGen",
             "type": "shell",
             "command": "python3",
+            "windows": {
+                "command": "py"
+            },
             "args": [
-                "${env:ENGINEX_ROOT}/tools/SolBinding/RunMe.py"
+                "${env:ENGINEX_ROOT}/tools/SolBinding/main.py"
             ],
             "presentation": {
                 "echo": false,
@@ -125,9 +129,12 @@
         {
             "label": "GUI",
             "type": "shell",
+            "windows": {
+                "command": "py",
+            },
             "command": "python3",
             "args": [
-                "${env:ENGINEX_ROOT}/tools/Project/RunMe.py",
+                "${env:ENGINEX_ROOT}/tools/Project/main.py",
                 "--gui",
                 "${workspaceFolder}"
             ],
@@ -136,7 +143,8 @@
                 "reveal": "always",
                 "focus": false,
                 "panel": "shared",
-                "clear": true
+                "clear": true,
+                "showReuseMessage": false
             },
             "options": {
                 "statusbar": {

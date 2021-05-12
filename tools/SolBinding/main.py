@@ -63,7 +63,7 @@ def _ProcessWork(idx):
 _UseMultiProcessing = True
 
 if __name__ == "__main__":
-    if _UseMultiProcessing and len(_genList) > 0:
+    if _UseMultiProcessing and len(_genList) > 1:
         pPool = multiprocessing.Pool()
         pPool.map(_ProcessWork, range(len(_genList)))
     else:

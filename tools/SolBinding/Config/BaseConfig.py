@@ -19,8 +19,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import sys
 from Util.EnvChecker import EnvChecker
+
+
+class NotFoundFileException(Exception):
+    def __str__(self) -> str:
+        return "未找到某些关键文件。"
 
 
 class BaseConfig(object):
@@ -30,7 +34,7 @@ class BaseConfig(object):
         gccToolChain = EnvChecker.Find_GCC_ToolChain()
         llvmToolChain = EnvChecker.Find_LLVM_ToolChain()
         if not ndkRoot or not defaultInclude or not gccToolChain or not llvmToolChain:
-            sys.exit(1)
+            raise NotFoundFileException()
 
         # Tag用于生成的注册函数中，作为和其它生成文件的区分。
         self.Tag = None
