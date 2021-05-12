@@ -36,7 +36,7 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon, QPixmap
 from PyQt5.QtCore import QFileInfo, QObject, QThread, QTimer, QUrl, Qt, pyqtSignal
-from PyQt5.QtWidgets import QDialog, QFileIconProvider, QLabel, QListWidgetItem, QRadioButton, QSpinBox, QTableWidgetItem, QTreeWidgetItem, QTreeWidget, QWidget, QFileDialog, QMessageBox, QTextBrowser
+from PyQt5.QtWidgets import QDialog, QFileIconProvider, QHeaderView, QLabel, QListWidgetItem, QRadioButton, QSizePolicy, QSpinBox, QTableWidgetItem, QTreeWidgetItem, QTreeWidget, QWidget, QFileDialog, QMessageBox, QTextBrowser
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer, QMediaPlaylist
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from UI_ToolForm import Ui_ToolForm
@@ -58,7 +58,7 @@ class ToolForm(QWidget, Ui_ToolForm):
         Idle = auto()
         Timer = auto()
         HotUpdate = auto()
-        Complie = auto()
+        Compile = auto()
 
     ModuleFileName = "Module.json"
 
@@ -142,7 +142,6 @@ class ToolForm(QWidget, Ui_ToolForm):
         self.TextBrowser.setGeometry(geometry)
         self.ImageLabel.setGeometry(geometry)
         self.VideoWidget.setGeometry(geometry)
-        self.ZipTreeView.setGeometry(geometry)
 
     def __OnModuleTreeExpandedEvent(self, item: QTreeWidgetItem):
         if item.expanded:
@@ -468,12 +467,17 @@ class ToolForm(QWidget, Ui_ToolForm):
         self.__verSBox.append(self.V3SpinBox)
         self.__verSBox.append(self.V4SpinBox)
 
+        header: QHeaderView = self.ModuleTreeWidget.header()
+        header.setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        header.setStretchLastSection(False)
         self.ProgressBar.originPalette = self.ProgressBar.palette()
 
         # 一些预览文本、图像、压缩文件的控件。
         self.TextBrowser = QTextBrowser(self.TabHotUpdate)
+        self.TextBrowser.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.TextBrowser.hide()
         self.ImageLabel = QLabel(self.TabHotUpdate)
+        self.ImageLabel.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         self.ImageLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.ImageLabel.hide()
         self.VideoWidget = QVideoWidget(self.TabHotUpdate)
@@ -482,8 +486,6 @@ class ToolForm(QWidget, Ui_ToolForm):
         self.MediaPlayer = QMediaPlayer(self.TabHotUpdate)
         self.MediaPlayer.setVideoOutput(self.VideoWidget)
         self.MediaPlayer.setPlaylist(self.MediaPlayList)
-        self.ZipTreeView = QTreeWidget(self.TabHotUpdate)
-        self.ZipTreeView.hide()
 
         self.SettingWidget.resizeEvent = self.__OnSettingWidgetGeometryChangedEvent
         self.SettingWidget.moveEvent = self.__OnSettingWidgetGeometryChangedEvent
@@ -595,12 +597,10 @@ class ToolForm(QWidget, Ui_ToolForm):
         self.ImageLabel.clear()
         self.MediaPlayer.stop()
         self.MediaPlayList.clear()
-        self.ZipTreeView.clear()
 
         self.TextBrowser.hide()
         self.ImageLabel.hide()
         self.VideoWidget.hide()
-        self.ZipTreeView.hide()
 
     def __HideInfoView(self):
         self.SettingWidget.hide()
@@ -656,7 +656,7 @@ class ToolForm(QWidget, Ui_ToolForm):
         if self.__moduleConfig.useUniConfig:
             return self.__moduleConfig.uniModule
 
-        item: QTreeWidget = self.ModuleTreeWidget.currentItem()
+        item: QTreeWidgetItem = self.ModuleTreeWidget.currentItem()
         if item:
             return item.module
         return None
