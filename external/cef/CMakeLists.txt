@@ -28,6 +28,7 @@ endif()
 add_library(ext_libcef_dll_wrapper STATIC IMPORTED GLOBAL)
 if(WINDOWS)
     set_target_properties(ext_libcef_dll_wrapper PROPERTIES
+      IMPORTED_LOCATION "${platform_spec_path}/libcef_dll_wrapper.lib"
       IMPORTED_LOCATION_RELEASE "${platform_spec_path}/libcef_dll_wrapper.lib"
       IMPORTED_LOCATION_DEBUG "${platform_spec_path}/libcef_dll_wrapper_d.lib"
     )
