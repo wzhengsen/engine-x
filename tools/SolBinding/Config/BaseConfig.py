@@ -18,7 +18,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-
+import os
 from Util.EnvChecker import EnvChecker
 
 
@@ -59,11 +59,14 @@ class BaseConfig(object):
             "-gcc-toolchain", gccToolChain,
             "--sysroot={}/platforms/android-14/arch-arm".format(ndkRoot),
             "-idirafter", "{}/sources/android/support/include".format(ndkRoot),
-            "-idirafter", "{}/sysroot/usr/include".format(ndkRoot),
-            "-idirafter", "{}/sysroot/usr/include/arm-linux-androideabi".format(ndkRoot),
-            "-idirafter", "{}/lib64/clang/5.0/include".format(llvmToolChain),
+            "-idirafter", "{}/sysroot/usr/include".format(llvmToolChain),
+            "-idirafter", "{}/sysroot/usr/include/arm-linux-androideabi".format(llvmToolChain),
             "-I{}/sources/cxx-stl/llvm-libc++/include".format(ndkRoot)
         ]
+        dl = os.listdir("{}/lib64/clang".format(llvmToolChain))
+        if dl:
+            self.AndroidFlags.append("-idirafter")
+            self.AndroidFlags.append("{}/lib64/clang/{}/include".format(llvmToolChain, dl[0]))
 
         self.ClangHeaders = []
         self.ClangFlags = ["-nostdinc", "-x", "c++", "-std=c++11", "-fsigned-char", "-U__SSE__"]
