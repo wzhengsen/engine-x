@@ -45,7 +45,16 @@ local attachInterval = 1;               --attach间隔时间(s)
 local customGetSocketInstance = nil;    --支持用户实现一个自定义调用luasocket的函数，函数返回值必须是一个socket实例。例: function() return require("socket.core").tcp() end;
 local consoleLogLevel = 2;           --打印在控制台(print)的日志等级 0 : all/ 1: info/ 2: error.
 local connectTimeoutSec = 0.005;       --等待连接超时时间, 单位s. 时间过长等待attach时会造成卡顿，时间过短可能无法连接。建议值0.005 - 0.05
+local useNoMetaPairs = true;            --不使用访问元方法的pairs，在某些调试情况下，可以避免一些问题。
 --用户设置项END
+
+local pairs = useNoMetaPairs and function (t)
+    local key,value = nil,nil;
+    return function ()
+        key,value = next(t,key);
+        return key,value;
+    end
+end or pairs;
 
 local debuggerVer = "3.1.0";                 --debugger版本号
 LuaPanda = {};
