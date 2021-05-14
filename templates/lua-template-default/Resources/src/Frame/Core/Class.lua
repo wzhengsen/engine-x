@@ -136,7 +136,7 @@ local function MakeLuaObjMetaTable(cls)
             else
                 if cls.__w__[key] then
                     -- 不能读取只写属性。
-                    error("You can't read a write-only property.")
+                    warn("You can't read a write-only property.")
                 end
             end
             -- 检查基类。
@@ -157,7 +157,7 @@ local function MakeLuaObjMetaTable(cls)
             else
                 if cls.__r__[key] then
                     -- 不能写入只读属性。
-                    error("You can't write a read-only property.")
+                    warn("You can't write a read-only property.")
                 end
             end
             rawset(sender,key,value);
@@ -199,7 +199,7 @@ local function RetrofitMeta(ud)
             else
                 if cls.__w__[key] then
                     -- 不能读取只写属性。
-                    error("You can't read a write-only property.")
+                    warn("You can't read a write-only property.")
                 end
             end
             -- 检查基类。
@@ -227,7 +227,7 @@ local function RetrofitMeta(ud)
             else
                 if cls.__r__[key] then
                     -- 不能写入只读属性。
-                    error("You can't write a read-only property.")
+                    warn("You can't write a read-only property.")
                 end
             end
         end
@@ -454,7 +454,7 @@ function class.New(...)
             else
                 if cls.__w__[key] then
                     -- 不能读取只写属性。
-                    error("You can't read a write-only property.")
+                    warn("You can't read a write-only property.")
                 end
             end
             -- 检查基类。
@@ -493,7 +493,7 @@ function class.New(...)
                 else
                     if cls.__r__[key] then
                         -- 不能写入只读属性。
-                        error("You can't write a read-only property.")
+                        warn("You can't write a read-only property.")
                     end
                 end
                 rawset(sender,key,value);
