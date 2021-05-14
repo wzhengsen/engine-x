@@ -133,6 +133,11 @@ local function MakeLuaObjMetaTable(cls)
             local property = cls.__r__[key];
             if property then
                 return property(sender);
+            else
+                if cls.__w__[key] then
+                    -- 不能读取只写属性。
+                    error("You can't read a write-only property.")
+                end
             end
             -- 检查基类。
             for _, base in ipairs(cls.__bases__) do
@@ -149,6 +154,11 @@ local function MakeLuaObjMetaTable(cls)
             if property then
                 property(sender,key,value);
                 return
+            else
+                if cls.__r__[key] then
+                    -- 不能写入只读属性。
+                    error("You can't write a read-only property.")
+                end
             end
             rawset(sender,key,value);
         end
@@ -186,6 +196,11 @@ local function RetrofitMeta(ud)
             local property = cls.__r__[key];
             if property then
                 return property(sender);
+            else
+                if cls.__w__[key] then
+                    -- 不能读取只写属性。
+                    error("You can't read a write-only property.")
+                end
             end
             -- 检查基类。
             for _, base in ipairs(cls.__bases__) do
@@ -209,6 +224,11 @@ local function RetrofitMeta(ud)
             if property then
                 property(sender,key,val);
                 return
+            else
+                if cls.__r__[key] then
+                    -- 不能写入只读属性。
+                    error("You can't write a read-only property.")
+                end
             end
         end
         -- 最后检查sol::usertype定义的元方法。
@@ -431,6 +451,11 @@ function class.New(...)
             local property = cls.__r__[key];
             if property then
                 return property(sender);
+            else
+                if cls.__w__[key] then
+                    -- 不能读取只写属性。
+                    error("You can't read a write-only property.")
+                end
             end
             -- 检查基类。
             for _, base in ipairs(cls.__bases__) do
@@ -465,6 +490,11 @@ function class.New(...)
                 if property then
                     property(sender,key,value);
                     return
+                else
+                    if cls.__r__[key] then
+                        -- 不能写入只读属性。
+                        error("You can't write a read-only property.")
+                    end
                 end
                 rawset(sender,key,value);
             end
