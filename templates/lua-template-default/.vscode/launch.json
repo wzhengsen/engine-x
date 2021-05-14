@@ -1,13 +1,5 @@
 {
     "version": "0.2.0",
-    "inputs": [
-        {
-            "type": "promptString",
-            "id": "deviceIP",
-            "description": "输入调试设备的IP地址：",
-            "default": "192.168."
-        }
-    ],
     "compounds": [
         {
             "name": "Windows: 复合调试",
@@ -92,7 +84,6 @@
         {
             "type": "lua",
             "request": "launch",
-            "tag": "normal",
             "name": "Lua: 调试",
             "windows": {
                 "program": "${workspaceFolder}/build/bin/${workspaceFolderBasename}/Debug/${workspaceFolderBasename}.exe"
@@ -112,17 +103,14 @@
             "luaFileExtension": "lua",
             "pathCaseSensitivity": true,
             "stopOnEntry": false,
-            "VSCodeAsClient": true,
-            "connectionIP": "127.0.0.1",
             "connectionPort": 8818,
             "logLevel": 1,
             "useCHook": true,
             "isNeedB64EncodeStr": true,
             "preLaunchTask": "AllSync",
             "luaPath": "",
-            "updateTips": true,
+            "updateTips": false,
             "autoPathMode": true,
-            "distinguishSameNameFile": true,
             "presentation": {
                 "hidden": false,
                 "group": "Lua",
@@ -132,23 +120,19 @@
         {
             "type": "lua",
             "request": "launch",
-            "tag": "attach",
             "name": "Lua: 附加",
             "cwd": "${workspaceFolder}/Resources",
             "TempFilePath": "${workspaceFolder}/Resources",
             "luaFileExtension": "lua",
             "pathCaseSensitivity": true,
             "stopOnEntry": false,
-            "VSCodeAsClient": true,
-            "connectionIP": "${input:deviceIP}",
             "connectionPort": 8818,
             "logLevel": 1,
             "useCHook": true,
             "isNeedB64EncodeStr": true,
             "luaPath": "",
-            "updateTips": true,
+            "updateTips": false,
             "autoPathMode": true,
-            "distinguishSameNameFile": true,
             "presentation": {
                 "hidden": false,
                 "group": "Lua",

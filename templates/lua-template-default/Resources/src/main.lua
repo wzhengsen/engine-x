@@ -1,15 +1,10 @@
-xpcall(
-function()
-    require("src.LuaPanda").startServer();
-end,
-function(msg)
-    print(msg);
-end);
-
-package.path = package.path .. ";src/?.lua";
-require("Frame.Init");
-
 local function main()
+    package.path = package.path .. ";src/?.lua";
+    require("LuaPanda").start();
+    require("Frame.Init");
     syx.Application():Start();
 end
-main();
+
+xpcall(main,function (msg)
+    print(msg);
+end);
