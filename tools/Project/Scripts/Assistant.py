@@ -269,7 +269,9 @@ class Assistant():
             mConfig = module if not uniConfig else self._config.uniModule
 
             zipUncompress = Assistant.__SyncGet(kw, mConfig.__dict__, "zipUncompress")
-            return Functions.CalcDirHash(opDir, compress=zipUncompress)
+            hashRet = Functions.CalcDirHash(opDir, compress=zipUncompress)
+            return {name:Asset(hash["size"],hash["md5"],hash["sha"],hash["compress"]) for name,hash in hashRet.items()}
+
         return {}
 
     def UpdateManifestFile(self, name: str, uniConfig: bool = False):

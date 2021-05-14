@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from typing import Dict
-from Scripts.Template import Asset
 import os
 import stat
 from enum import Enum, auto
@@ -425,7 +424,7 @@ def CalcFileHash(filePath, hashType=HashType.MD5):
 
 
 @newLine
-def CalcDirHash(path, hashType=HashType.MD5, withSize=True, compress=False) -> Dict[str, Asset]:
+def CalcDirHash(path, hashType=HashType.MD5, withSize=True, compress=False) -> Dict[str, Dict]:
     '''计算文件夹下所有文件的哈希值，并以一个map返回。
 
     Param:
@@ -439,7 +438,7 @@ def CalcDirHash(path, hashType=HashType.MD5, withSize=True, compress=False) -> D
         dict
     '''
 
-    ret: Dict[str, Asset] = {}
+    ret: Dict[str, Dict] = {}
     lF = ListFiles(path)
     count = len(lF)
     num = 0
@@ -447,12 +446,12 @@ def CalcDirHash(path, hashType=HashType.MD5, withSize=True, compress=False) -> D
     for f in lF:
         num += 1
         h = CalcFileHash(f, hashType)
-        m = Asset(
-            md5=h if hashType == HashType.MD5 else None,
-            sha=h if hashType == HashType.SHA1 else None,
-            size=os.path.getsize(f) if withSize else None,
-            compress=True if compress and f[-4:] == ".zip" else None
-        )
+        m = {
+            "md5": h if hashType == HashType.MD5 else None,
+            "sha": h if hashType == HashType.SHA1 else None,
+            "size": os.path.getsize(f) if withSize else None,
+            "compress": True if compress and f[-4:] == ".zip" else None
+        }
         rel = os.path.relpath(f, path).replace("\\", "/")
         ret[rel] = m
         print("哈希<%s> [%d%%]->%s" %

@@ -49,6 +49,10 @@ class NativeType(object):
     def Generatable(self):
         return self._generatable
 
+    @property
+    def Name(self):
+        return self._name
+
 
 class NativeMember(NativeType):
     """成员方法，成员变量等的基类。"""

@@ -2,9 +2,7 @@
 
 import os
 import sys
-import getopt
 import Functions
-from colorama import Fore, Back, Style
 
 
 def main(argv):

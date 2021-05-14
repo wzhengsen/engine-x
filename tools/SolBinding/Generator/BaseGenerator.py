@@ -23,11 +23,11 @@ import os
 import sys
 import re
 from clang import cindex
-from Util.Functions import *
+from Util.Functions import FindAllFilesMatch
 from Util.CursorHelper import CursorHelper
 from Config.BaseConfig import BaseConfig
-from Native.NativeObject import *
-from Native.NativeEnum import *
+from Native.NativeObject import NativeClass, NativeStruct
+from Native.NativeEnum import NativeAnonymousEnum, NativeEnum
 from Native.NativeBase import NativeGlobal
 
 
@@ -273,7 +273,8 @@ class BaseGenerator(BaseConfig):
         if next(cursor.get_children(), None) is None:
             return
 
-        if (cursor.kind == cindex.CursorKind.CLASS_DECL or (self.AllowStruct and cursor.kind == cindex.CursorKind.STRUCT_DECL))\
+        if (cursor.kind == cindex.CursorKind.CLASS_DECL
+                or (self.AllowStruct and cursor.kind == cindex.CursorKind.STRUCT_DECL))\
                 or cursor.kind == cindex.CursorKind.ENUM_DECL\
                 or cursor.kind == cindex.CursorKind.VAR_DECL:
             if (cursor.kind == cindex.CursorKind.VAR_DECL or cursor == cursor.type.get_declaration())\
@@ -304,9 +305,12 @@ class BaseGenerator(BaseConfig):
                     # 要求该匿名枚举的父级必须是被包含在生成列表中的。
                     ae = NativeAnonymousEnum(cursor, self)
                     if ae.Generatable:
-                        if ae._name not in self._nativeObjects.keys():
-                            self._nativeObjects[ae._name] = ae
+                        if ae.Name not in self._nativeObjects.keys():
+                            self._nativeObjects[ae.Name] = ae
             return
 
+        # 此处排除那些名字符合生成类型列表，却在未开启结构体生成时需要跳过的类。
+        if not self.AllowStruct and cursor.kind == cindex.CursorKind.STRUCT_DECL:
+            return
         for node in cursor.get_children():
             self._DeepIterate(node)
