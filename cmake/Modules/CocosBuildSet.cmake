@@ -14,7 +14,11 @@ if(CMAKE_TOOLCHAIN_FILE)
     message(STATUS "using toolchain file:" ${CMAKE_TOOLCHAIN_FILE})
 endif()
 
-find_program(PYTHON_COMMAND NAMES python3)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    find_program(PYTHON_COMMAND NAMES py)
+else()
+    find_program(PYTHON_COMMAND NAMES python3)
+endif()
 
 message(STATUS "PROJECT_NAME:" ${PROJECT_NAME})
 message(STATUS "PROJECT_SOURCE_DIR:" ${PROJECT_SOURCE_DIR})

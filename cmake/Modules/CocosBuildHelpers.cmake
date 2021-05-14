@@ -29,20 +29,20 @@ function(cocos_sync_target_res cocos_target)
     if(MSVC OR XCODE)
         add_custom_command(TARGET SYNC_RESOURCE-${cocos_target} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E echo "    syncing and deploy to ${link_folder_abs}"
-        COMMAND ${PYTHON_COMMAND} ARGS ${COCOS2DX_ROOT_PATH}/tools/StarryXTools/python/RunMe.py
+        COMMAND ${PYTHON_COMMAND} ARGS ${COCOS2DX_ROOT_PATH}/tools/Project/main.py
             --$<CONFIG> -s ${opt_FOLDERS} -d ${link_folder_abs}
         )
     else()
         if("${CMAKE_BUILD_TYPE}" MATCHES "Rel")
             add_custom_command(TARGET SYNC_RESOURCE-${cocos_target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E echo "    syncing and deploy to ${link_folder_abs}"
-            COMMAND ${PYTHON_COMMAND} ARGS ${COCOS2DX_ROOT_PATH}/tools/StarryXTools/python/RunMe.py
+            COMMAND ${PYTHON_COMMAND} ARGS ${COCOS2DX_ROOT_PATH}/tools/Project/main.py
                 --release -s ${opt_FOLDERS} -d ${link_folder_abs}
             )
         else()
             add_custom_command(TARGET SYNC_RESOURCE-${cocos_target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E echo "    syncing to ${link_folder_abs}"
-            COMMAND ${PYTHON_COMMAND} ARGS ${COCOS2DX_ROOT_PATH}/tools/StarryXTools/python/RunMe.py
+            COMMAND ${PYTHON_COMMAND} ARGS ${COCOS2DX_ROOT_PATH}/tools/Project/main.py
                 --debug -s ${opt_FOLDERS} -d ${link_folder_abs}
             )
         endif()
