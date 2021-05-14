@@ -52,7 +52,6 @@ static int register_custom_function(lua_State* L) noexcept {
     LuaRegisterDownloader(L);
     LuaRegister_luaprotobuf(L);
     LuaRegisterZipFile(L);
-    LuaRegisterCocos2dx(L);
     LuaRegisterDevice(L);
     LuaRegisterExtLib(L);
     return 0;
