@@ -49,6 +49,6 @@ class Cocos2dxGeneratorBackend(Cocos2dxGenerator):
             "Winding", "UniformInfo", "UniformLocation", "AttributeBindInfo", "TextureCubeFace", "ProgramState", "TextureBackend", "Program", "Texture2DBackend", "TextureCubemapBackend",
             "Device", "ShaderCache"
         ]
-        self.Skip.update({
+        self.Skip |= {
             "ProgramState": ["getCallbackUniforms", "getVertexUniformBuffer", "getFragmentUniformBuffer"]
-        })
+        }

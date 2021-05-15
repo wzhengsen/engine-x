@@ -40,9 +40,9 @@ class Cocos2dxGenerator(BaseGenerator):
             os.path.join(self.CocosRoot, "extensions")
         ]
 
-        self.InstanceMethods.update({
+        self.InstanceMethods |= {
             ".*": ("(g|G)etInstance", "(d|D)estroyInstance")
-        })
+        }
 
         # 解析时的依赖头文件路径等。
         self.ExtraArgs += [
@@ -51,7 +51,7 @@ class Cocos2dxGenerator(BaseGenerator):
             "-DANDROID"
         ]
 
-        self.RenameMembers.update({
+        self.RenameMembers |= {
             ".*": {"create": "new"}
-        })
+        }
         self.ParentsClassesSkip += ["Clonable"]

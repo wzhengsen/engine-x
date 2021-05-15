@@ -41,6 +41,6 @@ class Cocos2dxGenerator3D(Cocos2dxGenerator):
             "Animate3D", "Sprite3D", "Animation3D", "Skeleton3D", "^Mesh$", "AttachNode", "BillBoard", "Sprite3DCache", "TextureCube", "Skybox",
             "Terrain", "Bundle3D", "Sprite3DMaterial"
         ]
-        self.Skip.update({
+        self.Skip |= {
             "Terrain": ["getQuadTree"]
-        })
+        }

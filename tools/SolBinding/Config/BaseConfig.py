@@ -45,7 +45,7 @@ class BaseConfig(object):
         self.CppNameSpace = []
         # 允许生成匿名枚举。
         self.AllowAnonymous = False
-        # 允许生成结构体类型。
+        # 允许生成结构体类型（结构体普遍被转换为一个table，没有必要为每个结构体转换为用户类）。
         self.AllowStruct = False
         # 宏判断，用于某些情况下的条件编译。
         self.MacroJudgement = None

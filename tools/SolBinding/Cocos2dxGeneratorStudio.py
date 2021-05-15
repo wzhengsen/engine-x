@@ -38,11 +38,11 @@ class Cocos2dxGeneratorStudio(Cocos2dxGenerator):
             "-I{}/extensions/cocostudio".format(self.CocosRoot)
         ]
         self.Classes += [
-            "Armature", "ArmatureAnimation", "Skin", "Bone", "ArmatureDataManager", "\w+Data$", "ActionManagerEx", "ComAudio", "ComController", "ComAttribute",
+            "Armature", "ArmatureAnimation", "Skin", "Bone", "ArmatureDataManager", r"\w+Data$", "ActionManagerEx", "ComAudio", "ComController", "ComAttribute",
             "ComRender", "BatchNode", "SceneReader", "GUIReader", "ActionObject", "Tween", "DisplayManager", "NodeReader", "ActionTimeline.*", ".*Frame$",
             "Timeline", "ActionTimelineNode", "ComExtensionData", "BoneNode", "SkeletonNode"
         ]
-        self.Skip.update({
+        self.Skip |= {
             "GUIReader": ["getParseCallBackMap", "getParseObjectMap"],
             "BoneData": ["displayDataList"],
             "ArmatureData": ["boneDataDic"],
@@ -51,8 +51,8 @@ class Cocos2dxGeneratorStudio(Cocos2dxGenerator):
             "AnimationData": ["movementDataDic"],
             "TextureData": ["contourDataList"],
             "MovementData": ["movBoneDataDic"]
-        })
-        self.RenameMembers.update({
+        }
+        self.RenameMembers |= {
             "ActionManagerEx": {
                 "shareManager": "getInstance",
                 "purgeActionManager": "destroyInstance"
@@ -63,4 +63,4 @@ class Cocos2dxGeneratorStudio(Cocos2dxGenerator):
             "ComAudio": {
                 "end": "endToLua"
             }
-        })
+        }

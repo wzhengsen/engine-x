@@ -57,7 +57,7 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "Renderer", "FastTMXLayer", "FastTMXTiledMap", "LanguageType", "PHYSICS.*_MATERIAL_DEFAULT", "GlyphCollection", "MATRIX_STACK_TYPE", "LightType", "LightFlag", "Image::Format",
             "Text(H|V)Alignment", "ResolutionPolicy", "Touch::DispatchMode"
         ]
-        self.Skip.update({
+        self.Skip |= {
             "TMXMapInfo": ["startElement", "endElement"],
             "Application": ["^application.*", "Notify", "Dialog"],
             "Device": ["getTextureDataForText"],
@@ -65,8 +65,8 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "ParallaxNode": ["(s|g)etParallaxArray"],
             "TMXTilesetInfo": ["_animationInfo"],
             "AsyncTaskPool": ["enqueue"]
-        })
-        self.RenameMembers.update({
+        }
+        self.RenameMembers |= {
             "SpriteFrameCache": {"addSpriteFramesWithFile": "addSpriteFrames", "getSpriteFrameByName": "getSpriteFrame"},
             "ProgressTimer": {"setReverseProgress": "setReverseDirection"},
             "AnimationCache": {"addAnimationsWithFile": "addAnimations"},
@@ -77,8 +77,7 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "Director": {"end": "endToLua"},
             "GLView": {"end": "endToLua"},
             "RenderTexture": {"end": "endToLua"}
-        })
-        self.RenameClasses.update({
-            "ParticleSystemQuad": "ParticleSystem",
+        }
+        self.RenameClasses |= {
             "TMXTileFlags_": "TMXTileFlags"
-        })
+        }

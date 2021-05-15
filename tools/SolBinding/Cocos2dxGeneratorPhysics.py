@@ -39,6 +39,6 @@ class Cocos2dxGeneratorPhysics(Cocos2dxGenerator):
         self.Classes += [
             "Event(.*(Physics).*)", "Physics.*"
         ]
-        self.Skip.update({
+        self.Skip |= {
             "PhysicsBody": ["getCPBody"]
-        })
+        }
