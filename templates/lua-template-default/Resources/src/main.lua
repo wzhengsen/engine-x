@@ -11,7 +11,4 @@ local function main()
     require("Frame.Init");
     syx.Application():Start();
 end
-xpcall(main,
-function(msg)
-    print(msg);
-end);
+main();
