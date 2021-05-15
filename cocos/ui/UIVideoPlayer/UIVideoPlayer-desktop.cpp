@@ -58,7 +58,7 @@ LRESULT VideoPlayer::hookGLFWWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
                 VideoPlayer* pThis = (VideoPlayer*)GetWindowLongPtrW(vpView, GWLP_USERDATA);
                 if (pThis && pThis->_isUserInputEnabled) {
                     if (pThis->_isPlaying) {
-                        pThis->Pause();
+                        pThis->Suspend();
                     }
                     else if (pThis->_isPaused) {
                         pThis->Resume();
@@ -418,7 +418,7 @@ void VideoPlayer::Play() {
     }
 }
 
-void VideoPlayer::Pause() {
+void VideoPlayer::Suspend() {
     if (!_videoURL.empty()) {
         libvlc_media_player_pause(vlcPlayer);
     }

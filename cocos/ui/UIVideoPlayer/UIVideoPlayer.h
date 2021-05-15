@@ -137,9 +137,9 @@ namespace ui{
         virtual void Play();
 
         /**
-            * Pauses playback.
+            * Suspend playback.
             */
-        virtual void Pause();
+        virtual void Suspend();
 
         /**
             * Resumes playback.

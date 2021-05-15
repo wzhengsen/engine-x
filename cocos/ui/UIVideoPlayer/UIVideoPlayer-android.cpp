@@ -248,7 +248,7 @@ void VideoPlayer::Play()
     }
 }
 
-void VideoPlayer::Pause()
+void VideoPlayer::Suspend()
 {
     if (! _videoURL.empty())
     {
