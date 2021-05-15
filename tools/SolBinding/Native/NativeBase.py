@@ -193,6 +193,6 @@ class NativeGlobal(NativeWrapper):
             for pField in self._nNameList[1:-1]:
                 strList.append('pTable = pTable["{}"];\n'.format(pField))
 
-            strList.append('pTable["{}"] = std::ref({});\n}}\n'.format(self._newName, self._wholeName))
+            strList.append('pTable["{}"] = {};\n}}\n'.format(self._newName, self._wholeName))
             self._cxxStr = ''.join(strList)
         return self._cxxStr
