@@ -46,5 +46,6 @@
         "frameworks",
         "build"
     ],
-    "cmake.configureOnEdit": false
+    "cmake.configureOnEdit": false,
+    "Lua.workspace.preloadFileSize": 500
 }
