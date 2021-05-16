@@ -61,7 +61,7 @@ LRESULT VideoPlayer::hookGLFWWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPA
                         pThis->Suspend();
                     }
                     else if (pThis->_isPaused) {
-                        pThis->Resume();
+                        pThis->Recover();
                     }
                 }
             }
