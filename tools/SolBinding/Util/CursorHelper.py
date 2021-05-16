@@ -148,3 +148,25 @@ class CursorHelper:
                 return ntype.spelling.replace("__ndk1::", "")
             name = CursorHelper.GetWholeName(decl)
             return (("const " if ntype.is_const_qualified() else "") + name).replace("__ndk1::", "")
+
+    @staticmethod
+    def UpperCamelCase(name: str) -> str:
+        """如果可以，将参数name转换为大驼峰命名，并返回转换后的内容。
+        转换规则：
+            1、下划线后的小写字母转换为大写；
+            2、删除后接非数字非大写的下划线；
+            3、第一个字母转换为大写；
+            4、某些名字不会被转换（如new/delete等）。
+        """
+        if name in ("new", "delete"):
+            return name
+        nameLen = len(name) - 1
+        upper = True
+        ret = []
+        for idx, char in enumerate(name):
+            alpha = char.isalpha()
+            if char != "_" or (idx < nameLen and (name[idx + 1].isdigit() or name[idx + 1].isupper())):
+                ret.append(char.upper() if upper and alpha else char)
+            upper = not alpha
+
+        return "".join(ret)

@@ -71,13 +71,15 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "ProgressTimer": {"setReverseProgress": "setReverseDirection"},
             "AnimationCache": {"addAnimationsWithFile": "addAnimations"},
             "GLProgram": {"setUniformLocationWith1i": "setUniformLocationI32"},
-            "LabelAtlas": {"create": "_create"},
             "Touch": {"getID": "getId"},
-            "FileUtils": {"loadFilenameLookupDictionaryFromFile": "loadFilenameLookup"},
-            "Director": {"end": "endToLua"},
-            "GLView": {"end": "endToLua"},
-            "RenderTexture": {"end": "endToLua"}
+            "FileUtils": {"loadFilenameLookupDictionaryFromFile": "loadFilenameLookup"}
         }
-        self.RenameClasses |= {
-            "TMXTileFlags_": "TMXTileFlags"
-        }
+        if not self.UpperCamelCase:
+            self.RenameMembers |= {
+                "Director": {"end": "endToLua"},
+                "GLView": {"end": "endToLua"},
+                "RenderTexture": {"end": "endToLua"}
+            }
+            self.RenameClasses |= {
+                "TMXTileFlags_": "TMXTileFlags"
+            }

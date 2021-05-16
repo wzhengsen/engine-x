@@ -39,6 +39,7 @@ class Cocos2dxGeneratorAudioEngine(Cocos2dxGenerator):
         self.Classes += [
             "AudioEngine", "AudioProfile"
         ]
-        self.RenameMembers |= {
-            "AudioEngine": {"end": "endToLua"}
-        }
+        if not self.UpperCamelCase:
+            self.RenameMembers |= {
+                "AudioEngine": {"end": "endToLua"}
+            }

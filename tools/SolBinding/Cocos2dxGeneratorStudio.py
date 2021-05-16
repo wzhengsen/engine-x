@@ -59,8 +59,9 @@ class Cocos2dxGeneratorStudio(Cocos2dxGenerator):
             },
             "SceneReader": {
                 "purgeSceneReader": "destroyInstance"
-            },
-            "ComAudio": {
-                "end": "endToLua"
             }
         }
+        if not self.UpperCamelCase:
+            self.RenameMembers |= {
+                "ComAudio": {"end": "endToLua"}
+            }

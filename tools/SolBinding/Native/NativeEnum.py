@@ -36,17 +36,24 @@ class NativeEnum(NativeWrapper):
         依照 命名空间::类型名::类型名...::枚举名{...}的方式生成。
         """
         if not self._cxxStr:
+            upper = self._generator.UpperCamelCase
             kvMap = self._GetKeyValue()
             strList = ["void RegisterLua{}{}Auto(cocos2d::extension::Lua& lua) {{\n".format(
                 self._generator.Tag, "".join(self._nameList[1:]))]
             strList.append('sol::table pTable = lua["{}"];\n'.format(self._simpleNS))
             for pField in self._nNameList[1:-1]:
-                strList.append('pTable = pTable["{}"];\n'.format(pField))
+                strList.append('pTable = pTable["{}"];\n'.format(
+                    pField if not upper else CursorHelper.UpperCamelCase(pField)
+                ))
 
-            strList.append('pTable.new_enum<{}>("{}",{{\n'.format(self._wholeName, self._newName))
+            strList.append('pTable.new_enum<{}>("{}",{{\n'.format(
+                self._wholeName, self._newName if not upper else CursorHelper.UpperCamelCase(self._newName)
+            ))
             enumList = []
             for key, value in kvMap.items():
-                enumList.append('{{"{}",{}}}\n'.format(key, value))
+                enumList.append('{{"{}",{}}}\n'.format(
+                    key if not upper else CursorHelper.UpperCamelCase(key), value
+                ))
             strList.append(",".join(enumList))
             strList.append("});}")
             self._cxxStr = ''.join(strList)
@@ -69,15 +76,20 @@ class NativeAnonymousEnum(NativeEnum):
         依照 命名空间::类型名::类型名...最后的类型名{...}的方式生成。
         """
         if not self._cxxStr:
+            upper = self._generator.UpperCamelCase
             kvMap = self._GetKeyValue()
             strList = ["void RegisterLua{}{}Auto(cocos2d::extension::Lua& lua) {{\n".format(
                 self._generator.Tag, "".join(self._nameList[1:]))]
             strList.append('sol::table pTable = lua["{}"];\n'.format(self._simpleNS))
             for pField in self._nNameList[1:-1]:
-                strList.append('pTable = pTable["{}"];\n'.format(pField))
+                strList.append('pTable = pTable["{}"];\n'.format(
+                    pField if not upper else CursorHelper.UpperCamelCase(pField)
+                ))
 
             for key, value in kvMap.items():
-                strList.append('pTable["{}"] = {};\n'.format(key, value))
+                strList.append('pTable["{}"] = {};\n'.format(
+                    key if not upper else CursorHelper.UpperCamelCase(key), value
+                ))
             strList.append("}")
             self._cxxStr = ''.join(strList)
         return self._cxxStr

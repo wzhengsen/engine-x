@@ -33,7 +33,10 @@ class NativeField(NativeMember):
         依照 mt["self._newName"] = &self._wholeName;的方式生成。
         """
         if not self._cxxStr:
-            strList = ['mt["{}"]=&{};'.format(self._newName, self._wholeName)]
+            upper = self._generator.UpperCamelCase
+            strList = ['mt["{}"]=&{};'.format(
+                self._newName if not upper else CursorHelper.UpperCamelCase(self._newName), self._wholeName
+            )]
             self._cxxStr = ''.join(strList)
         return self._cxxStr
 
@@ -44,7 +47,10 @@ class NativeStaticField(NativeMember):
         依照 mt["self._newName"] = sol::var(std::ref(self._wholeName));的方式生成。
         """
         if not self._cxxStr:
-            strList = ['mt["{}"]=sol::var(std::ref({}));'.format(self._newName, self._wholeName)]
+            upper = self._generator.UpperCamelCase
+            strList = ['mt["{}"]=sol::var(std::ref({}));'.format(
+                self._newName if not upper else CursorHelper.UpperCamelCase(self._newName), self._wholeName
+            )]
             self._cxxStr = ''.join(strList)
         return self._cxxStr
 
@@ -137,11 +143,14 @@ class NativeMethod(NativeMember, NativeFunction):
 
     def __str__(self) -> str:
         if not self._cxxStr:
+            upper = self._generator.UpperCamelCase
             if self._newName == "new":
                 # new被作为构造函数。
                 cxx = ["mt.set_function(sol::meta_function::construct,"]
             else:
-                cxx = ['mt.set_function("{}",'.format(self._newName)]
+                cxx = ['mt.set_function("{}",'.format(
+                    self._newName if not upper else CursorHelper.UpperCamelCase(self._newName)
+                )]
 
             if self._minArgs < len(self._args):
                 # 具有默认参数的方法添加sol::overload重载。
@@ -167,7 +176,14 @@ class NativeOverloadMethod(NativeMember):
 
     def __str__(self) -> str:
         if not self._cxxStr:
-            cxx = ['mt.set_function("{}",'.format(self._newName)]
+            upper = self._generator.UpperCamelCase
+            if self._newName == "new":
+                # new被作为构造函数。
+                cxx = ["mt.set_function(sol::meta_function::construct,"]
+            else:
+                cxx = ['mt.set_function("{}",'.format(
+                    self._newName if not upper else CursorHelper.UpperCamelCase(self._newName)
+                )]
             cxx.append("sol::overload(")
 
             implList = []
@@ -391,6 +407,7 @@ class NativeObject(NativeWrapper):
         if self._cxxStr:
             return self._cxxStr
         cxx = []
+        upper = self._generator.UpperCamelCase
         # 优先生成内部枚举和内部类。
         for c in self._classes:
             cxx.append(str(c))
@@ -402,7 +419,7 @@ class NativeObject(NativeWrapper):
             self._generator.Tag, "".join(self._nameList[1:])))
         cxx.append("{\n")
         cxx.append('auto mt=lua.NewUserType<{wholeName}>("{nsName}","{class_name}",{noCtor});\n'.format(
-            nsName=".".join(self._nNameList[:-1]), class_name=self._newName, wholeName=self._wholeName, noCtor=noCtor))
+            nsName=".".join(self._nNameList[:-1]), class_name=self._newName if not upper else CursorHelper.UpperCamelCase(self._newName), wholeName=self._wholeName, noCtor=noCtor))
 
         # 类与基类名组合
         basesName = ""

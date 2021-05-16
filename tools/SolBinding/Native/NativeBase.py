@@ -187,12 +187,17 @@ class NativeGlobal(NativeWrapper):
 
     def __str__(self) -> str:
         if not self._cxxStr:
+            upper = self._generator.UpperCamelCase
             strList = ["void RegisterLua{}{}Auto(cocos2d::extension::Lua& lua) {{\n".format(
                 self._generator.Tag, "".join(self._nameList[1:]))]
             strList.append('sol::table pTable = lua["{}"];\n'.format(self._simpleNS))
             for pField in self._nNameList[1:-1]:
-                strList.append('pTable = pTable["{}"];\n'.format(pField))
+                strList.append('pTable = pTable["{}"];\n'.format(
+                    pField if not upper else CursorHelper.UpperCamelCase(pField)
+                ))
 
-            strList.append('pTable["{}"] = {};\n}}\n'.format(self._newName, self._wholeName))
+            strList.append('pTable["{}"] = {};\n}}\n'.format(
+                self._newName if not upper else CursorHelper.UpperCamelCase(self._newName), self._wholeName
+            ))
             self._cxxStr = ''.join(strList)
         return self._cxxStr

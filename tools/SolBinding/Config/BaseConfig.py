@@ -43,12 +43,14 @@ class BaseConfig(object):
         # 指定一组c++命名空间，所有c++类将在符合的命名空间中查找，且可以和相同的类名区分开来。
         # 比如："cocos2d::Label" <-> "cocos2d::ui::Label"
         self.CppNameSpace = []
-        # 允许生成匿名枚举。
+        # 允许生成匿名枚举（属于全局或仅属于命名空间的匿名枚举可能在被include时多次生成，谨慎开启）。
         self.AllowAnonymous = False
         # 允许生成结构体类型（结构体普遍被转换为一个table，没有必要为每个结构体转换为用户类）。
         self.AllowStruct = False
         # 宏判断，用于某些情况下的条件编译。
         self.MacroJudgement = None
+        # 使用大驼峰命名法（在最后阶段生效，不会影响命名空间）。
+        self.UpperCamelCase = True
 
         self.AndroidHeaders = []
         self.AndroidFlags = [
