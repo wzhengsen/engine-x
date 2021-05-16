@@ -6,6 +6,7 @@ set(lua_bindings_manual_headers
     manual/CCLuaBridge.h
     manual/CCRegisterLuaManual.h
     manual/CCLuaConvertSol.hpp
+    manual/network/CCLuaWebSocket.h
     # manual/extension/lua_cocos2dx_extension_manual.h
     # manual/spine/LuaSkeletonAnimation.h
     # manual/platform/ios/CCLuaObjcBridge.h
@@ -30,6 +31,7 @@ set(lua_bindings_manual_files
     manual/CCLuaBridge.cpp
     manual/CCRegisterLuaManual.cpp
     manual/CCLuaConvertSol.cpp
+    manual/network/CCLuaWebSocket.cpp
     # manual/lua_module_register.cpp
     # manual/cocos2d/lua_cocos2dx_manual.cpp
     # manual/cocos2d/lua_cocos2dx_physics_manual.cpp
