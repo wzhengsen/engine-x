@@ -142,9 +142,9 @@ namespace ui{
         virtual void Suspend();
 
         /**
-            * Resumes playback.
+            * Recover playback.
             */
-        virtual void Resume();
+        virtual void Recover();
 
         /**
             * Stops playback.

@@ -424,7 +424,7 @@ void VideoPlayer::Suspend() {
     }
 }
 
-void VideoPlayer::Resume() {
+void VideoPlayer::Recover() {
     if (!_videoURL.empty()) {
         libvlc_media_player_set_pause(vlcPlayer, 0);
     }
