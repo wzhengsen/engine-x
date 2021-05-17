@@ -285,5 +285,5 @@ void RegisterLuaManual(extension::Lua& lua) {
     RegisterLuaStudioAnimationDataManual(lua);
     RegisterLuaStudioTextureDataManual(lua);
     RegisterLuaStudioMovementDataManual(lua);
-    RegisterLuaSocketManual(lua);
+    extension::LuaWebSocket::RegisterLuaWebSocketManual(lua);
 }
