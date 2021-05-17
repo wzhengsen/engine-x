@@ -181,7 +181,7 @@ class Assistant():
         if sync:
             self.__SyncModuleToTemp(moduleName)
         if None == uniConfig:
-            uniConfig = self._config.get("useUniConfig")
+            uniConfig = self._config.useUniConfig
         for name, module in self.__GetModule(moduleName).items():
             opDir = os.path.join(Assistant._TempDir, name)
             mConfig = module if not uniConfig else self._config.uniModule
