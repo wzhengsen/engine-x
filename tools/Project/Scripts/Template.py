@@ -165,7 +165,7 @@ class ConfigTemplate:
         # 是否使用通用配置。
         self.useUniConfig = True
         # 退出时保存设置。
-        self.exitSave = True
+        self.exitSave = False
         # 配置文件根目录。
         self.configRoot = "Resources"
         self.uniModule = Module()
