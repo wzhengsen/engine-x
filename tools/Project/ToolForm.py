@@ -441,6 +441,12 @@ class ToolForm(QWidget, Ui_ToolForm):
                 QMessageBox.Yes | QMessageBox.No, QMessageBox.No
             ):
                 return a0.ignore()
+        if not self.__moduleConfig.exitSave:
+            if QMessageBox.Yes == QMessageBox.warning(
+                self, "警告", "你想在退出前保存配置吗？",
+                QMessageBox.Yes | QMessageBox.No, QMessageBox.No
+            ):
+                self.__moduleConfig.exitSave = True
         return super().closeEvent(a0)
 
     @staticmethod
