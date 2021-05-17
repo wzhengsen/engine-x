@@ -122,7 +122,7 @@
                     "label": "$(file-code)",
                     "tooltip": "LuaGen",
                     "color": "#6cc4ff",
-                    "hide": false,
+                    "hide": true,
                 }
             }
         },

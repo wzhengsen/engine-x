@@ -37,6 +37,9 @@
 			},
 			"debug": {
 				"visibility": "hidden"
+			},
+			"ctest": {
+				"visibility": "hidden"
 			}
 		},
 		"files.associations": {
