@@ -69,14 +69,6 @@ namespace extension {
             ws->close();
         });
 
-        ut["GetReadyState"] = &LuaWebSocket::getReadyState;
-        ut["GetUrl"] = &LuaWebSocket::getUrl;
-        ut["GetProtocol"] = &LuaWebSocket::getProtocol;
-        ut["SetOpenHandler"] = &LuaWebSocket::SetOpenHandler;
-        ut["SetMessageHandler"] = &LuaWebSocket::SetMessageHandler;
-        ut["SetCloseHandler"] = &LuaWebSocket::SetCloseHandler;
-        ut["SetErrorHandler"] = &LuaWebSocket::SetErrorHandler;
-
         ut["ReadyState"] = sol::readonly_property(&LuaWebSocket::getReadyState);
         ut["Url"] = sol::readonly_property(&LuaWebSocket::getUrl);
         ut["Protocol"] = sol::readonly_property(&LuaWebSocket::getProtocol);
