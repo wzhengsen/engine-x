@@ -28,6 +28,9 @@ function HttpInvoker:ctor(contentType)
     self._contentType = contentType or HttpInvoker.ContentType.UrlEncoded;
     self._headers = {};
     self._params = {};
+
+    -- 暂存上次的响应，用于在使用同步请求时保存结果。
+    self._responseCache = nil;
 end
 
 ---添加请求头。
@@ -88,6 +91,8 @@ function HttpInvoker:_OnResponse(_,url,code,headerStr,response,sendTime)
         ret.response = response;
     end
 
+    self._responseCache = suc and ret.response or nil;
+
     if not self:OnResponse(suc,ret) then
         Event.Http(self,suc,ret);
     end
@@ -129,6 +134,7 @@ end
 ---
 ---@param url string
 ---@param retry? integer 不要在外部传递该参数，该参数自动由HttpInvoker.Retry指定。
+---@return string,table,nil 只有在同步请求时，才会有返回值。
 function HttpInvoker:Get(url,retry)
     retry = retry or self._retry;
     local hr,data = self:_Prepare(url);
@@ -146,12 +152,16 @@ function HttpInvoker:Get(url,retry)
     else
         hr:Get(url.."?"..data);
     end
+    if false == self._async then
+        return self._responseCache;
+    end
 end
 
 ---发送Post请求。
 ---
 ---@param url string
 ---@param retry? integer 不要在外部传递该参数，该参数自动由HttpInvoker.Retry指定。
+---@return string,table,nil 只有在同步请求时，才会有返回值。
 function HttpInvoker:Post(url,retry)
     retry = retry or self._retry;
     local hr,data = self:_Prepare(url);
@@ -166,12 +176,16 @@ function HttpInvoker:Post(url,retry)
     end;
     hr.Data = data;
     hr:Post(url);
+    if false == self._async then
+        return self._responseCache;
+    end
 end
 
 ---发送Put请求。
 ---
 ---@param url string
 ---@param retry? integer 不要在外部传递该参数，该参数自动由HttpInvoker.Retry指定。
+---@return string,table,nil 只有在同步请求时，才会有返回值。
 function HttpInvoker:Put(url,retry)
     retry = retry or self._retry;
     local hr,data = self:_Prepare(url);
@@ -186,12 +200,16 @@ function HttpInvoker:Put(url,retry)
     end;
     hr.Data = data;
     hr:Put(url);
+    if false == self._async then
+        return self._responseCache;
+    end
 end
 
 ---发送Delete请求。
 ---
 ---@param url string
 ---@param retry? integer 不要在外部传递该参数，该参数自动由HttpInvoker.Retry指定。
+---@return string,table,nil 只有在同步请求时，才会有返回值。
 function HttpInvoker:Delete(url,retry)
     retry = retry or self._retry;
     local hr,data = self:_Prepare(url);
@@ -208,6 +226,9 @@ function HttpInvoker:Delete(url,retry)
         hr:Delete(url);
     else
         hr:Delete(url.."?"..data);
+    end
+    if false == self._async then
+        return self._responseCache;
     end
 end
 
