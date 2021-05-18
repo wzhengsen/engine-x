@@ -322,37 +322,44 @@ public:
 
     void setHosts(std::vector<std::string> hosts) { _hosts = std::move(hosts); }
     const std::vector<std::string>& getHosts() const { return _hosts; }
-	/*
-		���ó�ʱʱ�䣬����
-	*/
-	void SetTimeout(uint32_t timeout) noexcept {
-		_timeout = timeout;
-	}
 
-	/*
-		��ȡ��ʱʱ�䣬����
-	*/
-	uint32_t GetTimeout() const noexcept {
-		return _timeout;
-	}
+    /**
+     * Set request timeout.
+     * @param timeout Use millisecond.
+    */
+    void SetTimeout(uint32_t timeout) noexcept {
+        _timeout = timeout;
+    }
 
-	/*
-		�����Ƿ��첽
-	*/
-	void SetAsync(bool isAsync) noexcept {
-		_isAsync = isAsync;
+    /**
+     * The request timeout.
+     * @return Millisecond.
+    */
+    uint32_t GetTimeout() const noexcept {
+        return _timeout;
+    }
 
-	}
+    /**
+     * Set whether the request is async or not.
+     * @param isAsync async.
+    */
+    void SetAsync(bool isAsync) noexcept {
+        _isAsync = isAsync;
 
-	/*
-		�����Ƿ��첽
-	*/
-	bool IsAsync() const noexcept {
-		return _isAsync;
-	}
+    }
 
-	// Ĭ�Ϻ��볬ʱ
-	static constexpr uint32_t			 DefaultTimeoutMillisecond = 30000;
+    /**
+     * Get whether the request is async or not.
+     * @return Is async?
+    */
+    bool IsAsync() const noexcept {
+        return _isAsync;
+    }
+
+    /**
+     * @brief The default timeout.
+    */
+    static constexpr uint32_t   DefaultTimeoutMillisecond = 30000;
 
 private:
     void doSetResponseCallback(Ref* pTarget, SEL_HttpResponse pSelector)
@@ -394,4 +401,3 @@ NS_CC_END
 /// @}
 
 #endif //__HTTP_REQUEST_H__
-

@@ -30,6 +30,7 @@ extern "C" {
 #include "CCDatas.h"
 #include "ActionTimeline/CCSkeletonNode.h"
 #include "network/CCLuaWebSocket.h"
+#include "network/CCLuaHttpRequest.h"
 
 using namespace cocos2d;
 
@@ -286,4 +287,5 @@ void RegisterLuaManual(extension::Lua& lua) {
     RegisterLuaStudioTextureDataManual(lua);
     RegisterLuaStudioMovementDataManual(lua);
     extension::LuaWebSocket::RegisterLuaWebSocketManual(lua);
+    extension::LuaHttpRequest::RegisterLuaHttpRequestManual(lua);
 }

@@ -34,7 +34,7 @@ end
 --	Return:	string
 ---------------------------------------------
 function string:Trim()
-    return self:match("%S.*%S") or "";
+    return self:match("^%s*(.-)%s*$") or "";
 end
 
 local function EncodeUrl(input)
