@@ -38,5 +38,9 @@ class Cocos2dxGeneratorUI(Cocos2dxGenerator):
             "Helper", "Widget", "Layout", "Button", "CheckBox", "ImageView", "Text", "TextAtlas", "TextBMFont", "LoadingBar",
             "Slider", "TextField", "ScrollView", "ListView", "PageView", "LayoutParameter", "LinearLayoutParameter", "RelativeLayoutParameter", "Rich.*", "HBox",
             "VBox", "RelativeBox", "Scale9Sprite", "EditBox", "LayoutComponent", "AbstractCheckButton", "RadioButton", "RadioButtonGroup", "TabControl", "TabHeader",
-            "QrCode", "WebView", "VideoPlayer"
+            "QrCode", "WebView", "VideoPlayer",
+
+            "Widget::.*", "CheckBox::.*", "RadioButton::.*", "RadioButtonGroup::.*", "Slider::.*", "TextField::.*", "LoadingBar::.*", "ScrollView::.*", "ListView::.*", "PageView::.*",
+            "ListView::.*", "Text::.*", "LayoutComponent::.*", "Scale9Sprite::.*", "Layout::.*", "LayoutParameter::.*", "LinearLayoutParameter::.*", "RelativeLayoutParameter::.*", "EditBox::.*", "RichText::.*",
+            "TabControl::.*", "VideoPlayer::.*"
         ]

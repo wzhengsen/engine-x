@@ -47,7 +47,9 @@ class Cocos2dxGeneratorBackend(Cocos2dxGenerator):
             "VertexLayout", "BufferUsage", "BufferType", "ShaderStage", "VertexFormat", "PixelFormat", "TextureUsage", "IndexFormat", "VertexStepMode", "PrimitiveType",
             "TextureType", "SamplerAddressMode", "SamplerFilter", "StencilOperation", "CompareFunction", "BlendOperation", "BlendFactor", "ColorWriteMask", "SamplerDescriptor", "CullMode",
             "Winding", "UniformInfo", "UniformLocation", "AttributeBindInfo", "TextureCubeFace", "ProgramState", "TextureBackend", "Program", "Texture2DBackend", "TextureCubemapBackend",
-            "Device", "ShaderCache"
+            "Device", "ShaderCache",
+
+            "ProgramType"
         ]
         self.Skip |= {
             "ProgramState": ["getCallbackUniforms", "getVertexUniformBuffer", "getFragmentUniformBuffer"]

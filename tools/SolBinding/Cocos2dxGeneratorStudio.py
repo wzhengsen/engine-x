@@ -40,7 +40,9 @@ class Cocos2dxGeneratorStudio(Cocos2dxGenerator):
         self.Classes += [
             "Armature", "ArmatureAnimation", "Skin", "Bone", "ArmatureDataManager", r"\w+Data$", "ActionManagerEx", "ComAudio", "ComController", "ComAttribute",
             "ComRender", "BatchNode", "SceneReader", "GUIReader", "ActionObject", "Tween", "DisplayManager", "NodeReader", "ActionTimeline.*", ".*Frame$",
-            "Timeline", "ActionTimelineNode", "ComExtensionData", "BoneNode", "SkeletonNode"
+            "Timeline", "ActionTimelineNode", "ComExtensionData", "BoneNode", "SkeletonNode",
+
+            "MovementEventType", "InnerActionType"
         ]
         self.Skip |= {
             "GUIReader": ["getParseCallBackMap", "getParseObjectMap"],
