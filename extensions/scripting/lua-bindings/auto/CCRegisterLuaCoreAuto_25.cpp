@@ -8,6 +8,40 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+void RegisterLuaCoreDirectionLightAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::DirectionLight>("cc","DirectionLight",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::BaseLight,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::DirectionLight*(*)(const cocos2d::Vec3&,const cocos2d::Color3B&)>(&cocos2d::DirectionLight::create));
+mt.set_function("GetLightType",static_cast<cocos2d::LightType(cocos2d::DirectionLight::*)()const>(&cocos2d::DirectionLight::getLightType));
+mt.set_function("SetDirection",static_cast<void(cocos2d::DirectionLight::*)(const cocos2d::Vec3&)>(&cocos2d::DirectionLight::setDirection));
+mt.set_function("GetDirection",static_cast<cocos2d::Vec3(cocos2d::DirectionLight::*)()const>(&cocos2d::DirectionLight::getDirection));
+mt.set_function("GetDirectionInWorld",static_cast<cocos2d::Vec3(cocos2d::DirectionLight::*)()const>(&cocos2d::DirectionLight::getDirectionInWorld));
+}
+void RegisterLuaCorePointLightAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::PointLight>("cc","PointLight",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::BaseLight,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::PointLight*(*)(const cocos2d::Vec3&,const cocos2d::Color3B&,float)>(&cocos2d::PointLight::create));
+mt.set_function("GetLightType",static_cast<cocos2d::LightType(cocos2d::PointLight::*)()const>(&cocos2d::PointLight::getLightType));
+mt.set_function("GetRange",static_cast<float(cocos2d::PointLight::*)()const>(&cocos2d::PointLight::getRange));
+mt.set_function("SetRange",static_cast<void(cocos2d::PointLight::*)(float)>(&cocos2d::PointLight::setRange));
+}
+void RegisterLuaCoreSpotLightAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::SpotLight>("cc","SpotLight",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::BaseLight,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::SpotLight*(*)(const cocos2d::Vec3&,const cocos2d::Vec3&,const cocos2d::Color3B&,float,float,float)>(&cocos2d::SpotLight::create));
+mt.set_function("GetLightType",static_cast<cocos2d::LightType(cocos2d::SpotLight::*)()const>(&cocos2d::SpotLight::getLightType));
+mt.set_function("SetDirection",static_cast<void(cocos2d::SpotLight::*)(const cocos2d::Vec3&)>(&cocos2d::SpotLight::setDirection));
+mt.set_function("GetDirection",static_cast<cocos2d::Vec3(cocos2d::SpotLight::*)()const>(&cocos2d::SpotLight::getDirection));
+mt.set_function("GetDirectionInWorld",static_cast<cocos2d::Vec3(cocos2d::SpotLight::*)()const>(&cocos2d::SpotLight::getDirectionInWorld));
+mt.set_function("SetRange",static_cast<void(cocos2d::SpotLight::*)(float)>(&cocos2d::SpotLight::setRange));
+mt.set_function("GetRange",static_cast<float(cocos2d::SpotLight::*)()const>(&cocos2d::SpotLight::getRange));
+mt.set_function("SetInnerAngle",static_cast<void(cocos2d::SpotLight::*)(float)>(&cocos2d::SpotLight::setInnerAngle));
+mt.set_function("GetInnerAngle",static_cast<float(cocos2d::SpotLight::*)()const>(&cocos2d::SpotLight::getInnerAngle));
+mt.set_function("GetCosInnerAngle",static_cast<float(cocos2d::SpotLight::*)()const>(&cocos2d::SpotLight::getCosInnerAngle));
+mt.set_function("SetOuterAngle",static_cast<void(cocos2d::SpotLight::*)(float)>(&cocos2d::SpotLight::setOuterAngle));
+mt.set_function("GetOuterAngle",static_cast<float(cocos2d::SpotLight::*)()const>(&cocos2d::SpotLight::getOuterAngle));
+mt.set_function("GetCosOuterAngle",static_cast<float(cocos2d::SpotLight::*)()const>(&cocos2d::SpotLight::getCosOuterAngle));
+}
 void RegisterLuaCoreAmbientLightAuto(cocos2d::extension::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::AmbientLight>("cc","AmbientLight",false);
 cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::BaseLight,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
@@ -170,55 +204,4 @@ mt.set_function("WaitForQuit",static_cast<void(cocos2d::TextureCache::*)()>(&coc
 mt.set_function("GetTextureFilePath",static_cast<std::string(cocos2d::TextureCache::*)(cocos2d::Texture2D*)const>(&cocos2d::TextureCache::getTextureFilePath));
 mt.set_function("RenameTextureWithKey",static_cast<void(cocos2d::TextureCache::*)(const std::string&,const std::string&)>(&cocos2d::TextureCache::renameTextureWithKey));
 mt[sol::call_constructor]=sol::constructors<cocos2d::TextureCache()>();
-}
-void RegisterLuaCoreDeviceAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Device>("cc","Device",true);
-mt.set_function("GetDPI",static_cast<int(*)()>(&cocos2d::Device::getDPI));
-mt.set_function("SetAccelerometerEnabled",static_cast<void(*)(bool)>(&cocos2d::Device::setAccelerometerEnabled));
-mt.set_function("SetAccelerometerInterval",static_cast<void(*)(float)>(&cocos2d::Device::setAccelerometerInterval));
-mt.set_function("SetKeepScreenOn",static_cast<void(*)(bool)>(&cocos2d::Device::setKeepScreenOn));
-mt.set_function("Vibrate",static_cast<void(*)(float)>(&cocos2d::Device::vibrate));
-}
-void RegisterLuaCoreApplicationProtocolPlatformAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["cc"];
-pTable = pTable["ApplicationProtocol"];
-pTable.new_enum<cocos2d::ApplicationProtocol::Platform>("Platform",{
-{"OS_WINDOWS",cocos2d::ApplicationProtocol::Platform::OS_WINDOWS}
-,{"OS_LINUX",cocos2d::ApplicationProtocol::Platform::OS_LINUX}
-,{"OS_MAC",cocos2d::ApplicationProtocol::Platform::OS_MAC}
-,{"OS_ANDROID",cocos2d::ApplicationProtocol::Platform::OS_ANDROID}
-,{"OS_IPHONE",cocos2d::ApplicationProtocol::Platform::OS_IPHONE}
-,{"OS_IPAD",cocos2d::ApplicationProtocol::Platform::OS_IPAD}
-});}
-void RegisterLuaCoreApplicationProtocolAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ApplicationProtocol>("cc","ApplicationProtocol",true);
-mt.set_function("ApplicationDidFinishLaunching",static_cast<bool(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::applicationDidFinishLaunching));
-mt.set_function("ApplicationDidEnterBackground",static_cast<void(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::applicationDidEnterBackground));
-mt.set_function("ApplicationWillEnterForeground",static_cast<void(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::applicationWillEnterForeground));
-mt.set_function("SetAnimationInterval",static_cast<void(cocos2d::ApplicationProtocol::*)(float)>(&cocos2d::ApplicationProtocol::setAnimationInterval));
-mt.set_function("InitGLContextAttrs",static_cast<void(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::initGLContextAttrs));
-mt.set_function("GetCurrentLanguage",static_cast<cocos2d::LanguageType(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::getCurrentLanguage));
-mt.set_function("GetCurrentLanguageCode",static_cast<const char*(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::getCurrentLanguageCode));
-mt.set_function("GetTargetPlatform",static_cast<cocos2d::ApplicationProtocol::Platform(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::getTargetPlatform));
-mt.set_function("GetVersion",static_cast<std::string(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::getVersion));
-mt.set_function("GetCompileVersion",static_cast<int64_t(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::GetCompileVersion));
-mt.set_function("OpenURL",static_cast<bool(cocos2d::ApplicationProtocol::*)(const std::string&)>(&cocos2d::ApplicationProtocol::openURL));
-mt.set_function("RestartLuaEngine",static_cast<bool(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::RestartLuaEngine));
-mt.set_function("Dialog",sol::overload([](cocos2d::ApplicationProtocol* obj,const std::string& arg0,const std::string& arg1){return obj->Dialog(arg0,arg1);},[](cocos2d::ApplicationProtocol* obj,const std::string& arg0,const std::string& arg1,const std::function<void ()>& arg2){return obj->Dialog(arg0,arg1,arg2);},[](cocos2d::ApplicationProtocol* obj,const std::string& arg0,const std::string& arg1,const std::function<void ()>& arg2,const std::function<void ()>& arg3){return obj->Dialog(arg0,arg1,arg2,arg3);}));
-mt.set_function("Notify",sol::overload([](cocos2d::ApplicationProtocol* obj,const std::string& arg0,const std::string& arg1){return obj->Notify(arg0,arg1);},[](cocos2d::ApplicationProtocol* obj,const std::string& arg0,const std::string& arg1,const std::function<void ()>& arg2){return obj->Notify(arg0,arg1,arg2);}));
-RegisterLuaCoreApplicationProtocolPlatformAuto(lua);
-}
-void RegisterLuaCoreApplicationAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Application>("cc","Application",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ApplicationProtocol>());
-mt.set_function("SetAnimationInterval",static_cast<void(cocos2d::Application::*)(float)>(&cocos2d::Application::setAnimationInterval));
-mt.set_function("Run",static_cast<int(cocos2d::Application::*)()>(&cocos2d::Application::run));
-mt.set_function("GetInstance",static_cast<cocos2d::Application*(*)()>(&cocos2d::Application::getInstance));
-mt.set_function("GetCurrentLanguage",static_cast<cocos2d::LanguageType(cocos2d::Application::*)()>(&cocos2d::Application::getCurrentLanguage));
-mt.set_function("GetCurrentLanguageCode",static_cast<const char*(cocos2d::Application::*)()>(&cocos2d::Application::getCurrentLanguageCode));
-mt.set_function("GetTargetPlatform",static_cast<cocos2d::ApplicationProtocol::Platform(cocos2d::Application::*)()>(&cocos2d::Application::getTargetPlatform));
-mt.set_function("GetVersion",static_cast<std::string(cocos2d::Application::*)()>(&cocos2d::Application::getVersion));
-mt.set_function("GetCompileVersion",static_cast<int64_t(cocos2d::Application::*)()>(&cocos2d::Application::GetCompileVersion));
-mt.set_function("OpenURL",static_cast<bool(cocos2d::Application::*)(const std::string&)>(&cocos2d::Application::openURL));
-mt["Instance"]=sol::readonly_property(&cocos2d::Application::getInstance);
 }

@@ -15,6 +15,31 @@ mt.set_function(sol::meta_function::construct,static_cast<cocos2d::FlipY3D*(*)(f
 mt.set_function("Update",static_cast<void(cocos2d::FlipY3D::*)(float)>(&cocos2d::FlipY3D::update));
 mt.set_function("Clone",static_cast<cocos2d::FlipY3D*(cocos2d::FlipY3D::*)()const>(&cocos2d::FlipY3D::clone));
 }
+void RegisterLuaCoreLens3DAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::Lens3D>("cc","Lens3D",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Grid3DAction,cocos2d::GridAction,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::Lens3D*(*)(float,const cocos2d::Size&,const cocos2d::Vec2&,float)>(&cocos2d::Lens3D::create));
+mt.set_function("GetLensEffect",static_cast<float(cocos2d::Lens3D::*)()const>(&cocos2d::Lens3D::getLensEffect));
+mt.set_function("SetLensEffect",static_cast<void(cocos2d::Lens3D::*)(float)>(&cocos2d::Lens3D::setLensEffect));
+mt.set_function("SetConcave",static_cast<void(cocos2d::Lens3D::*)(bool)>(&cocos2d::Lens3D::setConcave));
+mt.set_function("GetPosition",static_cast<const cocos2d::Vec2&(cocos2d::Lens3D::*)()const>(&cocos2d::Lens3D::getPosition));
+mt.set_function("SetPosition",static_cast<void(cocos2d::Lens3D::*)(const cocos2d::Vec2&)>(&cocos2d::Lens3D::setPosition));
+mt.set_function("Clone",static_cast<cocos2d::Lens3D*(cocos2d::Lens3D::*)()const>(&cocos2d::Lens3D::clone));
+mt.set_function("Update",static_cast<void(cocos2d::Lens3D::*)(float)>(&cocos2d::Lens3D::update));
+}
+void RegisterLuaCoreRipple3DAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::Ripple3D>("cc","Ripple3D",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Grid3DAction,cocos2d::GridAction,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::Ripple3D*(*)(float,const cocos2d::Size&,const cocos2d::Vec2&,float,unsigned int,float)>(&cocos2d::Ripple3D::create));
+mt.set_function("GetPosition",static_cast<const cocos2d::Vec2&(cocos2d::Ripple3D::*)()const>(&cocos2d::Ripple3D::getPosition));
+mt.set_function("SetPosition",static_cast<void(cocos2d::Ripple3D::*)(const cocos2d::Vec2&)>(&cocos2d::Ripple3D::setPosition));
+mt.set_function("GetAmplitude",static_cast<float(cocos2d::Ripple3D::*)()const>(&cocos2d::Ripple3D::getAmplitude));
+mt.set_function("SetAmplitude",static_cast<void(cocos2d::Ripple3D::*)(float)>(&cocos2d::Ripple3D::setAmplitude));
+mt.set_function("GetAmplitudeRate",static_cast<float(cocos2d::Ripple3D::*)()const>(&cocos2d::Ripple3D::getAmplitudeRate));
+mt.set_function("SetAmplitudeRate",static_cast<void(cocos2d::Ripple3D::*)(float)>(&cocos2d::Ripple3D::setAmplitudeRate));
+mt.set_function("Clone",static_cast<cocos2d::Ripple3D*(cocos2d::Ripple3D::*)()const>(&cocos2d::Ripple3D::clone));
+mt.set_function("Update",static_cast<void(cocos2d::Ripple3D::*)(float)>(&cocos2d::Ripple3D::update));
+}
 void RegisterLuaCoreShaky3DAuto(cocos2d::extension::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::Shaky3D>("cc","Shaky3D",false);
 cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Grid3DAction,cocos2d::GridAction,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
@@ -95,26 +120,4 @@ mt.set_function("Clone",static_cast<cocos2d::ProgressFromTo*(cocos2d::ProgressFr
 mt.set_function("Reverse",static_cast<cocos2d::ProgressFromTo*(cocos2d::ProgressFromTo::*)()const>(&cocos2d::ProgressFromTo::reverse));
 mt.set_function("StartWithTarget",static_cast<void(cocos2d::ProgressFromTo::*)(cocos2d::Node*)>(&cocos2d::ProgressFromTo::startWithTarget));
 mt.set_function("Update",static_cast<void(cocos2d::ProgressFromTo::*)(float)>(&cocos2d::ProgressFromTo::update));
-}
-void RegisterLuaCoreShuffleTilesAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ShuffleTiles>("cc","ShuffleTiles",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TiledGrid3DAction,cocos2d::GridAction,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::ShuffleTiles*(*)(float,const cocos2d::Size&,unsigned int)>(&cocos2d::ShuffleTiles::create));
-mt.set_function("Shuffle",static_cast<void(cocos2d::ShuffleTiles::*)(unsigned int*,unsigned int)>(&cocos2d::ShuffleTiles::shuffle));
-mt.set_function("GetDelta",static_cast<cocos2d::Size(cocos2d::ShuffleTiles::*)(const cocos2d::Size&)const>(&cocos2d::ShuffleTiles::getDelta));
-mt.set_function("PlaceTile",static_cast<void(cocos2d::ShuffleTiles::*)(const cocos2d::Vec2&,cocos2d::Tile*)>(&cocos2d::ShuffleTiles::placeTile));
-mt.set_function("StartWithTarget",static_cast<void(cocos2d::ShuffleTiles::*)(cocos2d::Node*)>(&cocos2d::ShuffleTiles::startWithTarget));
-mt.set_function("Update",static_cast<void(cocos2d::ShuffleTiles::*)(float)>(&cocos2d::ShuffleTiles::update));
-mt.set_function("Clone",static_cast<cocos2d::ShuffleTiles*(cocos2d::ShuffleTiles::*)()const>(&cocos2d::ShuffleTiles::clone));
-}
-void RegisterLuaCoreFadeOutTRTilesAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::FadeOutTRTiles>("cc","FadeOutTRTiles",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TiledGrid3DAction,cocos2d::GridAction,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::FadeOutTRTiles*(*)(float,const cocos2d::Size&)>(&cocos2d::FadeOutTRTiles::create));
-mt.set_function("TestFunc",static_cast<float(cocos2d::FadeOutTRTiles::*)(const cocos2d::Size&,float)>(&cocos2d::FadeOutTRTiles::testFunc));
-mt.set_function("TurnOnTile",static_cast<void(cocos2d::FadeOutTRTiles::*)(const cocos2d::Vec2&)>(&cocos2d::FadeOutTRTiles::turnOnTile));
-mt.set_function("TurnOffTile",static_cast<void(cocos2d::FadeOutTRTiles::*)(const cocos2d::Vec2&)>(&cocos2d::FadeOutTRTiles::turnOffTile));
-mt.set_function("TransformTile",static_cast<void(cocos2d::FadeOutTRTiles::*)(const cocos2d::Vec2&,float)>(&cocos2d::FadeOutTRTiles::transformTile));
-mt.set_function("Update",static_cast<void(cocos2d::FadeOutTRTiles::*)(float)>(&cocos2d::FadeOutTRTiles::update));
-mt.set_function("Clone",static_cast<cocos2d::FadeOutTRTiles*(cocos2d::FadeOutTRTiles::*)()const>(&cocos2d::FadeOutTRTiles::clone));
 }

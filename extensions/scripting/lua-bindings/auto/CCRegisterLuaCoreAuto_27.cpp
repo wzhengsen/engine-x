@@ -8,6 +8,82 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+void RegisterLuaCoreTMXLayerInfoAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::TMXLayerInfo>("cc","TMXLayerInfo",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function("SetProperties",static_cast<void(cocos2d::TMXLayerInfo::*)(cocos2d::ValueMap)>(&cocos2d::TMXLayerInfo::setProperties));
+mt.set_function("GetProperties",static_cast<cocos2d::ValueMap&(cocos2d::TMXLayerInfo::*)()>(&cocos2d::TMXLayerInfo::getProperties));
+mt[sol::call_constructor]=sol::constructors<cocos2d::TMXLayerInfo()>();
+mt["Properties"]=&cocos2d::TMXLayerInfo::_properties;
+mt["Name"]=&cocos2d::TMXLayerInfo::_name;
+mt["LayerSize"]=&cocos2d::TMXLayerInfo::_layerSize;
+mt["Tiles"]=&cocos2d::TMXLayerInfo::_tiles;
+mt["Visible"]=&cocos2d::TMXLayerInfo::_visible;
+mt["Opacity"]=&cocos2d::TMXLayerInfo::_opacity;
+mt["OwnTiles"]=&cocos2d::TMXLayerInfo::_ownTiles;
+mt["Offset"]=&cocos2d::TMXLayerInfo::_offset;
+}
+void RegisterLuaCoreTMXTilesetInfoAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::TMXTilesetInfo>("cc","TMXTilesetInfo",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function("GetRectForGID",static_cast<cocos2d::Rect(cocos2d::TMXTilesetInfo::*)(uint32_t)>(&cocos2d::TMXTilesetInfo::getRectForGID));
+mt[sol::call_constructor]=sol::constructors<cocos2d::TMXTilesetInfo()>();
+mt["Name"]=&cocos2d::TMXTilesetInfo::_name;
+mt["FirstGid"]=&cocos2d::TMXTilesetInfo::_firstGid;
+mt["TileSize"]=&cocos2d::TMXTilesetInfo::_tileSize;
+mt["Spacing"]=&cocos2d::TMXTilesetInfo::_spacing;
+mt["Margin"]=&cocos2d::TMXTilesetInfo::_margin;
+mt["TileOffset"]=&cocos2d::TMXTilesetInfo::_tileOffset;
+mt["SourceImage"]=&cocos2d::TMXTilesetInfo::_sourceImage;
+mt["ImageSize"]=&cocos2d::TMXTilesetInfo::_imageSize;
+mt["OriginSourceImage"]=&cocos2d::TMXTilesetInfo::_originSourceImage;
+}
+void RegisterLuaCoreTMXMapInfoAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::TMXMapInfo>("cc","TMXMapInfo",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::SAXDelegator>());
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::TMXMapInfo*(*)(const std::string&)>(&cocos2d::TMXMapInfo::create));
+mt.set_function("CreateWithXML",static_cast<cocos2d::TMXMapInfo*(*)(const std::string&,const std::string&)>(&cocos2d::TMXMapInfo::createWithXML));
+mt.set_function("InitWithTMXFile",static_cast<bool(cocos2d::TMXMapInfo::*)(const std::string&)>(&cocos2d::TMXMapInfo::initWithTMXFile));
+mt.set_function("InitWithXML",static_cast<bool(cocos2d::TMXMapInfo::*)(const std::string&,const std::string&)>(&cocos2d::TMXMapInfo::initWithXML));
+mt.set_function("ParseXMLFile",static_cast<bool(cocos2d::TMXMapInfo::*)(const std::string&)>(&cocos2d::TMXMapInfo::parseXMLFile));
+mt.set_function("ParseXMLString",static_cast<bool(cocos2d::TMXMapInfo::*)(const std::string&)>(&cocos2d::TMXMapInfo::parseXMLString));
+mt.set_function("GetTileProperties",static_cast<cocos2d::ValueMapIntKey&(cocos2d::TMXMapInfo::*)()>(&cocos2d::TMXMapInfo::getTileProperties));
+mt.set_function("SetTileProperties",static_cast<void(cocos2d::TMXMapInfo::*)(const cocos2d::ValueMapIntKey&)>(&cocos2d::TMXMapInfo::setTileProperties));
+mt.set_function("GetOrientation",static_cast<int(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getOrientation));
+mt.set_function("SetOrientation",static_cast<void(cocos2d::TMXMapInfo::*)(int)>(&cocos2d::TMXMapInfo::setOrientation));
+mt.set_function("GetStaggerAxis",static_cast<int(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getStaggerAxis));
+mt.set_function("SetStaggerAxis",static_cast<void(cocos2d::TMXMapInfo::*)(int)>(&cocos2d::TMXMapInfo::setStaggerAxis));
+mt.set_function("GetStaggerIndex",static_cast<int(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getStaggerIndex));
+mt.set_function("SetStaggerIndex",static_cast<void(cocos2d::TMXMapInfo::*)(int)>(&cocos2d::TMXMapInfo::setStaggerIndex));
+mt.set_function("GetHexSideLength",static_cast<int(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getHexSideLength));
+mt.set_function("SetHexSideLength",static_cast<void(cocos2d::TMXMapInfo::*)(int)>(&cocos2d::TMXMapInfo::setHexSideLength));
+mt.set_function("GetMapSize",static_cast<const cocos2d::Size&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getMapSize));
+mt.set_function("SetMapSize",static_cast<void(cocos2d::TMXMapInfo::*)(const cocos2d::Size&)>(&cocos2d::TMXMapInfo::setMapSize));
+mt.set_function("GetTileSize",static_cast<const cocos2d::Size&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getTileSize));
+mt.set_function("SetTileSize",static_cast<void(cocos2d::TMXMapInfo::*)(const cocos2d::Size&)>(&cocos2d::TMXMapInfo::setTileSize));
+mt.set_function("GetLayers",sol::overload(static_cast<cocos2d::Vector<cocos2d::TMXLayerInfo *>&(cocos2d::TMXMapInfo::*)()>(&cocos2d::TMXMapInfo::getLayers),static_cast<const cocos2d::Vector<cocos2d::TMXLayerInfo *>&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getLayers)));
+mt.set_function("SetLayers",static_cast<void(cocos2d::TMXMapInfo::*)(const cocos2d::Vector<cocos2d::TMXLayerInfo *>&)>(&cocos2d::TMXMapInfo::setLayers));
+mt.set_function("GetTilesets",sol::overload(static_cast<cocos2d::Vector<cocos2d::TMXTilesetInfo *>&(cocos2d::TMXMapInfo::*)()>(&cocos2d::TMXMapInfo::getTilesets),static_cast<const cocos2d::Vector<cocos2d::TMXTilesetInfo *>&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getTilesets)));
+mt.set_function("SetTilesets",static_cast<void(cocos2d::TMXMapInfo::*)(const cocos2d::Vector<cocos2d::TMXTilesetInfo *>&)>(&cocos2d::TMXMapInfo::setTilesets));
+mt.set_function("GetObjectGroups",sol::overload(static_cast<cocos2d::Vector<cocos2d::TMXObjectGroup *>&(cocos2d::TMXMapInfo::*)()>(&cocos2d::TMXMapInfo::getObjectGroups),static_cast<const cocos2d::Vector<cocos2d::TMXObjectGroup *>&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getObjectGroups)));
+mt.set_function("SetObjectGroups",static_cast<void(cocos2d::TMXMapInfo::*)(const cocos2d::Vector<cocos2d::TMXObjectGroup *>&)>(&cocos2d::TMXMapInfo::setObjectGroups));
+mt.set_function("GetParentElement",static_cast<int(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getParentElement));
+mt.set_function("SetParentElement",static_cast<void(cocos2d::TMXMapInfo::*)(int)>(&cocos2d::TMXMapInfo::setParentElement));
+mt.set_function("GetParentGID",static_cast<int(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getParentGID));
+mt.set_function("SetParentGID",static_cast<void(cocos2d::TMXMapInfo::*)(int)>(&cocos2d::TMXMapInfo::setParentGID));
+mt.set_function("GetLayerAttribs",static_cast<int(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getLayerAttribs));
+mt.set_function("SetLayerAttribs",static_cast<void(cocos2d::TMXMapInfo::*)(int)>(&cocos2d::TMXMapInfo::setLayerAttribs));
+mt.set_function("IsStoringCharacters",static_cast<bool(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::isStoringCharacters));
+mt.set_function("SetStoringCharacters",static_cast<void(cocos2d::TMXMapInfo::*)(bool)>(&cocos2d::TMXMapInfo::setStoringCharacters));
+mt.set_function("GetProperties",sol::overload(static_cast<cocos2d::ValueMap&(cocos2d::TMXMapInfo::*)()>(&cocos2d::TMXMapInfo::getProperties),static_cast<const cocos2d::ValueMap&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getProperties)));
+mt.set_function("SetProperties",static_cast<void(cocos2d::TMXMapInfo::*)(const cocos2d::ValueMap&)>(&cocos2d::TMXMapInfo::setProperties));
+mt.set_function("TextHandler",static_cast<void(cocos2d::TMXMapInfo::*)(void*,const char*,size_t)>(&cocos2d::TMXMapInfo::textHandler));
+mt.set_function("GetCurrentString",static_cast<const std::string&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getCurrentString));
+mt.set_function("SetCurrentString",static_cast<void(cocos2d::TMXMapInfo::*)(const std::string&)>(&cocos2d::TMXMapInfo::setCurrentString));
+mt.set_function("GetTMXFileName",static_cast<const std::string&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getTMXFileName));
+mt.set_function("SetTMXFileName",static_cast<void(cocos2d::TMXMapInfo::*)(const std::string&)>(&cocos2d::TMXMapInfo::setTMXFileName));
+mt.set_function("GetExternalTilesetFileName",static_cast<const std::string&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getExternalTilesetFileName));
+}
 void RegisterLuaCoreTileMapAtlasAuto(cocos2d::extension::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::TileMapAtlas>("cc","TileMapAtlas",false);
 cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::AtlasNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TextureProtocol,cocos2d::BlendProtocol>());
@@ -142,39 +218,4 @@ mt.set_function("AddSprite3DData",static_cast<bool(cocos2d::Sprite3DCache::*)(co
 mt.set_function("RemoveSprite3DData",static_cast<void(cocos2d::Sprite3DCache::*)(const std::string&)>(&cocos2d::Sprite3DCache::removeSprite3DData));
 mt.set_function("RemoveAllSprite3DData",static_cast<void(cocos2d::Sprite3DCache::*)()>(&cocos2d::Sprite3DCache::removeAllSprite3DData));
 mt["Instance"]=sol::property(&cocos2d::Sprite3DCache::getInstance,[](std::nullptr_t){cocos2d::Sprite3DCache::destroyInstance();});
-}
-void RegisterLuaCoreSprite3DMaterialMaterialTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["cc"];
-pTable = pTable["Sprite3DMaterial"];
-pTable.new_enum<cocos2d::Sprite3DMaterial::MaterialType>("MaterialType",{
-{"UNLIT",cocos2d::Sprite3DMaterial::MaterialType::UNLIT}
-,{"UNLIT_NOTEX",cocos2d::Sprite3DMaterial::MaterialType::UNLIT_NOTEX}
-,{"VERTEX_LIT",cocos2d::Sprite3DMaterial::MaterialType::VERTEX_LIT}
-,{"DIFFUSE",cocos2d::Sprite3DMaterial::MaterialType::DIFFUSE}
-,{"DIFFUSE_NOTEX",cocos2d::Sprite3DMaterial::MaterialType::DIFFUSE_NOTEX}
-,{"BUMPED_DIFFUSE",cocos2d::Sprite3DMaterial::MaterialType::BUMPED_DIFFUSE}
-,{"CUSTOM",cocos2d::Sprite3DMaterial::MaterialType::CUSTOM}
-});}
-void RegisterLuaCoreSprite3DMaterialAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Sprite3DMaterial>("cc","Sprite3DMaterial",true);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Material,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function("GetMaterialType",static_cast<cocos2d::Sprite3DMaterial::MaterialType(cocos2d::Sprite3DMaterial::*)()const>(&cocos2d::Sprite3DMaterial::getMaterialType));
-mt.set_function("CreateBuiltInMaterial",sol::overload(static_cast<void(*)()>(&cocos2d::Sprite3DMaterial::createBuiltInMaterial),static_cast<cocos2d::Sprite3DMaterial*(*)(cocos2d::Sprite3DMaterial::MaterialType,bool)>(&cocos2d::Sprite3DMaterial::createBuiltInMaterial)));
-mt.set_function("CreateWithFilename",static_cast<cocos2d::Sprite3DMaterial*(*)(const std::string&)>(&cocos2d::Sprite3DMaterial::createWithFilename));
-mt.set_function("CreateWithProgramState",static_cast<cocos2d::Sprite3DMaterial*(*)(cocos2d::backend::ProgramState*)>(&cocos2d::Sprite3DMaterial::createWithProgramState));
-mt.set_function("SetTexture",static_cast<void(cocos2d::Sprite3DMaterial::*)(cocos2d::Texture2D*,cocos2d::NTextureData::Usage)>(&cocos2d::Sprite3DMaterial::setTexture));
-mt.set_function("ReleaseBuiltInMaterial",static_cast<void(*)()>(&cocos2d::Sprite3DMaterial::releaseBuiltInMaterial));
-mt.set_function("ReleaseCachedMaterial",static_cast<void(*)()>(&cocos2d::Sprite3DMaterial::releaseCachedMaterial));
-mt.set_function("Clone",static_cast<cocos2d::Material*(cocos2d::Sprite3DMaterial::*)()const>(&cocos2d::Sprite3DMaterial::clone));
-RegisterLuaCoreSprite3DMaterialMaterialTypeAuto(lua);
-}
-void RegisterLuaCoreSprite3DMaterialCacheAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Sprite3DMaterialCache>("cc","Sprite3DMaterialCache",true);
-mt.set_function("GetInstance",static_cast<cocos2d::Sprite3DMaterialCache*(*)()>(&cocos2d::Sprite3DMaterialCache::getInstance));
-mt.set_function("DestroyInstance",static_cast<void(*)()>(&cocos2d::Sprite3DMaterialCache::destroyInstance));
-mt.set_function("AddSprite3DMaterial",static_cast<bool(cocos2d::Sprite3DMaterialCache::*)(const std::string&,cocos2d::Texture2D*)>(&cocos2d::Sprite3DMaterialCache::addSprite3DMaterial));
-mt.set_function("GetSprite3DMaterial",static_cast<cocos2d::Texture2D*(cocos2d::Sprite3DMaterialCache::*)(const std::string&)>(&cocos2d::Sprite3DMaterialCache::getSprite3DMaterial));
-mt.set_function("RemoveAllSprite3DMaterial",static_cast<void(cocos2d::Sprite3DMaterialCache::*)()>(&cocos2d::Sprite3DMaterialCache::removeAllSprite3DMaterial));
-mt.set_function("RemoveUnusedSprite3DMaterial",static_cast<void(cocos2d::Sprite3DMaterialCache::*)()>(&cocos2d::Sprite3DMaterialCache::removeUnusedSprite3DMaterial));
-mt["Instance"]=sol::property(&cocos2d::Sprite3DMaterialCache::getInstance,[](std::nullptr_t){cocos2d::Sprite3DMaterialCache::destroyInstance();});
 }

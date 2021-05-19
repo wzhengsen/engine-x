@@ -8,6 +8,57 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+void RegisterLuaCoreDeviceAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::Device>("cc","Device",true);
+mt.set_function("GetDPI",static_cast<int(*)()>(&cocos2d::Device::getDPI));
+mt.set_function("SetAccelerometerEnabled",static_cast<void(*)(bool)>(&cocos2d::Device::setAccelerometerEnabled));
+mt.set_function("SetAccelerometerInterval",static_cast<void(*)(float)>(&cocos2d::Device::setAccelerometerInterval));
+mt.set_function("SetKeepScreenOn",static_cast<void(*)(bool)>(&cocos2d::Device::setKeepScreenOn));
+mt.set_function("Vibrate",static_cast<void(*)(float)>(&cocos2d::Device::vibrate));
+}
+void RegisterLuaCoreApplicationProtocolPlatformAuto(cocos2d::extension::Lua& lua) {
+sol::table pTable = lua["cc"];
+pTable = pTable["ApplicationProtocol"];
+pTable.new_enum<cocos2d::ApplicationProtocol::Platform>("Platform",{
+{"OS_WINDOWS",cocos2d::ApplicationProtocol::Platform::OS_WINDOWS}
+,{"OS_LINUX",cocos2d::ApplicationProtocol::Platform::OS_LINUX}
+,{"OS_MAC",cocos2d::ApplicationProtocol::Platform::OS_MAC}
+,{"OS_ANDROID",cocos2d::ApplicationProtocol::Platform::OS_ANDROID}
+,{"OS_IPHONE",cocos2d::ApplicationProtocol::Platform::OS_IPHONE}
+,{"OS_IPAD",cocos2d::ApplicationProtocol::Platform::OS_IPAD}
+});}
+void RegisterLuaCoreApplicationProtocolAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::ApplicationProtocol>("cc","ApplicationProtocol",true);
+mt.set_function("ApplicationDidFinishLaunching",static_cast<bool(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::applicationDidFinishLaunching));
+mt.set_function("ApplicationDidEnterBackground",static_cast<void(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::applicationDidEnterBackground));
+mt.set_function("ApplicationWillEnterForeground",static_cast<void(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::applicationWillEnterForeground));
+mt.set_function("SetAnimationInterval",static_cast<void(cocos2d::ApplicationProtocol::*)(float)>(&cocos2d::ApplicationProtocol::setAnimationInterval));
+mt.set_function("InitGLContextAttrs",static_cast<void(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::initGLContextAttrs));
+mt.set_function("GetCurrentLanguage",static_cast<cocos2d::LanguageType(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::getCurrentLanguage));
+mt.set_function("GetCurrentLanguageCode",static_cast<const char*(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::getCurrentLanguageCode));
+mt.set_function("GetTargetPlatform",static_cast<cocos2d::ApplicationProtocol::Platform(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::getTargetPlatform));
+mt.set_function("GetVersion",static_cast<std::string(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::getVersion));
+mt.set_function("GetCompileVersion",static_cast<int64_t(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::GetCompileVersion));
+mt.set_function("OpenURL",static_cast<bool(cocos2d::ApplicationProtocol::*)(const std::string&)>(&cocos2d::ApplicationProtocol::openURL));
+mt.set_function("RestartLuaEngine",static_cast<bool(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::RestartLuaEngine));
+mt.set_function("Dialog",sol::overload([](cocos2d::ApplicationProtocol* obj,const std::string& arg0,const std::string& arg1){return obj->Dialog(arg0,arg1);},[](cocos2d::ApplicationProtocol* obj,const std::string& arg0,const std::string& arg1,const std::function<void ()>& arg2){return obj->Dialog(arg0,arg1,arg2);},[](cocos2d::ApplicationProtocol* obj,const std::string& arg0,const std::string& arg1,const std::function<void ()>& arg2,const std::function<void ()>& arg3){return obj->Dialog(arg0,arg1,arg2,arg3);}));
+mt.set_function("Notify",sol::overload([](cocos2d::ApplicationProtocol* obj,const std::string& arg0,const std::string& arg1){return obj->Notify(arg0,arg1);},[](cocos2d::ApplicationProtocol* obj,const std::string& arg0,const std::string& arg1,const std::function<void ()>& arg2){return obj->Notify(arg0,arg1,arg2);}));
+RegisterLuaCoreApplicationProtocolPlatformAuto(lua);
+}
+void RegisterLuaCoreApplicationAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::Application>("cc","Application",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ApplicationProtocol>());
+mt.set_function("SetAnimationInterval",static_cast<void(cocos2d::Application::*)(float)>(&cocos2d::Application::setAnimationInterval));
+mt.set_function("Run",static_cast<int(cocos2d::Application::*)()>(&cocos2d::Application::run));
+mt.set_function("GetInstance",static_cast<cocos2d::Application*(*)()>(&cocos2d::Application::getInstance));
+mt.set_function("GetCurrentLanguage",static_cast<cocos2d::LanguageType(cocos2d::Application::*)()>(&cocos2d::Application::getCurrentLanguage));
+mt.set_function("GetCurrentLanguageCode",static_cast<const char*(cocos2d::Application::*)()>(&cocos2d::Application::getCurrentLanguageCode));
+mt.set_function("GetTargetPlatform",static_cast<cocos2d::ApplicationProtocol::Platform(cocos2d::Application::*)()>(&cocos2d::Application::getTargetPlatform));
+mt.set_function("GetVersion",static_cast<std::string(cocos2d::Application::*)()>(&cocos2d::Application::getVersion));
+mt.set_function("GetCompileVersion",static_cast<int64_t(cocos2d::Application::*)()>(&cocos2d::Application::GetCompileVersion));
+mt.set_function("OpenURL",static_cast<bool(cocos2d::Application::*)(const std::string&)>(&cocos2d::Application::openURL));
+mt["Instance"]=sol::readonly_property(&cocos2d::Application::getInstance);
+}
 void RegisterLuaCoreGLViewImplAuto(cocos2d::extension::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::GLViewImpl>("cc","GLViewImpl",false);
 cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::GLView,cocos2d::Ref,cocos2d::extension::LuaObject>());
@@ -121,79 +172,3 @@ pTable.new_enum<cocos2d::TMXTileFlags_>("TMXTileFlags",{
 ,{"KTMXFlipedAll",cocos2d::TMXTileFlags_::kTMXFlipedAll}
 ,{"KTMXFlippedMask",cocos2d::TMXTileFlags_::kTMXFlippedMask}
 });}
-void RegisterLuaCoreTMXLayerInfoAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TMXLayerInfo>("cc","TMXLayerInfo",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function("SetProperties",static_cast<void(cocos2d::TMXLayerInfo::*)(cocos2d::ValueMap)>(&cocos2d::TMXLayerInfo::setProperties));
-mt.set_function("GetProperties",static_cast<cocos2d::ValueMap&(cocos2d::TMXLayerInfo::*)()>(&cocos2d::TMXLayerInfo::getProperties));
-mt[sol::call_constructor]=sol::constructors<cocos2d::TMXLayerInfo()>();
-mt["Properties"]=&cocos2d::TMXLayerInfo::_properties;
-mt["Name"]=&cocos2d::TMXLayerInfo::_name;
-mt["LayerSize"]=&cocos2d::TMXLayerInfo::_layerSize;
-mt["Tiles"]=&cocos2d::TMXLayerInfo::_tiles;
-mt["Visible"]=&cocos2d::TMXLayerInfo::_visible;
-mt["Opacity"]=&cocos2d::TMXLayerInfo::_opacity;
-mt["OwnTiles"]=&cocos2d::TMXLayerInfo::_ownTiles;
-mt["Offset"]=&cocos2d::TMXLayerInfo::_offset;
-}
-void RegisterLuaCoreTMXTilesetInfoAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TMXTilesetInfo>("cc","TMXTilesetInfo",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function("GetRectForGID",static_cast<cocos2d::Rect(cocos2d::TMXTilesetInfo::*)(uint32_t)>(&cocos2d::TMXTilesetInfo::getRectForGID));
-mt[sol::call_constructor]=sol::constructors<cocos2d::TMXTilesetInfo()>();
-mt["Name"]=&cocos2d::TMXTilesetInfo::_name;
-mt["FirstGid"]=&cocos2d::TMXTilesetInfo::_firstGid;
-mt["TileSize"]=&cocos2d::TMXTilesetInfo::_tileSize;
-mt["Spacing"]=&cocos2d::TMXTilesetInfo::_spacing;
-mt["Margin"]=&cocos2d::TMXTilesetInfo::_margin;
-mt["TileOffset"]=&cocos2d::TMXTilesetInfo::_tileOffset;
-mt["SourceImage"]=&cocos2d::TMXTilesetInfo::_sourceImage;
-mt["ImageSize"]=&cocos2d::TMXTilesetInfo::_imageSize;
-mt["OriginSourceImage"]=&cocos2d::TMXTilesetInfo::_originSourceImage;
-}
-void RegisterLuaCoreTMXMapInfoAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TMXMapInfo>("cc","TMXMapInfo",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::SAXDelegator>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::TMXMapInfo*(*)(const std::string&)>(&cocos2d::TMXMapInfo::create));
-mt.set_function("CreateWithXML",static_cast<cocos2d::TMXMapInfo*(*)(const std::string&,const std::string&)>(&cocos2d::TMXMapInfo::createWithXML));
-mt.set_function("InitWithTMXFile",static_cast<bool(cocos2d::TMXMapInfo::*)(const std::string&)>(&cocos2d::TMXMapInfo::initWithTMXFile));
-mt.set_function("InitWithXML",static_cast<bool(cocos2d::TMXMapInfo::*)(const std::string&,const std::string&)>(&cocos2d::TMXMapInfo::initWithXML));
-mt.set_function("ParseXMLFile",static_cast<bool(cocos2d::TMXMapInfo::*)(const std::string&)>(&cocos2d::TMXMapInfo::parseXMLFile));
-mt.set_function("ParseXMLString",static_cast<bool(cocos2d::TMXMapInfo::*)(const std::string&)>(&cocos2d::TMXMapInfo::parseXMLString));
-mt.set_function("GetTileProperties",static_cast<cocos2d::ValueMapIntKey&(cocos2d::TMXMapInfo::*)()>(&cocos2d::TMXMapInfo::getTileProperties));
-mt.set_function("SetTileProperties",static_cast<void(cocos2d::TMXMapInfo::*)(const cocos2d::ValueMapIntKey&)>(&cocos2d::TMXMapInfo::setTileProperties));
-mt.set_function("GetOrientation",static_cast<int(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getOrientation));
-mt.set_function("SetOrientation",static_cast<void(cocos2d::TMXMapInfo::*)(int)>(&cocos2d::TMXMapInfo::setOrientation));
-mt.set_function("GetStaggerAxis",static_cast<int(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getStaggerAxis));
-mt.set_function("SetStaggerAxis",static_cast<void(cocos2d::TMXMapInfo::*)(int)>(&cocos2d::TMXMapInfo::setStaggerAxis));
-mt.set_function("GetStaggerIndex",static_cast<int(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getStaggerIndex));
-mt.set_function("SetStaggerIndex",static_cast<void(cocos2d::TMXMapInfo::*)(int)>(&cocos2d::TMXMapInfo::setStaggerIndex));
-mt.set_function("GetHexSideLength",static_cast<int(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getHexSideLength));
-mt.set_function("SetHexSideLength",static_cast<void(cocos2d::TMXMapInfo::*)(int)>(&cocos2d::TMXMapInfo::setHexSideLength));
-mt.set_function("GetMapSize",static_cast<const cocos2d::Size&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getMapSize));
-mt.set_function("SetMapSize",static_cast<void(cocos2d::TMXMapInfo::*)(const cocos2d::Size&)>(&cocos2d::TMXMapInfo::setMapSize));
-mt.set_function("GetTileSize",static_cast<const cocos2d::Size&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getTileSize));
-mt.set_function("SetTileSize",static_cast<void(cocos2d::TMXMapInfo::*)(const cocos2d::Size&)>(&cocos2d::TMXMapInfo::setTileSize));
-mt.set_function("GetLayers",sol::overload(static_cast<cocos2d::Vector<cocos2d::TMXLayerInfo *>&(cocos2d::TMXMapInfo::*)()>(&cocos2d::TMXMapInfo::getLayers),static_cast<const cocos2d::Vector<cocos2d::TMXLayerInfo *>&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getLayers)));
-mt.set_function("SetLayers",static_cast<void(cocos2d::TMXMapInfo::*)(const cocos2d::Vector<cocos2d::TMXLayerInfo *>&)>(&cocos2d::TMXMapInfo::setLayers));
-mt.set_function("GetTilesets",sol::overload(static_cast<cocos2d::Vector<cocos2d::TMXTilesetInfo *>&(cocos2d::TMXMapInfo::*)()>(&cocos2d::TMXMapInfo::getTilesets),static_cast<const cocos2d::Vector<cocos2d::TMXTilesetInfo *>&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getTilesets)));
-mt.set_function("SetTilesets",static_cast<void(cocos2d::TMXMapInfo::*)(const cocos2d::Vector<cocos2d::TMXTilesetInfo *>&)>(&cocos2d::TMXMapInfo::setTilesets));
-mt.set_function("GetObjectGroups",sol::overload(static_cast<cocos2d::Vector<cocos2d::TMXObjectGroup *>&(cocos2d::TMXMapInfo::*)()>(&cocos2d::TMXMapInfo::getObjectGroups),static_cast<const cocos2d::Vector<cocos2d::TMXObjectGroup *>&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getObjectGroups)));
-mt.set_function("SetObjectGroups",static_cast<void(cocos2d::TMXMapInfo::*)(const cocos2d::Vector<cocos2d::TMXObjectGroup *>&)>(&cocos2d::TMXMapInfo::setObjectGroups));
-mt.set_function("GetParentElement",static_cast<int(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getParentElement));
-mt.set_function("SetParentElement",static_cast<void(cocos2d::TMXMapInfo::*)(int)>(&cocos2d::TMXMapInfo::setParentElement));
-mt.set_function("GetParentGID",static_cast<int(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getParentGID));
-mt.set_function("SetParentGID",static_cast<void(cocos2d::TMXMapInfo::*)(int)>(&cocos2d::TMXMapInfo::setParentGID));
-mt.set_function("GetLayerAttribs",static_cast<int(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getLayerAttribs));
-mt.set_function("SetLayerAttribs",static_cast<void(cocos2d::TMXMapInfo::*)(int)>(&cocos2d::TMXMapInfo::setLayerAttribs));
-mt.set_function("IsStoringCharacters",static_cast<bool(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::isStoringCharacters));
-mt.set_function("SetStoringCharacters",static_cast<void(cocos2d::TMXMapInfo::*)(bool)>(&cocos2d::TMXMapInfo::setStoringCharacters));
-mt.set_function("GetProperties",sol::overload(static_cast<cocos2d::ValueMap&(cocos2d::TMXMapInfo::*)()>(&cocos2d::TMXMapInfo::getProperties),static_cast<const cocos2d::ValueMap&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getProperties)));
-mt.set_function("SetProperties",static_cast<void(cocos2d::TMXMapInfo::*)(const cocos2d::ValueMap&)>(&cocos2d::TMXMapInfo::setProperties));
-mt.set_function("TextHandler",static_cast<void(cocos2d::TMXMapInfo::*)(void*,const char*,size_t)>(&cocos2d::TMXMapInfo::textHandler));
-mt.set_function("GetCurrentString",static_cast<const std::string&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getCurrentString));
-mt.set_function("SetCurrentString",static_cast<void(cocos2d::TMXMapInfo::*)(const std::string&)>(&cocos2d::TMXMapInfo::setCurrentString));
-mt.set_function("GetTMXFileName",static_cast<const std::string&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getTMXFileName));
-mt.set_function("SetTMXFileName",static_cast<void(cocos2d::TMXMapInfo::*)(const std::string&)>(&cocos2d::TMXMapInfo::setTMXFileName));
-mt.set_function("GetExternalTilesetFileName",static_cast<const std::string&(cocos2d::TMXMapInfo::*)()const>(&cocos2d::TMXMapInfo::getExternalTilesetFileName));
-}

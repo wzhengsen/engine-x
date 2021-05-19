@@ -8,6 +8,61 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+void RegisterLuaCoreLayerColorAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::LayerColor>("cc","LayerColor",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Layer,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::BlendProtocol>());
+mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::LayerColor*(*)(const cocos2d::Color4B&,float,float)>(&cocos2d::LayerColor::create),static_cast<cocos2d::LayerColor*(*)()>(&cocos2d::LayerColor::create),static_cast<cocos2d::LayerColor*(*)(const cocos2d::Color4B&)>(&cocos2d::LayerColor::create)));
+mt.set_function("ChangeWidth",static_cast<void(cocos2d::LayerColor::*)(float)>(&cocos2d::LayerColor::changeWidth));
+mt.set_function("ChangeHeight",static_cast<void(cocos2d::LayerColor::*)(float)>(&cocos2d::LayerColor::changeHeight));
+mt.set_function("ChangeWidthAndHeight",static_cast<void(cocos2d::LayerColor::*)(float,float)>(&cocos2d::LayerColor::changeWidthAndHeight));
+mt.set_function("Draw",static_cast<void(cocos2d::LayerColor::*)(cocos2d::Renderer*,const cocos2d::Mat4&,uint32_t)>(&cocos2d::LayerColor::draw));
+mt.set_function("SetContentSize",static_cast<void(cocos2d::LayerColor::*)(const cocos2d::Size&)>(&cocos2d::LayerColor::setContentSize));
+mt.set_function("GetBlendFunc",static_cast<const cocos2d::BlendFunc&(cocos2d::LayerColor::*)()const>(&cocos2d::LayerColor::getBlendFunc));
+mt.set_function("SetBlendFunc",static_cast<void(cocos2d::LayerColor::*)(const cocos2d::BlendFunc&)>(&cocos2d::LayerColor::setBlendFunc));
+}
+void RegisterLuaCoreLayerGradientAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::LayerGradient>("cc","LayerGradient",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::LayerColor,cocos2d::Layer,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::BlendProtocol>());
+mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::LayerGradient*(*)(const cocos2d::Color4B&,const cocos2d::Color4B&)>(&cocos2d::LayerGradient::create),static_cast<cocos2d::LayerGradient*(*)()>(&cocos2d::LayerGradient::create),static_cast<cocos2d::LayerGradient*(*)(const cocos2d::Color4B&,const cocos2d::Color4B&,const cocos2d::Vec2&)>(&cocos2d::LayerGradient::create)));
+mt.set_function("SetCompressedInterpolation",static_cast<void(cocos2d::LayerGradient::*)(bool)>(&cocos2d::LayerGradient::setCompressedInterpolation));
+mt.set_function("IsCompressedInterpolation",static_cast<bool(cocos2d::LayerGradient::*)()const>(&cocos2d::LayerGradient::isCompressedInterpolation));
+mt.set_function("SetStartColor",static_cast<void(cocos2d::LayerGradient::*)(const cocos2d::Color3B&)>(&cocos2d::LayerGradient::setStartColor));
+mt.set_function("GetStartColor",static_cast<const cocos2d::Color3B&(cocos2d::LayerGradient::*)()const>(&cocos2d::LayerGradient::getStartColor));
+mt.set_function("SetEndColor",static_cast<void(cocos2d::LayerGradient::*)(const cocos2d::Color3B&)>(&cocos2d::LayerGradient::setEndColor));
+mt.set_function("GetEndColor",static_cast<const cocos2d::Color3B&(cocos2d::LayerGradient::*)()const>(&cocos2d::LayerGradient::getEndColor));
+mt.set_function("SetStartOpacity",static_cast<void(cocos2d::LayerGradient::*)(uint8_t)>(&cocos2d::LayerGradient::setStartOpacity));
+mt.set_function("GetStartOpacity",static_cast<uint8_t(cocos2d::LayerGradient::*)()const>(&cocos2d::LayerGradient::getStartOpacity));
+mt.set_function("SetEndOpacity",static_cast<void(cocos2d::LayerGradient::*)(uint8_t)>(&cocos2d::LayerGradient::setEndOpacity));
+mt.set_function("GetEndOpacity",static_cast<uint8_t(cocos2d::LayerGradient::*)()const>(&cocos2d::LayerGradient::getEndOpacity));
+mt.set_function("SetVector",static_cast<void(cocos2d::LayerGradient::*)(const cocos2d::Vec2&)>(&cocos2d::LayerGradient::setVector));
+mt.set_function("GetVector",static_cast<const cocos2d::Vec2&(cocos2d::LayerGradient::*)()const>(&cocos2d::LayerGradient::getVector));
+mt.set_function("GetDescription",static_cast<std::string(cocos2d::LayerGradient::*)()const>(&cocos2d::LayerGradient::getDescription));
+}
+void RegisterLuaCoreLayerRadialGradientAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::LayerRadialGradient>("cc","LayerRadialGradient",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Layer,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::LayerRadialGradient*(*)()>(&cocos2d::LayerRadialGradient::create),static_cast<cocos2d::LayerRadialGradient*(*)(const cocos2d::Color4B&,const cocos2d::Color4B&,float,const cocos2d::Vec2&,float)>(&cocos2d::LayerRadialGradient::create)));
+mt.set_function("Draw",static_cast<void(cocos2d::LayerRadialGradient::*)(cocos2d::Renderer*,const cocos2d::Mat4&,uint32_t)>(&cocos2d::LayerRadialGradient::draw));
+mt.set_function("SetContentSize",static_cast<void(cocos2d::LayerRadialGradient::*)(const cocos2d::Size&)>(&cocos2d::LayerRadialGradient::setContentSize));
+mt.set_function("SetStartOpacity",static_cast<void(cocos2d::LayerRadialGradient::*)(uint8_t)>(&cocos2d::LayerRadialGradient::setStartOpacity));
+mt.set_function("GetStartOpacity",static_cast<uint8_t(cocos2d::LayerRadialGradient::*)()const>(&cocos2d::LayerRadialGradient::getStartOpacity));
+mt.set_function("SetEndOpacity",static_cast<void(cocos2d::LayerRadialGradient::*)(uint8_t)>(&cocos2d::LayerRadialGradient::setEndOpacity));
+mt.set_function("GetEndOpacity",static_cast<uint8_t(cocos2d::LayerRadialGradient::*)()const>(&cocos2d::LayerRadialGradient::getEndOpacity));
+mt.set_function("SetRadius",static_cast<void(cocos2d::LayerRadialGradient::*)(float)>(&cocos2d::LayerRadialGradient::setRadius));
+mt.set_function("GetRadius",static_cast<float(cocos2d::LayerRadialGradient::*)()const>(&cocos2d::LayerRadialGradient::getRadius));
+mt.set_function("SetCenter",static_cast<void(cocos2d::LayerRadialGradient::*)(const cocos2d::Vec2&)>(&cocos2d::LayerRadialGradient::setCenter));
+mt.set_function("GetCenter",static_cast<cocos2d::Vec2(cocos2d::LayerRadialGradient::*)()const>(&cocos2d::LayerRadialGradient::getCenter));
+mt.set_function("SetExpand",static_cast<void(cocos2d::LayerRadialGradient::*)(float)>(&cocos2d::LayerRadialGradient::setExpand));
+mt.set_function("GetExpand",static_cast<float(cocos2d::LayerRadialGradient::*)()const>(&cocos2d::LayerRadialGradient::getExpand));
+mt.set_function("SetStartColor",sol::overload(static_cast<void(cocos2d::LayerRadialGradient::*)(const cocos2d::Color4B&)>(&cocos2d::LayerRadialGradient::setStartColor),static_cast<void(cocos2d::LayerRadialGradient::*)(const cocos2d::Color3B&)>(&cocos2d::LayerRadialGradient::setStartColor)));
+mt.set_function("GetStartColor",static_cast<cocos2d::Color4B(cocos2d::LayerRadialGradient::*)()const>(&cocos2d::LayerRadialGradient::getStartColor));
+mt.set_function("GetStartColor3B",static_cast<cocos2d::Color3B(cocos2d::LayerRadialGradient::*)()const>(&cocos2d::LayerRadialGradient::getStartColor3B));
+mt.set_function("SetEndColor",sol::overload(static_cast<void(cocos2d::LayerRadialGradient::*)(const cocos2d::Color4B&)>(&cocos2d::LayerRadialGradient::setEndColor),static_cast<void(cocos2d::LayerRadialGradient::*)(const cocos2d::Color3B&)>(&cocos2d::LayerRadialGradient::setEndColor)));
+mt.set_function("GetEndColor",static_cast<cocos2d::Color4B(cocos2d::LayerRadialGradient::*)()const>(&cocos2d::LayerRadialGradient::getEndColor));
+mt.set_function("GetEndColor3B",static_cast<cocos2d::Color3B(cocos2d::LayerRadialGradient::*)()const>(&cocos2d::LayerRadialGradient::getEndColor3B));
+mt.set_function("SetBlendFunc",static_cast<void(cocos2d::LayerRadialGradient::*)(const cocos2d::BlendFunc&)>(&cocos2d::LayerRadialGradient::setBlendFunc));
+mt.set_function("GetBlendFunc",static_cast<cocos2d::BlendFunc(cocos2d::LayerRadialGradient::*)()const>(&cocos2d::LayerRadialGradient::getBlendFunc));
+}
 void RegisterLuaCoreLayerMultiplexAuto(cocos2d::extension::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::LayerMultiplex>("cc","LayerMultiplex",false);
 cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Layer,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
@@ -87,89 +142,4 @@ mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d:
 mt.set_function("SetNormalSpriteFrame",static_cast<void(cocos2d::MenuItemImage::*)(cocos2d::SpriteFrame*)>(&cocos2d::MenuItemImage::setNormalSpriteFrame));
 mt.set_function("SetSelectedSpriteFrame",static_cast<void(cocos2d::MenuItemImage::*)(cocos2d::SpriteFrame*)>(&cocos2d::MenuItemImage::setSelectedSpriteFrame));
 mt.set_function("SetDisabledSpriteFrame",static_cast<void(cocos2d::MenuItemImage::*)(cocos2d::SpriteFrame*)>(&cocos2d::MenuItemImage::setDisabledSpriteFrame));
-}
-void RegisterLuaCoreMenuItemToggleAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::MenuItemToggle>("cc","MenuItemToggle",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::MenuItem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function("CreateWithCallback",static_cast<cocos2d::MenuItemToggle*(*)(const cocos2d::MenuItem::MenuItemHandlerType&,const cocos2d::Vector<cocos2d::MenuItem *>&)>(&cocos2d::MenuItemToggle::createWithCallback));
-mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::MenuItemToggle*(*)(cocos2d::MenuItem*)>(&cocos2d::MenuItemToggle::create),static_cast<cocos2d::MenuItemToggle*(*)()>(&cocos2d::MenuItemToggle::create)));
-mt.set_function("AddSubItem",static_cast<void(cocos2d::MenuItemToggle::*)(cocos2d::MenuItem*)>(&cocos2d::MenuItemToggle::addSubItem));
-mt.set_function("GetSelectedItem",static_cast<cocos2d::MenuItem*(cocos2d::MenuItemToggle::*)()>(&cocos2d::MenuItemToggle::getSelectedItem));
-mt.set_function("GetSelectedIndex",static_cast<unsigned int(cocos2d::MenuItemToggle::*)()const>(&cocos2d::MenuItemToggle::getSelectedIndex));
-mt.set_function("SetSelectedIndex",static_cast<void(cocos2d::MenuItemToggle::*)(unsigned int)>(&cocos2d::MenuItemToggle::setSelectedIndex));
-mt.set_function("GetSubItems",sol::overload(static_cast<cocos2d::Vector<cocos2d::MenuItem *>&(cocos2d::MenuItemToggle::*)()>(&cocos2d::MenuItemToggle::getSubItems),static_cast<const cocos2d::Vector<cocos2d::MenuItem *>&(cocos2d::MenuItemToggle::*)()const>(&cocos2d::MenuItemToggle::getSubItems)));
-mt.set_function("SetSubItems",static_cast<void(cocos2d::MenuItemToggle::*)(const cocos2d::Vector<cocos2d::MenuItem *>&)>(&cocos2d::MenuItemToggle::setSubItems));
-mt.set_function("Activate",static_cast<void(cocos2d::MenuItemToggle::*)()>(&cocos2d::MenuItemToggle::activate));
-mt.set_function("Selected",static_cast<void(cocos2d::MenuItemToggle::*)()>(&cocos2d::MenuItemToggle::selected));
-mt.set_function("Unselected",static_cast<void(cocos2d::MenuItemToggle::*)()>(&cocos2d::MenuItemToggle::unselected));
-mt.set_function("SetEnabled",static_cast<void(cocos2d::MenuItemToggle::*)(bool)>(&cocos2d::MenuItemToggle::setEnabled));
-mt.set_function("Cleanup",static_cast<void(cocos2d::MenuItemToggle::*)()>(&cocos2d::MenuItemToggle::cleanup));
-}
-void RegisterLuaCoreMenuStateAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["cc"];
-pTable = pTable["Menu"];
-pTable.new_enum<cocos2d::Menu::State>("State",{
-{"WAITING",cocos2d::Menu::State::WAITING}
-,{"TRACKING_TOUCH",cocos2d::Menu::State::TRACKING_TOUCH}
-});}
-void RegisterLuaCoreMenuAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Menu>("cc","Menu",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Layer,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::Menu*(*)()>(&cocos2d::Menu::create));
-mt.set_function("CreateWithArray",static_cast<cocos2d::Menu*(*)(const cocos2d::Vector<cocos2d::MenuItem *>&)>(&cocos2d::Menu::createWithArray));
-mt.set_function("CreateWithItem",static_cast<cocos2d::Menu*(*)(cocos2d::MenuItem*)>(&cocos2d::Menu::createWithItem));
-mt.set_function("CreateWithItems",static_cast<cocos2d::Menu*(*)(cocos2d::MenuItem*,va_list)>(&cocos2d::Menu::createWithItems));
-mt.set_function("AlignItemsVertically",static_cast<void(cocos2d::Menu::*)()>(&cocos2d::Menu::alignItemsVertically));
-mt.set_function("AlignItemsVerticallyWithPadding",static_cast<void(cocos2d::Menu::*)(float)>(&cocos2d::Menu::alignItemsVerticallyWithPadding));
-mt.set_function("AlignItemsHorizontally",static_cast<void(cocos2d::Menu::*)()>(&cocos2d::Menu::alignItemsHorizontally));
-mt.set_function("AlignItemsHorizontallyWithPadding",static_cast<void(cocos2d::Menu::*)(float)>(&cocos2d::Menu::alignItemsHorizontallyWithPadding));
-mt.set_function("AlignItemsInColumns",static_cast<void(cocos2d::Menu::*)(int,va_list)>(&cocos2d::Menu::alignItemsInColumns));
-mt.set_function("AlignItemsInColumnsWithArray",static_cast<void(cocos2d::Menu::*)(const cocos2d::ValueVector&)>(&cocos2d::Menu::alignItemsInColumnsWithArray));
-mt.set_function("AlignItemsInRows",static_cast<void(cocos2d::Menu::*)(int,va_list)>(&cocos2d::Menu::alignItemsInRows));
-mt.set_function("AlignItemsInRowsWithArray",static_cast<void(cocos2d::Menu::*)(const cocos2d::ValueVector&)>(&cocos2d::Menu::alignItemsInRowsWithArray));
-mt.set_function("IsEnabled",static_cast<bool(cocos2d::Menu::*)()const>(&cocos2d::Menu::isEnabled));
-mt.set_function("SetEnabled",static_cast<void(cocos2d::Menu::*)(bool)>(&cocos2d::Menu::setEnabled));
-mt.set_function("OnTouchBegan",static_cast<bool(cocos2d::Menu::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::Menu::onTouchBegan));
-mt.set_function("OnTouchEnded",static_cast<void(cocos2d::Menu::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::Menu::onTouchEnded));
-mt.set_function("OnTouchCancelled",static_cast<void(cocos2d::Menu::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::Menu::onTouchCancelled));
-mt.set_function("OnTouchMoved",static_cast<void(cocos2d::Menu::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::Menu::onTouchMoved));
-mt.set_function("RemoveChild",static_cast<void(cocos2d::Menu::*)(cocos2d::Node*,bool)>(&cocos2d::Menu::removeChild));
-mt.set_function("AddChild",sol::overload(static_cast<void(cocos2d::Menu::*)(cocos2d::Node*,int)>(&cocos2d::Menu::addChild),static_cast<void(cocos2d::Menu::*)(cocos2d::Node*)>(&cocos2d::Menu::addChild),static_cast<void(cocos2d::Menu::*)(cocos2d::Node*,int,int)>(&cocos2d::Menu::addChild),static_cast<void(cocos2d::Menu::*)(cocos2d::Node*,int,const std::string&)>(&cocos2d::Menu::addChild)));
-mt.set_function("OnEnter",static_cast<void(cocos2d::Menu::*)()>(&cocos2d::Menu::onEnter));
-mt.set_function("OnExit",static_cast<void(cocos2d::Menu::*)()>(&cocos2d::Menu::onExit));
-mt.set_function("SetOpacityModifyRGB",static_cast<void(cocos2d::Menu::*)(bool)>(&cocos2d::Menu::setOpacityModifyRGB));
-mt.set_function("IsOpacityModifyRGB",static_cast<bool(cocos2d::Menu::*)()const>(&cocos2d::Menu::isOpacityModifyRGB));
-mt.set_function("GetDescription",static_cast<std::string(cocos2d::Menu::*)()const>(&cocos2d::Menu::getDescription));
-RegisterLuaCoreMenuStateAuto(lua);
-}
-void RegisterLuaCoreMotionStreakAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::MotionStreak>("cc","MotionStreak",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TextureProtocol,cocos2d::BlendProtocol>());
-mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::MotionStreak*(*)(float,float,float,const cocos2d::Color3B&,cocos2d::Texture2D*)>(&cocos2d::MotionStreak::create),static_cast<cocos2d::MotionStreak*(*)(float,float,float,const cocos2d::Color3B&,const std::string&)>(&cocos2d::MotionStreak::create)));
-mt.set_function("SetPosition",sol::overload(static_cast<void(cocos2d::MotionStreak::*)(float,float)>(&cocos2d::MotionStreak::setPosition),static_cast<void(cocos2d::MotionStreak::*)(const cocos2d::Vec2&)>(&cocos2d::MotionStreak::setPosition)));
-mt.set_function("GetPosition",sol::overload(static_cast<void(cocos2d::MotionStreak::*)(float*,float*)const>(&cocos2d::MotionStreak::getPosition),static_cast<const cocos2d::Vec2&(cocos2d::MotionStreak::*)()const>(&cocos2d::MotionStreak::getPosition)));
-mt.set_function("SetPositionX",static_cast<void(cocos2d::MotionStreak::*)(float)>(&cocos2d::MotionStreak::setPositionX));
-mt.set_function("SetPositionY",static_cast<void(cocos2d::MotionStreak::*)(float)>(&cocos2d::MotionStreak::setPositionY));
-mt.set_function("GetPositionX",static_cast<float(cocos2d::MotionStreak::*)()const>(&cocos2d::MotionStreak::getPositionX));
-mt.set_function("GetPositionY",static_cast<float(cocos2d::MotionStreak::*)()const>(&cocos2d::MotionStreak::getPositionY));
-mt.set_function("GetPosition3D",static_cast<cocos2d::Vec3(cocos2d::MotionStreak::*)()const>(&cocos2d::MotionStreak::getPosition3D));
-mt.set_function("Draw",static_cast<void(cocos2d::MotionStreak::*)(cocos2d::Renderer*,const cocos2d::Mat4&,uint32_t)>(&cocos2d::MotionStreak::draw));
-mt.set_function("Update",static_cast<void(cocos2d::MotionStreak::*)(float)>(&cocos2d::MotionStreak::update));
-mt.set_function("GetTexture",static_cast<cocos2d::Texture2D*(cocos2d::MotionStreak::*)()const>(&cocos2d::MotionStreak::getTexture));
-mt.set_function("SetTexture",static_cast<void(cocos2d::MotionStreak::*)(cocos2d::Texture2D*)>(&cocos2d::MotionStreak::setTexture));
-mt.set_function("SetBlendFunc",static_cast<void(cocos2d::MotionStreak::*)(const cocos2d::BlendFunc&)>(&cocos2d::MotionStreak::setBlendFunc));
-mt.set_function("GetBlendFunc",static_cast<const cocos2d::BlendFunc&(cocos2d::MotionStreak::*)()const>(&cocos2d::MotionStreak::getBlendFunc));
-mt.set_function("GetOpacity",static_cast<uint8_t(cocos2d::MotionStreak::*)()const>(&cocos2d::MotionStreak::getOpacity));
-mt.set_function("SetOpacity",static_cast<void(cocos2d::MotionStreak::*)(uint8_t)>(&cocos2d::MotionStreak::setOpacity));
-mt.set_function("SetOpacityModifyRGB",static_cast<void(cocos2d::MotionStreak::*)(bool)>(&cocos2d::MotionStreak::setOpacityModifyRGB));
-mt.set_function("IsOpacityModifyRGB",static_cast<bool(cocos2d::MotionStreak::*)()const>(&cocos2d::MotionStreak::isOpacityModifyRGB));
-mt.set_function("TintWithColor",static_cast<void(cocos2d::MotionStreak::*)(const cocos2d::Color3B&)>(&cocos2d::MotionStreak::tintWithColor));
-mt.set_function("Reset",static_cast<void(cocos2d::MotionStreak::*)()>(&cocos2d::MotionStreak::reset));
-mt.set_function("IsFastMode",static_cast<bool(cocos2d::MotionStreak::*)()const>(&cocos2d::MotionStreak::isFastMode));
-mt.set_function("SetFastMode",static_cast<void(cocos2d::MotionStreak::*)(bool)>(&cocos2d::MotionStreak::setFastMode));
-mt.set_function("GetStroke",static_cast<float(cocos2d::MotionStreak::*)()const>(&cocos2d::MotionStreak::getStroke));
-mt.set_function("SetStroke",static_cast<void(cocos2d::MotionStreak::*)(float)>(&cocos2d::MotionStreak::setStroke));
-mt.set_function("IsStartingPositionInitialized",static_cast<bool(cocos2d::MotionStreak::*)()const>(&cocos2d::MotionStreak::isStartingPositionInitialized));
-mt.set_function("SetStartingPositionInitialized",static_cast<void(cocos2d::MotionStreak::*)(bool)>(&cocos2d::MotionStreak::setStartingPositionInitialized));
-mt.set_function("SetProgramState",static_cast<bool(cocos2d::MotionStreak::*)(cocos2d::backend::ProgramState*,bool)>(&cocos2d::MotionStreak::setProgramState));
 }

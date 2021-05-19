@@ -8,6 +8,24 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+void RegisterLuaCoreTransitionMoveInTAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::TransitionMoveInT>("cc","TransitionMoveInT",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionMoveInL,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>());
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::TransitionMoveInT*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionMoveInT::create));
+}
+void RegisterLuaCoreTransitionMoveInBAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::TransitionMoveInB>("cc","TransitionMoveInB",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionMoveInL,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>());
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::TransitionMoveInB*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionMoveInB::create));
+}
+void RegisterLuaCoreTransitionSlideInLAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::TransitionSlideInL>("cc","TransitionSlideInL",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>());
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::TransitionSlideInL*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionSlideInL::create));
+mt.set_function("EaseActionWithAction",static_cast<cocos2d::ActionInterval*(cocos2d::TransitionSlideInL::*)(cocos2d::ActionInterval*)>(&cocos2d::TransitionSlideInL::easeActionWithAction));
+mt.set_function("Action",static_cast<cocos2d::ActionInterval*(cocos2d::TransitionSlideInL::*)()>(&cocos2d::TransitionSlideInL::action));
+mt.set_function("OnEnter",static_cast<void(cocos2d::TransitionSlideInL::*)()>(&cocos2d::TransitionSlideInL::onEnter));
+}
 void RegisterLuaCoreTransitionSlideInRAuto(cocos2d::extension::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::TransitionSlideInR>("cc","TransitionSlideInR",false);
 cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionSlideInL,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>());
@@ -50,22 +68,4 @@ auto mt=lua.NewUserType<cocos2d::TransitionFlipAngular>("cc","TransitionFlipAngu
 cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionSceneOriented,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
 mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::TransitionFlipAngular*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionFlipAngular::create),static_cast<cocos2d::TransitionFlipAngular*(*)(float,cocos2d::Scene*,cocos2d::TransitionScene::Orientation)>(&cocos2d::TransitionFlipAngular::create)));
 mt.set_function("OnEnter",static_cast<void(cocos2d::TransitionFlipAngular::*)()>(&cocos2d::TransitionFlipAngular::onEnter));
-}
-void RegisterLuaCoreTransitionZoomFlipXAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TransitionZoomFlipX>("cc","TransitionZoomFlipX",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionSceneOriented,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::TransitionZoomFlipX*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionZoomFlipX::create),static_cast<cocos2d::TransitionZoomFlipX*(*)(float,cocos2d::Scene*,cocos2d::TransitionScene::Orientation)>(&cocos2d::TransitionZoomFlipX::create)));
-mt.set_function("OnEnter",static_cast<void(cocos2d::TransitionZoomFlipX::*)()>(&cocos2d::TransitionZoomFlipX::onEnter));
-}
-void RegisterLuaCoreTransitionZoomFlipYAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TransitionZoomFlipY>("cc","TransitionZoomFlipY",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionSceneOriented,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::TransitionZoomFlipY*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionZoomFlipY::create),static_cast<cocos2d::TransitionZoomFlipY*(*)(float,cocos2d::Scene*,cocos2d::TransitionScene::Orientation)>(&cocos2d::TransitionZoomFlipY::create)));
-mt.set_function("OnEnter",static_cast<void(cocos2d::TransitionZoomFlipY::*)()>(&cocos2d::TransitionZoomFlipY::onEnter));
-}
-void RegisterLuaCoreTransitionZoomFlipAngularAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TransitionZoomFlipAngular>("cc","TransitionZoomFlipAngular",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionSceneOriented,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::TransitionZoomFlipAngular*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionZoomFlipAngular::create),static_cast<cocos2d::TransitionZoomFlipAngular*(*)(float,cocos2d::Scene*,cocos2d::TransitionScene::Orientation)>(&cocos2d::TransitionZoomFlipAngular::create)));
-mt.set_function("OnEnter",static_cast<void(cocos2d::TransitionZoomFlipAngular::*)()>(&cocos2d::TransitionZoomFlipAngular::onEnter));
 }
