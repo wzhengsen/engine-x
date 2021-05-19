@@ -29,7 +29,6 @@ set(lua_bindings_manual_headers
     )
 
 set(lua_bindings_manual_files
-    manual/CCLuaBridge.cpp
     manual/CCRegisterLuaManual.cpp
     manual/CCLuaConvertSol.cpp
     manual/network/CCLuaWebSocket.cpp
@@ -58,6 +57,17 @@ set(lua_bindings_manual_files
     # manual/ui/lua_cocos2dx_webview_manual.cpp
     # manual/ui/lua_cocos2dx_video_manual.cpp
     )
+
+if (NOT WINDOWS AND NOT LINUX)
+    set(lua_bindings_manual_headers
+        ${lua_bindings_manual_headers}
+        manual/CCLuaBridge.h
+        )
+    set(lua_bindings_manual_files
+        ${lua_bindings_manual_files}
+        manual/CCLuaBridge.cpp
+        )
+endif()
 
 # set(lua_bindings_auto_headers
 #     auto/CCRegisterLua3DAuto.hpp
