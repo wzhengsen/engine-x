@@ -15,20 +15,19 @@ _G.cjson = require("cjson");
 require("Lua.MathEx");
 require("Lua.StringEx");
 require("Lua.TableEx");
+require("Lua.OsEx");
+require("Lua.IoEx");
+require("Lua.LuaEx");
 
 require("Event");
 require("Handler");
 require("Class");
 
 require("OpenGLConstants");
-
 require("OpenGL");
 
 require("Cocos2dx.Constants");
 require("Cocos2dx.Cocos2dxEx");
-require("Lua.OsEx");
-require("Lua.IoEx");
-require("Lua.Lua");
 
 require("LuaBridge");
 

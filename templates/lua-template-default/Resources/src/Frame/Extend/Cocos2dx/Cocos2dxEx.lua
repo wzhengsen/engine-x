@@ -1,3 +1,23 @@
+-- Copyright (c) 2021 wzhengsen
+
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is
+-- furnished to do so, subject to the following conditions:
+
+-- The above copyright notice and this permission notice shall be included in
+-- all copies or substantial portions of the Software.
+
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+-- THE SOFTWARE.
+
 --[[
     Func:   cocos2dx Lua导出类的gtor stor及其一些Cocos2dx扩展功能函数等。
     Auth:   wzhengsen
@@ -7,96 +27,88 @@ local cc = cc;
 local ccui = ccui;
 local type = type;
 
---[[
-    Desc:   将table转换为一个在c++调用中可用的IntKeyMap值。
-            将table["1"]映射为table[1]，且令table[1] = nil
-    Param:  table
-    Return: table
-]]
-function cc.MakeIntKeyMap(t)
-    t["1"] = t[1];
-    t[1] = nil;
-    return t;
+local Ref = cc.Ref;
+function Ref.__properties__()
+    return {
+    r = {
+    ReferenceCount = Ref.GetReferenceCount
+    },
+    w = {
+    }};
 end
 
-local Ref = cc.Ref;
-Ref.gtor({
-    ReferenceCount = Ref.getReferenceCount
-});
-Ref.stor({
-});
-
 local Node = cc.Node;
-Node.gtor({
-    LocalZ = Node.getLocalZOrder,
-    GlobalZ = Node.getGlobalZOrder,
-    ScaleX = Node.getScaleX,
-    ScaleY = Node.getScaleY,
-    Scale = Node.getScale,
-    X = Node.getPositionX,
-    Y = Node.getPositionY,
-    XY = Node.getPositionXY,
-    Width = Node.getContentWidth,
-    Height = Node.getContentHeight,
-    PositionNormalized = Node.getPositionNormalized,
-    SkewX = Node.getSkewX,
-    SkewY = Node.getSkewY,
-    AnchorPoint = Node.getAnchorPoint,
-    AnchorPointInPoints = Node.getAnchorPointInPoints,
-    Size = Node.getContentSize,
-    Visible = Node.isVisible,
-    Rotation = Node.getRotation,
-    RotationX = Node.getRotationSkewX,
-    RotationY = Node.getRotationSkewY,
-    Children = Node.getChildren,
-    ChildrenCount = Node.getChildrenCount,
-    Parent = Node.getParent,
-    Tag = Node.getTag,
-    Name = Node.getName,
-    Running = Node.isRunning,
-    Scene = Node.getScene,
-    BoundingBox = Node.getBoundingBox,
-    EventDispatcher = Node.getEventDispatcher,
-    ActionManager = Node.getActionManager,
-    NumberOfRunningActions = Node.getNumberOfRunningActions,
-    Scheduler = Node.getScheduler,
-    Opacity = Node.getOpacity,
-    DisplayedOpacity = Node.getDisplayedOpacity,
-    CascadeOpacityEnabled = Node.isCascadeOpacityEnabled,
-    Color = Node.getColor,
-    DisplayedColor = Node.getDisplayedColor,
-    CascadeColorEnabled = Node.isCascadeColorEnabled,
-    CameraMask = Node.getCameraMask,
-    PhysicsBody = Node.getPhysicsBody,
-    OpacityModifyRGB = Node.isOpacityModifyRGB,
-    ProgramState = Node.getProgramState
-});
-
-Node.stor({
-    LocalZ = Node.setLocalZOrder,
-    GlobalZ = Node.setGlobalZOrder,
-    ScaleX = Node.setScaleX,
-    ScaleY = Node.setScaleY,
-    Scale = Node.setScale,
-    X = Node.setPositionX,
-    Y = Node.setPositionY,
-    XY = Node.setPosition,
-    Width = Node.setContentWidth,
-    Height = Node.setContentHeight,
-    PositionNormalized = Node.setPositionNormalized,
-    SkewX = Node.setSkewX,
-    SkewY = Node.setSkewY,
-    AnchorPoint = Node.setAnchorPoint,
-    Size = Node.setContentSize,
-    Visible = Node.setVisible,
-    Rotation = Node.setRotation,
-    RotationX = Node.setRotationSkewX,
-    RotationY = Node.setRotationSkewY,
+function Node.__properties__()
+    return {
+    r = {
+    LocalZ = Node.GetLocalZOrder,
+    GlobalZ = Node.GetGlobalZOrder,
+    ScaleX = Node.GetScaleX,
+    ScaleY = Node.GetScaleY,
+    Scale = Node.GetScale,
+    X = Node.GetPositionX,
+    Y = Node.GetPositionY,
+    XY = Node.GetPositionXY,
+    Width = Node.GetContentWidth,
+    Height = Node.GetContentHeight,
+    PositionNormalized = Node.GetPositionNormalized,
+    SkewX = Node.GetSkewX,
+    SkewY = Node.GetSkewY,
+    AnchorPoint = Node.GetAnchorPoint,
+    AnchorPointInPoints = Node.GetAnchorPointInPoints,
+    Size = Node.GetContentSize,
+    Visible = Node.IsVisible,
+    Rotation = Node.GetRotation,
+    RotationX = Node.GetRotationSkewX,
+    RotationY = Node.GetRotationSkewY,
+    Children = Node.GetChildren,
+    ChildrenCount = Node.GetChildrenCount,
+    Parent = Node.GetParent,
+    Tag = Node.GetTag,
+    Name = Node.GetName,
+    Running = Node.IsRunning,
+    Scene = Node.GetScene,
+    BoundingBox = Node.GetBoundingBox,
+    EventDispatcher = Node.GetEventDispatcher,
+    ActionManager = Node.GetActionManager,
+    NumberOfRunningActions = Node.GetNumberOfRunningActions,
+    Scheduler = Node.GetScheduler,
+    Opacity = Node.GetOpacity,
+    DisplayedOpacity = Node.GetDisplayedOpacity,
+    CascadeOpacityEnabled = Node.IsCascadeOpacityEnabled,
+    Color = Node.GetColor,
+    DisplayedColor = Node.GetDisplayedColor,
+    CascadeColorEnabled = Node.IsCascadeColorEnabled,
+    CameraMask = Node.GetCameraMask,
+    PhysicsBody = Node.GetPhysicsBody,
+    OpacityModifyRGB = Node.IsOpacityModifyRGB,
+    ProgramState = Node.GetProgramState
+    },
+    w = {
+    LocalZ = Node.SetLocalZOrder,
+    GlobalZ = Node.SetGlobalZOrder,
+    ScaleX = Node.SetScaleX,
+    ScaleY = Node.SetScaleY,
+    Scale = Node.SetScale,
+    X = Node.SetPositionX,
+    Y = Node.SetPositionY,
+    XY = Node.SetPosition,
+    Width = Node.SetContentWidth,
+    Height = Node.SetContentHeight,
+    PositionNormalized = Node.SetPositionNormalized,
+    SkewX = Node.SetSkewX,
+    SkewY = Node.SetSkewY,
+    AnchorPoint = Node.SetAnchorPoint,
+    Size = Node.SetContentSize,
+    Visible = Node.SetVisible,
+    Rotation = Node.SetRotation,
+    RotationX = Node.SetRotationSkewX,
+    RotationY = Node.SetRotationSkewY,
     Parent = function(self,p)
         if class.IsNull(p) then
             Node.removeFromParent(self);
         else
-            local op = Node.getParent(self);
+            local op = Node.GetParent(self);
             if op then
                 if op ~= p then
                     self:retain();
@@ -109,567 +121,650 @@ Node.stor({
             end
         end
     end,
-    Tag = Node.setTag,
-    Name = Node.setName,
-    EventDispatcher = Node.setEventDispatcher,
-    ActionManager = Node.setActionManager,
-    Scheduler = Node.setScheduler,
-    Opacity = Node.setOpacity,
-    CascadeOpacityEnabled = Node.setCascadeOpacityEnabled,
-    Color = Node.setColor,
-    CascadeColorEnabled = Node.setCascadeColorEnabled,
-    CameraMask = Node.setCameraMask,
-    PhysicsBody = Node.setPhysicsBody,
-    OpacityModifyRGB = Node.setOpacityModifyRGB,
-    ProgramState = Node.setProgramState
-});
+    Tag = Node.SetTag,
+    Name = Node.SetName,
+    EventDispatcher = Node.SetEventDispatcher,
+    ActionManager = Node.SetActionManager,
+    Scheduler = Node.SetScheduler,
+    Opacity = Node.SetOpacity,
+    CascadeOpacityEnabled = Node.SetCascadeOpacityEnabled,
+    Color = Node.SetColor,
+    CascadeColorEnabled = Node.SetCascadeColorEnabled,
+    CameraMask = Node.SetCameraMask,
+    PhysicsBody = Node.SetPhysicsBody,
+    OpacityModifyRGB = Node.SetOpacityModifyRGB,
+    ProgramState = Node.SetProgramState
+    }};
+end
 
 local Action = cc.Action;
-Action.gtor({
-    Done = Action.isDone,
-    Target = Action.getTarget,
-    OriginalTarget = Action.getOriginalTarget,
-    Tag = Action.getTag,
-    Flags = Action.getFlags
-});
-Action.stor({
-    Target = Action.getTarget,
-    OriginalTarget = Action.setOriginalTarget,
-    Tag = Action.setTag,
-    Flags = Action.setFlags
-});
+function Action.__properties__()
+    return {
+    r = {
+    Done = Action.IsDone,
+    Target = Action.GetTarget,
+    OriginalTarget = Action.GetOriginalTarget,
+    Tag = Action.GetTag,
+    Flags = Action.GetFlags
+    },
+    w = {
+    Target = Action.GetTarget,
+    OriginalTarget = Action.SetOriginalTarget,
+    Tag = Action.SetTag,
+    Flags = Action.SetFlags
+    }};
+end
 
 local FiniteTimeAction = cc.FiniteTimeAction;
-FiniteTimeAction.gtor({
-    Duration = FiniteTimeAction.getDuration
-});
-FiniteTimeAction.stor({
-    Duration = FiniteTimeAction.setDuration
-});
+function FiniteTimeAction.__properties__()
+    return {
+    r = {
+    Duration = FiniteTimeAction.GetDuration
+    },
+    w = {
+    Duration = FiniteTimeAction.SetDuration
+    }};
+end
 
 local Speed = cc.Speed;
-Speed.gtor({
-    Speed = Speed.getSpeed,
-    InnerAction = Speed.getInnerAction
-});
-Speed.stor({
-    Speed = Speed.setSpeed,
-    InnerAction = Speed.setInnerAction
-});
+function Speed.__properties__()
+    return {
+    r = {
+    Speed = Speed.GetSpeed,
+    InnerAction = Speed.GetInnerAction
+    },
+    w = {
+    Speed = Speed.SetSpeed,
+    InnerAction = Speed.SetInnerAction
+    }};
+end
 
 local Follow = cc.Follow;
-Follow.gtor({
-    BoundarySet = Follow.isBoundarySet
-});
-Follow.stor({
-    BoundarySet = Follow.setBoundarySet
-});
+function Follow.__properties__()
+    return {
+    r = {
+    BoundarySet = Follow.IsBoundarySet
+    },
+    w = {
+    BoundarySet = Follow.SetBoundarySet
+    }};
+end
 
 local ActionInterval = cc.ActionInterval;
-ActionInterval.gtor({
-    Elapsed = ActionInterval.getElapsed,
-    AmplitudeRate = ActionInterval.getAmplitudeRate
-});
-ActionInterval.stor({
-    AmplitudeRate = ActionInterval.setAmplitudeRate
-});
+function ActionInterval.__properties__()
+    return {
+    r = {
+    Elapsed = ActionInterval.GetElapsed,
+    AmplitudeRate = ActionInterval.GetAmplitudeRate
+    },
+    w = {
+    AmplitudeRate = ActionInterval.SetAmplitudeRate
+    }};
+end
 
 local Animate = cc.Animate;
-Animate.gtor({
-    Animation = Animate.getAnimation,
-    CurrentFrameIndex = Animate.getCurrentFrameIndex
-});
-Animate.stor({
-    Animation = Animate.setAnimation
-});
+function Animate.__properties__()
+    return {
+    r = {
+    Animation = Animate.GetAnimation,
+    CurrentFrameIndex = Animate.GetCurrentFrameIndex
+    },
+    w = {
+    Animation = Animate.SetAnimation
+    }};
+end
 
 local TargetedAction = cc.TargetedAction;
-TargetedAction.gtor({
-    ForcedTarget = TargetedAction.getForcedTarget
-});
-TargetedAction.stor({
-    ForcedTarget = TargetedAction.setForcedTarget
-});
+function TargetedAction.__properties__()
+    return {
+    r = {
+    ForcedTarget = TargetedAction.GetForcedTarget
+    },
+    w = {
+    ForcedTarget = TargetedAction.SetForcedTarget
+    }};
+end
 
 local EaseRateAction = cc.EaseRateAction;
-EaseRateAction.gtor({
-    Rate = EaseRateAction.getRate
-});
-EaseRateAction.stor({
-    Rate = EaseRateAction.setRate
-});
+function EaseRateAction.__properties__()
+    return {
+    r = {
+    Rate = EaseRateAction.GetRate
+    },
+    w = {
+    Rate = EaseRateAction.SetRate
+    }};
+end
 
 local EaseElastic = cc.EaseElastic;
-EaseElastic.gtor({
-    Period = EaseElastic.getPeriod
-});
-EaseElastic.stor({
-    Period = EaseElastic.setPeriod
-});
+function EaseElastic.__properties__()
+    return {
+    r = {
+    Period = EaseElastic.GetPeriod
+    },
+    w = {
+    Period = EaseElastic.SetPeriod
+    }};
+end
 
 local GridAction = cc.GridAction;
-GridAction.gtor({
-    Grid = GridAction.getGrid
-});
+function GridAction.__properties__()
+    return {
+    r = {
+    Grid = GridAction.GetGrid
+    },
+    w = {
+    }};
+end
 
 local Waves3D = cc.Waves3D;
-Waves3D.gtor({
-    Amplitude = Waves3D.getAmplitude,
-    AmplitudeRate = Waves3D.getAmplitudeRate
-});
-Waves3D.stor({
-    Amplitude = Waves3D.setAmplitude,
-    AmplitudeRate = Waves3D.setAmplitudeRate
-});
+function Waves3D.__properties__()
+    return {
+    r = {
+    Amplitude = Waves3D.GetAmplitude,
+    AmplitudeRate = Waves3D.GetAmplitudeRate
+    },
+    w = {
+    Amplitude = Waves3D.SetAmplitude,
+    AmplitudeRate = Waves3D.SetAmplitudeRate
+    }};
+end
 
 local Lens3D = cc.Lens3D;
-Lens3D.gtor({
-    LensEffect = Lens3D.getLensEffect,
-    Position = Lens3D.getPosition
-});
-Lens3D.stor({
-    LensEffect = Lens3D.setLensEffect,
-    Concave = Lens3D.setConcave,
-    Position = Lens3D.setPosition
-});
+function Lens3D.__properties__()
+    return {
+    r = {
+    LensEffect = Lens3D.GetLensEffect,
+    Position = Lens3D.GetPosition
+    },
+    w = {
+    LensEffect = Lens3D.SetLensEffect,
+    Concave = Lens3D.SetConcave,
+    Position = Lens3D.SetPosition
+    }};
+end
 
 local Ripple3D = cc.Ripple3D;
-Ripple3D.gtor({
-    Amplitude = Ripple3D.getAmplitude,
-    AmplitudeRate = Ripple3D.getAmplitudeRate,
-    Position = Ripple3D.getPosition
-});
-Ripple3D.stor({
-    Amplitude = Ripple3D.setAmplitude,
-    AmplitudeRate = Ripple3D.setAmplitudeRate,
-    Position = Ripple3D.setPosition
-});
+function Ripple3D.__properties__()
+    return {
+    r = {
+    Amplitude = Ripple3D.GetAmplitude,
+    AmplitudeRate = Ripple3D.GetAmplitudeRate,
+    Position = Ripple3D.GetPosition
+    },
+    w = {
+    Amplitude = Ripple3D.SetAmplitude,
+    AmplitudeRate = Ripple3D.SetAmplitudeRate,
+    Position = Ripple3D.SetPosition
+    }};
+end
 
 local Liquid = cc.Liquid;
-Liquid.gtor({
-    Amplitude = Liquid.getAmplitude,
-    AmplitudeRate = Liquid.getAmplitudeRate
-});
-Liquid.stor({
-    Amplitude = Liquid.setAmplitude,
-    AmplitudeRate = Liquid.setAmplitudeRate
-});
+function Liquid.__properties__()
+    return {
+    r = {
+    Amplitude = Liquid.GetAmplitude,
+    AmplitudeRate = Liquid.GetAmplitudeRate
+    },
+    w = {
+    Amplitude = Liquid.SetAmplitude,
+    AmplitudeRate = Liquid.SetAmplitudeRate
+    }};
+end
 
 local Waves = cc.Waves;
-Waves.gtor({
-    Amplitude = Waves.getAmplitude,
-    AmplitudeRate = Waves.getAmplitudeRate
-});
-Waves.stor({
-    Amplitude = Waves.setAmplitude,
-    AmplitudeRate = Waves.setAmplitudeRate
-});
+function Waves.__properties__()
+    return {
+    r = {
+    Amplitude = Waves.GetAmplitude,
+    AmplitudeRate = Waves.GetAmplitudeRate
+    },
+    w = {
+    Amplitude = Waves.SetAmplitude,
+    AmplitudeRate = Waves.SetAmplitudeRate
+    }};
+end
 
 local Twirl = cc.Ripple3D;
-Twirl.gtor({
-    Amplitude = Twirl.getAmplitude,
-    AmplitudeRate = Twirl.getAmplitudeRate,
-    Position = Twirl.getPosition
-});
-Twirl.stor({
-    Amplitude = Twirl.setAmplitude,
-    AmplitudeRate = Twirl.setAmplitudeRate,
-    Position = Twirl.setPosition
-});
+function Twirl.__properties__()
+    return {
+    r = {
+    Amplitude = Twirl.GetAmplitude,
+    AmplitudeRate = Twirl.GetAmplitudeRate,
+    Position = Twirl.GetPosition
+    },
+    w = {
+    Amplitude = Twirl.SetAmplitude,
+    AmplitudeRate = Twirl.SetAmplitudeRate,
+    Position = Twirl.SetPosition
+    }};
+end
 
 local WavesTiles3D = cc.WavesTiles3D;
-WavesTiles3D.gtor({
-    Amplitude = WavesTiles3D.getAmplitude,
-    AmplitudeRate = WavesTiles3D.getAmplitudeRate
-});
-WavesTiles3D.stor({
-    Amplitude = WavesTiles3D.setAmplitude,
-    AmplitudeRate = WavesTiles3D.setAmplitudeRate
-});
+function WavesTiles3D.__properties__()
+    return {
+    r = {
+    Amplitude = WavesTiles3D.GetAmplitude,
+    AmplitudeRate = WavesTiles3D.GetAmplitudeRate
+    },
+    w = {
+    Amplitude = WavesTiles3D.SetAmplitude,
+    AmplitudeRate = WavesTiles3D.SetAmplitudeRate
+    }};
+end
 
 local JumpTiles3D = cc.WavesTiles3D;
-JumpTiles3D.gtor({
-    Amplitude = JumpTiles3D.getAmplitude,
-    AmplitudeRate = JumpTiles3D.getAmplitudeRate
-});
-JumpTiles3D.stor({
-    Amplitude = JumpTiles3D.setAmplitude,
-    AmplitudeRate = JumpTiles3D.setAmplitudeRate
-});
+function JumpTiles3D.__properties__()
+    return {
+    r = {
+    Amplitude = JumpTiles3D.GetAmplitude,
+    AmplitudeRate = JumpTiles3D.GetAmplitudeRate
+    },
+    w = {
+    Amplitude = JumpTiles3D.SetAmplitude,
+    AmplitudeRate = JumpTiles3D.SetAmplitudeRate
+    }};
+end
 
 local SpriteFrame = cc.SpriteFrame;
-SpriteFrame.gtor({
-    RectInPixels = SpriteFrame.getRectInPixels,
-    Rotated = SpriteFrame.isRotated,
-    Rect = SpriteFrame.getRect,
-    CenterRect = SpriteFrame.getCenterRect,
-    HasCenterRect = SpriteFrame.hasCenterRect,
-    OffsetInPixels = SpriteFrame.getOffsetInPixels,
-    OriginalSizeInPixels = SpriteFrame.getOriginalSizeInPixels,
-    OriginalSize = SpriteFrame.getOriginalSize,
-    Texture = SpriteFrame.getTexture,
-    Offset = SpriteFrame.getOffset,
-    AnchorPoint = SpriteFrame.getAnchorPoint,
-    HasAnchorPoint = SpriteFrame.hasAnchorPoint,
-});
-SpriteFrame.stor({
-    RectInPixels = SpriteFrame.setRectInPixels,
-    setRotated = SpriteFrame.setRotated,
-    Rect = SpriteFrame.setRect,
-    CenterRectInPixels = SpriteFrame.setCenterRectInPixels,
-    OffsetInPixels = SpriteFrame.setOffsetInPixels,
-    OriginalSizeInPixels = SpriteFrame.setOriginalSizeInPixels,
-    OriginalSize = SpriteFrame.setOriginalSize,
-    Texture = SpriteFrame.setTexture,
-    Offset = SpriteFrame.setOffset,
-    AnchorPoint = SpriteFrame.setAnchorPoint,
-});
+function SpriteFrame.__properties__()
+    return {
+    r = {
+    RectInPixels = SpriteFrame.GetRectInPixels,
+    Rotated = SpriteFrame.IsRotated,
+    Rect = SpriteFrame.GetRect,
+    CenterRect = SpriteFrame.GetCenterRect,
+    HasCenterRect = SpriteFrame.HasCenterRect,
+    OffsetInPixels = SpriteFrame.GetOffsetInPixels,
+    OriginalSizeInPixels = SpriteFrame.GetOriginalSizeInPixels,
+    OriginalSize = SpriteFrame.GetOriginalSize,
+    Texture = SpriteFrame.GetTexture,
+    Offset = SpriteFrame.GetOffset,
+    AnchorPoint = SpriteFrame.GetAnchorPoint,
+    HasAnchorPoint = SpriteFrame.HasAnchorPoint,
+    },
+    w = {
+    RectInPixels = SpriteFrame.SetRectInPixels,
+    setRotated = SpriteFrame.SetRotated,
+    Rect = SpriteFrame.SetRect,
+    CenterRectInPixels = SpriteFrame.SetCenterRectInPixels,
+    OffsetInPixels = SpriteFrame.SetOffsetInPixels,
+    OriginalSizeInPixels = SpriteFrame.SetOriginalSizeInPixels,
+    OriginalSize = SpriteFrame.SetOriginalSize,
+    Texture = SpriteFrame.SetTexture,
+    Offset = SpriteFrame.SetOffset,
+    AnchorPoint = SpriteFrame.SetAnchorPoint,
+    }};
+end
 
 local AnimationFrame = cc.AnimationFrame;
-AnimationFrame.gtor({
-    SpriteFrame = AnimationFrame.getSpriteFrame,
-    DelayUnits = AnimationFrame.getDelayUnits,
-    UserInfo = AnimationFrame.getUserInfo
-});
-AnimationFrame.stor({
-    SpriteFrame = AnimationFrame.setSpriteFrame,
-    DelayUnits = AnimationFrame.setDelayUnits,
-    UserInfo = AnimationFrame.setUserInfo
-});
+function AnimationFrame.__properties__()
+    return {
+    r = {
+    SpriteFrame = AnimationFrame.GetSpriteFrame,
+    DelayUnits = AnimationFrame.GetDelayUnits,
+    UserInfo = AnimationFrame.GetUserInfo
+    },
+    w = {
+    SpriteFrame = AnimationFrame.SetSpriteFrame,
+    DelayUnits = AnimationFrame.SetDelayUnits,
+    UserInfo = AnimationFrame.SetUserInfo
+    }};
+end
 
 local Animation = cc.Animation;
-Animation.gtor({
-    TotalDelayUnits = Animation.getTotalDelayUnits,
-    DelayPerUnit = Animation.getDelayPerUnit,
-    Duration = Animation.getDuration,
-    Frames = Animation.getFrames,
-    RestoreOriginalFrame = Animation.getRestoreOriginalFrame,
-    Loops = Animation.getLoops
-});
-Animation.stor({
-    DelayPerUnit = Animation.setDelayPerUnit,
-    Frames = Animation.setFrames,
-    RestoreOriginalFrame = Animation.setRestoreOriginalFrame,
-    Loops = Animation.setLoops
-});
+function Animation.__properties__()
+    return {
+    r = {
+    TotalDelayUnits = Animation.GetTotalDelayUnits,
+    DelayPerUnit = Animation.GetDelayPerUnit,
+    Duration = Animation.GetDuration,
+    Frames = Animation.GetFrames,
+    RestoreOriginalFrame = Animation.GetRestoreOriginalFrame,
+    Loops = Animation.GetLoops
+    },
+    w = {
+    DelayPerUnit = Animation.SetDelayPerUnit,
+    Frames = Animation.SetFrames,
+    RestoreOriginalFrame = Animation.SetRestoreOriginalFrame,
+    Loops = Animation.SetLoops
+    }};
+end
 
 local AtlasNode = cc.AtlasNode;
-AtlasNode.gtor({
-    TextureAtlas = AtlasNode.getTextureAtlas,
-    QuadsToDraw = AtlasNode.getQuadsToDraw,
-    Texture = AtlasNode.getTexture,
-    BlendFunc = AtlasNode.getBlendFunc
-});
-AtlasNode.stor({
-    TextureAtlas = AtlasNode.setTextureAtlas,
-    QuadsToDraw = AtlasNode.setQuadsToDraw,
-    Texture = AtlasNode.setTexture,
-    BlendFunc = AtlasNode.setBlendFunc
-});
+function AtlasNode.__properties__()
+    return {
+    r = {
+    TextureAtlas = AtlasNode.GetTextureAtlas,
+    QuadsToDraw = AtlasNode.GetQuadsToDraw,
+    Texture = AtlasNode.GetTexture,
+    BlendFunc = AtlasNode.GetBlendFunc
+    },
+    w = {
+    TextureAtlas = AtlasNode.SetTextureAtlas,
+    QuadsToDraw = AtlasNode.SetQuadsToDraw,
+    Texture = AtlasNode.SetTexture,
+    BlendFunc = AtlasNode.SetBlendFunc
+    }};
+end
 
 local Camera = cc.Camera;
-Camera.gtor({
-    Type = Camera.getType,
-    CameraFlag = Camera.getCameraFlag,
-    ProjectionMatrix = Camera.getProjectionMatrix,
-    ViewMatrix = Camera.getViewMatrix,
-    ViewProjectionMatrix = Camera.getViewProjectionMatrix,
-    Depth = Camera.getDepth,
-    RenderOrder = Camera.getRenderOrder,
-    FarPlane = Camera.getFarPlane,
-    NearPlane = Camera.getNearPlane,
-    ViewProjectionUpdated = Camera.isViewProjectionUpdated,
-    BackgroundBrush = Camera.getBackgroundBrush,
-    BrushValid = Camera.isBrushValid
-});
-Camera.stor({
-    CameraFlag = Camera.setCameraFlag,
-    Depth = Camera.setDepth,
-    FrameBufferObject = Camera.setFrameBufferObject,
-    Viewport = Camera.setViewport,
-    BackgroundBrush = Camera.setBackgroundBrush,
-    Scene = Camera.setScene,
-    AdditionalProjection = Camera.setAdditionalProjection
-});
+function Camera.__properties__()
+    return {
+    r = {
+    Type = Camera.GetType,
+    CameraFlag = Camera.GetCameraFlag,
+    ProjectionMatrix = Camera.GetProjectionMatrix,
+    ViewMatrix = Camera.GetViewMatrix,
+    ViewProjectionMatrix = Camera.GetViewProjectionMatrix,
+    Depth = Camera.GetDepth,
+    RenderOrder = Camera.GetRenderOrder,
+    FarPlane = Camera.GetFarPlane,
+    NearPlane = Camera.GetNearPlane,
+    ViewProjectionUpdated = Camera.IsViewProjectionUpdated,
+    BackgroundBrush = Camera.GetBackgroundBrush,
+    BrushValid = Camera.IsBrushValid
+    },
+    w = {
+    CameraFlag = Camera.SetCameraFlag,
+    Depth = Camera.SetDepth,
+    FrameBufferObject = Camera.SetFrameBufferObject,
+    Viewport = Camera.SetViewport,
+    BackgroundBrush = Camera.SetBackgroundBrush,
+    Scene = Camera.SetScene,
+    AdditionalProjection = Camera.SetAdditionalProjection
+    }};
+end
 
 local CameraBackgroundBrush = cc.CameraBackgroundBrush;
-CameraBackgroundBrush.gtor({
-    BrushType = CameraBackgroundBrush.getBrushType,
-    Valid = CameraBackgroundBrush.isValid
-});
-CameraBackgroundBrush.stor({
-});
+function CameraBackgroundBrush.__properties__()
+    return {
+    r = {
+    BrushType = CameraBackgroundBrush.GetBrushType,
+    Valid = CameraBackgroundBrush.IsValid
+    },
+    w = {
+    }};
+end
 
 local CameraBackgroundDepthBrush = cc.CameraBackgroundDepthBrush;
-CameraBackgroundDepthBrush.gtor({
-});
-CameraBackgroundDepthBrush.stor({
-    Depth = CameraBackgroundDepthBrush.setDepth
-});
+function CameraBackgroundDepthBrush.__properties__()
+    return {
+    r = {
+    },
+    w = {
+    Depth = CameraBackgroundDepthBrush.SetDepth
+    }};
+end
 
 local CameraBackgroundColorBrush = cc.CameraBackgroundColorBrush;
-CameraBackgroundColorBrush.gtor({
-});
-CameraBackgroundColorBrush.stor({
-    Color = CameraBackgroundColorBrush.setColor
-});
+function CameraBackgroundColorBrush.__properties__()
+    return {
+    r = {
+    },
+    w = {
+    Color = CameraBackgroundColorBrush.SetColor
+    }};
+end
 
 local CameraBackgroundSkyBoxBrush = cc.CameraBackgroundSkyBoxBrush;
-CameraBackgroundSkyBoxBrush.gtor({
-});
-CameraBackgroundSkyBoxBrush.stor({
-    Texture = CameraBackgroundSkyBoxBrush.setTexture
-});
+function CameraBackgroundSkyBoxBrush.__properties__()
+    return {
+    r = {
+    },
+    w = {
+    Texture = CameraBackgroundSkyBoxBrush.SetTexture
+    }};
+end
 
 local ClippingNode = cc.ClippingNode;
-ClippingNode.gtor({
-    Stencil = ClippingNode.getStencil,
-    Content = ClippingNode.hasContent,
-    AlphaThreshold = ClippingNode.getAlphaThreshold,
-    Inverted = ClippingNode.isInverted
-});
-ClippingNode.stor({
-    Stencil = ClippingNode.setStencil,
-    AlphaThreshold = ClippingNode.setAlphaThreshold,
-    Inverted = ClippingNode.setInverted
-});
+function ClippingNode.__properties__()
+    return {
+    r = {
+    Stencil = ClippingNode.GetStencil,
+    Content = ClippingNode.HasContent,
+    AlphaThreshold = ClippingNode.GetAlphaThreshold,
+    Inverted = ClippingNode.IsInverted
+    },
+    w = {
+    Stencil = ClippingNode.SetStencil,
+    AlphaThreshold = ClippingNode.SetAlphaThreshold,
+    Inverted = ClippingNode.SetInverted
+    }};
+end
 
 local ClippingRectangleNode = cc.ClippingRectangleNode;
-ClippingRectangleNode.gtor({
-    ClippingRegion = ClippingRectangleNode.getClippingRegion,
-    ClippingEnabled = ClippingRectangleNode.isClippingEnabled
-});
-ClippingRectangleNode.stor({
-    ClippingRegion = ClippingRectangleNode.setClippingRegion,
-    ClippingEnabled = ClippingRectangleNode.setClippingEnabled
-});
+function ClippingRectangleNode.__properties__()
+    return {
+    r = {
+    ClippingRegion = ClippingRectangleNode.GetClippingRegion,
+    ClippingEnabled = ClippingRectangleNode.IsClippingEnabled
+    },
+    w = {
+    ClippingRegion = ClippingRectangleNode.SetClippingRegion,
+    ClippingEnabled = ClippingRectangleNode.SetClippingEnabled
+    }};
+end
 
 local Component = cc.Component;
-Component.gtor({
-    Enabled = Component.isEnabled,
-    Name = Component.getName,
-    Owner = Component.getOwner
-});
-Component.stor({
-    Enabled = Component.setEnabled,
-    Name = Component.setName,
-    Owner = Component.setOwner
-});
+function Component.__properties__()
+    return {
+    r = {
+    Enabled = Component.IsEnabled,
+    Name = Component.GetName,
+    Owner = Component.GetOwner
+    },
+    w = {
+    Enabled = Component.SetEnabled,
+    Name = Component.SetName,
+    Owner = Component.SetOwner
+    }};
+end
 
 local DrawNode = cc.DrawNode;
-DrawNode.gtor({
-    BlendFunc = DrawNode.getBlendFunc,
-    LineWidth = DrawNode.getLineWidth,
-    Isolated = DrawNode.isIsolated
-});
-DrawNode.stor({
-    BlendFunc = DrawNode.setBlendFunc,
-    LineWidth = DrawNode.setLineWidth,
-    Isolated = DrawNode.setIsolated
-});
+function DrawNode.__properties__()
+    return {
+    r = {
+    BlendFunc = DrawNode.GetBlendFunc,
+    LineWidth = DrawNode.GetLineWidth,
+    Isolated = DrawNode.IsIsolated
+    },
+    w = {
+    BlendFunc = DrawNode.SetBlendFunc,
+    LineWidth = DrawNode.SetLineWidth,
+    Isolated = DrawNode.SetIsolated
+    }};
+end
 
 -- cc.FastTMXLayer
 local FastTMXLayer = cc.FastTMXLayer;
-FastTMXLayer.gtor({
-    LayerName = FastTMXLayer.getLayerName,
-    LayerSize = FastTMXLayer.getLayerSize,
-    MapTileSize = FastTMXLayer.getMapTileSize,
-    TileSet = FastTMXLayer.getTileSet,
-    LayerOrientation = FastTMXLayer.getLayerOrientation,
-    Properties = FastTMXLayer.getProperties
-});
-FastTMXLayer.stor({
-    LayerName = FastTMXLayer.setLayerName,
-    LayerSize = FastTMXLayer.setLayerSize,
-    MapTileSize = FastTMXLayer.setMapTileSize,
-    TileSet = FastTMXLayer.setTileSet,
-    LayerOrientation = FastTMXLayer.setLayerOrientation,
-    Properties = FastTMXLayer.setProperties
-});
-
--- cc.FastTMXLayer
-FastTMXLayer = cc.FastTMXLayer;
-FastTMXLayer.gtor({
-    LayerName = FastTMXLayer.getLayerName,
-    LayerSize = FastTMXLayer.getLayerSize,
-    MapTileSize = FastTMXLayer.getMapTileSize,
-    TileSet = FastTMXLayer.getTileSet,
-    LayerOrientation = FastTMXLayer.getLayerOrientation,
-    Properties = FastTMXLayer.getProperties
-});
-FastTMXLayer.stor({
-    LayerName = FastTMXLayer.setLayerName,
-    LayerSize = FastTMXLayer.setLayerSize,
-    MapTileSize = FastTMXLayer.setMapTileSize,
-    TileSet = FastTMXLayer.setTileSet,
-    LayerOrientation = FastTMXLayer.setLayerOrientation,
-    Properties = FastTMXLayer.setProperties
-});
+function FastTMXLayer.__properties__()
+    return {
+    r = {
+    LayerName = FastTMXLayer.GetLayerName,
+    LayerSize = FastTMXLayer.GetLayerSize,
+    MapTileSize = FastTMXLayer.GetMapTileSize,
+    TileSet = FastTMXLayer.GetTileSet,
+    LayerOrientation = FastTMXLayer.GetLayerOrientation,
+    Properties = FastTMXLayer.GetProperties
+    },
+    w = {
+    LayerName = FastTMXLayer.SetLayerName,
+    LayerSize = FastTMXLayer.SetLayerSize,
+    MapTileSize = FastTMXLayer.SetMapTileSize,
+    TileSet = FastTMXLayer.SetTileSet,
+    LayerOrientation = FastTMXLayer.SetLayerOrientation,
+    Properties = FastTMXLayer.SetProperties
+    }};
+end
 
 
 -- cc.FastTMXTiledMap
 local FastTMXTiledMap = cc.FastTMXTiledMap;
-FastTMXTiledMap.gtor({
-    MapSize = FastTMXTiledMap.getMapSize,
-    TileSize = FastTMXTiledMap.getTileSize,
-    MapOrientation = FastTMXTiledMap.getMapOrientation,
-    ObjectGroups = FastTMXTiledMap.getObjectGroups,
-    Properties = FastTMXTiledMap.getProperties
-});
-FastTMXTiledMap.stor({
-    MapSize = FastTMXTiledMap.setMapSize,
-    TileSize = FastTMXTiledMap.setTileSize,
-    MapOrientation = FastTMXTiledMap.setMapOrientation,
-    ObjectGroups = FastTMXTiledMap.setObjectGroups,
-    Properties = FastTMXTiledMap.setProperties
-});
-
--- cc.FastTMXTiledMap
-FastTMXTiledMap = cc.FastTMXTiledMap;
-FastTMXTiledMap.gtor({
-    MapSize = FastTMXTiledMap.getMapSize,
-    TileSize = FastTMXTiledMap.getTileSize,
-    MapOrientation = FastTMXTiledMap.getMapOrientation,
-    ObjectGroups = FastTMXTiledMap.getObjectGroups,
-    Properties = FastTMXTiledMap.getProperties
-});
-FastTMXTiledMap.stor({
-    MapSize = FastTMXTiledMap.setMapSize,
-    TileSize = FastTMXTiledMap.setTileSize,
-    MapOrientation = FastTMXTiledMap.setMapOrientation,
-    ObjectGroups = FastTMXTiledMap.setObjectGroups,
-    Properties = FastTMXTiledMap.setProperties
-});
+function FastTMXTiledMap.__properties__()
+    return {
+    r = {
+    MapSize = FastTMXTiledMap.GetMapSize,
+    TileSize = FastTMXTiledMap.GetTileSize,
+    MapOrientation = FastTMXTiledMap.GetMapOrientation,
+    ObjectGroups = FastTMXTiledMap.GetObjectGroups,
+    Properties = FastTMXTiledMap.GetProperties
+    },
+    w = {
+    MapSize = FastTMXTiledMap.SetMapSize,
+    TileSize = FastTMXTiledMap.SetTileSize,
+    MapOrientation = FastTMXTiledMap.SetMapOrientation,
+    ObjectGroups = FastTMXTiledMap.SetObjectGroups,
+    Properties = FastTMXTiledMap.SetProperties
+    }};
+end
 
 local TMXObjectGroup = cc.TMXObjectGroup;
-TMXObjectGroup.gtor({
-    GroupName = TMXObjectGroup.getGroupName,
-    PositionOffset = TMXObjectGroup.getPositionOffset,
-    Properties = TMXObjectGroup.getProperties,
-    Objects = TMXObjectGroup.getObjects,
-});
-TMXObjectGroup.stor({
-    GroupName = TMXObjectGroup.setGroupName,
-    PositionOffset = TMXObjectGroup.setPositionOffset,
-    Properties = TMXObjectGroup.setProperties,
-    Objects = TMXObjectGroup.setObjects,
-});
+function TMXObjectGroup.__properties__()
+    return {
+    r = {
+    GroupName = TMXObjectGroup.GetGroupName,
+    PositionOffset = TMXObjectGroup.GetPositionOffset,
+    Properties = TMXObjectGroup.GetProperties,
+    Objects = TMXObjectGroup.GetObjects,
+    },
+    w = {
+    GroupName = TMXObjectGroup.SetGroupName,
+    PositionOffset = TMXObjectGroup.SetPositionOffset,
+    Properties = TMXObjectGroup.SetProperties,
+    Objects = TMXObjectGroup.SetObjects,
+    }};
+end
 
 local TMXLayerInfo = cc.TMXLayerInfo;
-TMXLayerInfo.gtor({
-    Properties = TMXLayerInfo.getProperties
-});
-TMXLayerInfo.stor({
-    Properties = TMXLayerInfo.setProperties
-});
+function TMXLayerInfo.__properties__()
+    return {
+    r = {
+    Properties = TMXLayerInfo.GetProperties
+    },
+    w = {
+    Properties = TMXLayerInfo.SetProperties
+    }};
+end
 
 local TMXMapInfo = cc.TMXMapInfo;
-TMXMapInfo.gtor({
-    TileProperties = TMXMapInfo.getTileProperties,
-    Orientation = TMXMapInfo.getOrientation,
-    StaggerAxis = TMXMapInfo.getStaggerAxis,
-    StaggerIndex = TMXMapInfo.getStaggerIndex,
-    HexSideLength = TMXMapInfo.getHexSideLength,
-    MapSize = TMXMapInfo.getMapSize,
-    TileSize = TMXMapInfo.getTileSize,
-    Layers = TMXMapInfo.getLayers,
-    Tilesets = TMXMapInfo.getTilesets,
-    ObjectGroups = TMXMapInfo.getObjectGroups,
-    ParentElement = TMXMapInfo.getParentElement,
-    ParentGID = TMXMapInfo.getParentGID,
-    LayerAttribs = TMXMapInfo.getLayerAttribs,
-    StoringCharacters = TMXMapInfo.isStoringCharacters,
-    Properties = TMXMapInfo.getProperties
-});
-TMXMapInfo.stor({
-    TileProperties = TMXMapInfo.setTileProperties,
-    Orientation = TMXMapInfo.setOrientation,
-    StaggerAxis = TMXMapInfo.setStaggerAxis,
-    StaggerIndex = TMXMapInfo.setStaggerIndex,
-    HexSideLength = TMXMapInfo.setHexSideLength,
-    MapSize = TMXMapInfo.setMapSize,
-    TileSize = TMXMapInfo.setTileSize,
-    Layers = TMXMapInfo.setLayers,
-    Tilesets = TMXMapInfo.setTilesets,
-    ObjectGroups = TMXMapInfo.setObjectGroups,
-    ParentElement = TMXMapInfo.setParentElement,
-    ParentGID = TMXMapInfo.setParentGID,
-    LayerAttribs = TMXMapInfo.setLayerAttribs,
-    StoringCharacters = TMXMapInfo.setStoringCharacters,
-    Properties = TMXMapInfo.setProperties
-});
+function TMXMapInfo.__properties__()
+    return {
+    r = {
+    TileProperties = TMXMapInfo.GetTileProperties,
+    Orientation = TMXMapInfo.GetOrientation,
+    StaggerAxis = TMXMapInfo.GetStaggerAxis,
+    StaggerIndex = TMXMapInfo.GetStaggerIndex,
+    HexSideLength = TMXMapInfo.GetHexSideLength,
+    MapSize = TMXMapInfo.GetMapSize,
+    TileSize = TMXMapInfo.GetTileSize,
+    Layers = TMXMapInfo.GetLayers,
+    Tilesets = TMXMapInfo.GetTilesets,
+    ObjectGroups = TMXMapInfo.GetObjectGroups,
+    ParentElement = TMXMapInfo.GetParentElement,
+    ParentGID = TMXMapInfo.GetParentGID,
+    LayerAttribs = TMXMapInfo.GetLayerAttribs,
+    StoringCharacters = TMXMapInfo.IsStoringCharacters,
+    Properties = TMXMapInfo.GetProperties
+    },
+    w = {
+    TileProperties = TMXMapInfo.SetTileProperties,
+    Orientation = TMXMapInfo.SetOrientation,
+    StaggerAxis = TMXMapInfo.SetStaggerAxis,
+    StaggerIndex = TMXMapInfo.SetStaggerIndex,
+    HexSideLength = TMXMapInfo.SetHexSideLength,
+    MapSize = TMXMapInfo.SetMapSize,
+    TileSize = TMXMapInfo.SetTileSize,
+    Layers = TMXMapInfo.SetLayers,
+    Tilesets = TMXMapInfo.SetTilesets,
+    ObjectGroups = TMXMapInfo.SetObjectGroups,
+    ParentElement = TMXMapInfo.SetParentElement,
+    ParentGID = TMXMapInfo.SetParentGID,
+    LayerAttribs = TMXMapInfo.SetLayerAttribs,
+    StoringCharacters = TMXMapInfo.SetStoringCharacters,
+    Properties = TMXMapInfo.SetProperties
+    }};
+end
 
 local GridBase = cc.GridBase;
-GridBase.gtor({
-    Active = GridBase.isActive,
-    ReuseGrid = GridBase.getReuseGrid,
-    GridSize = GridBase.getGridSize,
-    Step = GridBase.getStep,
-    TextureFlipped = GridBase.isTextureFlipped,
-    GridRect = GridBase.getGridRect
-});
-GridBase.stor({
-    Active = GridBase.setActive,
-    ReuseGrid = GridBase.setReuseGrid,
-    GridSize = GridBase.setGridSize,
-    Step = GridBase.setStep,
-    TextureFlipped = GridBase.setTextureFlipped,
-    GridRect = GridBase.setGridRect
-});
+function GridBase.__properties__()
+    return {
+    r = {
+    Active = GridBase.IsActive,
+    ReuseGrid = GridBase.GetReuseGrid,
+    GridSize = GridBase.GetGridSize,
+    Step = GridBase.GetStep,
+    TextureFlipped = GridBase.IsTextureFlipped,
+    GridRect = GridBase.GetGridRect
+    },
+    w = {
+    Active = GridBase.SetActive,
+    ReuseGrid = GridBase.SetReuseGrid,
+    GridSize = GridBase.SetGridSize,
+    Step = GridBase.SetStep,
+    TextureFlipped = GridBase.SetTextureFlipped,
+    GridRect = GridBase.SetGridRect
+    }};
+end
 
 local Grid3D = cc.Grid3D;
-Grid3D.gtor({
-    NeedDepthTestForBlit = Grid3D.getNeedDepthTestForBlit
-});
-Grid3D.stor({
-    NeedDepthTestForBlit = Grid3D.setNeedDepthTestForBlit
-});
+function Grid3D.__properties__()
+    return {
+    r = {
+    NeedDepthTestForBlit = Grid3D.GetNeedDepthTestForBlit
+    },
+    w = {
+    NeedDepthTestForBlit = Grid3D.SetNeedDepthTestForBlit
+    }};
+end
 
 local Label = cc.Label;
-Label.gtor({
-    TTFConfig = Label.getTTFConfig,
-    BMFontFilePath = Label.getBMFontFilePath,
-    SystemFontName = Label.getSystemFontName,
-    SystemFontSize = Label.getSystemFontSize,
-    String = Label.getString,
-    Text = Label.getString,
-    StringNumLines = Label.getStringNumLines,
-    TextNumLines = Label.getStringNumLines,
-    StringLength = Label.getStringLength,
-    TextLength = Label.getStringLength,
-    TextColor = Label.getTextColor,
-    ShadowEnabled = Label.isShadowEnabled,
-    ShadowOffset = Label.getShadowOffset,
-    ShadowBlurRadius = Label.getShadowBlurRadius,
-    ShadowColor = Label.getShadowColor,
-    OutlineSize = Label.getOutlineSize,
-    LabelEffectType = Label.getLabelEffectType,
-    EffectColor = Label.getEffectColor,
-    TextAlignment = Label.getTextAlignment,
-    HorizontalAlignment = Label.getHorizontalAlignment,
-    VerticalAlignment = Label.getVerticalAlignment,
-    MaxLineWidth = Label.getMaxLineWidth,
-    BMFontSize = Label.getBMFontSize,
-    Wrap = Label.isWrapEnabled,
-    Overflow = Label.getOverflow,
-    LabelWidth = Label.getWidth,
-    LabelHeight = Label.getHeight,
-    Dimensions = Label.getDimensions,
-    ClipMarginEnabled = Label.isClipMarginEnabled,
-    LineHeight = Label.getLineHeight,
-    LineSpacing = Label.getLineSpacing,
-    LabelType = Label.getLabelType,
-    RenderingFontSize = Label.getRenderingFontSize,
-    AdditionalKerning = Label.getAdditionalKerning,
-    BlendFunc = Label.getBlendFunc
-});
-Label.stor({
-    TTFConfig = Label.setTTFConfig,
-    SystemFontName = Label.setSystemFontName,
-    SystemFontSize = Label.setSystemFontSize,
-    String = Label.setString,
-    Text = Label.setString,
-    TextColor = Label.setTextColor,
+function Label.__properties__()
+    return {
+    r = {
+    TTFConfig = Label.GetTTFConfig,
+    BMFontFilePath = Label.GetBMFontFilePath,
+    SystemFontName = Label.GetSystemFontName,
+    SystemFontSize = Label.GetSystemFontSize,
+    String = Label.GetString,
+    Text = Label.GetString,
+    StringNumLines = Label.GetStringNumLines,
+    TextNumLines = Label.GetStringNumLines,
+    StringLength = Label.GetStringLength,
+    TextLength = Label.GetStringLength,
+    TextColor = Label.GetTextColor,
+    ShadowEnabled = Label.IsShadowEnabled,
+    ShadowOffset = Label.GetShadowOffset,
+    ShadowBlurRadius = Label.GetShadowBlurRadius,
+    ShadowColor = Label.GetShadowColor,
+    OutlineSize = Label.GetOutlineSize,
+    LabelEffectType = Label.GetLabelEffectType,
+    EffectColor = Label.GetEffectColor,
+    TextAlignment = Label.GetTextAlignment,
+    HorizontalAlignment = Label.GetHorizontalAlignment,
+    VerticalAlignment = Label.GetVerticalAlignment,
+    MaxLineWidth = Label.GetMaxLineWidth,
+    BMFontSize = Label.GetBMFontSize,
+    Wrap = Label.IsWrapEnabled,
+    Overflow = Label.GetOverflow,
+    LabelWidth = Label.GetWidth,
+    LabelHeight = Label.GetHeight,
+    Dimensions = Label.GetDimensions,
+    ClipMarginEnabled = Label.IsClipMarginEnabled,
+    LineHeight = Label.GetLineHeight,
+    LineSpacing = Label.GetLineSpacing,
+    LabelType = Label.GetLabelType,
+    RenderingFontSize = Label.GetRenderingFontSize,
+    AdditionalKerning = Label.GetAdditionalKerning,
+    BlendFunc = Label.GetBlendFunc
+    },
+    w = {
+    TTFConfig = Label.SetTTFConfig,
+    SystemFontName = Label.SetSystemFontName,
+    SystemFontSize = Label.SetSystemFontSize,
+    String = Label.SetString,
+    Text = Label.SetString,
+    TextColor = Label.SetTextColor,
     Italics = function(self,b)
         if b then
             Label.enableItalics(self);
@@ -731,97 +826,115 @@ Label.stor({
             Label.disableEffect(self,cc.LabelEffect.GLOW);
         end
     end,
-    Alignment = Label.setAlignment,
-    HorizontalAlignment = Label.setHorizontalAlignment,
-    VerticalAlignment = Label.setVerticalAlignment,
-    LineBreakWithoutSpace = Label.setLineBreakWithoutSpace,
-    MaxLineWidth = Label.setMaxLineWidth,
-    BMFontSize = Label.setBMFontSize,
-    Wrap = Label.enableWrap,
-    Overflow = Label.setOverflow,
-    LabelWidth = Label.setWidth,
-    LabelHeight = Label.setHeight,
-    Dimensions = Label.setDimensions,
-    ClipMarginEnabled = Label.setClipMarginEnabled,
-    LineHeight = Label.setLineHeight,
-    LineSpacing = Label.setLineSpacing,
-    AdditionalKerning = Label.setAdditionalKerning,
-    BlendFunc = Label.setBlendFunc
-});
+    Alignment = Label.SetAlignment,
+    HorizontalAlignment = Label.SetHorizontalAlignment,
+    VerticalAlignment = Label.SetVerticalAlignment,
+    LineBreakWithoutSpace = Label.SetLineBreakWithoutSpace,
+    MaxLineWidth = Label.SetMaxLineWidth,
+    BMFontSize = Label.SetBMFontSize,
+    Wrap = Label.EnableWrap,
+    Overflow = Label.SetOverflow,
+    LabelWidth = Label.SetWidth,
+    LabelHeight = Label.SetHeight,
+    Dimensions = Label.SetDimensions,
+    ClipMarginEnabled = Label.SetClipMarginEnabled,
+    LineHeight = Label.SetLineHeight,
+    LineSpacing = Label.SetLineSpacing,
+    AdditionalKerning = Label.SetAdditionalKerning,
+    BlendFunc = Label.SetBlendFunc
+    }};
+end
 
 local LabelAtlas = cc.LabelAtlas;
-LabelAtlas.gtor({
-    String = LabelAtlas.getString,
-    Text = LabelAtlas.getString
-});
-LabelAtlas.stor({
-    String = LabelAtlas.setString,
-    Text = LabelAtlas.setString
-});
+function LabelAtlas.__properties__()
+    return {
+    r = {
+    String = LabelAtlas.GetString,
+    Text = LabelAtlas.GetString
+    },
+    w = {
+    String = LabelAtlas.SetString,
+    Text = LabelAtlas.SetString
+    }};
+end
 
 local LayerColor = cc.LayerColor;
-LayerColor.gtor({
-    BlendFunc = LayerColor.getBlendFunc
-});
-LayerColor.stor({
-    BlendFunc = LayerColor.setBlendFunc
-});
+function LayerColor.__properties__()
+    return {
+    r = {
+    BlendFunc = LayerColor.GetBlendFunc
+    },
+    w = {
+    BlendFunc = LayerColor.SetBlendFunc
+    }};
+end
 
 local LayerGradient = cc.LayerGradient;
-LayerGradient.gtor({
-    CompressedInterpolation = LayerGradient.isCompressedInterpolation,
-    StartColor = LayerGradient.getStartColor,
-    EndColor = LayerGradient.getEndColor,
-    StartOpacity = LayerGradient.getStartOpacity,
-    EndOpacity = LayerGradient.getEndOpacity,
-    Vector = LayerGradient.getVector
-});
-LayerGradient.stor({
-    CompressedInterpolation = LayerGradient.setCompressedInterpolation,
-    StartColor = LayerGradient.setStartColor,
-    EndColor = LayerGradient.setEndColor,
-    StartOpacity = LayerGradient.setStartOpacity,
-    EndOpacity = LayerGradient.setEndOpacity,
-    Vector = LayerGradient.setVector
-});
+function LayerGradient.__properties__()
+    return {
+    r = {
+    CompressedInterpolation = LayerGradient.IsCompressedInterpolation,
+    StartColor = LayerGradient.GetStartColor,
+    EndColor = LayerGradient.GetEndColor,
+    StartOpacity = LayerGradient.GetStartOpacity,
+    EndOpacity = LayerGradient.GetEndOpacity,
+    Vector = LayerGradient.GetVector
+    },
+    w = {
+    CompressedInterpolation = LayerGradient.SetCompressedInterpolation,
+    StartColor = LayerGradient.SetStartColor,
+    EndColor = LayerGradient.SetEndColor,
+    StartOpacity = LayerGradient.SetStartOpacity,
+    EndOpacity = LayerGradient.SetEndOpacity,
+    Vector = LayerGradient.SetVector
+    }};
+end
 
 local LayerRadialGradient = cc.LayerRadialGradient;
-LayerRadialGradient.gtor({
-    BlendFunc = LayerRadialGradient.getBlendFunc,
-    StartColor = LayerRadialGradient.getStartColor,
-    EndColor = LayerRadialGradient.getEndColor,
-    StartOpacity = LayerRadialGradient.getStartOpacity,
-    EndOpacity = LayerRadialGradient.getEndOpacity,
-    Radius = LayerRadialGradient.getRadius,
-    Center = LayerRadialGradient.getCenter,
-    Expand = LayerRadialGradient.getExpand
-});
-LayerRadialGradient.stor({
-    BlendFunc = LayerRadialGradient.setBlendFunc,
-    StartColor = LayerRadialGradient.setStartColor,
-    EndColor = LayerRadialGradient.setEndColor,
-    StartOpacity = LayerRadialGradient.setStartOpacity,
-    EndOpacity = LayerRadialGradient.setEndOpacity,
-    Radius = LayerRadialGradient.setRadius,
-    Center = LayerRadialGradient.setCenter,
-    Expand = LayerRadialGradient.setExpand
-});
+function LayerRadialGradient.__properties__()
+    return {
+    r = {
+    BlendFunc = LayerRadialGradient.GetBlendFunc,
+    StartColor = LayerRadialGradient.GetStartColor,
+    EndColor = LayerRadialGradient.GetEndColor,
+    StartOpacity = LayerRadialGradient.GetStartOpacity,
+    EndOpacity = LayerRadialGradient.GetEndOpacity,
+    Radius = LayerRadialGradient.GetRadius,
+    Center = LayerRadialGradient.GetCenter,
+    Expand = LayerRadialGradient.GetExpand
+    },
+    w = {
+    BlendFunc = LayerRadialGradient.SetBlendFunc,
+    StartColor = LayerRadialGradient.SetStartColor,
+    EndColor = LayerRadialGradient.SetEndColor,
+    StartOpacity = LayerRadialGradient.SetStartOpacity,
+    EndOpacity = LayerRadialGradient.SetEndOpacity,
+    Radius = LayerRadialGradient.SetRadius,
+    Center = LayerRadialGradient.SetCenter,
+    Expand = LayerRadialGradient.SetExpand
+    }};
+end
 
 local Menu = cc.Menu;
-Menu.gtor({
-    Enabled = Menu.isEnabled
-});
-Menu.stor({
-    Enabled = Menu.setEnabled
-});
+function Menu.__properties__()
+    return {
+    r = {
+    Enabled = Menu.IsEnabled
+    },
+    w = {
+    Enabled = Menu.SetEnabled
+    }};
+end
 
 local MenuItem = cc.MenuItem;
-MenuItem.gtor({
-    Enabled = MenuItem.isEnabled,
-    Selected = MenuItem.isSelected
-});
-MenuItem.stor({
-    Enabled = MenuItem.setEnabled,
+function MenuItem.__properties__()
+    return {
+    r = {
+    Enabled = MenuItem.IsEnabled,
+    Selected = MenuItem.IsSelected
+    },
+    w = {
+    Enabled = MenuItem.SetEnabled,
     Selected = function(self,b)
         if b then
             MenuItem.selected(self);
@@ -829,331 +942,376 @@ MenuItem.stor({
             MenuItem.unselected(self);
         end
     end
-});
+    }};
+end
 
 local MenuItemLabel = cc.MenuItemLabel;
-MenuItemLabel.gtor({
-    String = MenuItemLabel.getString,
-    Text = MenuItemLabel.getString,
-    DisabledColor = MenuItemLabel.getDisabledColor,
-    Label = MenuItemLabel.getLabel
-});
-MenuItemLabel.stor({
-    String = MenuItemLabel.setString,
-    Text = MenuItemLabel.setString,
-    DisabledColor = MenuItemLabel.setDisabledColor,
-    Label = MenuItemLabel.setLabel
-});
+function MenuItemLabel.__properties__()
+    return {
+    r = {
+    String = MenuItemLabel.GetString,
+    Text = MenuItemLabel.GetString,
+    DisabledColor = MenuItemLabel.GetDisabledColor,
+    Label = MenuItemLabel.GetLabel
+    },
+    w = {
+    String = MenuItemLabel.SetString,
+    Text = MenuItemLabel.SetString,
+    DisabledColor = MenuItemLabel.SetDisabledColor,
+    Label = MenuItemLabel.SetLabel
+    }};
+end
 
 local MenuItemFont = cc.MenuItemFont;
-MenuItemFont.gtor({
-    FontSize = MenuItemFont.getFontSizeObj,
-    FontName = MenuItemFont.getFontNameObj
-});
-MenuItemLabel.stor({
-    FontSize = MenuItemFont.setFontSizeObj,
-    FontName = MenuItemFont.setFontNameObj
-});
+function MenuItemFont.__properties__()
+    return {
+    r = {
+    FontSize = MenuItemFont.GetFontSizeObj,
+    FontName = MenuItemFont.GetFontNameObj
+    },
+    w = {
+    FontSize = MenuItemFont.SetFontSizeObj,
+    FontName = MenuItemFont.SetFontNameObj
+    }};
+end
 
 local MenuItemSprite = cc.MenuItemSprite;
-MenuItemSprite.gtor({
-    NormalImage = MenuItemSprite.getNormalImage,
-    SelectedImage = MenuItemSprite.getSelectedImage,
-    DisabledImage = MenuItemSprite.getDisabledImage
-});
-MenuItemSprite.stor({
-    NormalImage = MenuItemSprite.setNormalImage,
-    SelectedImage = MenuItemSprite.setSelectedImage,
-    DisabledImage = MenuItemSprite.setDisabledImage
-});
+function MenuItemSprite.__properties__()
+    return {
+    r = {
+    NormalImage = MenuItemSprite.GetNormalImage,
+    SelectedImage = MenuItemSprite.GetSelectedImage,
+    DisabledImage = MenuItemSprite.GetDisabledImage
+    },
+    w = {
+    NormalImage = MenuItemSprite.SetNormalImage,
+    SelectedImage = MenuItemSprite.SetSelectedImage,
+    DisabledImage = MenuItemSprite.SetDisabledImage
+    }};
+end
 
 local MenuItemImage = cc.MenuItemImage;
-MenuItemImage.gtor({
-});
-MenuItemImage.stor({
-    NormalSpriteFrame = MenuItemImage.setNormalSpriteFrame,
-    SelectedSpriteFrame = MenuItemImage.setSelectedSpriteFrame,
-    DisabledSpriteFrame = MenuItemImage.setDisabledSpriteFrame
-});
+function MenuItemImage.__properties__()
+    return {
+    r = {
+    },
+    w = {
+    NormalSpriteFrame = MenuItemImage.SetNormalSpriteFrame,
+    SelectedSpriteFrame = MenuItemImage.SetSelectedSpriteFrame,
+    DisabledSpriteFrame = MenuItemImage.SetDisabledSpriteFrame
+    }};
+end
 
 local MenuItemToggle = cc.MenuItemToggle;
-MenuItemToggle.gtor({
-    SelectedItem = MenuItemSprite.getSelectedItem,
-    SelectedIndex = MenuItemSprite.getSelectedIndex,
-    SubItems = MenuItemSprite.getSubItems
-});
-MenuItemToggle.stor({
-    SelectedIndex = MenuItemSprite.setSelectedIndex,
-    SubItems = MenuItemSprite.setSubItems
-});
+function MenuItemToggle.__properties__()
+    return {
+    r = {
+    SelectedItem = MenuItemSprite.GetSelectedItem,
+    SelectedIndex = MenuItemSprite.GetSelectedIndex,
+    SubItems = MenuItemSprite.GetSubItems
+    },
+    w = {
+    SelectedIndex = MenuItemSprite.SetSelectedIndex,
+    SubItems = MenuItemSprite.SetSubItems
+    }};
+end
 
 local MotionStreak = cc.MotionStreak;
-MotionStreak.gtor({
-    FastMode = MotionStreak.isFastMode,
-    Stroke = MotionStreak.getStroke,
-    StartingPositionInitialized = MotionStreak.isStartingPositionInitialized,
-    Texture = MotionStreak.getTexture,
-    BlendFunc = MotionStreak.getBlendFunc
-});
-MotionStreak.stor({
-    FastMode = MotionStreak.setFastMode,
-    Stroke = MotionStreak.setStroke,
-    StartingPositionInitialized = MotionStreak.setStartingPositionInitialized,
-    Texture = MotionStreak.setTexture,
-    BlendFunc = MotionStreak.setBlendFunc
-});
+function MotionStreak.__properties__()
+    return {
+    r = {
+    FastMode = MotionStreak.IsFastMode,
+    Stroke = MotionStreak.GetStroke,
+    StartingPositionInitialized = MotionStreak.IsStartingPositionInitialized,
+    Texture = MotionStreak.GetTexture,
+    BlendFunc = MotionStreak.GetBlendFunc
+    },
+    w = {
+    FastMode = MotionStreak.SetFastMode,
+    Stroke = MotionStreak.SetStroke,
+    StartingPositionInitialized = MotionStreak.SetStartingPositionInitialized,
+    Texture = MotionStreak.SetTexture,
+    BlendFunc = MotionStreak.SetBlendFunc
+    }};
+end
 
 local NodeGrid = cc.NodeGrid;
-NodeGrid.gtor({
-    Grid = NodeGrid.getGrid,
-    GridRect = NodeGrid.getGridRect
-});
-NodeGrid.stor({
-    Grid = NodeGrid.setGrid,
-    Target = NodeGrid.setTarget,
-    GridRect = NodeGrid.setGridRect
-});
+function NodeGrid.__properties__()
+    return {
+    r = {
+    Grid = NodeGrid.GetGrid,
+    GridRect = NodeGrid.GetGridRect
+    },
+    w = {
+    Grid = NodeGrid.SetGrid,
+    Target = NodeGrid.SetTarget,
+    GridRect = NodeGrid.SetGridRect
+    }};
+end
 
 local ParticleBatchNode = cc.ParticleBatchNode;
-ParticleBatchNode.gtor({
-    TextureAtlas = ParticleBatchNode.getTextureAtlas,
-    BlendFunc = ParticleBatchNode.getBlendFunc,
-    Texture = ParticleBatchNode.getTexture
-});
-ParticleBatchNode.stor({
-    TextureAtlas = ParticleBatchNode.setTextureAtlas,
-    BlendFunc = ParticleBatchNode.setBlendFunc,
-    Texture = ParticleBatchNode.setTexture
-});
+function ParticleBatchNode.__properties__()
+    return {
+    r = {
+    TextureAtlas = ParticleBatchNode.GetTextureAtlas,
+    BlendFunc = ParticleBatchNode.GetBlendFunc,
+    Texture = ParticleBatchNode.GetTexture
+    },
+    w = {
+    TextureAtlas = ParticleBatchNode.SetTextureAtlas,
+    BlendFunc = ParticleBatchNode.SetBlendFunc,
+    Texture = ParticleBatchNode.SetTexture
+    }};
+end
 
 local ParticleSystem = cc.ParticleSystem;
-ParticleSystem.gtor({
-    Full = ParticleSystem.isFull,
-    AutoRemoveOnFinish = ParticleSystem.isAutoRemoveOnFinish,
-    Gravity = ParticleSystem.getGravity,
-    Speed = ParticleSystem.getSpeed,
-    SpeedVar = ParticleSystem.getSpeedVar,
-    TangentialAccel = ParticleSystem.getTangentialAccel,
-    TangentialAccelVar = ParticleSystem.getTangentialAccelVar,
-    RadialAccel = ParticleSystem.getRadialAccel,
-    RadialAccelVar = ParticleSystem.getRadialAccelVar,
-    RotationIsDir = ParticleSystem.getRotationIsDir,
-    StartRadius = ParticleSystem.getStartRadius,
-    StartRadiusVar = ParticleSystem.getStartRadiusVar,
-    EndRadius = ParticleSystem.getEndRadius,
-    EndRadiusVar = ParticleSystem.getEndRadiusVar,
-    RotatePerSecond = ParticleSystem.getRotatePerSecond,
-    RotatePerSecondVar = ParticleSystem.getRotatePerSecondVar,
-    Active = ParticleSystem.isActive,
-    BlendAdditive = ParticleSystem.isBlendAdditive,
-    BatchNode = ParticleSystem.getBatchNode,
-    AtlasIndex = ParticleSystem.getAtlasIndex,
-    ParticleCount = ParticleSystem.getParticleCount,
-    Duration = ParticleSystem.getDuration,
-    SourcePosition = ParticleSystem.getSourcePosition,
-    PosVar = ParticleSystem.getPosVar,
-    Life = ParticleSystem.getLife,
-    LifeVar = ParticleSystem.getLifeVar,
-    Angle = ParticleSystem.getAngle,
-    AngleVar = ParticleSystem.getAngleVar,
-    EmitterMode = ParticleSystem.getEmitterMode,
-    StartSize = ParticleSystem.getStartSize,
-    StartSizeVar = ParticleSystem.getStartSizeVar,
-    EndSize = ParticleSystem.getEndSize,
-    EndSizeVar = ParticleSystem.getEndSizeVar,
-    StartColor = ParticleSystem.getStartColor,
-    StartColorVar = ParticleSystem.getStartColorVar,
-    EndColor = ParticleSystem.getEndColor,
-    EndColorVar = ParticleSystem.getEndColorVar,
-    StartSpin = ParticleSystem.getStartSpin,
-    StartSpinVar = ParticleSystem.getStartSpinVar,
-    EndSpin = ParticleSystem.getEndSpin,
-    EndSpinVar = ParticleSystem.getEndSpinVar,
-    EmissionRate = ParticleSystem.getEmissionRate,
-    TotalParticles = ParticleSystem.getTotalParticles,
-    PositionType = ParticleSystem.getPositionType,
-    Texture = ParticleSystem.getTexture,
-    BlendFunc = ParticleSystem.getBlendFunc,
-    ResourceFile = ParticleSystem.getResourceFile
-});
-ParticleSystem.stor({
-    AutoRemoveOnFinish = ParticleSystem.setAutoRemoveOnFinish,
-    Gravity = ParticleSystem.setGravity,
-    Speed = ParticleSystem.setSpeed,
-    SpeedVar = ParticleSystem.setSpeedVar,
-    TangentialAccel = ParticleSystem.setTangentialAccel,
-    TangentialAccelVar = ParticleSystem.setTangentialAccelVar,
-    RadialAccel = ParticleSystem.setRadialAccel,
-    RadialAccelVar = ParticleSystem.setRadialAccelVar,
-    RotationIsDir = ParticleSystem.setRotationIsDir,
-    StartRadius = ParticleSystem.setStartRadius,
-    StartRadiusVar = ParticleSystem.setStartRadiusVar,
-    EndRadius = ParticleSystem.setEndRadius,
-    EndRadiusVar = ParticleSystem.setEndRadiusVar,
-    RotatePerSecond = ParticleSystem.setRotatePerSecond,
-    RotatePerSecondVar = ParticleSystem.setRotatePerSecondVar,
-    BlendAdditive = ParticleSystem.setBlendAdditive,
-    BatchNode = ParticleSystem.setBatchNode,
-    AtlasIndex = ParticleSystem.setAtlasIndex,
-    Duration = ParticleSystem.setDuration,
-    SourcePosition = ParticleSystem.setSourcePosition,
-    PosVar = ParticleSystem.setPosVar,
-    Life = ParticleSystem.setLife,
-    LifeVar = ParticleSystem.setLifeVar,
-    Angle = ParticleSystem.setAngle,
-    AngleVar = ParticleSystem.setAngleVar,
-    EmitterMode = ParticleSystem.setEmitterMode,
-    StartSize = ParticleSystem.setStartSize,
-    StartSizeVar = ParticleSystem.setStartSizeVar,
-    EndSize = ParticleSystem.setEndSize,
-    EndSizeVar = ParticleSystem.setEndSizeVar,
-    StartColor = ParticleSystem.setStartColor,
-    StartColorVar = ParticleSystem.setStartColorVar,
-    EndColor = ParticleSystem.setEndColor,
-    EndColorVar = ParticleSystem.setEndColorVar,
-    StartSpin = ParticleSystem.setStartSpin,
-    StartSpinVar = ParticleSystem.setStartSpinVar,
-    EndSpin = ParticleSystem.setEndSpin,
-    EndSpinVar = ParticleSystem.setEndSpinVar,
-    EmissionRate = ParticleSystem.setEmissionRate,
-    TotalParticles = ParticleSystem.setTotalParticles,
-    PositionType = ParticleSystem.setPositionType,
-    Texture = ParticleSystem.setTexture,
-    BlendFunc = ParticleSystem.setBlendFunc
-});
+function ParticleSystem.__properties__()
+    return {
+    r = {
+    Full = ParticleSystem.IsFull,
+    AutoRemoveOnFinish = ParticleSystem.IsAutoRemoveOnFinish,
+    Gravity = ParticleSystem.GetGravity,
+    Speed = ParticleSystem.GetSpeed,
+    SpeedVar = ParticleSystem.GetSpeedVar,
+    TangentialAccel = ParticleSystem.GetTangentialAccel,
+    TangentialAccelVar = ParticleSystem.GetTangentialAccelVar,
+    RadialAccel = ParticleSystem.GetRadialAccel,
+    RadialAccelVar = ParticleSystem.GetRadialAccelVar,
+    RotationIsDir = ParticleSystem.GetRotationIsDir,
+    StartRadius = ParticleSystem.GetStartRadius,
+    StartRadiusVar = ParticleSystem.GetStartRadiusVar,
+    EndRadius = ParticleSystem.GetEndRadius,
+    EndRadiusVar = ParticleSystem.GetEndRadiusVar,
+    RotatePerSecond = ParticleSystem.GetRotatePerSecond,
+    RotatePerSecondVar = ParticleSystem.GetRotatePerSecondVar,
+    Active = ParticleSystem.IsActive,
+    BlendAdditive = ParticleSystem.IsBlendAdditive,
+    BatchNode = ParticleSystem.GetBatchNode,
+    AtlasIndex = ParticleSystem.GetAtlasIndex,
+    ParticleCount = ParticleSystem.GetParticleCount,
+    Duration = ParticleSystem.GetDuration,
+    SourcePosition = ParticleSystem.GetSourcePosition,
+    PosVar = ParticleSystem.GetPosVar,
+    Life = ParticleSystem.GetLife,
+    LifeVar = ParticleSystem.GetLifeVar,
+    Angle = ParticleSystem.GetAngle,
+    AngleVar = ParticleSystem.GetAngleVar,
+    EmitterMode = ParticleSystem.GetEmitterMode,
+    StartSize = ParticleSystem.GetStartSize,
+    StartSizeVar = ParticleSystem.GetStartSizeVar,
+    EndSize = ParticleSystem.GetEndSize,
+    EndSizeVar = ParticleSystem.GetEndSizeVar,
+    StartColor = ParticleSystem.GetStartColor,
+    StartColorVar = ParticleSystem.GetStartColorVar,
+    EndColor = ParticleSystem.GetEndColor,
+    EndColorVar = ParticleSystem.GetEndColorVar,
+    StartSpin = ParticleSystem.GetStartSpin,
+    StartSpinVar = ParticleSystem.GetStartSpinVar,
+    EndSpin = ParticleSystem.GetEndSpin,
+    EndSpinVar = ParticleSystem.GetEndSpinVar,
+    EmissionRate = ParticleSystem.GetEmissionRate,
+    TotalParticles = ParticleSystem.GetTotalParticles,
+    PositionType = ParticleSystem.GetPositionType,
+    Texture = ParticleSystem.GetTexture,
+    BlendFunc = ParticleSystem.GetBlendFunc,
+    ResourceFile = ParticleSystem.GetResourceFile
+    },
+    w = {
+    AutoRemoveOnFinish = ParticleSystem.SetAutoRemoveOnFinish,
+    Gravity = ParticleSystem.SetGravity,
+    Speed = ParticleSystem.SetSpeed,
+    SpeedVar = ParticleSystem.SetSpeedVar,
+    TangentialAccel = ParticleSystem.SetTangentialAccel,
+    TangentialAccelVar = ParticleSystem.SetTangentialAccelVar,
+    RadialAccel = ParticleSystem.SetRadialAccel,
+    RadialAccelVar = ParticleSystem.SetRadialAccelVar,
+    RotationIsDir = ParticleSystem.SetRotationIsDir,
+    StartRadius = ParticleSystem.SetStartRadius,
+    StartRadiusVar = ParticleSystem.SetStartRadiusVar,
+    EndRadius = ParticleSystem.SetEndRadius,
+    EndRadiusVar = ParticleSystem.SetEndRadiusVar,
+    RotatePerSecond = ParticleSystem.SetRotatePerSecond,
+    RotatePerSecondVar = ParticleSystem.SetRotatePerSecondVar,
+    BlendAdditive = ParticleSystem.SetBlendAdditive,
+    BatchNode = ParticleSystem.SetBatchNode,
+    AtlasIndex = ParticleSystem.SetAtlasIndex,
+    Duration = ParticleSystem.SetDuration,
+    SourcePosition = ParticleSystem.SetSourcePosition,
+    PosVar = ParticleSystem.SetPosVar,
+    Life = ParticleSystem.SetLife,
+    LifeVar = ParticleSystem.SetLifeVar,
+    Angle = ParticleSystem.SetAngle,
+    AngleVar = ParticleSystem.SetAngleVar,
+    EmitterMode = ParticleSystem.SetEmitterMode,
+    StartSize = ParticleSystem.SetStartSize,
+    StartSizeVar = ParticleSystem.SetStartSizeVar,
+    EndSize = ParticleSystem.SetEndSize,
+    EndSizeVar = ParticleSystem.SetEndSizeVar,
+    StartColor = ParticleSystem.SetStartColor,
+    StartColorVar = ParticleSystem.SetStartColorVar,
+    EndColor = ParticleSystem.SetEndColor,
+    EndColorVar = ParticleSystem.SetEndColorVar,
+    StartSpin = ParticleSystem.SetStartSpin,
+    StartSpinVar = ParticleSystem.SetStartSpinVar,
+    EndSpin = ParticleSystem.SetEndSpin,
+    EndSpinVar = ParticleSystem.SetEndSpinVar,
+    EmissionRate = ParticleSystem.SetEmissionRate,
+    TotalParticles = ParticleSystem.SetTotalParticles,
+    PositionType = ParticleSystem.SetPositionType,
+    Texture = ParticleSystem.SetTexture,
+    BlendFunc = ParticleSystem.SetBlendFunc
+    }};
+end
 
 local ProgressTimer = cc.ProgressTimer;
-ProgressTimer.gtor({
-    Type = ProgressTimer.getType,
-    Percentage = ProgressTimer.getPercentage,
+function ProgressTimer.__properties__()
+    return {
+    r = {
+    Type = ProgressTimer.GetType,
+    Percentage = ProgressTimer.GetPercentage,
     Percent = function(self)
         return ProgressTimer.getPercentage(self) / 100;
     end,
-    Sprite = ProgressTimer.getSprite,
-    ReverseDirection = ProgressTimer.isReverseDirection,
-    Midpoint = ProgressTimer.getMidpoint,
-    BarChangeRate = ProgressTimer.getBarChangeRate
-});
-ProgressTimer.stor({
-    Type = ProgressTimer.setType,
-    Percentage = ProgressTimer.setPercentage,
+    Sprite = ProgressTimer.GetSprite,
+    ReverseDirection = ProgressTimer.IsReverseDirection,
+    Midpoint = ProgressTimer.GetMidpoint,
+    BarChangeRate = ProgressTimer.GetBarChangeRate
+    },
+    w = {
+    Type = ProgressTimer.SetType,
+    Percentage = ProgressTimer.SetPercentage,
     Percent = function(self,val)
         ProgressTimer.setPercentage(self,val * 100);
     end,
-    Sprite = ProgressTimer.setSprite,
-    ReverseDirection = ProgressTimer.setReverseDirection,
-    Midpoint = ProgressTimer.setMidpoint,
-    BarChangeRate = ProgressTimer.setBarChangeRate
-});
+    Sprite = ProgressTimer.SetSprite,
+    ReverseDirection = ProgressTimer.SetReverseDirection,
+    Midpoint = ProgressTimer.SetMidpoint,
+    BarChangeRate = ProgressTimer.SetBarChangeRate
+    }};
+end
 
 local RenderTexture = cc.RenderTexture;
-RenderTexture.gtor({
-    ClearFlags = RenderTexture.getClearFlags,
-    ClearColor = RenderTexture.getClearColor,
-    ClearDepth = RenderTexture.getClearDepth,
-    ClearStencil = RenderTexture.getClearStencil,
-    AutoDraw = RenderTexture.isAutoDraw,
-    Sprite = RenderTexture.getSprite
-});
-RenderTexture.stor({
-    ClearFlags = RenderTexture.setClearFlags,
-    ClearColor = RenderTexture.setClearColor,
-    ClearDepth = RenderTexture.setClearDepth,
-    ClearStencil = RenderTexture.setClearStencil,
-    AutoDraw = RenderTexture.setAutoDraw,
-    Sprite = RenderTexture.setSprite,
-    KeepMatrix = RenderTexture.setKeepMatrix
-});
+function RenderTexture.__properties__()
+    return {
+    r = {
+    ClearFlags = RenderTexture.GetClearFlags,
+    ClearColor = RenderTexture.GetClearColor,
+    ClearDepth = RenderTexture.GetClearDepth,
+    ClearStencil = RenderTexture.GetClearStencil,
+    AutoDraw = RenderTexture.IsAutoDraw,
+    Sprite = RenderTexture.GetSprite
+    },
+    w = {
+    ClearFlags = RenderTexture.SetClearFlags,
+    ClearColor = RenderTexture.SetClearColor,
+    ClearDepth = RenderTexture.SetClearDepth,
+    ClearStencil = RenderTexture.SetClearStencil,
+    AutoDraw = RenderTexture.SetAutoDraw,
+    Sprite = RenderTexture.SetSprite,
+    KeepMatrix = RenderTexture.SetKeepMatrix
+    }};
+end
 
 local Scene = cc.Scene;
-Scene.gtor({
-    Cameras = Scene.getCameras,
-    DefaultCamera = Scene.getDefaultCamera,
-    Lights = Scene.getLights,
-    PhysicsWorld = Scene.getPhysicsWorld,
-    Physics3DWorld = Scene.getPhysics3DWorld,
-    NavMesh = Scene.getNavMesh,
-});
-Scene.stor({
-    NavMesh = Scene.setNavMesh
-});
+function Scene.__properties__()
+    return {
+    r = {
+    Cameras = Scene.GetCameras,
+    DefaultCamera = Scene.GetDefaultCamera,
+    Lights = Scene.GetLights,
+    PhysicsWorld = Scene.GetPhysicsWorld,
+    Physics3DWorld = Scene.GetPhysics3DWorld,
+    NavMesh = Scene.GetNavMesh,
+    },
+    w = {
+    NavMesh = Scene.SetNavMesh
+    }};
+end
 
 local NavMeshAgent = cc.NavMeshAgent;
-NavMeshAgent.gtor({
-    Radius = NavMeshAgent.getRadius,
-    Height = NavMeshAgent.getHeight,
-    MaxAcceleration = NavMeshAgent.getMaxAcceleration,
-    MaxSpeed = NavMeshAgent.getMaxSpeed,
-    SeparationWeight = NavMeshAgent.getSeparationWeight,
-    ObstacleAvoidanceType = NavMeshAgent.getObstacleAvoidanceType,
-    CurrentVelocity = NavMeshAgent.getCurrentVelocity,
-    OnOffMeshLink = NavMeshAgent.isOnOffMeshLink,
-    SyncFlag = NavMeshAgent.getSyncFlag,
-    Velocity = NavMeshAgent.getVelocity
-});
-NavMeshAgent.stor({
-    Radius = NavMeshAgent.setRadius,
-    Height = NavMeshAgent.setHeight,
-    MaxAcceleration = NavMeshAgent.setMaxAcceleration,
-    MaxSpeed = NavMeshAgent.setMaxSpeed,
-    SeparationWeight = NavMeshAgent.setSeparationWeight,
-    ObstacleAvoidanceType = NavMeshAgent.setObstacleAvoidanceType,
-    OrientationRefAxes = NavMeshAgent.setOrientationRefAxes,
-    AutoOrientation = NavMeshAgent.setAutoOrientation,
-    AutoTraverseOffMeshLink = NavMeshAgent.setAutoTraverseOffMeshLink,
-    SyncFlag = NavMeshAgent.setSyncFlag
-});
+function NavMeshAgent.__properties__()
+    return {
+    r = {
+    Radius = NavMeshAgent.GetRadius,
+    Height = NavMeshAgent.GetHeight,
+    MaxAcceleration = NavMeshAgent.GetMaxAcceleration,
+    MaxSpeed = NavMeshAgent.GetMaxSpeed,
+    SeparationWeight = NavMeshAgent.GetSeparationWeight,
+    ObstacleAvoidanceType = NavMeshAgent.GetObstacleAvoidanceType,
+    CurrentVelocity = NavMeshAgent.GetCurrentVelocity,
+    OnOffMeshLink = NavMeshAgent.IsOnOffMeshLink,
+    SyncFlag = NavMeshAgent.GetSyncFlag,
+    Velocity = NavMeshAgent.GetVelocity
+    },
+    w = {
+    Radius = NavMeshAgent.SetRadius,
+    Height = NavMeshAgent.SetHeight,
+    MaxAcceleration = NavMeshAgent.SetMaxAcceleration,
+    MaxSpeed = NavMeshAgent.SetMaxSpeed,
+    SeparationWeight = NavMeshAgent.SetSeparationWeight,
+    ObstacleAvoidanceType = NavMeshAgent.SetObstacleAvoidanceType,
+    OrientationRefAxes = NavMeshAgent.SetOrientationRefAxes,
+    AutoOrientation = NavMeshAgent.SetAutoOrientation,
+    AutoTraverseOffMeshLink = NavMeshAgent.SetAutoTraverseOffMeshLink,
+    SyncFlag = NavMeshAgent.SetSyncFlag
+    }};
+end
 
 local NavMeshObstacle = cc.NavMeshObstacle;
-NavMeshObstacle.gtor({
-    Radius = NavMeshObstacle.getRadius,
-    Height = NavMeshObstacle.getHeight,
-    SyncFlag = NavMeshObstacle.getSyncFlag
-});
-NavMeshObstacle.stor({
-    Radius = NavMeshObstacle.setRadius,
-    Height = NavMeshObstacle.setHeight,
-    SyncFlag = NavMeshObstacle.setSyncFlag
-});
+function NavMeshObstacle.__properties__()
+    return {
+    r = {
+    Radius = NavMeshObstacle.GetRadius,
+    Height = NavMeshObstacle.GetHeight,
+    SyncFlag = NavMeshObstacle.GetSyncFlag
+    },
+    w = {
+    Radius = NavMeshObstacle.SetRadius,
+    Height = NavMeshObstacle.SetHeight,
+    SyncFlag = NavMeshObstacle.SetSyncFlag
+    }};
+end
 
 local Sprite = cc.Sprite;
-Sprite.gtor({
-    BatchNode = Sprite.getBatchNode,
-    Texture = Sprite.getTexture,
-    CenterRectNormalized = Sprite.getCenterRectNormalized,
-    CenterRect = Sprite.getCenterRect,
-    FrameDisplayed = Sprite.isFrameDisplayed,
-    SpriteFrame = Sprite.getSpriteFrame,
-    Dirty = Sprite.isDirty,
-    TextureRectRotated = Sprite.isTextureRectRotated,
-    AtlasIndex = Sprite.getAtlasIndex,
-    TextureRect = Sprite.getTextureRect,
-    TextureAtlas = Sprite.getTextureAtlas,
-    OffsetPosition = Sprite.getOffsetPosition,
-    FlippedX = Sprite.isFlippedX,
-    FlippedY = Sprite.isFlippedY,
-    StretchEnabled = Sprite.isStretchEnabled,
-    BlendFunc = Sprite.getBlendFunc,
+function Sprite.__properties__()
+    return {
+    r = {
+    BatchNode = Sprite.GetBatchNode,
+    Texture = Sprite.GetTexture,
+    CenterRectNormalized = Sprite.GetCenterRectNormalized,
+    CenterRect = Sprite.GetCenterRect,
+    FrameDisplayed = Sprite.IsFrameDisplayed,
+    SpriteFrame = Sprite.GetSpriteFrame,
+    Dirty = Sprite.IsDirty,
+    TextureRectRotated = Sprite.IsTextureRectRotated,
+    AtlasIndex = Sprite.GetAtlasIndex,
+    TextureRect = Sprite.GetTextureRect,
+    TextureAtlas = Sprite.GetTextureAtlas,
+    OffsetPosition = Sprite.GetOffsetPosition,
+    FlippedX = Sprite.IsFlippedX,
+    FlippedY = Sprite.IsFlippedY,
+    StretchEnabled = Sprite.IsStretchEnabled,
+    BlendFunc = Sprite.GetBlendFunc,
     Grayed = function(self)
         return self.__spriteGrayed or false;
     end
-});
-Sprite.stor({
-    BatchNode = Sprite.setBatchNode,
-    Texture = Sprite.setTexture,
-    TextureRect = Sprite.setTextureRect,
-    VertexRect = Sprite.setVertexRect,
-    CenterRectNormalized = Sprite.setCenterRectNormalized,
-    CenterRect = Sprite.setCenterRect,
-    SpriteFrame = Sprite.setSpriteFrame,
-    Dirty = Sprite.setDirty,
-    AtlasIndex = Sprite.setAtlasIndex,
-    TextureAtlas = Sprite.setTextureAtlas,
-    FlippedX = Sprite.setFlippedX,
-    FlippedY = Sprite.setFlippedY,
-    StretchEnabled = Sprite.setStretchEnabled,
-    BlendFunc = Sprite.setBlendFunc,
-    ProgramState = Sprite.setProgramState,
+    },
+    w = {
+    BatchNode = Sprite.SetBatchNode,
+    Texture = Sprite.SetTexture,
+    TextureRect = Sprite.SetTextureRect,
+    VertexRect = Sprite.SetVertexRect,
+    CenterRectNormalized = Sprite.SetCenterRectNormalized,
+    CenterRect = Sprite.SetCenterRect,
+    SpriteFrame = Sprite.SetSpriteFrame,
+    Dirty = Sprite.SetDirty,
+    AtlasIndex = Sprite.SetAtlasIndex,
+    TextureAtlas = Sprite.SetTextureAtlas,
+    FlippedX = Sprite.SetFlippedX,
+    FlippedY = Sprite.SetFlippedY,
+    StretchEnabled = Sprite.SetStretchEnabled,
+    BlendFunc = Sprite.SetBlendFunc,
+    ProgramState = Sprite.SetProgramState,
     Grayed = function(self,val)
         val = not not val;
         if self.__spriteGrayed == val then
@@ -1163,666 +1321,804 @@ Sprite.stor({
         self.ProgramState = val and ccb.ProgramType.GRAY_SCALE or ccb.ProgramType.POSITION_TEXTURE_COLOR;
         self.__spriteGrayed = val;
     end
-});
+    }};
+end
 
 local SpriteBatchNode = cc.SpriteBatchNode;
-SpriteBatchNode.gtor({
-    TextureAtlas = SpriteBatchNode.getTextureAtlas,
-    Descendants = SpriteBatchNode.getDescendants,
-    Texture = SpriteBatchNode.getTexture,
-    BlendFunc = SpriteBatchNode.getBlendFunc,
-});
-SpriteBatchNode.stor({
-    TextureAtlas = SpriteBatchNode.setTextureAtlas,
-    Texture = SpriteBatchNode.setTexture,
-    BlendFunc = SpriteBatchNode.setBlendFunc,
-});
+function SpriteBatchNode.__properties__()
+    return {
+    r = {
+    TextureAtlas = SpriteBatchNode.GetTextureAtlas,
+    Descendants = SpriteBatchNode.GetDescendants,
+    Texture = SpriteBatchNode.GetTexture,
+    BlendFunc = SpriteBatchNode.GetBlendFunc,
+    },
+    w = {
+    TextureAtlas = SpriteBatchNode.SetTextureAtlas,
+    Texture = SpriteBatchNode.SetTexture,
+    BlendFunc = SpriteBatchNode.SetBlendFunc,
+    }};
+end
 
 local TransitionScene = cc.TransitionScene;
-TransitionScene.gtor({
-    InScene = TransitionScene.getInScene,
-    Duration = TransitionScene.getDuration
-});
-TransitionScene.stor({
-});
+function TransitionScene.__properties__()
+    return {
+    r = {
+    InScene = TransitionScene.GetInScene,
+    Duration = TransitionScene.GetDuration
+    },
+    w = {
+    }};
+end
 
 local Director = cc.Director;
-Director.gtor({
-    RunningScene = Director.getRunningScene,
-    AnimationInterval = Director.getAnimationInterval,
-    DisplayStats = Director.isDisplayStats,
-    SecondsPerFrame = Director.getSecondsPerFrame,
-    OpenGLView = Director.getOpenGLView,
-    TextureCache = Director.getTextureCache,
-    NextDeltaTimeZero = Director.isNextDeltaTimeZero,
-    Paused = Director.isPaused,
-    TotalFrames = Director.getTotalFrames,
-    SendCleanupToScene = Director.isSendCleanupToScene,
-    NotificationNode = Director.getNotificationNode,
-    WinSize = Director.getWinSize,
-    WinSizeInPixels = Director.getWinSizeInPixels,
-    VisibleSize = Director.getVisibleSize,
-    VisibleOrigin = Director.getVisibleOrigin,
-    SafeAreaRect = Director.getSafeAreaRect,
-    ZEye = Director.getZEye,
-    ClearColor = Director.getClearColor,
-    ContentScaleFactor = Director.getContentScaleFactor,
-    Scheduler = Director.getScheduler,
-    ActionManager = Director.getActionManager,
-    EventDispatcher = Director.getEventDispatcher,
-    DeltaTime = Director.getDeltaTime,
-    FrameRate = Director.getFrameRate,
-    Cocos2dThreadId = Director.getCocos2dThreadId,
-    Valid = Director.isValid
-});
-Director.stor({
-    AnimationInterval = Director.setAnimationInterval,
-    DisplayStats = Director.setDisplayStats,
-    OpenGLView = Director.setOpenGLView,
-    NextDeltaTimeZero = Director.setNextDeltaTimeZero,
-    NotificationNode = Director.setNotificationNode,
-    AlphaBlending = Director.setAlphaBlending,
-    ClearColor = Director.setClearColor,
-    ContentScaleFactor = Director.setContentScaleFactor,
-    Scheduler = Director.setScheduler,
-    ActionManager = Director.setActionManager,
-    EventDispatcher = Director.setEventDispatcher
-});
+function Director.__properties__()
+    return {
+    r = {
+    RunningScene = Director.GetRunningScene,
+    AnimationInterval = Director.GetAnimationInterval,
+    DisplayStats = Director.IsDisplayStats,
+    SecondsPerFrame = Director.GetSecondsPerFrame,
+    OpenGLView = Director.GetOpenGLView,
+    TextureCache = Director.GetTextureCache,
+    NextDeltaTimeZero = Director.IsNextDeltaTimeZero,
+    Paused = Director.IsPaused,
+    TotalFrames = Director.GetTotalFrames,
+    SendCleanupToScene = Director.IsSendCleanupToScene,
+    NotificationNode = Director.GetNotificationNode,
+    WinSize = Director.GetWinSize,
+    WinSizeInPixels = Director.GetWinSizeInPixels,
+    VisibleSize = Director.GetVisibleSize,
+    VisibleOrigin = Director.GetVisibleOrigin,
+    SafeAreaRect = Director.GetSafeAreaRect,
+    ZEye = Director.GetZEye,
+    ClearColor = Director.GetClearColor,
+    ContentScaleFactor = Director.GetContentScaleFactor,
+    Scheduler = Director.GetScheduler,
+    ActionManager = Director.GetActionManager,
+    EventDispatcher = Director.GetEventDispatcher,
+    DeltaTime = Director.GetDeltaTime,
+    FrameRate = Director.GetFrameRate,
+    Cocos2dThreadId = Director.GetCocos2dThreadId,
+    Valid = Director.IsValid
+    },
+    w = {
+    AnimationInterval = Director.SetAnimationInterval,
+    DisplayStats = Director.SetDisplayStats,
+    OpenGLView = Director.SetOpenGLView,
+    NextDeltaTimeZero = Director.SetNextDeltaTimeZero,
+    NotificationNode = Director.SetNotificationNode,
+    AlphaBlending = Director.SetAlphaBlending,
+    ClearColor = Director.SetClearColor,
+    ContentScaleFactor = Director.SetContentScaleFactor,
+    Scheduler = Director.SetScheduler,
+    ActionManager = Director.SetActionManager,
+    EventDispatcher = Director.SetEventDispatcher
+    }};
+end
 
 local Event = cc.Event;
-Event.gtor({
-    Type = Event.getType,
-    Stopped = Event.isStopped,
-    CurrentTarget = Event.getCurrentTarget
-});
-Event.stor({
-});
+function Event.__properties__()
+    return {
+    r = {
+    Type = Event.GetType,
+    Stopped = Event.IsStopped,
+    CurrentTarget = Event.GetCurrentTarget
+    },
+    w = {
+    }};
+end
 
 local EventCustom = cc.EventCustom;
-EventCustom.gtor({
-    EventName = EventCustom.getEventName
-});
-EventCustom.stor({
-});
+function EventCustom.__properties__()
+    return {
+    r = {
+    EventName = EventCustom.GetEventName
+    },
+    w = {
+    }};
+end
 
 local EventDispatcher = cc.EventDispatcher;
-EventDispatcher.gtor({
-    Enabled = EventDispatcher.isEnabled
-});
-EventDispatcher.stor({
-    Enabled = EventDispatcher.setEnabled
-});
+function EventDispatcher.__properties__()
+    return {
+    r = {
+    Enabled = EventDispatcher.IsEnabled
+    },
+    w = {
+    Enabled = EventDispatcher.SetEnabled
+    }};
+end
 
 local EventListener = cc.EventListener;
-EventListener.gtor({
-    Enabled = EventListener.isEnabled
-});
-EventListener.stor({
-    Enabled = EventListener.setEnabled
-});
+function EventListener.__properties__()
+    return {
+    r = {
+    Enabled = EventListener.IsEnabled
+    },
+    w = {
+    Enabled = EventListener.SetEnabled
+    }};
+end
 
 local EventListenerTouchOneByOne = cc.EventListenerTouchOneByOne;
-EventListenerTouchOneByOne.gtor({
-    SwallowTouches = EventListenerTouchOneByOne.isSwallowTouches
-});
-EventListenerTouchOneByOne.stor({
-    SwallowTouches = EventListenerTouchOneByOne.setSwallowTouches
-});
+function EventListenerTouchOneByOne.__properties__()
+    return {
+    r = {
+    SwallowTouches = EventListenerTouchOneByOne.IsSwallowTouches
+    },
+    w = {
+    SwallowTouches = EventListenerTouchOneByOne.SetSwallowTouches
+    }};
+end
 
 local EventMouse = cc.EventMouse;
-EventMouse.gtor({
-    ScrollX = EventMouse.getScrollX,
-    ScrollY = EventMouse.getScrollY,
-    MouseButton = EventMouse.getMouseButton,
-    CursorX = EventMouse.getCursorX,
-    CursorY = EventMouse.getCursorY,
-    Location = EventMouse.getLocation,
-    PreviousLocation = EventMouse.getPreviousLocation,
-    StartLocation = EventMouse.getStartLocation,
-    Delta = EventMouse.getDelta,
-    LocationInView = EventMouse.getLocationInView,
-    PreviousLocationInView = EventMouse.getPreviousLocationInView,
-    StartLocationInView = EventMouse.getStartLocationInView
-});
-EventMouse.stor({
-    CursorPosition = EventMouse.setCursorPosition,
-    MouseButton = EventMouse.setMouseButton
-});
+function EventMouse.__properties__()
+    return {
+    r = {
+    ScrollX = EventMouse.GetScrollX,
+    ScrollY = EventMouse.GetScrollY,
+    MouseButton = EventMouse.GetMouseButton,
+    CursorX = EventMouse.GetCursorX,
+    CursorY = EventMouse.GetCursorY,
+    Location = EventMouse.GetLocation,
+    PreviousLocation = EventMouse.GetPreviousLocation,
+    StartLocation = EventMouse.GetStartLocation,
+    Delta = EventMouse.GetDelta,
+    LocationInView = EventMouse.GetLocationInView,
+    PreviousLocationInView = EventMouse.GetPreviousLocationInView,
+    StartLocationInView = EventMouse.GetStartLocationInView
+    },
+    w = {
+    CursorPosition = EventMouse.SetCursorPosition,
+    MouseButton = EventMouse.SetMouseButton
+    }};
+end
 
 local EventTouch = cc.EventTouch;
-EventTouch.gtor({
-    EventCode = EventTouch.getEventCode,
-    Touches = EventTouch.getTouches
-});
-EventTouch.stor({
-});
+function EventTouch.__properties__()
+    return {
+    r = {
+    EventCode = EventTouch.GetEventCode,
+    Touches = EventTouch.GetTouches
+    },
+    w = {
+    }};
+end
 
 local Scheduler = cc.Scheduler;
-Scheduler.gtor({
-    TimeScale = Scheduler.getTimeScale
-});
-Scheduler.stor({
-    TimeScale = Scheduler.setTimeScale
-});
+function Scheduler.__properties__()
+    return {
+    r = {
+    TimeScale = Scheduler.GetTimeScale
+    },
+    w = {
+    TimeScale = Scheduler.SetTimeScale
+    }};
+end
 
 local Touch = cc.Touch;
-Touch.gtor({
-    Location = Touch.getLocation,
-    PreviousLocation = Touch.getPreviousLocation,
-    StartLocation = Touch.getStartLocation,
-    Delta = Touch.getDelta,
-    LocationInView = Touch.getLocationInView,
-    PreviousLocationInView = Touch.getPreviousLocationInView,
-    StartLocationInView = Touch.getStartLocationInView,
-    ID = Touch.getID,
-    CurrentForce = Touch.getCurrentForce,
-    MaxForce = Touch.getMaxForce
-});
-Touch.stor({
-});
+function Touch.__properties__()
+    return {
+    r = {
+    Location = Touch.GetLocation,
+    PreviousLocation = Touch.GetPreviousLocation,
+    StartLocation = Touch.GetStartLocation,
+    Delta = Touch.GetDelta,
+    LocationInView = Touch.GetLocationInView,
+    PreviousLocationInView = Touch.GetPreviousLocationInView,
+    StartLocationInView = Touch.GetStartLocationInView,
+    ID = Touch.GetID,
+    CurrentForce = Touch.GetCurrentForce,
+    MaxForce = Touch.GetMaxForce
+    },
+    w = {
+    }};
+end
 
 local CSLoader = cc.CSLoader;
-CSLoader.gtor({
-    RecordJsonPath = CSLoader.isRecordJsonPath,
-    JsonPath = CSLoader.getJsonPath,
-});
-CSLoader.stor({
-    RecordJsonPath = CSLoader.setRecordJsonPath,
-    JsonPath = CSLoader.setJsonPath,
-});
+function CSLoader.__properties__()
+    return {
+    r = {
+    RecordJsonPath = CSLoader.IsRecordJsonPath,
+    JsonPath = CSLoader.GetJsonPath,
+    },
+    w = {
+    RecordJsonPath = CSLoader.SetRecordJsonPath,
+    JsonPath = CSLoader.SetJsonPath,
+    }};
+end
 
 local AssetsManagerEx = cc.AssetsManagerEx;
-AssetsManagerEx.gtor({
-    State = AssetsManagerEx.getState,
-    StoragePath = AssetsManagerEx.getStoragePath,
-    LocalManifest = AssetsManagerEx.getLocalManifest,
-    RemoteManifest = AssetsManagerEx.getRemoteManifest,
-    MaxConcurrentTask = AssetsManagerEx.getMaxConcurrentTask
-});
-AssetsManagerEx.stor({
-    MaxConcurrentTask = AssetsManagerEx.setMaxConcurrentTask
-});
+function AssetsManagerEx.__properties__()
+    return {
+    r = {
+    State = AssetsManagerEx.GetState,
+    StoragePath = AssetsManagerEx.GetStoragePath,
+    LocalManifest = AssetsManagerEx.GetLocalManifest,
+    RemoteManifest = AssetsManagerEx.GetRemoteManifest,
+    MaxConcurrentTask = AssetsManagerEx.GetMaxConcurrentTask
+    },
+    w = {
+    MaxConcurrentTask = AssetsManagerEx.SetMaxConcurrentTask
+    }};
+end
 
 local EventAssetsManagerEx = cc.EventAssetsManagerEx;
-EventAssetsManagerEx.gtor({
-    EventCode = EventAssetsManagerEx.getEventCode,
-    CURLECode = EventAssetsManagerEx.getCURLECode,
-    CURLMCode = EventAssetsManagerEx.getCURLMCode,
-    Message = EventAssetsManagerEx.getMessage,
-    AssetId = EventAssetsManagerEx.getAssetId,
-    AssetsManagerEx = EventAssetsManagerEx.getAssetsManagerEx,
+function EventAssetsManagerEx.__properties__()
+    return {
+    r = {
+    EventCode = EventAssetsManagerEx.GetEventCode,
+    CURLECode = EventAssetsManagerEx.GetCURLECode,
+    CURLMCode = EventAssetsManagerEx.GetCURLMCode,
+    Message = EventAssetsManagerEx.GetMessage,
+    AssetId = EventAssetsManagerEx.GetAssetId,
+    AssetsManagerEx = EventAssetsManagerEx.GetAssetsManagerEx,
     Percent = function(self)
         return EventAssetsManagerEx.getPercent(self) / 100;
     end,
     PercentByFile = function(self)
         return EventAssetsManagerEx.getPercentByFile(self) / 100;
     end
-});
-EventAssetsManagerEx.stor({
-});
+    },
+    w = {
+    }};
+end
 
 local Manifest = cc.Manifest;
-Manifest.gtor({
-    VersionLoaded = Manifest.isVersionLoaded,
-    Loaded = Manifest.isLoaded,
-    PackageUrl = Manifest.getPackageUrl,
-    ManifestFileUrl = Manifest.getManifestFileUrl,
-    VersionFileUrl = Manifest.getVersionFileUrl,
-    Version = Manifest.getVersion,
-    SearchPaths = Manifest.getSearchPaths
-});
-Manifest.stor({
-});
+function Manifest.__properties__()
+    return {
+    r = {
+    VersionLoaded = Manifest.IsVersionLoaded,
+    Loaded = Manifest.IsLoaded,
+    PackageUrl = Manifest.GetPackageUrl,
+    ManifestFileUrl = Manifest.GetManifestFileUrl,
+    VersionFileUrl = Manifest.GetVersionFileUrl,
+    Version = Manifest.GetVersion,
+    SearchPaths = Manifest.GetSearchPaths
+    },
+    w = {
+    }};
+end
 
 local PhysicsBody = cc.PhysicsBody;
-PhysicsBody.gtor({
-    Shapes = PhysicsBody.getShapes,
-    FirstShape = PhysicsBody.getFirstShape,
-    Velocity = PhysicsBody.getVelocity,
-    AngularVelocity = PhysicsBody.getAngularVelocity,
-    VelocityLimit = PhysicsBody.getVelocityLimit,
-    AngularVelocityLimit = PhysicsBody.getAngularVelocityLimit,
-    World = PhysicsBody.getWorld,
-    Joints = PhysicsBody.getJoints,
-    Node = PhysicsBody.getNode,
-    CategoryBitmask = PhysicsBody.getCategoryBitmask,
-    ContactTestBitmask = PhysicsBody.getContactTestBitmask,
-    CollisionBitmask = PhysicsBody.getCollisionBitmask,
-    Group = PhysicsBody.getGroup,
-    Position = PhysicsBody.getPosition,
-    Rotation = PhysicsBody.getRotation,
-    PositionOffset = PhysicsBody.getPositionOffset,
-    RotationOffset = PhysicsBody.getRotationOffset,
-    Dynamic = PhysicsBody.isDynamic,
-    Mass = PhysicsBody.getMass,
-    Moment = PhysicsBody.getMoment,
-    LinearDamping = PhysicsBody.getLinearDamping,
-    AngularDamping = PhysicsBody.getAngularDamping,
-    Resting = PhysicsBody.isResting,
-    RotationEnabled = PhysicsBody.isRotationEnabled,
-    GravityEnabled = PhysicsBody.isGravityEnabled,
-    Tag = PhysicsBody.getTag,
-});
-PhysicsBody.stor({
-    Velocity = PhysicsBody.setVelocity,
-    AngularVelocity = PhysicsBody.setAngularVelocity,
-    VelocityLimit = PhysicsBody.setVelocityLimit,
-    AngularVelocityLimit = PhysicsBody.setAngularVelocityLimit,
-    CategoryBitmask = PhysicsBody.setCategoryBitmask,
-    ContactTestBitmask = PhysicsBody.setContactTestBitmask,
-    CollisionBitmask = PhysicsBody.setCollisionBitmask,
-    Group = PhysicsBody.setGroup,
-    PositionOffset = PhysicsBody.setPositionOffset,
-    RotationOffset = PhysicsBody.setRotationOffset,
-    Dynamic = PhysicsBody.setDynamic,
-    Mass = PhysicsBody.setMass,
-    Moment = PhysicsBody.setMoment,
-    LinearDamping = PhysicsBody.setLinearDamping,
-    AngularDamping = PhysicsBody.setAngularDamping,
-    Resting = PhysicsBody.setResting,
-    RotationEnabled = PhysicsBody.setRotationEnable,
-    GravityEnabled = PhysicsBody.setGravityEnabled,
-    Tag = PhysicsBody.setTag,
-});
+function PhysicsBody.__properties__()
+    return {
+    r = {
+    Shapes = PhysicsBody.GetShapes,
+    FirstShape = PhysicsBody.GetFirstShape,
+    Velocity = PhysicsBody.GetVelocity,
+    AngularVelocity = PhysicsBody.GetAngularVelocity,
+    VelocityLimit = PhysicsBody.GetVelocityLimit,
+    AngularVelocityLimit = PhysicsBody.GetAngularVelocityLimit,
+    World = PhysicsBody.GetWorld,
+    Joints = PhysicsBody.GetJoints,
+    Node = PhysicsBody.GetNode,
+    CategoryBitmask = PhysicsBody.GetCategoryBitmask,
+    ContactTestBitmask = PhysicsBody.GetContactTestBitmask,
+    CollisionBitmask = PhysicsBody.GetCollisionBitmask,
+    Group = PhysicsBody.GetGroup,
+    Position = PhysicsBody.GetPosition,
+    Rotation = PhysicsBody.GetRotation,
+    PositionOffset = PhysicsBody.GetPositionOffset,
+    RotationOffset = PhysicsBody.GetRotationOffset,
+    Dynamic = PhysicsBody.IsDynamic,
+    Mass = PhysicsBody.GetMass,
+    Moment = PhysicsBody.GetMoment,
+    LinearDamping = PhysicsBody.GetLinearDamping,
+    AngularDamping = PhysicsBody.GetAngularDamping,
+    Resting = PhysicsBody.IsResting,
+    RotationEnabled = PhysicsBody.IsRotationEnabled,
+    GravityEnabled = PhysicsBody.IsGravityEnabled,
+    Tag = PhysicsBody.GetTag,
+    },
+    w = {
+    Velocity = PhysicsBody.SetVelocity,
+    AngularVelocity = PhysicsBody.SetAngularVelocity,
+    VelocityLimit = PhysicsBody.SetVelocityLimit,
+    AngularVelocityLimit = PhysicsBody.SetAngularVelocityLimit,
+    CategoryBitmask = PhysicsBody.SetCategoryBitmask,
+    ContactTestBitmask = PhysicsBody.SetContactTestBitmask,
+    CollisionBitmask = PhysicsBody.SetCollisionBitmask,
+    Group = PhysicsBody.SetGroup,
+    PositionOffset = PhysicsBody.SetPositionOffset,
+    RotationOffset = PhysicsBody.SetRotationOffset,
+    Dynamic = PhysicsBody.SetDynamic,
+    Mass = PhysicsBody.SetMass,
+    Moment = PhysicsBody.SetMoment,
+    LinearDamping = PhysicsBody.SetLinearDamping,
+    AngularDamping = PhysicsBody.SetAngularDamping,
+    Resting = PhysicsBody.SetResting,
+    RotationEnabled = PhysicsBody.SetRotationEnable,
+    GravityEnabled = PhysicsBody.SetGravityEnabled,
+    Tag = PhysicsBody.SetTag,
+    }};
+end
 
 local PhysicsShape = cc.PhysicsShape;
-PhysicsShape.gtor({
-    Body = PhysicsShape.getBody,
-    Type = PhysicsShape.getType,
-    Area = PhysicsShape.getArea,
-    Moment = PhysicsShape.getMoment,
-    Tag = PhysicsShape.getTag,
-    Mass = PhysicsShape.getMass,
-    Density = PhysicsShape.getDensity,
-    Restitution = PhysicsShape.getRestitution,
-    Friction = PhysicsShape.getFriction,
-    Material = PhysicsShape.getMaterial,
-    Sensor = PhysicsShape.isSensor,
-    Offset = PhysicsShape.getOffset,
-    Center = PhysicsShape.getCenter,
-    CategoryBitmask = PhysicsShape.getCategoryBitmask,
-    ContactTestBitmask = PhysicsShape.getContactTestBitmask,
-    CollisionBitmask = PhysicsShape.getCollisionBitmask,
-    Group = PhysicsShape.getGroup
-});
-PhysicsShape.stor({
-    Moment = PhysicsShape.setMoment,
-    Tag = PhysicsShape.setTag,
-    Mass = PhysicsShape.setMass,
-    Density = PhysicsShape.setDensity,
-    Restitution = PhysicsShape.setRestitution,
-    Friction = PhysicsShape.setFriction,
-    Material = PhysicsShape.setMaterial,
-    Sensor = PhysicsShape.setSensor,
-    CategoryBitmask = PhysicsShape.setCategoryBitmask,
-    ContactTestBitmask = PhysicsShape.setContactTestBitmask,
-    CollisionBitmask = PhysicsShape.setCollisionBitmask,
-    Group = PhysicsShape.setGroup
-});
+function PhysicsShape.__properties__()
+    return {
+    r = {
+    Body = PhysicsShape.GetBody,
+    Type = PhysicsShape.GetType,
+    Area = PhysicsShape.GetArea,
+    Moment = PhysicsShape.GetMoment,
+    Tag = PhysicsShape.GetTag,
+    Mass = PhysicsShape.GetMass,
+    Density = PhysicsShape.GetDensity,
+    Restitution = PhysicsShape.GetRestitution,
+    Friction = PhysicsShape.GetFriction,
+    Material = PhysicsShape.GetMaterial,
+    Sensor = PhysicsShape.IsSensor,
+    Offset = PhysicsShape.GetOffset,
+    Center = PhysicsShape.GetCenter,
+    CategoryBitmask = PhysicsShape.GetCategoryBitmask,
+    ContactTestBitmask = PhysicsShape.GetContactTestBitmask,
+    CollisionBitmask = PhysicsShape.GetCollisionBitmask,
+    Group = PhysicsShape.GetGroup
+    },
+    w = {
+    Moment = PhysicsShape.SetMoment,
+    Tag = PhysicsShape.SetTag,
+    Mass = PhysicsShape.SetMass,
+    Density = PhysicsShape.SetDensity,
+    Restitution = PhysicsShape.SetRestitution,
+    Friction = PhysicsShape.SetFriction,
+    Material = PhysicsShape.SetMaterial,
+    Sensor = PhysicsShape.SetSensor,
+    CategoryBitmask = PhysicsShape.SetCategoryBitmask,
+    ContactTestBitmask = PhysicsShape.SetContactTestBitmask,
+    CollisionBitmask = PhysicsShape.SetCollisionBitmask,
+    Group = PhysicsShape.SetGroup
+    }};
+end
 
 local PhysicsContact = cc.PhysicsContact;
-PhysicsContact.gtor({
-    ShapeA = PhysicsContact.getShapeA,
-    ShapeB = PhysicsContact.getShapeB,
-    EventCode = PhysicsContact.getEventCode,
-    ContactData = PhysicsContact.getContactData,
-    PreContactData = PhysicsContact.getPreContactData
-});
-PhysicsContact.stor({
-});
+function PhysicsContact.__properties__()
+    return {
+    r = {
+    ShapeA = PhysicsContact.GetShapeA,
+    ShapeB = PhysicsContact.GetShapeB,
+    EventCode = PhysicsContact.GetEventCode,
+    ContactData = PhysicsContact.GetContactData,
+    PreContactData = PhysicsContact.GetPreContactData
+    },
+    w = {
+    }};
+end
 
 local PhysicsShapeCircle = cc.PhysicsShapeCircle;
-PhysicsShapeCircle.gtor({
-    Radius = PhysicsShapeCircle.getRadius
-});
-PhysicsShapeCircle.stor({
-});
+function PhysicsShapeCircle.__properties__()
+    return {
+    r = {
+    Radius = PhysicsShapeCircle.GetRadius
+    },
+    w = {
+    }};
+end
 
 local PhysicsShapePolygon = cc.PhysicsShapePolygon;
-PhysicsShapePolygon.gtor({
-    PointsCount = PhysicsShapePolygon.getPointsCount
-});
-PhysicsShapePolygon.stor({
-});
+function PhysicsShapePolygon.__properties__()
+    return {
+    r = {
+    PointsCount = PhysicsShapePolygon.GetPointsCount
+    },
+    w = {
+    }};
+end
 
 local PhysicsShapeBox = cc.PhysicsShapeBox;
-PhysicsShapeBox.gtor({
-    Size = PhysicsShapeBox.getSize
-});
-PhysicsShapeBox.stor({
-});
+function PhysicsShapeBox.__properties__()
+    return {
+    r = {
+    Size = PhysicsShapeBox.GetSize
+    },
+    w = {
+    }};
+end
 
 local PhysicsShapeEdgeSegment = cc.PhysicsShapeEdgeSegment;
-PhysicsShapeEdgeSegment.gtor({
-    PointA = PhysicsShapeEdgeSegment.getPointA,
-    PointB = PhysicsShapeEdgeSegment.getPointB
-});
-PhysicsShapeEdgeSegment.stor({
-});
+function PhysicsShapeEdgeSegment.__properties__()
+    return {
+    r = {
+    PointA = PhysicsShapeEdgeSegment.GetPointA,
+    PointB = PhysicsShapeEdgeSegment.GetPointB
+    },
+    w = {
+    }};
+end
 
 local PhysicsShapeEdgePolygon = cc.PhysicsShapeEdgePolygon;
-PhysicsShapeEdgePolygon.gtor({
-    PointsCount = PhysicsShapeEdgePolygon.getPointsCount
-});
-PhysicsShapeEdgePolygon.stor({
-});
+function PhysicsShapeEdgePolygon.__properties__()
+    return {
+    r = {
+    PointsCount = PhysicsShapeEdgePolygon.GetPointsCount
+    },
+    w = {
+    }};
+end
 
 local PhysicsShapeEdgeChain = cc.PhysicsShapeEdgeChain;
-PhysicsShapeEdgeChain.gtor({
-    PointsCount = PhysicsShapeEdgeChain.getPointsCount
-});
-PhysicsShapeEdgeChain.stor({
-});
+function PhysicsShapeEdgeChain.__properties__()
+    return {
+    r = {
+    PointsCount = PhysicsShapeEdgeChain.GetPointsCount
+    },
+    w = {
+    }};
+end
 
 local PhysicsJoint = cc.PhysicsJoint;
-PhysicsJoint.gtor({
-    BodyA = PhysicsJoint.getBodyA,
-    BodyB = PhysicsJoint.getBodyB,
-    World = PhysicsJoint.getWorld,
-    Tag = PhysicsJoint.getTag,
-    Enabled = PhysicsJoint.isEnabled,
-    CollisionEnabled = PhysicsJoint.isCollisionEnabled,
-    MaxForce = PhysicsJoint.getMaxForce
-});
-PhysicsJoint.stor({
-    Tag = PhysicsJoint.setTag,
-    Enabled = PhysicsJoint.setEnabled,
-    CollisionEnabled = PhysicsJoint.setCollisionEnabled,
-    MaxForce = PhysicsJoint.setMaxForce
-});
+function PhysicsJoint.__properties__()
+    return {
+    r = {
+    BodyA = PhysicsJoint.GetBodyA,
+    BodyB = PhysicsJoint.GetBodyB,
+    World = PhysicsJoint.GetWorld,
+    Tag = PhysicsJoint.GetTag,
+    Enabled = PhysicsJoint.IsEnabled,
+    CollisionEnabled = PhysicsJoint.IsCollisionEnabled,
+    MaxForce = PhysicsJoint.GetMaxForce
+    },
+    w = {
+    Tag = PhysicsJoint.SetTag,
+    Enabled = PhysicsJoint.SetEnabled,
+    CollisionEnabled = PhysicsJoint.SetCollisionEnabled,
+    MaxForce = PhysicsJoint.SetMaxForce
+    }};
+end
 
 local PhysicsJointLimit = cc.PhysicsJointLimit;
-PhysicsJointLimit.gtor({
-    Anchr1 = PhysicsJointLimit.getAnchr1,
-    Anchr2 = PhysicsJointLimit.getAnchr2,
-    Min = PhysicsJointLimit.getMin,
-    Max = PhysicsJointLimit.getMax
-});
-PhysicsJointLimit.stor({
-    Anchr1 = PhysicsJointLimit.setAnchr1,
-    Anchr2 = PhysicsJointLimit.setAnchr2,
-    Min = PhysicsJointLimit.setMin,
-    Max = PhysicsJointLimit.setMax
-});
+function PhysicsJointLimit.__properties__()
+    return {
+    r = {
+    Anchr1 = PhysicsJointLimit.GetAnchr1,
+    Anchr2 = PhysicsJointLimit.GetAnchr2,
+    Min = PhysicsJointLimit.GetMin,
+    Max = PhysicsJointLimit.GetMax
+    },
+    w = {
+    Anchr1 = PhysicsJointLimit.SetAnchr1,
+    Anchr2 = PhysicsJointLimit.SetAnchr2,
+    Min = PhysicsJointLimit.SetMin,
+    Max = PhysicsJointLimit.SetMax
+    }};
+end
 
 local PhysicsJointDistance = cc.PhysicsJointDistance;
-PhysicsJointDistance.gtor({
-    Distance = PhysicsJointDistance.getDistance
-});
-PhysicsJointDistance.stor({
-    Distance = PhysicsJointDistance.setDistance
-});
+function PhysicsJointDistance.__properties__()
+    return {
+    r = {
+    Distance = PhysicsJointDistance.GetDistance
+    },
+    w = {
+    Distance = PhysicsJointDistance.SetDistance
+    }};
+end
 
 local PhysicsJointSpring = cc.PhysicsJointSpring;
-PhysicsJointSpring.gtor({
-    Anchr1 = PhysicsJointSpring.getAnchr1,
-    Anchr2 = PhysicsJointSpring.getAnchr2,
-    RestLength = PhysicsJointSpring.getRestLength,
-    Stiffness = PhysicsJointSpring.getStiffness,
-    Damping = PhysicsJointSpring.getDamping
-});
-PhysicsJointSpring.stor({
-    Anchr1 = PhysicsJointSpring.setAnchr1,
-    Anchr2 = PhysicsJointSpring.setAnchr2,
-    RestLength = PhysicsJointSpring.setRestLength,
-    Stiffness = PhysicsJointSpring.setStiffness,
-    Damping = PhysicsJointSpring.setDamping
-});
+function PhysicsJointSpring.__properties__()
+    return {
+    r = {
+    Anchr1 = PhysicsJointSpring.GetAnchr1,
+    Anchr2 = PhysicsJointSpring.GetAnchr2,
+    RestLength = PhysicsJointSpring.GetRestLength,
+    Stiffness = PhysicsJointSpring.GetStiffness,
+    Damping = PhysicsJointSpring.GetDamping
+    },
+    w = {
+    Anchr1 = PhysicsJointSpring.SetAnchr1,
+    Anchr2 = PhysicsJointSpring.SetAnchr2,
+    RestLength = PhysicsJointSpring.SetRestLength,
+    Stiffness = PhysicsJointSpring.SetStiffness,
+    Damping = PhysicsJointSpring.SetDamping
+    }};
+end
 
 local PhysicsJointGroove = cc.PhysicsJointGroove;
-PhysicsJointGroove.gtor({
-    GrooveA = PhysicsJointGroove.getGrooveA,
-    GrooveB = PhysicsJointGroove.getGrooveB,
-    Anchr2 = PhysicsJointGroove.getAnchr2
-});
-PhysicsJointGroove.stor({
-    GrooveA = PhysicsJointGroove.setGrooveA,
-    GrooveB = PhysicsJointGroove.setGrooveB,
-    Anchr2 = PhysicsJointGroove.setAnchr2
-});
+function PhysicsJointGroove.__properties__()
+    return {
+    r = {
+    GrooveA = PhysicsJointGroove.GetGrooveA,
+    GrooveB = PhysicsJointGroove.GetGrooveB,
+    Anchr2 = PhysicsJointGroove.GetAnchr2
+    },
+    w = {
+    GrooveA = PhysicsJointGroove.SetGrooveA,
+    GrooveB = PhysicsJointGroove.SetGrooveB,
+    Anchr2 = PhysicsJointGroove.SetAnchr2
+    }};
+end
 
 local PhysicsJointRotarySpring = cc.PhysicsJointRotarySpring;
-PhysicsJointRotarySpring.gtor({
-    RestAngle = PhysicsJointRotarySpring.getRestAngle,
-    Stiffness = PhysicsJointRotarySpring.getStiffness,
-    Damping = PhysicsJointRotarySpring.getDamping
-});
-PhysicsJointRotarySpring.stor({
-    RestAngle = PhysicsJointRotarySpring.setRestAngle,
-    Stiffness = PhysicsJointRotarySpring.setStiffness,
-    Damping = PhysicsJointRotarySpring.setDamping
-});
+function PhysicsJointRotarySpring.__properties__()
+    return {
+    r = {
+    RestAngle = PhysicsJointRotarySpring.GetRestAngle,
+    Stiffness = PhysicsJointRotarySpring.GetStiffness,
+    Damping = PhysicsJointRotarySpring.GetDamping
+    },
+    w = {
+    RestAngle = PhysicsJointRotarySpring.SetRestAngle,
+    Stiffness = PhysicsJointRotarySpring.SetStiffness,
+    Damping = PhysicsJointRotarySpring.SetDamping
+    }};
+end
 
 local PhysicsJointRotaryLimit = cc.PhysicsJointRotaryLimit;
-PhysicsJointRotaryLimit.gtor({
-    Min = PhysicsJointRotaryLimit.getMin,
-    Max = PhysicsJointRotaryLimit.getMax
-});
-PhysicsJointRotaryLimit.stor({
-    Min = PhysicsJointRotaryLimit.setMin,
-    Max = PhysicsJointRotaryLimit.setMax
-});
+function PhysicsJointRotaryLimit.__properties__()
+    return {
+    r = {
+    Min = PhysicsJointRotaryLimit.GetMin,
+    Max = PhysicsJointRotaryLimit.GetMax
+    },
+    w = {
+    Min = PhysicsJointRotaryLimit.SetMin,
+    Max = PhysicsJointRotaryLimit.SetMax
+    }};
+end
 
 local PhysicsJointRatchet = cc.PhysicsJointRatchet;
-PhysicsJointRatchet.gtor({
-    Angle = PhysicsJointRatchet.getAngle,
-    Phase = PhysicsJointRatchet.getPhase,
-    Ratchet = PhysicsJointRatchet.getRatchet
-});
-PhysicsJointRatchet.stor({
-    Angle = PhysicsJointRatchet.setAngle,
-    Phase = PhysicsJointRatchet.setPhase,
-    Ratchet = PhysicsJointRatchet.setRatchet
-});
+function PhysicsJointRatchet.__properties__()
+    return {
+    r = {
+    Angle = PhysicsJointRatchet.GetAngle,
+    Phase = PhysicsJointRatchet.GetPhase,
+    Ratchet = PhysicsJointRatchet.GetRatchet
+    },
+    w = {
+    Angle = PhysicsJointRatchet.SetAngle,
+    Phase = PhysicsJointRatchet.SetPhase,
+    Ratchet = PhysicsJointRatchet.SetRatchet
+    }};
+end
 
 local PhysicsJointGear = cc.PhysicsJointGear;
-PhysicsJointGear.gtor({
-    Phase = PhysicsJointGear.getPhase,
-    Ratio = PhysicsJointGear.getRatio
-});
-PhysicsJointGear.stor({
-    Phase = PhysicsJointGear.setPhase,
-    Ratio = PhysicsJointGear.setRatio
-});
+function PhysicsJointGear.__properties__()
+    return {
+    r = {
+    Phase = PhysicsJointGear.GetPhase,
+    Ratio = PhysicsJointGear.GetRatio
+    },
+    w = {
+    Phase = PhysicsJointGear.SetPhase,
+    Ratio = PhysicsJointGear.SetRatio
+    }};
+end
 
 local PhysicsJointMotor = cc.PhysicsJointMotor;
-PhysicsJointMotor.gtor({
-    Rate = PhysicsJointGear.getRate
-});
-PhysicsJointMotor.stor({
-    Rate = PhysicsJointGear.setRate
-});
+function PhysicsJointMotor.__properties__()
+    return {
+    r = {
+    Rate = PhysicsJointGear.GetRate
+    },
+    w = {
+    Rate = PhysicsJointGear.SetRate
+    }};
+end
 
 local PhysicsWorld = cc.PhysicsWorld;
-PhysicsWorld.gtor({
-    Bodies = PhysicsWorld.getAllBodies,
-    Scene = PhysicsWorld.getScene,
-    Gravity = PhysicsWorld.getGravity,
-    Speed = PhysicsWorld.getSpeed,
-    UpdateRate = PhysicsWorld.getUpdateRate,
-    Substeps = PhysicsWorld.getSubsteps,
-    FixedUpdateRate = PhysicsWorld.getFixedUpdateRate,
-    AutoStep = PhysicsWorld.isAutoStep
-});
-PhysicsWorld.stor({
-    Gravity = PhysicsWorld.setGravity,
-    Speed = PhysicsWorld.setSpeed,
-    UpdateRate = PhysicsWorld.setUpdateRate,
-    Substeps = PhysicsWorld.setSubsteps,
-    FixedUpdateRate = PhysicsWorld.setFixedUpdateRate,
-    AutoStep = PhysicsWorld.setAutoStep,
-    DebugDrawMask = PhysicsWorld.setDebugDrawMask
-});
+function PhysicsWorld.__properties__()
+    return {
+    r = {
+    Bodies = PhysicsWorld.GetAllBodies,
+    Scene = PhysicsWorld.GetScene,
+    Gravity = PhysicsWorld.GetGravity,
+    Speed = PhysicsWorld.GetSpeed,
+    UpdateRate = PhysicsWorld.GetUpdateRate,
+    Substeps = PhysicsWorld.GetSubsteps,
+    FixedUpdateRate = PhysicsWorld.GetFixedUpdateRate,
+    AutoStep = PhysicsWorld.IsAutoStep
+    },
+    w = {
+    Gravity = PhysicsWorld.SetGravity,
+    Speed = PhysicsWorld.SetSpeed,
+    UpdateRate = PhysicsWorld.SetUpdateRate,
+    Substeps = PhysicsWorld.SetSubsteps,
+    FixedUpdateRate = PhysicsWorld.SetFixedUpdateRate,
+    AutoStep = PhysicsWorld.SetAutoStep,
+    DebugDrawMask = PhysicsWorld.SetDebugDrawMask
+    }};
+end
 
 local Application = cc.Application;
-Application.gtor({
-    TargetPlatform = Application.getTargetPlatform,
-    CurrentLanguage = Application.getCurrentLanguage,
-    CurrentLanguageCode = Application.getCurrentLanguageCode,
-    Version = Application.getVersion,
+function Application.__properties__()
+    return {
+    r = {
+    TargetPlatform = Application.GetTargetPlatform,
+    CurrentLanguage = Application.GetCurrentLanguage,
+    CurrentLanguageCode = Application.GetCurrentLanguageCode,
+    Version = Application.GetVersion,
     CompileVersion = Application.GetCompileVersion
-});
-Application.stor({
-    AnimationInterval = Application.setAnimationInterval
-});
+    },
+    w = {
+    AnimationInterval = Application.SetAnimationInterval
+    }};
+end
 
 local FileUtils = cc.FileUtils;
-FileUtils.gtor({
-    SearchResolutionsOrder = FileUtils.getSearchResolutionsOrder,
-    DefaultResourceRootPath = FileUtils.getDefaultResourceRootPath,
-    SearchPaths = FileUtils.getSearchPaths,
-    OriginalSearchPaths = FileUtils.getOriginalSearchPaths,
-    WritablePath = FileUtils.getWritablePath,
-    PopupNotify = FileUtils.isPopupNotify
-});
-FileUtils.stor({
-    FilenameLookupDictionary = FileUtils.setFilenameLookupDictionary,
-    SearchResolutionsOrder = FileUtils.setSearchResolutionsOrder,
-    SearchPaths = FileUtils.setSearchPaths,
-    DefaultResourceRootPath = FileUtils.setDefaultResourceRootPath,
-    WritablePath = FileUtils.setWritablePath,
-    PopupNotify = FileUtils.setPopupNotify
-});
+function FileUtils.__properties__()
+    return {
+    r = {
+    SearchResolutionsOrder = FileUtils.GetSearchResolutionsOrder,
+    DefaultResourceRootPath = FileUtils.GetDefaultResourceRootPath,
+    SearchPaths = FileUtils.GetSearchPaths,
+    OriginalSearchPaths = FileUtils.GetOriginalSearchPaths,
+    WritablePath = FileUtils.GetWritablePath,
+    PopupNotify = FileUtils.IsPopupNotify
+    },
+    w = {
+    FilenameLookupDictionary = FileUtils.SetFilenameLookupDictionary,
+    SearchResolutionsOrder = FileUtils.SetSearchResolutionsOrder,
+    SearchPaths = FileUtils.SetSearchPaths,
+    DefaultResourceRootPath = FileUtils.SetDefaultResourceRootPath,
+    WritablePath = FileUtils.SetWritablePath,
+    PopupNotify = FileUtils.SetPopupNotify
+    }};
+end
 
 local GLView = cc.GLView;
-GLView.gtor({
-    OpenGLReady = GLView.isOpenGLReady,
-    FrameSize = GLView.getFrameSize,
-    FrameZoomFactor = GLView.getFrameZoomFactor,
-    RetinaFactor = GLView.getRetinaFactor,
-    ContentScaleFactor = GLView.getContentScaleFactor,
-    RetinaDisplay = GLView.isRetinaDisplay,
-    VisibleSize = GLView.getVisibleSize,
-    VisibleOrigin = GLView.getVisibleOrigin,
-    VisibleRect = GLView.getVisibleRect,
-    SafeAreaRect = GLView.getSafeAreaRect,
-    DesignResolutionSize = GLView.getDesignResolutionSize,
-    ScissorEnabled = GLView.isScissorEnabled,
-    ScissorRect = GLView.getScissorRect,
-    ViewName = GLView.getViewName,
-    ViewPortRect = GLView.getViewPortRect,
-    Touches = GLView.getAllTouches,
-    ScaleX = GLView.getScaleX,
-    ScaleY = GLView.getScaleY,
-    ResolutionPolicy = GLView.getResolutionPolicy
-});
-GLView.stor({
-    IMEKeyboardState = GLView.setIMEKeyboardState,
-    FrameSize = GLView.setFrameSize,
-    FrameZoomFactor = GLView.setFrameZoomFactor,
-    CursorVisible = GLView.setCursorVisible,
-    RetinaFactor = GLView.setRetinaFactor,
-    ViewName = GLView.setViewName,
-    Icon = GLView.setIcon
-});
+function GLView.__properties__()
+    return {
+    r = {
+    OpenGLReady = GLView.IsOpenGLReady,
+    FrameSize = GLView.GetFrameSize,
+    FrameZoomFactor = GLView.GetFrameZoomFactor,
+    RetinaFactor = GLView.GetRetinaFactor,
+    ContentScaleFactor = GLView.GetContentScaleFactor,
+    RetinaDisplay = GLView.IsRetinaDisplay,
+    VisibleSize = GLView.GetVisibleSize,
+    VisibleOrigin = GLView.GetVisibleOrigin,
+    VisibleRect = GLView.GetVisibleRect,
+    SafeAreaRect = GLView.GetSafeAreaRect,
+    DesignResolutionSize = GLView.GetDesignResolutionSize,
+    ScissorEnabled = GLView.IsScissorEnabled,
+    ScissorRect = GLView.GetScissorRect,
+    ViewName = GLView.GetViewName,
+    ViewPortRect = GLView.GetViewPortRect,
+    Touches = GLView.GetAllTouches,
+    ScaleX = GLView.GetScaleX,
+    ScaleY = GLView.GetScaleY,
+    ResolutionPolicy = GLView.GetResolutionPolicy
+    },
+    w = {
+    IMEKeyboardState = GLView.SetIMEKeyboardState,
+    FrameSize = GLView.SetFrameSize,
+    FrameZoomFactor = GLView.SetFrameZoomFactor,
+    CursorVisible = GLView.SetCursorVisible,
+    RetinaFactor = GLView.SetRetinaFactor,
+    ViewName = GLView.SetViewName,
+    Icon = GLView.SetIcon
+    }};
+end
 
 local Image = cc.Image;
-Image.gtor({
-    FileType = Image.getFileType,
-    RenderFormat = Image.getRenderFormat,
-    Width = Image.getWidth,
-    Height = Image.getHeight,
-    NumberOfMipmaps = Image.getNumberOfMipmaps,
-    PremultipliedAlpha = Image.hasPremultipliedAlpha,
-    FilePath = Image.getFilePath,
-    BitPerPixel = Image.getBitPerPixel,
-    Alpha = Image.hasAlpha,
-    Compressed = Image.isCompressed
-});
-Image.stor({
-});
+function Image.__properties__()
+    return {
+    r = {
+    FileType = Image.GetFileType,
+    RenderFormat = Image.GetRenderFormat,
+    Width = Image.GetWidth,
+    Height = Image.GetHeight,
+    NumberOfMipmaps = Image.GetNumberOfMipmaps,
+    PremultipliedAlpha = Image.HasPremultipliedAlpha,
+    FilePath = Image.GetFilePath,
+    BitPerPixel = Image.GetBitPerPixel,
+    Alpha = Image.HasAlpha,
+    Compressed = Image.IsCompressed
+    },
+    w = {
+    }};
+end
 
 local RenderState = cc.RenderState;
-RenderState.gtor({
-    Name = RenderState.getName,
-    Texture = RenderState.getTexture
-});
-RenderState.stor({
-    Texture = RenderState.setTexture,
-    Parent = RenderState.setParent
-});
+function RenderState.__properties__()
+    return {
+    r = {
+    Name = RenderState.GetName,
+    Texture = RenderState.GetTexture
+    },
+    w = {
+    Texture = RenderState.SetTexture,
+    Parent = RenderState.SetParent
+    }};
+end
 
 local Material = cc.Material;
-Material.gtor({
-    Name = Material.getName,
-    Technique = Material.getTechnique,
-    Techniques = Material.getTechniques,
-    TechniqueCount = Material.getTechniqueCount
-});
-Material.stor({
-    Name = Material.setName
-});
+function Material.__properties__()
+    return {
+    r = {
+    Name = Material.GetName,
+    Technique = Material.GetTechnique,
+    Techniques = Material.GetTechniques,
+    TechniqueCount = Material.GetTechniqueCount
+    },
+    w = {
+    Name = Material.SetName
+    }};
+end
 
 local Pass = cc.Pass;
-Pass.gtor({
-    ProgramState = Pass.getProgramState,
-    VertexAttributeBinding = Pass.getVertexAttributeBinding,
-    Hash = Pass.getHash
-});
-Pass.stor({
-    VertexAttributeBinding = Pass.setVertexAttributeBinding
-});
+function Pass.__properties__()
+    return {
+    r = {
+    ProgramState = Pass.GetProgramState,
+    VertexAttributeBinding = Pass.GetVertexAttributeBinding,
+    Hash = Pass.GetHash
+    },
+    w = {
+    VertexAttributeBinding = Pass.SetVertexAttributeBinding
+    }};
+end
 
 local Technique = cc.Technique;
-Technique.gtor({
-    Name = Technique.getName,
-    PassCount = Technique.getPassCount,
-    Passes = Technique.getPasses
-});
-Technique.stor({
-});
+function Technique.__properties__()
+    return {
+    r = {
+    Name = Technique.GetName,
+    PassCount = Technique.GetPassCount,
+    Passes = Technique.GetPasses
+    },
+    w = {
+    }};
+end
 
 local Texture2D = cc.Texture2D;
-Texture2D.gtor({
-    StringForFormat = Texture2D.getStringForFormat,
-    BitsPerPixelForFormat = Texture2D.getBitsPerPixelForFormat,
-    ContentSizeInPixels = Texture2D.getContentSizeInPixels,
-    PremultipliedAlpha = Texture2D.hasPremultipliedAlpha,
-    Mipmaps = Texture2D.hasMipmaps,
-    PixelFormat = Texture2D.getPixelFormat,
-    PixelsWide = Texture2D.getPixelsWide,
-    PixelsHigh = Texture2D.getPixelsHigh,
-    Name = Texture2D.getName,
-    MaxS = Texture2D.getMaxS,
-    MaxT = Texture2D.getMaxT,
-    Size = Texture2D.getContentSize,
-    Path = Texture2D.getPath,
-    AlphaTextureName = Texture2D.getAlphaTextureName,
-    AlphaTexture = Texture2D.getAlphaTexture
-});
-Texture2D.stor({
-    TexParameters = Texture2D.setTexParameters,
-    MaxS = Texture2D.setMaxS,
-    MaxT = Texture2D.setMaxT,
-    AlphaTexture = Texture2D.setAlphaTexture
-});
+function Texture2D.__properties__()
+    return {
+    r = {
+    StringForFormat = Texture2D.GetStringForFormat,
+    BitsPerPixelForFormat = Texture2D.GetBitsPerPixelForFormat,
+    ContentSizeInPixels = Texture2D.GetContentSizeInPixels,
+    PremultipliedAlpha = Texture2D.HasPremultipliedAlpha,
+    Mipmaps = Texture2D.HasMipmaps,
+    PixelFormat = Texture2D.GetPixelFormat,
+    PixelsWide = Texture2D.GetPixelsWide,
+    PixelsHigh = Texture2D.GetPixelsHigh,
+    Name = Texture2D.GetName,
+    MaxS = Texture2D.GetMaxS,
+    MaxT = Texture2D.GetMaxT,
+    Size = Texture2D.GetContentSize,
+    Path = Texture2D.GetPath,
+    AlphaTextureName = Texture2D.GetAlphaTextureName,
+    AlphaTexture = Texture2D.GetAlphaTexture
+    },
+    w = {
+    TexParameters = Texture2D.SetTexParameters,
+    MaxS = Texture2D.SetMaxS,
+    MaxT = Texture2D.SetMaxT,
+    AlphaTexture = Texture2D.SetAlphaTexture
+    }};
+end
 
 local Scale9Sprite = ccui.Scale9Sprite;
-Scale9Sprite.gtor({
-    OriginalSize = Scale9Sprite.getOriginalSize,
-    PreferredSize = Scale9Sprite.getPreferredSize,
-    InsetLeft = Scale9Sprite.getInsetLeft,
-    InsetTop = Scale9Sprite.getInsetTop,
-    InsetRight = Scale9Sprite.getInsetRight,
-    InsetBottom = Scale9Sprite.getInsetBottom,
-    Scale9Enabled = Scale9Sprite.isScale9Enabled,
-    Sprite = Scale9Sprite.getSprite,
-    RenderingType = Scale9Sprite.getRenderingType,
-    CapInsets = Scale9Sprite.getCapInsets,
+function Scale9Sprite.__properties__()
+    return {
+    r = {
+    OriginalSize = Scale9Sprite.GetOriginalSize,
+    PreferredSize = Scale9Sprite.GetPreferredSize,
+    InsetLeft = Scale9Sprite.GetInsetLeft,
+    InsetTop = Scale9Sprite.GetInsetTop,
+    InsetRight = Scale9Sprite.GetInsetRight,
+    InsetBottom = Scale9Sprite.GetInsetBottom,
+    Scale9Enabled = Scale9Sprite.IsScale9Enabled,
+    Sprite = Scale9Sprite.GetSprite,
+    RenderingType = Scale9Sprite.GetRenderingType,
+    CapInsets = Scale9Sprite.GetCapInsets,
     -- 由于State枚举和State的gtor冲突，可以使用Grayed代替State的gtor
     Grayed = function(self)
         return self:getState() == Scale9Sprite.State.GRAY;
     end
-});
-Scale9Sprite.stor({
-    PreferredSize = Scale9Sprite.setPreferredSize,
-    InsetLeft = Scale9Sprite.setInsetLeft,
-    InsetTop = Scale9Sprite.setInsetTop,
-    InsetRight = Scale9Sprite.setInsetRight,
-    InsetBottom = Scale9Sprite.setInsetBottom,
-    Scale9Enabled = Scale9Sprite.setScale9Enabled,
-    RenderingType = Scale9Sprite.setRenderingType,
-    CapInsets = Scale9Sprite.setCapInsets,
+    },
+    w = {
+    PreferredSize = Scale9Sprite.SetPreferredSize,
+    InsetLeft = Scale9Sprite.SetInsetLeft,
+    InsetTop = Scale9Sprite.SetInsetTop,
+    InsetRight = Scale9Sprite.SetInsetRight,
+    InsetBottom = Scale9Sprite.SetInsetBottom,
+    Scale9Enabled = Scale9Sprite.SetScale9Enabled,
+    RenderingType = Scale9Sprite.SetRenderingType,
+    CapInsets = Scale9Sprite.SetCapInsets,
     -- 由于State枚举和State的stor冲突，可以使用Grayed代替State的stor
     Grayed = function(self,val)
         if val then
@@ -1831,228 +2127,249 @@ Scale9Sprite.stor({
             self:setState(Scale9Sprite.State.NORMAL);
         end
     end
-});
+    }};
+end
 
 local Widget = ccui.Widget;
-Widget.gtor({
-    Enabled = Widget.isEnabled,
-    Bright = Widget.isBright,
-    TouchEnabled = Widget.isTouchEnabled,
-    Highlighted = Widget.isHighlighted,
-    LeftBoundary = Widget.getLeftBoundary,
-    BottomBoundary = Widget.getBottomBoundary,
-    RightBoundary = Widget.getRightBoundary,
-    TopBoundary = Widget.getTopBoundary,
-    PositionPercent = Widget.getPositionPercent,
-    PositionType = Widget.getPositionType,
-    FlippedX = Widget.isFlippedX,
-    FlippedY = Widget.isFlippedY,
-    ClippingParentContainsPoint = Widget.isClippingParentContainsPoint,
-    TouchBeganPosition = Widget.getTouchBeganPosition,
-    TouchMovePosition = Widget.getTouchMovePosition,
-    TouchEndPosition = Widget.getTouchEndPosition,
-    SizeType = Widget.getSizeType,
-    CustomSize = Widget.getCustomSize,
-    LayoutSize = Widget.getLayoutSize,
-    SizePercent = Widget.getSizePercent,
-    LayoutParameter = Widget.getLayoutParameter,
-    IgnoreContentAdaptWithSize = Widget.isIgnoreContentAdaptWithSize,
-    WorldPosition = Widget.getWorldPosition,
-    VirtualRenderer = Widget.getVirtualRenderer,
-    VirtualRendererSize = Widget.getVirtualRendererSize,
-    ActionTag = Widget.getActionTag,
-    PropagateTouchEvents = Widget.isPropagateTouchEvents,
-    SwallowTouches = Widget.isSwallowTouches,
-    Focused = Widget.isFocused,
-    FocusEnabled = Widget.isFocusEnabled,
-    UnifySizeEnabled = Widget.isUnifySizeEnabled,
-    CallbackName = Widget.getCallbackName,
-    CallbackType = Widget.getCallbackType,
-    LayoutComponentEnabled = Widget.isLayoutComponentEnabled
-});
-Widget.stor({
-    Enabled = Widget.setEnabled,
-    Bright = Widget.setBright,
-    TouchEnabled = Widget.setTouchEnabled,
-    BrightStyle = Widget.setBrightStyle,
-    Highlighted = Widget.setHighlighted,
-    PositionPercent = Widget.setPositionPercent,
-    PositionType = Widget.setPositionType,
-    FlippedX = Widget.setFlippedX,
-    FlippedY = Widget.setFlippedY,
-    SizePercent = Widget.setSizePercent,
-    SizeType = Widget.setSizeType,
-    LayoutParameter = Widget.setLayoutParameter,
-    IgnoreContentAdaptWithSize = Widget.ignoreContentAdaptWithSize,
-    ActionTag = Widget.setActionTag,
-    PropagateTouchEvents = Widget.setPropagateTouchEvents,
-    SwallowTouches = Widget.setSwallowTouches,
-    Focused = Widget.setFocused,
-    FocusEnabled = Widget.setFocusEnabled,
-    UnifySizeEnabled = Widget.setUnifySizeEnabled,
-    CallbackName = Widget.setCallbackName,
-    LayoutComponentEnabled = Widget.setLayoutComponentEnabled,
-    TouchHandler = Widget.addTouchEventListener
-});
+function Widget.__properties__()
+    return {
+    r = {
+    Enabled = Widget.IsEnabled,
+    Bright = Widget.IsBright,
+    TouchEnabled = Widget.IsTouchEnabled,
+    Highlighted = Widget.IsHighlighted,
+    LeftBoundary = Widget.GetLeftBoundary,
+    BottomBoundary = Widget.GetBottomBoundary,
+    RightBoundary = Widget.GetRightBoundary,
+    TopBoundary = Widget.GetTopBoundary,
+    PositionPercent = Widget.GetPositionPercent,
+    PositionType = Widget.GetPositionType,
+    FlippedX = Widget.IsFlippedX,
+    FlippedY = Widget.IsFlippedY,
+    ClippingParentContainsPoint = Widget.IsClippingParentContainsPoint,
+    TouchBeganPosition = Widget.GetTouchBeganPosition,
+    TouchMovePosition = Widget.GetTouchMovePosition,
+    TouchEndPosition = Widget.GetTouchEndPosition,
+    SizeType = Widget.GetSizeType,
+    CustomSize = Widget.GetCustomSize,
+    LayoutSize = Widget.GetLayoutSize,
+    SizePercent = Widget.GetSizePercent,
+    LayoutParameter = Widget.GetLayoutParameter,
+    IgnoreContentAdaptWithSize = Widget.IsIgnoreContentAdaptWithSize,
+    WorldPosition = Widget.GetWorldPosition,
+    VirtualRenderer = Widget.GetVirtualRenderer,
+    VirtualRendererSize = Widget.GetVirtualRendererSize,
+    ActionTag = Widget.GetActionTag,
+    PropagateTouchEvents = Widget.IsPropagateTouchEvents,
+    SwallowTouches = Widget.IsSwallowTouches,
+    Focused = Widget.IsFocused,
+    FocusEnabled = Widget.IsFocusEnabled,
+    UnifySizeEnabled = Widget.IsUnifySizeEnabled,
+    CallbackName = Widget.GetCallbackName,
+    CallbackType = Widget.GetCallbackType,
+    LayoutComponentEnabled = Widget.IsLayoutComponentEnabled
+    },
+    w = {
+    Enabled = Widget.SetEnabled,
+    Bright = Widget.SetBright,
+    TouchEnabled = Widget.SetTouchEnabled,
+    BrightStyle = Widget.SetBrightStyle,
+    Highlighted = Widget.SetHighlighted,
+    PositionPercent = Widget.SetPositionPercent,
+    PositionType = Widget.SetPositionType,
+    FlippedX = Widget.SetFlippedX,
+    FlippedY = Widget.SetFlippedY,
+    SizePercent = Widget.SetSizePercent,
+    SizeType = Widget.SetSizeType,
+    LayoutParameter = Widget.SetLayoutParameter,
+    IgnoreContentAdaptWithSize = Widget.IgnoreContentAdaptWithSize,
+    ActionTag = Widget.SetActionTag,
+    PropagateTouchEvents = Widget.SetPropagateTouchEvents,
+    SwallowTouches = Widget.SetSwallowTouches,
+    Focused = Widget.SetFocused,
+    FocusEnabled = Widget.SetFocusEnabled,
+    UnifySizeEnabled = Widget.SetUnifySizeEnabled,
+    CallbackName = Widget.SetCallbackName,
+    LayoutComponentEnabled = Widget.SetLayoutComponentEnabled,
+    TouchHandler = Widget.AddTouchEventListener
+    }};
+end
 
 local Layout = ccui.Layout;
-Layout.gtor({
-    BackGroundImageCapInsets = Layout.getBackGroundImageCapInsets,
-    BackGroundColorType = Layout.getBackGroundColorType,
-    BackGroundImageScale9Enabled = Layout.isBackGroundImageScale9Enabled,
-    BackGroundColor = Layout.getBackGroundColor,
-    BackGroundStartColor = Layout.getBackGroundStartColor,
-    BackGroundEndColor = Layout.getBackGroundEndColor,
-    BackGroundColorOpacity = Layout.getBackGroundColorOpacity,
-    BackGroundColorVector = Layout.getBackGroundColorVector,
-    BackGroundImageColor = Layout.getBackGroundImageColor,
-    BackGroundImageOpacity = Layout.getBackGroundImageOpacity,
-    BackGroundImageTextureSize = Layout.getBackGroundImageTextureSize,
-    ClippingType = Layout.getClippingType,
-    ClippingEnabled = Layout.isClippingEnabled,
-    LayoutType = Layout.getLayoutType,
-    LoopFocus = Layout.isLoopFocus,
-    PassFocusToChild = Layout.isPassFocusToChild
-});
-Layout.stor({
-    BackGroundImage = Layout.setBackGroundImage,
-    BackGroundImageCapInsets = Layout.setBackGroundImageCapInsets,
-    BackGroundColorType = Layout.setBackGroundColorType,
-    BackGroundImageScale9Enabled = Layout.setBackGroundImageScale9Enabled,
-    BackGroundColor = Layout.setBackGroundColor,
-    BackGroundColorOpacity = Layout.setBackGroundColorOpacity,
-    BackGroundColorVector = Layout.setBackGroundColorVector,
-    BackGroundImageColor = Layout.setBackGroundImageColor,
-    BackGroundImageOpacity = Layout.setBackGroundImageOpacity,
-    ClippingEnabled = Layout.setClippingEnabled,
-    ClippingType = Layout.setClippingType,
-    LayoutType = Layout.setLayoutType,
-    LoopFocus = Layout.setLoopFocus,
-    PassFocusToChild = Layout.setPassFocusToChild
-});
+function Layout.__properties__()
+    return {
+    r = {
+    BackGroundImageCapInsets = Layout.GetBackGroundImageCapInsets,
+    BackGroundColorType = Layout.GetBackGroundColorType,
+    BackGroundImageScale9Enabled = Layout.IsBackGroundImageScale9Enabled,
+    BackGroundColor = Layout.GetBackGroundColor,
+    BackGroundStartColor = Layout.GetBackGroundStartColor,
+    BackGroundEndColor = Layout.GetBackGroundEndColor,
+    BackGroundColorOpacity = Layout.GetBackGroundColorOpacity,
+    BackGroundColorVector = Layout.GetBackGroundColorVector,
+    BackGroundImageColor = Layout.GetBackGroundImageColor,
+    BackGroundImageOpacity = Layout.GetBackGroundImageOpacity,
+    BackGroundImageTextureSize = Layout.GetBackGroundImageTextureSize,
+    ClippingType = Layout.GetClippingType,
+    ClippingEnabled = Layout.IsClippingEnabled,
+    LayoutType = Layout.GetLayoutType,
+    LoopFocus = Layout.IsLoopFocus,
+    PassFocusToChild = Layout.IsPassFocusToChild
+    },
+    w = {
+    BackGroundImage = Layout.SetBackGroundImage,
+    BackGroundImageCapInsets = Layout.SetBackGroundImageCapInsets,
+    BackGroundColorType = Layout.SetBackGroundColorType,
+    BackGroundImageScale9Enabled = Layout.SetBackGroundImageScale9Enabled,
+    BackGroundColor = Layout.SetBackGroundColor,
+    BackGroundColorOpacity = Layout.SetBackGroundColorOpacity,
+    BackGroundColorVector = Layout.SetBackGroundColorVector,
+    BackGroundImageColor = Layout.SetBackGroundImageColor,
+    BackGroundImageOpacity = Layout.SetBackGroundImageOpacity,
+    ClippingEnabled = Layout.SetClippingEnabled,
+    ClippingType = Layout.SetClippingType,
+    LayoutType = Layout.SetLayoutType,
+    LoopFocus = Layout.SetLoopFocus,
+    PassFocusToChild = Layout.SetPassFocusToChild
+    }};
+end
 
 local LayoutComponent = ccui.LayoutComponent;
-LayoutComponent.gtor({
-    UsingPercentContentSize = LayoutComponent.getUsingPercentContentSize,
-    PercentContentSize = LayoutComponent.getPercentContentSize,
-    AnchorPosition = LayoutComponent.getAnchorPosition,
-    Position = LayoutComponent.getPosition,
-    XY = LayoutComponent.getPosition,
-    PositionPercentXEnabled = LayoutComponent.isPositionPercentXEnabled,
-    PositionPercentX = LayoutComponent.getPositionPercentX,
-    PositionPercentYEnabled = LayoutComponent.isPositionPercentYEnabled,
-    PositionPercentY = LayoutComponent.getPositionPercentY,
-    HorizontalEdge = LayoutComponent.getHorizontalEdge,
-    VerticalEdge = LayoutComponent.getVerticalEdge,
-    LeftMargin = LayoutComponent.getLeftMargin,
-    RightMargin = LayoutComponent.getRightMargin,
-    TopMargin = LayoutComponent.getTopMargin,
-    BottomMargin = LayoutComponent.getBottomMargin,
-    Size = LayoutComponent.getSize,
-    PercentWidthEnabled = LayoutComponent.isPercentWidthEnabled,
-    SizeWidth = LayoutComponent.getSizeWidth,
-    PercentWidth = LayoutComponent.getPercentWidth,
-    PercentHeightEnabled = LayoutComponent.isPercentHeightEnabled,
-    SizeHeight = LayoutComponent.getSizeHeight,
-    PercentHeight = LayoutComponent.getPercentHeight,
-    StretchWidthEnabled = LayoutComponent.isStretchWidthEnabled,
-    StretchHeightEnabled = LayoutComponent.isStretchHeightEnabled,
-});
-LayoutComponent.stor({
-    UsingPercentContentSize = LayoutComponent.setUsingPercentContentSize,
-    PercentContentSize = LayoutComponent.setPercentContentSize,
-    AnchorPosition = LayoutComponent.setAnchorPosition,
-    Position = LayoutComponent.setPosition,
-    XY = LayoutComponent.setPosition,
-    PositionPercentXEnabled = LayoutComponent.setPositionPercentXEnabled,
-    PositionPercentX = LayoutComponent.setPositionPercentX,
-    PositionPercentYEnabled = LayoutComponent.setPositionPercentYEnabled,
-    PositionPercentY = LayoutComponent.setPositionPercentY,
-    HorizontalEdge = LayoutComponent.setHorizontalEdge,
-    VerticalEdge = LayoutComponent.setVerticalEdge,
-    LeftMargin = LayoutComponent.setLeftMargin,
-    RightMargin = LayoutComponent.setRightMargin,
-    TopMargin = LayoutComponent.setTopMargin,
-    BottomMargin = LayoutComponent.setBottomMargin,
-    Size = LayoutComponent.setSize,
-    PercentWidthEnabled = LayoutComponent.setPercentWidthEnabled,
-    SizeWidth = LayoutComponent.setSizeWidth,
-    PercentWidth = LayoutComponent.setPercentWidth,
-    PercentHeightEnabled = LayoutComponent.setPercentHeightEnabled,
-    SizeHeight = LayoutComponent.setSizeHeight,
-    PercentHeight = LayoutComponent.setPercentHeight,
-    StretchWidthEnabled = LayoutComponent.setStretchWidthEnabled,
-    StretchHeightEnabled = LayoutComponent.setStretchHeightEnabled,
-    PercentOnlyEnabled = LayoutComponent.setPercentOnlyEnabled,
-    ActiveEnabled = LayoutComponent.setActiveEnabled,
-});
+function LayoutComponent.__properties__()
+    return {
+    r = {
+    UsingPercentContentSize = LayoutComponent.GetUsingPercentContentSize,
+    PercentContentSize = LayoutComponent.GetPercentContentSize,
+    AnchorPosition = LayoutComponent.GetAnchorPosition,
+    Position = LayoutComponent.GetPosition,
+    XY = LayoutComponent.GetPosition,
+    PositionPercentXEnabled = LayoutComponent.IsPositionPercentXEnabled,
+    PositionPercentX = LayoutComponent.GetPositionPercentX,
+    PositionPercentYEnabled = LayoutComponent.IsPositionPercentYEnabled,
+    PositionPercentY = LayoutComponent.GetPositionPercentY,
+    HorizontalEdge = LayoutComponent.GetHorizontalEdge,
+    VerticalEdge = LayoutComponent.GetVerticalEdge,
+    LeftMargin = LayoutComponent.GetLeftMargin,
+    RightMargin = LayoutComponent.GetRightMargin,
+    TopMargin = LayoutComponent.GetTopMargin,
+    BottomMargin = LayoutComponent.GetBottomMargin,
+    Size = LayoutComponent.GetSize,
+    PercentWidthEnabled = LayoutComponent.IsPercentWidthEnabled,
+    SizeWidth = LayoutComponent.GetSizeWidth,
+    PercentWidth = LayoutComponent.GetPercentWidth,
+    PercentHeightEnabled = LayoutComponent.IsPercentHeightEnabled,
+    SizeHeight = LayoutComponent.GetSizeHeight,
+    PercentHeight = LayoutComponent.GetPercentHeight,
+    StretchWidthEnabled = LayoutComponent.IsStretchWidthEnabled,
+    StretchHeightEnabled = LayoutComponent.IsStretchHeightEnabled,
+    },
+    w = {
+    UsingPercentContentSize = LayoutComponent.SetUsingPercentContentSize,
+    PercentContentSize = LayoutComponent.SetPercentContentSize,
+    AnchorPosition = LayoutComponent.SetAnchorPosition,
+    Position = LayoutComponent.SetPosition,
+    XY = LayoutComponent.SetPosition,
+    PositionPercentXEnabled = LayoutComponent.SetPositionPercentXEnabled,
+    PositionPercentX = LayoutComponent.SetPositionPercentX,
+    PositionPercentYEnabled = LayoutComponent.SetPositionPercentYEnabled,
+    PositionPercentY = LayoutComponent.SetPositionPercentY,
+    HorizontalEdge = LayoutComponent.SetHorizontalEdge,
+    VerticalEdge = LayoutComponent.SetVerticalEdge,
+    LeftMargin = LayoutComponent.SetLeftMargin,
+    RightMargin = LayoutComponent.SetRightMargin,
+    TopMargin = LayoutComponent.SetTopMargin,
+    BottomMargin = LayoutComponent.SetBottomMargin,
+    Size = LayoutComponent.SetSize,
+    PercentWidthEnabled = LayoutComponent.SetPercentWidthEnabled,
+    SizeWidth = LayoutComponent.SetSizeWidth,
+    PercentWidth = LayoutComponent.SetPercentWidth,
+    PercentHeightEnabled = LayoutComponent.SetPercentHeightEnabled,
+    SizeHeight = LayoutComponent.SetSizeHeight,
+    PercentHeight = LayoutComponent.SetPercentHeight,
+    StretchWidthEnabled = LayoutComponent.SetStretchWidthEnabled,
+    StretchHeightEnabled = LayoutComponent.SetStretchHeightEnabled,
+    PercentOnlyEnabled = LayoutComponent.SetPercentOnlyEnabled,
+    ActiveEnabled = LayoutComponent.SetActiveEnabled,
+    }};
+end
 
 local LayoutParameter = ccui.LayoutParameter;
-LayoutParameter.gtor({
-    Margin = LayoutParameter.getMargin,
-    LayoutType = LayoutParameter.getLayoutType
-});
-LayoutParameter.stor({
-    Margin = LayoutParameter.setMargin
-});
+function LayoutParameter.__properties__()
+    return {
+    r = {
+    Margin = LayoutParameter.GetMargin,
+    LayoutType = LayoutParameter.GetLayoutType
+    },
+    w = {
+    Margin = LayoutParameter.SetMargin
+    }};
+end
 
 local LinearLayoutParameter = ccui.LinearLayoutParameter;
-LinearLayoutParameter.gtor({
-    Gravity = LinearLayoutParameter.getGravity
-});
-LinearLayoutParameter.stor({
-    Gravity = LinearLayoutParameter.setGravity
-});
+function LinearLayoutParameter.__properties__()
+    return {
+    r = {
+    Gravity = LinearLayoutParameter.GetGravity
+    },
+    w = {
+    Gravity = LinearLayoutParameter.SetGravity
+    }};
+end
 
 local RelativeLayoutParameter = ccui.RelativeLayoutParameter;
-RelativeLayoutParameter.gtor({
-    Align = RelativeLayoutParameter.getAlign,
-    RelativeToWidgetName = RelativeLayoutParameter.getRelativeToWidgetName,
-    RelativeName = RelativeLayoutParameter.getRelativeName
-});
-RelativeLayoutParameter.stor({
-    Align = RelativeLayoutParameter.setAlign,
-    RelativeToWidgetName = RelativeLayoutParameter.setRelativeToWidgetName,
-    RelativeName = RelativeLayoutParameter.setRelativeName
-});
+function RelativeLayoutParameter.__properties__()
+    return {
+    r = {
+    Align = RelativeLayoutParameter.GetAlign,
+    RelativeToWidgetName = RelativeLayoutParameter.GetRelativeToWidgetName,
+    RelativeName = RelativeLayoutParameter.GetRelativeName
+    },
+    w = {
+    Align = RelativeLayoutParameter.SetAlign,
+    RelativeToWidgetName = RelativeLayoutParameter.SetRelativeToWidgetName,
+    RelativeName = RelativeLayoutParameter.SetRelativeName
+    }};
+end
 
 local EditBox = ccui.EditBox;
-EditBox.gtor({
-    CapInsetsNormalRenderer = EditBox.getCapInsetsNormalRenderer,
-    CapInsetsPressedRenderer = EditBox.getCapInsetsPressedRenderer,
-    CapInsetsDisabledRenderer = EditBox.getCapInsetsDisabledRenderer,
-    Text = EditBox.getText,
-    FontName = EditBox.getFontName,
-    FontSize = EditBox.getFontSize,
-    FontColor = EditBox.getFontColor,
-    PlaceholderFontName = EditBox.getPlaceholderFontName,
-    PlaceholderFontSize = EditBox.getPlaceholderFontSize,
-    PlaceholderFontColor = EditBox.getPlaceholderFontColor,
-    PlaceHolder = EditBox.getPlaceHolder,
-    InputMode = EditBox.getInputMode,
-    MaxLength = EditBox.getMaxLength,
-    InputFlag = EditBox.getInputFlag,
-    ReturnType = EditBox.getReturnType,
-    TextHorizontalAlignment = EditBox.getTextHorizontalAlignment
-});
-EditBox.stor({
-    CapInsets = EditBox.setCapInsets,
-    CapInsetsNormalRenderer = EditBox.setCapInsetsNormalRenderer,
-    CapInsetsPressedRenderer = EditBox.setCapInsetsPressedRenderer,
-    CapInsetsDisabledRenderer = EditBox.setCapInsetsDisabledRenderer,
-    Text = EditBox.setText,
-    FontName = EditBox.setFontName,
-    FontSize = EditBox.setFontSize,
-    FontColor = EditBox.setFontColor,
-    PlaceholderFontName = EditBox.setPlaceholderFontName,
-    PlaceholderFontSize = EditBox.setPlaceholderFontSize,
-    PlaceholderFontColor = EditBox.setPlaceholderFontColor,
-    PlaceHolder = EditBox.setPlaceHolder,
-    InputMode = EditBox.setInputMode,
-    MaxLength = EditBox.setMaxLength,
-    InputFlag = EditBox.setInputFlag,
-    ReturnType = EditBox.setReturnType,
-    TextHorizontalAlignment = EditBox.setTextHorizontalAlignment,
+function EditBox.__properties__()
+    return {
+    r = {
+    CapInsetsNormalRenderer = EditBox.GetCapInsetsNormalRenderer,
+    CapInsetsPressedRenderer = EditBox.GetCapInsetsPressedRenderer,
+    CapInsetsDisabledRenderer = EditBox.GetCapInsetsDisabledRenderer,
+    Text = EditBox.GetText,
+    FontName = EditBox.GetFontName,
+    FontSize = EditBox.GetFontSize,
+    FontColor = EditBox.GetFontColor,
+    PlaceholderFontName = EditBox.GetPlaceholderFontName,
+    PlaceholderFontSize = EditBox.GetPlaceholderFontSize,
+    PlaceholderFontColor = EditBox.GetPlaceholderFontColor,
+    PlaceHolder = EditBox.GetPlaceHolder,
+    InputMode = EditBox.GetInputMode,
+    MaxLength = EditBox.GetMaxLength,
+    InputFlag = EditBox.GetInputFlag,
+    ReturnType = EditBox.GetReturnType,
+    TextHorizontalAlignment = EditBox.GetTextHorizontalAlignment
+    },
+    w = {
+    CapInsets = EditBox.SetCapInsets,
+    CapInsetsNormalRenderer = EditBox.SetCapInsetsNormalRenderer,
+    CapInsetsPressedRenderer = EditBox.SetCapInsetsPressedRenderer,
+    CapInsetsDisabledRenderer = EditBox.SetCapInsetsDisabledRenderer,
+    Text = EditBox.SetText,
+    FontName = EditBox.SetFontName,
+    FontSize = EditBox.SetFontSize,
+    FontColor = EditBox.SetFontColor,
+    PlaceholderFontName = EditBox.SetPlaceholderFontName,
+    PlaceholderFontSize = EditBox.SetPlaceholderFontSize,
+    PlaceholderFontColor = EditBox.SetPlaceholderFontColor,
+    PlaceHolder = EditBox.SetPlaceHolder,
+    InputMode = EditBox.SetInputMode,
+    MaxLength = EditBox.SetMaxLength,
+    InputFlag = EditBox.SetInputFlag,
+    ReturnType = EditBox.SetReturnType,
+    TextHorizontalAlignment = EditBox.SetTextHorizontalAlignment,
     Handler = function(self,val)
         if val == nil then
             self:unregisterScriptEditBoxHandler();
@@ -2060,182 +2377,200 @@ EditBox.stor({
             self:registerScriptEditBoxHandler(val);
         end
     end
-});
+    }};
+end
 
 local ScrollView = ccui.ScrollView;
-ScrollView.gtor({
-    Direction = ScrollView.getDirection,
-    InnerContainer = ScrollView.getInnerContainer,
-    ScrolledPercentVertical = ScrollView.getScrolledPercentVertical,
-    ScrolledPercentHorizontal = ScrollView.getScrolledPercentHorizontal,
-    ScrolledPercentBothDirection = ScrollView.getScrolledPercentBothDirection,
-    InnerContainerSize = ScrollView.getInnerContainerSize,
-    InnerContainerPosition = ScrollView.getInnerContainerPosition,
-    BounceEnabled = ScrollView.isBounceEnabled,
-    InertiaScrollEnabled = ScrollView.isInertiaScrollEnabled,
-    ScrollBarEnabled = ScrollView.isScrollBarEnabled,
-    ScrollBarPositionFromCornerForVertical = ScrollView.getScrollBarPositionFromCornerForVertical,
-    ScrollBarPositionFromCornerForHorizontal = ScrollView.getScrollBarPositionFromCornerForHorizontal,
-    ScrollBarWidth = ScrollView.getScrollBarWidth,
-    ScrollBarColor = ScrollView.getScrollBarColor,
-    ScrollBarOpacity = ScrollView.getScrollBarOpacity,
-    ScrollBarAutoHideEnabled = ScrollView.isScrollBarAutoHideEnabled,
-    ScrollBarAutoHideTime = ScrollView.getScrollBarAutoHideTime,
-    TouchTotalTimeThreshold = ScrollView.getTouchTotalTimeThreshold,
-    LayoutType = ScrollView.getLayoutType,
-    Scrolling = ScrollView.isScrolling,
-    AutoScrolling = ScrollView.isAutoScrolling
-});
-ScrollView.stor({
-    Direction = ScrollView.setDirection,
-    InnerContainerSize = ScrollView.setInnerContainerSize,
-    InnerContainerPosition = ScrollView.setInnerContainerPosition,
-    BounceEnabled = ScrollView.setBounceEnabled,
-    InertiaScrollEnabled = ScrollView.setInertiaScrollEnabled,
-    ScrollBarEnabled = ScrollView.setScrollBarEnabled,
-    ScrollBarPositionFromCorner = ScrollView.setScrollBarPositionFromCorner,
-    ScrollBarPositionFromCornerForVertical = ScrollView.setScrollBarPositionFromCornerForVertical,
-    ScrollBarPositionFromCornerForHorizontal = ScrollView.setScrollBarPositionFromCornerForHorizontal,
-    ScrollBarWidth = ScrollView.setScrollBarWidth,
-    ScrollBarColor = ScrollView.setScrollBarColor,
-    ScrollBarOpacity = ScrollView.setScrollBarOpacity,
-    ScrollBarAutoHideEnabled = ScrollView.setScrollBarAutoHideEnabled,
-    ScrollBarAutoHideTime = ScrollView.setScrollBarAutoHideTime,
-    TouchTotalTimeThreshold = ScrollView.setTouchTotalTimeThreshold,
-    LayoutType = ScrollView.setLayoutType
-});
+function ScrollView.__properties__()
+    return {
+    r = {
+    Direction = ScrollView.GetDirection,
+    InnerContainer = ScrollView.GetInnerContainer,
+    ScrolledPercentVertical = ScrollView.GetScrolledPercentVertical,
+    ScrolledPercentHorizontal = ScrollView.GetScrolledPercentHorizontal,
+    ScrolledPercentBothDirection = ScrollView.GetScrolledPercentBothDirection,
+    InnerContainerSize = ScrollView.GetInnerContainerSize,
+    InnerContainerPosition = ScrollView.GetInnerContainerPosition,
+    BounceEnabled = ScrollView.IsBounceEnabled,
+    InertiaScrollEnabled = ScrollView.IsInertiaScrollEnabled,
+    ScrollBarEnabled = ScrollView.IsScrollBarEnabled,
+    ScrollBarPositionFromCornerForVertical = ScrollView.GetScrollBarPositionFromCornerForVertical,
+    ScrollBarPositionFromCornerForHorizontal = ScrollView.GetScrollBarPositionFromCornerForHorizontal,
+    ScrollBarWidth = ScrollView.GetScrollBarWidth,
+    ScrollBarColor = ScrollView.GetScrollBarColor,
+    ScrollBarOpacity = ScrollView.GetScrollBarOpacity,
+    ScrollBarAutoHideEnabled = ScrollView.IsScrollBarAutoHideEnabled,
+    ScrollBarAutoHideTime = ScrollView.GetScrollBarAutoHideTime,
+    TouchTotalTimeThreshold = ScrollView.GetTouchTotalTimeThreshold,
+    LayoutType = ScrollView.GetLayoutType,
+    Scrolling = ScrollView.IsScrolling,
+    AutoScrolling = ScrollView.IsAutoScrolling
+    },
+    w = {
+    Direction = ScrollView.SetDirection,
+    InnerContainerSize = ScrollView.SetInnerContainerSize,
+    InnerContainerPosition = ScrollView.SetInnerContainerPosition,
+    BounceEnabled = ScrollView.SetBounceEnabled,
+    InertiaScrollEnabled = ScrollView.SetInertiaScrollEnabled,
+    ScrollBarEnabled = ScrollView.SetScrollBarEnabled,
+    ScrollBarPositionFromCorner = ScrollView.SetScrollBarPositionFromCorner,
+    ScrollBarPositionFromCornerForVertical = ScrollView.SetScrollBarPositionFromCornerForVertical,
+    ScrollBarPositionFromCornerForHorizontal = ScrollView.SetScrollBarPositionFromCornerForHorizontal,
+    ScrollBarWidth = ScrollView.SetScrollBarWidth,
+    ScrollBarColor = ScrollView.SetScrollBarColor,
+    ScrollBarOpacity = ScrollView.SetScrollBarOpacity,
+    ScrollBarAutoHideEnabled = ScrollView.SetScrollBarAutoHideEnabled,
+    ScrollBarAutoHideTime = ScrollView.SetScrollBarAutoHideTime,
+    TouchTotalTimeThreshold = ScrollView.SetTouchTotalTimeThreshold,
+    LayoutType = ScrollView.SetLayoutType
+    }};
+end
 
 local ListView = ccui.ListView;
-ListView.gtor({
-    Items = ListView.getItems,
-    MagneticType = ListView.getMagneticType,
-    MagneticAllowedOutOfBoundary = ListView.getMagneticAllowedOutOfBoundary,
-    ItemsMargin = ListView.getItemsMargin,
-    LeftPadding = ListView.getLeftPadding,
-    TopPadding = ListView.getTopPadding,
-    RightPadding = ListView.getRightPadding,
-    BottomPadding = ListView.getBottomPadding,
-    ScrollDuration = ListView.getScrollDuration,
-    CenterItemInCurrentView = ListView.getCenterItemInCurrentView,
-    LeftmostItemInCurrentView = ListView.getLeftmostItemInCurrentView,
-    RightmostItemInCurrentView = ListView.getRightmostItemInCurrentView,
-    TopmostItemInCurrentView = ListView.getTopmostItemInCurrentView,
-    BottommostItemInCurrentView = ListView.getBottommostItemInCurrentView,
-    CurSelectedIndex = ListView.getCurSelectedIndex
-});
-ListView.stor({
-    ItemModel = ListView.setItemModel,
-    Gravity = ListView.setGravity,
-    MagneticType = ListView.setMagneticType,
-    MagneticAllowedOutOfBoundary = ListView.setMagneticAllowedOutOfBoundary,
-    ItemsMargin = ListView.setItemsMargin,
-    LeftPadding = ListView.setLeftPadding,
-    TopPadding = ListView.setTopPadding,
-    RightPadding = ListView.setRightPadding,
-    BottomPadding = ListView.setBottomPadding,
-    ScrollDuration = ListView.setScrollDuration,
-    CurSelectedIndex = ListView.setCurSelectedIndex
-});
+function ListView.__properties__()
+    return {
+    r = {
+    Items = ListView.GetItems,
+    MagneticType = ListView.GetMagneticType,
+    MagneticAllowedOutOfBoundary = ListView.GetMagneticAllowedOutOfBoundary,
+    ItemsMargin = ListView.GetItemsMargin,
+    LeftPadding = ListView.GetLeftPadding,
+    TopPadding = ListView.GetTopPadding,
+    RightPadding = ListView.GetRightPadding,
+    BottomPadding = ListView.GetBottomPadding,
+    ScrollDuration = ListView.GetScrollDuration,
+    CenterItemInCurrentView = ListView.GetCenterItemInCurrentView,
+    LeftmostItemInCurrentView = ListView.GetLeftmostItemInCurrentView,
+    RightmostItemInCurrentView = ListView.GetRightmostItemInCurrentView,
+    TopmostItemInCurrentView = ListView.GetTopmostItemInCurrentView,
+    BottommostItemInCurrentView = ListView.GetBottommostItemInCurrentView,
+    CurSelectedIndex = ListView.GetCurSelectedIndex
+    },
+    w = {
+    ItemModel = ListView.SetItemModel,
+    Gravity = ListView.SetGravity,
+    MagneticType = ListView.SetMagneticType,
+    MagneticAllowedOutOfBoundary = ListView.SetMagneticAllowedOutOfBoundary,
+    ItemsMargin = ListView.SetItemsMargin,
+    LeftPadding = ListView.SetLeftPadding,
+    TopPadding = ListView.SetTopPadding,
+    RightPadding = ListView.SetRightPadding,
+    BottomPadding = ListView.SetBottomPadding,
+    ScrollDuration = ListView.SetScrollDuration,
+    CurSelectedIndex = ListView.SetCurSelectedIndex
+    }};
+end
 
 local PageView = ccui.PageView;
-PageView.gtor({
-    CurrentPageIndex = PageView.getCurrentPageIndex,
-    IndicatorEnabled = PageView.getIndicatorEnabled,
-    IndicatorPositionAsAnchorPoint = PageView.getIndicatorPositionAsAnchorPoint,
-    IndicatorPosition = PageView.getIndicatorPosition,
-    IndicatorSpaceBetweenIndexNodes = PageView.getIndicatorSpaceBetweenIndexNodes,
-    IndicatorSelectedIndexColor = PageView.getIndicatorSelectedIndexColor,
-    IndicatorIndexNodesColor = PageView.getIndicatorIndexNodesColor,
-    getIndicatorSelectedIndexOpacity = PageView.getIndicatorSelectedIndexOpacity,
-    IndicatorIndexNodesOpacity = PageView.getIndicatorIndexNodesOpacity,
-    IndicatorIndexNodesScale = PageView.getIndicatorIndexNodesScale
-});
-PageView.stor({
-    CurrentPageIndex = PageView.setCurrentPageIndex,
-    IndicatorEnabled = PageView.setIndicatorEnabled,
-    IndicatorPositionAsAnchorPoint = PageView.setIndicatorPositionAsAnchorPoint,
-    IndicatorPosition = PageView.setIndicatorPosition,
-    IndicatorSpaceBetweenIndexNodes = PageView.setIndicatorSpaceBetweenIndexNodes,
-    IndicatorSelectedIndexColor = PageView.setIndicatorSelectedIndexColor,
-    IndicatorIndexNodesColor = PageView.setIndicatorIndexNodesColor,
-    getIndicatorSelectedIndexOpacity = PageView.setIndicatorSelectedIndexOpacity,
-    IndicatorIndexNodesOpacity = PageView.setIndicatorIndexNodesOpacity,
-    IndicatorIndexNodesScale = PageView.setIndicatorIndexNodesScale,
-    IndicatorIndexNodesTexture = PageView.setIndicatorIndexNodesTexture,
-    AutoScrollStopEpsilon = PageView.setAutoScrollStopEpsilon
-});
+function PageView.__properties__()
+    return {
+    r = {
+    CurrentPageIndex = PageView.GetCurrentPageIndex,
+    IndicatorEnabled = PageView.GetIndicatorEnabled,
+    IndicatorPositionAsAnchorPoint = PageView.GetIndicatorPositionAsAnchorPoint,
+    IndicatorPosition = PageView.GetIndicatorPosition,
+    IndicatorSpaceBetweenIndexNodes = PageView.GetIndicatorSpaceBetweenIndexNodes,
+    IndicatorSelectedIndexColor = PageView.GetIndicatorSelectedIndexColor,
+    IndicatorIndexNodesColor = PageView.GetIndicatorIndexNodesColor,
+    getIndicatorSelectedIndexOpacity = PageView.GetIndicatorSelectedIndexOpacity,
+    IndicatorIndexNodesOpacity = PageView.GetIndicatorIndexNodesOpacity,
+    IndicatorIndexNodesScale = PageView.GetIndicatorIndexNodesScale
+    },
+    w = {
+    CurrentPageIndex = PageView.SetCurrentPageIndex,
+    IndicatorEnabled = PageView.SetIndicatorEnabled,
+    IndicatorPositionAsAnchorPoint = PageView.SetIndicatorPositionAsAnchorPoint,
+    IndicatorPosition = PageView.SetIndicatorPosition,
+    IndicatorSpaceBetweenIndexNodes = PageView.SetIndicatorSpaceBetweenIndexNodes,
+    IndicatorSelectedIndexColor = PageView.SetIndicatorSelectedIndexColor,
+    IndicatorIndexNodesColor = PageView.SetIndicatorIndexNodesColor,
+    getIndicatorSelectedIndexOpacity = PageView.SetIndicatorSelectedIndexOpacity,
+    IndicatorIndexNodesOpacity = PageView.SetIndicatorIndexNodesOpacity,
+    IndicatorIndexNodesScale = PageView.SetIndicatorIndexNodesScale,
+    IndicatorIndexNodesTexture = PageView.SetIndicatorIndexNodesTexture,
+    AutoScrollStopEpsilon = PageView.SetAutoScrollStopEpsilon
+    }};
+end
 
 local Button = ccui.Button;
-Button.gtor({
-    CapInsetsNormalRenderer = Button.getCapInsetsNormalRenderer,
-    CapInsetsPressedRenderer = Button.getCapInsetsPressedRenderer,
-    CapInsetsDisabledRenderer = Button.getCapInsetsDisabledRenderer,
-    Scale9Enabled = Button.isScale9Enabled,
-    TitleRenderer = Button.getTitleRenderer,
-    TitleText = Button.getTitleText,
-    Text = Button.getTitleText,
-    TitleColor = Button.getTitleColor,
-    TitleFontSize = Button.getTitleFontSize,
-    TitleFontName = Button.getTitleFontName,
-    TitleLabel = Button.getTitleLabel,
-    ZoomScale = Button.getZoomScale,
-    RendererNormal = Button.getRendererNormal,
-    RendererClicked = Button.getRendererClicked,
-    RendererDisabled = Button.getRendererDisabled,
-    NormalFile = Button.getNormalFile,
-    PressedFile = Button.getPressedFile,
-    DisabledFile = Button.getDisabledFile
-});
-Button.stor({
-    CapInsets = Button.setCapInsets,
-    CapInsetsNormalRenderer = Button.setCapInsetsNormalRenderer,
-    CapInsetsPressedRenderer = Button.setCapInsetsPressedRenderer,
-    CapInsetsDisabledRenderer = Button.setCapInsetsDisabledRenderer,
-    Scale9Enabled = Button.setScale9Enabled,
-    PressedActionEnabled = Button.setPressedActionEnabled,
-    TitleText = Button.setTitleText,
-    TitleColor = Button.setTitleColor,
-    TitleFontSize = Button.setTitleFontSize,
-    TitleFontName = Button.setTitleFontName,
-    TitleAlignment = Button.setTitleAlignment,
-    TitleLabel = Button.setTitleLabel,
-    ZoomScale = Button.setZoomScale
-});
+function Button.__properties__()
+    return {
+    r = {
+    CapInsetsNormalRenderer = Button.GetCapInsetsNormalRenderer,
+    CapInsetsPressedRenderer = Button.GetCapInsetsPressedRenderer,
+    CapInsetsDisabledRenderer = Button.GetCapInsetsDisabledRenderer,
+    Scale9Enabled = Button.IsScale9Enabled,
+    TitleRenderer = Button.GetTitleRenderer,
+    TitleText = Button.GetTitleText,
+    Text = Button.GetTitleText,
+    TitleColor = Button.GetTitleColor,
+    TitleFontSize = Button.GetTitleFontSize,
+    TitleFontName = Button.GetTitleFontName,
+    TitleLabel = Button.GetTitleLabel,
+    ZoomScale = Button.GetZoomScale,
+    RendererNormal = Button.GetRendererNormal,
+    RendererClicked = Button.GetRendererClicked,
+    RendererDisabled = Button.GetRendererDisabled,
+    NormalFile = Button.GetNormalFile,
+    PressedFile = Button.GetPressedFile,
+    DisabledFile = Button.GetDisabledFile
+    },
+    w = {
+    CapInsets = Button.SetCapInsets,
+    CapInsetsNormalRenderer = Button.SetCapInsetsNormalRenderer,
+    CapInsetsPressedRenderer = Button.SetCapInsetsPressedRenderer,
+    CapInsetsDisabledRenderer = Button.SetCapInsetsDisabledRenderer,
+    Scale9Enabled = Button.SetScale9Enabled,
+    PressedActionEnabled = Button.SetPressedActionEnabled,
+    TitleText = Button.SetTitleText,
+    TitleColor = Button.SetTitleColor,
+    TitleFontSize = Button.SetTitleFontSize,
+    TitleFontName = Button.SetTitleFontName,
+    TitleAlignment = Button.SetTitleAlignment,
+    TitleLabel = Button.SetTitleLabel,
+    ZoomScale = Button.SetZoomScale
+    }};
+end
 
 local AbstractCheckButton = ccui.AbstractCheckButton;
-AbstractCheckButton.gtor({
-    Selected = AbstractCheckButton.isSelected,
-    ZoomScale = AbstractCheckButton.getZoomScale,
-    RendererBackground = AbstractCheckButton.getRendererBackground,
-    RendererBackgroundSelected = AbstractCheckButton.getRendererBackgroundSelected,
-    RendererFrontCross = AbstractCheckButton.getRendererFrontCross,
-    RendererBackgroundDisabled = AbstractCheckButton.getRendererBackgroundDisabled,
-    RendererFrontCrossDisabled = AbstractCheckButton.getRendererFrontCrossDisabled,
-    BackNormalFile = AbstractCheckButton.getBackNormalFile,
-    BackPressedFile = AbstractCheckButton.getBackPressedFile,
-    BackDisabledFile = AbstractCheckButton.getBackDisabledFile,
-    CrossNormalFile = AbstractCheckButton.getCrossNormalFile,
-    CrossDisabledFile = AbstractCheckButton.getCrossDisabledFile
-});
-AbstractCheckButton.stor({
-    Selected = AbstractCheckButton.setSelected,
-    ZoomScale = AbstractCheckButton.setZoomScale
-});
+function AbstractCheckButton.__properties__()
+    return {
+    r = {
+    Selected = AbstractCheckButton.IsSelected,
+    ZoomScale = AbstractCheckButton.GetZoomScale,
+    RendererBackground = AbstractCheckButton.GetRendererBackground,
+    RendererBackgroundSelected = AbstractCheckButton.GetRendererBackgroundSelected,
+    RendererFrontCross = AbstractCheckButton.GetRendererFrontCross,
+    RendererBackgroundDisabled = AbstractCheckButton.GetRendererBackgroundDisabled,
+    RendererFrontCrossDisabled = AbstractCheckButton.GetRendererFrontCrossDisabled,
+    BackNormalFile = AbstractCheckButton.GetBackNormalFile,
+    BackPressedFile = AbstractCheckButton.GetBackPressedFile,
+    BackDisabledFile = AbstractCheckButton.GetBackDisabledFile,
+    CrossNormalFile = AbstractCheckButton.GetCrossNormalFile,
+    CrossDisabledFile = AbstractCheckButton.GetCrossDisabledFile
+    },
+    w = {
+    Selected = AbstractCheckButton.SetSelected,
+    ZoomScale = AbstractCheckButton.SetZoomScale
+    }};
+end
 
 local ImageView = ccui.ImageView;
-ImageView.gtor({
-    Scale9Enabled = ImageView.isScale9Enabled,
-    CapInsets = ImageView.getCapInsets,
-    RenderFile = ImageView.getRenderFile,
-    Renderer = ImageView.getRenderer,
+function ImageView.__properties__()
+    return {
+    r = {
+    Scale9Enabled = ImageView.IsScale9Enabled,
+    CapInsets = ImageView.GetCapInsets,
+    RenderFile = ImageView.GetRenderFile,
+    Renderer = ImageView.GetRenderer,
     Grayed = function(self)
         return self.Renderer:getState() == Scale9Sprite.State.GRAY;
     end
-});
-ImageView.stor({
-    TextureRect = ImageView.setTextureRect,
-    Scale9Enabled = ImageView.setScale9Enabled,
-    CapInsets = ImageView.setCapInsets,
+    },
+    w = {
+    TextureRect = ImageView.SetTextureRect,
+    Scale9Enabled = ImageView.SetScale9Enabled,
+    CapInsets = ImageView.SetCapInsets,
     Grayed = function(self,val)
         if val then
             self.Renderer:setState(Scale9Sprite.State.GRAY);
@@ -2243,205 +2578,232 @@ ImageView.stor({
             self.Renderer:setState(Scale9Sprite.State.NORMAL);
         end
     end
-});
+    }};
+end
 
 local LoadingBar = ccui.LoadingBar;
-LoadingBar.gtor({
-    Direction = LoadingBar.getDirection,
+function LoadingBar.__properties__()
+    return {
+    r = {
+    Direction = LoadingBar.GetDirection,
     Percent = function(self)
         return LoadingBar.getPercent(self) / 100;
     end,
-    Scale9Enabled = LoadingBar.isScale9Enabled,
-    CapInsets = LoadingBar.getCapInsets,
-    RenderFile = LoadingBar.getRenderFile
-});
-LoadingBar.stor({
-    Direction = LoadingBar.setDirection,
+    Scale9Enabled = LoadingBar.IsScale9Enabled,
+    CapInsets = LoadingBar.GetCapInsets,
+    RenderFile = LoadingBar.GetRenderFile
+    },
+    w = {
+    Direction = LoadingBar.SetDirection,
     Percent = function(self,val)
         LoadingBar.setPercent(self,val * 100);
     end,
-    Scale9Enabled = LoadingBar.setScale9Enabled,
-    CapInsets = LoadingBar.setCapInsets
-});
+    Scale9Enabled = LoadingBar.SetScale9Enabled,
+    CapInsets = LoadingBar.SetCapInsets
+    }};
+end
 
 local RadioButtonGroup = ccui.RadioButtonGroup;
-RadioButtonGroup.gtor({
-    SelectedButtonIndex = RadioButtonGroup.getSelectedButtonIndex,
-    NumberOfRadioButtons = RadioButtonGroup.getNumberOfRadioButtons,
-    AllowedNoSelection = RadioButtonGroup.isAllowedNoSelection
-});
-RadioButtonGroup.stor({
-    SelectedButton = RadioButtonGroup.setSelectedButton,
-    SelectedButtonWithoutEvent = RadioButtonGroup.setSelectedButtonWithoutEvent,
-    AllowedNoSelection = RadioButtonGroup.setAllowedNoSelection
-});
+function RadioButtonGroup.__properties__()
+    return {
+    r = {
+    SelectedButtonIndex = RadioButtonGroup.GetSelectedButtonIndex,
+    NumberOfRadioButtons = RadioButtonGroup.GetNumberOfRadioButtons,
+    AllowedNoSelection = RadioButtonGroup.IsAllowedNoSelection
+    },
+    w = {
+    SelectedButton = RadioButtonGroup.SetSelectedButton,
+    SelectedButtonWithoutEvent = RadioButtonGroup.SetSelectedButtonWithoutEvent,
+    AllowedNoSelection = RadioButtonGroup.SetAllowedNoSelection
+    }};
+end
 
 local RichElement = ccui.RichElement;
-RichElement.gtor({
-});
-RichElement.stor({
-    Color = RichElement.setColor
-});
+function RichElement.__properties__()
+    return {
+    r = {
+    },
+    w = {
+    Color = RichElement.SetColor
+    }};
+end
 
 local RichElementImage = ccui.RichElementImage;
-RichElementImage.gtor({
-});
-RichElementImage.stor({
-    Width = RichElementImage.setWidth,
-    Height = RichElementImage.setHeight,
-    Url = RichElementImage.setUrl
-});
+function RichElementImage.__properties__()
+    return {
+    r = {
+    },
+    w = {
+    Width = RichElementImage.SetWidth,
+    Height = RichElementImage.SetHeight,
+    Url = RichElementImage.SetUrl
+    }};
+end
 
 local RichText = ccui.RichText;
-RichText.gtor({
-    FontColor3B = RichText.getFontColor3B,
-    AnchorFontColor3B = RichText.getAnchorFontColor3B,
-    WrapMode = RichText.getWrapMode,
-    HorizontalAlignment = RichText.getHorizontalAlignment,
-    FontColor = RichText.getFontColor,
-    FontSize = RichText.getFontSize,
-    FontFace = RichText.getFontFace,
-    AnchorFontColor = RichText.getAnchorFontColor,
-    AnchorTextBoldEnabled = RichText.isAnchorTextBoldEnabled,
-    AnchorTextItalicEnabled = RichText.isAnchorTextItalicEnabled,
-    AnchorTextDelEnabled = RichText.isAnchorTextDelEnabled,
-    AnchorTextUnderlineEnabled = RichText.isAnchorTextUnderlineEnabled,
-    AnchorTextOutlineEnabled = RichText.isAnchorTextOutlineEnabled,
-    AnchorTextOutlineColor3B = RichText.getAnchorTextOutlineColor3B,
-    AnchorTextOutlineSize = RichText.getAnchorTextOutlineSize,
-    AnchorTextShadowEnabled = RichText.isAnchorTextShadowEnabled,
-    AnchorTextShadowColor3B = RichText.getAnchorTextShadowColor3B,
-    AnchorTextShadowOffset = RichText.getAnchorTextShadowOffset,
-    AnchorTextShadowBlurRadius = RichText.getAnchorTextShadowBlurRadius,
-    AnchorTextGlowEnabled = RichText.isAnchorTextGlowEnabled,
-    AnchorTextGlowColor3B = RichText.getAnchorTextGlowColor3B,
-    Defaults = RichText.getDefaults
-});
-RichText.stor({
-    VerticalSpace = RichText.setVerticalSpace,
-    WrapMode = RichText.setWrapMode,
-    HorizontalAlignment = RichText.setHorizontalAlignment,
-    FontColor = RichText.setFontColor,
-    FontSize = RichText.setFontSize,
-    FontFace = RichText.setFontFace,
-    AnchorFontColor = RichText.setAnchorFontColor,
-    AnchorTextBoldEnabled = RichText.setAnchorTextBold,
-    AnchorTextItalicEnabled = RichText.setAnchorTextItalic,
-    AnchorTextDelEnabled = RichText.setAnchorTextDel,
-    AnchorTextUnderlineEnabled = RichText.setAnchorTextUnderline,
-    AnchorTextOutline = RichText.setAnchorTextOutline,
-    AnchorTextShadow = RichText.setAnchorTextShadow,
-    AnchorTextGlow = RichText.setAnchorTextGlow,
-    Defaults = RichText.setDefaults
-});
+function RichText.__properties__()
+    return {
+    r = {
+    FontColor3B = RichText.GetFontColor3B,
+    AnchorFontColor3B = RichText.GetAnchorFontColor3B,
+    WrapMode = RichText.GetWrapMode,
+    HorizontalAlignment = RichText.GetHorizontalAlignment,
+    FontColor = RichText.GetFontColor,
+    FontSize = RichText.GetFontSize,
+    FontFace = RichText.GetFontFace,
+    AnchorFontColor = RichText.GetAnchorFontColor,
+    AnchorTextBoldEnabled = RichText.IsAnchorTextBoldEnabled,
+    AnchorTextItalicEnabled = RichText.IsAnchorTextItalicEnabled,
+    AnchorTextDelEnabled = RichText.IsAnchorTextDelEnabled,
+    AnchorTextUnderlineEnabled = RichText.IsAnchorTextUnderlineEnabled,
+    AnchorTextOutlineEnabled = RichText.IsAnchorTextOutlineEnabled,
+    AnchorTextOutlineColor3B = RichText.GetAnchorTextOutlineColor3B,
+    AnchorTextOutlineSize = RichText.GetAnchorTextOutlineSize,
+    AnchorTextShadowEnabled = RichText.IsAnchorTextShadowEnabled,
+    AnchorTextShadowColor3B = RichText.GetAnchorTextShadowColor3B,
+    AnchorTextShadowOffset = RichText.GetAnchorTextShadowOffset,
+    AnchorTextShadowBlurRadius = RichText.GetAnchorTextShadowBlurRadius,
+    AnchorTextGlowEnabled = RichText.IsAnchorTextGlowEnabled,
+    AnchorTextGlowColor3B = RichText.GetAnchorTextGlowColor3B,
+    Defaults = RichText.GetDefaults
+    },
+    w = {
+    VerticalSpace = RichText.SetVerticalSpace,
+    WrapMode = RichText.SetWrapMode,
+    HorizontalAlignment = RichText.SetHorizontalAlignment,
+    FontColor = RichText.SetFontColor,
+    FontSize = RichText.SetFontSize,
+    FontFace = RichText.SetFontFace,
+    AnchorFontColor = RichText.SetAnchorFontColor,
+    AnchorTextBoldEnabled = RichText.SetAnchorTextBold,
+    AnchorTextItalicEnabled = RichText.SetAnchorTextItalic,
+    AnchorTextDelEnabled = RichText.SetAnchorTextDel,
+    AnchorTextUnderlineEnabled = RichText.SetAnchorTextUnderline,
+    AnchorTextOutline = RichText.SetAnchorTextOutline,
+    AnchorTextShadow = RichText.SetAnchorTextShadow,
+    AnchorTextGlow = RichText.SetAnchorTextGlow,
+    Defaults = RichText.SetDefaults
+    }};
+end
 
 local Slider = ccui.Slider;
-Slider.gtor({
-    Scale9Enabled = Slider.isScale9Enabled,
-    CapInsetsBarRenderer = Slider.getCapInsetsBarRenderer,
-    CapInsetProgressBarRenderer = Slider.getCapInsetProgressBarRenderer,
+function Slider.__properties__()
+    return {
+    r = {
+    Scale9Enabled = Slider.IsScale9Enabled,
+    CapInsetsBarRenderer = Slider.GetCapInsetsBarRenderer,
+    CapInsetProgressBarRenderer = Slider.GetCapInsetProgressBarRenderer,
     Percent = function(self)
         return Slider.getPercent(self) / 100;
     end,
     MaxPercent = function(self)
         return Slider.getMaxPercent(self) / 100;
     end,
-    ZoomScale = Slider.getZoomScale,
-    SlidBallNormalRenderer = Slider.getSlidBallNormalRenderer,
-    SlidBallPressedRenderer = Slider.getSlidBallPressedRenderer,
-    SlidBallDisabledRenderer = Slider.getSlidBallDisabledRenderer,
-    SlidBallRenderer = Slider.getSlidBallRenderer,
-    BackFile = Slider.getBackFile,
-    ProgressBarFile = Slider.getProgressBarFile,
-    BallNormalFile = Slider.getBallNormalFile,
-    BallPressedFile = Slider.getBallPressedFile,
-    BallDisabledFile = Slider.getBallDisabledFile
-});
-Slider.stor({
-    Scale9Enabled = Slider.setScale9Enabled,
-    CapInsets = Slider.setCapInsets,
-    CapInsetsBarRenderer = Slider.setCapInsetsBarRenderer,
-    CapInsetProgressBarRenderer = Slider.setCapInsetProgressBarRenderer,
+    ZoomScale = Slider.GetZoomScale,
+    SlidBallNormalRenderer = Slider.GetSlidBallNormalRenderer,
+    SlidBallPressedRenderer = Slider.GetSlidBallPressedRenderer,
+    SlidBallDisabledRenderer = Slider.GetSlidBallDisabledRenderer,
+    SlidBallRenderer = Slider.GetSlidBallRenderer,
+    BackFile = Slider.GetBackFile,
+    ProgressBarFile = Slider.GetProgressBarFile,
+    BallNormalFile = Slider.GetBallNormalFile,
+    BallPressedFile = Slider.GetBallPressedFile,
+    BallDisabledFile = Slider.GetBallDisabledFile
+    },
+    w = {
+    Scale9Enabled = Slider.SetScale9Enabled,
+    CapInsets = Slider.SetCapInsets,
+    CapInsetsBarRenderer = Slider.SetCapInsetsBarRenderer,
+    CapInsetProgressBarRenderer = Slider.SetCapInsetProgressBarRenderer,
     Percent = function(self,val)
         Slider.setPercent(self,val * 100);
     end,
     MaxPercent = function(self,val)
         Slider.setMaxPercent(self,val * 100);
     end,
-    ZoomScale = Slider.setZoomScale
-});
+    ZoomScale = Slider.SetZoomScale
+    }};
+end
 
 local TabHeader = ccui.TabHeader;
-TabHeader.gtor({
-    TitleRenderer = TabHeader.getTitleRenderer,
-    TitleText = TabHeader.getTitleText,
-    Text = TabHeader.getTitleText,
-    TitleColor = TabHeader.getTitleColor,
-    TitleFontSize = TabHeader.getTitleFontSize,
-    TitleFontName = TabHeader.getTitleFontName,
-    IndexInTabControl = TabHeader.getIndexInTabControl
-});
-TabHeader.stor({
-    TitleText = TabHeader.setTitleText,
-    Text = TabHeader.setTitleText,
-    TitleColor = TabHeader.setTitleColor,
-    TitleFontSize = TabHeader.setTitleFontSize,
-    TitleFontName = TabHeader.setTitleFontName
-});
+function TabHeader.__properties__()
+    return {
+    r = {
+    TitleRenderer = TabHeader.GetTitleRenderer,
+    TitleText = TabHeader.GetTitleText,
+    Text = TabHeader.GetTitleText,
+    TitleColor = TabHeader.GetTitleColor,
+    TitleFontSize = TabHeader.GetTitleFontSize,
+    TitleFontName = TabHeader.GetTitleFontName,
+    IndexInTabControl = TabHeader.GetIndexInTabControl
+    },
+    w = {
+    TitleText = TabHeader.SetTitleText,
+    Text = TabHeader.SetTitleText,
+    TitleColor = TabHeader.SetTitleColor,
+    TitleFontSize = TabHeader.SetTitleFontSize,
+    TitleFontName = TabHeader.SetTitleFontName
+    }};
+end
 
 local TabControl = ccui.TabControl;
-TabControl.gtor({
-    TabCount = TabControl.getTabCount,
-    SelectedTabIndex = TabControl.getSelectedTabIndex,
-    HeaderWidth = TabControl.getHeaderWidth,
-    HeaderHeight = TabControl.getHeaderHeight,
-    IgnoreHeadersTextureSize = TabControl.isIgnoreHeadersTextureSize,
-    HeaderSelectedZoom = TabControl.getHeaderSelectedZoom,
-    HeaderDockPlace = TabControl.getHeaderDockPlace
-});
-TabControl.stor({
-    SelectTab = TabControl.setSelectTab,
-    HeaderWidth = TabControl.setHeaderWidth,
-    HeaderHeight = TabControl.setHeaderHeight,
-    IgnoreHeadersTextureSize = TabControl.ignoreHeadersTextureSize,
-    HeaderSelectedZoom = TabControl.setHeaderSelectedZoom,
-    HeaderDockPlace = TabControl.setHeaderDockPlace
-});
+function TabControl.__properties__()
+    return {
+    r = {
+    TabCount = TabControl.GetTabCount,
+    SelectedTabIndex = TabControl.GetSelectedTabIndex,
+    HeaderWidth = TabControl.GetHeaderWidth,
+    HeaderHeight = TabControl.GetHeaderHeight,
+    IgnoreHeadersTextureSize = TabControl.IsIgnoreHeadersTextureSize,
+    HeaderSelectedZoom = TabControl.GetHeaderSelectedZoom,
+    HeaderDockPlace = TabControl.GetHeaderDockPlace
+    },
+    w = {
+    SelectTab = TabControl.SetSelectTab,
+    HeaderWidth = TabControl.SetHeaderWidth,
+    HeaderHeight = TabControl.SetHeaderHeight,
+    IgnoreHeadersTextureSize = TabControl.IgnoreHeadersTextureSize,
+    HeaderSelectedZoom = TabControl.SetHeaderSelectedZoom,
+    HeaderDockPlace = TabControl.SetHeaderDockPlace
+    }};
+end
 
 local Text = ccui.Text;
-Text.gtor({
-    String = Text.getString,
-    Text = Text.getString,
-    StringLength = Text.getStringLength,
-    TextLength = Text.getStringLength,
-    FontSize = Text.getFontSize,
-    FontName = Text.getFontName,
-    Type = Text.getType,
-    TouchScaleChangeEnabled = Text.isTouchScaleChangeEnabled,
-    AutoRenderSize = Text.getAutoRenderSize,
-    TextAreaSize = Text.getTextAreaSize,
-    TextHorizontalAlignment = Text.getTextHorizontalAlignment,
-    TextVerticalAlignment = Text.getTextVerticalAlignment,
-    TextColor = Text.getTextColor,
-    ShadowEnabled = Text.isShadowEnabled,
-    ShadowOffset = Text.getShadowOffset,
-    ShadowBlurRadius = Text.getShadowBlurRadius,
-    ShadowColor = Text.getShadowColor,
-    OutlineSize = Text.getOutlineSize,
-    LabelEffectType = Text.getLabelEffectType,
-    EffectColor = Text.getEffectColor,
-    BlendFunc = Text.getBlendFunc
-});
-Text.stor({
-    String = Text.setString,
-    Text = Text.setString,
-    FontSize = Text.setFontSize,
-    FontName = Text.setFontName,
-    TouchScaleChangeEnabled = Text.setTouchScaleChangeEnabled,
-    TextAreaSize = Text.setTextAreaSize,
-    TextHorizontalAlignment = Text.setTextHorizontalAlignment,
-    TextVerticalAlignment = Text.setTextVerticalAlignment,
-    TextColor = Text.setTextColor,
+function Text.__properties__()
+    return {
+    r = {
+    String = Text.GetString,
+    Text = Text.GetString,
+    StringLength = Text.GetStringLength,
+    TextLength = Text.GetStringLength,
+    FontSize = Text.GetFontSize,
+    FontName = Text.GetFontName,
+    Type = Text.GetType,
+    TouchScaleChangeEnabled = Text.IsTouchScaleChangeEnabled,
+    AutoRenderSize = Text.GetAutoRenderSize,
+    TextAreaSize = Text.GetTextAreaSize,
+    TextHorizontalAlignment = Text.GetTextHorizontalAlignment,
+    TextVerticalAlignment = Text.GetTextVerticalAlignment,
+    TextColor = Text.GetTextColor,
+    ShadowEnabled = Text.IsShadowEnabled,
+    ShadowOffset = Text.GetShadowOffset,
+    ShadowBlurRadius = Text.GetShadowBlurRadius,
+    ShadowColor = Text.GetShadowColor,
+    OutlineSize = Text.GetOutlineSize,
+    LabelEffectType = Text.GetLabelEffectType,
+    EffectColor = Text.GetEffectColor,
+    BlendFunc = Text.GetBlendFunc
+    },
+    w = {
+    String = Text.SetString,
+    Text = Text.SetString,
+    FontSize = Text.SetFontSize,
+    FontName = Text.SetFontName,
+    TouchScaleChangeEnabled = Text.SetTouchScaleChangeEnabled,
+    TextAreaSize = Text.SetTextAreaSize,
+    TextHorizontalAlignment = Text.SetTextHorizontalAlignment,
+    TextVerticalAlignment = Text.SetTextVerticalAlignment,
+    TextColor = Text.SetTextColor,
     Shadow = function(self,bc)
         if bc then
             if "table" == type(bc) then
@@ -2475,85 +2837,97 @@ Text.stor({
             Text.disableEffect(self,cc.LabelEffect.GLOW);
         end
     end,
-    BlendFunc = Text.setBlendFunc
-});
+    BlendFunc = Text.SetBlendFunc
+    }};
+end
 
 local TextAtlas = ccui.TextAtlas;
-TextAtlas.gtor({
-    String = TextAtlas.getString,
-    Text = TextAtlas.getString,
-    StringLength = TextAtlas.getStringLength,
-    RenderFile = TextAtlas.getRenderFile
-});
-TextAtlas.stor({
-    String = TextAtlas.setString,
-    Text = TextAtlas.setString
-});
+function TextAtlas.__properties__()
+    return {
+    r = {
+    String = TextAtlas.GetString,
+    Text = TextAtlas.GetString,
+    StringLength = TextAtlas.GetStringLength,
+    RenderFile = TextAtlas.GetRenderFile
+    },
+    w = {
+    String = TextAtlas.SetString,
+    Text = TextAtlas.SetString
+    }};
+end
 
 local TextBMFont = ccui.TextBMFont;
-TextBMFont.gtor({
-    String = TextBMFont.getString,
-    Text = TextBMFont.getString,
-    StringLength = TextBMFont.getStringLength,
-    RenderFile = TextBMFont.getRenderFile
-});
-TextBMFont.stor({
-    String = TextBMFont.setString,
-    Text = TextBMFont.setString
-});
+function TextBMFont.__properties__()
+    return {
+    r = {
+    String = TextBMFont.GetString,
+    Text = TextBMFont.GetString,
+    StringLength = TextBMFont.GetStringLength,
+    RenderFile = TextBMFont.GetRenderFile
+    },
+    w = {
+    String = TextBMFont.SetString,
+    Text = TextBMFont.SetString
+    }};
+end
 
 local TextField = ccui.TextField;
-TextField.gtor({
-    TouchSize = TextField.getTouchSize,
-    PlaceHolder = TextField.getPlaceHolder,
-    PlaceholderColor = TextField.getPlaceholderColor,
-    TextColor = TextField.getTextColor,
-    FontSize = TextField.getFontSize,
-    FontName = TextField.getFontName,
-    String = TextField.getString,
-    Text = TextField.getString,
-    MaxLengthEnabled = TextField.isMaxLengthEnabled,
-    MaxLength = TextField.getMaxLength,
-    StringLength = TextField.getStringLength,
-    PasswordEnabled = TextField.isPasswordEnabled,
-    PasswordStyleText = TextField.getPasswordStyleText,
-    AttachWithIME = TextField.getAttachWithIME,
-    DetachWithIME = TextField.getDetachWithIME,
-    InsertText = TextField.getInsertText,
-    DeleteBackward = TextField.getDeleteBackward,
-    AutoRenderSize = TextField.getAutoRenderSize,
-    TextHorizontalAlignment = TextField.getTextHorizontalAlignment,
-    TextVerticalAlignment = TextField.getTextVerticalAlignment
-});
-TextField.stor({
-    TouchSize = TextField.setTouchSize,
-    TouchAreaEnabled = TextField.setTouchAreaEnabled,
-    PlaceHolder = TextField.setPlaceHolder,
-    PlaceholderColor = TextField.setPlaceholderColor,
-    TextColor = TextField.setTextColor,
-    FontSize = TextField.setFontSize,
-    FontName = TextField.setFontName,
-    String = TextField.setString,
-    Text = TextField.setString,
-    MaxLengthEnabled = TextField.setMaxLengthEnabled,
-    MaxLength = TextField.setMaxLength,
-    StringLength = TextField.setStringLength,
-    PasswordEnabled = TextField.setPasswordEnabled,
-    PasswordStyleText = TextField.setPasswordStyleText,
-    AttachWithIME = TextField.setAttachWithIME,
-    DetachWithIME = TextField.setDetachWithIME,
-    InsertText = TextField.setInsertText,
-    DeleteBackward = TextField.setDeleteBackward,
-    TextAreaSize = TextField.setTextAreaSize,
-    TextHorizontalAlignment = TextField.setTextHorizontalAlignment,
-    TextVerticalAlignment = TextField.setTextVerticalAlignment,
-    CursorEnabled = TextField.setCursorEnabled,
-    CursorChar = TextField.setCursorChar,
-    CursorPosition = TextField.setCursorPosition
-});
+function TextField.__properties__()
+    return {
+    r = {
+    TouchSize = TextField.GetTouchSize,
+    PlaceHolder = TextField.GetPlaceHolder,
+    PlaceholderColor = TextField.GetPlaceholderColor,
+    TextColor = TextField.GetTextColor,
+    FontSize = TextField.GetFontSize,
+    FontName = TextField.GetFontName,
+    String = TextField.GetString,
+    Text = TextField.GetString,
+    MaxLengthEnabled = TextField.IsMaxLengthEnabled,
+    MaxLength = TextField.GetMaxLength,
+    StringLength = TextField.GetStringLength,
+    PasswordEnabled = TextField.IsPasswordEnabled,
+    PasswordStyleText = TextField.GetPasswordStyleText,
+    AttachWithIME = TextField.GetAttachWithIME,
+    DetachWithIME = TextField.GetDetachWithIME,
+    InsertText = TextField.GetInsertText,
+    DeleteBackward = TextField.GetDeleteBackward,
+    AutoRenderSize = TextField.GetAutoRenderSize,
+    TextHorizontalAlignment = TextField.GetTextHorizontalAlignment,
+    TextVerticalAlignment = TextField.GetTextVerticalAlignment
+    },
+    w = {
+    TouchSize = TextField.SetTouchSize,
+    TouchAreaEnabled = TextField.SetTouchAreaEnabled,
+    PlaceHolder = TextField.SetPlaceHolder,
+    PlaceholderColor = TextField.SetPlaceholderColor,
+    TextColor = TextField.SetTextColor,
+    FontSize = TextField.SetFontSize,
+    FontName = TextField.SetFontName,
+    String = TextField.SetString,
+    Text = TextField.SetString,
+    MaxLengthEnabled = TextField.SetMaxLengthEnabled,
+    MaxLength = TextField.SetMaxLength,
+    StringLength = TextField.SetStringLength,
+    PasswordEnabled = TextField.SetPasswordEnabled,
+    PasswordStyleText = TextField.SetPasswordStyleText,
+    AttachWithIME = TextField.SetAttachWithIME,
+    DetachWithIME = TextField.SetDetachWithIME,
+    InsertText = TextField.SetInsertText,
+    DeleteBackward = TextField.SetDeleteBackward,
+    TextAreaSize = TextField.SetTextAreaSize,
+    TextHorizontalAlignment = TextField.SetTextHorizontalAlignment,
+    TextVerticalAlignment = TextField.SetTextVerticalAlignment,
+    CursorEnabled = TextField.SetCursorEnabled,
+    CursorChar = TextField.SetCursorChar,
+    CursorPosition = TextField.SetCursorPosition
+    }};
+end
 
 local VideoPlayer = ccui.VideoPlayer;
-VideoPlayer.gtor({
+function VideoPlayer.__properties__()
+    return {
+    r = {
     FileName = VideoPlayer.GetFileName,
     File = VideoPlayer.GetFileName,
     Url = VideoPlayer.GetURL,
@@ -2562,8 +2936,8 @@ VideoPlayer.gtor({
     UserInputEnabled = VideoPlayer.IsUserInputEnabled,
     KeepAspectRatioEnabled = VideoPlayer.IsKeepAspectRatioEnabled,
     FullScreenEnabled = VideoPlayer.IsFullScreenEnabled
-});
-VideoPlayer.stor({
+    },
+    w = {
     FileName = VideoPlayer.SetFileName,
     File = VideoPlayer.SetFileName,
     Url = VideoPlayer.SetURL,
@@ -2573,48 +2947,51 @@ VideoPlayer.stor({
     KeepAspectRatioEnabled = VideoPlayer.SetKeepAspectRatioEnabled,
     FullScreenEnabled = VideoPlayer.SetFullScreenEnabled,
     EventHandler = VideoPlayer.AddEventListener
-});
+    }};
+end
 
 local WebView = ccui.WebView;
-WebView.gtor({
-    OpacityWebView = WebView.getOpacityWebView
-});
-WebView.stor({
-    JavascriptInterfaceScheme = WebView.setJavascriptInterfaceScheme,
-    ScalesPageToFit = WebView.setScalesPageToFit,
-    OpacityWebView = WebView.setOpacityWebView,
-    BackgroundTransparent = WebView.setBackgroundTransparent,
-    FinishHandler = WebView.setOnDidFinishLoading,
-    FailHandler = WebView.setOnDidFailLoading,
-    StartHandler = WebView.setOnShouldStartLoading,
-    JsHandler = WebView.setOnJSCallback,
-    Url = WebView.loadURL,
-    File = WebView.loadFile
-});
+function WebView.__properties__()
+    return {
+    r = {
+    OpacityWebView = WebView.GetOpacityWebView
+    },
+    w = {
+    JavascriptInterfaceScheme = WebView.SetJavascriptInterfaceScheme,
+    ScalesPageToFit = WebView.SetScalesPageToFit,
+    OpacityWebView = WebView.SetOpacityWebView,
+    BackgroundTransparent = WebView.SetBackgroundTransparent,
+    FinishHandler = WebView.SetOnDidFinishLoading,
+    FailHandler = WebView.SetOnDidFailLoading,
+    StartHandler = WebView.SetOnShouldStartLoading,
+    JsHandler = WebView.SetOnJSCallback,
+    Url = WebView.LoadURL,
+    File = WebView.LoadFile
+    }};
+end
 
 local QrCode = ccui.QrCode;
-QrCode.gtor({
-});
-QrCode.stor({
+function QrCode.__properties__()
+    return {
+    r = {
+    },
+    w = {
     String = QrCode.LoadCodeByString
-});
+    }};
+end
 
 local EventController = cc.EventController;
-EventController.gtor({
-    ControllerEventType = EventController.getControllerEventType,
-    Controller = EventController.getController,
-    KeyCode = EventController.getKeyCode,
-    Connected = EventController.isConnected
-});
-EventController.stor({
-    KeyCode = EventController.setKeyCode,
-    ConnectStatus = EventController.setConnectStatus,
-    Connected = EventController.setConnectStatus
-});
-
-local XMLHttpRequest = cc.XMLHttpRequest;
-XMLHttpRequest.gtor({
-});
-XMLHttpRequest.stor({
-    Aborted = XMLHttpRequest.setAborted
-});
+function EventController.__properties__()
+    return {
+    r = {
+    ControllerEventType = EventController.GetControllerEventType,
+    Controller = EventController.GetController,
+    KeyCode = EventController.GetKeyCode,
+    Connected = EventController.IsConnected
+    },
+    w = {
+    KeyCode = EventController.SetKeyCode,
+    ConnectStatus = EventController.SetConnectStatus,
+    Connected = EventController.SetConnectStatus
+    }};
+end

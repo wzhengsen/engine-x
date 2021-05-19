@@ -152,7 +152,7 @@ local function MakeLuaObjMetaTable(cls)
         __newindex = function (sender,key,value)
             local property = cls.__w__[key];
             if property then
-                property(sender,key,value);
+                property(sender,value);
                 return
             else
                 if cls.__r__[key] then
@@ -222,7 +222,7 @@ local function RetrofitMeta(ud)
         if cls then
             local property = cls.__w__[key];
             if property then
-                property(sender,key,val);
+                property(sender,val);
                 return
             else
                 if cls.__r__[key] then
@@ -488,7 +488,7 @@ function class.New(...)
             else
                 local property = cls.__w__[key];
                 if property then
-                    property(sender,key,value);
+                    property(sender,value);
                     return
                 else
                     if cls.__r__[key] then

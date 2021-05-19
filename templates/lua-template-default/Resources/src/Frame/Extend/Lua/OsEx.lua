@@ -4,7 +4,7 @@
     Date:	2019年08月04日
     Desc:	为os库新增了一些方法
 ]]
-local app = cc.Application.getInstance();
+local app = cc.Application.Instance;
 local targetPlatform = app.TargetPlatform;
 local currentLanguage = app.CurrentLanguage;
 os.Platform = cc.ApplicationProtocol.Platform;
