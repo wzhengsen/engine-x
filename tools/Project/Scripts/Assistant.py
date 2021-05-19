@@ -52,6 +52,13 @@ class Assistant():
             # 没有配置时，创建一个默认配置，但该配置并不保存，也不产生版本信息。
             self._config = ConfigTemplate()
 
+        self._configPath = srcPath
+
+        configRoot = os.path.join(srcPath, self._config.configRoot)
+        if not os.path.isdir(configRoot):
+            os.makedirs(configRoot)
+        os.chdir(configRoot)
+
     def __del__(self):
         if self._config.exitSave:
             Functions.SaveJson(self._configFileName, self._config)
@@ -270,7 +277,7 @@ class Assistant():
 
             zipUncompress = Assistant.__SyncGet(kw, mConfig.__dict__, "zipUncompress")
             hashRet = Functions.CalcDirHash(opDir, compress=zipUncompress)
-            return {name:Asset(hash["size"],hash["md5"],hash["sha"],hash["compress"]) for name,hash in hashRet.items()}
+            return {name: Asset(hash["size"], hash["md5"], hash["sha"], hash["compress"]) for name, hash in hashRet.items()}
 
         return {}
 

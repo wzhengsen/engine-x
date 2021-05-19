@@ -306,9 +306,6 @@ def main(argv):
         print("源目录不存在。")
         return False
 
-    oCwd = os.getcwd()
-    os.chdir(os.path.realpath(srcPath))
-
     if "c" in oKeys:
         ast.CreateDefaultConfig()
     if "i" in oKeys:
@@ -332,7 +329,6 @@ def main(argv):
             modules = None
             ret = ast.Upload(modules, uniConfig, **opts)
 
-    os.chdir(oCwd)
     return ret
 
 

@@ -71,7 +71,6 @@ class ToolForm(QWidget, Ui_ToolForm):
             cwd = None
         self.__modulePath = ""
         self.__moduleConfig = None
-        self.__workDir = os.getcwd()
 
         if not self.__ReadConfig(cwd):
             sys.exit()
@@ -79,8 +78,9 @@ class ToolForm(QWidget, Ui_ToolForm):
         self.__verRBtn: List[QRadioButton] = []
         self.__verSBox: List[QSpinBox] = []
 
-        self.__assistant = Assistant(self.__modulePath, self.__moduleConfig)
+        self.__assistant = Assistant(".", self.__moduleConfig)
         self.__workType = ToolForm.WorkType.Idle
+        self.__workDir = os.getcwd()
 
         self.__fip = QFileIconProvider()
 
@@ -128,12 +128,7 @@ class ToolForm(QWidget, Ui_ToolForm):
             )
 
         if self.__moduleConfig != None:
-            configRoot = os.path.join(os.path.dirname(ToolForm.ModuleFileName), self.__moduleConfig.configRoot)
-            if not os.path.isdir(configRoot):
-                os.makedirs(configRoot)
-            self.__workDir = os.path.abspath(configRoot)
-            os.chdir(configRoot)
-            self.__modulePath = os.path.abspath("..")
+            os.chdir(os.path.dirname(os.path.abspath(ToolForm.ModuleFileName)))
             return True
         return False
 

@@ -169,7 +169,7 @@ endif()
 # copy resource on linux or WINDOWS or Apple
 if(LINUX OR WINDOWS OR APPLE)
     cocos_get_resource_path(APP_RES_DIR ${APP_NAME})
-    cocos_sync_target_res(${APP_NAME} LINK_TO ${APP_RES_DIR} FOLDERS ${ori_res_folders})
+    cocos_sync_target_res(${APP_NAME} LINK_TO ${APP_RES_DIR} FOLDERS ${CMAKE_CURRENT_SOURCE_DIR})
     if(LINUX)
         cocos_sync_target_icon(${APP_NAME}
             ICON_FROM ${RUNTIME_SRC_ROOT}/proj.linux/res/linuxIcon.png
