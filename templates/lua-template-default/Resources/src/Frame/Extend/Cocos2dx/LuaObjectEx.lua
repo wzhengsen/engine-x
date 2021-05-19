@@ -18,35 +18,22 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
---[[
-    Auth:   wzhengsen
-    Date:   2020.08.15
-    Desc:   重写一些lua库函数。
-]]
+local LuaObject = cc.LuaObject;
 
-if os.Windows then
-    local _print = print;
-    function print(...)
-        local convert = {};
-        for _,arg in pairs({...}) do
-            table.insert(convert,tostring(arg):Convert("gbk//TRANSLIT","utf-8") or arg);
-        end
-        _print(table.unpack(convert));
-    end
+function LuaObject:dtor(_)end
 
-    local _dofile = dofile;
-    function dofile(filename)
-        if filename then
-            filename = filename:Convert("gbk//TRANSLIT","utf-8");
-        end
-        return _dofile(filename);
-    end;
-
-    local _loadfile = loadfile;
-    function loadfile(filename,...)
-        if filename then
-            filename = filename:Convert("gbk//TRANSLIT","utf-8");
-        end
-        return _loadfile(filename,...);
-    end;
+function LuaObject.__properties__()
+    return {
+        r = {
+        },
+        w = {
+            EnableDtorEvent = function (self,val)
+                if val then
+                    self.DtorHandler = class.Handler(self,self.dtor);
+                else
+                    self.DtorHandler = nil;
+                end
+            end
+        }
+    };
 end

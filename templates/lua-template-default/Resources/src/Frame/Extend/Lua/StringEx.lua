@@ -29,6 +29,10 @@ Update: 新增了加解密（Encrypt,Decrypt）、
         哈希值（Hash）
         的算法
 ---------------------------------------------]]
+
+---@class stringex
+---@field Convert fun(to:string,from:string):string
+local string = string;
 local crypto = require("crypto");
 
 ---按分隔符截取字符串。

@@ -27,6 +27,17 @@ local cc = cc;
 local ccui = ccui;
 local type = type;
 
+local LuaObject = cc.LuaObject;
+function LuaObject.__properties__()
+    return {
+        r = {
+        },
+        w = {
+            DtorHandler = LuaObject.SetDtorHandler
+        }
+    };
+end
+
 local Ref = cc.Ref;
 function Ref.__properties__()
     return {
@@ -82,7 +93,13 @@ function Node.__properties__()
     CameraMask = Node.GetCameraMask,
     PhysicsBody = Node.GetPhysicsBody,
     OpacityModifyRGB = Node.IsOpacityModifyRGB,
-    ProgramState = Node.GetProgramState
+    ProgramState = Node.GetProgramState,
+    OnEnterHandler = Node.GetOnEnterHandler,
+    OnExitHandler = Node.GetOnExitHandler,
+    OnEnterTransitionDidFinishHandler = Node.GetOnEnterTransitionDidFinishHandler,
+    OnExitTransitionDidStartHandler = Node.GetOnExitTransitionDidStartHandler,
+    OnCleanUpHandler = Node.GetOnCleanUpHandler,
+    OnUpdateHandler = Node.GetOnUpdateHandler
     },
     w = {
     LocalZ = Node.SetLocalZOrder,
@@ -133,7 +150,13 @@ function Node.__properties__()
     CameraMask = Node.SetCameraMask,
     PhysicsBody = Node.SetPhysicsBody,
     OpacityModifyRGB = Node.SetOpacityModifyRGB,
-    ProgramState = Node.SetProgramState
+    ProgramState = Node.SetProgramState,
+    OnEnterHandler = Node.SetOnEnterHandler,
+    OnExitHandler = Node.SetOnExitHandler,
+    OnEnterTransitionDidFinishHandler = Node.SetOnEnterTransitionDidFinishHandler,
+    OnExitTransitionDidStartHandler = Node.SetOnExitTransitionDidStartHandler,
+    OnCleanUpHandler = Node.SetOnCleanUpHandler,
+    OnUpdateHandler = Node.SetOnUpdateHandler
     }};
 end
 
@@ -2171,9 +2194,14 @@ function Widget.__properties__()
     },
     w = {
     Enabled = Widget.SetEnabled,
-    Bright = Widget.SetBright,
+    Bright = function (self,val)
+        if "boolean" == type(val) then
+            self:SetBright(val);
+        else
+            self:SetBrightStyle(val);
+        end
+    end,
     TouchEnabled = Widget.SetTouchEnabled,
-    BrightStyle = Widget.SetBrightStyle,
     Highlighted = Widget.SetHighlighted,
     PositionPercent = Widget.SetPositionPercent,
     PositionType = Widget.SetPositionType,
@@ -2191,7 +2219,8 @@ function Widget.__properties__()
     UnifySizeEnabled = Widget.SetUnifySizeEnabled,
     CallbackName = Widget.SetCallbackName,
     LayoutComponentEnabled = Widget.SetLayoutComponentEnabled,
-    TouchHandler = Widget.AddTouchEventListener
+    TouchHandler = Widget.AddTouchEventListener,
+    ClickHandler = Widget.AddClickEventListener
     }};
 end
 
@@ -2247,8 +2276,8 @@ function LayoutComponent.__properties__()
     PositionPercentX = LayoutComponent.GetPositionPercentX,
     PositionPercentYEnabled = LayoutComponent.IsPositionPercentYEnabled,
     PositionPercentY = LayoutComponent.GetPositionPercentY,
-    HorizontalEdge = LayoutComponent.GetHorizontalEdge,
-    VerticalEdge = LayoutComponent.GetVerticalEdge,
+    Horizontal = LayoutComponent.GetHorizontalEdge,
+    Vertical = LayoutComponent.GetVerticalEdge,
     LeftMargin = LayoutComponent.GetLeftMargin,
     RightMargin = LayoutComponent.GetRightMargin,
     TopMargin = LayoutComponent.GetTopMargin,
@@ -2273,8 +2302,8 @@ function LayoutComponent.__properties__()
     PositionPercentX = LayoutComponent.SetPositionPercentX,
     PositionPercentYEnabled = LayoutComponent.SetPositionPercentYEnabled,
     PositionPercentY = LayoutComponent.SetPositionPercentY,
-    HorizontalEdge = LayoutComponent.SetHorizontalEdge,
-    VerticalEdge = LayoutComponent.SetVerticalEdge,
+    Horizontal = LayoutComponent.SetHorizontalEdge,
+    Vertical = LayoutComponent.SetVerticalEdge,
     LeftMargin = LayoutComponent.SetLeftMargin,
     RightMargin = LayoutComponent.SetRightMargin,
     TopMargin = LayoutComponent.SetTopMargin,

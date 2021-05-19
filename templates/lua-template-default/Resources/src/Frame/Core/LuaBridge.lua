@@ -1,3 +1,23 @@
+-- Copyright (c) 2021 wzhengsen
+
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is
+-- furnished to do so, subject to the following conditions:
+
+-- The above copyright notice and this permission notice shall be included in
+-- all copies or substantial portions of the Software.
+
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+-- THE SOFTWARE.
+
 --[[
     Auth:   wzhengsen
     Date:   2020.10.02
@@ -86,7 +106,7 @@ LuaBridge.LastError = LuaBridge.Error.OK;
 
 rawset(_G,"LuaBridge",LuaBridge);
 
-if not os.IsAndroid() and not os.IsApple() then
+if not os.Android and not os.Apple then
     return LuaBridge;
 end
 local type = type;
@@ -95,7 +115,7 @@ local table = table;
 local ipairs = ipairs;
 local print = print;
 
-if os.IsAndroid() then
+if os.Android then
     LuaBridge._className = "org.cocos2dx.lib.Cocos2dxHelper";
     LuaBridge._callStaticMethod = LuaJavaBridge.callStaticMethod;
     LuaBridge._javaReturnSignMap = {
@@ -210,7 +230,7 @@ if os.IsAndroid() then
         table.insert(methodTable,signTable);
         ::continue::;
     end
-elseif os.IsApple() then
+elseif os.Apple then
     LuaBridge._className = "Cocos2dxHelper";
     LuaBridge._callStaticMethod = LuaObjcBridge.callStaticMethod;
 end
@@ -220,7 +240,7 @@ local methodMeta = {};
 methodMeta.__call = function(t,...)
     local methodName = t._methodName;
     local ok,ret,sign = nil,nil,nil;
-    if os.IsAndroid() then
+    if os.Android then
         ret,sign = LuaBridge._checkMethodSign(methodName,...);
         if not ret then
             ok,ret = LuaBridge._callStaticMethod(LuaBridge._className,methodName,sign,...);

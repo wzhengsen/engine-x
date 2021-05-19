@@ -1,14 +1,5 @@
 syx = {};
 
-syx.Convert = require("Utils.Convert");
-syx.String = syx.Convert.ToString;
-syx.Integer = syx.Convert.ToInteger;
-syx.Double = syx.Convert.ToDouble;
-syx.Number = syx.Convert.ToNumber;
-syx.Boolean = syx.Convert.ToBoolean;
-
-syx.Application = require("src.Application");
-
 syx.Effect = require("Audio.Effect");
 syx.Music = require("Audio.Music");
 syx.Sound = require("Audio.Sound");

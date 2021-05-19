@@ -1,149 +1,33 @@
---[[
+-- Copyright (c) 2021 wzhengsen
 
-Copyright (c) 2014-2017 Chukong Technologies Inc.
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is
+-- furnished to do so, subject to the following conditions:
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+-- The above copyright notice and this permission notice shall be included in
+-- all copies or substantial portions of the Software.
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+-- THE SOFTWARE.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+local Node = cc.Node;
 
-]]
+function Node:OnEnter(_)end
+function Node:OnExit(_)end
+function Node:OnEnterTransitionDidFinish(_)end
+function Node:OnExitTransitionDidStart(_)end
+function Node:OnCleanUp(_)end
+function Node:OnUpdate(_)end
 
-local Node = cc.Node
-
-function Node:onUpdate(callback)
-    self:scheduleUpdateWithPriorityLua(callback, 0)
-    return self
-end
-
-Node.scheduleUpdate = Node.onUpdate
-
-function Node:onNodeEvent(eventName, callback)
-    if "enter" == eventName then
-        self.onEnterCallback_ = callback
-    elseif "exit" == eventName then
-        self.onExitCallback_ = callback
-    elseif "enterTransitionFinish" == eventName then
-        self.onEnterTransitionFinishCallback_ = callback
-    elseif "exitTransitionStart" == eventName then
-        self.onExitTransitionStartCallback_ = callback
-    elseif "cleanup" == eventName then
-        self.onCleanupCallback_ = callback
-    end
-    self:enableNodeEvents()
-end
-
-function Node:enableNodeEvents()
-    if self.isNodeEventEnabled_ then
-        return self
-    end
-
-    self:registerScriptHandler(function(state)
-        if state == "enter" then
-            self:onEnter_()
-        elseif state == "exit" then
-            self:onExit_()
-        elseif state == "enterTransitionFinish" then
-            self:onEnterTransitionFinish_()
-        elseif state == "exitTransitionStart" then
-            self:onExitTransitionStart_()
-        elseif state == "cleanup" then
-            self:onCleanup_()
-        end
-    end)
-    self.isNodeEventEnabled_ = true
-
-    return self
-end
-
-function Node:disableNodeEvents()
-    self:unregisterScriptHandler()
-    self.isNodeEventEnabled_ = false
-    return self
-end
-
-
-function Node:onEnter()
-end
-
-function Node:onExit()
-end
-
-function Node:onEnterTransitionFinish()
-end
-
-function Node:onExitTransitionStart()
-end
-
-function Node:onCleanup()
-end
-
-function Node:onEnter_()
-    self:onEnter()
-    if not self.onEnterCallback_ then
-        return
-    end
-    self:onEnterCallback_()
-end
-
-function Node:onExit_()
-    self:onExit()
-    if not self.onExitCallback_ then
-        return
-    end
-    self:onExitCallback_()
-end
-
-function Node:onEnterTransitionFinish_()
-    self:onEnterTransitionFinish()
-    if not self.onEnterTransitionFinishCallback_ then
-        return
-    end
-    self:onEnterTransitionFinishCallback_()
-end
-
-function Node:onExitTransitionStart_()
-    self:onExitTransitionStart()
-    if not self.onExitTransitionStartCallback_ then
-        return
-    end
-    self:onExitTransitionStartCallback_()
-end
-
-function Node:onCleanup_()
-    self:onCleanup()
-    if not self.onCleanupCallback_ then
-        return
-    end
-    self:onCleanupCallback_()
-end
-
-
---[[
-    Func:   Node一些补充的封装方法
-    Auth:   WangZhengSen
-    Data:   2019.04.04
-]]
-
---[[
-    Func:   递归查找子节点
-    Param:  number
-    Return: Node
-]]
-function Node:SeekNodeByTag(nTag)
+local function SeekNodeByTag(self,nTag)
     local node = self:getChildByTag(nTag);
     if node then
         return node;
@@ -156,59 +40,53 @@ function Node:SeekNodeByTag(nTag)
     end
 end
 
---[[
-    Func:   递归查找子节点
-    Param:  string|number
-    Return: Node
-]]
-function Node:SeekNode(sn)
+local function SeekNode(self,sn)
     if type(sn) == "string" then
-        local node = nil
-        self:enumerateChildren("//"..sn,function(sNode)
+        local node = nil;
+        self:EnumerateChildren("//"..sn,function(sNode)
             node = sNode;
             return true;
         end);
         return node;
     elseif type(sn) == "number" then
-        return self:SeekNodeByTag(sn);
+        return SeekNodeByTag(self,sn);
     end
 end
 
-function Node:SeekNodeInSelf(sn)
+local function SeekNodeInSelf(self,sn)
     if type(sn) == "string" then
-        return self:getChildByName(sn);
+        return self:GetChildByName(sn);
     elseif type(sn) == "number" then
-        return self:getChildByTag(sn);
+        return self:GetChildByTag(sn);
     end
 end
 
 -- 整除运算指向SeekNode
-Node[".idiv"] = Node.SeekNode;
+Node.__idiv__ = SeekNode;
 -- 除法运算指向SeekNodeInSelf
-Node[".div"] = Node.SeekNodeInSelf;
+Node.__div__ = SeekNodeInSelf;
 
 
---[[
-    Func:   置于父级顶部
-]]
+---置于父级顶部
+---
 function Node:SetTop()
-    local p = self:getParent();
+    local p = self.Parent;
     if class.IsNull(p) then return; end
 
-    local cC = p:getChildren();
+    local cC = p.Children;
     local maxZOrder = nil;
     for _,v in ipairs(cC) do
-        local zOrder = v:getLocalZOrder();
+        local zOrder = v.LocalZ;
         if not maxZOrder or zOrder > maxZOrder then
             maxZOrder = zOrder;
         end
     end
-    self:setLocalZOrder(maxZOrder + 1);
+    self.LocalZ = maxZOrder + 1;
 end
 
 --[[
     Func:   绑定一个布局组件，并指定绑定参数。
-    Param:  table|boolean
+    Param:  table|boolean|nil
     Desc:   参数为表时字段详情如下：
             {
                 pw 指示百分比适应宽；
@@ -248,109 +126,133 @@ end
 local LayoutComponent = ccui.LayoutComponent;
 local HorizontalEdge = LayoutComponent.HorizontalEdge;
 local VerticalEdge = LayoutComponent.VerticalEdge;
-function Node:Layout(layoutParam)
-    layoutParam = nil == layoutParam or layoutParam;
+local function Layout(self,layoutParam)
     local pType = type(layoutParam);
     if "table" == pType then
-        local layout = LayoutComponent.bindLayoutComponent(self);
-        layout:setActiveEnabled(true);
+        local layout = LayoutComponent.BindLayoutComponent(self);
+        layout.ActiveEnabled = true;
         for k,v in pairs(layoutParam) do
             local isBoolean = "boolean" == type(v);
             if "pw" == k then
                 if isBoolean then
-                    layout:setPercentWidthEnabled(v);
+                    layout.PercentWidthEnabled = v;
                 else
-                    layout:setPercentWidthEnabled(true);
-                    layout:setPercentWidth(v);
+                    layout.PercentWidthEnabled = true;
+                    layout.PercentWidth = v;
                 end
             elseif "ph" == k then
                 if isBoolean then
-                    layout:setPercentHeightEnabled(v);
+                    layout.PercentHeightEnabled = v;
                 else
-                    layout:setPercentHeightEnabled(true);
-                    layout:setPercentHeight(v);
+                    layout.PercentHeightEnabled = true;
+                    layout.PercentHeight = v;
                 end
             elseif "sw" == k then
                 if isBoolean then
-                    layout:setStretchWidthEnabled(v);
+                    layout.StretchWidthEnabled = v;
                 end
             elseif "sh" == k then
                 if isBoolean then
-                    layout:setStretchHeightEnabled(v);
+                    layout.StretchHeightEnabled = v;
                 end
             elseif "px" == k then
                 if isBoolean then
-                    layout:setPositionPercentXEnabled(v);
+                    layout.PositionPercentXEnabled = v;
                 else
-                    layout:setPositionPercentXEnabled(true);
-                    layout:setPositionPercentX(v);
+                    layout.PositionPercentXEnabled = true;
+                    layout.PositionPercentX = v;
                 end
             elseif "py" == k then
                 if isBoolean then
-                    layout:setPositionPercentYEnabled(v);
+                    layout.PositionPercentYEnabled = v;
                 else
-                    layout:setPositionPercentYEnabled(true);
-                    layout:setPositionPercentY(v);
+                    layout.PositionPercentYEnabled = true;
+                    layout.PositionPercentY = v;
                 end
             elseif "lm" == k or "rm" == k then
-                local he = layout:getHorizontalEdge();
+                local he = layout.Horizontal;
                 if "lm" == k then
                     if isBoolean then
-                        he = v
-                        and (he | HorizontalEdge.Left)
-                        or (he & HorizontalEdge.Right);
+                        he = v and (he | HorizontalEdge.Left) or (he & HorizontalEdge.Right);
                     else
                         he = he | HorizontalEdge.Left;
-                        layout:setLeftMargin(v);
+                        layout.LeftMargin = v;
                     end
                 else
                     if isBoolean then
-                        he = v
-                        and (he | HorizontalEdge.Right)
-                        or (he & HorizontalEdge.Left);
+                        he = v and (he | HorizontalEdge.Right) or (he & HorizontalEdge.Left);
                     else
                         he = he | HorizontalEdge.Right;
-                        layout:setRightMargin(v);
+                        layout.RightMargin = v;
                     end
                 end
-                layout:setHorizontalEdge(he);
+                layout.Horizontal = he;
             elseif "tm" == k or "bm" == k then
-                local ve = layout:getVerticalEdge();
+                local ve = layout.Vertical;
                 if "tm" == k then
                     if isBoolean then
-                        ve = v
-                        and (ve | VerticalEdge.Top)
-                        or (ve & VerticalEdge.Bottom);
+                        ve = v and (ve | VerticalEdge.Top) or (ve & VerticalEdge.Bottom);
                     else
                         ve = (ve | VerticalEdge.Top);
-                        layout:setTopMargin(v);
+                        layout.TopMargin = v;
                     end
                 else
                     if isBoolean then
-                        ve = v
-                        and (ve | VerticalEdge.Bottom)
-                        or (ve & VerticalEdge.Top);
+                        ve = v and (ve | VerticalEdge.Bottom) or (ve & VerticalEdge.Top);
                     else
                         ve = (ve | VerticalEdge.Bottom);
-                        layout:setBottomMargin(v);
+                        layout.BottomMargin = v;
                     end
                 end
-                layout:setVerticalEdge(ve);
+                layout.Vertical = ve;
             end
         end
 
-        layout:refreshLayout();
-    else
-        local layout = self:getComponent("__ui_layout");
+        layout:RefreshLayout();
+    elseif "boolean" == pType then
+        local layout = self:GetComponent("__ui_layout");
         if not layout then
             if layoutParam then
-                ccui.Helper.doLayout(self);
+                ccui.Helper.DoLayout(self);
             end
         else
-            layout:setActiveEnabled(layoutParam);
+            layout.ActiveEnabled = layoutParam;
             if layoutParam then
-                layout:refreshLayout();
+                layout:RefreshLayout();
             end
         end
+    elseif "nil" == pType then
+        self:RemoveComponent("__ui_layout");
     end
+end
+
+function Node.__properties__()
+    return {
+        w = {
+            -- 考虑到效率问题，OnUpdate应当独立开启，且不建议大量使用。
+            EnableUpdateEvent = function (self,val)
+                if val then
+                    self.OnUpdateHandler = class.Handler(self,self.OnUpdate);
+                else
+                    self.OnUpdateHandler = nil;
+                end
+            end,
+            EnableEvents = function (self,val)
+                if val then
+                    self.OnEnterHandler = class.Handler(self,self.OnEnter);
+                    self.OnExitHandler = class.Handler(self,self.OnExit);
+                    self.OnEnterTransitionDidFinishHandler = class.Handler(self,self.OnEnterTransitionDidFinish);
+                    self.OnExitTransitionDidStartHandler = class.Handler(self,self.OnExitTransitionDidStart);
+                    self.OnCleanUpHandler = class.Handler(self,self.OnCleanUp);
+                else
+                    self.OnEnterHandler = nil;
+                    self.OnExitHandler = nil;
+                    self.OnEnterTransitionDidFinishHandler = nil;
+                    self.OnExitTransitionDidStartHandler = nil;
+                    self.OnCleanUpHandler = nil;
+                end
+            end,
+            Layout = Layout
+        }
+    };
 end

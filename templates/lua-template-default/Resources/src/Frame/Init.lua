@@ -1,3 +1,23 @@
+-- Copyright (c) 2021 wzhengsen
+
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is
+-- furnished to do so, subject to the following conditions:
+
+-- The above copyright notice and this permission notice shall be included in
+-- all copies or substantial portions of the Software.
+
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+-- THE SOFTWARE.
+
 local path = package.path;
 path = path .. ";src/Frame/Module/?.lua";
 path = path .. ";src/Frame/Extend/?.lua";
@@ -12,6 +32,10 @@ package.cpath = cpath;
 -- Initialize global.
 _G.cjson = require("cjson");
 
+require("Event");
+require("Handler");
+require("Class");
+
 require("Lua.MathEx");
 require("Lua.StringEx");
 require("Lua.TableEx");
@@ -19,24 +43,22 @@ require("Lua.OsEx");
 require("Lua.IoEx");
 require("Lua.LuaEx");
 
-require("Event");
-require("Handler");
-require("Class");
+require("LuaBridge");
 
 require("OpenGLConstants");
 require("OpenGL");
 
 require("Cocos2dx.Constants");
 require("Cocos2dx.Cocos2dxEx");
-
-require("LuaBridge");
-
-require("Cocos2dx.CSLoaderEx");
+require("Cocos2dx.LuaObjectEx");
 require("Cocos2dx.NodeEx");
-require("Cocos2dx.RefEx");
-require("Cocos2dx.WidgetEx");
-require("Cocos2dx.ButtonEx");
 require("Cocos2dx.VideoPlayerEx");
+
+require("Utils.Convert");
+require("Utils.UserFile");
+require("Utils.LocalFile");
+require("Utils.ZipFile");
+require("Application");
 
 require("Module.Init");
 
@@ -129,7 +151,6 @@ if config.RequireHttpEnabled then
     function RequireHttpInvoker:ctor()
         syx.HttpInvoker.ctor(self);
         self._timeout = 3000;
-        self._responseType = cc.XMLHttpRequest.ResponseType.STRING;
         self._async = false;
     end
     local rhInvoker = RequireHttpInvoker.new();

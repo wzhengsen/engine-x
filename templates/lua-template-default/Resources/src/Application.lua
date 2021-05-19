@@ -1,3 +1,23 @@
+-- Copyright (c) 2021 wzhengsen
+
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is
+-- furnished to do so, subject to the following conditions:
+
+-- The above copyright notice and this permission notice shall be included in
+-- all copies or substantial portions of the Software.
+
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+-- THE SOFTWARE.
+
 --[[
     File:   Application
     Auth:   wzhengsen
@@ -7,26 +27,62 @@
     Date:       2020.02.08
     Content:    Application现在继承至cc.Application
 ]]
-local Application = class(function()
-    return cc.Application.getInstance();
-end,class.Singleton);
+
 local config = require("config");
 local Entrance = require("Game.Entrance");
+local App = cc.Application;
+local Application = class(function()
+    return App.Instance;
+end);
+Application.__new__ = Application.new;
+Application.new = nil;
+
+function Application.__properties__()
+    return {
+        r = {
+            Instance = function (_)
+                if class.IsNull(Application.__instance) then
+                    Application.__instance = Application.__new__();
+                end
+                return Application.__instance;
+            end
+        },
+        w = {
+            --开启/关闭一个全局的按键监听。
+            ListenKeyboardEnabled = function(self,b)
+                assert("boolean" == type(b), "Error boolean value.");
+                local hasListener = not class.IsNull(self.__keyboardListener);
+                if b ~= hasListener then
+                    local dispatcher = cc.Director.Instance.EventDispatcher;
+                    if b then
+                        self.__keyboardListener = cc.EventListenerKeyboard.new();
+                        self.__keyboardListener.OnKeyPressed = Event.KeyDown;
+                        self.__keyboardListener.OnKeyReleased = Event.KeyUp;
+                        dispatcher:AddEventListenerWithFixedPriority(self.__keyboardListener, -1);
+                    else
+                        dispatcher:RemoveEventListener(self.__keyboardListener);
+                        self.__keyboardListener = nil;
+                    end
+                end
+            end
+        }
+    };
+end
 
 function Application:ctor()
     -- 监听进入前台后台事件。
-    local eventDispatcher = cc.Director.getInstance():getEventDispatcher()
-    self.lsrAWEF = eventDispatcher:addCustomEventListener(
+    local eventDispatcher = cc.Director.Instance.EventDispatcher;
+    self._lsrAWEF = eventDispatcher:AddCustomEventListener(
         "applicationWillEnterForeground",
         class.Handler(self,self.OnEnterForeground)
     );
-    self.lsrADEB = eventDispatcher:addCustomEventListener(
+    self._lsrADEB = eventDispatcher:AddCustomEventListener(
         "applicationDidEnterBackground",
         class.Handler(self,self.OnEnterBackground)
     );
 
     -- 不同设备，不同的监听转屏方法。
-    if os.IsAndroid() then
+    if os.Android then
         LuaBridge.SetOnLuaOrientationChanged(function(ori)
             if ori == 1 then
                 self:OnDeviceToPortrait();
@@ -36,39 +92,39 @@ function Application:ctor()
         end);
     else
         -- 监听屏幕旋转事件。
-        self.lsrDTL = eventDispatcher:addCustomEventListener(
+        self._lsrDTL = eventDispatcher:AddCustomEventListener(
             "DeviceToLandscape",
             class.Handler(self,self.OnDeviceToLandscape)
         );
-        self.lsrDTP = eventDispatcher:addCustomEventListener(
+        self._lsrDTP = eventDispatcher:AddCustomEventListener(
             "DeviceToPortrait",
             class.Handler(self,self.OnDeviceToPortrait)
         );
     end
 end
 
---[[
-    Desc:       以给定的宽/高设置设计分辨率，会自动选用FIXED_WIDTH或FIXED_HEIGHT模式。
-                并且在改变分辨率后会触发AppDesignResolutionChanged事件。
-    Param:      <number>
-                <number>
-]]
+---以给定的宽/高设置设计分辨率，会自动选用FIXED_WIDTH或FIXED_HEIGHT模式。
+---并且在改变分辨率后会触发AppDesignResolutionChanged事件。
+---
+---@param width number
+---@param height number
+---
 function Application:SetDesignResolutionSize(width,height)
-    local director = cc.Director.getInstance();
-    local view = director:getOpenGLView();
-    local frameSize = view:getFrameSize();
-    view:setDesignResolutionSize(
+    local director = cc.Director.Instance;
+    local view = director.OpenGLView;
+    local frameSize = view.FrameSize;
+    view:SetDesignResolutionSize(
         width,
         height,
         frameSize.width < frameSize.height and cc.ResolutionPolicy.FIXED_WIDTH or cc.ResolutionPolicy.FIXED_HEIGHT
     );
 
-    local runningScene = director:getRunningScene();
+    local runningScene = director.RunningScene;
     if not class.IsNull(runningScene) then
         -- 此处重复一次隐藏/显示，以立即刷新一些不会自动重绘的节点。如：VideoPlayer/WebView/EditBox
-        local vb = runningScene:isVisible();
-        runningScene:setVisible(not vb);
-        runningScene:setVisible(vb);
+        local vb = runningScene.Visible;
+        runningScene.Visible = not vb;
+        runningScene.Visible = vb;
     end
 
     Event.AppDesignResolutionChanged(width,height);
@@ -83,7 +139,7 @@ function Application:OnEnterBackground()
 end
 
 function Application:OnDeviceToLandscape()
-    local glView = cc.Director.getInstance().OpenGLView;
+    local glView = cc.Director.Instance.OpenGLView;
     local size = glView.FrameSize;
     glView.FrameSize = {
         width = size.height,
@@ -97,7 +153,7 @@ function Application:OnDeviceToLandscape()
 end
 
 function Application:OnDeviceToPortrait()
-    local glView = cc.Director.getInstance().OpenGLView;
+    local glView = cc.Director.Instance.OpenGLView;
     local size = glView.FrameSize;
     glView.FrameSize = {
         width = size.height,
@@ -111,12 +167,12 @@ function Application:OnDeviceToPortrait()
 end
 
 function Application:InitGLView()
-    local director = cc.Director.getInstance();
+    local director = cc.Director.Instance;
     local view = director.OpenGLView;
 
-    local fuInst = cc.FileUtils.getInstance();
-    local fullPath = fuInst:fullPathForFilename("config.json");
-    local jStr = fuInst:getDataFromFile(fullPath);
+    local fuInst = cc.FileUtils.Instance;
+    local fullPath = fuInst:FullPathForFilename("config.json");
+    local jStr = fuInst:GetDataFromFile(fullPath);
     local jConfig = jStr and cjson.decode(jStr) or {
         isLandscape = true,
         name = "StaryX",
@@ -125,7 +181,7 @@ function Application:InitGLView()
     };
 
     if class.IsNull(view) then
-        director.OpenGLView = cc.GLViewImpl.createWithRect(
+        director.OpenGLView = cc.GLViewImpl.CreateWithRect(
             jConfig.name,
             {
                 x = 0,y = 0,
@@ -153,9 +209,9 @@ function Application:InitGLView()
     end
 
     -- 按配置项，向横屏或竖屏转动。
-    syx.Device.SetOrientation(jConfig.isLandscape
-    and syx.Device.OrientationType.Landscape
-    or syx.Device.OrientationType.Portrait);
+    cc.Device.SetOrientation(jConfig.isLandscape
+    and cc.Device.OrientationType.Landscape
+    or cc.Device.OrientationType.Portrait);
 end
 
 function Application:OnFinishLaunch()
@@ -166,62 +222,34 @@ end
     Func:   重启
 ]]
 function Application:Restart()
-    syx.Connection.CloseMGR();
-    syx.Downloader.CloseMGR();
-    syx.Sound.UncacheAll();
-    cc.Director.getInstance():restart();
+    cc.Connection.CloseMGR();
+    cc.Downloader.CloseMGR();
+    cc.Sound.UncacheAll();
+    cc.Director.Instance:Restart();
 end
 
 function Application:Start()
-    local fuInst = cc.FileUtils.getInstance();
-    fuInst:addSearchPath(fuInst.WritablePath .. "res/");
-    fuInst:addSearchPath("res/");
+    local fuInst = cc.FileUtils.Instance;
+    fuInst:AddSearchPath(fuInst.WritablePath .. "res/");
+    fuInst:AddSearchPath("res/");
 
     self:InitGLView();
 
     self.ListenKeyboardEnabled = true;
 
     self:OnFinishLaunch();
-    Entrance():Enter();
+    Entrance.Instance:Enter();
 end
 
-if os.IsApple() or os.IsAndroid() then
+if os.Apple or os.Android then
     function Application:Notify(...)
         LuaBridge.Notify(...);
     end
-    if os.IsAndroid() then
+    if os.Android then
         function Application:Dialog(...)
             LuaBridge.Dialog(...);
         end
     end
 end
 
---[[
-    Desc:       开启/关闭一个全局的按键监听。
-]]
-Application.stor({
-    ListenKeyboardEnabled = function(self,b)
-        assert("boolean" == type(b), "Error boolean value.");
-        local hasListener = not class.IsNull(self.__keyboardListener);
-        if b ~= hasListener then
-            if b then
-                self.__keyboardListener = cc.EventListenerKeyboard.new();
-                self.__keyboardListener:registerScriptHandler(function(keyCode,_)
-                    Event.KeyDown(keyCode);
-                end,ScriptHandlerMgr.HandlerType.EVENT_KEYBOARD_PRESSED);
-                self.__keyboardListener:registerScriptHandler(function(keyCode,_)
-                    Event.KeyUp(keyCode);
-                end,ScriptHandlerMgr.HandlerType.EVENT_KEYBOARD_RELEASED);
-
-                local dispatcher = cc.Director.getInstance().EventDispatcher;
-                dispatcher:addEventListenerWithFixedPriority(self.__keyboardListener, -1);
-            else
-                local dispatcher = cc.Director.getInstance().EventDispatcher;
-                dispatcher:removeEventListener(self.__keyboardListener);
-                self.__keyboardListener = nil;
-            end
-        end
-    end
-});
-
-return Application
+cc.Application = Application;

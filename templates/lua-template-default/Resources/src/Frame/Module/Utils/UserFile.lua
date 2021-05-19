@@ -1,33 +1,25 @@
---[[
-    File:   UserFile
-    Func:   本地文件，该文件即是cc.UserDefault，使用单例
-    Auth:   wzhengsen
-    Data:   2019.04.04
+-- Copyright (c) 2021 wzhengsen
 
-    Chg By:     wzhengsen
-    Date:       2019.07.06
-    Content:    cc.UserDefault.getInstance()现在被作为成员；
-                增加了Get的自动判断；
-                增加了Flush()。
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is
+-- furnished to do so, subject to the following conditions:
 
-    Chg By:     wzhengsen
-    Date:       2019.09.26
-    Content:    采用继承的方式使用cc.UserDefault
+-- The above copyright notice and this permission notice shall be included in
+-- all copies or substantial portions of the Software.
 
-    Chg By:     wzhengsen
-    Date:       2019.12.05
-    Content:    采用.和=操作符取值与赋值了，且不再继承自cc.UserDefault。
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+-- THE SOFTWARE.
 
-    Chg By:     wzhengsen
-    Date:       2019.12.10
-    Content:    新增了Clear()方法以清除所有数据；XmlFile重命名为UserFile。
-]]
-local UserFile = class(class.Singleton)
-
---[[
-    类型前缀，每种类型均以字符串保存，并添加对应前缀
-]]
-UserFile.TypePrefix = {
+---类型前缀，每种类型均以字符串保存，并添加对应前缀。
+local TypePrefix = {
     string  = "_@_TS",
     boolean = "_@_TB",
     number  = "_@_TN",
@@ -36,93 +28,72 @@ UserFile.TypePrefix = {
     ["_@_TS"] = "S",
     ["_@_TB"] = "B",
     ["_@_TN"] = "N",
-}
+};
 
-function UserFile:ctor()
-    UserFile.UpdateUD(self);
-    local newmt = {
-        binData = {}
-    }
-    self.newmt = newmt
-    newmt.__newindex = function(_,k,v)
-        if UserFile.TypePrefix[type(k)] then
-            -- 前缀查询
-            UserFile.UpdateUD(self);
-            local prefix = UserFile.TypePrefix[type(v)]
-            if prefix then
-                self.ud:setStringForKey(tostring(k),prefix .. tostring(v))
-                -- 此处保存一个缓存在内存中
-                rawset(newmt.binData,k,v)
-            elseif v == nil then
-                self.ud:deleteValueForKey(k)
-                rawset(newmt.binData,k,v)
-            else
-                print("UserFile can't set the value.")
-            end
+local type = type;
+local rawset = rawset;
+local tostring = tostring;
+local UserDefault = cc.UserDefault;
+--直接使用UserFile来操作UserDefault的文件。
+--该类不可实例化，其所有方法和属性都是静态的。
+local UserFile = setmetatable({
+    -- 使用该值作为加密和解密密码。
+    Key = nil
+},
+{
+    __newindex = function (t,k,v)
+        if k == "Key" then
+            rawset(t,k,v);
+        end
+        -- 仅布尔/数值/字符串能作为键。
+        if not TypePrefix[type(k)] then
+            return;
+        end
+        k = tostring(k);
+        if nil == v then
+            UserDefault.Instance:DeleteValueForKey(k);
         else
-            print("UserFile can't set the value.")
-        end
-    end
-    newmt.__index = function(_,k)
-        local ret = rawget(newmt.binData,k)
-        -- 先判断缓存值
-        if nil ~= ret then
-            return ret
-        end
-
-        -- 再查找文件
-        UserFile.UpdateUD(self);
-        ret = self.ud:getStringForKey(k,"")
-        if "" ~= ret then
-            local vType = UserFile.TypePrefix[ret:sub(1,5)]
-            -- 查询前缀
-            if vType == "N" then
-                ret = tonumber(ret:sub(6))
-            elseif vType == "S" then
-                ret = ret:sub(6)
-            elseif vType == "B" then
-                local retV = ret:sub(6)
-                if retV == "true" then
-                    ret = true
-                elseif retV == "false" then
-                    ret = false
-                else
-                    ret = nil
-                end
+            local prefix = TypePrefix[type(v)];
+            if prefix then
+                v = tostring(v);
+                local key = t.Key;
+                UserDefault.Instance:SetStringForKey(k,prefix .. (key and v:Encrypt(key) or v));
             end
-            -- 缓存
-            rawset(newmt.binData,k,ret)
-            return ret
         end
-
-        -- 最后查找原类型
-        ret = UserFile[k]
-        if nil ~= ret then
-            return ret
+    end,
+    __index = function (t,k)
+        if k == "Key" then
+            return nil;
         end
-        return nil
+        -- 仅布尔/数值/字符串能作为键。
+        if not TypePrefix[type(k)] then
+            return nil;
+        end
+        k = tostring(k);
+        local val = UserDefault.Instance:GetStringForKey(k,"");
+        if "" == val then
+            return nil;
+        end
+        local vType = TypePrefix[val:sub(1,5)];
+        if vType then
+            local ret = val:sub(6);
+            local key = t.Key;
+            ret = key and ret:Decrypt(key) or ret;
+            if "N" == vType then
+                return cc.ToNumber(ret);
+            elseif "S" == vType then
+                return ret;
+            elseif "B" == vType then
+                return cc.ToBoolean(ret);
+            end
+        end
     end
-    setmetatable(self,newmt)
+});
+
+---清空映射文件。
+---
+function UserFile.Clear()
+    UserDefault.Instance:Clear();
 end
 
-function UserFile:UpdateUD()
-    if class.IsNull(rawget(self,"ud")) then
-        rawset(self,"ud",cc.UserDefault.getInstance());
-    end
-end
-
-function UserFile:Flush()
-    UserFile.UpdateUD(self);
-    self.ud:flush()
-end
-
---[[
-    Func:   清空xml文件
-]]
-function UserFile:Clear()
-    UserFile.UpdateUD(self);
-    self.ud:Clear()
-    self.newmt.binData = {}
-end
-
-return UserFile
+cc.UserFile = UserFile;

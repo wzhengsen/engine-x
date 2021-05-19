@@ -137,6 +137,7 @@ local function MakeLuaObjMetaTable(cls)
                 if cls.__w__[key] then
                     -- 不能读取只写属性。
                     warn("You can't read a write-only property.")
+                    return nil;
                 end
             end
             -- 检查基类。
@@ -153,11 +154,12 @@ local function MakeLuaObjMetaTable(cls)
             local property = cls.__w__[key];
             if property then
                 property(sender,value);
-                return
+                return;
             else
                 if cls.__r__[key] then
                     -- 不能写入只读属性。
                     warn("You can't write a read-only property.")
+                    return;
                 end
             end
             rawset(sender,key,value);
@@ -199,7 +201,8 @@ local function RetrofitMeta(ud)
             else
                 if cls.__w__[key] then
                     -- 不能读取只写属性。
-                    warn("You can't read a write-only property.")
+                    warn("You can't read a write-only property.");
+                    return nil;
                 end
             end
             -- 检查基类。
@@ -227,7 +230,8 @@ local function RetrofitMeta(ud)
             else
                 if cls.__r__[key] then
                     -- 不能写入只读属性。
-                    warn("You can't write a read-only property.")
+                    warn("You can't write a read-only property.");
+                    return;
                 end
             end
         end
@@ -331,7 +335,7 @@ function class.New(...)
                 end
 
                 -- 加入多继承表。
-                table.insert(cls.__bases__,base)
+                table.insert(cls.__bases__,base);
             end
         end
     end
@@ -454,7 +458,8 @@ function class.New(...)
             else
                 if cls.__w__[key] then
                     -- 不能读取只写属性。
-                    warn("You can't read a write-only property.")
+                    warn("You can't read a write-only property.");
+                    return nil;
                 end
             end
             -- 检查基类。
@@ -493,7 +498,8 @@ function class.New(...)
                 else
                     if cls.__r__[key] then
                         -- 不能写入只读属性。
-                        warn("You can't write a read-only property.")
+                        warn("You can't write a read-only property.");
+                        return;
                     end
                 end
                 rawset(sender,key,value);

@@ -1,33 +1,51 @@
+-- Copyright (c) 2021 wzhengsen
+
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is
+-- furnished to do so, subject to the following conditions:
+
+-- The above copyright notice and this permission notice shall be included in
+-- all copies or substantial portions of the Software.
+
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+-- THE SOFTWARE.
+
 --[[
-    File:       Convert.lua
-    Func:       一些和转换相关的封装。
+    File:       一些和转换相关的封装。
     Content:    如阿拉伯数字转中文数，数字的千分位截断，
                 一些类型强制转换等。
 ]]
-local Convert = {}
 
-
---[[
-    Func:   将数字以千分位截断
-    Param:  number
-    Return: string
-    Desc:   转换失败返回nil
-]]
-function Convert.Kilodigit(num)
-    num = tonumber(num)
+---将数字或任意可以转换为数字的内容以千分位截断，不能转换的内容返回nil。
+---
+---@param num any
+---@return string?
+---
+function cc.ToKilodigit(num)
+    num = tonumber(num);
     if not num then
-        return nil
+        return nil;
     end
-    local formatted = tostring(num)
-    local k = nil
+    local formatted = tostring(num);
+    local k = nil;
     while true do
-        formatted, k = formatted:gsub("^(-?%d+)(%d%d%d)", "%1,%2")
-        if k == 0 then break end
+        formatted, k = formatted:gsub("^(-?%d+)(%d%d%d)", "%1,%2");
+        if k == 0 then
+            break;
+        end
     end
-    return formatted
+    return formatted;
 end
 
-Convert.ChineseNumberUpper = {
+local ChineseNumberUpper = {
     ["."] = "点",
     [0] = "零",
     [1] = "壹",
@@ -44,8 +62,8 @@ Convert.ChineseNumberUpper = {
     [1000] = "千",
     [10000] = "万",
     [100000000] = "亿"
-}
-Convert.ChineseNumberLower = {
+};
+local ChineseNumberLower = {
     ["."] = "点",
     [0] = "〇",
     [1] = "一",
@@ -62,128 +80,163 @@ Convert.ChineseNumberLower = {
     [1000] = "千",
     [10000] = "万",
     [100000000] = "亿"
-}
+};
 
 --[[
     Func:   小数部分转换
 ]]
 local function transfromFloat2Chinese(numStr,b)
     if numStr == 0 then
-        return ""
+        return "";
     end
     -- 去掉首位0
-    numStr = tostring(numStr):sub(2)
-    local cTab = b and Convert.ChineseNumberUpper or Convert.ChineseNumberLower
+    numStr = tostring(numStr):sub(2);
+    local cTab = b and ChineseNumberUpper or ChineseNumberLower;
 
-    local ret = {}
+    local ret = {};
     for i = 1,#numStr do
-        local char = numStr:sub(i,i)
-        ret[i] = cTab[tonumber(char) or char] or ""
+        local char = numStr:sub(i,i);
+        ret[i] = cTab[tonumber(char) or char] or "";
     end
 
-    return table.concat(ret)
+    return table.concat(ret);
 end
 
 --[[
     Func:   整数部分转换
 ]]
 local function transfromInt2Chinese(num,np,b)
-    local cTab = b and Convert.ChineseNumberUpper or Convert.ChineseNumberLower
+    local cTab = b and ChineseNumberUpper or ChineseNumberLower;
     if 0 == num then
-        return cTab[0]
+        return cTab[0];
     end
 
-    local retStr = ""
+    local retStr = "";
     -- 指示上一个值是否为0，连续的0不需要多次转换为“零”或“〇”
-    local lastZero = true
+    local lastZero = true;
     while np > 0 do
-        local dV = num // np
+        local dV = num // np;
         -- 获取单位
-        local unit = np >= 10 and cTab[np]
+        local unit = np >= 10 and cTab[np];
         if dV ~= 0 and (unit or np < 10) then
-            local numStr = ""
+            local numStr = "";
             if np == 100000000 then
                 -- 最高转换单位为“亿”，超过100000000的部分再次尝试转换
-                numStr = transfromInt2Chinese(dV,np,b)
+                numStr = transfromInt2Chinese(dV,np,b);
             else
                 -- 获取转换值，如千万、百万等没有对应单位的，再次尝试转换
-                numStr = cTab[dV] or transfromInt2Chinese(dV,10000,b)
+                numStr = cTab[dV] or transfromInt2Chinese(dV,10000,b);
             end
             if np >= 10 then
                 -- 因为没有单位“个”，所以大于10的数才拼接单位
-                retStr = retStr .. numStr .. unit
+                retStr = retStr .. numStr .. unit;
             else
-                retStr = retStr .. numStr
+                retStr = retStr .. numStr;
             end
-            lastZero = false
+            lastZero = false;
         elseif dV == 0 and not lastZero and num ~= 0 then
-            lastZero = true
-            retStr = retStr .. cTab[0]
+            lastZero = true;
+            retStr = retStr .. cTab[0];
         end
         if unit then
-            num = num % np
+            num = num % np;
         end
-        np = np // 10
+        np = np // 10;
     end
 
-    return retStr
+    return retStr;
 end
 
---[[
-    Func:   将数字转换为中文
-    Param:  number              待转换数字
-            boolean{true}       是否使用大写转换
-    Return: string
-    Desc:   转换失败返回nil
-]]
-function Convert.ChineseNumber(num,b)
-    num = tonumber(num)
+---将数字或任意可以转换为数字的内容转换为中文，不能转换的内容将返回nil。
+---
+---@param num any
+---@param b? boolean {true}是否使用大写转换
+---@return string?
+---@bug 当转换极小值时，输出不正确（如ToChinese(0.9e-12)）。
+---
+function cc.ToChinese(num,b)
+    num = tonumber(num);
     if not num then
-        return nil
+        return nil;
     end
-    local isNegative = num < 0
-    num = math.abs(num)
-    b = nil == b and true
+    local isNegative = num < 0;
+    num = math.abs(num);
+    b = nil == b or b;
 
     -- 分割为整数和小数
-    local iNum,fNum = math.modf(num)
-    -- 小数
-    local fNumStr = transfromFloat2Chinese(fNum,b)
-    -- 整数
-    local iNumStr = transfromInt2Chinese(iNum,100000000,b)
-    if isNegative then
-        return "负" .. iNumStr .. fNumStr
+    local iNum,fNum = math.modf(num);
+    if fNum ~= 0.0 then
+        -- 为确保精度，将小数部分截取到和实际传入的等长。
+        local numStr = tostring(num);
+        local dotIdx = numStr:find(".",1,true);
+        if dotIdx then
+            fNum = "0" .. numStr:sub(dotIdx);
+        end
     end
-    return iNumStr .. fNumStr
+    -- 小数
+    local fNumStr = transfromFloat2Chinese(fNum,b);
+    -- 整数
+    local iNumStr = transfromInt2Chinese(iNum,100000000,b);
+    if isNegative then
+        return "负" .. iNumStr .. fNumStr;
+    end
+    return iNumStr .. fNumStr;
 end
-
-
 
 --[[
     一些基本类型转换。
 ]]
-function Convert.ToBoolean(obj)
-    if obj then
-        return true
+
+---转换任意值为布尔值，无论该值能不能被转换，一定会返回布尔值，且不会抛出错误。
+---特别的，"false"将被转换为false，而不是true，这和lua的默认行为不同。
+---
+---@param obj any
+---@return boolean
+---
+function cc.ToBoolean(obj)
+    if "string" == type(obj) and "false" == obj:lower() then
+        return false;
     end
-    return false
+    if obj then
+        return true;
+    end
+    return false;
 end
 
-function Convert.ToNumber(num)
-    return tonumber(num) or 0
+---转换任意值为数字，无论该值能不能被转换，一定会返回数字类型，且不会抛出错误。
+---
+---@param num any
+---@return number
+---
+function cc.ToNumber(num)
+    return tonumber(num) or 0;
 end
 
-function Convert.ToDouble(num)
-    return (tonumber(num) or 0) + 0.0
+---转换任意值为双精度浮点型，无论该值能不能被转换，一定会返回双精度浮点型，且不会抛出错误。
+---
+---@param num any
+---@return number
+---
+function cc.ToDouble(num)
+    return (tonumber(num) or 0) + 0.0;
 end
 
-function Convert.ToInteger(num)
-    return math.floor(tonumber(num) or 0)
+---转换任意值为整型，无论该值能不能被转换，一定会返回整型，且不会抛出错误。
+---
+---@param num any
+---@return number
+---
+function cc.ToInteger(num)
+    return math.floor(tonumber(num) or 0);
 end
 
-function Convert.ToString(str)
-    if str == nil then return "" end
-    return tostring(str)
+---转换任意值为字符串，无论该值能不能被转换，一定会返回字符串，且不会抛出错误。
+---特别的，nil将被转换为""，而不是"nil"，这和lua的默认行为不同。
+---
+---@param str any
+---@return string
+---
+function cc.ToString(str)
+    if str == nil then return ""; end
+    return tostring(str);
 end
-
-return Convert
