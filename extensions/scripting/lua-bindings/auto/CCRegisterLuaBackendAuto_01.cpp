@@ -8,106 +8,106 @@
 #include "renderer/backend/CommandBuffer.h"
 #include "renderer/backend/Buffer.h"
 #include "renderer/backend/RenderPipeline.h"
-void RegisterLuaBackendSamplerAddressModeAuto(cocos2d::Lua& lua) {
+void RegisterLuaBackendSamplerAddressModeAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("SamplerAddressMode"
-,"REPEAT",0
-,"MIRROR_REPEAT",1
-,"CLAMP_TO_EDGE",2
-,"DONT_CARE",3
-);}
-void RegisterLuaBackendSamplerFilterAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::SamplerAddressMode>("SamplerAddressMode",{
+{"REPEAT",cocos2d::backend::SamplerAddressMode::REPEAT}
+,{"MIRROR_REPEAT",cocos2d::backend::SamplerAddressMode::MIRROR_REPEAT}
+,{"CLAMP_TO_EDGE",cocos2d::backend::SamplerAddressMode::CLAMP_TO_EDGE}
+,{"DONT_CARE",cocos2d::backend::SamplerAddressMode::DONT_CARE}
+});}
+void RegisterLuaBackendSamplerFilterAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("SamplerFilter"
-,"NEAREST",0
-,"NEAREST_MIPMAP_NEAREST",1
-,"NEAREST_MIPMAP_LINEAR",2
-,"LINEAR",3
-,"LINEAR_MIPMAP_LINEAR",4
-,"LINEAR_MIPMAP_NEAREST",5
-,"DONT_CARE",6
-);}
-void RegisterLuaBackendStencilOperationAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::SamplerFilter>("SamplerFilter",{
+{"NEAREST",cocos2d::backend::SamplerFilter::NEAREST}
+,{"NEAREST_MIPMAP_NEAREST",cocos2d::backend::SamplerFilter::NEAREST_MIPMAP_NEAREST}
+,{"NEAREST_MIPMAP_LINEAR",cocos2d::backend::SamplerFilter::NEAREST_MIPMAP_LINEAR}
+,{"LINEAR",cocos2d::backend::SamplerFilter::LINEAR}
+,{"LINEAR_MIPMAP_LINEAR",cocos2d::backend::SamplerFilter::LINEAR_MIPMAP_LINEAR}
+,{"LINEAR_MIPMAP_NEAREST",cocos2d::backend::SamplerFilter::LINEAR_MIPMAP_NEAREST}
+,{"DONT_CARE",cocos2d::backend::SamplerFilter::DONT_CARE}
+});}
+void RegisterLuaBackendStencilOperationAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("StencilOperation"
-,"KEEP",0
-,"ZERO",1
-,"REPLACE",2
-,"INVERT",3
-,"INCREMENT_WRAP",4
-,"DECREMENT_WRAP",5
-);}
-void RegisterLuaBackendCompareFunctionAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::StencilOperation>("StencilOperation",{
+{"KEEP",cocos2d::backend::StencilOperation::KEEP}
+,{"ZERO",cocos2d::backend::StencilOperation::ZERO}
+,{"REPLACE",cocos2d::backend::StencilOperation::REPLACE}
+,{"INVERT",cocos2d::backend::StencilOperation::INVERT}
+,{"INCREMENT_WRAP",cocos2d::backend::StencilOperation::INCREMENT_WRAP}
+,{"DECREMENT_WRAP",cocos2d::backend::StencilOperation::DECREMENT_WRAP}
+});}
+void RegisterLuaBackendCompareFunctionAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("CompareFunction"
-,"NEVER",0
-,"LESS",1
-,"LESS_EQUAL",2
-,"GREATER",3
-,"GREATER_EQUAL",4
-,"EQUAL",5
-,"NOT_EQUAL",6
-,"ALWAYS",7
-);}
-void RegisterLuaBackendBlendOperationAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::CompareFunction>("CompareFunction",{
+{"NEVER",cocos2d::backend::CompareFunction::NEVER}
+,{"LESS",cocos2d::backend::CompareFunction::LESS}
+,{"LESS_EQUAL",cocos2d::backend::CompareFunction::LESS_EQUAL}
+,{"GREATER",cocos2d::backend::CompareFunction::GREATER}
+,{"GREATER_EQUAL",cocos2d::backend::CompareFunction::GREATER_EQUAL}
+,{"EQUAL",cocos2d::backend::CompareFunction::EQUAL}
+,{"NOT_EQUAL",cocos2d::backend::CompareFunction::NOT_EQUAL}
+,{"ALWAYS",cocos2d::backend::CompareFunction::ALWAYS}
+});}
+void RegisterLuaBackendBlendOperationAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("BlendOperation"
-,"ADD",0
-,"SUBTRACT",1
-,"RESERVE_SUBTRACT",2
-);}
-void RegisterLuaBackendBlendFactorAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::BlendOperation>("BlendOperation",{
+{"ADD",cocos2d::backend::BlendOperation::ADD}
+,{"SUBTRACT",cocos2d::backend::BlendOperation::SUBTRACT}
+,{"RESERVE_SUBTRACT",cocos2d::backend::BlendOperation::RESERVE_SUBTRACT}
+});}
+void RegisterLuaBackendBlendFactorAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("BlendFactor"
-,"ZERO",0
-,"ONE",1
-,"SRC_COLOR",2
-,"ONE_MINUS_SRC_COLOR",3
-,"SRC_ALPHA",4
-,"ONE_MINUS_SRC_ALPHA",5
-,"DST_COLOR",6
-,"ONE_MINUS_DST_COLOR",7
-,"DST_ALPHA",8
-,"ONE_MINUS_DST_ALPHA",9
-,"CONSTANT_ALPHA",10
-,"SRC_ALPHA_SATURATE",11
-,"ONE_MINUS_CONSTANT_ALPHA",12
-,"BLEND_CLOLOR",13
-);}
-void RegisterLuaBackendColorWriteMaskAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::BlendFactor>("BlendFactor",{
+{"ZERO",cocos2d::backend::BlendFactor::ZERO}
+,{"ONE",cocos2d::backend::BlendFactor::ONE}
+,{"SRC_COLOR",cocos2d::backend::BlendFactor::SRC_COLOR}
+,{"ONE_MINUS_SRC_COLOR",cocos2d::backend::BlendFactor::ONE_MINUS_SRC_COLOR}
+,{"SRC_ALPHA",cocos2d::backend::BlendFactor::SRC_ALPHA}
+,{"ONE_MINUS_SRC_ALPHA",cocos2d::backend::BlendFactor::ONE_MINUS_SRC_ALPHA}
+,{"DST_COLOR",cocos2d::backend::BlendFactor::DST_COLOR}
+,{"ONE_MINUS_DST_COLOR",cocos2d::backend::BlendFactor::ONE_MINUS_DST_COLOR}
+,{"DST_ALPHA",cocos2d::backend::BlendFactor::DST_ALPHA}
+,{"ONE_MINUS_DST_ALPHA",cocos2d::backend::BlendFactor::ONE_MINUS_DST_ALPHA}
+,{"CONSTANT_ALPHA",cocos2d::backend::BlendFactor::CONSTANT_ALPHA}
+,{"SRC_ALPHA_SATURATE",cocos2d::backend::BlendFactor::SRC_ALPHA_SATURATE}
+,{"ONE_MINUS_CONSTANT_ALPHA",cocos2d::backend::BlendFactor::ONE_MINUS_CONSTANT_ALPHA}
+,{"BLEND_CLOLOR",cocos2d::backend::BlendFactor::BLEND_CLOLOR}
+});}
+void RegisterLuaBackendColorWriteMaskAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("ColorWriteMask"
-,"RED_BIT",0
-,"GREEN_BIT",1
-,"BLUE_BIT",2
-,"ALPHA_BIT",3
-,"NONE",0
-,"RED",1
-,"GREEN",2
-,"BLUE",4
-,"ALPHA",8
-,"ALL",15
-);}
-void RegisterLuaBackendCullModeAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::ColorWriteMask>("ColorWriteMask",{
+{"RED_BIT",cocos2d::backend::ColorWriteMask::RED_BIT}
+,{"GREEN_BIT",cocos2d::backend::ColorWriteMask::GREEN_BIT}
+,{"BLUE_BIT",cocos2d::backend::ColorWriteMask::BLUE_BIT}
+,{"ALPHA_BIT",cocos2d::backend::ColorWriteMask::ALPHA_BIT}
+,{"NONE",cocos2d::backend::ColorWriteMask::NONE}
+,{"RED",cocos2d::backend::ColorWriteMask::RED}
+,{"GREEN",cocos2d::backend::ColorWriteMask::GREEN}
+,{"BLUE",cocos2d::backend::ColorWriteMask::BLUE}
+,{"ALPHA",cocos2d::backend::ColorWriteMask::ALPHA}
+,{"ALL",cocos2d::backend::ColorWriteMask::ALL}
+});}
+void RegisterLuaBackendCullModeAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("CullMode"
-,"NONE",0
-,"BACK",1
-,"FRONT",2
-);}
-void RegisterLuaBackendWindingAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::CullMode>("CullMode",{
+{"NONE",cocos2d::backend::CullMode::NONE}
+,{"BACK",cocos2d::backend::CullMode::BACK}
+,{"FRONT",cocos2d::backend::CullMode::FRONT}
+});}
+void RegisterLuaBackendWindingAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("Winding"
-,"CLOCK_WISE",0
-,"COUNTER_CLOCK_WISE",1
-);}
-void RegisterLuaBackendTextureCubeFaceAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::Winding>("Winding",{
+{"CLOCK_WISE",cocos2d::backend::Winding::CLOCK_WISE}
+,{"COUNTER_CLOCK_WISE",cocos2d::backend::Winding::COUNTER_CLOCK_WISE}
+});}
+void RegisterLuaBackendTextureCubeFaceAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("TextureCubeFace"
-,"POSITIVE_X",0
-,"NEGATIVE_X",1
-,"POSITIVE_Y",2
-,"NEGATIVE_Y",3
-,"POSITIVE_Z",4
-,"NEGATIVE_Z",5
-);}
+pTable.new_enum<cocos2d::backend::TextureCubeFace>("TextureCubeFace",{
+{"POSITIVE_X",cocos2d::backend::TextureCubeFace::POSITIVE_X}
+,{"NEGATIVE_X",cocos2d::backend::TextureCubeFace::NEGATIVE_X}
+,{"POSITIVE_Y",cocos2d::backend::TextureCubeFace::POSITIVE_Y}
+,{"NEGATIVE_Y",cocos2d::backend::TextureCubeFace::NEGATIVE_Y}
+,{"POSITIVE_Z",cocos2d::backend::TextureCubeFace::POSITIVE_Z}
+,{"NEGATIVE_Z",cocos2d::backend::TextureCubeFace::NEGATIVE_Z}
+});}

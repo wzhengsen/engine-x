@@ -4,12 +4,14 @@
 #include "Particle3D/PU/CCPUAffector.h"
 #include "Particle3D/PU/CCPUObserver.h"
 #include "Particle3D/CCParticle3DAffector.h"
-extern void RegisterLuaExtensionEventAssetsManagerExAuto(cocos2d::Lua&);
-extern void RegisterLuaExtensionManifestAuto(cocos2d::Lua&);
-extern void RegisterLuaExtensionAssetsManagerExAuto(cocos2d::Lua&);
-extern void RegisterLuaExtensionEventListenerAssetsManagerExAuto(cocos2d::Lua&);
-void RegisterLuaExtensionAuto(cocos2d::Lua& lua){
+extern void RegisterLuaExtensionLuaObjectAuto(cocos2d::extension::Lua&);
+extern void RegisterLuaExtensionEventAssetsManagerExAuto(cocos2d::extension::Lua&);
+extern void RegisterLuaExtensionManifestAuto(cocos2d::extension::Lua&);
+extern void RegisterLuaExtensionAssetsManagerExAuto(cocos2d::extension::Lua&);
+extern void RegisterLuaExtensionEventListenerAssetsManagerExAuto(cocos2d::extension::Lua&);
+void RegisterLuaExtensionAuto(cocos2d::extension::Lua& lua){
 lua["cc"]=lua.get_or("cc",lua.create_table());
+RegisterLuaExtensionLuaObjectAuto(lua);
 RegisterLuaExtensionEventAssetsManagerExAuto(lua);
 RegisterLuaExtensionManifestAuto(lua);
 RegisterLuaExtensionAssetsManagerExAuto(lua);

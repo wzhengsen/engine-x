@@ -8,106 +8,86 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-void RegisterLuaCoreShowAuto(cocos2d::Lua& lua){
-sol::table ns = lua["cc"];
-auto mt=lua.NewUserType<cocos2d::Show,cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("Show",false);
-ns["Show"] = mt;
-lua["Show"] = sol::nil;
-mt.set_function("update",static_cast<void(cocos2d::Show::*)(float)>(&cocos2d::Show::update));
-mt.set_function("reverse",static_cast<cocos2d::ActionInstant*(cocos2d::Show::*)()const>(&cocos2d::Show::reverse));
-mt.set_function("clone",static_cast<cocos2d::Show*(cocos2d::Show::*)()const>(&cocos2d::Show::clone));
+void RegisterLuaCoreEaseElasticInAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::EaseElasticIn>("cc","EaseElasticIn",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::EaseElastic,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function(sol::meta_function::construct,sol::overload([](cocos2d::EaseElasticIn* obj,cocos2d::ActionInterval* arg0){return obj->create(arg0);},[](cocos2d::EaseElasticIn* obj,cocos2d::ActionInterval* arg0,float arg1){return obj->create(arg0,arg1);}));
+mt.set_function("Clone",static_cast<cocos2d::EaseElasticIn*(cocos2d::EaseElasticIn::*)()const>(&cocos2d::EaseElasticIn::clone));
+mt.set_function("Update",static_cast<void(cocos2d::EaseElasticIn::*)(float)>(&cocos2d::EaseElasticIn::update));
+mt.set_function("Reverse",static_cast<cocos2d::EaseElastic*(cocos2d::EaseElasticIn::*)()const>(&cocos2d::EaseElasticIn::reverse));
+}
+void RegisterLuaCoreEaseElasticOutAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::EaseElasticOut>("cc","EaseElasticOut",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::EaseElastic,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function(sol::meta_function::construct,sol::overload([](cocos2d::EaseElasticOut* obj,cocos2d::ActionInterval* arg0){return obj->create(arg0);},[](cocos2d::EaseElasticOut* obj,cocos2d::ActionInterval* arg0,float arg1){return obj->create(arg0,arg1);}));
+mt.set_function("Clone",static_cast<cocos2d::EaseElasticOut*(cocos2d::EaseElasticOut::*)()const>(&cocos2d::EaseElasticOut::clone));
+mt.set_function("Update",static_cast<void(cocos2d::EaseElasticOut::*)(float)>(&cocos2d::EaseElasticOut::update));
+mt.set_function("Reverse",static_cast<cocos2d::EaseElastic*(cocos2d::EaseElasticOut::*)()const>(&cocos2d::EaseElasticOut::reverse));
+}
+void RegisterLuaCoreEaseElasticInOutAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::EaseElasticInOut>("cc","EaseElasticInOut",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::EaseElastic,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function(sol::meta_function::construct,sol::overload([](cocos2d::EaseElasticInOut* obj,cocos2d::ActionInterval* arg0){return obj->create(arg0);},[](cocos2d::EaseElasticInOut* obj,cocos2d::ActionInterval* arg0,float arg1){return obj->create(arg0,arg1);}));
+mt.set_function("Clone",static_cast<cocos2d::EaseElasticInOut*(cocos2d::EaseElasticInOut::*)()const>(&cocos2d::EaseElasticInOut::clone));
+mt.set_function("Update",static_cast<void(cocos2d::EaseElasticInOut::*)(float)>(&cocos2d::EaseElasticInOut::update));
+mt.set_function("Reverse",static_cast<cocos2d::EaseElastic*(cocos2d::EaseElasticInOut::*)()const>(&cocos2d::EaseElasticInOut::reverse));
+}
+void RegisterLuaCoreEaseBezierActionAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::EaseBezierAction>("cc","EaseBezierAction",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EaseBezierAction*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseBezierAction::create));
+mt.set_function("Update",static_cast<void(cocos2d::EaseBezierAction::*)(float)>(&cocos2d::EaseBezierAction::update));
+mt.set_function("Clone",static_cast<cocos2d::EaseBezierAction*(cocos2d::EaseBezierAction::*)()const>(&cocos2d::EaseBezierAction::clone));
+mt.set_function("Reverse",static_cast<cocos2d::EaseBezierAction*(cocos2d::EaseBezierAction::*)()const>(&cocos2d::EaseBezierAction::reverse));
+mt.set_function("SetBezierParamer",static_cast<void(cocos2d::EaseBezierAction::*)(float,float,float,float)>(&cocos2d::EaseBezierAction::setBezierParamer));
+}
+void RegisterLuaCoreActionInstantAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::ActionInstant>("cc","ActionInstant",true);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function("Clone",static_cast<cocos2d::ActionInstant*(cocos2d::ActionInstant::*)()const>(&cocos2d::ActionInstant::clone));
+mt.set_function("Reverse",static_cast<cocos2d::ActionInstant*(cocos2d::ActionInstant::*)()const>(&cocos2d::ActionInstant::reverse));
+mt.set_function("StartWithTarget",static_cast<void(cocos2d::ActionInstant::*)(cocos2d::Node*)>(&cocos2d::ActionInstant::startWithTarget));
+mt.set_function("IsDone",static_cast<bool(cocos2d::ActionInstant::*)()const>(&cocos2d::ActionInstant::isDone));
+mt.set_function("Step",static_cast<void(cocos2d::ActionInstant::*)(float)>(&cocos2d::ActionInstant::step));
+mt.set_function("Update",static_cast<void(cocos2d::ActionInstant::*)(float)>(&cocos2d::ActionInstant::update));
+}
+void RegisterLuaCoreShowAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::Show>("cc","Show",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
 mt.set_function(sol::meta_function::construct,static_cast<cocos2d::Show*(*)()>(&cocos2d::Show::create));
+mt.set_function("Update",static_cast<void(cocos2d::Show::*)(float)>(&cocos2d::Show::update));
+mt.set_function("Reverse",static_cast<cocos2d::ActionInstant*(cocos2d::Show::*)()const>(&cocos2d::Show::reverse));
+mt.set_function("Clone",static_cast<cocos2d::Show*(cocos2d::Show::*)()const>(&cocos2d::Show::clone));
 }
-void RegisterLuaCoreHideAuto(cocos2d::Lua& lua){
-sol::table ns = lua["cc"];
-auto mt=lua.NewUserType<cocos2d::Hide,cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("Hide",false);
-ns["Hide"] = mt;
-lua["Hide"] = sol::nil;
-mt.set_function("update",static_cast<void(cocos2d::Hide::*)(float)>(&cocos2d::Hide::update));
-mt.set_function("reverse",static_cast<cocos2d::ActionInstant*(cocos2d::Hide::*)()const>(&cocos2d::Hide::reverse));
-mt.set_function("clone",static_cast<cocos2d::Hide*(cocos2d::Hide::*)()const>(&cocos2d::Hide::clone));
+void RegisterLuaCoreHideAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::Hide>("cc","Hide",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
 mt.set_function(sol::meta_function::construct,static_cast<cocos2d::Hide*(*)()>(&cocos2d::Hide::create));
+mt.set_function("Update",static_cast<void(cocos2d::Hide::*)(float)>(&cocos2d::Hide::update));
+mt.set_function("Reverse",static_cast<cocos2d::ActionInstant*(cocos2d::Hide::*)()const>(&cocos2d::Hide::reverse));
+mt.set_function("Clone",static_cast<cocos2d::Hide*(cocos2d::Hide::*)()const>(&cocos2d::Hide::clone));
 }
-void RegisterLuaCoreToggleVisibilityAuto(cocos2d::Lua& lua){
-sol::table ns = lua["cc"];
-auto mt=lua.NewUserType<cocos2d::ToggleVisibility,cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("ToggleVisibility",false);
-ns["ToggleVisibility"] = mt;
-lua["ToggleVisibility"] = sol::nil;
-mt.set_function("update",static_cast<void(cocos2d::ToggleVisibility::*)(float)>(&cocos2d::ToggleVisibility::update));
-mt.set_function("reverse",static_cast<cocos2d::ToggleVisibility*(cocos2d::ToggleVisibility::*)()const>(&cocos2d::ToggleVisibility::reverse));
-mt.set_function("clone",static_cast<cocos2d::ToggleVisibility*(cocos2d::ToggleVisibility::*)()const>(&cocos2d::ToggleVisibility::clone));
+void RegisterLuaCoreToggleVisibilityAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::ToggleVisibility>("cc","ToggleVisibility",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
 mt.set_function(sol::meta_function::construct,static_cast<cocos2d::ToggleVisibility*(*)()>(&cocos2d::ToggleVisibility::create));
+mt.set_function("Update",static_cast<void(cocos2d::ToggleVisibility::*)(float)>(&cocos2d::ToggleVisibility::update));
+mt.set_function("Reverse",static_cast<cocos2d::ToggleVisibility*(cocos2d::ToggleVisibility::*)()const>(&cocos2d::ToggleVisibility::reverse));
+mt.set_function("Clone",static_cast<cocos2d::ToggleVisibility*(cocos2d::ToggleVisibility::*)()const>(&cocos2d::ToggleVisibility::clone));
 }
-void RegisterLuaCoreRemoveSelfAuto(cocos2d::Lua& lua){
-sol::table ns = lua["cc"];
-auto mt=lua.NewUserType<cocos2d::RemoveSelf,cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("RemoveSelf",false);
-ns["RemoveSelf"] = mt;
-lua["RemoveSelf"] = sol::nil;
-mt.set_function("update",static_cast<void(cocos2d::RemoveSelf::*)(float)>(&cocos2d::RemoveSelf::update));
-mt.set_function("clone",static_cast<cocos2d::RemoveSelf*(cocos2d::RemoveSelf::*)()const>(&cocos2d::RemoveSelf::clone));
-mt.set_function("reverse",static_cast<cocos2d::RemoveSelf*(cocos2d::RemoveSelf::*)()const>(&cocos2d::RemoveSelf::reverse));
+void RegisterLuaCoreRemoveSelfAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::RemoveSelf>("cc","RemoveSelf",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
 mt.set_function(sol::meta_function::construct,sol::overload([](cocos2d::RemoveSelf* obj){return obj->create();},[](cocos2d::RemoveSelf* obj,bool arg0){return obj->create(arg0);}));
+mt.set_function("Update",static_cast<void(cocos2d::RemoveSelf::*)(float)>(&cocos2d::RemoveSelf::update));
+mt.set_function("Clone",static_cast<cocos2d::RemoveSelf*(cocos2d::RemoveSelf::*)()const>(&cocos2d::RemoveSelf::clone));
+mt.set_function("Reverse",static_cast<cocos2d::RemoveSelf*(cocos2d::RemoveSelf::*)()const>(&cocos2d::RemoveSelf::reverse));
 }
-void RegisterLuaCoreFlipXAuto(cocos2d::Lua& lua){
-sol::table ns = lua["cc"];
-auto mt=lua.NewUserType<cocos2d::FlipX,cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("FlipX",false);
-ns["FlipX"] = mt;
-lua["FlipX"] = sol::nil;
-mt.set_function("update",static_cast<void(cocos2d::FlipX::*)(float)>(&cocos2d::FlipX::update));
-mt.set_function("reverse",static_cast<cocos2d::FlipX*(cocos2d::FlipX::*)()const>(&cocos2d::FlipX::reverse));
-mt.set_function("clone",static_cast<cocos2d::FlipX*(cocos2d::FlipX::*)()const>(&cocos2d::FlipX::clone));
+void RegisterLuaCoreFlipXAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::FlipX>("cc","FlipX",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
 mt.set_function(sol::meta_function::construct,static_cast<cocos2d::FlipX*(*)(bool)>(&cocos2d::FlipX::create));
-}
-void RegisterLuaCoreFlipYAuto(cocos2d::Lua& lua){
-sol::table ns = lua["cc"];
-auto mt=lua.NewUserType<cocos2d::FlipY,cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("FlipY",false);
-ns["FlipY"] = mt;
-lua["FlipY"] = sol::nil;
-mt.set_function("update",static_cast<void(cocos2d::FlipY::*)(float)>(&cocos2d::FlipY::update));
-mt.set_function("reverse",static_cast<cocos2d::FlipY*(cocos2d::FlipY::*)()const>(&cocos2d::FlipY::reverse));
-mt.set_function("clone",static_cast<cocos2d::FlipY*(cocos2d::FlipY::*)()const>(&cocos2d::FlipY::clone));
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::FlipY*(*)(bool)>(&cocos2d::FlipY::create));
-}
-void RegisterLuaCorePlaceAuto(cocos2d::Lua& lua){
-sol::table ns = lua["cc"];
-auto mt=lua.NewUserType<cocos2d::Place,cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("Place",false);
-ns["Place"] = mt;
-lua["Place"] = sol::nil;
-mt.set_function("update",static_cast<void(cocos2d::Place::*)(float)>(&cocos2d::Place::update));
-mt.set_function("reverse",static_cast<cocos2d::Place*(cocos2d::Place::*)()const>(&cocos2d::Place::reverse));
-mt.set_function("clone",static_cast<cocos2d::Place*(cocos2d::Place::*)()const>(&cocos2d::Place::clone));
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::Place*(*)(const cocos2d::Vec2&)>(&cocos2d::Place::create));
-}
-void RegisterLuaCoreCallFuncAuto(cocos2d::Lua& lua){
-sol::table ns = lua["cc"];
-auto mt=lua.NewUserType<cocos2d::CallFunc,cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("CallFunc",false);
-ns["CallFunc"] = mt;
-lua["CallFunc"] = sol::nil;
-mt.set_function("execute",static_cast<void(cocos2d::CallFunc::*)()>(&cocos2d::CallFunc::execute));
-mt.set_function("update",static_cast<void(cocos2d::CallFunc::*)(float)>(&cocos2d::CallFunc::update));
-mt.set_function("reverse",static_cast<cocos2d::CallFunc*(cocos2d::CallFunc::*)()const>(&cocos2d::CallFunc::reverse));
-mt.set_function("clone",static_cast<cocos2d::CallFunc*(cocos2d::CallFunc::*)()const>(&cocos2d::CallFunc::clone));
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::CallFunc*(*)(const std::function<void ()>&)>(&cocos2d::CallFunc::create));
-}
-void RegisterLuaCoreGridActionAuto(cocos2d::Lua& lua){
-sol::table ns = lua["cc"];
-auto mt=lua.NewUserType<cocos2d::GridAction,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("GridAction",true);
-ns["GridAction"] = mt;
-lua["GridAction"] = sol::nil;
-mt.set_function("getGrid",static_cast<cocos2d::GridBase*(cocos2d::GridAction::*)()>(&cocos2d::GridAction::getGrid));
-mt.set_function("clone",static_cast<cocos2d::GridAction*(cocos2d::GridAction::*)()const>(&cocos2d::GridAction::clone));
-mt.set_function("reverse",static_cast<cocos2d::GridAction*(cocos2d::GridAction::*)()const>(&cocos2d::GridAction::reverse));
-mt.set_function("startWithTarget",static_cast<void(cocos2d::GridAction::*)(cocos2d::Node*)>(&cocos2d::GridAction::startWithTarget));
-}
-void RegisterLuaCoreGrid3DActionAuto(cocos2d::Lua& lua){
-sol::table ns = lua["cc"];
-auto mt=lua.NewUserType<cocos2d::Grid3DAction,cocos2d::GridAction,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::LuaObject>("Grid3DAction",true);
-ns["Grid3DAction"] = mt;
-lua["Grid3DAction"] = sol::nil;
-mt.set_function("getGrid",static_cast<cocos2d::GridBase*(cocos2d::Grid3DAction::*)()>(&cocos2d::Grid3DAction::getGrid));
-mt.set_function("getVertex",static_cast<cocos2d::Vec3(cocos2d::Grid3DAction::*)(const cocos2d::Vec2&)const>(&cocos2d::Grid3DAction::getVertex));
-mt.set_function("getOriginalVertex",static_cast<cocos2d::Vec3(cocos2d::Grid3DAction::*)(const cocos2d::Vec2&)const>(&cocos2d::Grid3DAction::getOriginalVertex));
-mt.set_function("setVertex",static_cast<void(cocos2d::Grid3DAction::*)(const cocos2d::Vec2&,const cocos2d::Vec3&)>(&cocos2d::Grid3DAction::setVertex));
-mt.set_function("clone",static_cast<cocos2d::Grid3DAction*(cocos2d::Grid3DAction::*)()const>(&cocos2d::Grid3DAction::clone));
-mt.set_function("getGridRect",static_cast<cocos2d::Rect(cocos2d::Grid3DAction::*)()const>(&cocos2d::Grid3DAction::getGridRect));
+mt.set_function("Update",static_cast<void(cocos2d::FlipX::*)(float)>(&cocos2d::FlipX::update));
+mt.set_function("Reverse",static_cast<cocos2d::FlipX*(cocos2d::FlipX::*)()const>(&cocos2d::FlipX::reverse));
+mt.set_function("Clone",static_cast<cocos2d::FlipX*(cocos2d::FlipX::*)()const>(&cocos2d::FlipX::clone));
 }

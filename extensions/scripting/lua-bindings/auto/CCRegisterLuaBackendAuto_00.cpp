@@ -8,107 +8,107 @@
 #include "renderer/backend/CommandBuffer.h"
 #include "renderer/backend/Buffer.h"
 #include "renderer/backend/RenderPipeline.h"
-void RegisterLuaBackendBufferUsageAuto(cocos2d::Lua& lua) {
+void RegisterLuaBackendBufferUsageAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("BufferUsage"
-,"STATIC",0
-,"DYNAMIC",1
-);}
-void RegisterLuaBackendBufferTypeAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::BufferUsage>("BufferUsage",{
+{"STATIC",cocos2d::backend::BufferUsage::STATIC}
+,{"DYNAMIC",cocos2d::backend::BufferUsage::DYNAMIC}
+});}
+void RegisterLuaBackendBufferTypeAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("BufferType"
-,"VERTEX",0
-,"INDEX",1
-);}
-void RegisterLuaBackendShaderStageAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::BufferType>("BufferType",{
+{"VERTEX",cocos2d::backend::BufferType::VERTEX}
+,{"INDEX",cocos2d::backend::BufferType::INDEX}
+});}
+void RegisterLuaBackendShaderStageAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("ShaderStage"
-,"VERTEX",0
-,"FRAGMENT",1
-,"VERTEX_AND_FRAGMENT",2
-);}
-void RegisterLuaBackendVertexFormatAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::ShaderStage>("ShaderStage",{
+{"VERTEX",cocos2d::backend::ShaderStage::VERTEX}
+,{"FRAGMENT",cocos2d::backend::ShaderStage::FRAGMENT}
+,{"VERTEX_AND_FRAGMENT",cocos2d::backend::ShaderStage::VERTEX_AND_FRAGMENT}
+});}
+void RegisterLuaBackendVertexFormatAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("VertexFormat"
-,"FLOAT4",0
-,"FLOAT3",1
-,"FLOAT2",2
-,"FLOAT",3
-,"INT4",4
-,"INT3",5
-,"INT2",6
-,"INT",7
-,"USHORT4",8
-,"USHORT2",9
-,"UBYTE4",10
-);}
-void RegisterLuaBackendPixelFormatAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::VertexFormat>("VertexFormat",{
+{"FLOAT4",cocos2d::backend::VertexFormat::FLOAT4}
+,{"FLOAT3",cocos2d::backend::VertexFormat::FLOAT3}
+,{"FLOAT2",cocos2d::backend::VertexFormat::FLOAT2}
+,{"FLOAT",cocos2d::backend::VertexFormat::FLOAT}
+,{"INT4",cocos2d::backend::VertexFormat::INT4}
+,{"INT3",cocos2d::backend::VertexFormat::INT3}
+,{"INT2",cocos2d::backend::VertexFormat::INT2}
+,{"INT",cocos2d::backend::VertexFormat::INT}
+,{"USHORT4",cocos2d::backend::VertexFormat::USHORT4}
+,{"USHORT2",cocos2d::backend::VertexFormat::USHORT2}
+,{"UBYTE4",cocos2d::backend::VertexFormat::UBYTE4}
+});}
+void RegisterLuaBackendPixelFormatAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("PixelFormat"
-,"PVRTC4",0
-,"PVRTC4A",1
-,"PVRTC2",2
-,"PVRTC2A",3
-,"ETC1",4
-,"ETC2_RGB",5
-,"ETC2_RGBA",6
-,"S3TC_DXT1",7
-,"S3TC_DXT3",8
-,"S3TC_DXT5",9
-,"ATC_RGB",10
-,"ATC_EXPLICIT_ALPHA",11
-,"ATC_INTERPOLATED_ALPHA",12
-,"ASTC4x4",13
-,"ASTC5x5",14
-,"ASTC6x6",15
-,"ASTC8x5",16
-,"ASTC8x6",17
-,"ASTC8x8",18
-,"ASTC10x5",19
-,"RGBA8",20
-,"BGRA8",21
-,"RGB8",22
-,"RGB565",23
-,"RGBA4",24
-,"RGB5A1",25
-,"A8",26
-,"L8",27
-,"LA8",28
-,"D24S8",29
-,"COUNT",30
-,"NONE",65535
-);}
-void RegisterLuaBackendTextureUsageAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::PixelFormat>("PixelFormat",{
+{"PVRTC4",cocos2d::backend::PixelFormat::PVRTC4}
+,{"PVRTC4A",cocos2d::backend::PixelFormat::PVRTC4A}
+,{"PVRTC2",cocos2d::backend::PixelFormat::PVRTC2}
+,{"PVRTC2A",cocos2d::backend::PixelFormat::PVRTC2A}
+,{"ETC1",cocos2d::backend::PixelFormat::ETC1}
+,{"ETC2_RGB",cocos2d::backend::PixelFormat::ETC2_RGB}
+,{"ETC2_RGBA",cocos2d::backend::PixelFormat::ETC2_RGBA}
+,{"S3TC_DXT1",cocos2d::backend::PixelFormat::S3TC_DXT1}
+,{"S3TC_DXT3",cocos2d::backend::PixelFormat::S3TC_DXT3}
+,{"S3TC_DXT5",cocos2d::backend::PixelFormat::S3TC_DXT5}
+,{"ATC_RGB",cocos2d::backend::PixelFormat::ATC_RGB}
+,{"ATC_EXPLICIT_ALPHA",cocos2d::backend::PixelFormat::ATC_EXPLICIT_ALPHA}
+,{"ATC_INTERPOLATED_ALPHA",cocos2d::backend::PixelFormat::ATC_INTERPOLATED_ALPHA}
+,{"ASTC4X4",cocos2d::backend::PixelFormat::ASTC4x4}
+,{"ASTC5X5",cocos2d::backend::PixelFormat::ASTC5x5}
+,{"ASTC6X6",cocos2d::backend::PixelFormat::ASTC6x6}
+,{"ASTC8X5",cocos2d::backend::PixelFormat::ASTC8x5}
+,{"ASTC8X6",cocos2d::backend::PixelFormat::ASTC8x6}
+,{"ASTC8X8",cocos2d::backend::PixelFormat::ASTC8x8}
+,{"ASTC10X5",cocos2d::backend::PixelFormat::ASTC10x5}
+,{"RGBA8",cocos2d::backend::PixelFormat::RGBA8}
+,{"BGRA8",cocos2d::backend::PixelFormat::BGRA8}
+,{"RGB8",cocos2d::backend::PixelFormat::RGB8}
+,{"RGB565",cocos2d::backend::PixelFormat::RGB565}
+,{"RGBA4",cocos2d::backend::PixelFormat::RGBA4}
+,{"RGB5A1",cocos2d::backend::PixelFormat::RGB5A1}
+,{"A8",cocos2d::backend::PixelFormat::A8}
+,{"L8",cocos2d::backend::PixelFormat::L8}
+,{"LA8",cocos2d::backend::PixelFormat::LA8}
+,{"D24S8",cocos2d::backend::PixelFormat::D24S8}
+,{"COUNT",cocos2d::backend::PixelFormat::COUNT}
+,{"NONE",cocos2d::backend::PixelFormat::NONE}
+});}
+void RegisterLuaBackendTextureUsageAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("TextureUsage"
-,"READ",0
-,"WRITE",1
-,"RENDER_TARGET",2
-);}
-void RegisterLuaBackendIndexFormatAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::TextureUsage>("TextureUsage",{
+{"READ",cocos2d::backend::TextureUsage::READ}
+,{"WRITE",cocos2d::backend::TextureUsage::WRITE}
+,{"RENDER_TARGET",cocos2d::backend::TextureUsage::RENDER_TARGET}
+});}
+void RegisterLuaBackendIndexFormatAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("IndexFormat"
-,"U_SHORT",0
-,"U_INT",1
-);}
-void RegisterLuaBackendVertexStepModeAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::IndexFormat>("IndexFormat",{
+{"U_SHORT",cocos2d::backend::IndexFormat::U_SHORT}
+,{"U_INT",cocos2d::backend::IndexFormat::U_INT}
+});}
+void RegisterLuaBackendVertexStepModeAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("VertexStepMode"
-,"VERTEX",0
-,"INSTANCE",1
-);}
-void RegisterLuaBackendPrimitiveTypeAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::VertexStepMode>("VertexStepMode",{
+{"VERTEX",cocos2d::backend::VertexStepMode::VERTEX}
+,{"INSTANCE",cocos2d::backend::VertexStepMode::INSTANCE}
+});}
+void RegisterLuaBackendPrimitiveTypeAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("PrimitiveType"
-,"POINT",0
-,"LINE",1
-,"LINE_STRIP",2
-,"TRIANGLE",3
-,"TRIANGLE_STRIP",4
-);}
-void RegisterLuaBackendTextureTypeAuto(cocos2d::Lua& lua) {
+pTable.new_enum<cocos2d::backend::PrimitiveType>("PrimitiveType",{
+{"POINT",cocos2d::backend::PrimitiveType::POINT}
+,{"LINE",cocos2d::backend::PrimitiveType::LINE}
+,{"LINE_STRIP",cocos2d::backend::PrimitiveType::LINE_STRIP}
+,{"TRIANGLE",cocos2d::backend::PrimitiveType::TRIANGLE}
+,{"TRIANGLE_STRIP",cocos2d::backend::PrimitiveType::TRIANGLE_STRIP}
+});}
+void RegisterLuaBackendTextureTypeAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccb"];
-pTable.new_enum("TextureType"
-,"TEXTURE_2D",0
-,"TEXTURE_CUBE",1
-);}
+pTable.new_enum<cocos2d::backend::TextureType>("TextureType",{
+{"TEXTURE_2D",cocos2d::backend::TextureType::TEXTURE_2D}
+,{"TEXTURE_CUBE",cocos2d::backend::TextureType::TEXTURE_CUBE}
+});}

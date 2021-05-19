@@ -1,189 +1,180 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaStudioAuto.hpp"
 #include "cocostudio/CocoStudio.h"
 #include "cocostudio/CCComExtensionData.h"
-void RegisterLuaStudioComAudioAuto(cocos2d::Lua& lua){
-sol::table ns = lua["ccs"];
-auto mt=lua.NewUserType<cocostudio::ComAudio,cocos2d::Component,cocos2d::Ref,cocos2d::LuaObject,cocos2d::PlayableProtocol>("ComAudio",false);
-ns["ComAudio"] = mt;
-lua["ComAudio"] = sol::nil;
-mt.set_function("init",static_cast<bool(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::init));
-mt.set_function("onEnter",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::onEnter));
-mt.set_function("onExit",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::onExit));
-mt.set_function("onAdd",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::onAdd));
-mt.set_function("onRemove",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::onRemove));
-mt.set_function("serialize",static_cast<bool(cocostudio::ComAudio::*)(void*)>(&cocostudio::ComAudio::serialize));
-mt.set_function("endToLua",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::end));
-mt.set_function("preloadBackgroundMusic",static_cast<void(cocostudio::ComAudio::*)(const char*)>(&cocostudio::ComAudio::preloadBackgroundMusic));
-mt.set_function("playBackgroundMusic",sol::overload(static_cast<void(cocostudio::ComAudio::*)(const char*)>(&cocostudio::ComAudio::playBackgroundMusic),static_cast<void(cocostudio::ComAudio::*)(const char*,bool)>(&cocostudio::ComAudio::playBackgroundMusic),static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::playBackgroundMusic)));
-mt.set_function("stopBackgroundMusic",sol::overload(static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::stopBackgroundMusic),static_cast<void(cocostudio::ComAudio::*)(bool)>(&cocostudio::ComAudio::stopBackgroundMusic)));
-mt.set_function("pauseBackgroundMusic",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::pauseBackgroundMusic));
-mt.set_function("resumeBackgroundMusic",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::resumeBackgroundMusic));
-mt.set_function("rewindBackgroundMusic",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::rewindBackgroundMusic));
-mt.set_function("willPlayBackgroundMusic",static_cast<bool(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::willPlayBackgroundMusic));
-mt.set_function("isBackgroundMusicPlaying",static_cast<bool(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::isBackgroundMusicPlaying));
-mt.set_function("getBackgroundMusicVolume",static_cast<float(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::getBackgroundMusicVolume));
-mt.set_function("setBackgroundMusicVolume",static_cast<void(cocostudio::ComAudio::*)(float)>(&cocostudio::ComAudio::setBackgroundMusicVolume));
-mt.set_function("getEffectsVolume",static_cast<float(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::getEffectsVolume));
-mt.set_function("setEffectsVolume",static_cast<void(cocostudio::ComAudio::*)(float)>(&cocostudio::ComAudio::setEffectsVolume));
-mt.set_function("playEffect",sol::overload(static_cast<unsigned int(cocostudio::ComAudio::*)(const char*)>(&cocostudio::ComAudio::playEffect),static_cast<unsigned int(cocostudio::ComAudio::*)(const char*,bool)>(&cocostudio::ComAudio::playEffect),static_cast<unsigned int(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::playEffect)));
-mt.set_function("pauseEffect",static_cast<void(cocostudio::ComAudio::*)(unsigned int)>(&cocostudio::ComAudio::pauseEffect));
-mt.set_function("pauseAllEffects",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::pauseAllEffects));
-mt.set_function("resumeEffect",static_cast<void(cocostudio::ComAudio::*)(unsigned int)>(&cocostudio::ComAudio::resumeEffect));
-mt.set_function("resumeAllEffects",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::resumeAllEffects));
-mt.set_function("stopEffect",static_cast<void(cocostudio::ComAudio::*)(unsigned int)>(&cocostudio::ComAudio::stopEffect));
-mt.set_function("stopAllEffects",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::stopAllEffects));
-mt.set_function("preloadEffect",static_cast<void(cocostudio::ComAudio::*)(const char*)>(&cocostudio::ComAudio::preloadEffect));
-mt.set_function("unloadEffect",static_cast<void(cocostudio::ComAudio::*)(const char*)>(&cocostudio::ComAudio::unloadEffect));
-mt.set_function("setFile",static_cast<void(cocostudio::ComAudio::*)(const char*)>(&cocostudio::ComAudio::setFile));
-mt.set_function("getFile",static_cast<const char*(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::getFile));
-mt.set_function("setLoop",static_cast<void(cocostudio::ComAudio::*)(bool)>(&cocostudio::ComAudio::setLoop));
-mt.set_function("isLoop",static_cast<bool(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::isLoop));
-mt.set_function("start",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::start));
-mt.set_function("stop",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::stop));
-mt.set_function("createInstance",static_cast<cocos2d::Ref*(*)()>(&cocostudio::ComAudio::createInstance));
+void RegisterLuaStudioComAttributeAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocostudio::ComAttribute>("ccs","ComAttribute",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Component,cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function("CreateInstance",static_cast<cocos2d::Ref*(*)()>(&cocostudio::ComAttribute::createInstance));
+mt.set_function(sol::meta_function::construct,static_cast<cocostudio::ComAttribute*(*)()>(&cocostudio::ComAttribute::create));
+mt.set_function("Init",static_cast<bool(cocostudio::ComAttribute::*)()>(&cocostudio::ComAttribute::init));
+mt.set_function("Serialize",static_cast<bool(cocostudio::ComAttribute::*)(void*)>(&cocostudio::ComAttribute::serialize));
+mt.set_function("SetInt",static_cast<void(cocostudio::ComAttribute::*)(const std::string&,int)>(&cocostudio::ComAttribute::setInt));
+mt.set_function("SetFloat",static_cast<void(cocostudio::ComAttribute::*)(const std::string&,float)>(&cocostudio::ComAttribute::setFloat));
+mt.set_function("SetBool",static_cast<void(cocostudio::ComAttribute::*)(const std::string&,bool)>(&cocostudio::ComAttribute::setBool));
+mt.set_function("SetString",static_cast<void(cocostudio::ComAttribute::*)(const std::string&,const std::string&)>(&cocostudio::ComAttribute::setString));
+mt.set_function("GetInt",sol::overload([](cocostudio::ComAttribute* obj,const std::string& arg0){return obj->getInt(arg0);},[](cocostudio::ComAttribute* obj,const std::string& arg0,int arg1){return obj->getInt(arg0,arg1);}));
+mt.set_function("GetFloat",sol::overload([](cocostudio::ComAttribute* obj,const std::string& arg0){return obj->getFloat(arg0);},[](cocostudio::ComAttribute* obj,const std::string& arg0,float arg1){return obj->getFloat(arg0,arg1);}));
+mt.set_function("GetBool",sol::overload([](cocostudio::ComAttribute* obj,const std::string& arg0){return obj->getBool(arg0);},[](cocostudio::ComAttribute* obj,const std::string& arg0,bool arg1){return obj->getBool(arg0,arg1);}));
+mt.set_function("GetString",sol::overload([](cocostudio::ComAttribute* obj,const std::string& arg0){return obj->getString(arg0);},[](cocostudio::ComAttribute* obj,const std::string& arg0,const std::string& arg1){return obj->getString(arg0,arg1);}));
+mt.set_function("Parse",static_cast<bool(cocostudio::ComAttribute::*)(const std::string&)>(&cocostudio::ComAttribute::parse));
+mt[sol::call_constructor]=sol::constructors<cocostudio::ComAttribute()>();
+mt["Type"]=sol::var(std::ref(cocostudio::ComAttribute::Type));
+mt["COMPONENT_NAME"]=sol::var(std::ref(cocostudio::ComAttribute::COMPONENT_NAME));
+}
+void RegisterLuaStudioComAudioAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocostudio::ComAudio>("ccs","ComAudio",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Component,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::PlayableProtocol>());
+mt.set_function("CreateInstance",static_cast<cocos2d::Ref*(*)()>(&cocostudio::ComAudio::createInstance));
 mt.set_function(sol::meta_function::construct,static_cast<cocostudio::ComAudio*(*)()>(&cocostudio::ComAudio::create));
+mt.set_function("Init",static_cast<bool(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::init));
+mt.set_function("OnEnter",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::onEnter));
+mt.set_function("OnExit",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::onExit));
+mt.set_function("OnAdd",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::onAdd));
+mt.set_function("OnRemove",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::onRemove));
+mt.set_function("Serialize",static_cast<bool(cocostudio::ComAudio::*)(void*)>(&cocostudio::ComAudio::serialize));
+mt.set_function("End",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::end));
+mt.set_function("PreloadBackgroundMusic",static_cast<void(cocostudio::ComAudio::*)(const char*)>(&cocostudio::ComAudio::preloadBackgroundMusic));
+mt.set_function("PlayBackgroundMusic",sol::overload(static_cast<void(cocostudio::ComAudio::*)(const char*)>(&cocostudio::ComAudio::playBackgroundMusic),static_cast<void(cocostudio::ComAudio::*)(const char*,bool)>(&cocostudio::ComAudio::playBackgroundMusic),static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::playBackgroundMusic)));
+mt.set_function("StopBackgroundMusic",sol::overload(static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::stopBackgroundMusic),static_cast<void(cocostudio::ComAudio::*)(bool)>(&cocostudio::ComAudio::stopBackgroundMusic)));
+mt.set_function("PauseBackgroundMusic",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::pauseBackgroundMusic));
+mt.set_function("ResumeBackgroundMusic",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::resumeBackgroundMusic));
+mt.set_function("RewindBackgroundMusic",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::rewindBackgroundMusic));
+mt.set_function("WillPlayBackgroundMusic",static_cast<bool(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::willPlayBackgroundMusic));
+mt.set_function("IsBackgroundMusicPlaying",static_cast<bool(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::isBackgroundMusicPlaying));
+mt.set_function("GetBackgroundMusicVolume",static_cast<float(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::getBackgroundMusicVolume));
+mt.set_function("SetBackgroundMusicVolume",static_cast<void(cocostudio::ComAudio::*)(float)>(&cocostudio::ComAudio::setBackgroundMusicVolume));
+mt.set_function("GetEffectsVolume",static_cast<float(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::getEffectsVolume));
+mt.set_function("SetEffectsVolume",static_cast<void(cocostudio::ComAudio::*)(float)>(&cocostudio::ComAudio::setEffectsVolume));
+mt.set_function("PlayEffect",sol::overload(static_cast<unsigned int(cocostudio::ComAudio::*)(const char*)>(&cocostudio::ComAudio::playEffect),static_cast<unsigned int(cocostudio::ComAudio::*)(const char*,bool)>(&cocostudio::ComAudio::playEffect),static_cast<unsigned int(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::playEffect)));
+mt.set_function("PauseEffect",static_cast<void(cocostudio::ComAudio::*)(unsigned int)>(&cocostudio::ComAudio::pauseEffect));
+mt.set_function("PauseAllEffects",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::pauseAllEffects));
+mt.set_function("ResumeEffect",static_cast<void(cocostudio::ComAudio::*)(unsigned int)>(&cocostudio::ComAudio::resumeEffect));
+mt.set_function("ResumeAllEffects",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::resumeAllEffects));
+mt.set_function("StopEffect",static_cast<void(cocostudio::ComAudio::*)(unsigned int)>(&cocostudio::ComAudio::stopEffect));
+mt.set_function("StopAllEffects",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::stopAllEffects));
+mt.set_function("PreloadEffect",static_cast<void(cocostudio::ComAudio::*)(const char*)>(&cocostudio::ComAudio::preloadEffect));
+mt.set_function("UnloadEffect",static_cast<void(cocostudio::ComAudio::*)(const char*)>(&cocostudio::ComAudio::unloadEffect));
+mt.set_function("SetFile",static_cast<void(cocostudio::ComAudio::*)(const char*)>(&cocostudio::ComAudio::setFile));
+mt.set_function("GetFile",static_cast<const char*(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::getFile));
+mt.set_function("SetLoop",static_cast<void(cocostudio::ComAudio::*)(bool)>(&cocostudio::ComAudio::setLoop));
+mt.set_function("IsLoop",static_cast<bool(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::isLoop));
+mt.set_function("Start",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::start));
+mt.set_function("Stop",static_cast<void(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::stop));
+mt["Type"]=sol::var(std::ref(cocostudio::ComAudio::Type));
+mt["COMPONENT_NAME"]=sol::var(std::ref(cocostudio::ComAudio::COMPONENT_NAME));
 }
-void RegisterLuaStudioComControllerAuto(cocos2d::Lua& lua){
-sol::table ns = lua["ccs"];
-auto mt=lua.NewUserType<cocostudio::ComController,cocos2d::Component,cocos2d::Ref,cocos2d::LuaObject,cocostudio::InputDelegate>("ComController",false);
-ns["ComController"] = mt;
-lua["ComController"] = sol::nil;
-mt.set_function("init",static_cast<bool(cocostudio::ComController::*)()>(&cocostudio::ComController::init));
-mt.set_function("onEnter",static_cast<void(cocostudio::ComController::*)()>(&cocostudio::ComController::onEnter));
-mt.set_function("onExit",static_cast<void(cocostudio::ComController::*)()>(&cocostudio::ComController::onExit));
-mt.set_function("onAdd",static_cast<void(cocostudio::ComController::*)()>(&cocostudio::ComController::onAdd));
-mt.set_function("onRemove",static_cast<void(cocostudio::ComController::*)()>(&cocostudio::ComController::onRemove));
-mt.set_function("update",static_cast<void(cocostudio::ComController::*)(float)>(&cocostudio::ComController::update));
-mt.set_function("createInstance",static_cast<cocos2d::Ref*(*)()>(&cocostudio::ComController::createInstance));
+void RegisterLuaStudioComControllerAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocostudio::ComController>("ccs","ComController",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Component,cocos2d::Ref,cocos2d::extension::LuaObject,cocostudio::InputDelegate>());
+mt.set_function("CreateInstance",static_cast<cocos2d::Ref*(*)()>(&cocostudio::ComController::createInstance));
 mt.set_function(sol::meta_function::construct,static_cast<cocostudio::ComController*(*)()>(&cocostudio::ComController::create));
+mt.set_function("Init",static_cast<bool(cocostudio::ComController::*)()>(&cocostudio::ComController::init));
+mt.set_function("OnEnter",static_cast<void(cocostudio::ComController::*)()>(&cocostudio::ComController::onEnter));
+mt.set_function("OnExit",static_cast<void(cocostudio::ComController::*)()>(&cocostudio::ComController::onExit));
+mt.set_function("OnAdd",static_cast<void(cocostudio::ComController::*)()>(&cocostudio::ComController::onAdd));
+mt.set_function("OnRemove",static_cast<void(cocostudio::ComController::*)()>(&cocostudio::ComController::onRemove));
+mt.set_function("Update",static_cast<void(cocostudio::ComController::*)(float)>(&cocostudio::ComController::update));
+mt[sol::call_constructor]=sol::constructors<cocostudio::ComController()>();
+mt["Type"]=sol::var(std::ref(cocostudio::ComController::Type));
+mt["COMPONENT_NAME"]=sol::var(std::ref(cocostudio::ComController::COMPONENT_NAME));
 }
-void RegisterLuaStudioComRenderAuto(cocos2d::Lua& lua){
-sol::table ns = lua["ccs"];
-auto mt=lua.NewUserType<cocostudio::ComRender,cocos2d::Component,cocos2d::Ref,cocos2d::LuaObject>("ComRender",false);
-ns["ComRender"] = mt;
-lua["ComRender"] = sol::nil;
-mt.set_function("onEnter",static_cast<void(cocostudio::ComRender::*)()>(&cocostudio::ComRender::onEnter));
-mt.set_function("onExit",static_cast<void(cocostudio::ComRender::*)()>(&cocostudio::ComRender::onExit));
-mt.set_function("onAdd",static_cast<void(cocostudio::ComRender::*)()>(&cocostudio::ComRender::onAdd));
-mt.set_function("onRemove",static_cast<void(cocostudio::ComRender::*)()>(&cocostudio::ComRender::onRemove));
-mt.set_function("serialize",static_cast<bool(cocostudio::ComRender::*)(void*)>(&cocostudio::ComRender::serialize));
-mt.set_function("getNode",static_cast<cocos2d::Node*(cocostudio::ComRender::*)()>(&cocostudio::ComRender::getNode));
-mt.set_function("setNode",static_cast<void(cocostudio::ComRender::*)(cocos2d::Node*)>(&cocostudio::ComRender::setNode));
-mt.set_function("createInstance",static_cast<cocos2d::Ref*(*)()>(&cocostudio::ComRender::createInstance));
+void RegisterLuaStudioComRenderAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocostudio::ComRender>("ccs","ComRender",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Component,cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function("CreateInstance",static_cast<cocos2d::Ref*(*)()>(&cocostudio::ComRender::createInstance));
 mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocostudio::ComRender*(*)(cocos2d::Node*,const char*)>(&cocostudio::ComRender::create),static_cast<cocostudio::ComRender*(*)()>(&cocostudio::ComRender::create)));
+mt.set_function("OnEnter",static_cast<void(cocostudio::ComRender::*)()>(&cocostudio::ComRender::onEnter));
+mt.set_function("OnExit",static_cast<void(cocostudio::ComRender::*)()>(&cocostudio::ComRender::onExit));
+mt.set_function("OnAdd",static_cast<void(cocostudio::ComRender::*)()>(&cocostudio::ComRender::onAdd));
+mt.set_function("OnRemove",static_cast<void(cocostudio::ComRender::*)()>(&cocostudio::ComRender::onRemove));
+mt.set_function("Serialize",static_cast<bool(cocostudio::ComRender::*)(void*)>(&cocostudio::ComRender::serialize));
+mt.set_function("GetNode",static_cast<cocos2d::Node*(cocostudio::ComRender::*)()>(&cocostudio::ComRender::getNode));
+mt.set_function("SetNode",static_cast<void(cocostudio::ComRender::*)(cocos2d::Node*)>(&cocostudio::ComRender::setNode));
+mt["Type"]=sol::var(std::ref(cocostudio::ComRender::Type));
+mt["COMPONENT_NAME"]=sol::var(std::ref(cocostudio::ComRender::COMPONENT_NAME));
 }
-void RegisterLuaStudioGUIReaderAuto(cocos2d::Lua& lua){
-sol::table ns = lua["ccs"];
-auto mt=lua.NewUserType<cocostudio::GUIReader,cocos2d::Ref,cocos2d::LuaObject>("GUIReader",true);
-ns["GUIReader"] = mt;
-lua["GUIReader"] = sol::nil;
-mt.set_function("widgetFromJsonFile",static_cast<cocos2d::ui::Widget*(cocostudio::GUIReader::*)(const char*)>(&cocostudio::GUIReader::widgetFromJsonFile));
-mt.set_function("widgetFromBinaryFile",static_cast<cocos2d::ui::Widget*(cocostudio::GUIReader::*)(const char*)>(&cocostudio::GUIReader::widgetFromBinaryFile));
-mt.set_function("getVersionInteger",static_cast<int(cocostudio::GUIReader::*)(const char*)>(&cocostudio::GUIReader::getVersionInteger));
-mt.set_function("storeFileDesignSize",static_cast<void(cocostudio::GUIReader::*)(const char*,const cocos2d::Size&)>(&cocostudio::GUIReader::storeFileDesignSize));
-mt.set_function("getFileDesignSize",static_cast<cocos2d::Size(cocostudio::GUIReader::*)(const char*)const>(&cocostudio::GUIReader::getFileDesignSize));
-mt.set_function("setFilePath",static_cast<void(cocostudio::GUIReader::*)(const std::string&)>(&cocostudio::GUIReader::setFilePath));
-mt.set_function("getFilePath",static_cast<const std::string&(cocostudio::GUIReader::*)()const>(&cocostudio::GUIReader::getFilePath));
-mt.set_function("registerTypeAndCallBack",sol::overload(static_cast<void(cocostudio::GUIReader::*)(const std::string&,cocos2d::ObjectFactory::InstanceFunc,cocos2d::Ref*,cocostudio::SEL_ParseEvent)>(&cocostudio::GUIReader::registerTypeAndCallBack),static_cast<void(cocostudio::GUIReader::*)(const std::string&,cocos2d::ObjectFactory::Instance,cocos2d::Ref*,cocostudio::SEL_ParseEvent)>(&cocostudio::GUIReader::registerTypeAndCallBack)));
-mt.set_function("getInstance",static_cast<cocostudio::GUIReader*(*)()>(&cocostudio::GUIReader::getInstance));
-mt.set_function("destroyInstance",static_cast<void(*)()>(&cocostudio::GUIReader::destroyInstance));
+void RegisterLuaStudioGUIReaderAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocostudio::GUIReader>("ccs","GUIReader",true);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function("GetInstance",static_cast<cocostudio::GUIReader*(*)()>(&cocostudio::GUIReader::getInstance));
+mt.set_function("DestroyInstance",static_cast<void(*)()>(&cocostudio::GUIReader::destroyInstance));
+mt.set_function("WidgetFromJsonFile",static_cast<cocos2d::ui::Widget*(cocostudio::GUIReader::*)(const char*)>(&cocostudio::GUIReader::widgetFromJsonFile));
+mt.set_function("WidgetFromBinaryFile",static_cast<cocos2d::ui::Widget*(cocostudio::GUIReader::*)(const char*)>(&cocostudio::GUIReader::widgetFromBinaryFile));
+mt.set_function("GetVersionInteger",static_cast<int(cocostudio::GUIReader::*)(const char*)>(&cocostudio::GUIReader::getVersionInteger));
+mt.set_function("StoreFileDesignSize",static_cast<void(cocostudio::GUIReader::*)(const char*,const cocos2d::Size&)>(&cocostudio::GUIReader::storeFileDesignSize));
+mt.set_function("GetFileDesignSize",static_cast<cocos2d::Size(cocostudio::GUIReader::*)(const char*)const>(&cocostudio::GUIReader::getFileDesignSize));
+mt.set_function("SetFilePath",static_cast<void(cocostudio::GUIReader::*)(const std::string&)>(&cocostudio::GUIReader::setFilePath));
+mt.set_function("GetFilePath",static_cast<const std::string&(cocostudio::GUIReader::*)()const>(&cocostudio::GUIReader::getFilePath));
+mt.set_function("RegisterTypeAndCallBack",sol::overload(static_cast<void(cocostudio::GUIReader::*)(const std::string&,cocos2d::ObjectFactory::InstanceFunc,cocos2d::Ref*,cocostudio::SEL_ParseEvent)>(&cocostudio::GUIReader::registerTypeAndCallBack),static_cast<void(cocostudio::GUIReader::*)(const std::string&,cocos2d::ObjectFactory::Instance,cocos2d::Ref*,cocostudio::SEL_ParseEvent)>(&cocostudio::GUIReader::registerTypeAndCallBack)));
+mt["Instance"]=sol::property(&cocostudio::GUIReader::getInstance,[](std::nullptr_t){cocostudio::GUIReader::destroyInstance();});
 }
-void RegisterLuaStudioSceneReaderAttachComponentTypeAuto(cocos2d::Lua& lua) {
-sol::table pTable = lua["ccs"];
-pTable = pTable["SceneReader"];
-pTable.new_enum("AttachComponentType"
-,"EMPTY_NODE",0
-,"RENDER_NODE",1
-,"DEFAULT",0
-);}
-void RegisterLuaStudioSceneReaderAuto(cocos2d::Lua& lua){
-sol::table ns = lua["ccs"];
-auto mt=lua.NewUserType<cocostudio::SceneReader>("SceneReader",true);
-ns["SceneReader"] = mt;
-lua["SceneReader"] = sol::nil;
-mt.set_function("createNodeWithSceneFile",sol::overload([](cocostudio::SceneReader* obj,const std::string& arg0){return obj->createNodeWithSceneFile(arg0);},[](cocostudio::SceneReader* obj,const std::string& arg0,cocostudio::SceneReader::AttachComponentType arg1){return obj->createNodeWithSceneFile(arg0,arg1);}));
-mt.set_function("setTarget",static_cast<void(cocostudio::SceneReader::*)(const std::function<void (cocos2d::Ref *, void *)>&)>(&cocostudio::SceneReader::setTarget));
-mt.set_function("getNodeByTag",static_cast<cocos2d::Node*(cocostudio::SceneReader::*)(int)>(&cocostudio::SceneReader::getNodeByTag));
-mt.set_function("getAttachComponentType",static_cast<cocostudio::SceneReader::AttachComponentType(cocostudio::SceneReader::*)()>(&cocostudio::SceneReader::getAttachComponentType));
-mt.set_function("getInstance",static_cast<cocostudio::SceneReader*(*)()>(&cocostudio::SceneReader::getInstance));
-mt.set_function("destroyInstance",static_cast<void(*)()>(&cocostudio::SceneReader::destroyInstance));
-mt.set_function("sceneReaderVersion",static_cast<const char*(*)()>(&cocostudio::SceneReader::sceneReaderVersion));
-RegisterLuaStudioSceneReaderAttachComponentTypeAuto(lua);
+void RegisterLuaStudioSceneReaderAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocostudio::SceneReader>("ccs","SceneReader",true);
+mt.set_function("GetInstance",static_cast<cocostudio::SceneReader*(*)()>(&cocostudio::SceneReader::getInstance));
+mt.set_function("DestroyInstance",static_cast<void(*)()>(&cocostudio::SceneReader::destroyInstance));
+mt.set_function("SceneReaderVersion",static_cast<const char*(*)()>(&cocostudio::SceneReader::sceneReaderVersion));
+mt.set_function("CreateNodeWithSceneFile",sol::overload([](cocostudio::SceneReader* obj,const std::string& arg0){return obj->createNodeWithSceneFile(arg0);},[](cocostudio::SceneReader* obj,const std::string& arg0,cocostudio::SceneReader::AttachComponentType arg1){return obj->createNodeWithSceneFile(arg0,arg1);}));
+mt.set_function("SetTarget",static_cast<void(cocostudio::SceneReader::*)(const std::function<void (cocos2d::Ref *, void *)>&)>(&cocostudio::SceneReader::setTarget));
+mt.set_function("GetNodeByTag",static_cast<cocos2d::Node*(cocostudio::SceneReader::*)(int)>(&cocostudio::SceneReader::getNodeByTag));
+mt.set_function("GetAttachComponentType",static_cast<cocostudio::SceneReader::AttachComponentType(cocostudio::SceneReader::*)()>(&cocostudio::SceneReader::getAttachComponentType));
+mt["Instance"]=sol::property(&cocostudio::SceneReader::getInstance,[](std::nullptr_t){cocostudio::SceneReader::destroyInstance();});
 }
-void RegisterLuaStudioActionTimelineCacheAuto(cocos2d::Lua& lua){
-sol::table ns = lua["ccs"];
-auto mt=lua.NewUserType<cocostudio::timeline::ActionTimelineCache>("ActionTimelineCache",true);
-ns["ActionTimelineCache"] = mt;
-lua["ActionTimelineCache"] = sol::nil;
-mt.set_function("purge",static_cast<void(cocostudio::timeline::ActionTimelineCache::*)()>(&cocostudio::timeline::ActionTimelineCache::purge));
-mt.set_function("init",static_cast<void(cocostudio::timeline::ActionTimelineCache::*)()>(&cocostudio::timeline::ActionTimelineCache::init));
-mt.set_function("removeAction",static_cast<void(cocostudio::timeline::ActionTimelineCache::*)(const std::string&)>(&cocostudio::timeline::ActionTimelineCache::removeAction));
-mt.set_function("createActionFromJson",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const std::string&)>(&cocostudio::timeline::ActionTimelineCache::createActionFromJson));
-mt.set_function("createActionFromContent",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const std::string&,const std::string&)>(&cocostudio::timeline::ActionTimelineCache::createActionFromContent));
-mt.set_function("loadAnimationActionWithFile",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const std::string&)>(&cocostudio::timeline::ActionTimelineCache::loadAnimationActionWithFile));
-mt.set_function("loadAnimationActionWithContent",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const std::string&,const std::string&)>(&cocostudio::timeline::ActionTimelineCache::loadAnimationActionWithContent));
-mt.set_function("createActionWithFlatBuffersFile",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const std::string&)>(&cocostudio::timeline::ActionTimelineCache::createActionWithFlatBuffersFile));
-mt.set_function("createActionWithDataBuffer",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(cocos2d::Data,const std::string&)>(&cocostudio::timeline::ActionTimelineCache::createActionWithDataBuffer));
-mt.set_function("loadAnimationActionWithFlatBuffersFile",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const std::string&)>(&cocostudio::timeline::ActionTimelineCache::loadAnimationActionWithFlatBuffersFile));
-mt.set_function("loadAnimationWithDataBuffer",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const cocos2d::Data&,const std::string&)>(&cocostudio::timeline::ActionTimelineCache::loadAnimationWithDataBuffer));
-mt.set_function("createActionWithFlatBuffersForSimulator",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const std::string&)>(&cocostudio::timeline::ActionTimelineCache::createActionWithFlatBuffersForSimulator));
-mt.set_function("getInstance",static_cast<cocostudio::timeline::ActionTimelineCache*(*)()>(&cocostudio::timeline::ActionTimelineCache::getInstance));
-mt.set_function("destroyInstance",static_cast<void(*)()>(&cocostudio::timeline::ActionTimelineCache::destroyInstance));
-mt.set_function("createAction",static_cast<cocostudio::timeline::ActionTimeline*(*)(const std::string&)>(&cocostudio::timeline::ActionTimelineCache::createAction));
+void RegisterLuaStudioActionTimelineCacheAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocostudio::timeline::ActionTimelineCache>("ccs","ActionTimelineCache",true);
+mt.set_function("GetInstance",static_cast<cocostudio::timeline::ActionTimelineCache*(*)()>(&cocostudio::timeline::ActionTimelineCache::getInstance));
+mt.set_function("DestroyInstance",static_cast<void(*)()>(&cocostudio::timeline::ActionTimelineCache::destroyInstance));
+mt.set_function("Purge",static_cast<void(cocostudio::timeline::ActionTimelineCache::*)()>(&cocostudio::timeline::ActionTimelineCache::purge));
+mt.set_function("Init",static_cast<void(cocostudio::timeline::ActionTimelineCache::*)()>(&cocostudio::timeline::ActionTimelineCache::init));
+mt.set_function("RemoveAction",static_cast<void(cocostudio::timeline::ActionTimelineCache::*)(const std::string&)>(&cocostudio::timeline::ActionTimelineCache::removeAction));
+mt.set_function("CreateAction",static_cast<cocostudio::timeline::ActionTimeline*(*)(const std::string&)>(&cocostudio::timeline::ActionTimelineCache::createAction));
+mt.set_function("CreateActionFromJson",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const std::string&)>(&cocostudio::timeline::ActionTimelineCache::createActionFromJson));
+mt.set_function("CreateActionFromContent",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const std::string&,const std::string&)>(&cocostudio::timeline::ActionTimelineCache::createActionFromContent));
+mt.set_function("LoadAnimationActionWithFile",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const std::string&)>(&cocostudio::timeline::ActionTimelineCache::loadAnimationActionWithFile));
+mt.set_function("LoadAnimationActionWithContent",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const std::string&,const std::string&)>(&cocostudio::timeline::ActionTimelineCache::loadAnimationActionWithContent));
+mt.set_function("CreateActionWithFlatBuffersFile",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const std::string&)>(&cocostudio::timeline::ActionTimelineCache::createActionWithFlatBuffersFile));
+mt.set_function("CreateActionWithDataBuffer",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(cocos2d::Data,const std::string&)>(&cocostudio::timeline::ActionTimelineCache::createActionWithDataBuffer));
+mt.set_function("LoadAnimationActionWithFlatBuffersFile",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const std::string&)>(&cocostudio::timeline::ActionTimelineCache::loadAnimationActionWithFlatBuffersFile));
+mt.set_function("LoadAnimationWithDataBuffer",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const cocos2d::Data&,const std::string&)>(&cocostudio::timeline::ActionTimelineCache::loadAnimationWithDataBuffer));
+mt.set_function("CreateActionWithFlatBuffersForSimulator",static_cast<cocostudio::timeline::ActionTimeline*(cocostudio::timeline::ActionTimelineCache::*)(const std::string&)>(&cocostudio::timeline::ActionTimelineCache::createActionWithFlatBuffersForSimulator));
+mt[sol::call_constructor]=sol::constructors<cocostudio::timeline::ActionTimelineCache()>();
+mt["Instance"]=sol::property(&cocostudio::timeline::ActionTimelineCache::getInstance,[](std::nullptr_t){cocostudio::timeline::ActionTimelineCache::destroyInstance();});
 }
-void RegisterLuaStudioFrameAuto(cocos2d::Lua& lua){
-sol::table ns = lua["ccs"];
-auto mt=lua.NewUserType<cocostudio::timeline::Frame,cocos2d::Ref,cocos2d::LuaObject>("Frame",true);
-ns["Frame"] = mt;
-lua["Frame"] = sol::nil;
-mt.set_function("setFrameIndex",static_cast<void(cocostudio::timeline::Frame::*)(unsigned int)>(&cocostudio::timeline::Frame::setFrameIndex));
-mt.set_function("getFrameIndex",static_cast<unsigned int(cocostudio::timeline::Frame::*)()const>(&cocostudio::timeline::Frame::getFrameIndex));
-mt.set_function("setTimeline",static_cast<void(cocostudio::timeline::Frame::*)(cocostudio::timeline::Timeline*)>(&cocostudio::timeline::Frame::setTimeline));
-mt.set_function("getTimeline",static_cast<cocostudio::timeline::Timeline*(cocostudio::timeline::Frame::*)()const>(&cocostudio::timeline::Frame::getTimeline));
-mt.set_function("setNode",static_cast<void(cocostudio::timeline::Frame::*)(cocos2d::Node*)>(&cocostudio::timeline::Frame::setNode));
-mt.set_function("getNode",static_cast<cocos2d::Node*(cocostudio::timeline::Frame::*)()const>(&cocostudio::timeline::Frame::getNode));
-mt.set_function("setTween",static_cast<void(cocostudio::timeline::Frame::*)(bool)>(&cocostudio::timeline::Frame::setTween));
-mt.set_function("isTween",static_cast<bool(cocostudio::timeline::Frame::*)()const>(&cocostudio::timeline::Frame::isTween));
-mt.set_function("setTweenType",static_cast<void(cocostudio::timeline::Frame::*)(const cocos2d::tweenfunc::TweenType&)>(&cocostudio::timeline::Frame::setTweenType));
-mt.set_function("getTweenType",static_cast<cocos2d::tweenfunc::TweenType(cocostudio::timeline::Frame::*)()const>(&cocostudio::timeline::Frame::getTweenType));
-mt.set_function("setEasingParams",static_cast<void(cocostudio::timeline::Frame::*)(const std::vector<float>&)>(&cocostudio::timeline::Frame::setEasingParams));
-mt.set_function("getEasingParams",static_cast<const std::vector<float>&(cocostudio::timeline::Frame::*)()const>(&cocostudio::timeline::Frame::getEasingParams));
-mt.set_function("isEnterWhenPassed",static_cast<bool(cocostudio::timeline::Frame::*)()>(&cocostudio::timeline::Frame::isEnterWhenPassed));
-mt.set_function("onEnter",static_cast<void(cocostudio::timeline::Frame::*)(cocostudio::timeline::Frame*,int)>(&cocostudio::timeline::Frame::onEnter));
-mt.set_function("apply",static_cast<void(cocostudio::timeline::Frame::*)(float)>(&cocostudio::timeline::Frame::apply));
-mt.set_function("clone",static_cast<cocostudio::timeline::Frame*(cocostudio::timeline::Frame::*)()>(&cocostudio::timeline::Frame::clone));
+void RegisterLuaStudioFrameAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocostudio::timeline::Frame>("ccs","Frame",true);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function("SetFrameIndex",static_cast<void(cocostudio::timeline::Frame::*)(unsigned int)>(&cocostudio::timeline::Frame::setFrameIndex));
+mt.set_function("GetFrameIndex",static_cast<unsigned int(cocostudio::timeline::Frame::*)()const>(&cocostudio::timeline::Frame::getFrameIndex));
+mt.set_function("SetTimeline",static_cast<void(cocostudio::timeline::Frame::*)(cocostudio::timeline::Timeline*)>(&cocostudio::timeline::Frame::setTimeline));
+mt.set_function("GetTimeline",static_cast<cocostudio::timeline::Timeline*(cocostudio::timeline::Frame::*)()const>(&cocostudio::timeline::Frame::getTimeline));
+mt.set_function("SetNode",static_cast<void(cocostudio::timeline::Frame::*)(cocos2d::Node*)>(&cocostudio::timeline::Frame::setNode));
+mt.set_function("GetNode",static_cast<cocos2d::Node*(cocostudio::timeline::Frame::*)()const>(&cocostudio::timeline::Frame::getNode));
+mt.set_function("SetTween",static_cast<void(cocostudio::timeline::Frame::*)(bool)>(&cocostudio::timeline::Frame::setTween));
+mt.set_function("IsTween",static_cast<bool(cocostudio::timeline::Frame::*)()const>(&cocostudio::timeline::Frame::isTween));
+mt.set_function("SetTweenType",static_cast<void(cocostudio::timeline::Frame::*)(const cocos2d::tweenfunc::TweenType&)>(&cocostudio::timeline::Frame::setTweenType));
+mt.set_function("GetTweenType",static_cast<cocos2d::tweenfunc::TweenType(cocostudio::timeline::Frame::*)()const>(&cocostudio::timeline::Frame::getTweenType));
+mt.set_function("SetEasingParams",static_cast<void(cocostudio::timeline::Frame::*)(const std::vector<float, std::allocator<float> >&)>(&cocostudio::timeline::Frame::setEasingParams));
+mt.set_function("GetEasingParams",static_cast<const std::vector<float, std::allocator<float> >&(cocostudio::timeline::Frame::*)()const>(&cocostudio::timeline::Frame::getEasingParams));
+mt.set_function("IsEnterWhenPassed",static_cast<bool(cocostudio::timeline::Frame::*)()>(&cocostudio::timeline::Frame::isEnterWhenPassed));
+mt.set_function("OnEnter",static_cast<void(cocostudio::timeline::Frame::*)(cocostudio::timeline::Frame*,int)>(&cocostudio::timeline::Frame::onEnter));
+mt.set_function("Apply",static_cast<void(cocostudio::timeline::Frame::*)(float)>(&cocostudio::timeline::Frame::apply));
+mt.set_function("Clone",static_cast<cocostudio::timeline::Frame*(cocostudio::timeline::Frame::*)()>(&cocostudio::timeline::Frame::clone));
 }
-void RegisterLuaStudioVisibleFrameAuto(cocos2d::Lua& lua){
-sol::table ns = lua["ccs"];
-auto mt=lua.NewUserType<cocostudio::timeline::VisibleFrame,cocostudio::timeline::Frame,cocos2d::Ref,cocos2d::LuaObject>("VisibleFrame",false);
-ns["VisibleFrame"] = mt;
-lua["VisibleFrame"] = sol::nil;
-mt.set_function("onEnter",static_cast<void(cocostudio::timeline::VisibleFrame::*)(cocostudio::timeline::Frame*,int)>(&cocostudio::timeline::VisibleFrame::onEnter));
-mt.set_function("clone",static_cast<cocostudio::timeline::Frame*(cocostudio::timeline::VisibleFrame::*)()>(&cocostudio::timeline::VisibleFrame::clone));
-mt.set_function("setVisible",static_cast<void(cocostudio::timeline::VisibleFrame::*)(bool)>(&cocostudio::timeline::VisibleFrame::setVisible));
-mt.set_function("isVisible",static_cast<bool(cocostudio::timeline::VisibleFrame::*)()const>(&cocostudio::timeline::VisibleFrame::isVisible));
+void RegisterLuaStudioVisibleFrameAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocostudio::timeline::VisibleFrame>("ccs","VisibleFrame",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocostudio::timeline::Frame,cocos2d::Ref,cocos2d::extension::LuaObject>());
 mt.set_function(sol::meta_function::construct,static_cast<cocostudio::timeline::VisibleFrame*(*)()>(&cocostudio::timeline::VisibleFrame::create));
+mt.set_function("OnEnter",static_cast<void(cocostudio::timeline::VisibleFrame::*)(cocostudio::timeline::Frame*,int)>(&cocostudio::timeline::VisibleFrame::onEnter));
+mt.set_function("Clone",static_cast<cocostudio::timeline::Frame*(cocostudio::timeline::VisibleFrame::*)()>(&cocostudio::timeline::VisibleFrame::clone));
+mt.set_function("SetVisible",static_cast<void(cocostudio::timeline::VisibleFrame::*)(bool)>(&cocostudio::timeline::VisibleFrame::setVisible));
+mt.set_function("IsVisible",static_cast<bool(cocostudio::timeline::VisibleFrame::*)()const>(&cocostudio::timeline::VisibleFrame::isVisible));
 }
-void RegisterLuaStudioTextureFrameAuto(cocos2d::Lua& lua){
-sol::table ns = lua["ccs"];
-auto mt=lua.NewUserType<cocostudio::timeline::TextureFrame,cocostudio::timeline::Frame,cocos2d::Ref,cocos2d::LuaObject>("TextureFrame",false);
-ns["TextureFrame"] = mt;
-lua["TextureFrame"] = sol::nil;
-mt.set_function("setNode",static_cast<void(cocostudio::timeline::TextureFrame::*)(cocos2d::Node*)>(&cocostudio::timeline::TextureFrame::setNode));
-mt.set_function("onEnter",static_cast<void(cocostudio::timeline::TextureFrame::*)(cocostudio::timeline::Frame*,int)>(&cocostudio::timeline::TextureFrame::onEnter));
-mt.set_function("clone",static_cast<cocostudio::timeline::Frame*(cocostudio::timeline::TextureFrame::*)()>(&cocostudio::timeline::TextureFrame::clone));
-mt.set_function("setTextureName",static_cast<void(cocostudio::timeline::TextureFrame::*)(std::string)>(&cocostudio::timeline::TextureFrame::setTextureName));
-mt.set_function("getTextureName",static_cast<std::string(cocostudio::timeline::TextureFrame::*)()const>(&cocostudio::timeline::TextureFrame::getTextureName));
+void RegisterLuaStudioTextureFrameAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocostudio::timeline::TextureFrame>("ccs","TextureFrame",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocostudio::timeline::Frame,cocos2d::Ref,cocos2d::extension::LuaObject>());
 mt.set_function(sol::meta_function::construct,static_cast<cocostudio::timeline::TextureFrame*(*)()>(&cocostudio::timeline::TextureFrame::create));
-}
-void RegisterLuaStudioRotationFrameAuto(cocos2d::Lua& lua){
-sol::table ns = lua["ccs"];
-auto mt=lua.NewUserType<cocostudio::timeline::RotationFrame,cocostudio::timeline::Frame,cocos2d::Ref,cocos2d::LuaObject>("RotationFrame",false);
-ns["RotationFrame"] = mt;
-lua["RotationFrame"] = sol::nil;
-mt.set_function("onEnter",static_cast<void(cocostudio::timeline::RotationFrame::*)(cocostudio::timeline::Frame*,int)>(&cocostudio::timeline::RotationFrame::onEnter));
-mt.set_function("clone",static_cast<cocostudio::timeline::Frame*(cocostudio::timeline::RotationFrame::*)()>(&cocostudio::timeline::RotationFrame::clone));
-mt.set_function("setRotation",static_cast<void(cocostudio::timeline::RotationFrame::*)(float)>(&cocostudio::timeline::RotationFrame::setRotation));
-mt.set_function("getRotation",static_cast<float(cocostudio::timeline::RotationFrame::*)()const>(&cocostudio::timeline::RotationFrame::getRotation));
-mt.set_function(sol::meta_function::construct,static_cast<cocostudio::timeline::RotationFrame*(*)()>(&cocostudio::timeline::RotationFrame::create));
+mt.set_function("SetNode",static_cast<void(cocostudio::timeline::TextureFrame::*)(cocos2d::Node*)>(&cocostudio::timeline::TextureFrame::setNode));
+mt.set_function("OnEnter",static_cast<void(cocostudio::timeline::TextureFrame::*)(cocostudio::timeline::Frame*,int)>(&cocostudio::timeline::TextureFrame::onEnter));
+mt.set_function("Clone",static_cast<cocostudio::timeline::Frame*(cocostudio::timeline::TextureFrame::*)()>(&cocostudio::timeline::TextureFrame::clone));
+mt.set_function("SetTextureName",static_cast<void(cocostudio::timeline::TextureFrame::*)(std::string)>(&cocostudio::timeline::TextureFrame::setTextureName));
+mt.set_function("GetTextureName",static_cast<std::string(cocostudio::timeline::TextureFrame::*)()const>(&cocostudio::timeline::TextureFrame::getTextureName));
 }

@@ -1,9 +1,9 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaControllerAuto.hpp"
 #include "base/CCGameController.h"
-extern void RegisterLuaControllerControllerAuto(cocos2d::Lua&);
-extern void RegisterLuaControllerEventControllerAuto(cocos2d::Lua&);
-extern void RegisterLuaControllerEventListenerControllerAuto(cocos2d::Lua&);
-void RegisterLuaControllerAuto(cocos2d::Lua& lua){
+extern void RegisterLuaControllerControllerAuto(cocos2d::extension::Lua&);
+extern void RegisterLuaControllerEventControllerAuto(cocos2d::extension::Lua&);
+extern void RegisterLuaControllerEventListenerControllerAuto(cocos2d::extension::Lua&);
+void RegisterLuaControllerAuto(cocos2d::extension::Lua& lua){
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 lua["cc"]=lua.get_or("cc",lua.create_table());
 RegisterLuaControllerControllerAuto(lua);
