@@ -23,11 +23,13 @@ local TypePrefix = {
     string  = "_@_TS",
     boolean = "_@_TB",
     number  = "_@_TN",
+    table   = "_@_TT",
 
     -- 反向查询映射
     ["_@_TS"] = "S",
     ["_@_TB"] = "B",
     ["_@_TN"] = "N",
+    ["_@_TT"] = "T"
 };
 
 local type = type;
@@ -46,7 +48,8 @@ local UserFile = setmetatable({
             rawset(t,k,v);
         end
         -- 仅布尔/数值/字符串能作为键。
-        if not TypePrefix[type(k)] then
+        local kType = type(k);
+        if "table" == kType or not TypePrefix[kType] then
             return;
         end
         k = tostring(k);
@@ -55,9 +58,16 @@ local UserFile = setmetatable({
         else
             local prefix = TypePrefix[type(v)];
             if prefix then
-                v = tostring(v);
                 local key = t.Key;
-                UserDefault.Instance:SetStringForKey(k,prefix .. (key and v:Encrypt(key) or v));
+                if prefix ~= TypePrefix.table then
+                    v = tostring(v);
+                    UserDefault.Instance:SetStringForKey(k,prefix .. (key and v:Encrypt(key) or v));
+                else
+                    v = cjson.encode(v);
+                    if v then
+                        UserDefault.Instance:SetStringForKey(k,prefix .. (key and v:Encrypt(key) or v));
+                    end
+                end
             end
         end
     end,
@@ -66,7 +76,8 @@ local UserFile = setmetatable({
             return nil;
         end
         -- 仅布尔/数值/字符串能作为键。
-        if not TypePrefix[type(k)] then
+        local kType = type(k);
+        if "table" == kType or not TypePrefix[kType] then
             return nil;
         end
         k = tostring(k);
@@ -85,6 +96,8 @@ local UserFile = setmetatable({
                 return ret;
             elseif "B" == vType then
                 return cc.ToBoolean(ret);
+            elseif "T" == vType then
+                return cjson.decode(ret);
             end
         end
     end
