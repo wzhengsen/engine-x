@@ -8,6 +8,15 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+void RegisterLuaCoreTMXTileFlags_Auto(cocos2d::extension::Lua& lua) {
+sol::table pTable = lua["cc"];
+pTable.new_enum<cocos2d::TMXTileFlags_>("TMXTileFlags",{
+{"KTMXTileHorizontalFlag",cocos2d::TMXTileFlags_::kTMXTileHorizontalFlag}
+,{"KTMXTileVerticalFlag",cocos2d::TMXTileFlags_::kTMXTileVerticalFlag}
+,{"KTMXTileDiagonalFlag",cocos2d::TMXTileFlags_::kTMXTileDiagonalFlag}
+,{"KTMXFlipedAll",cocos2d::TMXTileFlags_::kTMXFlipedAll}
+,{"KTMXFlippedMask",cocos2d::TMXTileFlags_::kTMXFlippedMask}
+});}
 void RegisterLuaCoreTMXLayerInfoAuto(cocos2d::extension::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::TMXLayerInfo>("cc","TMXLayerInfo",false);
 cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>());
@@ -208,14 +217,4 @@ mt.set_function("GetMaterial",static_cast<cocos2d::Material*(cocos2d::Sprite3D::
 mt.set_function("SetForce2DQueue",static_cast<void(cocos2d::Sprite3D::*)(bool)>(&cocos2d::Sprite3D::setForce2DQueue));
 mt.set_function("GetMeshes",static_cast<const cocos2d::Vector<cocos2d::Mesh *>&(cocos2d::Sprite3D::*)()const>(&cocos2d::Sprite3D::getMeshes));
 mt.set_function("Visit",static_cast<void(cocos2d::Sprite3D::*)(cocos2d::Renderer*,const cocos2d::Mat4&,uint32_t)>(&cocos2d::Sprite3D::visit));
-}
-void RegisterLuaCoreSprite3DCacheAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Sprite3DCache>("cc","Sprite3DCache",true);
-mt.set_function("GetInstance",static_cast<cocos2d::Sprite3DCache*(*)()>(&cocos2d::Sprite3DCache::getInstance));
-mt.set_function("DestroyInstance",static_cast<void(*)()>(&cocos2d::Sprite3DCache::destroyInstance));
-mt.set_function("GetSpriteData",static_cast<cocos2d::Sprite3DCache::Sprite3DData*(cocos2d::Sprite3DCache::*)(const std::string&)const>(&cocos2d::Sprite3DCache::getSpriteData));
-mt.set_function("AddSprite3DData",static_cast<bool(cocos2d::Sprite3DCache::*)(const std::string&,cocos2d::Sprite3DCache::Sprite3DData*)>(&cocos2d::Sprite3DCache::addSprite3DData));
-mt.set_function("RemoveSprite3DData",static_cast<void(cocos2d::Sprite3DCache::*)(const std::string&)>(&cocos2d::Sprite3DCache::removeSprite3DData));
-mt.set_function("RemoveAllSprite3DData",static_cast<void(cocos2d::Sprite3DCache::*)()>(&cocos2d::Sprite3DCache::removeAllSprite3DData));
-mt["Instance"]=sol::property(&cocos2d::Sprite3DCache::getInstance,[](std::nullptr_t){cocos2d::Sprite3DCache::destroyInstance();});
 }

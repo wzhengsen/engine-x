@@ -8,6 +8,19 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+void RegisterLuaCoreBaseLightAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::BaseLight>("cc","BaseLight",true);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function("GetLightType",static_cast<cocos2d::LightType(cocos2d::BaseLight::*)()const>(&cocos2d::BaseLight::getLightType));
+mt.set_function("GetIntensity",static_cast<float(cocos2d::BaseLight::*)()const>(&cocos2d::BaseLight::getIntensity));
+mt.set_function("SetIntensity",static_cast<void(cocos2d::BaseLight::*)(float)>(&cocos2d::BaseLight::setIntensity));
+mt.set_function("GetLightFlag",static_cast<cocos2d::LightFlag(cocos2d::BaseLight::*)()const>(&cocos2d::BaseLight::getLightFlag));
+mt.set_function("SetLightFlag",static_cast<void(cocos2d::BaseLight::*)(cocos2d::LightFlag)>(&cocos2d::BaseLight::setLightFlag));
+mt.set_function("SetEnabled",static_cast<void(cocos2d::BaseLight::*)(bool)>(&cocos2d::BaseLight::setEnabled));
+mt.set_function("IsEnabled",static_cast<bool(cocos2d::BaseLight::*)()const>(&cocos2d::BaseLight::isEnabled));
+mt.set_function("OnEnter",static_cast<void(cocos2d::BaseLight::*)()>(&cocos2d::BaseLight::onEnter));
+mt.set_function("OnExit",static_cast<void(cocos2d::BaseLight::*)()>(&cocos2d::BaseLight::onExit));
+}
 void RegisterLuaCoreDirectionLightAuto(cocos2d::extension::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::DirectionLight>("cc","DirectionLight",false);
 cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::BaseLight,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
@@ -182,26 +195,4 @@ mt["VBO_SIZE"]=sol::var(std::ref(cocos2d::Renderer::VBO_SIZE));
 mt["INDEX_VBO_SIZE"]=sol::var(std::ref(cocos2d::Renderer::INDEX_VBO_SIZE));
 mt["BATCH_TRIAGCOMMAND_RESERVED_SIZE"]=sol::var(std::ref(cocos2d::Renderer::BATCH_TRIAGCOMMAND_RESERVED_SIZE));
 mt["MATERIAL_ID_DO_NOT_BATCH"]=sol::var(std::ref(cocos2d::Renderer::MATERIAL_ID_DO_NOT_BATCH));
-}
-void RegisterLuaCoreTextureCacheAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TextureCache>("cc","TextureCache",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function("SetETC1AlphaFileSuffix",static_cast<void(*)(const std::string&)>(&cocos2d::TextureCache::setETC1AlphaFileSuffix));
-mt.set_function("GetETC1AlphaFileSuffix",static_cast<std::string(*)()>(&cocos2d::TextureCache::getETC1AlphaFileSuffix));
-mt.set_function("GetDescription",static_cast<std::string(cocos2d::TextureCache::*)()const>(&cocos2d::TextureCache::getDescription));
-mt.set_function("AddImage",sol::overload(static_cast<cocos2d::Texture2D*(cocos2d::TextureCache::*)(cocos2d::Image*,const std::string&)>(&cocos2d::TextureCache::addImage),static_cast<cocos2d::Texture2D*(cocos2d::TextureCache::*)(const std::string&)>(&cocos2d::TextureCache::addImage)));
-mt.set_function("AddImageAsync",sol::overload(static_cast<void(cocos2d::TextureCache::*)(const std::string&,const std::function<void (cocos2d::Texture2D *)>&,const std::string&)>(&cocos2d::TextureCache::addImageAsync),static_cast<void(cocos2d::TextureCache::*)(const std::string&,const std::function<void (cocos2d::Texture2D *)>&)>(&cocos2d::TextureCache::addImageAsync)));
-mt.set_function("UnbindImageAsync",static_cast<void(cocos2d::TextureCache::*)(const std::string&)>(&cocos2d::TextureCache::unbindImageAsync));
-mt.set_function("UnbindAllImageAsync",static_cast<void(cocos2d::TextureCache::*)()>(&cocos2d::TextureCache::unbindAllImageAsync));
-mt.set_function("GetTextureForKey",static_cast<cocos2d::Texture2D*(cocos2d::TextureCache::*)(const std::string&)const>(&cocos2d::TextureCache::getTextureForKey));
-mt.set_function("ReloadTexture",static_cast<bool(cocos2d::TextureCache::*)(const std::string&)>(&cocos2d::TextureCache::reloadTexture));
-mt.set_function("RemoveAllTextures",static_cast<void(cocos2d::TextureCache::*)()>(&cocos2d::TextureCache::removeAllTextures));
-mt.set_function("RemoveUnusedTextures",static_cast<void(cocos2d::TextureCache::*)()>(&cocos2d::TextureCache::removeUnusedTextures));
-mt.set_function("RemoveTexture",static_cast<void(cocos2d::TextureCache::*)(cocos2d::Texture2D*)>(&cocos2d::TextureCache::removeTexture));
-mt.set_function("RemoveTextureForKey",static_cast<void(cocos2d::TextureCache::*)(const std::string&)>(&cocos2d::TextureCache::removeTextureForKey));
-mt.set_function("GetCachedTextureInfo",static_cast<std::string(cocos2d::TextureCache::*)()const>(&cocos2d::TextureCache::getCachedTextureInfo));
-mt.set_function("WaitForQuit",static_cast<void(cocos2d::TextureCache::*)()>(&cocos2d::TextureCache::waitForQuit));
-mt.set_function("GetTextureFilePath",static_cast<std::string(cocos2d::TextureCache::*)(cocos2d::Texture2D*)const>(&cocos2d::TextureCache::getTextureFilePath));
-mt.set_function("RenameTextureWithKey",static_cast<void(cocos2d::TextureCache::*)(const std::string&,const std::string&)>(&cocos2d::TextureCache::renameTextureWithKey));
-mt[sol::call_constructor]=sol::constructors<cocos2d::TextureCache()>();
 }

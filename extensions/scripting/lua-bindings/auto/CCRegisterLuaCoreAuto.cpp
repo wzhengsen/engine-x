@@ -255,6 +255,7 @@ extern void RegisterLuaCoreCameraBackgroundDepthBrushAuto(cocos2d::extension::Lu
 extern void RegisterLuaCoreCameraBackgroundColorBrushAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreCameraBackgroundSkyBoxBrushAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreGridBaseAuto(cocos2d::extension::Lua&);
+extern void RegisterLuaCoreGrid3DAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreLightTypeAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreLightFlagAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreBaseLightAuto(cocos2d::extension::Lua&);
@@ -539,6 +540,7 @@ RegisterLuaCoreCameraBackgroundDepthBrushAuto(lua);
 RegisterLuaCoreCameraBackgroundColorBrushAuto(lua);
 RegisterLuaCoreCameraBackgroundSkyBoxBrushAuto(lua);
 RegisterLuaCoreGridBaseAuto(lua);
+RegisterLuaCoreGrid3DAuto(lua);
 RegisterLuaCoreLightTypeAuto(lua);
 RegisterLuaCoreLightFlagAuto(lua);
 RegisterLuaCoreBaseLightAuto(lua);

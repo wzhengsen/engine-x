@@ -142,6 +142,21 @@ mt.set_function("Set2DProjection",static_cast<void(cocos2d::GridBase::*)()>(&coc
 mt.set_function("SetGridRect",static_cast<void(cocos2d::GridBase::*)(const cocos2d::Rect&)>(&cocos2d::GridBase::setGridRect));
 mt.set_function("GetGridRect",static_cast<const cocos2d::Rect&(cocos2d::GridBase::*)()const>(&cocos2d::GridBase::getGridRect));
 }
+void RegisterLuaCoreGrid3DAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::Grid3D>("cc","Grid3D",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::GridBase,cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::Grid3D*(*)(const cocos2d::Size&,const cocos2d::Rect&)>(&cocos2d::Grid3D::create),static_cast<cocos2d::Grid3D*(*)(const cocos2d::Size&)>(&cocos2d::Grid3D::create),static_cast<cocos2d::Grid3D*(*)(const cocos2d::Size&,cocos2d::Texture2D*,bool)>(&cocos2d::Grid3D::create),static_cast<cocos2d::Grid3D*(*)(const cocos2d::Size&,cocos2d::Texture2D*,bool,const cocos2d::Rect&)>(&cocos2d::Grid3D::create)));
+mt.set_function("GetVertex",static_cast<cocos2d::Vec3(cocos2d::Grid3D::*)(const cocos2d::Vec2&)const>(&cocos2d::Grid3D::getVertex));
+mt.set_function("GetOriginalVertex",static_cast<cocos2d::Vec3(cocos2d::Grid3D::*)(const cocos2d::Vec2&)const>(&cocos2d::Grid3D::getOriginalVertex));
+mt.set_function("SetVertex",static_cast<void(cocos2d::Grid3D::*)(const cocos2d::Vec2&,const cocos2d::Vec3&)>(&cocos2d::Grid3D::setVertex));
+mt.set_function("BeforeBlit",static_cast<void(cocos2d::Grid3D::*)()>(&cocos2d::Grid3D::beforeBlit));
+mt.set_function("AfterBlit",static_cast<void(cocos2d::Grid3D::*)()>(&cocos2d::Grid3D::afterBlit));
+mt.set_function("Blit",static_cast<void(cocos2d::Grid3D::*)()>(&cocos2d::Grid3D::blit));
+mt.set_function("Reuse",static_cast<void(cocos2d::Grid3D::*)()>(&cocos2d::Grid3D::reuse));
+mt.set_function("CalculateVertexPoints",static_cast<void(cocos2d::Grid3D::*)()>(&cocos2d::Grid3D::calculateVertexPoints));
+mt.set_function("SetNeedDepthTestForBlit",static_cast<void(cocos2d::Grid3D::*)(bool)>(&cocos2d::Grid3D::setNeedDepthTestForBlit));
+mt.set_function("GetNeedDepthTestForBlit",static_cast<bool(cocos2d::Grid3D::*)()const>(&cocos2d::Grid3D::getNeedDepthTestForBlit));
+}
 void RegisterLuaCoreLightTypeAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["cc"];
 pTable.new_enum<cocos2d::LightType>("LightType",{
@@ -170,16 +185,3 @@ pTable.new_enum<cocos2d::LightFlag>("LightFlag",{
 ,{"LIGHT14",cocos2d::LightFlag::LIGHT14}
 ,{"LIGHT15",cocos2d::LightFlag::LIGHT15}
 });}
-void RegisterLuaCoreBaseLightAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::BaseLight>("cc","BaseLight",true);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function("GetLightType",static_cast<cocos2d::LightType(cocos2d::BaseLight::*)()const>(&cocos2d::BaseLight::getLightType));
-mt.set_function("GetIntensity",static_cast<float(cocos2d::BaseLight::*)()const>(&cocos2d::BaseLight::getIntensity));
-mt.set_function("SetIntensity",static_cast<void(cocos2d::BaseLight::*)(float)>(&cocos2d::BaseLight::setIntensity));
-mt.set_function("GetLightFlag",static_cast<cocos2d::LightFlag(cocos2d::BaseLight::*)()const>(&cocos2d::BaseLight::getLightFlag));
-mt.set_function("SetLightFlag",static_cast<void(cocos2d::BaseLight::*)(cocos2d::LightFlag)>(&cocos2d::BaseLight::setLightFlag));
-mt.set_function("SetEnabled",static_cast<void(cocos2d::BaseLight::*)(bool)>(&cocos2d::BaseLight::setEnabled));
-mt.set_function("IsEnabled",static_cast<bool(cocos2d::BaseLight::*)()const>(&cocos2d::BaseLight::isEnabled));
-mt.set_function("OnEnter",static_cast<void(cocos2d::BaseLight::*)()>(&cocos2d::BaseLight::onEnter));
-mt.set_function("OnExit",static_cast<void(cocos2d::BaseLight::*)()>(&cocos2d::BaseLight::onExit));
-}

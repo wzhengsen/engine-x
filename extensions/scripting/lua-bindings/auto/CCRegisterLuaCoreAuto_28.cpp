@@ -8,6 +8,16 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+void RegisterLuaCoreSprite3DCacheAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::Sprite3DCache>("cc","Sprite3DCache",true);
+mt.set_function("GetInstance",static_cast<cocos2d::Sprite3DCache*(*)()>(&cocos2d::Sprite3DCache::getInstance));
+mt.set_function("DestroyInstance",static_cast<void(*)()>(&cocos2d::Sprite3DCache::destroyInstance));
+mt.set_function("GetSpriteData",static_cast<cocos2d::Sprite3DCache::Sprite3DData*(cocos2d::Sprite3DCache::*)(const std::string&)const>(&cocos2d::Sprite3DCache::getSpriteData));
+mt.set_function("AddSprite3DData",static_cast<bool(cocos2d::Sprite3DCache::*)(const std::string&,cocos2d::Sprite3DCache::Sprite3DData*)>(&cocos2d::Sprite3DCache::addSprite3DData));
+mt.set_function("RemoveSprite3DData",static_cast<void(cocos2d::Sprite3DCache::*)(const std::string&)>(&cocos2d::Sprite3DCache::removeSprite3DData));
+mt.set_function("RemoveAllSprite3DData",static_cast<void(cocos2d::Sprite3DCache::*)()>(&cocos2d::Sprite3DCache::removeAllSprite3DData));
+mt["Instance"]=sol::property(&cocos2d::Sprite3DCache::getInstance,[](std::nullptr_t){cocos2d::Sprite3DCache::destroyInstance();});
+}
 void RegisterLuaCoreSprite3DMaterialMaterialTypeAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["cc"];
 pTable = pTable["Sprite3DMaterial"];

@@ -221,6 +221,13 @@ mt.set_function("GetString",static_cast<const std::string&(cocos2d::LabelAtlas::
 mt.set_function("UpdateAtlasValues",static_cast<void(cocos2d::LabelAtlas::*)()>(&cocos2d::LabelAtlas::updateAtlasValues));
 mt.set_function("GetDescription",static_cast<std::string(cocos2d::LabelAtlas::*)()const>(&cocos2d::LabelAtlas::getDescription));
 }
+void RegisterLuaCoreTouchDispatchModeAuto(cocos2d::extension::Lua& lua) {
+sol::table pTable = lua["cc"];
+pTable = pTable["Touch"];
+pTable.new_enum<cocos2d::Touch::DispatchMode>("DispatchMode",{
+{"ALL_AT_ONCE",cocos2d::Touch::DispatchMode::ALL_AT_ONCE}
+,{"ONE_BY_ONE",cocos2d::Touch::DispatchMode::ONE_BY_ONE}
+});}
 void RegisterLuaCoreTouchAuto(cocos2d::extension::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::Touch>("cc","Touch",false);
 cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>());
@@ -236,6 +243,7 @@ mt.set_function("GetId",static_cast<int(cocos2d::Touch::*)()const>(&cocos2d::Tou
 mt.set_function("GetCurrentForce",static_cast<float(cocos2d::Touch::*)()const>(&cocos2d::Touch::getCurrentForce));
 mt.set_function("GetMaxForce",static_cast<float(cocos2d::Touch::*)()const>(&cocos2d::Touch::getMaxForce));
 mt[sol::call_constructor]=sol::constructors<cocos2d::Touch()>();
+RegisterLuaCoreTouchDispatchModeAuto(lua);
 }
 void RegisterLuaCoreLayerAuto(cocos2d::extension::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::Layer>("cc","Layer",false);

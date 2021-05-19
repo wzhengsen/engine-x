@@ -8,6 +8,28 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+void RegisterLuaCoreTextureCacheAuto(cocos2d::extension::Lua& lua){
+auto mt=lua.NewUserType<cocos2d::TextureCache>("cc","TextureCache",false);
+cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>());
+mt.set_function("SetETC1AlphaFileSuffix",static_cast<void(*)(const std::string&)>(&cocos2d::TextureCache::setETC1AlphaFileSuffix));
+mt.set_function("GetETC1AlphaFileSuffix",static_cast<std::string(*)()>(&cocos2d::TextureCache::getETC1AlphaFileSuffix));
+mt.set_function("GetDescription",static_cast<std::string(cocos2d::TextureCache::*)()const>(&cocos2d::TextureCache::getDescription));
+mt.set_function("AddImage",sol::overload(static_cast<cocos2d::Texture2D*(cocos2d::TextureCache::*)(cocos2d::Image*,const std::string&)>(&cocos2d::TextureCache::addImage),static_cast<cocos2d::Texture2D*(cocos2d::TextureCache::*)(const std::string&)>(&cocos2d::TextureCache::addImage)));
+mt.set_function("AddImageAsync",sol::overload(static_cast<void(cocos2d::TextureCache::*)(const std::string&,const std::function<void (cocos2d::Texture2D *)>&,const std::string&)>(&cocos2d::TextureCache::addImageAsync),static_cast<void(cocos2d::TextureCache::*)(const std::string&,const std::function<void (cocos2d::Texture2D *)>&)>(&cocos2d::TextureCache::addImageAsync)));
+mt.set_function("UnbindImageAsync",static_cast<void(cocos2d::TextureCache::*)(const std::string&)>(&cocos2d::TextureCache::unbindImageAsync));
+mt.set_function("UnbindAllImageAsync",static_cast<void(cocos2d::TextureCache::*)()>(&cocos2d::TextureCache::unbindAllImageAsync));
+mt.set_function("GetTextureForKey",static_cast<cocos2d::Texture2D*(cocos2d::TextureCache::*)(const std::string&)const>(&cocos2d::TextureCache::getTextureForKey));
+mt.set_function("ReloadTexture",static_cast<bool(cocos2d::TextureCache::*)(const std::string&)>(&cocos2d::TextureCache::reloadTexture));
+mt.set_function("RemoveAllTextures",static_cast<void(cocos2d::TextureCache::*)()>(&cocos2d::TextureCache::removeAllTextures));
+mt.set_function("RemoveUnusedTextures",static_cast<void(cocos2d::TextureCache::*)()>(&cocos2d::TextureCache::removeUnusedTextures));
+mt.set_function("RemoveTexture",static_cast<void(cocos2d::TextureCache::*)(cocos2d::Texture2D*)>(&cocos2d::TextureCache::removeTexture));
+mt.set_function("RemoveTextureForKey",static_cast<void(cocos2d::TextureCache::*)(const std::string&)>(&cocos2d::TextureCache::removeTextureForKey));
+mt.set_function("GetCachedTextureInfo",static_cast<std::string(cocos2d::TextureCache::*)()const>(&cocos2d::TextureCache::getCachedTextureInfo));
+mt.set_function("WaitForQuit",static_cast<void(cocos2d::TextureCache::*)()>(&cocos2d::TextureCache::waitForQuit));
+mt.set_function("GetTextureFilePath",static_cast<std::string(cocos2d::TextureCache::*)(cocos2d::Texture2D*)const>(&cocos2d::TextureCache::getTextureFilePath));
+mt.set_function("RenameTextureWithKey",static_cast<void(cocos2d::TextureCache::*)(const std::string&,const std::string&)>(&cocos2d::TextureCache::renameTextureWithKey));
+mt[sol::call_constructor]=sol::constructors<cocos2d::TextureCache()>();
+}
 void RegisterLuaCoreDeviceAuto(cocos2d::extension::Lua& lua){
 auto mt=lua.NewUserType<cocos2d::Device>("cc","Device",true);
 mt.set_function("GetDPI",static_cast<int(*)()>(&cocos2d::Device::getDPI));
@@ -163,12 +185,3 @@ mt.set_function("GetObjects",sol::overload(static_cast<cocos2d::ValueVector&(coc
 mt.set_function("SetObjects",static_cast<void(cocos2d::TMXObjectGroup::*)(const cocos2d::ValueVector&)>(&cocos2d::TMXObjectGroup::setObjects));
 mt[sol::call_constructor]=sol::constructors<cocos2d::TMXObjectGroup()>();
 }
-void RegisterLuaCoreTMXTileFlags_Auto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["cc"];
-pTable.new_enum<cocos2d::TMXTileFlags_>("TMXTileFlags",{
-{"KTMXTileHorizontalFlag",cocos2d::TMXTileFlags_::kTMXTileHorizontalFlag}
-,{"KTMXTileVerticalFlag",cocos2d::TMXTileFlags_::kTMXTileVerticalFlag}
-,{"KTMXTileDiagonalFlag",cocos2d::TMXTileFlags_::kTMXTileDiagonalFlag}
-,{"KTMXFlipedAll",cocos2d::TMXTileFlags_::kTMXFlipedAll}
-,{"KTMXFlippedMask",cocos2d::TMXTileFlags_::kTMXFlippedMask}
-});}
