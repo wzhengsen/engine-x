@@ -20,16 +20,18 @@
 
 ---类型前缀，每种类型均以字符串保存，并添加对应前缀。
 local TypePrefix = {
-    string  = "_@_TS",
-    boolean = "_@_TB",
-    number  = "_@_TN",
-    table   = "_@_TT",
+    string          = "_@_TS",
+    boolean         = "_@_TB",
+    number          = "_@_TN",
+    table           = "_@_TT",
+    ["function"]    = "_@_TF",
 
     -- 反向查询映射
     ["_@_TS"] = "S",
     ["_@_TB"] = "B",
     ["_@_TN"] = "N",
-    ["_@_TT"] = "T"
+    ["_@_TT"] = "T",
+    ["_@_TF"] = "F"
 };
 
 local type = type;
@@ -49,7 +51,7 @@ local UserFile = setmetatable({
         end
         -- 仅布尔/数值/字符串能作为键。
         local kType = type(k);
-        if "table" == kType or not TypePrefix[kType] then
+        if "table" == kType or "function" == kType or not TypePrefix[kType] then
             return;
         end
         k = tostring(k);
@@ -59,15 +61,15 @@ local UserFile = setmetatable({
             local prefix = TypePrefix[type(v)];
             if prefix then
                 local key = t.Key;
-                if prefix ~= TypePrefix.table then
-                    v = tostring(v);
-                    UserDefault.Instance:SetStringForKey(k,prefix .. (key and v:Encrypt(key) or v));
+                if prefix == TypePrefix.table then
+                    v = cjson.encode(v) or "";
+                elseif prefix == TypePrefix["function"] then
+                    -- 可以保存函数，但不能保存函数的上值，已有的上值被初始化为nil。
+                    v = string.dump(v);
                 else
-                    v = cjson.encode(v);
-                    if v then
-                        UserDefault.Instance:SetStringForKey(k,prefix .. (key and v:Encrypt(key) or v));
-                    end
+                    v = tostring(v);
                 end
+                UserDefault.Instance:SetStringForKey(k,prefix .. (key and v:Encrypt(key) or v));
             end
         end
     end,
@@ -77,7 +79,7 @@ local UserFile = setmetatable({
         end
         -- 仅布尔/数值/字符串能作为键。
         local kType = type(k);
-        if "table" == kType or not TypePrefix[kType] then
+        if "table" == kType or "function" == kType or not TypePrefix[kType] then
             return nil;
         end
         k = tostring(k);
@@ -98,6 +100,8 @@ local UserFile = setmetatable({
                 return cc.ToBoolean(ret);
             elseif "T" == vType then
                 return cjson.decode(ret);
+            elseif "F" == vType then
+                return load(ret);
             end
         end
     end
