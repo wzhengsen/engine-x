@@ -20,11 +20,11 @@ require("Event");
 require("Handler");
 require("Class");
 
-require("Cocos2dxConstants");
 require("OpenGLConstants");
 
 require("OpenGL");
 
+require("Cocos2dx.Constants");
 require("Cocos2dx.Cocos2dxEx");
 require("Lua.OsEx");
 require("Lua.IoEx");

@@ -1,4 +1,4 @@
-local cc = cc
+local cc = cc;
 
 cc.AnimationFrameDisplayedNotification = "CCAnimationFrameDisplayedNotification";
 
