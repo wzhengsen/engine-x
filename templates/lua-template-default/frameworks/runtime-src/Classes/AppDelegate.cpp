@@ -114,9 +114,5 @@ bool AppDelegate::RestartLuaEngine() {
     register_all_packages();
     // Register custom module
     register_custom_function(lua->lua_state());
-    auto fullPath = fu->fullPathForFilename("src/main.luac");
-    if (fullPath.empty()) {
-        fullPath = fu->fullPathForFilename("src/main.lua");
-    }
-    return lua->script_file(fullPath).valid();
+    return lua->script("require('src.main');").valid();
 }

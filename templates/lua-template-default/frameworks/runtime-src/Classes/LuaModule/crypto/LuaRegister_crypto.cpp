@@ -19,7 +19,7 @@
     return 1;\
 }
 
-#define LuaDE(DC_EC,dc_ec) static int Lua##DC_EC(lua_State* L){\
+#define LuaDE(DC_EC) static int Lua##DC_EC(lua_State* L){\
     static const size_t keyLen = 16;\
     const Lua lua = Lua(L);\
     size_t strLen = 0;\
@@ -31,8 +31,8 @@
     for (size_t i = 0; i < std::min(pwdLen,keyLen); i++){\
         pwdChar[i] = pwd[i];\
     }\
-    AES_KEY aeskey = {0};\
-    AES_set_##dc_ec##_key(pwdChar, keyLen * sizeof(uint8_t) * 8, &aeskey);\
+    AES_KEY aeskey = {};\
+    AES_set_encrypt_key(pwdChar, keyLen * sizeof(uint8_t) * 8, &aeskey);\
     auto b = Lua::Buffer();\
     uint8_t* buffer = reinterpret_cast<uint8_t*>(lua.BufferInitSize(&b, strLen));\
     int num = 0;\
@@ -53,18 +53,18 @@ LuaHash(SHA384)
 LuaHash(SHA512)
 #define __temp_min__ min
 #undef min
-LuaDE(ENCRYPT,encrypt)
-LuaDE(DECRYPT,decrypt)
+LuaDE(ENCRYPT)
+LuaDE(DECRYPT)
 #define min __temp_min__
 #undef __temp_min__
 #undef SHA1_DIGEST_LENGTH
 #undef LuaHash
 #undef LuaDE
 
-static int LuaBase64(lua_State* L){
+static int LuaBase64(lua_State* L) {
     const Lua lua = Lua(L);
     size_t strLen = 0;
-    const uint8_t* str = reinterpret_cast<const uint8_t*>(lua.CheckLString(1,strLen));
+    const uint8_t* str = reinterpret_cast<const uint8_t*>(lua.CheckLString(1, strLen));
 
     BIO* b64 = BIO_new(BIO_f_base64());
     BIO* bmem = BIO_new(BIO_s_mem());
@@ -85,20 +85,20 @@ static int LuaBase64(lua_State* L){
 
     BIO_free_all(b64);
 
-    Lua::PushResultSize(&b,len);
+    Lua::PushResultSize(&b, len);
     return 1;
 }
 
-static int LuaUnbase64(lua_State* L){
+static int LuaUnbase64(lua_State* L) {
     const Lua lua = Lua(L);
     size_t strLen = 0;
-    const uint8_t* str = reinterpret_cast<const uint8_t*>(lua.CheckLString(1,strLen));
+    const uint8_t* str = reinterpret_cast<const uint8_t*>(lua.CheckLString(1, strLen));
 
     auto b = Lua::Buffer();
     uint8_t* buffer = reinterpret_cast<uint8_t*>(lua.BufferInitSize(&b, strLen));
 
-    BIO *b64 = BIO_new(BIO_f_base64());
-    BIO *bmem = BIO_new_mem_buf(str, static_cast<int>(strLen));
+    BIO* b64 = BIO_new(BIO_f_base64());
+    BIO* bmem = BIO_new_mem_buf(str, static_cast<int>(strLen));
 
     BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
     bmem = BIO_push(b64, bmem);
@@ -111,23 +111,23 @@ static int LuaUnbase64(lua_State* L){
     return 1;
 }
 
-static int LuaHex(lua_State* L){
+static int LuaHex(lua_State* L) {
     static char HexMap[] = "0123456789abcdef";
     const Lua lua = Lua(L);
     size_t strLen = 0;
-    const uint8_t* str = reinterpret_cast<const uint8_t*>(lua.CheckLString(1,strLen));
+    const uint8_t* str = reinterpret_cast<const uint8_t*>(lua.CheckLString(1, strLen));
 
     auto b = Lua::Buffer();
     char* buffer = lua.BufferInitSize(&b, strLen * 2);
-    for (size_t i = 0; i < strLen; i++){
+    for (size_t i = 0; i < strLen; i++) {
         buffer[i * 2] = HexMap[str[i] >> 4];
         buffer[i * 2 + 1] = HexMap[str[i] & 0xf];
     }
-    Lua::PushResultSize(&b,strLen * 2);
+    Lua::PushResultSize(&b, strLen * 2);
     return 1;
 }
 
-static int LuaUnhex(lua_State* L){
+static int LuaUnhex(lua_State* L) {
     static uint8_t HexMap[] = {
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,        0,1,2,3,4,5,6,7,8,9,0,0,0,0,0,0,
@@ -143,19 +143,19 @@ static int LuaUnhex(lua_State* L){
     };
     const Lua lua = Lua(L);
     size_t strLen = 0;
-    const uint8_t* str = reinterpret_cast<const uint8_t*>(lua.CheckLString(1,strLen));
+    const uint8_t* str = reinterpret_cast<const uint8_t*>(lua.CheckLString(1, strLen));
 
-    if (strLen <= 1){
+    if (strLen <= 1) {
         lua.Push("");
         return 1;
     }
 
     auto b = Lua::Buffer();
     char* buffer = lua.BufferInitSize(&b, strLen / 2);
-    for (size_t i = 0; i < strLen / 2; i++){
+    for (size_t i = 0; i < strLen / 2; i++) {
         buffer[i] = (HexMap[str[i * 2]] << 4) + HexMap[str[i * 2 + 1]];
     }
-    Lua::PushResultSize(&b,strLen / 2);
+    Lua::PushResultSize(&b, strLen / 2);
     return 1;
 }
 
