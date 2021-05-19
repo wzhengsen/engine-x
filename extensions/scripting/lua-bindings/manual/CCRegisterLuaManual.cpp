@@ -49,7 +49,7 @@ static void RegisterLuaSocketManual(extension::Lua& lua) {
 
 static void RegisterLuaCoreTMXMapInfoManual(extension::Lua& lua) {
     sol::usertype<TMXMapInfo> tmi = lua["cc"]["TMXMapInfo"];
-    tmi["startElement"] = [](TMXMapInfo* tmi, const std::string_view& sv, const sol::table t) {
+    tmi["StartElement"] = [](TMXMapInfo* tmi, const std::string_view& sv, const sol::table t) {
         const auto size = t.size();
         std::unique_ptr<const char* []> strs = std::make_unique<const char* []>(size + 1);
         std::vector<std::string> sVec = {};
@@ -60,7 +60,7 @@ static void RegisterLuaCoreTMXMapInfoManual(extension::Lua& lua) {
         strs[size] = nullptr;
         tmi->startElement(nullptr, sv.data(), strs.get());
     };
-    tmi["endElement"] = [](TMXMapInfo* tmi, const std::string_view& sv) {
+    tmi["EndElement"] = [](TMXMapInfo* tmi, const std::string_view& sv) {
         tmi->endElement(nullptr, sv.data());
     };
 }
@@ -105,7 +105,7 @@ static void RegisterLuaCoreApplicationManual(extension::Lua& lua) {
 
 static void RegisterLuaCoreDeviceManual(extension::Lua& lua) {
     sol::usertype<cocos2d::Device> device = lua["cc"]["Device"];
-    device["getTextureDataForText"] = [](const std::string& text, const FontDefinition& fd, lua_Integer align) {
+    device["GetTextureDataForText"] = [](const std::string& text, const FontDefinition& fd, lua_Integer align) {
         int width = 0;
         int height = 0;
         bool hasPremultipliedAlpha = false;
@@ -117,7 +117,7 @@ static void RegisterLuaCoreDeviceManual(extension::Lua& lua) {
 
 static void RegisterLuaCoreRenderTextureManual(extension::Lua& lua) {
     sol::usertype<RenderTexture> renderTexture = lua["cc"]["RenderTexture"];
-    renderTexture["newImage"] = [](RenderTexture* renderTexture, sol::function f, sol::variadic_args va) {
+    renderTexture["NewImage"] = [](RenderTexture* renderTexture, sol::function f, sol::variadic_args va) {
         renderTexture->newImage([f](RefPtr<Image> refPtr) {
             f(refPtr.get());
         }, va.size() == 0 ? false : va[0].as<bool>());
@@ -126,7 +126,7 @@ static void RegisterLuaCoreRenderTextureManual(extension::Lua& lua) {
 
 static void RegisterLuaCoreParallaxNodeManual(extension::Lua& lua) {
     sol::usertype<ParallaxNode> parallaxNode = lua["cc"]["ParallaxNode"];
-    parallaxNode["setParallaxArray"] = [](ParallaxNode* parallaxNode, sol::table t) {
+    parallaxNode["SetParallaxArray"] = [](ParallaxNode* parallaxNode, sol::table t) {
         const auto size = static_cast<ssize_t>(t.size());
         _ccArray* arr = ccArrayNew(size);
 
@@ -139,7 +139,7 @@ static void RegisterLuaCoreParallaxNodeManual(extension::Lua& lua) {
         }
         parallaxNode->setParallaxArray(arr);
     };
-    parallaxNode["getParallaxArray"] = [&lua](ParallaxNode* parallaxNode) {
+    parallaxNode["GetParallaxArray"] = [&lua](ParallaxNode* parallaxNode) {
         const _ccArray* const arr = parallaxNode->getParallaxArray();
         sol::table t = lua.create_table(static_cast<int>(arr->num));
         Ref* ref = nullptr;
@@ -153,7 +153,7 @@ static void RegisterLuaCoreParallaxNodeManual(extension::Lua& lua) {
 
 static void RegisterLuaBackendProgramStateManual(extension::Lua& lua) {
     sol::usertype<backend::ProgramState> programState = lua["ccb"]["ProgramState"];
-    programState["getCallbackUniforms"] = [&lua](backend::ProgramState* programState) {
+    programState["GetCallbackUniforms"] = [&lua](backend::ProgramState* programState) {
         const auto& m = programState->getCallbackUniforms();
         sol::table t = lua.create_table(0, static_cast<int>(m.size()));
         for (const auto& it : m) {
@@ -161,14 +161,14 @@ static void RegisterLuaBackendProgramStateManual(extension::Lua& lua) {
         }
         return t;
     };
-    programState["getVertexUniformBuffer"] = [&lua](backend::ProgramState* programState) {
+    programState["GetVertexUniformBuffer"] = [&lua](backend::ProgramState* programState) {
         char* outStr = nullptr;
         size_t size = 0;
         programState->getVertexUniformBuffer(&outStr, size);
         return std::string(outStr, size);
     };
 
-    programState["getFragmentUniformBuffer"] = [&lua](backend::ProgramState* programState) {
+    programState["GetFragmentUniformBuffer"] = [&lua](backend::ProgramState* programState) {
         char* outStr = nullptr;
         size_t size = 0;
         programState->getFragmentUniformBuffer(&outStr, size);
@@ -180,11 +180,11 @@ static void RegisterLuaPhysicsPhysicsBodyManual(extension::Lua& lua) {
 #if CC_USE_PHYSICS
     sol::usertype<PhysicsBody> physicsBody = lua["cc"]["PhysicsBody"];
 #if CC_ENABLE_CHIPMUNK_INTEGRATION
-    physicsBody["getCPBody"] = &PhysicsBody::getCPBody;
+    physicsBody["GetCPBody"] = &PhysicsBody::getCPBody;
 #endif
 #if CC_ENABLE_BOX2D_INTEGRATION
     // todo
-    physicsBody["getB2DBody"] = []() {
+    physicsBody["GetB2DBody"] = []() {
         return 0;
     };
 #endif
@@ -244,7 +244,7 @@ inline static void RegisterLuaStudioMovementBoneDataManual(extension::Lua& lua) 
 
 static void RegisterLuaStudioSkeletonNodeManual(extension::Lua& lua) {
     sol::usertype<cocostudio::timeline::SkeletonNode> skeletonNode = lua["ccs"]["SkeletonNode"];
-    skeletonNode["getAllSubBonesMap"] = [&lua](cocostudio::timeline::SkeletonNode* skeletonNode) {
+    skeletonNode["GetAllSubBonesMap"] = [&lua](cocostudio::timeline::SkeletonNode* skeletonNode) {
         // The returned table does not hold data.
         auto& sMap = skeletonNode->getAllSubBonesMap();
         sol::table t = lua.create_table(0, static_cast<int>(sMap.size()));
