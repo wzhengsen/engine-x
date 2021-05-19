@@ -81,6 +81,8 @@ public:
 
     static cocos2d::Node* createNode(const std::string& filename);
     static cocos2d::Node* createNode(const std::string& filename, const ccNodeLoadCallback& callback);
+    static cocos2d::Node* createNode(const std::string& filename, const Size& size);
+    static cocos2d::Node* createNode(const std::string& filename, const Size& size, const ccNodeLoadCallback& callback);
     static cocos2d::Node* createNode(const Data& data);
     static cocos2d::Node* createNode(const Data& data, const ccNodeLoadCallback &callback);
     static cocos2d::Node* createNodeWithVisibleSize(const std::string& filename);

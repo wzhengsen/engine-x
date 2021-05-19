@@ -324,6 +324,24 @@ Node* CSLoader::createNode(const std::string &filename, const ccNodeLoadCallback
     return nullptr;
 }
 
+Node* CSLoader::createNode(const std::string& filename, const Size& size) {
+    auto node = createNode(filename);
+    if (node != nullptr) {
+        node->setContentSize(size);
+        ui::Helper::doLayout(node);
+    }
+    return node;
+}
+
+Node* CSLoader::createNode(const std::string& filename, const Size& size, const ccNodeLoadCallback& callback) {
+    auto node = createNode(filename, callback);
+    if (node != nullptr) {
+        node->setContentSize(size);
+        ui::Helper::doLayout(node);
+    }
+    return node;
+}
+
 Node* CSLoader::createNodeWithVisibleSize(const std::string& filename)
 {
     auto node = createNode(filename);
