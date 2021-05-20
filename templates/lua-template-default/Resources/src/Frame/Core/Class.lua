@@ -68,7 +68,8 @@ local MetaNeedImpl = {
     __lt__ = "__lt",
     __le__ = "__le",
     __concat__ = "__concat",
-    __call__ = "__call"
+    __call__ = "__call",
+    __close__ = "__close"
 };
 
 local ObjMeta = {};
@@ -87,6 +88,13 @@ ObjMeta.__gc = function (sender)
     local __gc = sender.__gc__;
     if __gc then
         __gc(sender);
+    end
+end
+-- __close元方法，可以不实现。
+ObjMeta.__close = function (sender)
+    local __close = sender.__close__;
+    if __close then
+        __close(sender);
     end
 end
 -- __pairs元方法，可以不实现，采用默认实现。
