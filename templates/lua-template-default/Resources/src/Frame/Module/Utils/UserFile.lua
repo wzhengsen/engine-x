@@ -40,10 +40,17 @@ local tostring = tostring;
 local UserDefault = cc.UserDefault;
 --直接使用UserFile来操作UserDefault的文件。
 --该类不可实例化，其所有方法和属性都是静态的。
-local UserFile = setmetatable({
-    -- 使用该值作为加密和解密密码。
-    Key = nil
-},
+local UserFile = {
+    Key = nil;
+};
+
+---清空映射文件。
+---
+function UserFile.Clear()
+    UserDefault.Instance:Clear();
+end
+
+setmetatable(UserFile,
 {
     __newindex = function (t,k,v)
         if k == "Key" then
@@ -106,11 +113,5 @@ local UserFile = setmetatable({
         end
     end
 });
-
----清空映射文件。
----
-function UserFile.Clear()
-    UserDefault.Instance:Clear();
-end
 
 cc.UserFile = UserFile;
