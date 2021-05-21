@@ -85,12 +85,7 @@ local ChineseNumberLower = {
 --[[
     Func:   小数部分转换
 ]]
-local function transfromFloat2Chinese(numStr,b)
-    if numStr == 0 then
-        return "";
-    end
-    -- 去掉首位0
-    numStr = tostring(numStr):sub(2);
+local function TransfromFloat2Chinese(numStr,b)
     local cTab = b and ChineseNumberUpper or ChineseNumberLower;
 
     local ret = {};
@@ -105,7 +100,7 @@ end
 --[[
     Func:   整数部分转换
 ]]
-local function transfromInt2Chinese(num,np,b)
+local function TransfromInt2Chinese(num,np,b)
     local cTab = b and ChineseNumberUpper or ChineseNumberLower;
     if 0 == num then
         return cTab[0];
@@ -122,10 +117,10 @@ local function transfromInt2Chinese(num,np,b)
             local numStr = "";
             if np == 100000000 then
                 -- 最高转换单位为“亿”，超过100000000的部分再次尝试转换
-                numStr = transfromInt2Chinese(dV,np,b);
+                numStr = TransfromInt2Chinese(dV,np,b);
             else
                 -- 获取转换值，如千万、百万等没有对应单位的，再次尝试转换
-                numStr = cTab[dV] or transfromInt2Chinese(dV,10000,b);
+                numStr = cTab[dV] or TransfromInt2Chinese(dV,10000,b);
             end
             if np >= 10 then
                 -- 因为没有单位“个”，所以大于10的数才拼接单位
@@ -152,12 +147,16 @@ end
 ---@param num any
 ---@param b? boolean {true}是否使用大写转换
 ---@return string?
----@bug 当转换极小值时，输出不正确（如ToChinese(0.9e-12)）。
 ---
 function cc.ToChinese(num,b)
     num = tonumber(num);
     if not num then
         return nil;
+    end
+    if math.huge == num then
+        return "无穷";
+    elseif -math.huge == num then
+        return "负无穷";
     end
     local isNegative = num < 0;
     num = math.abs(num);
@@ -165,18 +164,28 @@ function cc.ToChinese(num,b)
 
     -- 分割为整数和小数
     local iNum,fNum = math.modf(num);
+    local fNumStr = "";
     if fNum ~= 0.0 then
-        -- 为确保精度，将小数部分截取到和实际传入的等长。
-        local numStr = tostring(num);
-        local dotIdx = numStr:find(".",1,true);
-        if dotIdx then
-            fNum = "0" .. numStr:sub(dotIdx);
+        fNumStr = tostring(fNum);
+        local eIdx = fNumStr:find("e");
+        if eIdx then
+            local e = cc.ToInteger(fNumStr:sub(eIdx + 2));
+            local pre = fNumStr:sub(1,eIdx - 1):gsub("%.","");
+            fNumStr = "." .. ("0"):rep(e - 1) .. pre;
+        else
+            -- 为确保精度，将小数部分截取到和实际传入的等长。
+            local numStr = tostring(num);
+            local dotIdx = numStr:find(".",1,true);
+            if dotIdx then
+                fNumStr = numStr:sub(dotIdx);
+            end
         end
+
+        -- 小数
+        fNumStr = TransfromFloat2Chinese(fNumStr,b);
     end
-    -- 小数
-    local fNumStr = transfromFloat2Chinese(fNum,b);
     -- 整数
-    local iNumStr = transfromInt2Chinese(iNum,100000000,b);
+    local iNumStr = TransfromInt2Chinese(iNum,100000000,b);
     if isNegative then
         return "负" .. iNumStr .. fNumStr;
     end
