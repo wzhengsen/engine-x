@@ -31,13 +31,10 @@ local LocalFile = class();
 
 ---构造。
 ---
----@param path string 存储文件的路径，使用绝对路径。
+---@param path string 存储文件的路径。
 ---@param key? string 如果必要，该文件的密码。
 ---
 function LocalFile:ctor(path,key)
-    assert(type(path) == "string" and path ~= "", "Path is invaild.");
-    assert(cc.FileUtils.Instance:IsAbsolutePath(path),"Relative Path was forbidden!");
-
     self.__key = key;
     self.__path = path;
     self.__FILE = nil;
@@ -63,15 +60,25 @@ function LocalFile:Open()
     end
     self.__FILE = file;
 
-    ---@type string
-    file = file:read("a");
+    local fileContent = file:read("a");
     if self.__key then
         -- 存在密码先解密。
-        file = file:Decrypt(self.__key);
+        fileContent = fileContent:Decrypt(self.__key);
     end
     -- 尝试json解码。
-    file = cjson.decode(file);
-    self.__fileData = file or {};
+    fileContent = cjson.decode(fileContent);
+    if fileContent then
+        for tab,key,val in apairs(fileContent) do
+            -- 对可能是函数的类型反序列化。
+            if "string" == type(val) and "_@_TF" == val:sub(1,5) then
+                local func = load(val:sub(6));
+                if func then
+                    tab[key] = func;
+                end
+            end
+        end
+    end
+    self.__fileData = fileContent or {};
     return true;
 end
 
@@ -83,6 +90,12 @@ function LocalFile:Flush()
         return;
     end
     local fileData = self.__fileData;
+    for tab,key,val in apairs(fileData) do
+        -- 对函数序列化，并加入前缀。
+        if "function" == type(val) then
+            tab[key] = "_@_TF" .. string.dump(val);
+        end
+    end
     local tabStr = cjson.encode(fileData);
     if tabStr then
         if self.__key then
@@ -133,6 +146,9 @@ function LocalFile.__properties__()
         r = {
             Data = function (self)
                 return self.__FILE and self.__fileData or {};
+            end,
+            Valid = function (self)
+                return nil ~= self.__FILE;
             end
         }
     };

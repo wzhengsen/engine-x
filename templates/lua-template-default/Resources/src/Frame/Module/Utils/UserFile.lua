@@ -24,14 +24,7 @@ local TypePrefix = {
     boolean         = "_@_TB",
     number          = "_@_TN",
     table           = "_@_TT",
-    ["function"]    = "_@_TF",
-
-    -- 反向查询映射
-    ["_@_TS"] = "S",
-    ["_@_TB"] = "B",
-    ["_@_TN"] = "N",
-    ["_@_TT"] = "T",
-    ["_@_TF"] = "F"
+    ["function"]    = "_@_TF"
 };
 
 local type = type;
@@ -67,8 +60,14 @@ setmetatable(UserFile,
         else
             local prefix = TypePrefix[type(v)];
             if prefix then
-                local key = t.Key;
+                local _key = t.Key;
                 if prefix == TypePrefix.table then
+                    -- 将表中可能嵌套存在的函数全部序列化。
+                    for tab,key,val in apairs(v) do
+                        if "function" == type(val) then
+                            tab[key] = TypePrefix["function"]..(string.dump(val));
+                        end
+                    end
                     v = cjson.encode(v) or "";
                 elseif prefix == TypePrefix["function"] then
                     -- 可以保存函数，但不能保存函数的上值，已有的上值被初始化为nil。
@@ -76,7 +75,7 @@ setmetatable(UserFile,
                 else
                     v = tostring(v);
                 end
-                UserDefault.Instance:SetStringForKey(k,prefix .. (key and v:Encrypt(key) or v));
+                UserDefault.Instance:SetStringForKey(k,prefix .. (_key and v:Encrypt(_key) or v));
             end
         end
     end,
@@ -90,24 +89,33 @@ setmetatable(UserFile,
             return nil;
         end
         k = tostring(k);
-        local val = UserDefault.Instance:GetStringForKey(k,"");
-        if "" == val then
+        local v = UserDefault.Instance:GetStringForKey(k,"");
+        if "" == v then
             return nil;
         end
-        local vType = TypePrefix[val:sub(1,5)];
+        local vType = v:sub(1,5);
         if vType then
-            local ret = val:sub(6);
-            local key = t.Key;
-            ret = key and ret:Decrypt(key) or ret;
-            if "N" == vType then
+            local ret = v:sub(6);
+            local _key = t.Key;
+            ret = _key and ret:Decrypt(_key) or ret;
+            if TypePrefix.number == vType then
                 return cc.ToNumber(ret);
-            elseif "S" == vType then
+            elseif TypePrefix.string == vType then
                 return ret;
-            elseif "B" == vType then
+            elseif TypePrefix.boolean == vType then
                 return cc.ToBoolean(ret);
-            elseif "T" == vType then
-                return cjson.decode(ret);
-            elseif "F" == vType then
+            elseif TypePrefix.table == vType then
+                local retTab = cjson.decode(ret);
+                -- 将表中可能嵌套存在的已被序列化的函数全部反序列化。
+                if retTab then
+                    for tab,key,val in apairs(retTab) do
+                        if "string" == type(val) and TypePrefix["function"] == val:sub(1,5) then
+                            tab[key] = (load(val:sub(6)));
+                        end
+                    end
+                end
+                return retTab;
+            elseif TypePrefix["function"] == vType then
                 return load(ret);
             end
         end
