@@ -723,20 +723,20 @@ static std::string IconvTo(const char* to, const char* from, uint8_t sizeRate, c
 }
 
 
-CC_DLL std::string UTF8ToGB2312(const char* c, size_t len, bool* fullSuc) {
-    return IconvTo("gb2312//TRANSLIT", "utf-8", 1, c, len, fullSuc);
+CC_DLL std::string Utf8ToGbk(const char* c, size_t len, bool* fullSuc) {
+    return IconvTo("gbk//TRANSLIT", "utf-8", 1, c, len, fullSuc);
 }
 
-CC_DLL std::string UTF8ToGB2312(const std::string& str, bool* fullSuc) {
-    return UTF8ToGB2312(str.c_str(), str.length(), fullSuc);
+CC_DLL std::string Utf8ToGbk(const std::string& str, bool* fullSuc) {
+    return Utf8ToGbk(str.c_str(), str.length(), fullSuc);
 }
 
-CC_DLL std::string GB2312ToUTF8(const char* c, size_t len, bool* fullSuc) {
-    return IconvTo("utf-8//TRANSLIT", "gb2312", 2, c, len, fullSuc);
+CC_DLL std::string GbkToUtf8(const char* c, size_t len, bool* fullSuc) {
+    return IconvTo("utf-8//TRANSLIT", "gbk", 2, c, len, fullSuc);
 }
 
-CC_DLL std::string GB2312ToUTF8(const std::string& str, bool* fullSuc) {
-    return GB2312ToUTF8(str.c_str(), str.length(), fullSuc);
+CC_DLL std::string GbkToUtf8(const std::string& str, bool* fullSuc) {
+    return GbkToUtf8(str.c_str(), str.length(), fullSuc);
 }
 
 static int invalid_date(const tm* ptm) {

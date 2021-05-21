@@ -354,12 +354,11 @@ namespace utils
     {
         return ((number > 0) && (number & (number - 1)) == 0);
     }
-	// Unicode����תΪUTF8  
-	CC_DLL bool UnicodeToUTF8(std::vector<char>& pu8, const wchar_t* pun, int uLen);
-    CC_DLL std::string UTF8ToGB2312(const char* c, size_t len, bool* fullSuc = nullptr);
-    CC_DLL std::string UTF8ToGB2312(const std::string& str, bool* fullSuc = nullptr);
-    CC_DLL std::string GB2312ToUTF8(const char* c, size_t len, bool* fullSuc = nullptr);
-    CC_DLL std::string GB2312ToUTF8(const std::string& str, bool* fullSuc = nullptr);
+
+    CC_DLL std::string Utf8ToGbk(const char* c, size_t len, bool* fullSuc = nullptr);
+    CC_DLL std::string Utf8ToGbk(const std::string& str, bool* fullSuc = nullptr);
+    CC_DLL std::string GbkToUtf8(const char* c, size_t len, bool* fullSuc = nullptr);
+    CC_DLL std::string GbkToUtf8(const std::string& str, bool* fullSuc = nullptr);
 
     CC_DLL uint32_t Time2DosDate(time_t t);
     CC_DLL uint32_t Time2DosDate();
