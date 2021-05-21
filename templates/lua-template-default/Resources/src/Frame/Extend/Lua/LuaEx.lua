@@ -21,8 +21,53 @@
 --[[
     Auth:   wzhengsen
     Date:   2020.08.15
-    Desc:   重写一些lua库函数。
+    Desc:   重写一些lua库函数和增加一些库函数。
 ]]
+
+local type = type;
+local table = table;
+
+---遍历表，且可遍历嵌套表，返回3个值：当前表，当前键，当前值。
+---不会触发__pairs元方法。
+---
+---@param t table
+---@return function
+---
+function _G.apairs(t)
+    local curTable = t;
+    -- 记录即将被遍历的表。
+    local tabList = {};
+    local key,val = nil,nil;
+    return function ()
+        ::begin::
+        key,val = next(curTable,key);
+        if "table" == type(val) then
+            table.insert(tabList,val);
+        end
+        if nil == key then
+            if #tabList > 0 then
+                curTable = table.remove(tabList);
+                goto begin
+            else
+                curTable = nil;
+            end
+        end
+        return curTable,key,val;
+    end
+end
+
+---以不会触发__pairs元方法的方式遍历表。
+---
+---@param t table
+---@return function
+---
+function _G.rpairs(t)
+    local key,value = nil,nil;
+    return function ()
+        key,value = next(t,key);
+        return key,value;
+    end
+end
 
 if os.Windows then
     local _print = print;

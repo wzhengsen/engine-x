@@ -26,14 +26,26 @@
 
 if os.Windows then
     local _open = io.open;
-    function io.open(filename,...)
+    ---
+    ---@param filename string
+    ---@param mode     openmode
+    ---@return file*?
+    ---@return string? errmsg
+    ---
+    function io.open(filename,mode)
         filename = filename:Convert("gbk//TRANSLIT","utf-8");
-        return _open(filename,...);
+        return _open(filename,mode);
     end
 
     local _popen = io.popen;
-    function io.popen(prog,...)
+    ---
+    ---@param prog  string
+    ---@param mode? popenmode
+    ---@return file*?
+    ---@return string? errmsg
+    ---
+    function io.popen(prog,mode)
         prog = prog:Convert("gbk//TRANSLIT","utf-8");
-        return _popen(prog,...);
+        return _popen(prog,mode);
     end
 end
