@@ -40,8 +40,6 @@ namespace cocos2d {
             * e1:delete();--ok
             * local e2 = Example();
             * e2:delete();--Don't do this.
-            * else:
-            * Don't __delete__ cocos2d::Ref.
             */
             void __delete__();
         protected:
