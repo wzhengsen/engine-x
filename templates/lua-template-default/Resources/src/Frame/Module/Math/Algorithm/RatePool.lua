@@ -5,7 +5,7 @@
 ]]
 local RatePool = class();
 
-function RatePool:ctor()
+function RatePool:__init__()
     self:Clear();
 end
 

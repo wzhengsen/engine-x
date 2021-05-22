@@ -31,7 +31,7 @@ namespace cocos2d {
         class CC_DLL LuaObject {
         public:
             virtual ~LuaObject();
-            void SetDtorHandler(std::function<void(LuaObject*)>& dh);
+            void SetDeleteHandler(std::function<void(LuaObject*)>& dh);
             /**
             * Note:
             * Only used in lua code to free pointers.
@@ -45,7 +45,7 @@ namespace cocos2d {
         protected:
             LuaObject() = default;
         private:
-            std::function<void(LuaObject*)> _dtorHandler = nullptr;
+            std::function<void(LuaObject*)> _deleteHandler = nullptr;
         };
     }// namespace cocos2d::extension
 } // namespace cocos2d

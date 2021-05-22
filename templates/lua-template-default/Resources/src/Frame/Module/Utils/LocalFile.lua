@@ -34,7 +34,7 @@ local LocalFile = class();
 ---@param path string 存储文件的路径。
 ---@param key? string 如果必要，该文件的密码。
 ---
-function LocalFile:ctor(path,key)
+function LocalFile:__init__(path,key)
     self.__key = key;
     self.__path = path;
     self.__FILE = nil;
@@ -155,7 +155,7 @@ function LocalFile.__properties__()
 end
 
 ---析构时自动关闭。
-function LocalFile:dtor()
+function LocalFile:__del__()
     self:Close()
 end
 

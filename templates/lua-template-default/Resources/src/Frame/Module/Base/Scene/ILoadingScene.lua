@@ -9,8 +9,8 @@ local BaseScene = require("Base.Scene.BaseScene")
 local ILoadingScene = class(BaseScene)
 local Timer = require("Classes.Timer");
 
-function ILoadingScene:ctor()
-    BaseScene.ctor(self)
+function ILoadingScene:__init__()
+    BaseScene.__init__(self)
 end
 
 function ILoadingScene:onEnterTransitionFinish()

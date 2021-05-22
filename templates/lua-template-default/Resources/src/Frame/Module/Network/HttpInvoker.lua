@@ -38,7 +38,7 @@ HttpInvoker.ContentType = {
     }
 };
 
-function HttpInvoker:ctor(contentType)
+function HttpInvoker:__init__(contentType)
     -- 超时时间，为nil时使用cc.HttpRequest默认超时时间，也可以指定时间，以毫秒计。
     self._timeout = nil;
     -- 重试次数，默认0，不重试。

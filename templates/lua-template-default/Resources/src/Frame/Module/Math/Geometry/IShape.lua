@@ -11,7 +11,7 @@ IShape.new = nil;
 -- 判断是否包含一个点，纯虚函数。
 IShape.IsPointIn = 0;
 
-function IShape:ctor()
+function IShape:__init__()
     self._locX = {};
     self._locY = {};
 end

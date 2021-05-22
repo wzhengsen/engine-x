@@ -1,7 +1,7 @@
 local FirstScene = class(syx.BaseScene);
 
-function FirstScene:ctor()
-    syx.BaseScene.ctor(self)
+function FirstScene:__init__()
+    syx.BaseScene.__init__(self)
     local img = ccui.ImageView.new("HelloWorld.png");
     img.Parent = self;
     img:Layout({

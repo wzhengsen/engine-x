@@ -39,7 +39,7 @@ Sound.UnkownTime = AudioEngine.TIME_UNKNOWN;
             boolean[false]                  循环
             number[Sound.DefaultVolume]     音量0-1
 ]]
-function Sound:ctor(filePath,loop,vol)
+function Sound:__init__(filePath,loop,vol)
     self.sInst = AudioEngine.INVALID_AUDIO_ID
     loop = loop or false
     vol = vol or Sound.DefaultVolume

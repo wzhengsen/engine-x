@@ -40,7 +40,7 @@ local config = require("config");
 ]]
 Server.ProtocolType = config.ProtocolType:lower()
 
-function Server:ctor()
+function Server:__init__()
     Connection.Init();
     Connection.ObjectTable[self] = true;
     self.hbDelays = {};
@@ -137,7 +137,7 @@ function Server:OnAccept()
     return true;
 end
 
-function Server:dtor()
+function Server:__del__()
     if self.State == Server.Closed then
         if not class.IsNull(self.hbTimer) then
             self.hbTimer:delete();

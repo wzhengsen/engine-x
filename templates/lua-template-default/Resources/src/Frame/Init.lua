@@ -148,8 +148,8 @@ end
 
 if config.RequireHttpEnabled then
     local RequireHttpInvoker = class(syx.HttpInvoker);
-    function RequireHttpInvoker:ctor()
-        syx.HttpInvoker.ctor(self);
+    function RequireHttpInvoker:__init__()
+        syx.HttpInvoker.__init__(self);
         self._timeout = 3000;
         self._async = false;
     end

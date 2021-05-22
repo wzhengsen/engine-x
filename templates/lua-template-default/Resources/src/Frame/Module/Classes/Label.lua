@@ -41,7 +41,7 @@ Label = class(function(font,fontSize,maxWidth,align)
     );
 end);
 
-function Label:ctor()
+function Label:__init__()
     self.LineBreakWithoutSpace = true;
     self.Overflow = cc.Label.Overflow.RESIZE_HEIGHT;
 end

@@ -16,7 +16,7 @@ Timer.Forever = 0;
 
                 number{1}           重复次数，小于等于0表示永远。
 ]]
-function Timer:ctor(time,func,rep)
+function Timer:__init__(time,func,rep)
     rep = rep or 1;
 
     self.__curRound = 0;
@@ -41,7 +41,7 @@ function Timer:ctor(time,func,rep)
     end,time / 1000,false);
 end
 
-function Timer:dtor()
+function Timer:__del__()
     if self.__timerHandler then
         scheduler:unscheduleScriptEntry(self.__timerHandler);
         self.__timerHandler = nil;

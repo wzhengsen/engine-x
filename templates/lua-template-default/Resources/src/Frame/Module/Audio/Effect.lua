@@ -28,8 +28,8 @@ Effect.Silence = UserFile().EffectSilence or false
 -- 记录所有当前运行的声音句柄
 Effect.AllInst = {}
 
-function Effect:ctor(...)
-    Sound.ctor(self,...)
+function Effect:__init__(...)
+    Sound.__init__(self,...)
     self.sVol = math.Limit(Effect.GetDefaultVolume(),0,1)
 
     self._cfb = function(_,str)

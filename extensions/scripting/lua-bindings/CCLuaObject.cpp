@@ -25,13 +25,13 @@
 namespace cocos2d {
     namespace extension {
         LuaObject::~LuaObject() {
-            if (_dtorHandler) {
-                _dtorHandler(this);
+            if (_deleteHandler) {
+                _deleteHandler(this);
             }
             Lua::GetInstance()->ReleaseInLua(this);
         }
-        void LuaObject::SetDtorHandler(std::function<void(LuaObject*)>& dh) {
-            _dtorHandler = dh;
+        void LuaObject::SetDeleteHandler(std::function<void(LuaObject*)>& dh) {
+            _deleteHandler = dh;
         }
 
         void LuaObject::__delete__() {

@@ -20,7 +20,7 @@
 
 local LuaObject = cc.LuaObject;
 
-function LuaObject:dtor(_)end
+function LuaObject:__del__(_)end
 
 function LuaObject.__properties__()
     return {
@@ -29,7 +29,7 @@ function LuaObject.__properties__()
         w = {
             EnableDtorEvent = function (self,val)
                 if val then
-                    self.DtorHandler = class.Handler(self,self.dtor);
+                    self.DtorHandler = class.Handler(self,self.__del__);
                 else
                     self.DtorHandler = nil;
                 end

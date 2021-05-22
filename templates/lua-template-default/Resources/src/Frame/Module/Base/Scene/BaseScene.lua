@@ -15,7 +15,7 @@ BaseScene.PreloadRes = {
     Texture = {},
 }
 
-function BaseScene:ctor()
+function BaseScene:__init__()
     self:enableNodeEvents()
     self:EnableRefEvents()
 end
@@ -29,7 +29,7 @@ function BaseScene:Run()
     end
 end
 
-function BaseScene:dtor()
+function BaseScene:__del__()
     for _,v in pairs(self.PreloadRes.Sound or {}) do
         Sound.Uncache(v)
     end

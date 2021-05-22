@@ -266,9 +266,9 @@ local handlerMetaTable = {
 };
 
 local deleteFunction = function(self)
-    local dtor = self.dtor;
-    if dtor then
-        dtor(self);
+    local __del__ = self.__del__;
+    if __del__ then
+        __del__(self);
     end
     setmetatable(self,nil);
     self["._isnull"] = true;
@@ -441,14 +441,14 @@ function class.New(...)
                 end
             end
 
-            local ctor = cls.ctor;
-            if ctor then
+            local __init__ = cls.__init__;
+            if __init__ then
                 -- 避免在ctor中再次new一个新的对象时递归污染classCreateLayer变量，
                 -- 在此缓存，调用后，将其设置为classCreateLayer+tempCreateLayer
                 -- 最终调用结束，将值-1。
                 local tempCreateLayer = classCreateLayer;
                 classCreateLayer = 0;
-                cls.ctor(instance,...);
+                cls.__init__(instance,...);
                 classCreateLayer = classCreateLayer + tempCreateLayer - 1;
             else
                 classCreateLayer = classCreateLayer - 1;

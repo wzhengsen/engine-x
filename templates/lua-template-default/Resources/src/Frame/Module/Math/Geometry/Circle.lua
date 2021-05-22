@@ -12,8 +12,8 @@ local Circle = class(IShape);
                 <number>            点的Y
                 <number>            半径
 ]]
-function Circle:ctor(x,y,r)
-    IShape.ctor(self);
+function Circle:__init__(x,y,r)
+    IShape.__init__(self);
     table.insert(self._locX,x);
     table.insert(self._locY,y);
     self.__circleR = r;

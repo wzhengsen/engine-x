@@ -6,7 +6,7 @@
 ---------------------------------------------
 local Stack = class();
 
-function Stack:ctor()
+function Stack:__init__()
 	self._stackTable = {};
 end
 

@@ -19,7 +19,7 @@
 local StarryDownloader = require("Starry::Downloader");
 local Downloader = class(StarryDownloader);
 
-function Downloader:ctor(once)
+function Downloader:__init__(once)
     Downloader.__dlMGR = Downloader.__dlMGR or {};
     table.insert(Downloader.__dlMGR,self);
     self._once = once == nil or once;
@@ -55,7 +55,7 @@ end
 function Downloader:OnError(task)
 end
 
-function Downloader:dtor()
+function Downloader:__del__()
     table.remove(Downloader.__dlMGR,table.Find(Downloader.__dlMGR,self));
 end
 

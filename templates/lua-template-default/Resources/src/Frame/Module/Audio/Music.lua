@@ -40,8 +40,8 @@ Music.Mode = {
     ListLoop = {}
 }
 
-function Music:ctor()
-    Sound.ctor(self)
+function Music:__init__()
+    Sound.__init__(self)
     self.sVol = math.Limit(Music.GetDefaultVolume(),0,1)
     self.sFilePath = ""
     self.playList = {}

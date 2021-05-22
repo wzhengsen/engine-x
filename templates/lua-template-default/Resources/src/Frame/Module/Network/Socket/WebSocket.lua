@@ -12,7 +12,7 @@
 
 local WebSocket = class(cc.WebSocket);
 
-function WebSocket:ctor()
+function WebSocket:__init__()
     self.OpenHandler = function (sender)
         if not sender:OnOpen() then
             Event.WebSocketOpen(sender);

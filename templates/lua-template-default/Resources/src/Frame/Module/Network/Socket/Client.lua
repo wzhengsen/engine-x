@@ -26,7 +26,7 @@ local config = require("config");
 ]]
 Client.ProtocolType = config.ProtocolType:lower()
 
-function Client:ctor()
+function Client:__init__()
     Connection.Init();
     Connection.ObjectTable[self] = true;
     self.HeartbeatEnabled = true;
@@ -103,7 +103,7 @@ function Client:OnClose()
     end
 end
 
-function Client:dtor()
+function Client:__del__()
     if self.State == cClient.Closed then
         if not class.IsNull(self.hbTimer) then
             self.hbTimer:delete();

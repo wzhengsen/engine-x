@@ -5,7 +5,7 @@
     Data:   2019.05.01
 ]]
 local IState = class()
-IState.ctor = nil
+IState.__init__ = nil
 
 --[[
     Func:   进入状态

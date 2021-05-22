@@ -15,8 +15,8 @@ local Sector = class(IShape);
                 <number>            弧度
                 <number>            中分线方向
 ]]
-function Sector:ctor(x,y,r,cR,direc)
-    IShape.ctor(self);
+function Sector:__init__(x,y,r,cR,direc)
+    IShape.__init__(self);
 
     cR = math.Limit(cR,0,2 * math.pi);
 

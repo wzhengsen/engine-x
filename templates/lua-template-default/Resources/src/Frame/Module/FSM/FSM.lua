@@ -8,7 +8,7 @@
 local FSM = class()
 local InitState = require("FSM.InitState")
 
-function FSM:ctor(initState)
+function FSM:__init__(initState)
     --nil状态标识初始状态,默认使用InitState
     initState = initState or InitState
 
