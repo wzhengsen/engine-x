@@ -31,7 +31,7 @@ namespace cocos2d {
         class CC_DLL LuaObject {
         public:
             virtual ~LuaObject();
-            void SetDeleteHandler(std::function<void(LuaObject*)>& dh);
+            void SetDeleteHandler(const std::function<void(LuaObject*)>& dh);
             /**
             * Note:
             * Only used in lua code to free pointers.

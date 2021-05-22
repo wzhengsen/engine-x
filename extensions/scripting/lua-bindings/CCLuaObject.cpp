@@ -30,7 +30,7 @@ namespace cocos2d {
             }
             Lua::GetInstance()->ReleaseInLua(this);
         }
-        void LuaObject::SetDeleteHandler(std::function<void(LuaObject*)>& dh) {
+        void LuaObject::SetDeleteHandler(const std::function<void(LuaObject*)>& dh) {
             _deleteHandler = dh;
         }
 

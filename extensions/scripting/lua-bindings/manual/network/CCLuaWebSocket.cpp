@@ -90,16 +90,16 @@ namespace extension {
             {"UNKNOWN",WebSocket::ErrorCode::UNKNOWN}
             });
     }
-    void LuaWebSocket::SetOpenHandler(std::function<void(LuaWebSocket*)> handler) {
+    void LuaWebSocket::SetOpenHandler(const std::function<void(LuaWebSocket*)>& handler) {
         _openHandler = handler;
     }
-    void LuaWebSocket::SetMessageHandler(std::function<void(LuaWebSocket*, const std::string_view&, bool)> handler) {
+    void LuaWebSocket::SetMessageHandler(const std::function<void(LuaWebSocket*, const std::string_view&, bool)>& handler) {
         _messageHandler = handler;
     }
-    void LuaWebSocket::SetCloseHandler(std::function<void(LuaWebSocket*)> handler) {
+    void LuaWebSocket::SetCloseHandler(const std::function<void(LuaWebSocket*)>& handler) {
         _closeHandler = handler;
     }
-    void LuaWebSocket::SetErrorHandler(std::function<void(LuaWebSocket*, const WebSocket::ErrorCode&)> handler) {
+    void LuaWebSocket::SetErrorHandler(const std::function<void(LuaWebSocket*, const WebSocket::ErrorCode&)>& handler) {
         _errorHandler = handler;
     }
     void LuaWebSocket::onOpen(WebSocket*) {

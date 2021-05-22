@@ -30,10 +30,10 @@ namespace extension {
     public:
         static void RegisterLuaWebSocketManual(Lua&);
     private:
-        void SetOpenHandler(std::function<void(LuaWebSocket*)>);
-        void SetMessageHandler(std::function<void(LuaWebSocket*, const std::string_view&, bool isBin)>);
-        void SetCloseHandler(std::function<void(LuaWebSocket*)>);
-        void SetErrorHandler(std::function<void(LuaWebSocket*, const WebSocket::ErrorCode&)>);
+        void SetOpenHandler(const std::function<void(LuaWebSocket*)>&);
+        void SetMessageHandler(const std::function<void(LuaWebSocket*, const std::string_view&, bool isBin)>&);
+        void SetCloseHandler(const std::function<void(LuaWebSocket*)>&);
+        void SetErrorHandler(const std::function<void(LuaWebSocket*, const WebSocket::ErrorCode&)>&);
 
         std::function<void(LuaWebSocket*)> _openHandler = nullptr;
         std::function<void(LuaWebSocket*, const std::string_view&, bool)> _messageHandler = nullptr;
