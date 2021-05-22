@@ -52,6 +52,6 @@ class Cocos2dxGenerator(BaseGenerator):
         ]
 
         self.RenameMembers |= {
-            ".*": {"create": "new"}
+            ".*": {"(C|c)reate": "new"}
         }
         self.ParentsClassesSkip += ["Clonable"]
