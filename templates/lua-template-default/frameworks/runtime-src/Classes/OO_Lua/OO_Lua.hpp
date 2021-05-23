@@ -1283,7 +1283,7 @@ namespace OO_Lua {
 			lua_pushnumber(L, n);
 		}
 
-		template<typename T>
+		template<typename T,typename = typename std::enable_if<std::is_integral<T>::value>::type>
 		inline void Push(T i) const noexcept {
 			lua_pushinteger(L, i);
 		}

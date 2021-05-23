@@ -6,8 +6,6 @@ set(target_name ${lib_name})
 project(${lib_name})
 
 set(${target_name}_src
-    Zip/ZipFile.h
-    Zip/ZipFile.cpp
     OO_Lua/OO_Lua.hpp
     Network/Connection.h
     Network/Connection.cpp
@@ -28,8 +26,6 @@ set(${target_name}_src
     LuaModule/lua-protobuf/LuaRegister_lua-protobuf.cpp
     LuaModule/Network/LuaRegisterConnection.h
     LuaModule/Network/LuaRegisterConnection.cpp
-    LuaModule/Zip/LuaRegisterZipFile.h
-    LuaModule/Zip/LuaRegisterZipFile.cpp
     LuaModule/Cocos2dx/LuaRegisterCocos2dx.h
     LuaModule/Cocos2dx/LuaRegisterCocos2dx.cpp
 )

@@ -28,7 +28,6 @@
 #include "crypto/LuaRegister_crypto.h"
 #include "Network/LuaRegisterConnection.h"
 #include "lua-protobuf/LuaRegister_lua-protobuf.h"
-#include "Zip/LuaRegisterZipFile.h"
 #include "Cocos2dx/LuaRegisterCocos2dx.h"
 #include "Device/LuaRegisterDevice.h"
 #include "ExtLib/LuaRegisterExtLib.h"

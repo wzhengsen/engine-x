@@ -214,7 +214,7 @@ namespace StarryX {
 			/*
 				为每个连接设置独立的事件响应
 			*/
-            void SetHandler(EventHandler eh) noexcept {
+            void SetHandler(const EventHandler& eh) noexcept {
                 eventHandler = eh;
             }
             inline EventHandler GetHandler() const noexcept {
