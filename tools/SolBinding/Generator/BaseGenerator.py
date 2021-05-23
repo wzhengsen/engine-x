@@ -201,8 +201,9 @@ class BaseGenerator(BaseConfig):
         """
         for k, v in self.RenameMembers.items():
             if re.match("^" + k + "$", className):
-                if funcName in v:
-                    return v[funcName]
+                for rName, nName in v.items():
+                    if re.match("^" + rName + "$", funcName):
+                        return nName
         return funcName
 
     def RenameClass(self, className: str) -> str:
