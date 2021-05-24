@@ -31,8 +31,50 @@ extern "C" {
 #include "ActionTimeline/CCSkeletonNode.h"
 #include "network/CCLuaWebSocket.h"
 #include "network/CCLuaHttpRequest.h"
+#include "base/CCZipFile.h"
 
 using namespace cocos2d;
+
+static void RegisterLuaCoreZipFileManual(extension::Lua& lua) {
+    sol::usertype<RZipFile::ZipItem> zItem = lua["cc"]["RZipFile"]["ZipItem"];
+    zItem["Read"] = [&lua](const RZipFile::ZipItem& item, const sol::variadic_args& va) {
+        const char* pwd = nullptr;
+        std::string pwdStr = {};
+        if (va.size() >= 1) {
+            pwdStr = va[0].as<std::string>();
+            pwd = pwdStr.c_str();
+        }
+        const auto& info = item.GetInfo();
+        const auto& name = info.name;
+        auto L = lua.lua_state();
+        if (name.length() > 0 && name[name.length() - 1] == '/') {
+            std::vector<const RZipFile::ZipItem*> vecItem = {};
+            bool ret = item.Read(vecItem);
+            if (ret) {
+                lua_createtable(L, static_cast<int>(vecItem.size()), 0);
+                size_t idx = 0;
+                for (const auto& i : vecItem) {
+                    sol::stack::raw_set_field(L, ++idx, i);
+                }
+            }
+            else {
+                lua_pushnil(L);
+            }
+            return sol::object(L);
+        }
+        luaL_Buffer b = {};
+        auto buffer = luaL_buffinitsize(L, &b, info.size);
+        bool ret = item.Read(buffer, info.size, pwd);
+        if (ret) {
+            luaL_pushresultsize(&b, info.size);
+        }
+        else {
+            luaL_pushresult(&b);
+            lua_pushnil(L);
+        }
+        return sol::object(L);
+    };
+}
 
 static void RegisterLuaSocketManual(extension::Lua& lua) {
     static constexpr luaL_Reg luax_exts[] = {

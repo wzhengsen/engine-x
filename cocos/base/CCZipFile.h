@@ -44,7 +44,6 @@ namespace cocos2d {
     class CC_DLL ZipFile {
 #endif
     public:
-        virtual ~ZipFile();
 
         enum class ErrorCode {
             Unknown,
@@ -223,6 +222,7 @@ namespace cocos2d {
          * @return      RZipFile instance or nullptr.
         */
         static RZipFile* Create(const std::string& filePath);
+        virtual ~RZipFile();
 
         /**
          * @brief       Seek a Item.
@@ -293,13 +293,14 @@ namespace cocos2d {
          * @return      WZipFile instance or nullptr.
         */
         static WZipFile* Create(const std::string& filePath);
+        virtual ~WZipFile();
 
         void Work(const std::string& path, const char* password = nullptr) override;
     protected:
         using ZipFile::ZipFile;
 
         bool Open() override;
-        void Close() override;
+        void Close();
 
         void PushDir(const std::string& dir, const char* password = nullptr);
         void PushFile(const std::string& file, const char* password = nullptr);

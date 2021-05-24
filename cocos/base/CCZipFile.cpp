@@ -48,10 +48,6 @@ ZipFile::ZipFile(const std::string& filePath) {
     }
 }
 
-ZipFile::~ZipFile() {
-    Close();
-}
-
 bool ZipFile::IsValid() const noexcept {
     return _zip != nullptr;
 }
@@ -245,6 +241,7 @@ bool RZipFile::ZipItem::Read(std::vector<const ZipItem*>& vecItem) const {
 
 RZipFile::ZipItemIterator& RZipFile::ZipItemIterator::operator=(const RZipFile::ZipItemIterator& iter) {
     _item = iter._item;
+    return *this;
 }
 bool RZipFile::ZipItemIterator::operator!=(const RZipFile::ZipItemIterator& iter) const {
     return _item != iter._item;
@@ -274,6 +271,10 @@ RZipFile* RZipFile::Create(const std::string& filePath) {
         return nullptr;
     }
     return rZip;
+}
+
+RZipFile::~RZipFile() {
+    Close();
 }
 
 bool RZipFile::Open() {
@@ -336,7 +337,7 @@ const RZipFile::ZipItem* RZipFile::Current() {
             _mapZipItem.emplace(pos, std::move(ZipItem(this, info)));
         }
     }
-    _curZipItem = &_mapZipItem[pos];
+    _curZipItem = &_mapZipItem.at(pos);;
     return _curZipItem;
 }
 
@@ -528,6 +529,10 @@ WZipFile* WZipFile::Create(const std::string& filePath) {
         return nullptr;
     }
     return wZip;
+}
+
+WZipFile::~WZipFile() {
+    Close();
 }
 
 bool WZipFile::Open() {

@@ -489,3 +489,15 @@ cocos2d::backend::AttributeBindInfo sol_lua_get(sol::types<cocos2d::backend::Att
     tracking.use(1);
     return { attributeName,location,size,type };
 }
+
+// Convert cocos2d::RZipFile::ZipInfo
+int sol_lua_push(sol::types<cocos2d::RZipFile::ZipInfo>, lua_State* L, const cocos2d::RZipFile::ZipInfo& val) {
+    lua_createtable(L, 0, 4);
+    sol::stack::raw_set_field(L, "name", val.name);
+    sol::stack::raw_set_field(L, "date", val.date);
+    if (val.name.length() > 0 && val.name[val.name.length() - 1] != '/') {
+        sol::stack::raw_set_field(L, "size", val.size);
+        sol::stack::raw_set_field(L, "encrypt", val.encrypt);
+    }
+    return 1;
+}
