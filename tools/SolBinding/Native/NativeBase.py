@@ -60,7 +60,7 @@ class NativeMember(NativeType):
     def __init__(self, cursor, generator: BaseConfig) -> None:
         super().__init__(cursor, generator)
         # 获取可能的重命名。
-        pName = CursorHelper.GetParentName(cursor)
+        pName = CursorHelper.GetClassesName(cursor)
         self._newName = generator.RenameMember(pName, cursor.spelling)
         self._generatable = not generator.ShouldSkip(pName, cursor.spelling)
 

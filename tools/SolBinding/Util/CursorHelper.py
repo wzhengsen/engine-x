@@ -98,7 +98,7 @@ class CursorHelper:
                 parent.kind == cindex.CursorKind.CLASS_DECL or parent.kind == cindex.CursorKind.STRUCT_DECL:
             name = parent.displayname
             if name != "__ndk1":
-                l.append(name)
+                l.insert(0, name)
             CursorHelper.GetClassesNameList(parent, l)
         return l
 

@@ -74,7 +74,7 @@ class NativeMethod(NativeMember, NativeFunction):
 
         # 判定是否有单例属性。
         if self._static:
-            parentName = CursorHelper.GetParentName(cursor)
+            parentName = CursorHelper.GetClassesName(cursor)
             for matchParent, instanceMethods in generator.InstanceMethods.items():
                 breakMe = False
                 if re.match("^" + matchParent + "$", parentName):
@@ -146,21 +146,22 @@ class NativeMethod(NativeMember, NativeFunction):
             upper = self._generator.UpperCamelCase
             if self._newName == "new":
                 # new被作为构造函数。
-                cxx = ["mt.set_function(sol::meta_function::construct,"]
+                cxx = ["mt[sol::meta_function::construct]="]
             else:
-                cxx = ['mt.set_function("{}",'.format(
+                cxx = ['mt["{}"]='.format(
                     self._newName if not upper else CursorHelper.UpperCamelCase(self._newName)
                 )]
 
-            if self._minArgs < len(self._args):
+            overload = self._minArgs < len(self._args)
+            if overload:
                 # 具有默认参数的方法添加sol::overload重载。
                 cxx.append("sol::overload(")
 
             cxx.append("".join(self.GetImplStr()))
 
-            if self._minArgs < len(self._args):
+            if overload:
                 cxx.append(")")
-            cxx.append(");")
+            cxx.append(";")
 
             self._cxxStr = "".join(cxx)
         return self._cxxStr
@@ -179,9 +180,9 @@ class NativeOverloadMethod(NativeMember):
             upper = self._generator.UpperCamelCase
             if self._newName == "new":
                 # new被作为构造函数。
-                cxx = ["mt.set_function(sol::meta_function::construct,"]
+                cxx = ["mt[sol::meta_function::construct]="]
             else:
-                cxx = ['mt.set_function("{}",'.format(
+                cxx = ['mt["{}"]='.format(
                     self._newName if not upper else CursorHelper.UpperCamelCase(self._newName)
                 )]
             cxx.append("sol::overload(")
@@ -191,7 +192,7 @@ class NativeOverloadMethod(NativeMember):
                 implList.append(impl.GetImplStr())
             cxx.append(",".join(implList))
 
-            cxx.append("));")
+            cxx.append(");")
 
             self._cxxStr = "".join(cxx)
         return self._cxxStr
