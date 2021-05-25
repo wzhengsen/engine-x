@@ -184,8 +184,8 @@ namespace cocos2d {
             */
             bool Read(std::vector<const ZipItem*>& vecItem) const;
             const ZipInfo& GetInfo() const noexcept;
-        private:
             ZipItem(RZipFile* rZip, const ZipInfo& info) noexcept :_rZip(rZip), _info(info) {};
+        private:
             ZipInfo _info = {};
             RZipFile* _rZip = nullptr;
             friend class RZipFile;
@@ -226,15 +226,19 @@ namespace cocos2d {
 
         /**
          * @brief       Seek a Item.
+         * @param       fileName The file name you want to seek for.
+         * @param       re Using regular expressions?
          * @return      When not found, nullptr is returned.
         */
-        const ZipItem* Seek(const std::string& fileName);
+        const ZipItem* Seek(const std::string& fileName, bool re = false);
 
         void Work(const std::string& path, const char* password = nullptr) override;
 
+        /**
+         * @brief       Use for iterator.
+        */
         ZipItemIterator begin();
         const static ZipItemIterator& end();
-        uint32_t size() const noexcept;
     protected:
         using ZipFile::ZipFile;
 

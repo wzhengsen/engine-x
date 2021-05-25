@@ -66,7 +66,7 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "TMXTilesetInfo": ["_animationInfo"],
             "AsyncTaskPool": ["enqueue"],
             "RZipFile::ZipItem": ["Read"],
-            "RZipFile": ["begin", "end", "size"]
+            "RZipFile": ["begin", "end"]
         }
         self.RenameMembers |= {
             "SpriteFrameCache": {"addSpriteFramesWithFile": "addSpriteFrames", "getSpriteFrameByName": "getSpriteFrame"},

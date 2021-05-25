@@ -28,29 +28,32 @@
   *              Shound not be called by manual.
   */
 template<typename T, typename = typename std::enable_if<std::is_base_of<cocos2d::extension::LuaObject, T>::value>::type>
-int sol_lua_push(sol::types<T*>, lua_State* L, const T* obj) {
+int sol_lua_push(sol::types<const T*>, lua_State* L, const T* obj) {
     if (nullptr == obj) {
         lua_pushnil(L);
         return 1;
     }
-    bool udExist = LUA_TTABLE == lua_getfield(L, LUA_REGISTRYINDEX, cocos2d::extension::Lua::UserDataKey);// table?
-
-    if (udExist) {
-        // Try to get exist userdata from registry[UserDataKey].
-        udExist = LUA_TUSERDATA == lua_rawgetp(L, 1, obj); // table,userdata?
-    }
-    if (!udExist) {
-        lua_settop(L, 0);
-        // New userdata.
-        *static_cast<const T**>(lua_newuserdata(L, sizeof(const T*))) = obj;// ud
-
+    
+    lua_pushlstring(L, cocos2d::extension::Lua::UserDataKey, sizeof(cocos2d::extension::Lua::UserDataKey));// UserDataKey
+    if (LUA_TTABLE != lua_rawget(L, LUA_REGISTRYINDEX)) {// table?
         // Make sure the registry[UserDataKey] is a table.
-        if (LUA_TTABLE != lua_getfield(L, LUA_REGISTRYINDEX, cocos2d::extension::Lua::UserDataKey)) {// ud,table?
-            lua_pop(L, 1);// ud
-            lua_newtable(L);// ud,table
-            lua_pushvalue(L, -1);// ud,table,table
-            lua_setfield(L, LUA_REGISTRYINDEX, cocos2d::extension::Lua::UserDataKey);// ud,table
-        }
+        lua_pop(L, -1);//
+        lua_createtable(L, 0, 1024);// table
+        lua_pushlstring(L, cocos2d::extension::Lua::UserDataKey, sizeof(cocos2d::extension::Lua::UserDataKey));// table UserDataKey
+        lua_pushvalue(L, -2);// table UserDataKey table
+        lua_rawset(L, LUA_REGISTRYINDEX);// table
+    }
+
+    // Try to get exist userdata from registry[UserDataKey].
+    if (LUA_TUSERDATA == lua_rawgetp(L, -1, obj)) {// table,userdata?
+        lua_remove(L, -2); // userdata
+    }
+    else {
+        lua_pop(L, 1);// table
+        // New userdata.
+        *static_cast<const T**>(lua_newuserdata(L, sizeof(const T*))) = obj;// table ud
+
+        lua_insert(L, -2);// ud table
 
         // Save object into registry[UserDataKey] with light_ud pointer as key.
         lua_pushvalue(L, -2);// ud,table,ud
@@ -70,6 +73,11 @@ int sol_lua_push(sol::types<T*>, lua_State* L, const T* obj) {
         }
     }
     return 1;
+}
+
+template<typename T, typename = typename std::enable_if<std::is_base_of<cocos2d::extension::LuaObject, T>::value>::type>
+int sol_lua_push(sol::types<T*>, lua_State* L, const T* obj) {
+    return sol_lua_push(sol::types<const T*>(), L, obj);
 }
 
 template <typename Handler>

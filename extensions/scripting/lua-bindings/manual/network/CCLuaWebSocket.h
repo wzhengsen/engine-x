@@ -20,7 +20,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 #pragma once
-#include "scripting/lua-bindings/CCLua.h"
+#include "scripting/lua-bindings/manual/CCLuaConvertSol.hpp"
 #include "network/WebSocket.h"
 using namespace cocos2d::network;
 

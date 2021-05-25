@@ -194,7 +194,7 @@ namespace cocos2d {
             * @param    obj Any c++ pointer.
             */
             void ReleaseInLua(void* obj);
-            inline static constexpr char UserDataKey[] = "Lua.UD?";
+            inline static constexpr char UserDataKey[] = { 'U','D',char(240),char(159),char(140),char(153) };
         protected:
             virtual void Init();
             using sol::state::state;

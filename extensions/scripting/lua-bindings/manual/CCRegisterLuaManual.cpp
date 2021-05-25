@@ -74,6 +74,18 @@ static void RegisterLuaCoreZipFileManual(extension::Lua& lua) {
         }
         return sol::object(L);
     };
+
+    sol::usertype<RZipFile> rZip = lua["cc"]["RZipFile"];
+    rZip["__pairs__"] = [](RZipFile* rZip) {
+        auto begin = rZip->begin();
+        return [=]() mutable {
+            const RZipFile::ZipItem* item = nullptr;
+            if (begin != RZipFile::end()) {
+                item = &*(begin++);
+            }
+            return item;
+        };
+    };
 }
 
 static void RegisterLuaSocketManual(extension::Lua& lua) {
@@ -330,4 +342,5 @@ void RegisterLuaManual(extension::Lua& lua) {
     RegisterLuaStudioMovementDataManual(lua);
     extension::LuaWebSocket::RegisterLuaWebSocketManual(lua);
     extension::LuaHttpRequest::RegisterLuaHttpRequestManual(lua);
+    RegisterLuaCoreZipFileManual(lua);
 }
