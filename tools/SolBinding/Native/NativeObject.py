@@ -123,14 +123,21 @@ class NativeMethod(NativeMember, NativeFunction):
             argsOffset = len(self._args) - self._minArgs + 1
             for i in range(argsOffset):
                 cxx.append("[](")
-                cxx.append(self._prefixName)
-                cxx.append("* obj")
+                if not self._static:
+                    cxx.append(self._prefixName)
+                    cxx.append("* obj")
                 for argIdx in range(self._minArgs + i):
-                    cxx.append(",")
+                    if not self._static or argIdx != 0:
+                        cxx.append(",")
                     cxx.append(self._args[argIdx])
                     cxx.append(" arg")
                     cxx.append(str(argIdx))
-                cxx.append("){return obj->")
+                if not self._static:
+                    cxx.append("){return obj->")
+                else:
+                    cxx.append("){return ")
+                    cxx.append(self._prefixName)
+                    cxx.append("::")
                 cxx.append(self._funcName)
                 cxx.append("(")
                 for argIdx in range(self._minArgs + i):
