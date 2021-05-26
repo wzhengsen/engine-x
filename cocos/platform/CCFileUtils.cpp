@@ -595,14 +595,17 @@ FileUtils::Status FileUtils::getContents(const std::string& filename, ResizableB
         AutoFileHandle(FILE* fp):fp(fp) {}
         ~AutoFileHandle() {
             if (fp) {
-                ::fclose(fp);
+                std::fclose(fp);
             }
         }
         private:
         FILE* fp = nullptr;
     };
-
-    FILE *fp = fopen(fullPath.c_str(), "rb");
+#if _WIN32
+    FILE *fp = fopen(cocos2d::utils::Utf8ToGbk(fullPath).c_str(), "rb");
+#else
+    FILE* fp = fopen(fullPath.c_str(), "rb");
+#endif
     auto autoHandle = AutoFileHandle(fp);
     if (!fp)
         return Status::OpenFailed;
@@ -616,22 +619,22 @@ FileUtils::Status FileUtils::getContents(const std::string& filename, ResizableB
 
     size_t size = statBuf.st_size;
     static char preSignBuffer[EncryptSignLen + 1] = { 0 };
-    ::memset(preSignBuffer, 0, EncryptSignLen + 1);
+    std::memset(preSignBuffer, 0, EncryptSignLen + 1);
 
     bool isAes = false;
-    ::fread(preSignBuffer, 1, EncryptSignLen, fp);
-    if(::memcmp(preSignBuffer, AES_Sign, EncryptSignLen) == 0) {
+    std::fread(preSignBuffer, 1, EncryptSignLen, fp);
+    if(std::memcmp(preSignBuffer, AES_Sign, EncryptSignLen) == 0) {
         size -= EncryptSignLen;
         isAes = true;
     }
     else {
-        if (::fseek(fp, 0, SEEK_SET) != 0) {
+        if (std::fseek(fp, 0, SEEK_SET) != 0) {
             return Status::ReadFailed;
         }
     }
 
     buffer->resize(size);
-    const size_t readsize = ::fread(buffer->buffer(), 1, size, fp);
+    const size_t readsize = std::fread(buffer->buffer(), 1, size, fp);
 
     if (readsize < size) {
         buffer->resize(readsize);
