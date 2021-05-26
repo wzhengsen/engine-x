@@ -45,6 +45,11 @@ namespace cocos2d {
 #endif
     public:
 
+        enum class Encoding {
+            Utf8,
+            Gbk
+        };
+
         enum class ErrorCode {
             Unknown,
             ZipError,
@@ -109,7 +114,7 @@ namespace cocos2d {
         */
         void WorkAsync(const std::string& path, const char* password = nullptr);
     protected:
-        ZipFile(const std::string& filePath);
+        ZipFile(const std::string& filePath,Encoding code = Encoding::Utf8);
         ZipFile(const ZipFile&) = delete;
         ZipFile& operator=(const ZipFile&) = delete;
 
@@ -126,6 +131,8 @@ namespace cocos2d {
 
         std::string _fOpenFilePath = {};
         void* _zip = nullptr;
+
+        Encoding _code = Encoding::Utf8;
 
         static uint32_t MakeItemDosDate(const char* path) noexcept;
         static uLong MakeItemCrc32(FILE* inf);
@@ -219,18 +226,25 @@ namespace cocos2d {
         /**
          * @brief       Create a RZipFile instance,if filePath isn't valid,returns nullptr.
          * @param       filePath The path of the zip file you want to read.
+         * @param       code Possible encoding methods for zip file internal filenames.
          * @return      RZipFile instance or nullptr.
         */
-        static RZipFile* Create(const std::string& filePath);
+        static RZipFile* Create(const std::string& filePath,Encoding code = Encoding::Utf8);
         virtual ~RZipFile();
 
         /**
-         * @brief       Seek a Item.
-         * @param       fileName The file name you want to seek for.
-         * @param       re Using regular expressions?
+         * @brief       Locate a Item.
+         * @param       fileName The file name you want to locate.
          * @return      When not found, nullptr is returned.
         */
-        const ZipItem* Seek(const std::string& fileName, bool re = false);
+        const ZipItem* Locate(const std::string& fileName);
+
+        /**
+        * @brief        Get all item which match the pattern.
+        * @param        fileName The file name you want to get£¬can be a regex pattern.
+        * @return       vector,but returns an empty vector when not found.
+        */
+        std::vector<const ZipItem*> Match(const std::string& fileName);
 
         void Work(const std::string& path, const char* password = nullptr) override;
 
@@ -294,9 +308,10 @@ namespace cocos2d {
         /**
          * @brief       Create a WZipFile instance,if filePath isn't valid,returns nullptr.
          * @param       filePath The path of the zip file you want to write to.
+         * @param       code Possible encoding methods for zip file internal filenames.
          * @return      WZipFile instance or nullptr.
         */
-        static WZipFile* Create(const std::string& filePath);
+        static WZipFile* Create(const std::string& filePath,Encoding code = Encoding::Utf8);
         virtual ~WZipFile();
 
         void Work(const std::string& path, const char* password = nullptr) override;
