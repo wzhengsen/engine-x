@@ -178,10 +178,13 @@ namespace cocos2d {
                     if (ud) {
                         *ud = nullptr;
                     }
+                    lua_pop(l, 1);// ...table,light_ud
+                    lua_pushnil(l);// ...table,light_ud,nil
+                    lua_rawset(l, -3);// ...table
                 }
-                lua_pop(l, 1);// ...table,light_ud
-                lua_pushnil(l);// ...table,light_ud,nil
-                lua_rawset(l, -3);// ...table
+                else {
+                    lua_pop(l, 2);// ...table
+                }
             }
             // Keep lua stack.
             lua_pop(l, 1);// ...
