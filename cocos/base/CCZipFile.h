@@ -44,12 +44,6 @@ namespace cocos2d {
     class CC_DLL ZipFile {
 #endif
     public:
-
-        enum class Encoding {
-            Utf8,
-            Gbk
-        };
-
         enum class ErrorCode {
             Unknown,
             ZipError,
@@ -114,7 +108,7 @@ namespace cocos2d {
         */
         void WorkAsync(const std::string& path, const char* password = nullptr);
     protected:
-        ZipFile(const std::string& filePath,Encoding code = Encoding::Utf8);
+        ZipFile(const std::string& filePath);
         ZipFile(const ZipFile&) = delete;
         ZipFile& operator=(const ZipFile&) = delete;
 
@@ -131,8 +125,6 @@ namespace cocos2d {
 
         std::string _fOpenFilePath = {};
         void* _zip = nullptr;
-
-        Encoding _code = Encoding::Utf8;
 
         static uint32_t MakeItemDosDate(const char* path) noexcept;
         static uLong MakeItemCrc32(FILE* inf);
@@ -223,13 +215,19 @@ namespace cocos2d {
             const RZipFile::ZipItem* _item = nullptr;
         };
 
+        enum class Encoding {
+            Auto,
+            Utf8,
+            Gbk
+        };
+
         /**
          * @brief       Create a RZipFile instance,if filePath isn't valid,returns nullptr.
          * @param       filePath The path of the zip file you want to read.
          * @param       code Possible encoding methods for zip file internal filenames.
          * @return      RZipFile instance or nullptr.
         */
-        static RZipFile* Create(const std::string& filePath,Encoding code = Encoding::Utf8);
+        static RZipFile* Create(const std::string& filePath,Encoding code = Encoding::Auto);
         virtual ~RZipFile();
 
         /**
@@ -255,9 +253,12 @@ namespace cocos2d {
         const static ZipItemIterator& end();
     protected:
         using ZipFile::ZipFile;
+        RZipFile(const std::string& filePath,Encoding code = Encoding::Auto) :ZipFile(filePath), _code(code) {};
 
         const ZipItem* _curZipItem = nullptr;
         uint32_t _itemCount = 0;
+
+        Encoding _code = Encoding::Auto;
 
         /**
          * @brief Returns true if the item should be created.
@@ -308,10 +309,9 @@ namespace cocos2d {
         /**
          * @brief       Create a WZipFile instance,if filePath isn't valid,returns nullptr.
          * @param       filePath The path of the zip file you want to write to.
-         * @param       code Possible encoding methods for zip file internal filenames.
          * @return      WZipFile instance or nullptr.
         */
-        static WZipFile* Create(const std::string& filePath,Encoding code = Encoding::Utf8);
+        static WZipFile* Create(const std::string& filePath);
         virtual ~WZipFile();
 
         void Work(const std::string& path, const char* password = nullptr) override;
