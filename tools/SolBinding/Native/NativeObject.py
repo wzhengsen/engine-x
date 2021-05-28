@@ -105,9 +105,9 @@ class NativeMethod(NativeMember, NativeFunction):
                 return False
             len1 = len(self._args)
             len2 = len(method._args)
-            if len1 != len2 or len1 < 1:
+            if len1 != len2:
                 return False
-            return self._args[1:] == method._args[1:]
+            return self._args == method._args
 
     @property
     def Override(self):
@@ -296,7 +296,10 @@ class NativeObject(NativeWrapper):
         self._parent: NativeObject = None
         self.__onlyParent = True
         self.__usingParent = False
+        # 生成字典，在该字典中的方法才会生成。
         self._methods = {}
+        # 全方法字典，用于存储和查询。
+        self._allMethods = {}
         # 纯虚函数字典。
         self._pvMethods = {}
         # 虚函数字典。
@@ -429,7 +432,7 @@ class NativeObject(NativeWrapper):
                 # if method.Override:
                 #     return
 
-                if not method.Supported or not method.Generatable or\
+                if not method.Supported or\
                         CursorHelper.GetAvailability(cursor) == CursorHelper.Availability.DEPRECATED:
                     return
 
@@ -437,7 +440,7 @@ class NativeObject(NativeWrapper):
                 parentBinding = False
                 if method.Virtual:
                     for parent in self._parents:
-                        pMethods = parent._methods
+                        pMethods = parent._allMethods
                         if method.FuncName in pMethods.keys() and\
                                 method.IsOverrided(pMethods[method.FuncName]):
                             # 基类已绑定。
@@ -455,14 +458,16 @@ class NativeObject(NativeWrapper):
                 else:
                     return
 
-                if method.Static:
-                    if method.InstanceProperty >= 0 and self._instanceMethodList[method.InstanceProperty] is None:
-                        self._instanceMethodList[method.InstanceProperty] = method
+                if method.Generatable:
+                    if method.Static:
+                        if method.InstanceProperty >= 0 and self._instanceMethodList[method.InstanceProperty] is None:
+                            self._instanceMethodList[method.InstanceProperty] = method
 
-                if method.NewName == "new":
-                    self._newCtor = True
+                    if method.NewName == "new":
+                        self._newCtor = True
 
-                self._PushToMethodDict(method, self._methods)
+                    self._PushToMethodDict(method, self._methods)
+                self._PushToMethodDict(method, self._allMethods)
         elif cursor.kind == cindex.CursorKind.CONSTRUCTOR:
             self._defaultCtor = False
             if cursor.access_specifier == cindex.AccessSpecifier.PUBLIC:

@@ -52,11 +52,11 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "FlipX3D", "FlipY3D", "Speed", "ActionManager", "Set", "Scheduler", "Timer", "Orbit.*", "Follow.*", "Bezier.*",
             "CardinalSpline.*", "Camera.*", "DrawNode", "Liquid$", "Waves$", "ShuffleTiles$", "TurnOffTiles$", "Split.*", "Twirl$", "FileUtils$",
             "GLProgram", "Application.*", "ClippingNode", "MotionStreak", "^Ref$", "UserDefault", "GLViewImpl", "GLView", "Image", "Event(?!.*(Physics).*).*",
-            "Component", "ProtectedNode", "Console", "GLProgramCache", "GLProgramState", "Device", "ClippingRectangleNode", ".*Light$", "AsyncTaskPool.*", "RenderState",
+            "Component", "ProtectedNode", "GLProgramCache", "GLProgramState", "Device", "ClippingRectangleNode", ".*Light$", "AsyncTaskPool.*", "RenderState",
             "Material", "Properties", "Technique", "Pass", "PolygonInfo", "AutoPolygon", "BoneNode", "SkeletonNode", "ComponentLua", "PipelineDescriptor",
             "Renderer", "FastTMXLayer", "FastTMXTiledMap", "LanguageType", "PHYSICS.*_MATERIAL_DEFAULT", "GlyphCollection", "MATRIX_STACK_TYPE", "LightType", "LightFlag", "Image::Format",
             "Text(H|V)Alignment", "ResolutionPolicy", "Lens3D", "Ripple3D", "WavesTiles3D", "JumpTiles3D", "Grid3D", ".*ZipFile", "RZipFile::ZipItem", "Touch::DispatchMode",
-            "RZipFile::Encoding"
+            "RZipFile::Encoding", "Clonable"
         ]
         self.Skip |= {
             "TMXMapInfo": ["startElement", "endElement"],
@@ -67,7 +67,8 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "TMXTilesetInfo": ["_animationInfo"],
             "AsyncTaskPool": ["enqueue"],
             "RZipFile::ZipItem": ["Read"],
-            "RZipFile": ["begin", "end"]
+            "RZipFile": ["begin", "end"],
+            "Node": ["onEnter.*", "onExit.*"]
         }
         self.RenameMembers |= {
             "SpriteFrameCache": {"addSpriteFramesWithFile": "addSpriteFrames", "getSpriteFrameByName": "getSpriteFrame"},
