@@ -641,41 +641,108 @@ void WZipFile::Work(const std::string& path, const char* password) {
     }
 }
 
+bool WZipFile::CloseUnzipAndReopenZip(unzFile unz) {
+    if (unz) {
+        unzClose(unz);
+    }
+    _zip = zipOpen(_fOpenFilePath.c_str(), APPEND_STATUS_ADDINZIP);
+    if (!_zip) {
+        OnError(ErrorCode::ReopenError, "Can't reopen zip file - " + TryG2U(_fOpenFilePath));
+        return false;
+    }
+    return true;
+}
+
 void WZipFile::PushDir(const std::string& dir, const char* password) {
     std::string newDir = dir;
     if (dir[dir.length() - 1] != '/') {
         newDir += '/';
     }
     std::vector<std::string> list = {};
+    std::vector<std::string> relList = {};
     FileUtils::getInstance()->listFilesRecursively(dir, &list);
 
+    // Close zip file first for find duplicative file.
+    Close();
     unzFile f = unzOpen(_fOpenFilePath.c_str());
     if (!f) {
+        if (!CloseUnzipAndReopenZip(f)) {
+            return;
+        }
         return OnError(ErrorCode::OpenZipError, "Open zip error - " + TryG2U(_fOpenFilePath));
     }
-    for (const auto& file : list) {
-        // Relative path in zip file.
-        auto relName = file.substr(newDir.length());
+    for (const auto& item: list) {
+        // Relative path in zip item.
+        auto relName = item.substr(newDir.length());
+        relList.push_back(relName);
         const bool found = LocateFileByUtf8(f, relName) == UNZ_OK;
         if (found) {
             // Already exist?
-            unzClose(f);
+            if (!CloseUnzipAndReopenZip(f)) {
+                return;
+            }
             return OnError(ErrorCode::DuplicateFileError, "Duplicate file - " + relName);
         }
     }
-    unzClose(f);
+    if (!CloseUnzipAndReopenZip(f)) {
+        return;
+    }
 
-    // for (const auto& file : list) {
-    //     // Relative path in zip file.
-    //     auto relNameU = file.substr(newDir.length());
-    //     auto relNameG = TryU2G(relNameU);
-    //     const bool found = LocateFileByUtf8(f, fileName) == UNZ_OK;
-    //     if (found) {
-    //         // Already exist?
-    //         unzClose(f);
-    //         return OnError(ErrorCode::DuplicateFileError, "Duplicate file - " + relNameU);
-    //     }
-    // }
+    // Create directory first.
+    const auto size = relList.size();
+    for (size_t idx = 0; idx < size; idx++) {
+        const std::string& relItem = relList[idx];
+        const std::string& item = list[idx];
+
+        const bool isDir = relItem[relItem.length() - 1] == '/';
+        // crc32
+        uLong crc = 0;
+        FILE* rf = nullptr;
+        zip_fileinfo zi = {MakeItemDosDate(item.c_str()),0,0};
+        const char* pwd = nullptr;
+        if (!isDir) {
+            rf = std::fopen(TryU2G(item).c_str(), "rb");
+            if (!rf) {
+                return OnError(ErrorCode::ReadFileError, "Can't open file - " + item);
+            }
+            crc = MakeItemCrc32(rf);
+            pwd = password;
+        }
+
+        // open internal file.
+        bool ok = zipOpenNewFileInZip4_64(_zip, relItem.c_str(), &zi,
+            nullptr, 0,
+            nullptr, 0,
+            nullptr,
+            Z_DEFLATED, Z_DEFAULT_COMPRESSION,
+            0,
+            -MAX_WBITS, DEF_MEM_LEVEL, Z_DEFAULT_STRATEGY,
+            pwd, crc,
+            // 0x0800 means that the filename is encoded by utf8.
+            // From https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT
+            MadeBy, 0x0800, 0) == ZIP_OK;
+        if (!ok) {
+            return OnError(ErrorCode::InternalFileError, "Can't open internal file - " + relItem);;
+        }
+
+        if (!isDir) {
+            std::unique_ptr<char[]> readBuff(new char[8192 * 4]);
+            size_t readSize = 0;
+            do {
+                readSize = std::fread(readBuff.get(), sizeof(char), 8192 * 4, rf);
+                ok = zipWriteInFileInZip(_zip, readBuff.get(), static_cast<uint32_t>(readSize)) == ZIP_OK;
+            } while (readSize == 8192 * 4 && ok);
+
+            std::fclose(rf);
+        }
+        // close internal file.
+        zipCloseFileInZip(_zip);
+
+        if (!ok) {
+            return OnError(ErrorCode::InternalFileError, "Can't write zip file - " + relItem);
+        }
+        OnProcess(relItem, static_cast<uint32_t>(idx + 1), static_cast<uint32_t>(size));
+    }
 }
 
 void WZipFile::PushFile(const std::string& file, const char* password) {
@@ -684,23 +751,17 @@ void WZipFile::PushFile(const std::string& file, const char* password) {
     const auto idx = fullPath.find_last_of("/");
     std::string baseName = idx != std::string::npos ? fullPath.substr(idx + 1) : fullPath;
     // Close zip file first for find duplicative file.
-    zipClose(_zip, nullptr);
+    Close();
     unzFile f = unzOpen(_fOpenFilePath.c_str());
     if (!f) {
-        // Reopen.
-        _zip = zipOpen(_fOpenFilePath.c_str(), APPEND_STATUS_ADDINZIP);
-        if (!_zip) {
-            return OnError(ErrorCode::ReopenError, "Can't reopen zip file - " + TryG2U(_fOpenFilePath));
+        if (!CloseUnzipAndReopenZip(f)) {
+            return;
         }
         return OnError(ErrorCode::OpenZipError, "Open zip error - " + TryG2U(_fOpenFilePath));
     }
     const bool found = LocateFileByUtf8(f, baseName) == UNZ_OK;
-    unzClose(f);
-
-    // Reopen.
-    _zip = zipOpen(_fOpenFilePath.c_str(), APPEND_STATUS_ADDINZIP);
-    if (!_zip) {
-        return OnError(ErrorCode::ReopenError, "Can't reopen zip file - " + TryG2U(_fOpenFilePath));
+    if (!CloseUnzipAndReopenZip(f)) {
+        return;
     }
 
     if (found) {
@@ -720,13 +781,6 @@ void WZipFile::PushFile(const std::string& file, const char* password) {
         0,0
     };
 
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-    static constexpr uint16_t madeBy = 0x1014;
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
-    static constexpr uint16_t madeBy = 0x1914;
-#else
-    static constexpr uint16_t madeBy = 0x0314;
-#endif
     // open internal file.
     bool ok = zipOpenNewFileInZip4_64(_zip, baseName.c_str(), &zi,
         nullptr, 0,
@@ -738,7 +792,7 @@ void WZipFile::PushFile(const std::string& file, const char* password) {
         password, crc,
         // 0x0800 means that the filename is encoded by utf8.
         // From https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT
-        madeBy, 0x0800, 0) == ZIP_OK;
+        MadeBy, 0x0800, 0) == ZIP_OK;
     if (!ok) {
         return OnError(ErrorCode::InternalFileError, "Can't open internal file - " + baseName);;
     }
@@ -757,14 +811,6 @@ void WZipFile::PushFile(const std::string& file, const char* password) {
     if (!ok) {
         return OnError(ErrorCode::InternalFileError, "Can't write zip file - " + baseName);
     }
-
-    // Reopen it for find duplicate file.
-    zipClose(_zip, nullptr);
-    _zip = zipOpen(_fOpenFilePath.c_str(), APPEND_STATUS_ADDINZIP);
-    if (!_zip) {
-        return OnError(ErrorCode::ReopenError, "Can't reopen zip file - " + TryG2U(_fOpenFilePath));
-    }
-
     return OnProcess(baseName, 1, 1);
 }
 

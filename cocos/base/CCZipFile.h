@@ -323,6 +323,15 @@ namespace cocos2d {
 
         void PushDir(const std::string& dir, const char* password = nullptr);
         void PushFile(const std::string& file, const char* password = nullptr);
+        bool CloseUnzipAndReopenZip(unzFile unz);
+
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
+        static constexpr uint16_t MadeBy = 0x1014;
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+        static constexpr uint16_t MadeBy = 0x1914;
+#else
+        static constexpr uint16_t MadeBy = 0x0314;
+#endif
     };
     /****************WZipFile end****************/
 }
