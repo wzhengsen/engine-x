@@ -122,6 +122,10 @@ class NativeFunction(NativeType):
         return False
 
     @property
+    def FuncName(self):
+        return self._funcName
+
+    @property
     def WholeFuncName(self):
         return self._wholeFuncName
 

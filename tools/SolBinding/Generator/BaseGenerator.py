@@ -56,9 +56,7 @@ class BaseGenerator(BaseConfig):
         self._nativeObjects = {}
 
         # 缓存的所有访问过的节点，避免重复访问。
-        self._allNativeObjects = {}
-        # 缓存的所有父级节点，这些节点不一定会被生成代码。
-        self.TempParentObjects = {}
+        self.AllNativeObjects = {}
 
         self.__inited = False
 
@@ -285,9 +283,7 @@ class BaseGenerator(BaseConfig):
                 if name:
                     # 具名枚举和类。
                     wholeName = CursorHelper.GetWholeName(cursor)
-                    if wholeName not in self._allNativeObjects.keys():
-                        self._allNativeObjects[wholeName] = True
-                    else:
+                    if wholeName in self.AllNativeObjects.keys():
                         return
                     if wholeName not in self._nativeObjects.keys():
                         nativeWrapper = None
@@ -301,6 +297,8 @@ class BaseGenerator(BaseConfig):
                             nativeWrapper = NativeStruct(cursor, self)
                         if nativeWrapper and nativeWrapper.Generatable:
                             self._nativeObjects[wholeName] = nativeWrapper
+                        if nativeWrapper:
+                            self.AllNativeObjects[wholeName] = nativeWrapper
                 else:
                     # 匿名枚举。
                     # 要求该匿名枚举的父级必须是被包含在生成列表中的。
@@ -308,6 +306,7 @@ class BaseGenerator(BaseConfig):
                     if ae.Generatable:
                         if ae.Name not in self._nativeObjects.keys():
                             self._nativeObjects[ae.Name] = ae
+                    self.AllNativeObjects[ae.Name] = ae
             return
 
         # 此处排除那些名字符合生成类型列表，却在未开启结构体生成时需要跳过的类。

@@ -20,6 +20,7 @@
 # THE SOFTWARE.
 
 import re
+from typing import Dict
 from clang import cindex
 from Config.BaseConfig import BaseConfig
 from Util.CursorHelper import CursorHelper
@@ -60,7 +61,9 @@ class NativeMethod(NativeMember, NativeFunction):
         super().__init__(cursor, generator)
         self._const = cursor.is_const_method()
         self._pureVirtual = cursor.is_pure_virtual_method()
+        self._virtual = cursor.is_virtual_method()
         self._isOverride = False
+        self._isOverload = False
         # -1-表示没有单例属性。
         # 0-表示该方法是获取单例方法。
         # 1-表示该方法是销毁单例方法。
@@ -86,6 +89,26 @@ class NativeMethod(NativeMember, NativeFunction):
                 if breakMe:
                     break
 
+    def IsOverrided(self, method: "NativeMethod"):
+        """判断自己是否重写了某方法，或某重载方法。
+        """
+        if self._funcName != method._funcName:
+            return False
+        if method.__class__.__name__ == "NativeOverloadMethod":
+            for m in method.Impl:
+                ret = self.IsOverrided(m)
+                if ret:
+                    return True
+            return False
+        else:
+            if not self._virtual or not method._virtual:
+                return False
+            len1 = len(self._args)
+            len2 = len(method._args)
+            if len1 != len2 or len1 < 1:
+                return False
+            return self._args[1:] == method._args[1:]
+
     @property
     def Override(self):
         return self._isOverride
@@ -95,8 +118,16 @@ class NativeMethod(NativeMember, NativeFunction):
         return self._pureVirtual
 
     @property
+    def Virtual(self):
+        return self._virtual
+
+    @property
     def InstanceProperty(self):
         return self._instanceProperty
+
+    @property
+    def Overload(self):
+        return self._isOverload
 
     def GetImplStr(self) -> str:
         """获取实现主体字符串。"""
@@ -178,9 +209,26 @@ class NativeOverloadMethod(NativeMember):
     def __init__(self, cursor, generator: BaseConfig) -> None:
         super().__init__(cursor, generator)
         self._impl = []
+        self._prefixName = CursorHelper.GetPrefixName(cursor)
+        self._funcName = cursor.spelling
+        self._wholeFuncName = self._prefixName + "::" + self._funcName
+        self._isOverload = True
 
     def AddMethod(self, method: NativeMethod):
-        self._impl.append(method)
+        if isinstance(method, NativeOverloadMethod):
+            appendList = []
+            for mm in method._impl:
+                ap = True
+                for sm in self._impl:
+                    if mm._args == sm._args:
+                        ap = False
+                        break
+                if ap:
+                    appendList.append(mm)
+            self._impl += appendList
+        else:
+            self._impl.append(method)
+            method._isOverload = True
 
     def __str__(self) -> str:
         if not self._cxxStr:
@@ -203,6 +251,10 @@ class NativeOverloadMethod(NativeMember):
 
             self._cxxStr = "".join(cxx)
         return self._cxxStr
+
+    @property
+    def Impl(self):
+        return self._impl
 
 
 class NativeConstructor(NativeType):
@@ -247,6 +299,11 @@ class NativeObject(NativeWrapper):
         self._methods = {}
         # 纯虚函数字典。
         self._pvMethods = {}
+        # 虚函数字典。
+        # 对于虚函数：
+        # 1、基类有声明的，由基类绑定一次；
+        # 2、只要自己有另一个同名方法，那么自己再绑定一次重载方法，否则自己不再绑定。
+        self._vMethods = {}
         self._fileds = []
         self._ctor = NativeConstructor(cursor, generator)
         # 所含的内部类，包括枚举/结构体。
@@ -282,10 +339,10 @@ class NativeObject(NativeWrapper):
                 if parentDef.displayname not in self._generator.ParentsClassesSkip:
                     pWholeName = CursorHelper.GetWholeName(parentDef)
 
-                    if pWholeName not in self._generator.TempParentObjects.keys():
-                        self._generator.TempParentObjects[pWholeName] = NativeClass(parentDef, self._generator)
+                    if pWholeName not in self._generator.AllNativeObjects.keys():
+                        self._generator.AllNativeObjects[pWholeName] = self.__class__(parentDef, self._generator)
 
-                    parent: NativeClass = self._generator.TempParentObjects[pWholeName]
+                    parent: NativeObject = self._generator.AllNativeObjects[pWholeName]
                     if parent.Generatable:
                         if pWholeName not in self._generator.NativeObjects.keys():
                             self._generator.NativeObjects[pWholeName] = parent
@@ -333,9 +390,14 @@ class NativeObject(NativeWrapper):
                     self._classes.append(gEnum)
             elif cursor.kind == cindex.CursorKind.CLASS_DECL\
                     or (self._generator.AllowStruct and cursor.kind == cindex.CursorKind.STRUCT_DECL):
+
+                pWholeName = CursorHelper.GetWholeName(cursor)
+
+                if pWholeName not in self._generator.AllNativeObjects.keys():
+                    self._generator.AllNativeObjects[pWholeName] = NativeClass(cursor, self._generator)\
+                        if cursor.kind == cindex.CursorKind.CLASS_DECL else NativeStruct(cursor, self._generator)
                 # 内部类和内部结构体。
-                gObj = NativeClass(cursor, self._generator) if cursor.kind == cindex.CursorKind.CLASS_DECL else NativeStruct(
-                    cursor, self._generator)
+                gObj = self._generator.AllNativeObjects[pWholeName]
                 if gObj.Generatable:
                     self._classes.append(gObj)
             elif cursor.kind == cindex.CursorKind.FIELD_DECL or cursor.kind == cindex.CursorKind.VAR_DECL:
@@ -366,8 +428,31 @@ class NativeObject(NativeWrapper):
                 # 如果不跳过，将重复绑定一次基类的虚函数。
                 # if method.Override:
                 #     return
+
                 if not method.Supported or not method.Generatable or\
                         CursorHelper.GetAvailability(cursor) == CursorHelper.Availability.DEPRECATED:
+                    return
+
+                # 检查基类是否绑定，基类未绑定，那么自己需要绑定。
+                parentBinding = False
+                if method.Virtual:
+                    for parent in self._parents:
+                        pMethods = parent._methods
+                        if method.FuncName in pMethods.keys() and\
+                                method.IsOverrided(pMethods[method.FuncName]):
+                            # 基类已绑定。
+                            parentBinding = True
+                            break
+
+                    if parentBinding:
+                        # 如果基类已绑定，加入虚函数缓存字典。
+                        self._PushToMethodDict(method, self._vMethods)
+                if not parentBinding:
+                    # 检查自己是否有基类未绑定的同名方法，如果没有，自己也不再绑定。
+                    if method.FuncName in self._vMethods:
+                        method = self._PushToMethodDict(method, self._vMethods)
+                        del self._vMethods[method.FuncName]
+                else:
                     return
 
                 if method.Static:
@@ -376,20 +461,8 @@ class NativeObject(NativeWrapper):
 
                 if method.NewName == "new":
                     self._newCtor = True
-                if method.WholeFuncName not in self._methods.keys():
-                    self._methods[method.WholeFuncName] = method
-                else:
-                    # 已有同名方法。
-                    preMethod: NativeMethod = self._methods[method.WholeFuncName]
-                    if isinstance(preMethod, NativeOverloadMethod):
-                        # 重载方法追加该方法作为实现。
-                        preMethod.AddMethod(method)
-                    else:
-                        # 替换普通方法为重载方法，并追加当前方法和原方法。
-                        nom = NativeOverloadMethod(cursor, self._generator)
-                        nom.AddMethod(method)
-                        nom.AddMethod(preMethod)
-                        self._methods[method.WholeFuncName] = nom
+
+                self._PushToMethodDict(method, self._methods)
         elif cursor.kind == cindex.CursorKind.CONSTRUCTOR:
             self._defaultCtor = False
             if cursor.access_specifier == cindex.AccessSpecifier.PUBLIC:
@@ -410,6 +483,25 @@ class NativeObject(NativeWrapper):
             if pArgs not in argsList:
                 argsList.append(pArgs)
         return argsList
+
+    def _PushToMethodDict(self, method: NativeMethod, d: Dict[str, NativeMethod]) -> NativeMethod:
+        """将一个方法推入方法字典，若有同名方法，将转换为重载方法。
+        """
+        name = method.FuncName
+        if name not in d.keys():
+            d[name] = method
+            return method
+        preMethod: NativeMethod = d[name]
+        if isinstance(preMethod, NativeOverloadMethod):
+            preMethod.AddMethod(method)
+            return preMethod
+        # 转换为重载函数。
+        # 替换普通方法为重载方法，并追加当前方法和原方法。
+        ov = NativeOverloadMethod(method._cursor, self._generator)
+        ov.AddMethod(method)
+        ov.AddMethod(preMethod)
+        d[name] = ov
+        return ov
 
     def __str__(self) -> str:
         if self._cxxStr:
@@ -465,14 +557,14 @@ class NativeObject(NativeWrapper):
         # 单例属性。
         if self._instanceMethodList[0] and self._instanceMethodList[1]:
             cxx.append('mt["Instance"]=sol::property(&{},[](std::nullptr_t){{{}();}});\n'.format(
-                self._instanceMethodList[0]._wholeFuncName,
-                self._instanceMethodList[1]._wholeFuncName))
+                self._instanceMethodList[0].WholeFuncName,
+                self._instanceMethodList[1].WholeFuncName))
         elif self._instanceMethodList[0]:
             cxx.append('mt["Instance"]=sol::readonly_property(&{});\n'.format(
-                self._instanceMethodList[0]._wholeFuncName))
+                self._instanceMethodList[0].WholeFuncName))
         elif self._instanceMethodList[1]:
             cxx.append('mt["Instance"]=sol::writeonly_property([](std::nullptr_t){{{}();}});\n'.format(
-                self._instanceMethodList[1]._wholeFuncName))
+                self._instanceMethodList[1].WholeFuncName))
 
         cxx.append("}")
         self._cxxStr = "".join(cxx)
