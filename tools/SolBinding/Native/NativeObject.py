@@ -390,7 +390,13 @@ class NativeObject(NativeWrapper):
                 name = CursorHelper.GetName(cursor)
                 gEnum = NativeEnum(cursor, self._generator) if name else NativeAnonymousEnum(cursor, self._generator)
                 if gEnum.Generatable:
-                    self._classes.append(gEnum)
+                    # 若需要生成到lua，则不加入自己的内部类，而是加入生成器的生成结构字典。
+                    if self._generator.EnumForLua:
+                        wholeName = CursorHelper.GetWholeName(cursor)
+                        if wholeName not in self._generator.NativeObjects.keys():
+                            self._generator.NativeObjects[wholeName] = gEnum
+                    else:
+                        self._classes.append(gEnum)
             elif cursor.kind == cindex.CursorKind.CLASS_DECL\
                     or (self._generator.AllowStruct and cursor.kind == cindex.CursorKind.STRUCT_DECL):
 
@@ -448,10 +454,14 @@ class NativeObject(NativeWrapper):
                             break
 
                     if parentBinding:
-                        # 如果基类已绑定，加入虚函数缓存字典。
-                        self._PushToMethodDict(method, self._vMethods)
+                        # 如果基类已绑定，判断自己是否有同名方法。
+                        if method.FuncName in self._methods:
+                            self._PushToMethodDict(method, self._methods)
+                        else:
+                            # 否则加入虚函数缓存字典。
+                            self._PushToMethodDict(method, self._vMethods)
                 if not parentBinding:
-                    # 检查自己是否有基类未绑定的同名方法，如果没有，自己也不再绑定。
+                    # 检查自己是否有在虚函数缓存字典中的方法。
                     if method.FuncName in self._vMethods:
                         method = self._PushToMethodDict(method, self._vMethods)
                         del self._vMethods[method.FuncName]

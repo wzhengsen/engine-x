@@ -28,6 +28,16 @@ class NotFoundFileException(Exception):
 
 
 class BaseConfig(object):
+    class AnonymousType():
+        # 不允许匿名枚举。
+        Ban = 0
+        # 允许所有的匿名枚举。
+        All = 1
+        # 仅允许类中的匿名枚举。
+        Class = 2
+        # 仅允许全局的匿名枚举。
+        Global = 3
+
     def __init__(self):
         ndkRoot = EnvChecker.Check_NDK_RootEnv()
         defaultInclude = EnvChecker.DefaultIncludePath()
@@ -44,7 +54,7 @@ class BaseConfig(object):
         # 比如："cocos2d::Label" <-> "cocos2d::ui::Label"
         self.CppNameSpace = []
         # 允许生成匿名枚举（属于全局或仅属于命名空间的匿名枚举可能在被include时多次生成，谨慎开启）。
-        self.AllowAnonymous = False
+        self.AllowAnonymous = BaseConfig.AnonymousType.Class
         # 允许生成结构体类型（结构体普遍被转换为一个table，没有必要为每个结构体转换为用户类）。
         self.AllowStruct = False
         # 宏判断，用于某些情况下的条件编译。

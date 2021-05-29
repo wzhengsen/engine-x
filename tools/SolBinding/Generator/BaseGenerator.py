@@ -32,7 +32,7 @@ from Native.NativeBase import NativeGlobal
 
 
 class BaseGenerator(BaseConfig):
-    def __init__(self, outputPath: str, outputFile: str, clearOldFile: bool = True):
+    def __init__(self, outputPath: str, outputFile: str, enumForLua: str = None, clearOldFile: bool = True):
         """
         参数：
 
@@ -46,6 +46,9 @@ class BaseGenerator(BaseConfig):
                                 outputPath/gFile_02.cpp
                                 ...
 
+            enumForLua          将枚举生成为lua代码的目录，若提供该值，将不再生成至c++中。
+                                若该值是一个列表，则lua代码将生成至列表的所有目录中。
+
             clearOldFile        是否清除原来的旧文件再生成，还是采取覆盖的方式。
                                 该参数在文件总数有变化时很有用。
         """
@@ -53,6 +56,7 @@ class BaseGenerator(BaseConfig):
         self._outputPath = outputPath
         self._outputFile = outputFile
         self._clearOldFile = clearOldFile
+        self._enumForLua = enumForLua
         self._nativeObjects = {}
 
         # 缓存的所有访问过的节点，避免重复访问。
@@ -77,13 +81,25 @@ class BaseGenerator(BaseConfig):
     def NativeObjects(self) -> dict:
         return self._nativeObjects
 
+    @property
+    def EnumForLua(self):
+        return self._enumForLua
+
     def _CheckOldFile(self):
         """检查是否需要删除旧文件。"""
         if not self._clearOldFile:
             return
-        matchFiles = FindAllFilesMatch(self._outputPath, lambda x: -1 != x.find(self._outputFile))
-        for file in matchFiles:
-            os.remove(file)
+        matchList = [self._outputPath]
+        if self._enumForLua:
+            if isinstance(self._enumForLua, str):
+                matchList.append(self._enumForLua)
+            elif isinstance(self._enumForLua, list):
+                matchList += self._enumForLua
+
+        for mathDir in matchList:
+            matchFiles = FindAllFilesMatch(mathDir, lambda x: -1 != x.find(self._outputFile))
+            for file in matchFiles:
+                os.remove(file)
 
     def _GenerateHeadCode(self):
         """生成c++头文件。
@@ -114,6 +130,8 @@ class BaseGenerator(BaseConfig):
                     strList.append('#include "{}"\n'.format(os.path.basename(header)))
 
             for c in self._nativeObjects.values():
+                if self._enumForLua and isinstance(c, NativeEnum):
+                    continue
                 strList.append("extern void RegisterLua{}{}Auto(cocos2d::extension::Lua&);\n".format(
                     self.Tag, "".join(c.NameList[1:])))
 
@@ -122,6 +140,8 @@ class BaseGenerator(BaseConfig):
                 strList.append(self.MacroJudgement + "\n")
             strList.append('lua["{0}"]=lua.get_or("{0}",lua.create_table());\n'.format(self.TargetNamespace))
             for c in self._nativeObjects.values():
+                if self._enumForLua and isinstance(c, NativeEnum):
+                    continue
                 strList.append("RegisterLua{}{}Auto(lua);\n".format(self.Tag, "".join(c.NameList[1:])))
             if self.MacroJudgement:
                 strList.append("#endif\n")
@@ -135,6 +155,8 @@ class BaseGenerator(BaseConfig):
         groupIndex = 10
         idx = 0
         strList = []
+        # 用于生成lua枚举。
+        luaEnums = []
 
         def DoEnd(self: BaseGenerator):
             if not strList:
@@ -146,6 +168,9 @@ class BaseGenerator(BaseConfig):
                 strList.clear()
 
         for obj in self._nativeObjects.values():
+            if self._enumForLua and isinstance(obj, NativeEnum):
+                luaEnums.append(obj)
+                continue
             if idx % groupIndex == 0:
                 strList.append('#include "scripting/lua-bindings/auto/{}.hpp"\n'.format(self._outputFile))
                 for header in self.Headers:
@@ -170,6 +195,25 @@ class BaseGenerator(BaseConfig):
             idx += 1
         else:
             DoEnd(self)
+
+        if self._enumForLua:
+            # 生成lua代码。
+            genLuaPaths = []
+            if isinstance(self._enumForLua, str):
+                genLuaPaths.append(self._enumForLua)
+            elif isinstance(self._enumForLua, list):
+                genLuaPaths += self._enumForLua
+            luaStrList = []
+            for obj in luaEnums:
+                luaStrList.append(str(obj))
+                luaStrList.append("\n")
+            for path in genLuaPaths:
+                genPath = os.path.join(path, self._outputFile + ".lua")
+                dirName = os.path.dirname(genPath)
+                if not os.path.isdir(dirName):
+                    os.makedirs(dirName)
+                with open(genPath, "w") as luaFile:
+                    luaFile.write(''.join(luaStrList))
 
     def _GenerateCode(self):
         self._GenerateHeadCode()

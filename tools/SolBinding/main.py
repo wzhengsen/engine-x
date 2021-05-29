@@ -20,6 +20,7 @@
 # THE SOFTWARE.
 
 import multiprocessing
+import sys
 from Generator.BaseGenerator import BaseGenerator
 from Cocos2dxGeneratorCore import Cocos2dxGeneratorCore
 from Cocos2dxGenerator3D import Cocos2dxGenerator3D
@@ -35,37 +36,38 @@ from Cocos2dxGeneratorSpine import Cocos2dxGeneratorSpine
 from Cocos2dxGeneratorStudio import Cocos2dxGeneratorStudio
 from Cocos2dxGeneratorUI import Cocos2dxGeneratorUI
 
-_genList = [
-    Cocos2dxGeneratorCore,
-    Cocos2dxGenerator3D,
-    Cocos2dxGeneratorAudioEngine,
-    Cocos2dxGeneratorBackend,
-    Cocos2dxGeneratorController,
-    Cocos2dxGeneratorCSLoader,
-    Cocos2dxGeneratorExtension,
-    Cocos2dxGeneratorNavMesh,
-    Cocos2dxGeneratorPhysics,
-    Cocos2dxGeneratorPhysics3D,
-    Cocos2dxGeneratorSpine,
-    Cocos2dxGeneratorStudio,
-    Cocos2dxGeneratorUI
-]
-
-
-def _ProcessWork(idx):
-    if idx < 0 or idx >= len(_genList):
-        return
-    gen: BaseGenerator = _genList[idx]()
-    gen.Generate()
-
 
 # 是否使用多进程。
 _UseMultiProcessing = True
 
+
+def _ProcessWork(ele):
+    gen: BaseGenerator = ele[0](workDir=ele[1])
+    gen.Generate()
+
+
 if __name__ == "__main__":
-    if _UseMultiProcessing and len(_genList) > 1:
+    genList = [
+        [Cocos2dxGeneratorCore, ""],
+        [Cocos2dxGenerator3D, ""],
+        [Cocos2dxGeneratorAudioEngine, ""],
+        [Cocos2dxGeneratorBackend, ""],
+        [Cocos2dxGeneratorController, ""],
+        [Cocos2dxGeneratorCSLoader, ""],
+        [Cocos2dxGeneratorExtension, ""],
+        [Cocos2dxGeneratorNavMesh, ""],
+        [Cocos2dxGeneratorPhysics, ""],
+        [Cocos2dxGeneratorPhysics3D, ""],
+        [Cocos2dxGeneratorSpine, ""],
+        [Cocos2dxGeneratorStudio, ""],
+        [Cocos2dxGeneratorUI, ""]
+    ]
+    if len(sys.argv) > 1:
+        for ele in genList:
+            ele[1] = sys.argv[1]
+    if _UseMultiProcessing and len(genList) > 1:
         pPool = multiprocessing.Pool()
-        pPool.map(_ProcessWork, range(len(_genList)))
+        pPool.map(_ProcessWork, genList)
     else:
-        for idx in range(len(_genList)):
-            _ProcessWork(idx)
+        for ele in genList:
+            _ProcessWork(ele)

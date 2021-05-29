@@ -24,7 +24,7 @@ from .BaseGenerator import BaseGenerator
 
 
 class Cocos2dxGenerator(BaseGenerator):
-    def __init__(self, clearOldFile: bool = True):
+    def __init__(self, workDir: str = None, clearOldFile: bool = True):
         self.CocosRoot = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
         # 由当前类名获取生成的文件名。
         suffix = self.__class__.__name__
@@ -32,7 +32,12 @@ class Cocos2dxGenerator(BaseGenerator):
             suffix = suffix[len(__class__.__name__):]
         fileName = "CCRegisterLua" + suffix + "Auto"
         outputPath = "{}/extensions/scripting/lua-bindings/auto".format(self.CocosRoot)
-        super().__init__(outputPath, fileName, clearOldFile)
+        enumForLua = "{}/templates/lua-template-default/Resources/src/Frame/Extend/Cocos2dx/Auto".format(self.CocosRoot)
+        if workDir:
+            # 指示了工作目录，会额外将lua代码生成一份到工作目录中。
+            enumForLua = [enumForLua]
+            enumForLua.append("{}/Resources/src/Frame/Extend/Cocos2dx/Auto".format(workDir))
+        super().__init__(outputPath, fileName, enumForLua, clearOldFile)
 
         self.Tag = suffix
         self.SearchPaths += [
@@ -53,4 +58,8 @@ class Cocos2dxGenerator(BaseGenerator):
 
         self.RenameMembers |= {
             ".*": {"(C|c)reate": "new"}
+        }
+
+        self.Skip |= {
+            ".*": ["createInstance", "__Type"]
         }
