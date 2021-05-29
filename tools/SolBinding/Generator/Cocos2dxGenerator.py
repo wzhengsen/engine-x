@@ -32,11 +32,13 @@ class Cocos2dxGenerator(BaseGenerator):
             suffix = suffix[len(__class__.__name__):]
         fileName = "CCRegisterLua" + suffix + "Auto"
         outputPath = "{}/extensions/scripting/lua-bindings/auto".format(self.CocosRoot)
-        enumForLua = "{}/templates/lua-template-default/Resources/src/Frame/Extend/Cocos2dx/Auto".format(self.CocosRoot)
+        enumForLua = None
         if workDir:
-            # 指示了工作目录，会额外将lua代码生成一份到工作目录中。
-            enumForLua = [enumForLua]
-            enumForLua.append("{}/Resources/src/Frame/Extend/Cocos2dx/Auto".format(workDir))
+            # 会额外将lua代码生成一份到工作目录中。
+            enumForLua = [
+                "{}/templates/lua-template-default/Resources/src/Frame/Extend/Cocos2dx/Auto".format(self.CocosRoot),
+                "{}/Resources/src/Frame/Extend/Cocos2dx/Auto".format(workDir)
+            ]
         super().__init__(outputPath, fileName, enumForLua, clearOldFile)
 
         self.Tag = suffix

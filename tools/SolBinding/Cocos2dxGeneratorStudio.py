@@ -23,8 +23,8 @@ from Generator.Cocos2dxGenerator import Cocos2dxGenerator
 
 
 class Cocos2dxGeneratorStudio(Cocos2dxGenerator):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **args):
+        super().__init__(**args)
         self.TargetNamespace = "ccs"
         # 尽量确保嵌套层数较深的命名空间位于列表前端。
         self.CppNameSpace += ["cocostudio::timeline", "cocostudio"]

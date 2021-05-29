@@ -23,8 +23,8 @@ from Generator.Cocos2dxGenerator import Cocos2dxGenerator
 
 
 class Cocos2dxGeneratorUI(Cocos2dxGenerator):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **args):
+        super().__init__(**args)
         self.TargetNamespace = "ccui"
         # 尽量确保嵌套层数较深的命名空间位于列表前端。
         self.CppNameSpace += ["cocos2d::ui"]
@@ -44,3 +44,6 @@ class Cocos2dxGeneratorUI(Cocos2dxGenerator):
             "ListView::.*", "Text::.*", "LayoutComponent::.*", "Scale9Sprite::.*", "Layout::.*", "LayoutParameter::.*", "LinearLayoutParameter::.*", "RelativeLayoutParameter::.*", "EditBox::.*", "RichText::.*",
             "TabControl::.*", "VideoPlayer::.*"
         ]
+        self.Skip |= {
+            "LayoutParameter": ["createCloneInstance", "copyProperties"]
+        }
