@@ -44,18 +44,38 @@ bool Component::init()
 
 void Component::onEnter()
 {
+#if CC_ENABLE_LUA_BINDING
+    if (_enterHandler) {
+        _enterHandler(this);
+    }
+#endif
 }
 
 void Component::onExit()
 {
+#if CC_ENABLE_LUA_BINDING
+    if (_exitHandler) {
+        _exitHandler(this);
+    }
+#endif
 }
 
 void Component::onAdd()
 {
+#if CC_ENABLE_LUA_BINDING
+    if (_addHandler) {
+        _addHandler(this);
+    }
+#endif
 }
 
 void Component::onRemove()
 {
+#if CC_ENABLE_LUA_BINDING
+    if (_removeHandler) {
+        _removeHandler(this);
+    }
+#endif
 }
 
 void Component::update(float /*delta*/)

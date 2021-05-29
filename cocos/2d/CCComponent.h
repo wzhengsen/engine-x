@@ -63,6 +63,12 @@ public:
     virtual void onExit();
     virtual void onAdd();
     virtual void onRemove();
+#if CC_ENABLE_LUA_BINDING
+    void SetOnEnterHandler(const std::function<void(Component*)>& handler) { _enterHandler = handler; }
+    void SetOnExitHandler(const std::function<void(Component*)>& handler) { _exitHandler = handler; }
+    void SetOnAddHandler(const std::function<void(Component*)>& handler) { _addHandler = handler; }
+    void SetOnRemoveHandler(const std::function<void(Component*)>& handler) { _removeHandler = handler; }
+#endif
 
 CC_CONSTRUCTOR_ACCESS:
     /**
@@ -71,6 +77,12 @@ CC_CONSTRUCTOR_ACCESS:
     Component();
 
 protected:
+#if CC_ENABLE_LUA_BINDING
+    std::function<void(Component*)> _enterHandler = nullptr;
+    std::function<void(Component*)> _exitHandler = nullptr;
+    std::function<void(Component*)> _addHandler = nullptr;
+    std::function<void(Component*)> _removeHandler = nullptr;
+#endif
     Node* _owner;
     std::string _name;
     bool _enabled;

@@ -1695,67 +1695,38 @@ public:
      */
     virtual bool isOpacityModifyRGB() const;
 
+#if CC_ENABLE_LUA_BINDING
     /**
      * Set the handler of event onEnter.
      * @param handler A std::function<void(Node*)> handler.
      */
     void SetOnEnterHandler(const std::function<void(Node*)>& handler) { _enterHandler = handler; }
     /**
-     * Get the handler of event onEnter.
-     * @return A std:function<void()> handler.
-     */
-    const std::function<void(Node*)>& GetOnEnterHandler() const { return _enterHandler; }
-    /**
      * Set the handler of event onExit.
      * @param handler A std::function<void(Node*)> handler.
      */
     void SetOnExitHandler(const std::function<void(Node*)>& handler) { _exitHandler = handler; }
-    /**
-     * Get the handler of event onExit.
-     * @return A std::function<void(Node*)>.
-     */
-    const std::function<void(Node*)>& GetOnExitHandler() const { return _exitHandler; }
     /**
      * Set the handler of event EnterTransitionDidFinish.
      * @param handler A std::function<void(Node*)> handler.
      */
     void SetOnEnterTransitionDidFinishHandler(const std::function<void(Node*)>& handler) { _enterTransitionDidFinishHandler = handler; }
     /**
-     * Get the handler of event EnterTransitionDidFinish.
-     * @return std::function<void(Node*)>
-     */
-    const std::function<void(Node*)>& GetOnEnterTransitionDidFinishHandler() const { return _enterTransitionDidFinishHandler; }
-    /**
      * Set the handler of event ExitTransitionDidStart.
      * @param handler A std::function<void(Node*)> handler.
      */
     void SetOnExitTransitionDidStartHandler(const std::function<void(Node*)>& handler) { _exitTransitionDidStartHandler = handler; }
-    /**
-     * Get the handler of event ExitTransitionDidStart.
-     * @return std::function<void(Node*)>
-     */
-    const std::function<void(Node*)>& GetOnExitTransitionDidStartHandler() const { return _exitTransitionDidStartHandler; }
     /**
      * @brief Set the handler of event onCleanUp.
      * @param handler A std::function<void(Node*)> handler.
      */
     void SetOnCleanUpHandler(const std::function<void(Node*)>& handler) { _cleanUpHandler = handler; }
     /**
-     * @brief Get the handler of event onCleanUp.
-     * @return A std:function<void()> handler.
-     */
-    const std::function<void(Node*)>& GetOnCleanUpHandler() const { return _cleanUpHandler; }
-    /**
      * @brief Set the handler of event onUpdate.
      * @param handler A std::function<void(Node*)> handler.
      */
     void SetOnUpdateHandler(const std::function<void(Node*)>& handler) { _updateHandler = handler; }
-    /**
-     * @brief Get the handler of event onUpdate.
-     * @return A std:function<void()> handler.
-     */
-    const std::function<void(Node*)>& GetOnUpdateHandler() const { return _updateHandler; }
-
+#endif
     /**
      * get & set camera mask, the node is visible by the camera whose camera flag & node's camera mask is true
      */
@@ -1935,12 +1906,14 @@ protected:
     Color3B     _realColor = Color3B::WHITE;
     uint8_t     _realOpacity = 255;
 
+#if CC_ENABLE_LUA_BINDING
     std::function<void(Node*)> _enterHandler = nullptr;
     std::function<void(Node*)> _exitHandler = nullptr;
     std::function<void(Node*)> _enterTransitionDidFinishHandler = nullptr;
     std::function<void(Node*)> _exitTransitionDidStartHandler = nullptr;
     std::function<void(Node*)> _cleanUpHandler = nullptr;
     std::function<void(Node*)> _updateHandler = nullptr;
+#endif
 
     backend::ProgramState* _programState = nullptr;
 

@@ -123,9 +123,11 @@ bool Node::init()
 }
 
 void Node::cleanup() {
+#if CC_ENABLE_LUA_BINDING
     if (_cleanUpHandler) {
         _cleanUpHandler(this);
     }
+#endif
 
     // actions
     this->stopAllActions();
@@ -1199,9 +1201,10 @@ void Node::onEnter()
     {
         ++__attachedNodeCount;
     }
-
+#if CC_ENABLE_LUA_BINDING
     if (_enterHandler)
         _enterHandler(this);
+#endif
 
     if (_componentContainer && !_componentContainer->isEmpty())
     {
@@ -1219,8 +1222,10 @@ void Node::onEnter()
 }
 
 void Node::onEnterTransitionDidFinish() {
+#if CC_ENABLE_LUA_BINDING
     if (_enterTransitionDidFinishHandler)
         _enterTransitionDidFinishHandler(this);
+#endif
 
     _isTransitionFinished = true;
     for( const auto &child: _children)
@@ -1228,8 +1233,10 @@ void Node::onEnterTransitionDidFinish() {
 }
 
 void Node::onExitTransitionDidStart() {
+#if CC_ENABLE_LUA_BINDING
     if (_exitTransitionDidStartHandler)
         _exitTransitionDidStartHandler(this);
+#endif
 
     for( const auto &child: _children)
         child->onExitTransitionDidStart();
@@ -1240,10 +1247,10 @@ void Node::onExit() {
     {
         --__attachedNodeCount;
     }
-
+#if CC_ENABLE_LUA_BINDING
     if (_exitHandler)
         _exitHandler(this);
-
+#endif
     if (_componentContainer && !_componentContainer->isEmpty())
     {
         _componentContainer->onExit();
@@ -1452,9 +1459,11 @@ void Node::pause()
 // override me
 void Node::update(float fDelta)
 {
+#if CC_ENABLE_LUA_BINDING
     if (_updateHandler) {
         _updateHandler(this);
     }
+#endif
 
     if (_componentContainer && !_componentContainer->isEmpty())
     {

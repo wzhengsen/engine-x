@@ -181,7 +181,6 @@ Director::~Director()
     CC_SAFE_RELEASE(_eventResetDirector);
 
     delete _renderer;
-    delete _console;
 
     CC_SAFE_RELEASE(_eventDispatcher);
     

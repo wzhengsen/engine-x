@@ -316,6 +316,7 @@ public:
     static bool isEnabled();
     
 protected:
+    AudioEngine() = default;
     static void addTask(const std::function<void()>& task);
     static void remove(AUDIO_ID audioID);
     
