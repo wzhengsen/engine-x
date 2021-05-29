@@ -43,7 +43,7 @@ class Assistant():
         srcPath             源目录。
         config              指定配置。
         '''
-
+        srcPath = os.path.abspath(srcPath)
         self._configFileName = os.path.join(srcPath, Assistant._ModuleFileName)
         self._config: ConfigTemplate = config if config else Functions.LoadJson(
             self._configFileName, object_hook=ConfigTemplate.FromJson)
@@ -61,7 +61,10 @@ class Assistant():
 
     def __del__(self):
         if self._config.exitSave:
+            oldPath = os.getcwd()
+            os.chdir(self._configPath)
             Functions.SaveJson(self._configFileName, self._config)
+            os.chdir(oldPath)
 
     def GetModules(self):
         return self._config.modules
