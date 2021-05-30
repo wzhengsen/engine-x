@@ -20,7 +20,7 @@
 # THE SOFTWARE.
 
 import re
-from typing import Dict
+from typing import Dict, List
 from clang import cindex
 from Config.BaseConfig import BaseConfig
 from Util.CursorHelper import CursorHelper
@@ -208,7 +208,7 @@ class NativeMethod(NativeMember, NativeFunction):
 class NativeOverloadMethod(NativeMember):
     def __init__(self, cursor, generator: BaseConfig) -> None:
         super().__init__(cursor, generator)
-        self._impl = []
+        self._impl: List[NativeFunction] = []
         self._prefixName = CursorHelper.GetPrefixName(cursor)
         self._funcName = cursor.spelling
         self._wholeFuncName = self._prefixName + "::" + self._funcName
@@ -225,10 +225,20 @@ class NativeOverloadMethod(NativeMember):
                         break
                 if ap:
                     appendList.append(mm)
-            self._impl += appendList
+            for m in appendList:
+                self._CheckArgsAppend(m)
         else:
-            self._impl.append(method)
+            self._CheckArgsAppend(method)
             method._isOverload = True
+
+    def _CheckArgsAppend(self, method: NativeFunction):
+        """检查参数长度，参数越长的，被加入最前方。
+        """
+        for idx, impl in enumerate(self._impl):
+            if len(method.Args) >= len(impl.Args):
+                self._impl.insert(idx, method)
+                return
+        self._impl.append(method)
 
     def __str__(self) -> str:
         if not self._cxxStr:
