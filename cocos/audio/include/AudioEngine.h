@@ -28,6 +28,9 @@
 #include "platform/CCPlatformConfig.h"
 #include "platform/CCPlatformMacros.h"
 #include "audio/include/AudioMacros.h"
+#if CC_ENABLE_LUA_BINDING
+#include "scripting/lua-bindings/CCLuaObject.h"
+#endif
 #include <functional>
 #include <list>
 #include <string>
@@ -50,7 +53,11 @@ NS_CC_BEGIN
  * @brief
  * @js NA
  */
+#if CC_ENABLE_LUA_BINDING
+class CC_DLL AudioProfile : public cocos2d::extension::LuaObject
+#else
 class CC_DLL AudioProfile
+#endif
 {
 public:
     //Profile name can't be empty.
