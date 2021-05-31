@@ -3,7 +3,7 @@
     Auth:   wzhengsen
     Date:   2019.07.07
 ]]
-local Sound = require("Audio.Sound")
+local Sound = require("Audio.Sound");
 local BaseScene = class(function()
     return cc.Scene.new();
 end)
@@ -16,16 +16,15 @@ BaseScene.PreloadRes = {
 }
 
 function BaseScene:__init__()
-    self:enableNodeEvents()
-    self:EnableRefEvents()
+    self.EnableEvents = true;
+    self.EnableDelEvent = true;
 end
 
 function BaseScene:Run()
-    local director = cc.Director.getInstance();
-    if class.IsNull(director:getRunningScene()) then
-        director:runWithScene(self)
+    if class.IsNull(D.RunningScene) then
+        D.RunWithScene(self)
     else
-        director:replaceScene(self)
+        D.ReplaceScene(self)
     end
 end
 
@@ -36,15 +35,13 @@ function BaseScene:__del__()
 end
 
 function BaseScene.Handler:OnDeviceToPortrait()
-    local glView = cc.Director.getInstance().OpenGLView;
-    self.Size = glView.FrameSize;
+    self.Size = D.OpenGLView.FrameSize;
     self:Layout();
 end
 
 function BaseScene.Handler:OnDeviceToLandscape()
-    local glView = cc.Director.getInstance().OpenGLView;
-    self.Size = glView.FrameSize;
+    self.Size = D.OpenGLView.FrameSize;
     self:Layout();
 end
 
-return BaseScene
+return BaseScene;

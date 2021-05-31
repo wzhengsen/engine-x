@@ -23,7 +23,7 @@
     Date:       2020.03.19
     Desc:       事件机制的Handler部分，和class类内部实现关联，使用相对更简洁。
 ]]
-local Event = require("Event");
+local Event = require("Frame.Core.Event");
 local Handler = {};
 
 --[[

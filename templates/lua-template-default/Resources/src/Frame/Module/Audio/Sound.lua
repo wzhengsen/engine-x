@@ -1,4 +1,28 @@
 --[[
+
+Copyright (c) 2014-2017 Chukong Technologies Inc.
+Copyright (c) 2021 wzhengsen.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+]]
+--[[
     File:   Sound
     Auth:   wzhengsen
     Data:   2019.07.06
@@ -14,21 +38,15 @@
 ]]
 
 local AudioEngine = cc.AudioEngine;
-local UserFile = require("Utils.UserFile")
-local Sound = class()
+local UserFile = require("Utils.UserFile");
+local Sound = class();
 
-Sound.State = {
+Sound.StateCode = {
     Error  = -1,
     Initialzing = 0,
     Playing = 1,
     Paused = 2
-}
-
---默认音量大小
-Sound.DefaultVolume = math.Limit(UserFile().SoundDefaultVolume or 0.8,0,1)
-
---静音选项
-Sound.Silence = UserFile().SoundSilence or false
+};
 
 -- 指示获取的持续时间是否是未知的。
 Sound.UnkownTime = AudioEngine.TIME_UNKNOWN;
@@ -40,12 +58,12 @@ Sound.UnkownTime = AudioEngine.TIME_UNKNOWN;
             number[Sound.DefaultVolume]     音量0-1
 ]]
 function Sound:__init__(filePath,loop,vol)
-    self.sInst = AudioEngine.INVALID_AUDIO_ID
-    loop = loop or false
-    vol = vol or Sound.DefaultVolume
-    self.sFilePath = filePath
-    self.sLoop = loop
-    self.sVol = math.Limit(vol,0,1)
+    self._sInst = AudioEngine.INVALID_AUDIO_ID;
+    loop = loop or false;
+    vol = vol or Sound.DefaultVolume;
+    self._sFilePath = filePath;
+    self._sLoop = loop;
+    self._sVol = math.Limit(vol,0,1);
 end
 
 --[[
@@ -53,76 +71,76 @@ end
 ]]
 function Sound:Play(force)
     if Sound.Silence then
-        return false
+        return false;
     end
 
-    if self.sInst ~= AudioEngine.INVALID_AUDIO_ID then
-        local state = self:GetState()
-        if state == Sound.State.Playing
-        or state == Sound.State.Paused then
+    if self._sInst ~= AudioEngine.INVALID_AUDIO_ID then
+        local state = self:GetState();
+        if state == Sound.StateCode.Playing
+        or state == Sound.StateCode.Paused then
             if force then
                 self:Stop();
             else
                 -- 播放状态和暂停状态下不能再次播放
-                return false
+                return false;
             end
         end
     end
 
-    self.sInst = AudioEngine.play2d(self.sFilePath,self.sLoop,self.sVol)
-    if self.sInst == AudioEngine.INVALID_AUDIO_ID then
-        return false
+    self._sInst = AudioEngine.play2d(self._sFilePath,self._sLoop,self._sVol);
+    if self._sInst == AudioEngine.INVALID_AUDIO_ID then
+        return false;
     end
 
     if self._cfb then
         -- 再次Play时将回调绑定至新的声音句柄
-        AudioEngine.setFinishCallback(self.sInst,self._cfb)
+        AudioEngine.SetFinishCallback(self._sInst,self._cfb);
     end
-    return true
+    return true;
 end
 
 function Sound:SetLoop(loop)
-    self.sLoop = loop
-    AudioEngine.setLoop(self.sInst,loop)
+    self._sLoop = loop;
+    AudioEngine.SetLoop(self._sInst,loop);
 end
 
 function Sound:IsLoop()
-    return AudioEngine.isLoop(self.sInst)
+    return AudioEngine.IsLoop(self._sInst);
 end
 
 function Sound:SetVolume(vol)
-    self.sVol = math.Limit(vol,0,1)
-    AudioEngine.setVolume(self.sInst,vol)
+    self._sVol = math.Limit(vol,0,1);
+    AudioEngine.SetVolume(self._sInst,vol);
 end
 
 function Sound:GetVolume()
-    return AudioEngine.getVolume(self.sInst)
+    return AudioEngine.GetVolume(self._sInst);
 end
 
 function Sound:Pause()
-    AudioEngine.pause(self.sInst)
-end
-
-function Sound.PauseAll()
-    AudioEngine.pauseAll()
+    AudioEngine.Pause(self._sInst);
 end
 
 function Sound:Resume()
-    AudioEngine.resume(self.sInst)
-end
-
-function Sound.ResumeAll()
-    AudioEngine.resumeAll()
+    AudioEngine.Resume(self._sInst);
 end
 
 function Sound:Stop()
-    AudioEngine.stop(self.sInst)
+    AudioEngine.Stop(self._sInst);
     --停止后，当前句柄将不可用
-    self.sInst = AudioEngine.INVALID_AUDIO_ID
+    self._sInst = AudioEngine.INVALID_AUDIO_ID;
+end
+
+function Sound.PauseAll()
+    AudioEngine.PauseAll();
+end
+
+function Sound.ResumeAll()
+    AudioEngine.ResumeAll();
 end
 
 function Sound.StopAll()
-    AudioEngine.stopAll()
+    AudioEngine.StopAll();
 end
 
 --[[
@@ -131,15 +149,15 @@ end
     Return: boolean
 ]]
 function Sound:SetCurrentTime(dt)
-    return AudioEngine.setCurrentTime(self.sInst,dt)
+    return AudioEngine.SetCurrentTime(self._sInst,dt);
 end
 
 function Sound:GetCurrentTime()
-    return AudioEngine.getCurrentTime(self.sInst)
+    return AudioEngine.GetCurrentTime(self._sInst);
 end
 
 function Sound:GetDuration()
-    return AudioEngine.getDuration(self.sInst);
+    return AudioEngine.GetDuration(self._sInst);
 end
 
 --[[
@@ -147,7 +165,7 @@ end
     Return: number  Sound.State{}
 ]]
 function Sound:GetState()
-    return AudioEngine.getState(self.sInst)
+    return AudioEngine.GetState(self._sInst);
 end
 
 function Sound:SetFinishHandler(fcb)
@@ -155,83 +173,57 @@ function Sound:SetFinishHandler(fcb)
         if fcb then
             fcb(self,str)
         end
-    end
-    AudioEngine.setFinishCallback(self.sInst,self._cfb)
+    end;
+    AudioEngine.SetFinishCallback(self._sInst,self._cfb);
 end
 
-Sound.gtor({
-    State = Sound.GetState,
-    Duration = Sound.GetDuration,
-    CurrentTime = Sound.GetCurrentTime,
-    Volume = Sound.GetVolume,
-    Loop = Sound.IsLoop
-});
-
-Sound.stor({
-    FinishHandler = Sound.SetFinishHandler,
-    CurrentTime = Sound.SetCurrentTime,
-    Volume = Sound.SetVolume,
-    Loop = Sound.SetLoop
-});
-
 function Sound.GetMaxAudioInstance()
-    return AudioEngine.getMaxAudioInstance()
+    return AudioEngine.GetMaxAudioInstance();
 end
 
 function Sound.SetMaxAudioInstance(max)
-    AudioEngine.setMaxAudioInstance(max)
+    AudioEngine.setMaxAudioInstance(max);
 end
 
 function Sound.Uncache(filePath)
-    AudioEngine.uncache(filePath)
+    AudioEngine.Uncache(filePath);
 end
 
 function Sound.UncacheAll()
-    AudioEngine.uncacheAll()
+    AudioEngine.UncacheAll();
 end
 
 --[[
     Func:   预载入声音
-    Param:  string|table    声音资源|声音资源表
-            function{nil}   完成回调|全部完成回调
-    Desc:   若str参数为字符串，则只会预载这一个资源；
-            若str参数为表，则会同时预载入所有的资源；
-            若function不为nil且str为表时，回调参数第三个为当前已预载数量。
+    Param:  table           声音资源表
+            function{nil}   完成回调
 ]]
-function Sound.Preload(str,callBack)
-    if "string" == type(str) then
-        if callBack then
-            AudioEngine.preload(str,function(suc)
-                callBack(str,suc)
-            end)
-        else
-            AudioEngine.preload(str)
+function Sound.Preload(sounds,callBack)
+    if not callBack then
+        for _,v in ipairs(sounds) do
+            AudioEngine.Preload(v);
         end
     else
-        if not callBack then
-            for _,v in ipairs(str) do
-                AudioEngine.preload(v)
-            end
-        else
-            local count = 0
-            for _,v in ipairs(str) do
-                AudioEngine.preload(v,function(suc)
-                    count = count + 1
-                    callBack(v,suc,count)
-                end)
-            end
+        local count = #sounds;
+        for i,sound in ipairs(sounds) do
+            AudioEngine.Preload(sound,function(suc)
+                callBack(sound,suc,i,count);
+            end)
         end
     end
 end
 
 function Sound.SetDefaultVolume(vol)
-    vol = math.Limit(vol,0,1)
-    UserFile().SoundDefaultVolume = vol
-    Sound.DefaultVolume = vol
+    vol = math.Limit(vol,0,1);
+    UserFile.SoundDefaultVolume = vol;
+    Sound._DefaultVolume = vol;
 end
 
 function Sound.GetDefaultVolume()
-    return Sound.DefaultVolume
+    if nil == Sound._DefaultVolume then
+        Sound._DefaultVolume = math.Limit(UserFile.SoundDefaultVolume or 0.8,0,1);
+    end
+    return Sound._DefaultVolume;
 end
 
 --[[
@@ -239,19 +231,52 @@ end
     Param:  boolean
 ]]
 function Sound.SetSilence(b)
-    b = syx.Boolean(b);
-    if Sound.Silence == b then
-        return
+    b = cc.ToBoolean(b);
+    if cc.ToBoolean(Sound._Silence) == b then
+        return;
     end
-    UserFile().SoundSilence = b
-    Sound.Silence = b
+    UserFile.SoundSilence = b;
+    Sound._Silence = b;
     if b then
         Sound.StopAll()
     end
 end
 
 function Sound.GetSilence()
-    return Sound.Silence
+    if nil == Sound._Silence then
+        Sound._Silence = UserFile.SoundSilence or false;
+    end
+    return Sound._Silence;
 end
 
-return Sound
+function Sound:__del__()
+    self:Stop();
+end
+
+function Sound.__properties__()
+    return {
+        r = {
+            State = Sound.GetState,
+            Duration = Sound.GetDuration,
+            CurrentTime = Sound.GetCurrentTime,
+            Volume = Sound.GetVolume,
+            Loop = Sound.IsLoop,
+            MaxAudioInstance = Sound.GetMaxAudioInstance,
+            DefaultVolume = Sound.GetDefaultVolume,
+            Silence = Sound.GetSilence
+        },
+        w = {
+            FinishHandler = Sound.SetFinishHandler,
+            CurrentTime = Sound.SetCurrentTime,
+            Volume = Sound.SetVolume,
+            Loop = Sound.SetLoop,
+            MaxAudioInstance = Sound.SetMaxAudioInstance,
+            DefaultVolume = Sound.SetDefaultVolume,
+            Silence = Sound.SetSilence
+        }
+    }
+end
+
+cc.Sound = Sound;
+
+return Sound;

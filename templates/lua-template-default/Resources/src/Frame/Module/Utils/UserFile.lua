@@ -103,7 +103,12 @@ setmetatable(UserFile,
             elseif TypePrefix.string == vType then
                 return ret;
             elseif TypePrefix.boolean == vType then
-                return cc.ToBoolean(ret);
+                if "true" == ret then
+                    return true
+                elseif "false" == ret then
+                    return false;
+                end
+                return ret;
             elseif TypePrefix.table == vType then
                 local retTab = cjson.decode(ret);
                 -- 将表中可能嵌套存在的已被序列化的函数全部反序列化。
@@ -123,3 +128,5 @@ setmetatable(UserFile,
 });
 
 cc.UserFile = UserFile;
+
+return UserFile;

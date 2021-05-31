@@ -197,15 +197,11 @@ end
 ]]
 
 ---转换任意值为布尔值，无论该值能不能被转换，一定会返回布尔值，且不会抛出错误。
----特别的，"false"将被转换为false，而不是true，这和lua的默认行为不同。
 ---
 ---@param obj any
 ---@return boolean
 ---
 function cc.ToBoolean(obj)
-    if "string" == type(obj) and "false" == obj:lower() then
-        return false;
-    end
     if obj then
         return true;
     end

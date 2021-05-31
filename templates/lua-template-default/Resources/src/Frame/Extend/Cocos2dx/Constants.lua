@@ -22,9 +22,42 @@ local cc = cc;
 
 cc.AnimationFrameDisplayedNotification = "CCAnimationFrameDisplayedNotification";
 
-cc.ParticleSystem.DURATION_INFINITY = -1;
-cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE = -1;
-cc.ParticleSystem.START_RADIUS_EQUAL_TO_END_RADIUS = -1;
+cc.TGA_OK = 0;
+cc.TGA_ERROR_FILE_OPEN = 1;
+cc.TGA_ERROR_READING_FILE = 2;
+cc.TGA_ERROR_INDEXED_COLOR = 3;
+cc.TGA_ERROR_MEMORY = 4;
+cc.TGA_ERROR_COMPRESSED_FILE = 5;
+
+cc.TMXLayerAttribNone = 1;
+cc.TMXLayerAttribBase64 = 2;
+cc.TMXLayerAttribGzip = 4;
+cc.TMXLayerAttribZlib = 8;
+cc.TMXLayerAttribCSV = 16;
+
+cc.TMXPropertyNone = 0;
+cc.TMXPropertyMap = 1;
+cc.TMXPropertyLayer = 2;
+cc.TMXPropertyObjectGroup = 3;
+cc.TMXPropertyObject = 4;
+cc.TMXPropertyTile = 5;
+cc.TMXPropertyAnimation = 6;
+
+cc.TMXOrientationOrtho = 0;
+cc.TMXOrientationHex = 1;
+cc.TMXOrientationIso = 2;
+cc.TMXOrientationStaggered = 3;
+
+cc.TMXStaggerAxis_X = 0;
+cc.TMXStaggerAxis_Y = 1;
+
+cc.TMXStaggerIndex_Odd = 0;
+cc.TMXStaggerIndex_Even = 1;
+
+cc.CCZ_COMPRESSION_ZLIB = 0;
+cc.CCZ_COMPRESSION_BZIP2 = 1;
+cc.CCZ_COMPRESSION_GZIP = 2;
+cc.CCZ_COMPRESSION_NONE = 3;
 
 local Color = nil;
 Color = setmetatable(

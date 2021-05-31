@@ -27,8 +27,14 @@ function(msg)
 end);
 
 local function main()
+    if sol.Debug then
+        -- 便于在调试器中观察。
+        local reg = debug.getregistry();
+        reg["UD🌙"] = reg["UD🌙"] or {};
+        _G.LuaUDS = reg["UD🌙"];
+    end
     package.path = package.path .. ";src/?.lua";
     require("Frame.Init");
-    cc.Application.Instance:Start();
+    --cc.Application.Instance:Start();
 end
 main();

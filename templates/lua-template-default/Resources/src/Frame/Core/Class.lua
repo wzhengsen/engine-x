@@ -29,7 +29,7 @@ local pairs = pairs;
 local ipairs = ipairs;
 local assert = assert;
 local type = type;
-local Handler = require("Handler");
+local Handler = require("Frame.Core.Handler");
 
 _G.class = {};
 
@@ -303,7 +303,11 @@ function class.New(...)
         });
     end
 
+    local singleton = false;
     for idx, base in ipairs(args) do
+        if base == class.Singleton then
+            singleton = true;
+        end
         local baseType = type(base);
         -- 基类只能是table或function。
         assert(baseType == "table" or baseType == "function","Base classes must be a table or function!");
@@ -313,6 +317,14 @@ function class.New(...)
             cls.__create = base;
             cls.__fCtorIdx__ = idx;
         else
+            local argMeta = getmetatable(base);
+            if nil == argMeta then
+                -- 一些简单表（没有元表）作为父级被继承时，添加一些必要的键。
+                base.__r__ = {};
+                base.__w__ = {};
+                base.__bases__ = {};
+                base.Handler = {};
+            end
             local __name = rawget(base,"__name");
             -- sol::usertype名字中带有"sol."
             if __name and __name:find("sol.") then
@@ -515,6 +527,33 @@ function class.New(...)
         end
     });
 
+    -- 处理单例继承。
+    if singleton then
+        -- 使用单例，new被禁止。
+        local new = cls.new;
+        cls.new = nil;
+        cls.__properties__ = {
+            r = {
+                Instance = function (self)
+                    if class.IsNull(self.__SingletonInst) then
+                        self.__SingletonInst = new();
+                    end
+                    return self.__SingletonInst;
+                end
+            },
+            w = {
+                Instance = function (self,val)
+                    -- 单例销毁时必须使用nil值。
+                    assert(nil == val,"The nil value must be used to destroy the singleton.")
+                    if not class.IsNull(self.__SingletonInst) then
+                        self.__SingletonInst:delete()
+                        self.__SingletonInst = nil;
+                    end
+                end
+            }
+        };
+    end
+
     return cls;
 end
 
@@ -532,3 +571,6 @@ class.IsNull = function(t)
         return isnull(t);
     end
 end
+
+-- 独特的类，继承该类的，都将拥有单例属性（使用Instance）。
+class.Singleton = class();

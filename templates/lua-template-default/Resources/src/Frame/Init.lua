@@ -20,10 +20,6 @@
 
 local path = package.path;
 path = path .. ";src/Frame/Module/?.lua";
-path = path .. ";src/Frame/Extend/?.lua";
-path = path .. ";src/Frame/Core/?.lua";
-path = path .. ";src/Frame/Constant/?.lua";
-path = path .. ";src/Frame/?.lua";
 package.path = path;
 
 local cpath = package.cpath;
@@ -31,36 +27,45 @@ package.cpath = cpath;
 
 -- Initialize global.
 _G.cjson = require("cjson");
+_G.D = cc.Director.Instance;
 
-require("Event");
-require("Handler");
-require("Class");
+require("Frame.Core.Event");
+require("Frame.Core.Handler");
+require("Frame.Core.Class");
 
-require("Lua.MathEx");
-require("Lua.StringEx");
-require("Lua.TableEx");
-require("Lua.OsEx");
-require("Lua.IoEx");
-require("Lua.LuaEx");
+require("Frame.Extend.Lua.MathEx");
+require("Frame.Extend.Lua.StringEx");
+require("Frame.Extend.Lua.TableEx");
+require("Frame.Extend.Lua.OsEx");
+require("Frame.Extend.Lua.IoEx");
+require("Frame.Extend.Lua.LuaEx");
 
-require("LuaBridge");
+require("Frame.Core.LuaBridge");
 
-require("OpenGLConstants");
-require("OpenGL");
+require("Frame.Constant.OpenGLConstants");
+require("Frame.Core.OpenGL");
 
-require("Cocos2dx.Constants");
-require("Cocos2dx.Cocos2dxEx");
-require("Cocos2dx.LuaObjectEx");
-require("Cocos2dx.NodeEx");
-require("Cocos2dx.VideoPlayerEx");
+require("Frame.Extend.Cocos2dx.Constants");
+require("Frame.Extend.Cocos2dx.ComponentEx");
+require("Frame.Extend.Cocos2dx.Cocos2dxEx");
+require("Frame.Extend.Cocos2dx.LuaObjectEx");
+require("Frame.Extend.Cocos2dx.NodeEx");
+require("Frame.Extend.Cocos2dx.VideoPlayerEx");
 
 require("Utils.Convert");
 require("Utils.UserFile");
 require("Utils.LocalFile");
-require("Utils.ZipFile");
-require("Application");
 
-require("Module.Init");
+require("Audio.Effect");
+require("Audio.Music");
+require("Audio.Sound");
+
+require("Base.Scene.BaseScene");
+require("Base.Scene.ILoadingScene");
+
+-- require("Application");
+
+--require("Module.Init");
 
 local config = require("config");
 
@@ -83,18 +88,18 @@ if config.DisableGlobal then
 end
 
 if config.ShowFps then
-    cc.Director.getInstance():setDisplayStats(true);
+    cc.Director.Instance.DisplayStats = true;
 end
 
 if config.RequireZipEnabled then
-    local function readZipFile(zipFile,interFileName,pwd)
-        local seekFile = zipFile:Seek(interFileName);
+    local function ReadZipFile(zipFile,fileName,interFileName,pwd)
+        local file = zipFile:Locate(interFileName);
         local ret = "No file found in zip file.The file name is "..interFileName;
-        if seekFile then
-            local content = pwd and seekFile:Read(pwd) or seekFile:Read();
+        if file then
+            local content = pwd and file:Read(pwd) or file:Read();
             local err = nil;
             if content then
-                ret,err = load(content,interFileName);
+                ret,err = load(content,fileName);
                 if err then
                     error(err);
                 end
@@ -107,21 +112,34 @@ if config.RequireZipEnabled then
     --[[
         require Zip 文件时，查找路径不依赖package.path路径。
         支持中文路径和中文文件名。
-        可省略文件的.lua/.luac后缀。
+        可省略文件的.lua/.luac/.zip后缀。
         参数：
-            zFileName       遵循"ccZip://fileName@subName"格式，如下：
-                require("ccZip://myZipFile.zip@myData/userInfo@password");
+            zFileName       遵循"Zip://fileName@subName"格式，如下：
+                            require("Zip://myZipFile.zip@myData/userInfo.lua@password");
+                            或
+                            require("Zip://myZipFile@myData/userInfo@password");
     ]]
     local searcher = function (zFile)
-        if zFile:sub(1,8) ~= "ccZip://" then
+        local zipPrefix<const> = "Zip://";
+        if zFile:sub(1,#zipPrefix) ~= zipPrefix then
             return nil;
         end
         local where = zFile:find("@");
         if not where then
             return nil;
         end
-        local zipFileName = zFile:sub(9,where - 1);
-        local zipFile = syx.ZipFile.new(zipFileName);
+        local zipFileName = zFile:sub(#zipPrefix + 1,where - 1);
+        local zipFile = nil;
+        if zipFileName:sub(-4) == ".zip" then
+            zipFile = cc.RZipFile.new(zipFileName);
+        else
+            for _,fileExt in ipairs({".zip",""}) do
+                zipFile = cc.RZipFile.new(zipFileName..fileExt);
+                if zipFile then
+                    break;
+                end
+            end
+        end
         local ret = "No file found.File name is "..zipFileName;
         if not zipFile then
             return ret;
@@ -131,10 +149,10 @@ if config.RequireZipEnabled then
         local interFileName = zFile:sub(where + 1,pwdPos and pwdPos - 1 or -1);
         ret = "No file found in zip file.File name is "..interFileName;
         if interFileName:sub(-5) == ".luac" or interFileName:sub(-4) == ".lua" then
-            ret = readZipFile(zipFile,interFileName,pwd)
+            ret = ReadZipFile(zipFile,zFile:sub(1,pwdPos and pwdPos - 1 or -1),interFileName,pwd)
         else
             for _,fileExt in pairs({".luac",".lua",""}) do
-                ret = readZipFile(zipFile,interFileName..fileExt,pwd)
+                ret = ReadZipFile(zipFile,zFile:sub(1,pwdPos and pwdPos - 1 or -1),interFileName..fileExt,pwd)
                 if "function" == type(ret) then
                     break;
                 end

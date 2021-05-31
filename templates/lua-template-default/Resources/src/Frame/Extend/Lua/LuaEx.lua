@@ -72,11 +72,16 @@ end
 if os.Windows then
     local _print = print;
     function print(...)
-        local convert = {};
-        for _,arg in pairs({...}) do
-            table.insert(convert,tostring(arg):Convert("gbk//TRANSLIT","utf-8") or arg);
+        local args = {...};
+        if next(args) then
+            local convert = {};
+            for _,arg in pairs(args) do
+                table.insert(convert,tostring(arg):Convert("gbk//TRANSLIT","utf-8") or arg);
+            end
+            _print(table.unpack(convert));
+        else
+            _print("nil");
         end
-        _print(table.unpack(convert));
     end
 
     local _dofile = dofile;

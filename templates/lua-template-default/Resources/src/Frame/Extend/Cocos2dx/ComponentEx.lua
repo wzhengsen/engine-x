@@ -18,20 +18,27 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
-local LuaObject = cc.LuaObject;
+local Component = cc.Component;
 
-function LuaObject:__del__(_)end
+function Component:OnEnter(_)end
+function Component:OnExit(_)end
+function Component:OnAdd(_)end
+function Component:OnRemove(_)end
 
-function LuaObject.__properties__()
+function Component.__properties__()
     return {
-        r = {
-        },
         w = {
-            EnableDelEvent = function (self,val)
+            EnableEvents = function (self,val)
                 if val then
-                    self.DeleteHandler = class.Handler(self,self.__del__);
+                    self.OnEnterHandler = class.Handler(self,self.OnEnter);
+                    self.OnExitHandler = class.Handler(self,self.OnExit);
+                    self.OnAddHandler = class.Handler(self,self.OnAdd);
+                    self.OnRemoveHandler = class.Handler(self,self.OnRemove);
                 else
-                    self.DeleteHandler = nil;
+                    self.OnEnterHandler = nil;
+                    self.OnExitHandler = nil;
+                    self.OnAddHandler = nil;
+                    self.OnRemoveHandler = nil;
                 end
             end
         }

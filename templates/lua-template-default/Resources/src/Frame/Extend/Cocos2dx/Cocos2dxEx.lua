@@ -33,7 +33,7 @@ function LuaObject.__properties__()
         r = {
         },
         w = {
-            DtorHandler = LuaObject.SetDtorHandler
+            DeleteHandler = LuaObject.SetDeleteHandler
         }
     };
 end
@@ -93,13 +93,7 @@ function Node.__properties__()
     CameraMask = Node.GetCameraMask,
     PhysicsBody = Node.GetPhysicsBody,
     OpacityModifyRGB = Node.IsOpacityModifyRGB,
-    ProgramState = Node.GetProgramState,
-    OnEnterHandler = Node.GetOnEnterHandler,
-    OnExitHandler = Node.GetOnExitHandler,
-    OnEnterTransitionDidFinishHandler = Node.GetOnEnterTransitionDidFinishHandler,
-    OnExitTransitionDidStartHandler = Node.GetOnExitTransitionDidStartHandler,
-    OnCleanUpHandler = Node.GetOnCleanUpHandler,
-    OnUpdateHandler = Node.GetOnUpdateHandler
+    ProgramState = Node.GetProgramState
     },
     w = {
     LocalZ = Node.SetLocalZOrder,
@@ -580,7 +574,11 @@ function Component.__properties__()
     w = {
     Enabled = Component.SetEnabled,
     Name = Component.SetName,
-    Owner = Component.SetOwner
+    Owner = Component.SetOwner,
+    OnEnterHandler = Component.SetOnEnterHandler,
+    OnExitHandler = Component.SetOnExitHandler,
+    OnAddHandler = Component.SetOnAddHandler,
+    OnRemoveHandler = Component.SetOnRemoveHandler
     }};
 end
 
@@ -3023,4 +3021,25 @@ function EventController.__properties__()
     ConnectStatus = EventController.SetConnectStatus,
     Connected = EventController.SetConnectStatus
     }};
+end
+
+local ZipFile = cc.ZipFile;
+function ZipFile.__properties__()
+    return {
+        r = {},
+        w = {
+            ProcessHandler = ZipFile.SetProcessHandler,
+            ErrorHandler = ZipFile.SetErrorHandler
+        }
+    };
+end
+
+local ZipItem = cc.RZipFile.ZipItem;
+function ZipItem.__properties__()
+    return {
+        r = {
+            Info = ZipItem.GetInfo
+        },
+        w = {}
+    };
 end

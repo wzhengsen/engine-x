@@ -25,11 +25,6 @@
     Desc:	为os库新增了一些方法
 ]]
 -- 令os继承自己，并使其不能实例化，主要是为了使用__properties__方法。
-os.__r__ = {};
-os.__w__ = {};
-os.__bases__ = {};
-os.Handler = {};
-
 ---@class osex
 ---@field Platform integer
 ---@field Language integer
