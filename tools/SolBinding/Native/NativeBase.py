@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+from typing import List
 from clang import cindex
 from Config.BaseConfig import BaseConfig
 from Util.CursorHelper import CursorHelper
@@ -28,7 +29,7 @@ class NativeType(object):
     """类，结构体，枚举，方法，成员变量等的基类。"""
 
     def __init__(self, cursor, generator: BaseConfig) -> None:
-        super().__init__()
+        object.__init__(self)
         self._cursor = cursor
         self._generator = generator
         # 生成的c++字符串。
@@ -58,7 +59,7 @@ class NativeMember(NativeType):
     """成员方法，成员变量等的基类。"""
 
     def __init__(self, cursor, generator: BaseConfig) -> None:
-        super().__init__(cursor, generator)
+        NativeType.__init__(self, cursor, generator)
         # 获取可能的重命名。
         pName = CursorHelper.GetClassesName(cursor)
         self._newName = generator.RenameMember(pName, cursor.spelling)
@@ -69,8 +70,11 @@ class NativeMember(NativeType):
         return self._newName
 
 
-class NativeFunction(NativeType):
-    """成员方法，普通函数等的基类。"""
+class NativeImplement(object):
+    """函数实现类。
+    多个互为重载的函数，可以作为一个具有多种实现的同一函数。
+    一个具有默认值参数的函数，也是一种具有多种实现的函数。
+    """
     __LiteralList = [
         cindex.CursorKind.INTEGER_LITERAL, cindex.CursorKind.FLOATING_LITERAL,
         cindex.CursorKind.IMAGINARY_LITERAL, cindex.CursorKind.STRING_LITERAL,
@@ -80,46 +84,121 @@ class NativeFunction(NativeType):
         # varible, or enumerator.
         cindex.CursorKind.DECL_REF_EXPR]
 
-    def __init__(self, cursor, generator: BaseConfig) -> None:
-        super().__init__(cursor, generator)
-        self._prefixName = CursorHelper.GetPrefixName(cursor)
-        self._funcName = cursor.spelling
-        self._wholeFuncName = self._prefixName + "::" + self._funcName
-        self._args = []
-        self._returnType = CursorHelper.GetArgName(cursor.result_type)
-        self._static: bool = cursor.is_static_method()
-        self._notSupported = False
+    @staticmethod
+    def CreateImplements(cursor):
+        """由一个游标，自动创建一组实现。
+        一般的，有默认值的函数游标，将生成多个实现。
+        """
+        retImpl: List[NativeImplement] = []
+        result = CursorHelper.GetArgName(cursor.result_type)
+        args: List[str] = []
 
         for arg in cursor.type.argument_types():
-            # 遍历参数。
             if arg.kind == cindex.TypeKind.RVALUEREFERENCE:
                 # 右值引用不可用。
-                self._notSupported = True
-                break
-            self._args.append(CursorHelper.GetArgName(arg))
-
-        defaultArg = False
-        index = -1
-        for node in cursor.get_children():
-            if node.kind == cindex.CursorKind.PARM_DECL:
-                index += 1
-                if NativeFunction.__CheckDefaultArg(node):
-                    defaultArg = True
-                    break
+                return []
+            args.append(CursorHelper.GetArgName(arg))
 
         # 最小参数数量。
-        # 当最小参数数量小于参数列表数时，表示该函数有默认参数。
-        self._minArgs = index if defaultArg else len(self._args)
+        minArgs = len(args)
+        for index, node in enumerate(cursor.get_children()):
+            if node.kind == cindex.CursorKind.PARM_DECL and NativeImplement.__CheckDefaultArg(node):
+                # 当最小参数数量小于参数列表数时，表示该函数有默认参数。
+                minArgs = index
+                break
+
+        # 具有（最大参数数量-最小参数数量+1）种实现。
+        # 且参数数量越长的实现在越靠前（sol重载以先查找先匹配的原则决定重载）。
+        for index in range(len(args) - minArgs + 1):
+            impl = NativeImplement(cursor, args[:len(args) - index], result)
+            impl._hasDefault = minArgs < len(args)
+            retImpl.append(impl)
+
+        return retImpl
+
+    def __init__(self, cursor: cindex.Cursor, args: List[str], res: str) -> None:
+        super().__init__()
+        self._cursor = cursor
+        self._args = args
+        self._result = res
+        # 普通函数始终是静态函数。
+        self._static: bool = True
+        # 该实现是否基于默认参数。
+        self._hasDefault: bool = False
 
     @staticmethod
     def __CheckDefaultArg(paramNode) -> bool:
         """检查是否有默认参数。"""
         for node in paramNode.get_children():
-            if node.kind in NativeFunction.__LiteralList:
+            if node.kind in NativeImplement.__LiteralList:
                 return True
-            if NativeFunction.__CheckDefaultArg(node):
+            if NativeImplement.__CheckDefaultArg(node):
                 return True
         return False
+
+    def __eq__(self, o: object) -> bool:
+        if isinstance(o, NativeImplement):
+            return self._args == o._args and self._static == o._static
+        return False
+
+    @property
+    def Args(self):
+        return self._args
+
+    @property
+    def Result(self):
+        return self._result
+
+    @property
+    def Static(self):
+        return self._static
+
+    @property
+    def Default(self):
+        return self._hasDefault
+
+
+class NativeFunction(NativeType):
+    """成员方法，普通函数等的基类。"""
+
+    def __init__(self, cursor, generator: BaseConfig, T: NativeImplement = None) -> None:
+        super().__init__(cursor, generator)
+        self._prefixName = CursorHelper.GetPrefixName(cursor)
+        self._funcName = cursor.spelling
+        self._wholeFuncName = self._prefixName + "::" + self._funcName
+        if not T:
+            T = NativeImplement
+        self._implements = T.CreateImplements(cursor)
+
+    def AddImplements(self, p: "cindex.Cursor | NativeImplement"):
+        if isinstance(p, cindex.Cursor):
+            implements = NativeImplement.CreateImplements(p)
+            for impl in implements:
+                self.AddImplements(impl)
+        elif isinstance(p, NativeImplement):
+            for impl in self._implements:
+                if p == impl:
+                    return
+
+            iLen = len(self._implements)
+            if 0 == iLen:
+                self._implements.append(p)
+                return
+            # 如果不是静态方法，参数长度+1，因为this指针将作为第一个参数。
+            pLen = len(p.Args) if p.Static else len(p.Args) + 1
+            for idx, impl in enumerate(self._implements):
+                iLen = len(impl.Args) if impl.Static else len(impl.Args) + 1
+                if pLen >= iLen:
+                    self._implements.insert(idx, p)
+                    break
+
+    def Merge(self, func: "NativeFunction"):
+        for impl in func._implements:
+            self.AddImplements(impl)
+
+    @property
+    def Supported(self):
+        return len(self._implements) > 0
 
     @property
     def FuncName(self):
@@ -134,16 +213,8 @@ class NativeFunction(NativeType):
         return self._prefixName
 
     @property
-    def Args(self):
-        return self._args
-
-    @property
-    def Supported(self):
-        return not self._notSupported
-
-    @property
-    def Static(self):
-        return self._static
+    def Overload(self):
+        return len(self._implements) > 1
 
 
 class NativeWrapper(NativeType):

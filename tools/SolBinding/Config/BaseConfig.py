@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 import os
+from typing import Dict
 from Util.EnvChecker import EnvChecker
 
 
@@ -144,7 +145,7 @@ class BaseConfig(object):
         # local inst = MyTest.getInstance();
         # local inst = MyTest.Instance;
         # MyTest.Instance = nil;--相当于调用MyTest.destroyInstance();
-        self.InstanceMethods = {}
+        self.InstanceMethods: Dict[str, tuple] = {}
 
         # 当一个类在作为父类时，希望被跳过的类型列表。
         self.ParentsClassesSkip = []
