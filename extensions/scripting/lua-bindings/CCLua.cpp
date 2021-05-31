@@ -162,6 +162,7 @@ namespace cocos2d {
         void Lua::Close() {
             delete lua;
             lua = nullptr;
+            Id2Meta.clear();
         }
 
         void Lua::ReleaseInLua(void* obj) {

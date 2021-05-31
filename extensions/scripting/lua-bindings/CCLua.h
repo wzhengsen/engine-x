@@ -46,6 +46,12 @@ namespace cocos2d {
             */
             static void Close();
 
+            /**
+            * @brief    This is the mapping from typeid to metaname.
+            *           It is used to convert to real type when base class pointer is pushed into lua.
+            */
+            inline static std::unordered_map<std::string, std::string> Id2Meta = {};
+
             /** ConfigType enum. */
             /* For compatibility. */
             enum class ConfigType {
@@ -56,6 +62,7 @@ namespace cocos2d {
 
             template<typename U>
             sol::usertype<U> NewUserType(const std::string& name, bool noCtor = false) {
+                Id2Meta[typeid(U).name()] = sol::usertype_traits<U*>::metatable();
                 auto ut = noCtor ? new_usertype<U>(name, sol::no_constructor) : new_usertype<U>(name);
                 ut[sol::meta_function::new_index] = [](lua_State* L) {
                     const auto top = lua_gettop(L);
