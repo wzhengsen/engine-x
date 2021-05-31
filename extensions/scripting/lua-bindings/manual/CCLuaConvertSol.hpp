@@ -64,8 +64,16 @@ int sol_lua_push(sol::types<const T*>, lua_State* L, const T* obj) {
         lua_newtable(L);// ud,table
         lua_setuservalue(L, -2);// ud
 
+        // meta name?
+        char* metaName = sol::usertype_traits<T*>::metatable().c_str();
+        const std::string& name = typeid(*obj).name();
+        auto iter = cocos2d::extension::Lua::Id2Meta.find(name);
+        if (iter != cocos2d::extension::Lua::Id2Meta.end()) {
+            metaName = cocos2d::extension::Lua::Id2Meta.at(name).c_str();
+        }
+
         // Set metatable for this userdata.
-        if (luaL_getmetatable(L, sol::usertype_traits<T*>::metatable().c_str())) {// ud,mt?
+        if (luaL_getmetatable(L, metaName)) {// ud,mt?
             lua_setmetatable(L, -2);// ud
         }
         else {
