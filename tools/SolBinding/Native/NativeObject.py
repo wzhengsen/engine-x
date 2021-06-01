@@ -71,11 +71,15 @@ class NativeMethodImplement(NativeImplement):
         self._pureVirtual = cursor.is_pure_virtual_method()
         self._virtual = cursor.is_virtual_method()
         self._isOverride = False
+        self._impl = impl
         if not self._pureVirtual:
             for node in cursor.get_children():
                 if node.kind == cindex.CursorKind.CXX_OVERRIDE_ATTR:
                     self._isOverride = True
                     break
+
+    def Copy(self) -> "NativeMethodImplement":
+        return NativeMethodImplement(self._impl)
 
     @property
     def Override(self):
@@ -124,6 +128,25 @@ class NativeMethod(NativeMember, NativeFunction):
                     break
             if breakMe:
                 break
+
+    def OverloadBy(self, child: "NativeObject") -> "NativeMethod":
+        """用于对子类使用using Parent::Method;方式重载方法时，返回一个
+        复制的对象，但其中的所属名将更改。
+        """
+        copy = NativeMethod(self._cursor, self._generator)
+        copy._cxxStr = None
+        copy._wholeName = CursorHelper.GetWholeName(child.Cursor) + "::" + copy._name
+
+        pName = CursorHelper.GetName(child.Cursor)
+        copy._newName = copy._generator.RenameMember(pName, copy._funcName)
+        copy._generatable = not copy._generator.ShouldSkip(pName, copy._funcName)
+
+        copy._prefixName = CursorHelper.GetName(child.Cursor)
+        copy._wholeFuncName = copy._prefixName + "::" + copy._funcName
+        copy._implements = []
+        for impl in self._implements:
+            copy._implements.append(impl.Copy())
+        return copy
 
     def IsOverrided(self, other: "NativeMethod"):
         """判断自己是否重写了某方法，或某重载方法。
@@ -279,7 +302,7 @@ class NativeConstructor(NativeFunction):
 
                 if self.Overload:
                     cxx.append(")")
-                cxx.append(";\n")
+                cxx.append(";")
         _cxxStr = "".join(cxx)
         return _cxxStr
 
@@ -294,16 +317,16 @@ class NativeObject(NativeWrapper):
         self._parent: NativeObject = None
         self.__onlyParent = True
         # 生成字典，在该字典中的方法才会生成。
-        self._methods = {}
+        self._methods: Dict[str, NativeMethod] = {}
         # 全方法字典，用于存储和查询。
-        self._allMethods = {}
+        # self._allMethods = {}
         # 纯虚函数字典。
         self._pvMethods = {}
         # 虚函数字典。
         # 对于虚函数：
         # 1、基类有声明的，由基类绑定一次；
         # 2、只要自己有另一个同名方法，那么自己再绑定一次重载方法，否则自己不再绑定。
-        self._vMethods = {}
+        self._tMethods = {}
         self._fileds = []
         self._ctor = NativeConstructor(self)
         # 如果还有名为"new"的函数（包括重命名的函数），那么，该类或结构体有new构造。
@@ -397,21 +420,60 @@ class NativeObject(NativeWrapper):
                     gField = NativeStaticField(cursor, self._generator)
                 if gField.Generatable:
                     self._fileds.append(gField)
-        if cursor.kind == cindex.CursorKind.CXX_METHOD and\
-                not cursor.type.is_function_variadic():
-            # 成员函数，且跳过函数变量。
-            method = NativeMethod(cursor, self._generator)
-            pureVirtual = cursor.is_pure_virtual_method()
-            virtual = cursor.is_virtual_method()
-            static = cursor.is_static_method()
-            if pureVirtual:
-                # 统计纯虚函数。
-                if method._wholeName not in self._pvMethods:
-                    self._pvMethods[method._wholeName] = method
+        if (cursor.kind == cindex.CursorKind.CXX_METHOD and
+            not cursor.type.is_function_variadic()) or \
+                cursor.kind == cindex.CursorKind.USING_DECLARATION:
+            static = False
+            if cursor.kind == cindex.CursorKind.USING_DECLARATION:
+                nodes = []
+                for node in cursor.get_children():
+                    nodes.append(node)
+                if len(nodes) == 3 and\
+                        nodes[0].kind == cindex.CursorKind.TYPE_REF and\
+                        nodes[1].kind == cindex.CursorKind.OVERLOADED_DECL_REF and\
+                        nodes[2].kind == cindex.CursorKind.TYPE_REF and\
+                        self._parent.WholeName == CursorHelper.GetWholeName(nodes[0].get_definition()):
+                    # 尝试匹配 using Parent::Parent;语句
+                    # 匹配成功后，默认构造不可用。
+                    self._ctor.Default = False
+                    if cursor.access_specifier == cindex.AccessSpecifier.PUBLIC:
+                        self._ctor.Merge(self._parent._ctor)
+                    return
+                if len(nodes) == 2 and\
+                        nodes[0].kind == cindex.CursorKind.TYPE_REF and\
+                        nodes[1].kind == cindex.CursorKind.OVERLOADED_DECL_REF and\
+                        cursor.access_specifier == cindex.AccessSpecifier.PUBLIC:
+                    # 尝试匹配 using Parent::Method;语句
+                    prefix = nodes[0].get_definition().displayname
+                    spelling = nodes[1].displayname
+                    method = None
+                    breakFlag = False
+                    for parent in self._parents:
+                        if parent.Name == prefix:
+                            for mName, m in parent._methods.items():
+                                if mName == spelling:
+                                    method = m.OverloadBy(self)
+                                    breakFlag = True
+                                    break
+                        if breakFlag:
+                            break
+                    if not method:
+                        return
+                else:
+                    return
             else:
-                # 消减已实现的纯虚函数。
-                if method._wholeName in self._pvMethods:
-                    self._pvMethods.pop(method._wholeName)
+                # 成员函数，且跳过函数变量。
+                method = NativeMethod(cursor, self._generator)
+                pureVirtual = cursor.is_pure_virtual_method()
+                static = cursor.is_static_method()
+                if pureVirtual:
+                    # 统计纯虚函数。
+                    if method._wholeName not in self._pvMethods:
+                        self._pvMethods[method._wholeName] = method
+                else:
+                    # 消减已实现的纯虚函数。
+                    if method._wholeName in self._pvMethods:
+                        self._pvMethods.pop(method._wholeName)
             if cursor.access_specifier == cindex.AccessSpecifier.PUBLIC:
                 if not method.Supported or\
                         CursorHelper.GetAvailability(cursor) == CursorHelper.Availability.DEPRECATED:
@@ -419,29 +481,27 @@ class NativeObject(NativeWrapper):
 
                 # 检查基类是否绑定，基类未绑定，那么自己需要绑定。
                 parentBinding = False
-                if virtual:
-                    for parent in self._parents:
-                        pMethods = parent._allMethods
-                        if method.FuncName in pMethods.keys() and\
-                                method.IsOverrided(pMethods[method.FuncName]):
-                            # 基类已绑定。
-                            parentBinding = True
-                            break
+                for parent in self._parents:
+                    pMethods = parent._methods
+                    if method.FuncName in pMethods.keys() and\
+                            method.IsOverrided(pMethods[method.FuncName]):
+                        # 基类已绑定。
+                        parentBinding = True
+                        break
 
-                    if parentBinding:
-                        # 如果基类已绑定，判断自己是否有同名方法。
-                        if method.FuncName in self._methods:
-                            self._PushToMethodDict(method, self._methods)
-                        else:
-                            # 否则加入虚函数缓存字典。
-                            self._PushToMethodDict(method, self._vMethods)
-                if not parentBinding:
-                    # 检查自己是否有在虚函数缓存字典中的方法。
-                    if method.FuncName in self._vMethods:
-                        method = self._PushToMethodDict(method, self._vMethods)
-                        del self._vMethods[method.FuncName]
-                else:
+                if parentBinding:
+                    # 如果基类已绑定，判断自己是否有同名方法。
+                    if method.FuncName in self._methods:
+                        self._PushToMethodDict(method, self._methods)
+                    else:
+                        # 否则加入函数缓存字典。
+                        self._PushToMethodDict(method, self._tMethods)
                     return
+                else:
+                    # 检查自己是否有在函数缓存字典中的方法。
+                    if method.FuncName in self._tMethods:
+                        method = self._PushToMethodDict(method, self._tMethods)
+                        del self._tMethods[method.FuncName]
 
                 if method.Generatable:
                     if static:
@@ -451,7 +511,7 @@ class NativeObject(NativeWrapper):
                     retMethod = self._PushToMethodDict(method, self._methods)
                     if retMethod.NewName == "new":
                         self._newCtor = retMethod
-                self._PushToMethodDict(method, self._allMethods)
+                # self._PushToMethodDict(method, self._allMethods)
         elif cursor.kind == cindex.CursorKind.CONSTRUCTOR:
             self._ctor.Default = False
             if cursor.access_specifier == cindex.AccessSpecifier.PUBLIC:
@@ -460,8 +520,6 @@ class NativeObject(NativeWrapper):
                 if ctor.Supported:
                     self._ctor.Merge(ctor)
         elif cursor.kind == cindex.CursorKind.USING_DECLARATION:
-            if not self._parent:
-                return
             nodes = []
             for node in cursor.get_children():
                 nodes.append(node)

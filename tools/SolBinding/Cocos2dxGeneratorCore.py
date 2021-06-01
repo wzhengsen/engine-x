@@ -27,7 +27,7 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
         super().__init__(**args)
         self.TargetNamespace = "cc"
         # 尽量确保嵌套层数较深的命名空间位于列表前端。
-        self.CppNameSpace += ["cocos2d"]
+        self.CppNameSpace += ["cocos2d", "cocos2d::network"]
         self.Headers += [
             "{}/cocos/cocos2d.h".format(self.CocosRoot),
             "{}/cocos/2d/CCProtectedNode.h".format(self.CocosRoot),
@@ -37,11 +37,13 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "{}/cocos/renderer/backend/RenderTarget.h".format(self.CocosRoot),
             "{}/cocos/navmesh/CCNavMesh.h".format(self.CocosRoot),
             "{}/cocos/ui/UIWidget.h".format(self.CocosRoot),
-            "{}/cocos/base/TGAlib.h".format(self.CocosRoot)
+            "{}/cocos/base/TGAlib.h".format(self.CocosRoot),
+            "{}/cocos/network/CCConnection.h".format(self.CocosRoot)
         ]
         self.ExtraArgs += [
             "-I{}/cocos/platform/android".format(self.CocosRoot),
-            "-I{}/external".format(self.CocosRoot)
+            "-I{}/external".format(self.CocosRoot),
+            "-I{}/external/openssl/include/android".format(self.CocosRoot)
         ]
         self.Classes += [
             "New.*", "Sprite.*", "Scene", "Node.*", "Director", "Layer.*", "Menu.*", "Touch", ".*Action.*", "Move.*",
@@ -56,7 +58,7 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "Material", "Properties", "Technique", "Pass", "PolygonInfo", "AutoPolygon", "BoneNode", "SkeletonNode", "ComponentLua", "PipelineDescriptor",
             "Renderer", "FastTMXLayer", "FastTMXTiledMap", "LanguageType", "PHYSICS.*_MATERIAL_DEFAULT", "GlyphCollection", "MATRIX_STACK_TYPE", "LightType", "LightFlag", "Image::Format",
             "Text(H|V)Alignment", "ResolutionPolicy", "Lens3D", "Ripple3D", "WavesTiles3D", "JumpTiles3D", "Grid3D", ".*ZipFile", "RZipFile::ZipItem", "Touch::DispatchMode",
-            "RZipFile::Encoding", "Clonable"
+            "RZipFile::Encoding", "Clonable", "Connection", "Server", "Client"
         ]
         self.Skip |= {
             "TMXMapInfo": ["startElement", "endElement"],

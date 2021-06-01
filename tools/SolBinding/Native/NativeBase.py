@@ -30,7 +30,7 @@ class NativeType(object):
 
     def __init__(self, cursor, generator: BaseConfig) -> None:
         object.__init__(self)
-        self._cursor = cursor
+        self._cursor: cindex.Cursor = cursor
         self._generator = generator
         # 生成的c++字符串。
         self._cxxStr = None
@@ -53,6 +53,10 @@ class NativeType(object):
     @property
     def Name(self):
         return self._name
+
+    @property
+    def Cursor(self):
+        return self._cursor
 
 
 class NativeMember(NativeType):
@@ -180,17 +184,14 @@ class NativeFunction(NativeType):
                 if p == impl:
                     return
 
-            iLen = len(self._implements)
-            if 0 == iLen:
-                self._implements.append(p)
-                return
             # 如果不是静态方法，参数长度+1，因为this指针将作为第一个参数。
             pLen = len(p.Args) if p.Static else len(p.Args) + 1
             for idx, impl in enumerate(self._implements):
                 iLen = len(impl.Args) if impl.Static else len(impl.Args) + 1
                 if pLen >= iLen:
                     self._implements.insert(idx, p)
-                    break
+                    return
+            self._implements.append(p)
 
     def Merge(self, func: "NativeFunction"):
         for impl in func._implements:
