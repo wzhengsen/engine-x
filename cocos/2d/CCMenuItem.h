@@ -83,7 +83,7 @@ public:
     * @endcode
     * @lua NA
     */
-    void SetHandler(const MenuItemHandlerType& handler);
+    void SetItemHandler(const MenuItemHandlerType& handler);
 
     /**
      * @js NA

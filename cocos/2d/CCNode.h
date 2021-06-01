@@ -1700,32 +1700,32 @@ public:
      * Set the handler of event onEnter.
      * @param handler A std::function<void(Node*)> handler.
      */
-    void SetOnEnterHandler(const std::function<void(Node*)>& handler) { _enterHandler = handler; }
+    void SetEnterHandler(const std::function<void(Node*)>& handler) { _enterHandler = handler; }
     /**
      * Set the handler of event onExit.
      * @param handler A std::function<void(Node*)> handler.
      */
-    void SetOnExitHandler(const std::function<void(Node*)>& handler) { _exitHandler = handler; }
+    void SetExitHandler(const std::function<void(Node*)>& handler) { _exitHandler = handler; }
     /**
      * Set the handler of event EnterTransitionDidFinish.
      * @param handler A std::function<void(Node*)> handler.
      */
-    void SetOnEnterTransitionDidFinishHandler(const std::function<void(Node*)>& handler) { _enterTransitionDidFinishHandler = handler; }
+    void SetEnterTransitionDidFinishHandler(const std::function<void(Node*)>& handler) { _enterTransitionDidFinishHandler = handler; }
     /**
      * Set the handler of event ExitTransitionDidStart.
      * @param handler A std::function<void(Node*)> handler.
      */
-    void SetOnExitTransitionDidStartHandler(const std::function<void(Node*)>& handler) { _exitTransitionDidStartHandler = handler; }
+    void SetExitTransitionDidStartHandler(const std::function<void(Node*)>& handler) { _exitTransitionDidStartHandler = handler; }
     /**
      * @brief Set the handler of event onCleanUp.
      * @param handler A std::function<void(Node*)> handler.
      */
-    void SetOnCleanUpHandler(const std::function<void(Node*)>& handler) { _cleanUpHandler = handler; }
+    void SetCleanUpHandler(const std::function<void(Node*)>& handler) { _cleanUpHandler = handler; }
     /**
      * @brief Set the handler of event onUpdate.
      * @param handler A std::function<void(Node*)> handler.
      */
-    void SetOnUpdateHandler(const std::function<void(Node*)>& handler) { _updateHandler = handler; }
+    void SetUpdateHandler(const std::function<void(Node*)>& handler) { _updateHandler = handler; }
 #endif
     /**
      * get & set camera mask, the node is visible by the camera whose camera flag & node's camera mask is true

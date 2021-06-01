@@ -115,7 +115,7 @@ bool MenuItem::isSelected() const
     return _selected;
 }
 
-void MenuItem::SetHandler(const MenuItemHandlerType& handler)
+void MenuItem::SetItemHandler(const MenuItemHandlerType& handler)
 {
     _handler = handler;
 }

@@ -64,10 +64,10 @@ public:
     virtual void onAdd();
     virtual void onRemove();
 #if CC_ENABLE_LUA_BINDING
-    void SetOnEnterHandler(const std::function<void(Component*)>& handler) { _enterHandler = handler; }
-    void SetOnExitHandler(const std::function<void(Component*)>& handler) { _exitHandler = handler; }
-    void SetOnAddHandler(const std::function<void(Component*)>& handler) { _addHandler = handler; }
-    void SetOnRemoveHandler(const std::function<void(Component*)>& handler) { _removeHandler = handler; }
+    void SetEnterHandler(const std::function<void(Component*)>& handler) { _enterHandler = handler; }
+    void SetExitHandler(const std::function<void(Component*)>& handler) { _exitHandler = handler; }
+    void SetAddHandler(const std::function<void(Component*)>& handler) { _addHandler = handler; }
+    void SetRemoveHandler(const std::function<void(Component*)>& handler) { _removeHandler = handler; }
 #endif
 
 CC_CONSTRUCTOR_ACCESS:
