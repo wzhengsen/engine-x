@@ -9,6 +9,7 @@ set(COCOS_NETWORK_HEADER
     network/HttpResponse.h
     network/HttpRequest.h
     network/HttpCookie.h
+    network/CCConnection.h
     )
 
 set(COCOS_NETWORK_SRC
@@ -19,4 +20,5 @@ set(COCOS_NETWORK_SRC
     network/CCDownloader-curl.cpp
     network/HttpCookie.cpp
     network/Uri.cpp
+    network/CCConnection.cpp
     )

@@ -71,7 +71,7 @@ SOFTWARE.
 ** 2. Add yasio/kcp/ikcp.c to your build system, even through the `YASIO_HEADER_ONLY` was defined.
 ** pitfall: yasio kcp support is experimental currently.
 */
-// #define YASIO_HAVE_KCP 1
+#define YASIO_HAVE_KCP 1
 
 /*
 ** Uncomment or add compiler flag -DYASIO_SSL_BACKEND=1 for SSL support with OpenSSL
