@@ -83,7 +83,7 @@ class CursorHelper:
 
     @staticmethod
     def GetWholeName(cursor) -> str:
-        """获得全名，包含命名空间名和所属类名。"""
+        """获得全名，包含命名空间名和类名。"""
         ns = CursorHelper._BuildNameSpace(cursor)
         ns.append(CursorHelper.GetName(cursor))
         return "::".join(ns)

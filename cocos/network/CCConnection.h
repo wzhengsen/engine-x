@@ -49,8 +49,8 @@ namespace network {
         Connection& operator=(const Connection&) = delete;
     };
 
+    class CC_DLL Server : public Connection {
 #if CC_ENABLE_LUA_BINDING
-    class CC_DLL Server : public Connection, public extension::LuaObject {
     public:
         typedef std::function<void(yasio::inet::transport_handle_t, bool, const std::string&, uint16_t)> SC_Handler;
         typedef std::function<void(yasio::inet::transport_handle_t, const std::string&)> SM_Handler;
@@ -62,8 +62,6 @@ namespace network {
         SC_Handler _connectHandler = nullptr;
         SM_Handler _messageHandler = nullptr;
         SL_Handler _loseHandler = nullptr;
-#else
-    class CC_DLL Server : public Connection {
 #endif
     public:
         Server(const std::string_view& addr, uint16_t port, Kind kind = Kind::TCP);
@@ -78,8 +76,8 @@ namespace network {
         void OnLose(yasio::inet::transport_handle_t transport) {};
     };
 
+    class CC_DLL Client : public Connection {
 #if CC_ENABLE_LUA_BINDING
-    class CC_DLL Client : public Connection, public extension::LuaObject {
     public:
         typedef std::function<void(bool)> CC_Handler;
         typedef std::function<void(const std::string&)> CM_Handler;
@@ -91,8 +89,6 @@ namespace network {
         CC_Handler _connectHandler = nullptr;
         CM_Handler _messageHandler = nullptr;
         CL_Handler _loseHandler = nullptr;
-#else
-    class CC_DLL Client : public Connection {
 #endif
     public:
         Client(const std::string_view& addr, uint16_t port, Kind kind = Kind::TCP);

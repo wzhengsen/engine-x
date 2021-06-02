@@ -141,7 +141,7 @@ class NativeMethod(NativeMember, NativeFunction):
         copy._newName = copy._generator.RenameMember(pName, copy._funcName)
         copy._generatable = not copy._generator.ShouldSkip(pName, copy._funcName)
 
-        copy._prefixName = CursorHelper.GetName(child.Cursor)
+        copy._prefixName = CursorHelper.GetWholeName(child.Cursor)
         copy._wholeFuncName = copy._prefixName + "::" + copy._funcName
         copy._implements = []
         for impl in self._implements:
