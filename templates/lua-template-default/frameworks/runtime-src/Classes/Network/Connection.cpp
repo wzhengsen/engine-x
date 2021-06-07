@@ -6,7 +6,8 @@ constexpr uint32_t Connection::MessageBuffer::InitMsgLen;
 bool Connection::MessageBuffer::ParseData(const void* buff, size_t len) {
     // 数据追加到msgBuff后。
 	if (Append(buff, len)) {
-		const uint32_t flagLen = *static_cast<const uint32_t*>(buffer);
+		uint32_t flagLen = *static_cast<const uint32_t*>(buffer);
+		flagLen = ::ntohl(flagLen) - sizeof(uint32_t);
 		if (flagLen <= Message::MaxMsgLen && flagLen) {
 			return true;
 		}
@@ -51,7 +52,8 @@ uint32_t Connection::MessageBuffer::GetLen() const noexcept {
         // 长度未达到头部标识的最低字节数。
         return 0;
     }
-    const uint32_t flagLen = *reinterpret_cast<const uint32_t*>(buffer);
+    uint32_t flagLen = *reinterpret_cast<const uint32_t*>(buffer);
+	flagLen = ntohl(flagLen) - sizeof(uint32_t);
     if (!flagLen || flagLen > size - sizeof(uint32_t) || flagLen > size) {
         // 头部标识长度为0或大于长度。
         return 0;

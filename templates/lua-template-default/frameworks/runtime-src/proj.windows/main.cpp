@@ -61,6 +61,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance,
         freopen("CONIN$", "r", stdin);
         freopen("CONOUT$", "w", stdout);
         freopen("CONOUT$", "w", stderr);
+        SetConsoleOutputCP(CP_UTF8);
     }
 
     // create the application instance

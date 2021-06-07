@@ -31,10 +31,11 @@ bool Client::Connect(const std::string& addr, uint16_t port, bool broadcast/* = 
 
 void Client::Send(const void* buff, size_t len) const noexcept {
 	if (State::Closed != cs && mgCon) {
-		const uint32_t u32Len = static_cast<uint32_t>(len);
+		uint32_t u32Len = static_cast<uint32_t>(len);
 		if (!(mgCon->flags & MG_F_UDP)) {
             // 先发送一次头部。
-			mg_send(mgCon, &u32Len, sizeof(u32Len));
+			const auto nu32Len = htonl(u32Len + sizeof(u32Len));
+			mg_send(mgCon, &nu32Len, sizeof(nu32Len));
 		}
 		mg_send(mgCon, buff, u32Len);
 	}
@@ -42,10 +43,11 @@ void Client::Send(const void* buff, size_t len) const noexcept {
 
 void Client::Send(const char* buff) const noexcept {
 	if (State::Closed != cs && mgCon) {
-		const uint32_t len = static_cast<uint32_t>(::strlen(buff));
+		uint32_t len = static_cast<uint32_t>(::strlen(buff));
 		if (!(mgCon->flags & MG_F_UDP)) {
             // 先发送一次头部。
-			mg_send(mgCon, &len, sizeof(len));
+			const auto nu32Len = htonl(len + sizeof(len));
+			mg_send(mgCon, &nu32Len, sizeof(nu32Len));
 		}
 		mg_send(mgCon, buff, len);
 	}
@@ -53,10 +55,11 @@ void Client::Send(const char* buff) const noexcept {
 
 void Client::Send(const std::string& str) const noexcept {
 	if (State::Closed != cs && mgCon) {
-		const uint32_t len = static_cast<uint32_t>(str.length());
+		uint32_t len = static_cast<uint32_t>(str.length());
 		if (!(mgCon->flags & MG_F_UDP)) {
             // 先发送一次头部。
-			mg_send(mgCon, &len, sizeof(len));
+			const auto nu32Len = htonl(len + sizeof(len));
+			mg_send(mgCon, &nu32Len, sizeof(nu32Len));
 		}
 		mg_send(mgCon, str.c_str(), len);
 	}
@@ -64,10 +67,11 @@ void Client::Send(const std::string& str) const noexcept {
 
 void Client::Send(const Message& msg) const noexcept {
 	if (State::Closed != cs && mgCon) {
-        const uint32_t len = msg.GetLen();
+        uint32_t len = msg.GetLen();
 		if (!(mgCon->flags & MG_F_UDP)) {
             // 先发送一次头部。
-			mg_send(mgCon, &len, sizeof(len));
+			const auto nu32Len = htonl(len + sizeof(len));
+			mg_send(mgCon, &nu32Len, sizeof(nu32Len));
 		}
 		mg_send(mgCon, msg.GetBuff(), len);
 	}

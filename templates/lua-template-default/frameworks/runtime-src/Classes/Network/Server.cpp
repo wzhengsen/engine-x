@@ -20,7 +20,8 @@ void Server::Send(mg_connection* mgCon,const void* buff, size_t len) const {
 		const uint32_t u32Len = static_cast<uint32_t>(len);
 		if (!(mgCon->flags & MG_F_UDP)) {
             // 先发送一次头部。
-			mg_send(mgCon, &u32Len, sizeof(u32Len));
+			const auto nu32Len = htonl(u32Len + sizeof(u32Len));
+			mg_send(mgCon, &nu32Len, sizeof(u32Len));
 		}
 		mg_send(mgCon, buff, u32Len);
 	}
@@ -31,7 +32,8 @@ void Server::Send(mg_connection* mgCon,const char* buff) const {
 		const uint32_t len = static_cast<uint32_t>(::strlen(buff));
 		if (!(mgCon->flags & MG_F_UDP)) {
             // 先发送一次头部。
-			mg_send(mgCon, &len, sizeof(len));
+			const auto nu32Len = htonl(len + sizeof(len));
+			mg_send(mgCon, &nu32Len, sizeof(nu32Len));
 		}
 		mg_send(mgCon, buff, len);
 	}
@@ -42,7 +44,8 @@ void Server::Send(mg_connection* mgCon,const std::string& str) const {
 		const uint32_t len = static_cast<uint32_t>(str.length());
 		if (!(mgCon->flags & MG_F_UDP)) {
             // 先发送一次头部。
-			mg_send(mgCon, &len, sizeof(len));
+			const auto nu32Len = htonl(len + sizeof(len));
+			mg_send(mgCon, &nu32Len, sizeof(nu32Len));
 		}
 		mg_send(mgCon, str.c_str(), len);
 	}
@@ -53,7 +56,8 @@ void Server::Send(mg_connection* mgCon, const Message& msg) const {
         const uint32_t len = msg.GetLen();
 		if (!(mgCon->flags & MG_F_UDP)) {
             // 先发送一次头部。
-			mg_send(mgCon, &len, sizeof(len));
+			const auto nu32Len = htonl(len + sizeof(len));
+			mg_send(mgCon, &nu32Len, sizeof(nu32Len));
 		}
 		mg_send(mgCon, msg.GetBuff(), len);
 	}
