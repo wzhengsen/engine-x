@@ -104,7 +104,7 @@ namespace cocos2d {
                 // Provides a way to register meta-method in lua.
                 // You can implement __metaname__ on a usertype or it's bases.
                 for (const auto& meta : MetaNeedImpl) {
-                    ut[meta.second] = [&meta](const sol::userdata ud, const sol::variadic_args& args) {
+                    ut[meta.second] = [&meta](const sol::userdata& ud, const sol::variadic_args& args) {
                         sol::object __meta = ud[meta.first];
                         if (sol::type::function == __meta.get_type()) {
                             return __meta.as<sol::function>()(ud, args);
@@ -114,9 +114,7 @@ namespace cocos2d {
                 }
                 // Provides a way to register property in lua.
                 ut["__properties__"] = sol::writeonly_property([ut](sol::object properties) mutable {
-                    if (sol::type::function == properties.get_type()) {
-                        properties = properties.as<sol::function>()(ut);
-                    }
+                    properties = properties.as<sol::function>()(ut);
                     SetProperties(ut, properties.as<sol::table>());
                 });
 
