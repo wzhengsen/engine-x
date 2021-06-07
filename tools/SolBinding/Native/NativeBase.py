@@ -105,11 +105,14 @@ class NativeImplement(object):
 
         # 最小参数数量。
         minArgs = len(args)
-        for index, node in enumerate(cursor.get_children()):
-            if node.kind == cindex.CursorKind.PARM_DECL and NativeImplement.__CheckDefaultArg(node):
-                # 当最小参数数量小于参数列表数时，表示该函数有默认参数。
-                minArgs = index
-                break
+        idx = 0
+        for node in cursor.get_children():
+            if node.kind == cindex.CursorKind.PARM_DECL:
+                if NativeImplement.__CheckDefaultArg(node):
+                    # 当最小参数数量小于参数列表数时，表示该函数有默认参数。
+                    minArgs = idx
+                    break
+                idx = idx + 1
 
         # 具有（最大参数数量-最小参数数量+1）种实现。
         # 且参数数量越长的实现在越靠前（sol重载以先查找先匹配的原则决定重载）。
