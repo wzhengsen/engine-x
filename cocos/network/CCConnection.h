@@ -36,6 +36,7 @@ namespace network {
         };
         void Open();
         void Close();
+        void SetHeartBeat(size_t interalMS = 15000,size_t times = 2);
         virtual ~Connection();
     protected:
         Connection();
@@ -52,9 +53,9 @@ namespace network {
     class CC_DLL Server : public Connection {
 #if CC_ENABLE_LUA_BINDING
     public:
-        typedef std::function<void(yasio::inet::transport_handle_t, bool, const std::string&, uint16_t)> SC_Handler;
-        typedef std::function<void(yasio::inet::transport_handle_t, const std::string&)> SM_Handler;
-        typedef std::function<void(yasio::inet::transport_handle_t)> SL_Handler;
+        typedef std::function<void(Server*, yasio::inet::transport_handle_t, bool, const std::string&, uint16_t)> SC_Handler;
+        typedef std::function<void(Server*, yasio::inet::transport_handle_t, const std::string&)> SM_Handler;
+        typedef std::function<void(Server*, yasio::inet::transport_handle_t)> SL_Handler;
         void SetConnectHandler(const SC_Handler& handler) { _connectHandler = handler; }
         void SetMessageHandler(const SM_Handler& handler) { _messageHandler = handler; }
         void SetLoseHandler(const SL_Handler& handler) { _loseHandler = handler; }
@@ -66,11 +67,13 @@ namespace network {
     public:
         Server(const std::string_view& addr, uint16_t port, Kind kind = Kind::TCP);
         Server(uint16_t port, Kind kind = Kind::TCP) : Server("0.0.0.0", port, kind) {}
+        ~Server();
 
         int Send(yasio::inet::transport_handle_t transport, const std::string& msg);
         void Close(yasio::inet::transport_handle_t transport);
 
     protected:
+        std::unordered_map<uint32_t, yasio::inet::transport_handle_t> _transports = {};
         void OnConnect(yasio::inet::transport_handle_t transport, bool suc) {};
         void OnMessage(yasio::inet::transport_handle_t transport, const std::string& sv) {};
         void OnLose(yasio::inet::transport_handle_t transport) {};
@@ -79,9 +82,9 @@ namespace network {
     class CC_DLL Client : public Connection {
 #if CC_ENABLE_LUA_BINDING
     public:
-        typedef std::function<void(bool)> CC_Handler;
-        typedef std::function<void(const std::string&)> CM_Handler;
-        typedef std::function<void()> CL_Handler;
+        typedef std::function<void(Client*,bool)> CC_Handler;
+        typedef std::function<void(Client*, const std::string&)> CM_Handler;
+        typedef std::function<void(Client*)> CL_Handler;
         void SetConnectHandler(const CC_Handler& handler) { _connectHandler = handler; }
         void SetMessageHandler(const CM_Handler& handler) { _messageHandler = handler; }
         void SetLoseHandler(const CL_Handler& handler) { _loseHandler = handler; }
@@ -92,6 +95,7 @@ namespace network {
 #endif
     public:
         Client(const std::string_view& addr, uint16_t port, Kind kind = Kind::TCP);
+        ~Client();
         int Send(const std::string& msg);
 
         /**

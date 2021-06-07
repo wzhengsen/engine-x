@@ -26,7 +26,11 @@ using namespace yasio::inet;
 
 network::Connection::Connection() {
     ServiceVec.push_back(&_service);
-    _service.set_option(YOPT_C_LFBFD_PARAMS, 0, 65535, 4, 0);
+
+    _service.set_option(YOPT_C_LFBFD_PARAMS, 0, 65535, 0, sizeof(uint32_t), 0);
+    _service.set_option(YOPT_C_LFBFD_IBTS, 0, sizeof(uint32_t));
+    SetHeartBeat();
+
     if (++InstanceCount == 1) {
         io_service::init_globals([](int level, const char* msg) {
             std::string text = "yasio Level " + std::to_string(level) + "->" + msg;
@@ -54,6 +58,10 @@ network::Connection::~Connection() {
     }
 }
 
+void network::Connection::SetHeartBeat(size_t interalMS, size_t times) {
+    _service.set_option(YOPT_S_TCP_KEEPALIVE, 0, static_cast<int>(interalMS / 1000), static_cast<int>(interalMS / 1000), static_cast<int>(times));
+}
+
 void network::Connection::Open() {
     _service.open(0, _kind);
 }
@@ -66,10 +74,13 @@ network::Server::Server(const std::string_view& addr, uint16_t port, Kind kind) 
     switch (kind) {
     case Kind::TCP:
         _kind = YCK_TCP_SERVER;
+        break;
     case Kind::UDP:
         _kind = YCK_UDP_SERVER;
+        break;
     case Kind::KCP:
         _kind = YCK_KCP_SERVER;
+        break;
     default:
         break;
     }
@@ -84,28 +95,36 @@ network::Server::Server(const std::string_view& addr, uint16_t port, Kind kind) 
             auto ip = ep.ip();
             auto port = ep.port();
             this->OnConnect(transport, suc);
+            if (suc) {
+                _transports.emplace(transport->id(), transport);
+            }
 #if CC_ENABLE_LUA_BINDING
             if (this->_connectHandler) {
-                this->_connectHandler(transport, suc, ip, port);
+                this->_connectHandler(this, transport, suc, ip, port);
             }
 #endif
             break;
         }
-        case YEK_CONNECTION_LOST:
+        case YEK_CONNECTION_LOST: {
             this->OnLose(transport);
+            auto iter = _transports.find(transport->id());
+            if (iter != _transports.end()) {
+                _transports.erase(iter);
+            }
 #if CC_ENABLE_LUA_BINDING
             if (this->_loseHandler) {
-                this->_loseHandler(transport);
+                this->_loseHandler(this, transport);
             }
 #endif
             break;
+        }
         case YEK_PACKET: {
             auto& packet = ev->packet();
             std::string msg = { packet.data(), packet.size() };
             this->OnMessage(ev->transport(), msg);
 #if CC_ENABLE_LUA_BINDING
             if (this->_messageHandler) {
-                this->_messageHandler(transport, msg);
+                this->_messageHandler(this, transport, msg);
             }
 #endif
             break;
@@ -116,8 +135,27 @@ network::Server::Server(const std::string_view& addr, uint16_t port, Kind kind) 
     });
 }
 
+network::Server::~Server() {
+    for (auto item : _transports) {
+        if (_service.is_open(item.second)) {
+            OnLose(item.second);
+#if CC_ENABLE_LUA_BINDING
+            if (_loseHandler) {
+                _loseHandler(this, item.second);
+            }
+#endif
+        }
+    }
+    _transports.clear();
+}
+
 int network::Server::Send(transport_handle_t transport, const std::string& msg) {
-    return _service.write(transport, msg.c_str(), msg.size());
+    const auto size = static_cast<uint32_t>(msg.size());
+    auto nSize = ::htonl(size + sizeof(uint32_t));
+    std::unique_ptr<char[]> buff = std::make_unique<char[]>(size + sizeof(uint32_t));
+    std::memcpy(buff.get(), &nSize, sizeof(uint32_t));
+    std::memcpy(buff.get() + sizeof(uint32_t), msg.data(), size);
+    return _service.write(transport, buff.get(), size + sizeof(uint32_t));
 }
 
 void network::Server::Close(transport_handle_t transport) {
@@ -128,10 +166,13 @@ network::Client::Client(const std::string_view& addr, uint16_t port, Kind kind) 
     switch (kind) {
     case Kind::TCP:
         _kind = YCK_TCP_CLIENT;
+        break;
     case Kind::UDP:
         _kind = YCK_UDP_CLIENT;
+        break;
     case Kind::KCP:
         _kind = YCK_KCP_CLIENT;
+        break;
     default:
         break;
     }
@@ -145,7 +186,7 @@ network::Client::Client(const std::string_view& addr, uint16_t port, Kind kind) 
             this->OnConnect(suc);
 #if CC_ENABLE_LUA_BINDING
             if (this->_connectHandler) {
-                this->_connectHandler(suc);
+                this->_connectHandler(this, suc);
             }
 #endif
             break;
@@ -155,7 +196,7 @@ network::Client::Client(const std::string_view& addr, uint16_t port, Kind kind) 
             this->OnLose();
 #if CC_ENABLE_LUA_BINDING
             if (this->_loseHandler) {
-                this->_loseHandler();
+                this->_loseHandler(this);
             }
 #endif
             break;
@@ -165,7 +206,7 @@ network::Client::Client(const std::string_view& addr, uint16_t port, Kind kind) 
             this->OnMessage(msg);
 #if CC_ENABLE_LUA_BINDING
             if (this->_messageHandler) {
-                this->_messageHandler(msg);
+                this->_messageHandler(this, msg);
             }
 #endif
             break;
@@ -176,8 +217,25 @@ network::Client::Client(const std::string_view& addr, uint16_t port, Kind kind) 
     });
 }
 
+network::Client::~Client() {
+    if (_transport && _service.is_open(_transport)) {
+        _transport = nullptr;
+        OnLose();
+#if CC_ENABLE_LUA_BINDING
+        if (_loseHandler) {
+            _loseHandler(this);
+        }
+#endif
+    }
+}
+
 int network::Client::Send(const std::string& msg) {
-    return _service.write(_transport, msg.c_str(), msg.size());
+    const auto size = static_cast<uint32_t>(msg.size());
+    auto nSize = ::htonl(size + sizeof(uint32_t));
+    std::unique_ptr<char[]> buff = std::make_unique<char[]>(size + sizeof(uint32_t));
+    std::memcpy(buff.get(), &nSize, sizeof(uint32_t));
+    std::memcpy(buff.get() + sizeof(uint32_t), msg.data(), size);
+    return _service.write(_transport, buff.get(), size + sizeof(uint32_t));
 }
 
 void network::Client::Open(size_t mSec) {
