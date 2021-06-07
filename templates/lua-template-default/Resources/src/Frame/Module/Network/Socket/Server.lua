@@ -150,50 +150,53 @@ function Server:__del__()
     return true;
 end
 
-Server.gtor({
-    State = Server.GetState,
-    Type = Server.GetType,
-    Sockets = Server.GetSockets,
-    HeartbeatEnabled = function(self)
-        return not not self.heartbeat;
-    end
-});
-
-Server.stor({
-    -- 开启心跳。
-    HeartbeatEnabled = function(self,val)
-        if not config.SocketHeartBeat then
-            return;
-        end
-        val = not not val;
-        if self.heartbeat == val then
-            return;
-        end
-        if val then
-            if self.Type == Server.UDP then
-                return;
+function Server.__properties__()
+    return {
+        r = {
+            State = Server.GetState,
+            Type = Server.GetType,
+            Sockets = Server.GetSockets,
+            HeartbeatEnabled = function(self)
+                return not not self.heartbeat;
             end
-            self.hbDelays = {};
-            self.hbTimer = self:Delay(3000,function()
-                if self.State ~= Server.Listening then
+        },
+        w = {
+            -- 开启心跳。
+            HeartbeatEnabled = function(self,val)
+                if not config.SocketHeartBeat then
                     return;
                 end
-                for _,sock in ipairs(self.Sockets) do
-                    -- 若连续3次没有收到，则断开。
-                    self.hbDelays[sock] = (self.hbDelays[sock] or 0) + 1;
-                    if self.hbDelays[sock] >= 3 then
-                        self:Close(sock);
-                        self.hbDelays[sock] = nil;
-                    end
+                val = not not val;
+                if self.heartbeat == val then
+                    return;
                 end
-            end,0);
-        else
-            if class.IsNull(self.hbTimer) then
-                return;
+                if val then
+                    if self.Type == Server.UDP then
+                        return;
+                    end
+                    self.hbDelays = {};
+                    self.hbTimer = self:Delay(3000,function()
+                        if self.State ~= Server.Listening then
+                            return;
+                        end
+                        for _,sock in ipairs(self.Sockets) do
+                            -- 若连续3次没有收到，则断开。
+                            self.hbDelays[sock] = (self.hbDelays[sock] or 0) + 1;
+                            if self.hbDelays[sock] >= 3 then
+                                self:Close(sock);
+                                self.hbDelays[sock] = nil;
+                            end
+                        end
+                    end,0);
+                else
+                    if class.IsNull(self.hbTimer) then
+                        return;
+                    end
+                    self.hbTimer:delete();
+                end
             end
-            self.hbTimer:delete();
-        end
-    end
-});
+        }
+    };
+end
 
 return Server

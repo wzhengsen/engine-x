@@ -4,7 +4,7 @@
 ]]
 local config = require("config");
 local Connection = require("StarryX::Connection");
-local Timer = require("Classes.Timer");
+local Timer = require("Others.Alarm");
 
 Connection.ObjectTable = {};
 

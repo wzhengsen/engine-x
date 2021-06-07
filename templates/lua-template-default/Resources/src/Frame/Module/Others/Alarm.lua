@@ -42,7 +42,8 @@ function Alarm:__init__(time,func,rep)
 
     self.__curRound = 0;
     self.__time = time;
-    self.__timerHandler = D.Scheduler:ScheduleScriptFunc(function(_)
+    self.__uniStr = string.Unique();
+    D.Scheduler:Schedule(function(_)
         local roundOver = false;
         self.__curRound = self.__curRound + 1;
         if rep > 0 then
@@ -56,13 +57,13 @@ function Alarm:__init__(time,func,rep)
         if roundOver and not class.IsNull(self) then
             self:delete();
         end
-    end,time / 1000,false);
+    end,D,time / 1000,false,self.__uniStr);
 end
 
 function Alarm:__del__()
-    if self.__timerHandler then
-        D.Scheduler:UnscheduleScriptEntry(self.__timerHandler);
-        self.__timerHandler = nil;
+    if self.__uniStr then
+        D.Scheduler:Unschedule(self.__uniStr,D);
+        self.__uniStr = nil;
     end
 end
 

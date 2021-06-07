@@ -145,12 +145,12 @@ function Node.__properties__()
     PhysicsBody = Node.SetPhysicsBody,
     OpacityModifyRGB = Node.SetOpacityModifyRGB,
     ProgramState = Node.SetProgramState,
-    OnEnterHandler = Node.SetOnEnterHandler,
-    OnExitHandler = Node.SetOnExitHandler,
-    OnEnterTransitionDidFinishHandler = Node.SetOnEnterTransitionDidFinishHandler,
-    OnExitTransitionDidStartHandler = Node.SetOnExitTransitionDidStartHandler,
-    OnCleanUpHandler = Node.SetOnCleanUpHandler,
-    OnUpdateHandler = Node.SetOnUpdateHandler
+    EnterHandler = Node.SetEnterHandler,
+    ExitHandler = Node.SetExitHandler,
+    EnterTransitionDidFinishHandler = Node.SetEnterTransitionDidFinishHandler,
+    ExitTransitionDidStartHandler = Node.SetExitTransitionDidStartHandler,
+    CleanUpHandler = Node.SetCleanUpHandler,
+    UpdateHandler = Node.SetUpdateHandler
     }};
 end
 

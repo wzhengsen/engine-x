@@ -29,7 +29,7 @@ function LuaObject.__properties__()
         w = {
             EnableDelEvent = function (self,val)
                 if val then
-                    self.DeleteHandler = class.Handler(self,self.__del__);
+                    self.DeleteHandler = class.__DefaultDelete;
                 else
                     self.DeleteHandler = nil;
                 end

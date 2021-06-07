@@ -99,4 +99,20 @@ if os.Windows then
         end
         return _loadfile(filename,...);
     end;
+
+    local _error = error;
+    function error(message,level)
+        if message then
+            message = message:Convert("gbk//TRANSLIT","utf-8");
+        end
+        return _error(message,level);
+    end
+
+    local _warn = warn;
+    function warn(message,...)
+        if message then
+            message = message:Convert("gbk//TRANSLIT","utf-8");
+        end
+        return _warn(message,...);
+    end
 end

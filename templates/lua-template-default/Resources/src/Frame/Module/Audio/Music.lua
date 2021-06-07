@@ -28,8 +28,8 @@ THE SOFTWARE.
             某些Sound方法在继承后将不可被Music访问
 ]]
 
-local UserFile = require("Utils.UserFile");
 local Sound = require("Audio.Sound");
+local UserFile = require("Utils.UserFile");
 local Music = class(Sound,class.Singleton);
 
 --[[
@@ -48,9 +48,6 @@ Music.GetMaxAudioInstance   = forbiddenMethod;
 Music.SetMaxAudioInstance   = forbiddenMethod;
 Music.SetLoop               = forbiddenMethod;
 Music.IsLoop                = forbiddenMethod;
-
--- 音乐静音选项
-Music.Silence = UserFile().MusicSilence or false
 
 -- 音乐播放模式
 Music.PlayMode = {

@@ -46,9 +46,6 @@ Effect.Preload               = forbiddenMethod;
 Effect.GetMaxAudioInstance   = forbiddenMethod;
 Effect.SetMaxAudioInstance   = forbiddenMethod;
 
--- 音效静音选项
-Effect.Silence = UserFile.EffectSilence or false;
-
 -- 记录所有当前运行的声音句柄
 Effect._AllInst = {};
 
