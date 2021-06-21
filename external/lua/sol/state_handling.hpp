@@ -86,9 +86,9 @@ namespace sol {
 			msg.assign(traceback.data(), traceback.size());
 		}
 #if SOL_IS_ON(SOL_PRINT_ERRORS_I_)
-		// std::cerr << "[sol2] An error occurred and was caught in traceback: ";
-		// std::cerr << msg;
-		// std::cerr << std::endl;
+		 std::cerr << "[sol2] An error occurred and was caught in traceback: ";
+		 std::cerr << msg;
+		 std::cerr << std::endl;
 #endif // Printing
 		return stack::push(L, msg);
 	}
