@@ -22,6 +22,7 @@
 #pragma once
 #include "yasio/yasio.hpp"
 #include "scripting/lua-bindings/CCLuaObject.h"
+#include <unordered_map>
 
 NS_CC_BEGIN
 namespace network {
