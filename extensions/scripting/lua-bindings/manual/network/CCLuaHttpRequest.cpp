@@ -25,20 +25,22 @@ using namespace cocos2d::network;
 NS_CC_BEGIN
 namespace extension {
     void LuaHttpRequest::RegisterLuaHttpRequestManual(Lua& lua) {
-        auto ut = lua.NewUserType<LuaHttpRequest>("cc", "HttpRequest", false);
-        Lua::SetBases(ut, sol::bases<Ref, LuaObject>());
-        ut[sol::meta_function::construct] = []() {
+        cocos2d::extension::Lua::Id2Meta[typeid(LuaHttpRequest).name()] = sol::usertype_traits<LuaHttpRequest*>::metatable();
+        sol::table mt = lua.NewClass(sol::usertype_traits<LuaHttpRequest*>::metatable(), sol::usertype_traits<LuaObject*>::metatable());
+        lua["cc"]["HttpRequest"] = mt;
+        mt[lua.OOPConfig["__new__"]] = []() {
             return new (std::nothrow) LuaHttpRequest();
         };
-        ut["Timeout"] = sol::writeonly_property(&LuaHttpRequest::SetTimeout);
-        ut["Async"] = sol::writeonly_property(&LuaHttpRequest::SetAsync);
-        ut["Headers"] = sol::writeonly_property(&LuaHttpRequest::SetHeaders);
-        ut["Data"] = sol::writeonly_property(&LuaHttpRequest::SetData);
-        ut["Handler"] = sol::writeonly_property(&LuaHttpRequest::SetHandler);
-        ut["Get"] = &LuaHttpRequest::Get;
-        ut["Post"] = &LuaHttpRequest::Post;
-        ut["Delete"] = &LuaHttpRequest::Delete;
-        ut["Put"] = &LuaHttpRequest::Put;
+        const std::string& set = lua.OOPConfig["set"];
+        mt[set]["Timeout"] = &LuaHttpRequest::SetTimeout;
+        mt[set]["Async"] = &LuaHttpRequest::SetAsync;
+        mt[set]["Headers"] = &LuaHttpRequest::SetHeaders;
+        mt[set]["Data"] = &LuaHttpRequest::SetData;
+        mt[set]["Handler"] = &LuaHttpRequest::SetHandler;
+        mt["Get"] = &LuaHttpRequest::Get;
+        mt["Post"] = &LuaHttpRequest::Post;
+        mt["Delete"] = &LuaHttpRequest::Delete;
+        mt["Put"] = &LuaHttpRequest::Put;
     }
 
     void LuaHttpRequest::AddHeaders(const sol::table& headers) {

@@ -25,9 +25,10 @@ using namespace cocos2d::network;
 NS_CC_BEGIN
 namespace extension {
     void LuaWebSocket::RegisterLuaWebSocketManual(Lua& lua) {
-        auto ut = lua.NewUserType<LuaWebSocket>("cc", "WebSocket", false);
-        Lua::SetBases(ut, sol::bases<LuaObject>());
-        ut[sol::meta_function::construct] = [](const std::string& url, const sol::object& protocols, const sol::object& caFile)->LuaWebSocket* {
+        cocos2d::extension::Lua::Id2Meta[typeid(LuaWebSocket).name()] = sol::usertype_traits<LuaWebSocket*>::metatable();
+        sol::table mt = lua.NewClass(sol::usertype_traits<LuaWebSocket*>::metatable(), sol::usertype_traits<LuaObject*>::metatable());
+        lua["cc"]["WebSocket"] = mt;
+        mt[lua.OOPConfig["__new__"]] = [](const std::string& url, const sol::object& protocols, const sol::object& caFile)->LuaWebSocket* {
             auto ws = new (std::nothrow) LuaWebSocket();
             const auto pType = protocols.get_type();
             std::vector<std::string>* pVec = nullptr;
@@ -53,7 +54,7 @@ namespace extension {
             }
             return ws;
         };
-        ut["Send"] = [](lua_State* L)->int {
+        mt["Send"] = [](lua_State* L)->int {
             LuaWebSocket** ws = reinterpret_cast<LuaWebSocket**>(lua_touserdata(L, 1));
             if (ws && *ws) {
                 size_t strLen = 0;
@@ -62,33 +63,36 @@ namespace extension {
             }
             return 0;
         };
-        ut["Close"] = sol::overload(&LuaWebSocket::close, [](LuaWebSocket* ws, bool async) {
+        mt["Close"] = sol::overload(&LuaWebSocket::close, [](LuaWebSocket* ws, bool async) {
             if (async) {
                 return ws->closeAsync();
             }
             ws->close();
         });
 
-        ut["ReadyState"] = sol::readonly_property(&LuaWebSocket::getReadyState);
-        ut["Url"] = sol::readonly_property(&LuaWebSocket::getUrl);
-        ut["Protocol"] = sol::readonly_property(&LuaWebSocket::getProtocol);
-        ut["OpenHandler"] = sol::writeonly_property(&LuaWebSocket::SetOpenHandler);
-        ut["MessageHandler"] = sol::writeonly_property(&LuaWebSocket::SetMessageHandler);
-        ut["CloseHandler"] = sol::writeonly_property(&LuaWebSocket::SetCloseHandler);
-        ut["ErrorHandler"] = sol::writeonly_property(&LuaWebSocket::SetErrorHandler);
+        const std::string& set = lua.OOPConfig["set"];
+        const std::string& get = lua.OOPConfig["get"];
+        const std::string& _static = lua.OOPConfig["Qualifiers"]["static"];
+        mt[get]["ReadyState"] = &LuaWebSocket::getReadyState;
+        mt[get]["Url"] = &LuaWebSocket::getUrl;
+        mt[get]["Protocol"] = &LuaWebSocket::getProtocol;
+        mt[set]["OpenHandler"] = &LuaWebSocket::SetOpenHandler;
+        mt[set]["MessageHandler"] = &LuaWebSocket::SetMessageHandler;
+        mt[set]["CloseHandler"] = &LuaWebSocket::SetCloseHandler;
+        mt[set]["ErrorHandler"] = &LuaWebSocket::SetErrorHandler;
 
-        sol::table lws = lua["cc"]["WebSocket"];
-        lws.new_enum<WebSocket::State>("State", {
-            {"CONNECTING",WebSocket::State::CONNECTING},
-            {"OPEN",WebSocket::State::OPEN},
-            {"CLOSED",WebSocket::State::CLOSED},
-            {"CLOSING",WebSocket::State::CLOSING},
-            });
-        lws.new_enum<WebSocket::ErrorCode>("ErrorCode", {
-            {"CONNECTION_FAILURE",WebSocket::ErrorCode::CONNECTION_FAILURE},
-            {"TIME_OUT",WebSocket::ErrorCode::TIME_OUT},
-            {"UNKNOWN",WebSocket::ErrorCode::UNKNOWN}
-            });
+
+        mt[_static]["State"] = lua.NewEnum(lua.create_table_with(
+            "CONNECTING", WebSocket::State::CONNECTING,
+            "OPEN", WebSocket::State::OPEN,
+            "CLOSED", WebSocket::State::CLOSED,
+            "CLOSING", WebSocket::State::CLOSING
+        ));
+        mt[_static]["ErrorCode"] = lua.NewEnum(lua.create_table_with(
+            "CONNECTION_FAILURE", WebSocket::ErrorCode::CONNECTION_FAILURE,
+            "TIME_OUT", WebSocket::ErrorCode::TIME_OUT,
+            "UNKNOWN", WebSocket::ErrorCode::UNKNOWN
+        ));
     }
     void LuaWebSocket::SetOpenHandler(const std::function<void(LuaWebSocket*)>& handler) {
         _openHandler = handler;

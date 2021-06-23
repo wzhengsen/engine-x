@@ -60,10 +60,6 @@ int sol_lua_push(sol::types<const T*>, lua_State* L, const T* obj) {
         lua_rawsetp(L, -2, obj);// ud,table
         lua_pop(L, 1);//ud
 
-        // Set uservalue for this userdata with a table.
-        lua_newtable(L);// ud,table
-        lua_setuservalue(L, -2);// ud
-
         // meta name?
         const char* metaName = sol::usertype_traits<T*>::metatable().c_str();
         const std::string& name = typeid(*obj).name();

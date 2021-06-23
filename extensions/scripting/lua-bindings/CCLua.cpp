@@ -46,14 +46,7 @@ namespace cocos2d {
     namespace extension {
         Lua* Lua::GetInstance() {
             if (!lua) {
-                lua = new Lua([](lua_State* L) {
-                    const char* message = lua_tostring(L, -1);
-                    if (message) {
-                        std::cerr << "[Lua Error]: " << message << std::endl;
-                    }
-                    lua_settop(L, 0);
-                    return 0;
-                });
+                lua = new Lua();
                 lua->Init();
             }
             return lua;
@@ -248,8 +241,26 @@ namespace cocos2d {
 
         void Lua::Register() {
             RegisterSol();
-            RegisterAuto();
-            RegisterManual();
+            if (RequireLuaOOP()) {
+                RegisterAuto();
+                RegisterManual();
+            }
+        }
+
+        bool Lua::RequireLuaOOP() {
+            if (!script(
+                "package.path = package.path .. ';src/?.lua';"
+                "local Config = require('OOP.Config');"
+                "Config.Debug = sol.Debug;"
+                "Config.ExternalClass.Null = sol.Null;"
+                "require('OOP.Class');"
+            ).valid()) {
+                return false; 
+            }
+            OOPConfig = script("return require('OOP.Config');");
+            NewClass = (*this)[OOPConfig["class"]]["New"];
+            NewEnum = (*this)[OOPConfig["enum"]]["New"];
+            return true;
         }
     }// namespace cocos2d::extension
 }// namespace cocos2d

@@ -36,7 +36,7 @@ extern "C" {
 using namespace cocos2d;
 
 static void RegisterLuaCoreZipFileManual(extension::Lua& lua) {
-    sol::usertype<RZipFile::ZipItem> zItem = lua["cc"]["RZipFile"]["ZipItem"];
+    sol::table zItem = lua["cc"]["RZipFile"]["ZipItem"];
     zItem["Read"] = [&lua](const RZipFile::ZipItem& item, const sol::variadic_args& va) {
         const char* pwd = nullptr;
         std::string pwdStr = {};
@@ -75,7 +75,7 @@ static void RegisterLuaCoreZipFileManual(extension::Lua& lua) {
         return sol::object(L);
     };
 
-    sol::usertype<RZipFile> rZip = lua["cc"]["RZipFile"];
+    sol::table rZip = lua["cc"]["RZipFile"];
     rZip["__pairs__"] = [](RZipFile* rZip) {
         auto begin = rZip->begin();
         return [=]() mutable {
@@ -102,7 +102,7 @@ static void RegisterLuaSocketManual(extension::Lua& lua) {
 }
 
 static void RegisterLuaCoreTMXMapInfoManual(extension::Lua& lua) {
-    sol::usertype<TMXMapInfo> tmi = lua["cc"]["TMXMapInfo"];
+    sol::table tmi = lua["cc"]["TMXMapInfo"];
     tmi["StartElement"] = [](TMXMapInfo* tmi, const std::string_view& sv, const sol::table t) {
         const auto size = t.size();
         std::unique_ptr<const char* []> strs = std::make_unique<const char* []>(size + 1);
@@ -120,7 +120,7 @@ static void RegisterLuaCoreTMXMapInfoManual(extension::Lua& lua) {
 }
 
 static void RegisterLuaCoreApplicationManual(extension::Lua& lua) {
-    sol::usertype<Application> app = lua["cc"]["Application"];
+    sol::table app = lua["cc"]["Application"];
 #if CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID
     app["Dialog"] = [](Application* app, const std::string& title, const std::string& content, sol::variadic_args va) {
         const auto size = va.size();
@@ -158,7 +158,7 @@ static void RegisterLuaCoreApplicationManual(extension::Lua& lua) {
 }
 
 static void RegisterLuaCoreDeviceManual(extension::Lua& lua) {
-    sol::usertype<cocos2d::Device> device = lua["cc"]["Device"];
+    sol::table device = lua["cc"]["Device"];
     device["GetTextureDataForText"] = [](const std::string& text, const FontDefinition& fd, lua_Integer align) {
         int width = 0;
         int height = 0;
@@ -170,7 +170,7 @@ static void RegisterLuaCoreDeviceManual(extension::Lua& lua) {
 }
 
 static void RegisterLuaCoreRenderTextureManual(extension::Lua& lua) {
-    sol::usertype<RenderTexture> renderTexture = lua["cc"]["RenderTexture"];
+    sol::table renderTexture = lua["cc"]["RenderTexture"];
     renderTexture["NewImage"] = [](RenderTexture* renderTexture, sol::function f, sol::variadic_args va) {
         renderTexture->newImage([f](RefPtr<Image> refPtr) {
             f(refPtr.get());
@@ -179,7 +179,7 @@ static void RegisterLuaCoreRenderTextureManual(extension::Lua& lua) {
 }
 
 static void RegisterLuaCoreParallaxNodeManual(extension::Lua& lua) {
-    sol::usertype<ParallaxNode> parallaxNode = lua["cc"]["ParallaxNode"];
+    sol::table parallaxNode = lua["cc"]["ParallaxNode"];
     parallaxNode["SetParallaxArray"] = [](ParallaxNode* parallaxNode, sol::table t) {
         const auto size = static_cast<ssize_t>(t.size());
         _ccArray* arr = ccArrayNew(size);
@@ -206,7 +206,7 @@ static void RegisterLuaCoreParallaxNodeManual(extension::Lua& lua) {
 }
 
 static void RegisterLuaBackendProgramStateManual(extension::Lua& lua) {
-    sol::usertype<backend::ProgramState> programState = lua["ccb"]["ProgramState"];
+    sol::table programState = lua["ccb"]["ProgramState"];
     programState["GetCallbackUniforms"] = [&lua](backend::ProgramState* programState) {
         const auto& m = programState->getCallbackUniforms();
         sol::table t = lua.create_table(0, static_cast<int>(m.size()));
@@ -232,7 +232,7 @@ static void RegisterLuaBackendProgramStateManual(extension::Lua& lua) {
 
 static void RegisterLuaPhysicsPhysicsBodyManual(extension::Lua& lua) {
 #if CC_USE_PHYSICS
-    sol::usertype<PhysicsBody> physicsBody = lua["cc"]["PhysicsBody"];
+    sol::table physicsBody = lua["cc"]["PhysicsBody"];
 #if CC_ENABLE_CHIPMUNK_INTEGRATION
     physicsBody["GetCPBody"] = &PhysicsBody::getCPBody;
 #endif
@@ -252,8 +252,8 @@ static void Cocos2dxVectorToTable(
     const std::string_view& svClassName,
     const std::string_view& svMethodName,
     MT&& mt) {
-    sol::usertype<T> cls = lua[svNameSpace][svClassName];
-    cls[svMethodName] = sol::readonly_property([&lua, mt](T* obj) {
+    sol::table cls = lua[svNameSpace][svClassName];
+    cls[lua.OOPConfig["get"]][svMethodName] = [&lua, mt](T* obj) {
         // The returned table does not hold data.
         auto& dList = obj->*mt;
         sol::table t = lua.create_table(static_cast<int>(dList.size()));
@@ -262,7 +262,7 @@ static void Cocos2dxVectorToTable(
             t[i++] = data;
         }
         return t;
-    });
+    };
 }
 
 template<typename T, typename MT>
@@ -272,8 +272,8 @@ static void Cocos2dxMapToTable(
     const std::string_view& svClassName,
     const std::string_view& svMethodName,
     MT&& mt) {
-    sol::usertype<T> cls = lua[svNameSpace][svClassName];
-    cls[svMethodName] = sol::readonly_property([&lua, mt](T* obj) {
+    sol::table cls = lua[svNameSpace][svClassName];
+    cls[lua.OOPConfig["get"]][svMethodName] = [&lua, mt](T* obj) {
         // The returned table does not hold data.
         auto& dMap = obj->*mt;
         sol::table t = lua.create_table(0, static_cast<int>(dMap.size()));
@@ -281,7 +281,7 @@ static void Cocos2dxMapToTable(
             t[data.first] = data.second;
         }
         return t;
-    });
+    };
 }
 
 inline static void RegisterLuaStudioBoneDataManual(extension::Lua& lua) {
@@ -297,7 +297,7 @@ inline static void RegisterLuaStudioMovementBoneDataManual(extension::Lua& lua) 
 }
 
 static void RegisterLuaStudioSkeletonNodeManual(extension::Lua& lua) {
-    sol::usertype<cocostudio::timeline::SkeletonNode> skeletonNode = lua["ccs"]["SkeletonNode"];
+    sol::table skeletonNode = lua["ccs"]["SkeletonNode"];
     skeletonNode["GetAllSubBonesMap"] = [&lua](cocostudio::timeline::SkeletonNode* skeletonNode) {
         // The returned table does not hold data.
         auto& sMap = skeletonNode->getAllSubBonesMap();
