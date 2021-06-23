@@ -29,28 +29,63 @@ from .NativeEnum import NativeEnum, NativeAnonymousEnum
 
 
 class NativeField(NativeMember):
+    def __init__(self, cursor, generator: BaseConfig) -> None:
+        super().__init__(cursor, generator)
+        self._const = cursor.type.is_const_qualified()
+
     def __str__(self) -> str:
         """成员变量的生成。
-        依照 mt["self._newName"] = &self._wholeName;的方式生成。
+        依照 mt["get"|"set"]["self._newName"] = [](...){...};的方式生成。
         """
         if not self._cxxStr:
             upper = self._generator.UpperCamelCase
-            strList = ['mt["{}"]=&{};'.format(
-                self._newName if not upper else CursorHelper.UpperCamelCase(self._newName), self._wholeName
+            if not self._const:
+                implStr = "[]({}* obj,const {}& value){{obj->{} = value;}};".format(
+                    CursorHelper.GetPrefixName(self._cursor),
+                    CursorHelper.GetArgName(self._cursor.type, False),
+                    self._name
+                )
+                strList = ['mt["{}"]["{}"]={};\n'.format(
+                    self._generator.LuaConfig["set"], self._newName if not upper else CursorHelper.UpperCamelCase(
+                        self._newName), implStr
+                )]
+            implStr = "[]({}* obj){{return obj->{};}};".format(CursorHelper.GetPrefixName(self._cursor), self._name)
+            strList = ['mt["{}"]["{}"]={};'.format(
+                self._generator.LuaConfig["get"], self._newName if not upper else CursorHelper.UpperCamelCase(
+                    self._newName), implStr
             )]
             self._cxxStr = ''.join(strList)
         return self._cxxStr
 
 
 class NativeStaticField(NativeMember):
+    def __init__(self, cursor, generator: BaseConfig) -> None:
+        super().__init__(cursor, generator)
+        self._const = cursor.type.is_const_qualified()
+
     def __str__(self) -> str:
         """静态成员变量的生成。
-        依照 mt["self._newName"] = sol::var(std::ref(self._wholeName));的方式生成。
+        依照 mt["get"|"set"]["self._newName"] = [](...){...};的方式生成。
         """
         if not self._cxxStr:
             upper = self._generator.UpperCamelCase
-            strList = ['mt["{}"]=sol::var(std::ref({}));'.format(
-                self._newName if not upper else CursorHelper.UpperCamelCase(self._newName), self._wholeName
+            if not self._const:
+                implStr = "[](const sol::object&,const {}& value){{{}::{} = value;}};".format(
+                    CursorHelper.GetArgName(self._cursor.type, False),
+                    CursorHelper.GetPrefixName(self._cursor),
+                    self._name
+                )
+                strList = ['mt["{}"]["{}"]={};\n'.format(
+                    self._generator.LuaConfig["set"],
+                    self._newName if not upper else CursorHelper.UpperCamelCase(self._newName),
+                    implStr
+                )]
+
+            implStr = "[](){{return {}::{};}};".format(CursorHelper.GetPrefixName(self._cursor), self._name)
+            strList = ['mt["{}"]["{}"]={};'.format(
+                self._generator.LuaConfig["get"],
+                self._newName if not upper else CursorHelper.UpperCamelCase(self._newName),
+                implStr
             )]
             self._cxxStr = ''.join(strList)
         return self._cxxStr
@@ -213,13 +248,17 @@ class NativeMethod(NativeMember, NativeFunction):
     def __str__(self) -> str:
         if not self._cxxStr:
             upper = self._generator.UpperCamelCase
-            if self._newName == "new":
-                # new被作为构造函数。
-                cxx = ["mt[sol::meta_function::construct]="]
-            else:
-                cxx = ['mt["{}"]='.format(
-                    self._newName if not upper else CursorHelper.UpperCamelCase(self._newName)
-                )]
+            allStatic = True
+            for impl in self._implements:
+                if not impl._static:
+                    allStatic = False
+                    break
+            cxx = ['mt{}["{}"]='.format(
+                ('["' + self._generator.LuaConfig["Qualifiers"]["static"] + '"]')
+                if allStatic and self._newName != "new" else "",
+                self._generator.LuaConfig["__new__"]
+                if self._newName == "new" else (self._newName if not upper else CursorHelper.UpperCamelCase(self._newName)
+                                                ))]
 
             if self.Overload:
                 cxx.append("sol::overload(")
@@ -277,34 +316,8 @@ class NativeConstructor(NativeFunction):
             return ",".join(cxx)
 
     def __str__(self) -> str:
-        if self._cxxStr:
-            return self._cxxStr
-        cxx = []
-        if not self._implements:
-            if self._useDefalut:
-                cxx.append("mt[sol::call_constructor]=sol::constructors<{}()>();\n".format(self._wholeFuncName))
-        else:
-            cxx.append("mt[sol::call_constructor]=sol::constructors<")
-            cxx.append(self.GetImplStr())
-            cxx.append(">();\n")
-
-        # 如果没有指定new构造，则以当前构造函数生成。
-        if not self._this.NewConstructor or not self._this.NewConstructor.Supported:
-            if not self._implements:
-                if self._useDefalut:
-                    cxx.append("mt[sol::meta_function::construct]=[](){{return new {}();}};\n".format(self._wholeFuncName))
-            else:
-                cxx.append("mt[sol::meta_function::construct]=")
-                if self.Overload:
-                    cxx.append("sol::overload(")
-
-                cxx.append(self.GetImplStr(True))
-
-                if self.Overload:
-                    cxx.append(")")
-                cxx.append(";")
-        _cxxStr = "".join(cxx)
-        return _cxxStr
+        # 不再生成构造。
+        return ""
 
 
 class NativeObject(NativeWrapper):
@@ -313,6 +326,7 @@ class NativeObject(NativeWrapper):
     def __init__(self, cursor, generator: BaseConfig) -> None:
         super().__init__(cursor, generator)
         self._parents: List[NativeObject] = []
+        self._directlyParents: List[NativeObject] = []
         # 直接父级，当只有一个直接父级时，此值才有意义。
         self._parent: NativeObject = None
         self.__onlyParent = True
@@ -369,6 +383,8 @@ class NativeObject(NativeWrapper):
                         if pWholeName not in self._generator.NativeObjects.keys():
                             self._generator.NativeObjects[pWholeName] = parent
 
+                    if parent not in self._directlyParents:
+                        self._directlyParents.append(parent)
                     if parent not in self._parents:
                         # 添加父级。
                         self._parents.append(parent)
@@ -555,32 +571,41 @@ class NativeObject(NativeWrapper):
             cxx.append(str(c))
             cxx.append("\n")
 
-        noCtor = "true" if not self._newCtor and not self._ctor.Supported else "false"
-
         cxx.append("void RegisterLua{}{}Auto(cocos2d::extension::Lua& lua)".format(
             self._generator.Tag, "".join(self._nameList[1:])))
         cxx.append("{\n")
-        cxx.append('auto mt=lua.NewUserType<{wholeName}>("{nsName}","{class_name}",{noCtor});\n'.format(
-            nsName=".".join(self._nNameList[:-1]), class_name=self._newName if not upper else CursorHelper.UpperCamelCase(self._newName), wholeName=self._wholeName, noCtor=noCtor))
 
+        cxx.append(
+            'cocos2d::extension::Lua::Id2Meta[typeid({wn}).name()] = sol::usertype_traits<{wn}*>::metatable();\n'.format(
+                wn=self._wholeName)
+        )
+        cxx.append('auto dep=lua.new_usertype<{wholeName}>("deprecated.{wholeName}");\n'.format(wholeName=self._wholeName))
         # 类与基类名组合
         basesName = ""
         for p in self._parents:
             basesName += (p._wholeName + ",")
         if basesName:
-            cxx.append("cocos2d::extension::Lua::SetBases(mt,sol::bases<{}>());\n".format(basesName[:-1]))
+            cxx.append("dep[sol::base_classes]=sol::bases<{}>();\n".format(basesName[:-1]))
+
+        cxx.append('sol::table mt=lua.NewClass(sol::usertype_traits<{}*>::metatable()'.format(self._wholeName))
+        for parent in self._directlyParents:
+            cxx.append(',sol::usertype_traits<{}*>::metatable()'.format(parent._wholeName))
+        cxx.append(');\n')
+
+        cxx.append('lua["{}"]'.format(self._simpleNS))
+        for pField in self._nNameList[1:-1]:
+            cxx.append('["{}"]'.format(
+                pField if not upper else CursorHelper.UpperCamelCase(pField)
+            ))
+        cxx.append('["{}"]=mt;\n'.format(self._newName if not upper else CursorHelper.UpperCamelCase(self._newName)))
+
+        if not self._newCtor:
+            cxx.append('mt["{}"] = [](){{return nullptr;}};\n'.format(self._generator.LuaConfig["__new__"]))
 
         # 方法生成。
         for method in self._methods.values():
             cxx.append(str(method))
             cxx.append("\n")
-
-        if len(self._pvMethods) == 0:
-            # 没有可用的纯虚函数，才允许使用构造。
-            ctorStr = str(self._ctor)
-            if ctorStr:
-                cxx.append(ctorStr)
-                cxx.append("\n")
 
         # public域生成。
         for field in self._fileds:
@@ -592,15 +617,13 @@ class NativeObject(NativeWrapper):
             cxx.append('RegisterLua{}{}Auto(lua);\n'.format(self._generator.Tag, "".join(c._nameList[1:])))
 
         # 单例属性。
-        if self._instanceMethodList[0] and self._instanceMethodList[1]:
-            cxx.append('mt["Instance"]=sol::property(&{},[](std::nullptr_t){{{}();}});\n'.format(
-                self._instanceMethodList[0].WholeFuncName,
-                self._instanceMethodList[1].WholeFuncName))
-        elif self._instanceMethodList[0]:
-            cxx.append('mt["Instance"]=sol::readonly_property(&{});\n'.format(
+        if self._instanceMethodList[0]:
+            cxx.append('mt["{}"]["Instance"]=&{};\n'.format(
+                self._generator.LuaConfig["get"],
                 self._instanceMethodList[0].WholeFuncName))
-        elif self._instanceMethodList[1]:
-            cxx.append('mt["Instance"]=sol::writeonly_property([](std::nullptr_t){{{}();}});\n'.format(
+        if self._instanceMethodList[1]:
+            cxx.append('mt["{}"]["Instance"]=[](std::nullptr_t){{{}();}};\n'.format(
+                self._generator.LuaConfig["set"],
                 self._instanceMethodList[1].WholeFuncName))
 
         cxx.append("}")

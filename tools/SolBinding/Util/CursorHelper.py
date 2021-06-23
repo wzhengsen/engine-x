@@ -135,7 +135,7 @@ class CursorHelper:
         return ("_AE_" + md5.hexdigest() + "_")
 
     @staticmethod
-    def GetArgName(ntype) -> str:
+    def GetArgName(ntype, useConst=True) -> str:
         """获得参数名，也可用于获得返回值名（获取的是类型名，而不是变量名）。"""
 
         if ntype.kind == cindex.TypeKind.POINTER:
@@ -147,7 +147,7 @@ class CursorHelper:
             if decl.kind == cindex.CursorKind.NO_DECL_FOUND:
                 return ntype.spelling.replace("__ndk1::", "")
             name = CursorHelper.GetWholeName(decl)
-            return (("const " if ntype.is_const_qualified() else "") + name).replace("__ndk1::", "")
+            return (("const " if ntype.is_const_qualified() and useConst else "") + name).replace("__ndk1::", "")
 
     @staticmethod
     def UpperCamelCase(name: str) -> str:
@@ -158,7 +158,7 @@ class CursorHelper:
             3、第一个字母转换为大写；
             4、某些名字不会被转换（如new/delete等）。
         """
-        if name in ("new", "delete"):
+        if name in ("new", "delete", "__delete__", "__new__"):
             return name
         nameLen = len(name) - 1
         upper = True

@@ -22,6 +22,22 @@
 
 # 一些基本功能性函数，没有具体业务逻辑。
 import os
+import importlib
+import platform
+
+
+def ExceptImport(name, install=None, reload=False):
+    if not install:
+        install = name
+    cmd = "pip3 install {} {}".format(install, "--user" if platform.system() != "Windows" else "").strip()
+    if 0 != os.system(cmd):
+        print("Install {} failed!".format(install))
+        exit(1)
+    else:
+        module = importlib.import_module(name)
+        if reload:
+            module = importlib.reload(module)
+        return module
 
 
 def FindFirstFileInDir(dir: str, fn: str) -> str:

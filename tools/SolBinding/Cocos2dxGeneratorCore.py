@@ -46,7 +46,7 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "-I{}/external/openssl/include/android".format(self.CocosRoot)
         ]
         self.Classes += [
-            "New.*", "Sprite.*", "Scene", "Node.*", "Director", "Layer.*", "Menu.*", "Touch", ".*Action.*", "Move.*",
+            "New.*", "Sprite((?!3D).)*", "Scene", "Node.*", "Director", "Layer.*", "Menu.*", "Touch", ".*Action.*", "Move.*",
             "Rotate.*", "Blink.*", "Tint.*", "Sequence", "Repeat.*", "Fade.*", "Ease.*", "Scale.*", "Transition.*", "Spawn",
             "Animat((?!3D).)*", "Flip.*", "Delay.*", "Skew.*", "Jump.*", "Place.*", "Show.*", "Progress.*", "PointArray", "ToggleVisibility.*",
             "RemoveSelf", "Hide", "Particle.*", "Label.*", "Atlas.*", "TextureCache.*", "Texture2D", "Cardinal.*", "CatmullRom.*", "ParallaxNode",
@@ -70,7 +70,7 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "AsyncTaskPool": ["enqueue"],
             "RZipFile::ZipItem": ["Read"],
             "RZipFile": ["begin", "end"],
-            "Node": ["onEnter.*", "onExit.*"],
+            "Node": ["onEnter.*", "onExit.*", "_setLocalZOrder"],
             "Component": ["onEnter", "onExit", "onAdd", "onRemove"]
         }
         self.RenameMembers |= {

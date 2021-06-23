@@ -21,11 +21,16 @@
 import os
 from typing import Dict
 from Util.EnvChecker import EnvChecker
+from Util.Functions import ExceptImport
+try:
+    import lupa
+except:
+    lupa = ExceptImport("lupa")
 
 
 class NotFoundFileException(Exception):
     def __str__(self) -> str:
-        return "未找到某些关键文件。"
+        return "未找到某些关键文件或环境变量。"
 
 
 class BaseConfig(object):
@@ -44,8 +49,14 @@ class BaseConfig(object):
         defaultInclude = EnvChecker.DefaultIncludePath()
         gccToolChain = EnvChecker.Find_GCC_ToolChain()
         llvmToolChain = EnvChecker.Find_LLVM_ToolChain()
-        if not ndkRoot or not defaultInclude or not gccToolChain or not llvmToolChain:
+        egx = os.environ.get("ENGINEX_ROOT")
+        if not ndkRoot or not defaultInclude or not gccToolChain or not llvmToolChain or not egx:
             raise NotFoundFileException()
+
+        lua = lupa.LuaRuntime(unpack_returned_tuples=True)
+        lua.execute('package.path = package.path .. ";{}/?.lua"'.format(os.path.join(egx,
+                                                                                     "templates/lua-template-default/Resources/src").replace("\\", '/')))
+        self.LuaConfig = lua.require("OOP.Config")
 
         # Tag用于生成的注册函数中，作为和其它生成文件的区分。
         self.Tag = None

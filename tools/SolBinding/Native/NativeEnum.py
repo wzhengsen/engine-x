@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+from clang import cindex
 from Util.CursorHelper import CursorHelper
 from .NativeObject import NativeWrapper
 from Config.BaseConfig import BaseConfig
@@ -54,22 +55,37 @@ class NativeEnum(NativeWrapper):
                 kvMap = self._GetKeyValue()
                 strList = ["void RegisterLua{}{}Auto(cocos2d::extension::Lua& lua) {{\n".format(
                     self._generator.Tag, "".join(self._nameList[1:]))]
-                strList.append('sol::table pTable = lua["{}"];\n'.format(self._simpleNS))
+
+                strList.append('sol::table enumTable = lua.create_table_with(0,{});\n'.format(len(kvMap)))
+                for key, value in kvMap.items():
+                    strList.append(
+                        'enumTable["{}"]={};\n'.format(
+                            key if not upper else CursorHelper.UpperCamelCase(key),
+                            str(value)
+                        )
+                    )
+
+                strList.append('lua["{}"]'.format(self._simpleNS))
                 for pField in self._nNameList[1:-1]:
-                    strList.append('pTable = pTable["{}"];\n'.format(
+                    strList.append('["{}"]'.format(
                         pField if not upper else CursorHelper.UpperCamelCase(pField)
                     ))
 
-                strList.append('pTable.new_enum<{}>("{}",{{\n'.format(
-                    self._wholeName, self._newName if not upper else CursorHelper.UpperCamelCase(self._newName)
-                ))
-                enumList = []
-                for key, value in kvMap.items():
-                    enumList.append('{{"{}",{}}}\n'.format(
-                        key if not upper else CursorHelper.UpperCamelCase(key), value
-                    ))
-                strList.append(",".join(enumList))
-                strList.append("});}")
+                pNS = self._cursor.semantic_parent.kind == cindex.CursorKind.NAMESPACE
+
+                if not pNS:
+                    strList.append(
+                        '["{}"]["{}"]='.format(
+                            self._generator.LuaConfig["Qualifiers"]["static"], self._newName if not upper else CursorHelper.UpperCamelCase(self._newName))
+                    )
+                else:
+                    strList.append(
+                        '["{}"]='.format(
+                            self._newName if not upper else CursorHelper.UpperCamelCase(self._newName))
+                    )
+
+                strList.append('lua.NewEnum(enumTable);\n')
+                strList.append("}")
                 self._cxxStr = ''.join(strList)
             return self._cxxStr
         if not self._luaStr:
@@ -134,8 +150,9 @@ class NativeAnonymousEnum(NativeEnum):
                     ))
 
                 for key, value in kvMap.items():
-                    strList.append('pTable["{}"] = {};\n'.format(
-                        key if not upper else CursorHelper.UpperCamelCase(key), value
+                    strList.append('pTable["{}"]["{}"] = {};\n'.format(
+                        self._generator.LuaConfig["Qualifiers"]["static"], key if not upper else CursorHelper.UpperCamelCase(
+                            key), value
                     ))
                 strList.append("}")
                 self._cxxStr = ''.join(strList)
