@@ -73,6 +73,10 @@ class BaseConfig(object):
         self.MacroJudgement = None
         # 使用大驼峰命名法（在最后阶段生效，不会影响命名空间）。
         self.UpperCamelCase = True
+        # 是否自动生成属性。
+        # 当一个方法能够接受一个参数，且前缀符合SetPrefix时，生成set属性；
+        # 当一个方法能够返回一个非void值，且接受0个参数，前缀也还符合GetPrefix时，生成get属性。
+        self.AutoProperties = True
 
         self.AndroidHeaders = []
         self.AndroidFlags = [
@@ -160,3 +164,8 @@ class BaseConfig(object):
 
         # 当一个类在作为父类时，希望被跳过的类型列表。
         self.ParentsClassesSkip = []
+
+        # 生成get属性的前缀。
+        self.GetPrefix = []
+        # 生成set属性的前缀。
+        self.SetPrefix = []

@@ -65,3 +65,6 @@ class Cocos2dxGenerator(BaseGenerator):
         self.Skip |= {
             ".*": ["createInstance", "__Type"]
         }
+
+        self.GetPrefix += ["(G|g)et", "(I|i)s"]
+        self.SetPrefix += ["(S|s)et"]
