@@ -51,6 +51,10 @@ class NativeType(object):
         return self._generatable
 
     @property
+    def Generator(self):
+        return self._generator
+
+    @property
     def Name(self):
         return self._name
 
@@ -89,7 +93,7 @@ class NativeImplement(object):
         cindex.CursorKind.DECL_REF_EXPR]
 
     @staticmethod
-    def CreateImplements(cursor):
+    def CreateImplements(cursor, nativeObj):
         """由一个游标，自动创建一组实现。
         一般的，有默认值的函数游标，将生成多个实现。
         """
@@ -126,6 +130,7 @@ class NativeImplement(object):
     def __init__(self, cursor: cindex.Cursor, args: List[str], res: str) -> None:
         super().__init__()
         self._cursor = cursor
+        self._name = cursor.spelling
         self._args = args
         self._result = res
         # 普通函数始终是静态函数。
@@ -168,18 +173,19 @@ class NativeImplement(object):
 class NativeFunction(NativeType):
     """成员方法，普通函数等的基类。"""
 
-    def __init__(self, cursor, generator: BaseConfig, T: NativeImplement = None) -> None:
+    def __init__(self, cursor, generator: BaseConfig, T: NativeImplement = None, nativeObj=None) -> None:
         super().__init__(cursor, generator)
         self._prefixName = CursorHelper.GetPrefixName(cursor)
         self._funcName = cursor.spelling
         self._wholeFuncName = self._prefixName + "::" + self._funcName
+        self._nativeObj = nativeObj
         if not T:
             T = NativeImplement
-        self._implements = T.CreateImplements(cursor)
+        self._implements = T.CreateImplements(cursor, nativeObj)
 
     def AddImplements(self, p: "cindex.Cursor | NativeImplement"):
         if isinstance(p, cindex.Cursor):
-            implements = NativeImplement.CreateImplements(p)
+            implements = NativeImplement.CreateImplements(p, self._nativeObj)
             for impl in implements:
                 self.AddImplements(impl)
         elif isinstance(p, NativeImplement):

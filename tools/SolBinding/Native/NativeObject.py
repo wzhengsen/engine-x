@@ -94,11 +94,11 @@ class NativeStaticField(NativeMember):
 class NativeMethodImplement(NativeImplement):
 
     @staticmethod
-    def CreateImplements(cursor):
-        impls = NativeImplement.CreateImplements(cursor)
-        return [NativeMethodImplement(impl) for impl in impls]
+    def CreateImplements(cursor, nativeObj: "NativeObject"):
+        impls = NativeImplement.CreateImplements(cursor, nativeObj)
+        return [NativeMethodImplement(impl, nativeObj) for impl in impls]
 
-    def __init__(self, impl: NativeImplement) -> None:
+    def __init__(self, impl: NativeImplement, nativeObj: "NativeObject") -> None:
         cursor = impl._cursor
         self.__dict__ |= impl.__dict__
         self._static: bool = cursor.is_static_method()
@@ -107,6 +107,43 @@ class NativeMethodImplement(NativeImplement):
         self._virtual = cursor.is_virtual_method()
         self._isOverride = False
         self._impl = impl
+        self._nativeObj = nativeObj
+        self._propertyName = self._name
+        self._getter = False
+        self._setter = False
+        generator = nativeObj.Generator
+        # 该实现是否可以作为get或set属性。
+        # get属性不返回void，参数长度为0，且具有匹配的get前缀，且不同于单例的构造函数名。
+        notFound = [True, True]
+        parentName = CursorHelper.GetClassesName(nativeObj.Cursor)
+        # 检查是否和单例属性命名冲突。
+        for matchParent, instanceMethods in generator.InstanceMethods.items():
+            if re.match("^" + matchParent + "$", parentName):
+                for idx in range(2):
+                    if instanceMethods[idx] and re.match("^" + instanceMethods[idx] + "$", self._name):
+                        notFound[idx] = False
+                        break
+
+        self._getter = notFound[0] and self._result != "void" and len(self._args) == 0
+        if self._getter:
+            self._getter = False
+            for prefix in generator.GetPrefix:
+                m = re.match("^" + prefix + "(.*)$", self._name)
+                if m:
+                    self._getter = True
+                    self._propertyName = m.group(2)
+                    break
+        else:
+            # set属性参数长度为1，且具有匹配的set前缀，且不同于单例的析构函数名。
+            self._setter = notFound[1] and len(self._args) == 1
+            if self._setter:
+                self._setter = False
+                for prefix in generator.SetPrefix:
+                    m = re.match("^" + prefix + "(.*)$", self._name)
+                    if m:
+                        self._setter = True
+                        self._propertyName = m.group(2)
+                        break
         if not self._pureVirtual:
             for node in cursor.get_children():
                 if node.kind == cindex.CursorKind.CXX_OVERRIDE_ATTR:
@@ -114,7 +151,7 @@ class NativeMethodImplement(NativeImplement):
                     break
 
     def Copy(self) -> "NativeMethodImplement":
-        return NativeMethodImplement(self._impl)
+        return NativeMethodImplement(self._impl, self._nativeObj)
 
     @property
     def Override(self):
@@ -132,12 +169,28 @@ class NativeMethodImplement(NativeImplement):
     def Const(self):
         return self._const
 
+    @property
+    def Getter(self):
+        return self._getter
+
+    @property
+    def Setter(self):
+        return self._setter
+
+    @property
+    def PropertyName(self):
+        return self._propertyName
+
 
 class NativeMethod(NativeMember, NativeFunction):
-    def __init__(self, cursor, generator: BaseConfig) -> None:
-        NativeFunction.__init__(self, cursor, generator, NativeMethodImplement)
+    def __init__(self, cursor, generator: BaseConfig, nativeObj: "NativeObject" = None) -> None:
+        NativeFunction.__init__(self, cursor, generator, NativeMethodImplement, nativeObj)
         NativeMember.__init__(self, cursor, generator)
 
+        self._getter = False
+        self._setter = False
+        self._propertyName = ""
+        self.__CheckGetSet()
         # -1-表示没有单例属性。
         # 0-表示该方法是获取单例方法。
         # 1-表示该方法是销毁单例方法。
@@ -146,7 +199,7 @@ class NativeMethod(NativeMember, NativeFunction):
         # 判定是否有单例属性（要求构造单例的方法必须具有一个非void返回值，要求析构单例的方法必须接受0个参数）。
         for impl in self._implements:
             breakMe = False
-            if not impl._static:
+            if not impl.Static:
                 continue
             parentName = CursorHelper.GetClassesName(cursor)
             for matchParent, instanceMethods in generator.InstanceMethods.items():
@@ -168,7 +221,7 @@ class NativeMethod(NativeMember, NativeFunction):
         """用于对子类使用using Parent::Method;方式重载方法时，返回一个
         复制的对象，但其中的所属名将更改。
         """
-        copy = NativeMethod(self._cursor, self._generator)
+        copy = NativeMethod(self._cursor, self._generator, self._nativeObj)
         copy._cxxStr = None
         copy._wholeName = CursorHelper.GetWholeName(child.Cursor) + "::" + copy._name
 
@@ -195,6 +248,28 @@ class NativeMethod(NativeMember, NativeFunction):
                     if oImpl.Virtual and sImpl == oImpl:
                         return True
         return False
+
+    def Merge(self, func: "NativeFunction"):
+        super().Merge(func)
+        self.__CheckGetSet()
+
+    def __CheckGetSet(self):
+        """当函数所有的实现均为静态或均不为静态时，
+        才生成属性。
+        """
+        staticFlag = self._implements[0].Static if len(self._implements) > 0 else False
+        for impl in self._implements:
+            if impl.Static != staticFlag:
+                self._getter = False
+                self._setter = False
+                self._propertyName = ""
+                return
+            if impl.Getter:
+                self._getter = True
+                self._propertyName = impl.PropertyName
+            if impl.Setter:
+                self._setter = True
+                self._propertyName = impl.PropertyName
 
     @property
     def InstanceProperty(self):
@@ -250,15 +325,19 @@ class NativeMethod(NativeMember, NativeFunction):
             upper = self._generator.UpperCamelCase
             allStatic = True
             for impl in self._implements:
-                if not impl._static:
+                if not impl.Static:
                     allStatic = False
                     break
-            cxx = ['mt{}["{}"]='.format(
-                ('["' + self._generator.LuaConfig["Qualifiers"]["static"] + '"]')
-                if allStatic and self._newName != "new" else "",
-                self._generator.LuaConfig["__new__"]
-                if self._newName == "new" else (self._newName if not upper else CursorHelper.UpperCamelCase(self._newName)
-                                                ))]
+            static = '["' + self._generator.LuaConfig["Qualifiers"]["static"] + '"]' if allStatic else ""
+            get = self._generator.LuaConfig["get"]
+            set = self._generator.LuaConfig["set"]
+            newName = self._newName if not upper else CursorHelper.UpperCamelCase(self._newName)
+            cxx = [
+                'mt{}["{}"]='.format(
+                    static if self._newName != "new" else "",
+                    self._generator.LuaConfig["__new__"] if self._newName == "new" else newName
+                )
+            ]
 
             if self.Overload:
                 cxx.append("sol::overload(")
@@ -268,6 +347,16 @@ class NativeMethod(NativeMember, NativeFunction):
             if self.Overload:
                 cxx.append(")")
             cxx.append(";")
+
+            pName = self._propertyName if not upper else CursorHelper.UpperCamelCase(self._propertyName)
+            if self._getter:
+                cxx.append("\n")
+                cxx.append('mt{}["{}"]["{}"]='.format(static, get, pName))
+                cxx.append('mt{}["{}"];'.format(static, newName))
+            if self._setter:
+                cxx.append("\n")
+                cxx.append('mt{}["{}"]["{}"]='.format(static, set, pName))
+                cxx.append('mt{}["{}"];'.format(static, newName))
 
             self._cxxStr = "".join(cxx)
         return self._cxxStr
@@ -288,15 +377,15 @@ class NativeConstructor(NativeFunction):
         self._useDefalut = True
         self._this = this
 
-    @property
+    @ property
     def Default(self):
         return self._useDefalut
 
-    @Default.setter
+    @ Default.setter
     def Default(self, val: bool):
         self._useDefalut = val
 
-    @property
+    @ property
     def Supported(self):
         return super().Supported or self._useDefalut
 
@@ -360,7 +449,7 @@ class NativeObject(NativeWrapper):
                 self._ctor.Default = False
                 break
 
-    @property
+    @ property
     def NewConstructor(self):
         return self._newCtor
 
@@ -482,7 +571,7 @@ class NativeObject(NativeWrapper):
                     return
             else:
                 # 成员函数，且跳过函数变量。
-                method = NativeMethod(cursor, self._generator)
+                method = NativeMethod(cursor, self._generator, self)
                 pureVirtual = cursor.is_pure_virtual_method()
                 static = cursor.is_static_method()
                 if pureVirtual:
