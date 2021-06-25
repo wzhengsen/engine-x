@@ -349,6 +349,9 @@ class NativeObject(NativeWrapper):
         self._classes = []
         # 存放具有获取和销毁单例方法的列表。
         self._instanceMethodList = [None, None]
+        # 强制记录虚函数的表，用于子类查找实现，以判断是否跳过生成重写的方法。
+        self._fvMethods = {}
+
         self.__DeepIterate(self._cursor)
 
         for p in self._parents:
@@ -498,12 +501,12 @@ class NativeObject(NativeWrapper):
                 # 检查基类是否绑定，基类未绑定，那么自己需要绑定。
                 parentBinding = False
                 for parent in self._parents:
-                    pMethods = parent._methods
-                    if method.FuncName in pMethods.keys() and\
-                            method.IsOverrided(pMethods[method.FuncName]):
-                        # 基类已绑定。
-                        parentBinding = True
-                        break
+                    for pMethods in [parent._methods, parent._fvMethods]:
+                        if method.FuncName in pMethods.keys() and\
+                                method.IsOverrided(pMethods[method.FuncName]):
+                            # 基类已绑定。
+                            parentBinding = True
+                            break
 
                 if parentBinding:
                     # 如果基类已绑定，判断自己是否有同名方法。
@@ -518,6 +521,9 @@ class NativeObject(NativeWrapper):
                     if method.FuncName in self._tMethods:
                         method = self._PushToMethodDict(method, self._tMethods)
                         del self._tMethods[method.FuncName]
+
+                if cursor.is_virtual_method():
+                    self._PushToMethodDict(method, self._fvMethods)
 
                 if method.Generatable:
                     if static:
