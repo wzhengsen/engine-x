@@ -111,7 +111,16 @@ class NativeMethodImplement(NativeImplement):
         self._propertyName = self._name
         self._getter = False
         self._setter = False
+
+        if not self._pureVirtual:
+            for node in cursor.get_children():
+                if node.kind == cindex.CursorKind.CXX_OVERRIDE_ATTR:
+                    self._isOverride = True
+                    break
         generator = nativeObj.Generator
+
+        if not generator.AutoProperties:
+            return
         # 该实现是否可以作为get或set属性。
         # get属性不返回void，参数长度为0，且具有匹配的get前缀，且不同于单例的构造函数名。
         notFound = [True, True]
@@ -144,11 +153,6 @@ class NativeMethodImplement(NativeImplement):
                         self._setter = True
                         self._propertyName = m.group(2)
                         break
-        if not self._pureVirtual:
-            for node in cursor.get_children():
-                if node.kind == cindex.CursorKind.CXX_OVERRIDE_ATTR:
-                    self._isOverride = True
-                    break
 
     def Copy(self) -> "NativeMethodImplement":
         return NativeMethodImplement(self._impl, self._nativeObj)
@@ -352,11 +356,11 @@ class NativeMethod(NativeMember, NativeFunction):
             if self._getter:
                 cxx.append("\n")
                 cxx.append('mt{}["{}"]["{}"]='.format(static, get, pName))
-                cxx.append('mt{}["{}"];'.format(static, newName))
+                cxx.append('mt["{}"];'.format(newName))
             if self._setter:
                 cxx.append("\n")
                 cxx.append('mt{}["{}"]["{}"]='.format(static, set, pName))
-                cxx.append('mt{}["{}"];'.format(static, newName))
+                cxx.append('mt["{}"];'.format(newName))
 
             self._cxxStr = "".join(cxx)
         return self._cxxStr
@@ -712,12 +716,15 @@ class NativeObject(NativeWrapper):
             cxx.append('RegisterLua{}{}Auto(lua);\n'.format(self._generator.Tag, "".join(c._nameList[1:])))
 
         # 单例属性。
+        static = self._generator.LuaConfig["Qualifiers"]["static"]
         if self._instanceMethodList[0]:
-            cxx.append('mt["{}"]["Instance"]=&{};\n'.format(
+            cxx.append('mt["{}"]["{}"]["Instance"]=&{};\n'.format(
+                static,
                 self._generator.LuaConfig["get"],
                 self._instanceMethodList[0].WholeFuncName))
         if self._instanceMethodList[1]:
-            cxx.append('mt["{}"]["Instance"]=[](std::nullptr_t){{{}();}};\n'.format(
+            cxx.append('mt["{}"]["{}"]["Instance"]=[](std::nullptr_t){{{}();}};\n'.format(
+                static,
                 self._generator.LuaConfig["set"],
                 self._instanceMethodList[1].WholeFuncName))
 
