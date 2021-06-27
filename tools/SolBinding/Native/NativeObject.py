@@ -696,6 +696,8 @@ class NativeObject(NativeWrapper):
             cxx.append('["{}"]'.format(
                 pField if not upper else CursorHelper.UpperCamelCase(pField)
             ))
+        else:
+            cxx.append('["{}"]'.format(self._generator.LuaConfig["Qualifiers"]["static"]))
         cxx.append('["{}"]=mt;\n'.format(self._newName if not upper else CursorHelper.UpperCamelCase(self._newName)))
 
         if not self._newCtor:
