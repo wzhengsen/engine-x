@@ -18,20 +18,13 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
----------------------------------------------
---  Module: 数学
---  Auth:   wzhengsen
---  Date:   2019年04月03日
---  Desc:   定义了一些数学运算，和一些数学算法
----------------------------------------------
+-- 定义了一些数学运算，和一些数学算法。
 
 ---将一个数限制在指定范围内。
----
 ---@param num number
 ---@param limit1 number
 ---@param limit2 number
 ---@return number
----
 function math.Limit(num,limit1,limit2)
     if limit1 > limit2 then
         limit1,limit2 = limit2,limit1;
@@ -46,13 +39,11 @@ function math.Limit(num,limit1,limit2)
 end
 
 ---取两坐标距离。
----
 ---@param x1 number
 ---@param y1 number
 ---@param x2 number
 ---@param y2 number
 ---@return number
----
 function math.Distance(x1,y1,x2,y2)
     local dx = x1 - x2;
     local dy = y1 - y2;
@@ -60,13 +51,11 @@ function math.Distance(x1,y1,x2,y2)
 end
 
 ---取两坐标弧度,从(x1,y1)到(x2,y2)
----
 ---@param X1 number
 ---@param Y1 number
 ---@param X2 number
 ---@param Y2 number
 ---@return number
----
 function math.Radian(X1,Y1,X2,Y2)
     local dy = Y2 - Y1;
     local dx = X2 - X1;
@@ -75,21 +64,18 @@ function math.Radian(X1,Y1,X2,Y2)
 end
 
 ---取极坐标XY。
----
 ---@param x number 原点x
 ---@param y number 原点y
 ---@param rad number 方向（弧度）
 ---@param dis number 距离
 ---@return number 极坐标x
 ---@return number 极坐标y
----
 function math.Polar(x,y,rad,dis)
     return x + math.cos(rad) * dis,y + math.sin(rad) * dis;
 end
 
 ---由点1向点2逼近一段距离，并返回新的位置。
 ---若逼近距离超过总距离,则返回目标位置。
----
 ---@param X1 number
 ---@param Y1 number
 ---@param X2 number
@@ -97,7 +83,6 @@ end
 ---@param dis number
 ---@return number
 ---@return number
----
 function math.Approach(X1,Y1,X2,Y2,dis)
     local allDist = math.Distance(X1,Y1,X2,Y2);
     if allDist == 0.0 then

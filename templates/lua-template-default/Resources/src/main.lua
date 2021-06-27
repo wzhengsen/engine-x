@@ -20,7 +20,7 @@
 
 xpcall(
 function()
-    require("src.LuaPanda").start();
+    require("LuaPanda").start();
 end,
 function(msg)
     print(msg);
@@ -33,7 +33,6 @@ local function main()
         reg["UD🌙"] = reg["UD🌙"] or {};
         _G.LuaUDS = reg["UD🌙"];
     end
-    package.path = package.path .. ";src/?.lua";
     require("Frame.Init");
     --cc.Application.Instance:Start();
 end

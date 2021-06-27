@@ -38,16 +38,16 @@ local RAII = setmetatable({},{
     end
 });
 local function FunctionWrapper(cls,f)
-    if AllFunctions[f] then
-        return f;
+    local newF = AllFunctions[f]
+    if nil == newF then
+        newF = function(...)
+            insert(AccessStack,cls);
+            local _<close> = RAII;
+            return f(...);
+        end
+        AllFunctions[newF] = newF;
+        AllFunctions[f] = newF;
     end
-    local newF = function(...)
-        insert(AccessStack,cls);
-        local _<close> = RAII;
-        return f(...);
-    end
-    AllFunctions[newF] = true;
-    AllFunctions[f] = true;
     return newF;
 end
 

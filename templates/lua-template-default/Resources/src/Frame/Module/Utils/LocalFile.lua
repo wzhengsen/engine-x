@@ -18,23 +18,12 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
---[[
-    Func:   用于存储数据到指定文件，可以指定密码，默认使用AES加密。
-    Date:   2019.12.11
-    Auth:   wzhengsen
-]]
-
----@class LocalFile
----@field new fun(path:string,key?:string):LocalFile
----@field Data table
+---用于存储数据到指定文件，可以指定密码，默认使用AES加密。
 local LocalFile = class();
 
----构造。
----
 ---@param path string 存储文件的路径。
 ---@param key? string 如果必要，该文件的密码。
----
-function LocalFile:__init__(path,key)
+function LocalFile:ctor(path,key)
     self.__key = key;
     self.__path = path;
     self.__FILE = nil;
@@ -47,7 +36,6 @@ end
 ---打开或重新打开文件。
 ---构造时会自动调用，一般用于Close后重新打开文件；
 ---文件关闭后，对文件的操作都不会保存，重新打开后，在文件关闭期间的修改都会丢失。
----
 ---@return boolean
 function LocalFile:Open()
     if self.__FILE then
@@ -114,9 +102,7 @@ function LocalFile:Flush()
 end
 
 ---关闭文件。
----
 ---@param b? boolean {true}指示调用Flush。
----
 function LocalFile:Close(b)
     local file = self.__FILE;
     if not file then
@@ -141,21 +127,16 @@ function LocalFile:Clear()
     end
 end
 
-function LocalFile.__properties__()
-    return {
-        r = {
-            Data = function (self)
-                return self.__FILE and self.__fileData or {};
-            end,
-            Valid = function (self)
-                return nil ~= self.__FILE;
-            end
-        }
-    };
+function LocalFile.get:Data()
+    return self.__FILE and self.__fileData or {};
+end
+
+function LocalFile.get:Valid()
+    return nil ~= self.__FILE;
 end
 
 ---析构时自动关闭。
-function LocalFile:__del__()
+function LocalFile:dtor()
     self:Close()
 end
 

@@ -25,22 +25,16 @@ function Component:OnExit(_)end
 function Component:OnAdd(_)end
 function Component:OnRemove(_)end
 
-function Component.__properties__()
-    return {
-        w = {
-            EnableEvents = function (self,val)
-                if val then
-                    self.OnEnterHandler = class.Handler(self,self.OnEnter);
-                    self.OnExitHandler = class.Handler(self,self.OnExit);
-                    self.OnAddHandler = class.Handler(self,self.OnAdd);
-                    self.OnRemoveHandler = class.Handler(self,self.OnRemove);
-                else
-                    self.OnEnterHandler = nil;
-                    self.OnExitHandler = nil;
-                    self.OnAddHandler = nil;
-                    self.OnRemoveHandler = nil;
-                end
-            end
-        }
-    };
+function Component.set:EnableEvents(val)
+    if val then
+        self.OnEnterHandler = self.OnEnter;
+        self.OnExitHandler = self.OnExit;
+        self.OnAddHandler = self.OnAdd;
+        self.OnRemoveHandler = self.OnRemove;
+    else
+        self.OnEnterHandler = nil;
+        self.OnExitHandler = nil;
+        self.OnAddHandler = nil;
+        self.OnRemoveHandler = nil;
+    end
 end

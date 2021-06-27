@@ -25,13 +25,8 @@ package.path = path;
 local cpath = package.cpath;
 package.cpath = cpath;
 
--- Initialize global.
 _G.cjson = require("cjson");
 _G.D = cc.Director.Instance;
-
-require("Frame.Core.Event");
-require("Frame.Core.Handler");
-require("Frame.Core.Class");
 
 require("Frame.Extend.Lua.MathEx");
 require("Frame.Extend.Lua.StringEx");
@@ -46,23 +41,38 @@ require("Frame.Constant.OpenGLConstants");
 require("Frame.Core.OpenGL");
 
 require("Frame.Extend.Cocos2dx.Constants");
-require("Frame.Extend.Cocos2dx.ComponentEx");
 require("Frame.Extend.Cocos2dx.Cocos2dxEx");
 require("Frame.Extend.Cocos2dx.LuaObjectEx");
+require("Frame.Extend.Cocos2dx.ComponentEx");
 require("Frame.Extend.Cocos2dx.NodeEx");
 require("Frame.Extend.Cocos2dx.VideoPlayerEx");
+require("Frame.Extend.Cocos2dx.ClientEx");
+require("Frame.Extend.Cocos2dx.ServerEx");
 
 require("Utils.Convert");
 require("Utils.UserFile");
 require("Utils.LocalFile");
 
+require("Audio.Sound");
 require("Audio.Effect");
 require("Audio.Music");
-require("Audio.Sound");
+
+require("Others.Alarm");
+require("Others.Label");
+
+require("FSM");
+
+require("Math.Algorithm.RatePool");
+require("Math.Algorithm.Stack");
+
+require("Math.Geometry.IShape");
+require("Math.Geometry.Circle");
+require("Math.Geometry.Polygon");
+require("Math.Geometry.Sector");
+require("Math.Geometry.Vector");
 
 require("Base.Scene.BaseScene");
 require("Base.Scene.ILoadingScene");
-
 -- require("Application");
 
 --require("Module.Init");
@@ -149,10 +159,10 @@ if config.RequireZipEnabled then
         local interFileName = zFile:sub(where + 1,pwdPos and pwdPos - 1 or -1);
         ret = "No file found in zip file.File name is "..interFileName;
         if interFileName:sub(-5) == ".luac" or interFileName:sub(-4) == ".lua" then
-            ret = ReadZipFile(zipFile,zFile:sub(1,pwdPos and pwdPos - 1 or -1),interFileName,pwd)
+            ret = ReadZipFile(zipFile,zFile:sub(1,pwdPos and pwdPos - 1 or -1),interFileName,pwd);
         else
             for _,fileExt in pairs({".luac",".lua",""}) do
-                ret = ReadZipFile(zipFile,zFile:sub(1,pwdPos and pwdPos - 1 or -1),interFileName..fileExt,pwd)
+                ret = ReadZipFile(zipFile,zFile:sub(1,pwdPos and pwdPos - 1 or -1),interFileName..fileExt,pwd);
                 if "function" == type(ret) then
                     break;
                 end
@@ -165,9 +175,9 @@ if config.RequireZipEnabled then
 end
 
 if config.RequireHttpEnabled then
-    local RequireHttpInvoker = class(syx.HttpInvoker);
-    function RequireHttpInvoker:__init__()
-        syx.HttpInvoker.__init__(self);
+    local RequireHttpInvoker = class(cc.HttpInvoker);
+    function RequireHttpInvoker:ctor()
+        cc.HttpInvoker.ctor(self);
         self._timeout = 3000;
         self._async = false;
     end

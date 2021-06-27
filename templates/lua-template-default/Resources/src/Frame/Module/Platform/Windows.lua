@@ -10,8 +10,8 @@
 local HttpInvoker = require("Network.HttpInvoker");
 local LocationInvoker = class(HttpInvoker);
 
-function LocationInvoker:__init__(callback)
-    HttpInvoker.__init__(self);
+function LocationInvoker:ctor(callback)
+    HttpInvoker.ctor(self);
     self.Timeout = 3000;
     self.Params = {
         ak = "xujZ0htdZtDXZz3eGTvGw0m3RUznBN7x",

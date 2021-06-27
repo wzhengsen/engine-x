@@ -18,17 +18,12 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
---[[
-    File:       一些和转换相关的封装。
-    Content:    如阿拉伯数字转中文数，数字的千分位截断，
-                一些类型强制转换等。
-]]
+-- 一些和转换相关的封装。
+-- 如阿拉伯数字转中文数，数字的千分位截断，一些类型强制转换等。
 
 ---将数字或任意可以转换为数字的内容以千分位截断，不能转换的内容返回nil。
----
 ---@param num any
 ---@return string?
----
 function cc.ToKilodigit(num)
     num = tonumber(num);
     if not num then
@@ -82,9 +77,11 @@ local ChineseNumberLower = {
     [100000000] = "亿"
 };
 
---[[
-    Func:   小数部分转换
-]]
+
+---小数部分转换
+---@param numStr string
+---@param b boolean
+---@return string
 local function TransfromFloat2Chinese(numStr,b)
     local cTab = b and ChineseNumberUpper or ChineseNumberLower;
 
@@ -97,9 +94,11 @@ local function TransfromFloat2Chinese(numStr,b)
     return table.concat(ret);
 end
 
---[[
-    Func:   整数部分转换
-]]
+---整数部分转换
+---@param num number
+---@param np number
+---@param b boolean
+---@return string
 local function TransfromInt2Chinese(num,np,b)
     local cTab = b and ChineseNumberUpper or ChineseNumberLower;
     if 0 == num then
@@ -143,11 +142,9 @@ local function TransfromInt2Chinese(num,np,b)
 end
 
 ---将数字或任意可以转换为数字的内容转换为中文，不能转换的内容将返回nil。
----
 ---@param num any
 ---@param b? boolean {true}是否使用大写转换
 ---@return string?
----
 function cc.ToChinese(num,b)
     num = tonumber(num);
     if not num then
@@ -192,15 +189,12 @@ function cc.ToChinese(num,b)
     return iNumStr .. fNumStr;
 end
 
---[[
-    一些基本类型转换。
-]]
+
+---一些基本类型转换。
 
 ---转换任意值为布尔值，无论该值能不能被转换，一定会返回布尔值，且不会抛出错误。
----
 ---@param obj any
 ---@return boolean
----
 function cc.ToBoolean(obj)
     if obj then
         return true;
@@ -209,38 +203,34 @@ function cc.ToBoolean(obj)
 end
 
 ---转换任意值为数字，无论该值能不能被转换，一定会返回数字类型，且不会抛出错误。
----
 ---@param num any
 ---@return number
----
 function cc.ToNumber(num)
     return tonumber(num) or 0;
 end
 
 ---转换任意值为双精度浮点型，无论该值能不能被转换，一定会返回双精度浮点型，且不会抛出错误。
----
 ---@param num any
 ---@return number
----
 function cc.ToDouble(num)
     return (tonumber(num) or 0) + 0.0;
 end
 
 ---转换任意值为整型，无论该值能不能被转换，一定会返回整型，且不会抛出错误。
----
 ---@param num any
 ---@return number
----
 function cc.ToInteger(num)
-    return math.floor(tonumber(num) or 0);
+    num = tonumber(num);
+    if nil == num then
+        return 0;
+    end
+    return math.tointeger(math.floor(num));
 end
 
 ---转换任意值为字符串，无论该值能不能被转换，一定会返回字符串，且不会抛出错误。
 ---特别的，nil将被转换为""，而不是"nil"，这和lua的默认行为不同。
----
 ---@param str any
 ---@return string
----
 function cc.ToString(str)
     if str == nil then return ""; end
     return tostring(str);

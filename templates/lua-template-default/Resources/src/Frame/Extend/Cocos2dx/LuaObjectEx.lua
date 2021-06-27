@@ -20,20 +20,8 @@
 
 local LuaObject = cc.LuaObject;
 
-function LuaObject:__del__(_)end
+function LuaObject:dtor(_)end
 
-function LuaObject.__properties__()
-    return {
-        r = {
-        },
-        w = {
-            EnableDelEvent = function (self,val)
-                if val then
-                    self.DeleteHandler = class.__DefaultDelete;
-                else
-                    self.DeleteHandler = nil;
-                end
-            end
-        }
-    };
+function LuaObject.set:EnableDelEvent(val)
+    self:SetDeleteHandler(val and class.CallDel or nil);
 end

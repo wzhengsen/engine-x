@@ -18,12 +18,6 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
---[[
-    Auth:   wzhengsen
-    Date:   2020.08.15
-    Desc:   重写一些lua io库函数。
-]]
-
 if os.Windows then
     local _open = io.open;
     ---

@@ -1,6 +1,4 @@
 --[[
-
-Copyright (c) 2014-2017 Chukong Technologies Inc.
 Copyright (c) 2021 wzhengsen.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,17 +18,13 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
-
-]]
---[[
-    File:   Music
-    Desc:   继承自Sound，由于背景音乐的特性，该类使用单例；
-            某些Sound方法在继承后将不可被Music访问
 ]]
 
 local Sound = require("Audio.Sound");
 local UserFile = require("Utils.UserFile");
-local Music = class(Sound,class.Singleton);
+---继承自Sound，由于背景音乐的特性，该类使用单例；
+---某些Sound方法在继承后将不可被Music访问。
+local Music = class(Sound);
 
 --[[
     禁止访问的方法
@@ -38,19 +32,22 @@ local Music = class(Sound,class.Singleton);
 local forbiddenMethod = function()
     error("Forbidden!");
 end
-Music.PauseAll              = forbiddenMethod;
-Music.ResumeAll             = forbiddenMethod;
-Music.StopAll               = forbiddenMethod;
-Music.Uncache               = forbiddenMethod;
-Music.UncacheAll            = forbiddenMethod;
-Music.Preload               = forbiddenMethod;
-Music.GetMaxAudioInstance   = forbiddenMethod;
-Music.SetMaxAudioInstance   = forbiddenMethod;
-Music.SetLoop               = forbiddenMethod;
-Music.IsLoop                = forbiddenMethod;
+Music.static.private.PauseAll              = forbiddenMethod;
+Music.static.private.ResumeAll             = forbiddenMethod;
+Music.static.private.StopAll               = forbiddenMethod;
+Music.static.private.Uncache               = forbiddenMethod;
+Music.static.private.UncacheAll            = forbiddenMethod;
+Music.static.private.Preload               = forbiddenMethod;
+Music.static.private.GetMaxAudioInstance   = forbiddenMethod;
+Music.static.private.SetMaxAudioInstance   = forbiddenMethod;
+Music.private.set.Loop                     = forbiddenMethod;
+Music.private.get.Loop                     = forbiddenMethod;
+
+Music.static.protected._DefaultVolume = UserFile.MusicDefaultVolume and math.Limit(cc.ToInteger(UserFile.MusicDefaultVolume),0,1) or Sound.DefaultVolume or 0.8;
+Music.static._Silence = UserFile.MusicSilence or false;
 
 -- 音乐播放模式
-Music.PlayMode = {
+Music.static.PlayMode = enum {
     -- 单曲单次
     SingleOnce = {},
     -- 单曲循环
@@ -59,113 +56,109 @@ Music.PlayMode = {
     ListRandom = {},
     -- 列表循环
     ListLoop = {}
-}
+};
 
-function Music:__init__()
-    Sound.__init__(self)
-    self._sVol = math.Limit(Music.GetDefaultVolume(),0,1);
-    self._sFilePath = "";
-    self._playList = {};
-    self._playMode = Music.PlayMode.ListLoop;
-
-    -- 当前播放序列
-    self._curPlayIndex = nil;
-    self._cfb = function(_,str)
-        if self._mcfb then
-            self:_mcfb(str);
+Music.protected.sVol = math.Limit(Music.DefaultVolume,0,1);
+Music.protected.sFilePath = "";
+Music.protected.playList = {};
+Music.protected.playMode = Music.PlayMode.ListLoop;
+-- 当前播放序列
+Music.protected.curPlayIndex = nil;
+Music.private.mcfb = nil;
+function Music:ctor()
+    Sound.ctor(self)
+    self.sVol = math.Limit(Music.DefaultVolume,0,1);
+    self.cfb = function(_,str)
+        if self.mcfb then
+            self:mcfb(str);
         end
 
-        if self._playMode == Music.PlayMode.ListRandom
-        or self._playMode == Music.PlayMode.ListLoop then
+        if self.playMode == Music.PlayMode.ListRandom
+        or self.playMode == Music.PlayMode.ListLoop then
             self:Next();
         end
     end
 end
 
---[[
-    Func:   设置播放列表
-    Param:  table               背景音乐只会播放列表中的文件
-            boolean{false}      是否预载
-]]
+function Music.__singleton__()
+    return Music.new();
+end
+
+---设置播放列表。
+---@param pList table 背景音乐只会播放列表中的文件。
+---@param bPreload? boolean {false} 是否预载。
 function Music:SetList(pList,bPreload)
-    self._playList = pList;
+    self.playList = pList;
     if bPreload then
         Sound.Preload(pList);
     end
 end
 
-function Music:GetList()
-    return self._playList;
+Music.set.List = Music.SetList;
+
+function Music.get:List()
+    return self.playList;
 end
 
---[[
-    Func:   设置播放模式
-    Param:  table{Music.PlayMode}
-]]
-function Music:SetMode(mode)
-    self._playMode = mode;
+---@alias Music.PlayMode integer
+---设置播放模式
+---@param mode Music.PlayMode
+function Music.set:Mode(mode)
+    self.playMode = mode;
 end
 
-function Music:GetMode()
-    return self._playMode;
+function Music.get:Mode()
+    return self.playMode;
 end
 
---[[
-    Func:   播放下一首
-    Return: boolean     是否成功切换至下一首
-]]
+---播放下一首。
+---@return boolean 是否成功切换至下一首。
 function Music:Next()
     self:Stop();
-    local listLen = self._playList and #self._playList or 0;
+    local listLen = self.playList and #self.playList or 0;
     if listLen == 0 then return false; end
 
-    self._sLoop = self._playMode == Music.PlayMode.SingleLoop;
-    if not self._curPlayIndex or self._curPlayIndex >= listLen then
-        self._curPlayIndex = 1;
+    self.sLoop = self.playMode == Music.PlayMode.SingleLoop;
+    if not self.curPlayIndex or self.curPlayIndex >= listLen then
+        self.curPlayIndex = 1;
     else
-        if self._playMode == Music.PlayMode.ListRandom then
+        if self.playMode == Music.PlayMode.ListRandom then
             -- 列表随机采用随机模式
-            self._curPlayIndex = math.random(1,listLen);
+            self.curPlayIndex = math.random(1,listLen);
         else
-            self._curPlayIndex = self._curPlayIndex + 1;
+            self.curPlayIndex = self.curPlayIndex + 1;
         end
     end
 
-    self._sFilePath = self._playList[self._curPlayIndex];
+    self.sFilePath = self.playList[self.curPlayIndex];
     return self:Play();
 end
 
 function Music:Play(...)
-    if Music.GetSilence() then
+    if Music.Silence then
         return false;
     end
-    if not self._curPlayIndex then
+    if not self.curPlayIndex then
         return self:Next();
     end
     return Sound.Play(self,...);
 end
 
-function Music:SetFinishHandler(fcb)
-    self._mcfb = fcb;
+function Music.set:FinishHandler(fcb)
+    self.mcfb = fcb;
 end
 
-function Music.SetDefaultVolume(vol)
+function Music.static.set.DefaultVolume(vol)
     vol = math.Limit(vol,0,1);
     UserFile.MusicDefaultVolume = vol;
     Music._DefaultVolume = vol;
 end
 
-function Music.GetDefaultVolume()
-    local dVol = rawget(Music,"_DefaultVolume") or UserFile.MusicDefaultVolume or Sound.DefaultVolume or 0.8;
-    Music._DefaultVolume = dVol;
-    return dVol;
+function Music.get.DefaultVolume()
+    return Music._DefaultVolume;
 end
 
---[[
-    Func:   设置是否静音
-    Param:  boolean
-]]
-function Music.SetSilence(b)
+function Music.static.set.Silence(b)
     b = cc.ToBoolean(b);
     if cc.ToBoolean(Music._Silence) == b then
         return;
@@ -177,36 +170,10 @@ function Music.SetSilence(b)
     end
 end
 
-function Music.GetSilence()
+function Music.static.get.Silence()
     -- 主音量或音乐音量任意一个静音，都为静音
-    local sil = Sound.Silence;
-    if sil then
-        return sil;
-    end
-    if nil == Music._Silence then
-        Music._Silence = UserFile.MusicSilence or false;
-    end
-    return Music._Silence;
-end
-
-function Music.__properties__()
-    return {
-        r = {
-            DefaultVolume = Music.GetDefaultVolume,
-            Silence = Music.GetSilence,
-            List = Music.GetList,
-            Mode = Music.GetMode
-        },
-        w = {
-            FinishHandler = Music.SetFinishHandler,
-            DefaultVolume = Music.SetDefaultVolume,
-            Silence = Music.SetSilence,
-            List = Music.SetList,
-            Mode = Music.SetMode
-        }
-    };
+    return Sound.Silence or Music._Silence;
 end
 
 cc.Music = Music;
-
 return Music;

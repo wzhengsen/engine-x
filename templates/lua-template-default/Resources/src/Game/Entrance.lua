@@ -21,7 +21,7 @@ function Entrance.__properties__()
     };
 end
 
-function Entrance:__init__()
+function Entrance:ctor()
     -- 游戏初始化代码 --
     local path = package.path;
     path = path .. ";src/Game/?.lua";

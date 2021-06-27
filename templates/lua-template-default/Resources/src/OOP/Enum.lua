@@ -26,9 +26,10 @@ local select = select;
 
 local Config = require("OOP.Config");
 local Version = Config.Version;
+local i18n = require("OOP.i18n");
 local EnumBehavior = Config.EnumBehavior;
 local Auto = Config.Auto;
-local AllEnumerations = require("OOP.Variant.Internal");
+local AllEnumerations = require("OOP.Variant.Internal").AllEnumerations;
 local enum = setmetatable({},{
     __call = function (e,...)
         return e.New(...);
@@ -40,7 +41,7 @@ if Config.Debug then
     enum[Auto] = function(...)
         local len = select("#",...)
         if len > 1 then
-            error(("%s function can't receive more than one parameters."):format(Auto));
+            error((i18n"%s function can't receive more than one parameters."):format(Auto));
         end
         AutoIdx = len == 0 and AutoIdx + 1 or ...;
         return AutoIdx;
@@ -49,9 +50,9 @@ if Config.Debug then
     function enum.New(first,...)
         local fT = type(first);
         local isString = fT == "string"
-        assert(isString or fT == "table","Only strings or tables can be used to generate a enumeration.")
+        assert(isString or fT == "table",i18n"Only strings or tables can be used to generate a enumeration.")
         if not isString then
-            assert(select("#",...) == 0,"Excess parameters.");
+            assert(select("#",...) == 0,i18n"Excess parameters.");
         end
         local e = isString and {} or first;
         if isString then
@@ -74,7 +75,7 @@ if Config.Debug then
                         warn("You can't edit a enumeration.");
                     end
                 elseif EnumBehavior == 1 then
-                    error("You can't edit a enumeration.");
+                    error(i18n"You can't edit a enumeration.");
                 end
             end
         });

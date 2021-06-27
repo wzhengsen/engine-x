@@ -23,12 +23,13 @@ local setmetatable = setmetatable;
 local type = type;
 local pcall = pcall;
 local error = error;
-local remove = table.remove;
+local next = next;
 
 local Config = require("OOP.Config");
 local Debug = Config.Debug;
 local ctor = Config.ctor;
-local __cls__ = Config.__cls__;
+
+local i18n = require("OOP.i18n");
 
 local Functions = Debug and require("OOP.Variant.DebugFunctions") or require("OOP.Variant.BaseFunctions");
 local ClassesBases = Functions.ClassesBases;
@@ -44,7 +45,7 @@ local RegisterHandlersAndMembers = Functions.RegisterHandlersAndMembers;
 local AttachClassFunctions = Functions.AttachClassFunctions;
 local ClassesBanNew = Functions.ClassesBanNew;
 local ClassesMetas = Functions.ClassesMetas;
-local NamedClasses = Functions.NamedClasses;
+local VirtualClassesMembers = Functions.VirtualClassesMembers;
 
 local ClassMeta = {
     __index = Functions.ClassGet,
@@ -75,7 +76,11 @@ end
 local function CreateClassNew(cls,clsAll,handlers,members)
     return function(...)
         if Debug then
-            assert(not ClassesBanNew[cls],"The base classes constructor is not accessible.");
+            assert(not ClassesBanNew[cls],i18n"The base classes constructor is not accessible.");
+            local key = next(VirtualClassesMembers[cls]);
+            if nil ~= key then
+                error((i18n"Cannot construct class with unoverridden pure virtual functions. - %s"):format(key));
+            end
         end
         ClassCreateLayer = ClassCreateLayer + 1;
         local ok,obj,all = pcall(CreateClassObject,cls,...);

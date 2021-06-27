@@ -1,6 +1,4 @@
 --[[
-
-Copyright (c) 2014-2017 Chukong Technologies Inc.
 Copyright (c) 2021 wzhengsen.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,34 +18,29 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+]]
 
-]]
---[[
-    Auth:       wzhengsen
-    Date:       2020.03.18
-    Content:    一个并不是那么精确的计时器的封装。
-]]
+---一个并不是那么精确的计时器的封装。
 local Alarm = class();
 
-Alarm.Forever = 0;
+Alarm.static.Forever = 0;
+Alarm.protected.curRound = 0;
+Alarm.protected.time = nil;
+Alarm.private.uniStr = nil;
 
---[[
-    Param:      number              间隔时间，以毫秒为单位。
-                function(sender)
-
-                number{1}           重复次数，小于等于0表示永远。
-]]
-function Alarm:__init__(time,func,rep)
+---@param time number 间隔时间，以毫秒为单位。
+---@param func function
+---@param rep integer {1}重复次数，小于等于0表示永远。
+function Alarm:ctor(time,func,rep)
     rep = rep or 1;
 
-    self.__curRound = 0;
-    self.__time = time;
-    self.__uniStr = string.Unique();
+    self.time = time;
+    self.uniStr = string.Unique();
     D.Scheduler:Schedule(function(_)
         local roundOver = false;
-        self.__curRound = self.__curRound + 1;
+        self.curRound = self.curRound + 1;
         if rep > 0 then
-            if self.__curRound >= rep then
+            if self.curRound >= rep then
                 roundOver = true;
             end
         end
@@ -57,26 +50,18 @@ function Alarm:__init__(time,func,rep)
         if roundOver and not class.IsNull(self) then
             self:delete();
         end
-    end,D,time / 1000,false,self.__uniStr);
+    end,D,time / 1000,false,self.uniStr);
 end
 
-function Alarm:__del__()
-    if self.__uniStr then
-        D.Scheduler:Unschedule(self.__uniStr,D);
-        self.__uniStr = nil;
+function Alarm:dtor()
+    if self.uniStr then
+        D.Scheduler:Unschedule(self.uniStr,D);
+        self.uniStr = nil;
     end
 end
-
-function Alarm.__properties__()
-    return {
-        r = {
-            Round = function(self)
-                return self.__curRound;
-            end
-        }
-    };
+function Alarm.get:Round()
+    return self.curRound;
 end
 
 cc.Alarm = Alarm;
-
 return Alarm;

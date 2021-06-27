@@ -69,7 +69,7 @@ function Application.__properties__()
     };
 end
 
-function Application:__init__()
+function Application:ctor()
     -- 监听进入前台后台事件。
     local eventDispatcher = cc.Director.Instance.EventDispatcher;
     self._lsrAWEF = eventDispatcher:AddCustomEventListener(

@@ -20,6 +20,7 @@
 -- THE SOFTWARE.
 
 local Config = require("OOP.Config");
+local i18n = require("OOP.i18n");
 local modf = math.modf;
 local assert = assert;
 local floor = math.floor;
@@ -27,7 +28,7 @@ local bits = Config.Version == 5.2 and bit32 or {
     band = function (a,b)
         local _,floatA = modf(a);
         local _,floatB = modf(b);
-        assert(floatA == 0 and floatB == 0 and a >= 0 and b >= 0 and a ~= math.huge and b ~= math.huge,"Illegal operand.");
+        assert(floatA == 0 and floatB == 0 and a >= 0 and b >= 0 and a ~= math.huge and b ~= math.huge,i18n"Illegal operand.");
         local ret = 0;
         for i = 1,32 do
             if a == 0 or b == 0 then
@@ -44,7 +45,7 @@ local bits = Config.Version == 5.2 and bit32 or {
     bor = function (a,b)
         local _,floatA = modf(a);
         local _,floatB = modf(b);
-        assert(floatA == 0 and floatB == 0 and a >= 0 and b >= 0 and a ~= math.huge and b ~= math.huge,"Illegal operand.");
+        assert(floatA == 0 and floatB == 0 and a >= 0 and b >= 0 and a ~= math.huge and b ~= math.huge,i18n"Illegal operand.");
         local ret = 0;
         for i = 1,32 do
             if a == 0 and b == 0 then

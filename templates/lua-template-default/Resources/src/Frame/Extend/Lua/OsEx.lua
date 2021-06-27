@@ -18,12 +18,6 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
---[[
-    Module:	os
-    Auth:	wzhengsen
-    Date:	2019年08月04日
-    Desc:	为os库新增了一些方法
-]]
 -- 令os继承自己，并使其不能实例化，主要是为了使用__properties__方法。
 ---@class osex
 ---@field Platform integer
@@ -37,65 +31,32 @@
 ---@field Apple boolean
 ---@field Linux boolean
 ---@field Mobile boolean
+---@field public private any
+---@field public get any
+---@field public static any
+---@field public const any
 os = class(os);
-os.new = nil;
+function os.private:ctor()end
+function os.private:dtor()end
+function os.__new__()end
 
 os.PlatformType = cc.ApplicationProtocol.Platform;
 os.LanguageType = cc.LanguageType;
 
 local app = cc.Application.Instance;
 local targetPlatform<const> = app:GetTargetPlatform();
-local currentLanguage<const> = app:GetCurrentLanguage();
 
-local isWindows<const>  = targetPlatform == os.PlatformType.OS_WINDOWS;
-local isAndroid<const>  = targetPlatform == os.PlatformType.OS_ANDROID;
-local isMac<const>      = targetPlatform == os.PlatformType.OS_MAC;
-local isIphone<const>   = targetPlatform == os.PlatformType.OS_IPHONE;
-local isIpad<const>     = targetPlatform == os.PlatformType.OS_IPAD;
-local isIos<const>      = isIphone or isIpad;
-local isApple<const>    = isIos or isMac;
-local isLinux<const>    = targetPlatform == os.PlatformType.OS_LINUX;
-local isMobile<const>   = isAndroid or isIos;
-
-function os.__properties__()
-    return {
-        r = {
-            Platform = function ()
-                return targetPlatform;
-            end,
-            Language = function ()
-                return currentLanguage;
-            end,
-            Windows = function ()
-                return isWindows;
-            end,
-            Android = function ()
-                return isAndroid;
-            end,
-            Mac = function ()
-                return isMac;
-            end,
-            Iphone = function ()
-                return isIphone;
-            end,
-            Ipad = function ()
-                return isIpad;
-            end,
-            Ios = function ()
-                return isIos;
-            end,
-            Apple = function ()
-                return isApple;
-            end,
-            Linux = function ()
-                return isLinux;
-            end,
-            Mobile = function ()
-                return isMobile;
-            end
-        }
-    };
-end
+os.static.const.Platform = targetPlatform;
+os.static.const.Language = app:GetCurrentLanguage();
+os.static.const.Windows = targetPlatform == os.PlatformType.OS_WINDOWS;
+os.static.const.Android = targetPlatform == os.PlatformType.OS_ANDROID;
+os.static.const.Mac = targetPlatform == os.PlatformType.OS_MAC;
+os.static.const.Iphone = targetPlatform == os.PlatformType.OS_IPHONE;
+os.static.const.Ipad = targetPlatform == os.PlatformType.OS_IPAD;
+os.static.const.Ios = targetPlatform == os.PlatformType.OS_IPHONE or targetPlatform == os.PlatformType.OS_IPAD;
+os.static.const.Apple = targetPlatform == os.PlatformType.OS_IPHONE or targetPlatform == os.PlatformType.OS_IPAD or targetPlatform == os.PlatformType.OS_MAC;
+os.static.const.Linux = targetPlatform == os.PlatformType.OS_LINUX;
+os.static.const.Mobile = targetPlatform == os.PlatformType.OS_ANDROID or targetPlatform == os.PlatformType.OS_IPHONE or targetPlatform == os.PlatformType.OS_IPAD;
 
 if os.Windows then
     local _execute = os.execute;

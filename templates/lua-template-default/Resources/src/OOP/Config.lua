@@ -107,7 +107,9 @@ local Config = {
         static = "static",
         const = "const",
 
-        final = "final"
+        final = "final",
+
+        virtual = "virtual"
     },
 
     -- If __singleton__ is defined,
@@ -161,6 +163,10 @@ local Config = {
     -- When the number of holes in the event response objects reaches a certain number,
     -- the list of objects is rearranged to optimise speed.
     HoleLimit = 15,
+
+    -- The language configuration, with a nil value, means that English is used by default.
+    -- Currently only English and Chinese are available, use "zh" for Chinese.
+    Language = "zh",
 
     --****************Functional fields end****************
 

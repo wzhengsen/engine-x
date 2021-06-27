@@ -18,30 +18,26 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
---[[
-    Auth:   wzhengsen
-    Data:   2020.09.14
-    Desc:   VideoPlayer监听回到前台后台事件，以暂停或继续。
-]]
-local VideoPlayer = class(ccui.VideoPlayer);
-ccui.VideoPlayer = VideoPlayer;
+local VideoPlayer = ccui.VideoPlayer;
 
-function VideoPlayer.Handler:OnAppEnterForeground()
-    if self._pauseOnBackground then
-        self._pauseOnBackground = nil;
+VideoPlayer.private.pauseOnBackground = nil;
+
+function VideoPlayer.handlers:OnAppEnterForeground()
+    if self.pauseOnBackground then
+        self.pauseOnBackground = nil;
         self:Recover();
     end
 end
 
-function VideoPlayer.Handler:OnAppEnterBackground()
+function VideoPlayer.handlers:OnAppEnterBackground()
     if self.Playing then
         self:Suspend();
-        self._pauseOnBackground = true;
+        self.pauseOnBackground = true;
     end
 end
 
 if os.Linux then
-    function VideoPlayer.Handler:OnKeyDown(key)
+    function VideoPlayer.handlers:OnKeyDown(key)
         if key == cc.EventKeyboard.KeyCode.KEY_ENTER and self.UserInputEnabled then
             if self.Playing then
                 self:Suspend();
@@ -51,5 +47,3 @@ if os.Linux then
         end
     end
 end
-
-return VideoPlayer;

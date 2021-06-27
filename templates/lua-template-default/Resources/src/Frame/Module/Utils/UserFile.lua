@@ -31,6 +31,7 @@ local type = type;
 local rawset = rawset;
 local tostring = tostring;
 local UserDefault = cc.UserDefault;
+
 --直接使用UserFile来操作UserDefault的文件。
 --该类不可实例化，其所有方法和属性都是静态的。
 local UserFile = {

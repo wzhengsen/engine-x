@@ -40,20 +40,20 @@ local error = error;
 local AllFunctions = setmetatable({},{__mode = "k"});
 local AccessStack = require("OOP.Variant.Internal").AccessStack;
 local function FunctionWrapper(cls,f)
-    if AllFunctions[f] then
-        return f;
+    local newF = AllFunctions[f]
+    if nil == newF then
+        newF = function(...)
+            insert(AccessStack,cls);
+            local ret = {pcall(f,...)};
+            remove(AccessStack);
+            if not ret[1] then
+                error(ret[2]);
+            end
+            return unpack(ret,2);
+        end;
+        AllFunctions[newF] = newF;
+        AllFunctions[f] = newF;
     end
-    local newF = function(...)
-        insert(AccessStack,cls);
-        local ret = {pcall(f,...)};
-        remove(AccessStack);
-        if not ret[1] then
-            error(ret[2]);
-        end
-        return unpack(ret,2);
-    end;
-    AllFunctions[newF] = true;
-    AllFunctions[f] = true;
     return newF;
 end
 

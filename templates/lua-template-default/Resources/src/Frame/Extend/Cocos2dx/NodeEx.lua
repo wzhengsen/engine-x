@@ -40,7 +40,7 @@ local function SeekNodeByTag(self,nTag)
     end
 end
 
-local function SeekNode(self,sn)
+function Node:__idiv__(sn)
     if type(sn) == "string" then
         local node = nil;
         self:EnumerateChildren("//"..sn,function(sNode)
@@ -53,19 +53,13 @@ local function SeekNode(self,sn)
     end
 end
 
-local function SeekNodeInSelf(self,sn)
+function Node:__div__(sn)
     if type(sn) == "string" then
         return self:GetChildByName(sn);
     elseif type(sn) == "number" then
         return self:GetChildByTag(sn);
     end
 end
-
--- 整除运算指向SeekNode
-Node.__idiv__ = SeekNode;
--- 除法运算指向SeekNodeInSelf
-Node.__div__ = SeekNodeInSelf;
-
 
 ---置于父级顶部
 ---
@@ -126,7 +120,7 @@ end
 local LayoutComponent = ccui.LayoutComponent;
 local HorizontalEdge = LayoutComponent.HorizontalEdge;
 local VerticalEdge = LayoutComponent.VerticalEdge;
-local function Layout(self,layoutParam)
+function Node:Layout(layoutParam)
     local pType = type(layoutParam);
     if "table" == pType then
         local layout = LayoutComponent.BindLayoutComponent(self);
@@ -226,33 +220,15 @@ local function Layout(self,layoutParam)
     end
 end
 
-function Node.__properties__()
-    return {
-        w = {
-            -- 考虑到效率问题，OnUpdate应当独立开启，且不建议大量使用。
-            EnableUpdateEvent = function (self,val)
-                if val then
-                    self.OnUpdateHandler = class.Handler(self,self.OnUpdate);
-                else
-                    self.OnUpdateHandler = nil;
-                end
-            end,
-            EnableEvents = function (self,val)
-                if val then
-                    self.OnEnterHandler = class.Handler(self,self.OnEnter);
-                    self.OnExitHandler = class.Handler(self,self.OnExit);
-                    self.OnEnterTransitionDidFinishHandler = class.Handler(self,self.OnEnterTransitionDidFinish);
-                    self.OnExitTransitionDidStartHandler = class.Handler(self,self.OnExitTransitionDidStart);
-                    self.OnCleanUpHandler = class.Handler(self,self.OnCleanUp);
-                else
-                    self.OnEnterHandler = nil;
-                    self.OnExitHandler = nil;
-                    self.OnEnterTransitionDidFinishHandler = nil;
-                    self.OnExitTransitionDidStartHandler = nil;
-                    self.OnCleanUpHandler = nil;
-                end
-            end,
-            Layout = Layout
-        }
-    };
+function Node.set:EnableUpdateEvent(val)
+    -- 考虑到效率问题，OnUpdate应当独立开启，且不建议大量使用。
+    self.OnUpdateHandler = val and self.OnUpdate or nil;
+end
+
+function Node.set:EnableEvents(val)
+    self.OnEnterHandler = val and self.OnEnter or nil;
+    self.OnExitHandler = val and self.OnExit or nil;
+    self.OnEnterTransitionDidFinishHandler = val and self.OnEnterTransitionDidFinish or nil;
+    self.OnExitTransitionDidStartHandler = val and self.OnExitTransitionDidStart or nil;
+    self.OnCleanUpHandler = val and self.OnCleanUp or nil;
 end

@@ -18,7 +18,7 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
-
+local setmetatable = setmetatable;
 local Config = require("OOP.Config");
 local Debug = Config.Debug;
 local WeakTable = {__mode = "k"};
@@ -26,22 +26,24 @@ return {
     NamedClasses = {},
     RequireInheriteClasses = {},
     AllClasses = setmetatable({},WeakTable),
-    FinalClasses = setmetatable({},WeakTable),
     AllEnumerations = setmetatable({},WeakTable),
     ClassesReadable = setmetatable({},WeakTable),
     ClassesWritable = setmetatable({},WeakTable),
     ClassesHandlers = setmetatable({},WeakTable),
     ClassesBases = setmetatable({},WeakTable),
     ClassesMembers = setmetatable({},WeakTable),
-    FinalClassesMembers = setmetatable({},WeakTable),
     ClassesMetas = setmetatable({},WeakTable),
     ClassesNew = setmetatable({},WeakTable),
     ClassesDelete = setmetatable({},WeakTable),
     ClassesSingleton = setmetatable({},WeakTable),
     ObjectsAll = setmetatable({},WeakTable),
     ObjectsCls = setmetatable({},WeakTable),
-    ClassesAll = setmetatable({},WeakTable);
+    ClassesStaticProperties = setmetatable({},WeakTable),
     ClassesPermisssions = Debug and setmetatable({},WeakTable) or nil,
+    FinalClasses = Debug and setmetatable({},WeakTable) or nil,
+    ClassesAll = Debug and setmetatable({},WeakTable) or nil,
+    FinalClassesMembers = Debug and setmetatable({},WeakTable) or nil,
+    VirtualClassesMembers = Debug and setmetatable({},WeakTable) or nil,
     ClassesFriends = Debug and setmetatable({},WeakTable) or nil,
     ClassesBanNew = Debug and setmetatable({},WeakTable) or nil,
     ClassesBanDelete = Debug and setmetatable({},WeakTable) or nil,
@@ -66,8 +68,6 @@ return {
         [Config.is] = true,
         [Config.handlers] = true,
         [Config.__new__] = true,
-        [Config.__delete__] = true,
-        [Config.set] = true,
-        [Config.get] = true
+        [Config.__delete__] = true
     };
 };

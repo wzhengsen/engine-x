@@ -1,27 +1,42 @@
 --[[
-    Auth:       wzhengsen
-    Date:       2020.01.08
-    Content:    几何形状类接口。
+Copyright (c) 2021 wzhengsen.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 ]]
+
+local Polar = math.Polar;
+local Distance = math.Distance;
+---几何形状类接口。
 local IShape = class();
 
--- 接口类，不能实例化。
-IShape.new = nil;
+IShape.protected.shapeLocsX = {};
+IShape.protected.shapeLocsY = {};
 
--- 判断是否包含一个点，纯虚函数。
+---判断是否包含一个点，纯虚函数。
 IShape.IsPointIn = 0;
 
-function IShape:__init__()
-    self._locX = {};
-    self._locY = {};
-end
-
---	Func:	相对移动
---	Param:	x偏移，y轴偏移
----------------------------------------------
+---相对移动。
+---@param x number
+---@param y number
 function IShape:MoveBy(x,y)
-    local locX = self._locX;
-    local locY = self._locY;
+    local locX = self.shapeLocsX;
+    local locY = self.shapeLocsY;
 
     for i = 1,#locX do
         locX[i] = locX[i] + x;
@@ -31,17 +46,19 @@ function IShape:MoveBy(x,y)
     end
 end
 
---	Func:	旋转
---	Param:	旋转轴点x,旋转轴点y,弧度
---	Desc:	增量旋转
----------------------------------------------
+---绕xy点增量旋转。
+---@param x number
+---@param y number
+---@param rad number
 function IShape:Rotate(x,y,rad)
-    local locX = self._locX;
-    local locY = self._locY;
+    local locX = self.shapeLocsX;
+    local locY = self.shapeLocsY;
 
     for i = 1,#locX do
-        locX[i],locY[i] = math.Polar(x,y,rad,math.Distance(x,y,locX[i],locY[i]));
+        locX[i],locY[i] = Polar(x,y,rad,Distance(x,y,locX[i],locY[i]));
     end
 end
 
+cc.Geometry = cc.Geometry or {};
+cc.Geometry.IShape = IShape;
 return IShape;

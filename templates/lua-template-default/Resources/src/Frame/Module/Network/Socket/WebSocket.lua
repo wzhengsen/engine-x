@@ -10,9 +10,9 @@
     Content:    重构cc.WebSocket，使用sol绑定。
 ]]
 
-local WebSocket = class(cc.WebSocket);
+local WebSocket = cc.WebSocket;
 
-function WebSocket:__init__()
+function WebSocket:ctor()
     self.OpenHandler = function (sender)
         if not sender:OnOpen() then
             Event.WebSocketOpen(sender);
@@ -46,5 +46,3 @@ end
 
 function WebSocket:OnError(errorCode)
 end
-
-return WebSocket;

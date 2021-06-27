@@ -18,21 +18,16 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
---[[
-    Auth:   wzhengsen
-    Date:   2020.08.15
-    Desc:   重写一些lua库函数和增加一些库函数。
-]]
 
 local type = type;
 local table = table;
 
+-- 重写一些lua库函数和增加一些库函数。
+
 ---遍历表，且可遍历嵌套表，返回3个值：当前表，当前键，当前值。
 ---不会触发__pairs元方法。
----
 ---@param t table
 ---@return function
----
 function _G.apairs(t)
     local curTable = t;
     -- 记录即将被遍历的表。
@@ -57,10 +52,8 @@ function _G.apairs(t)
 end
 
 ---以不会触发__pairs元方法的方式遍历表。
----
 ---@param t table
 ---@return function
----
 function _G.rpairs(t)
     local key,value = nil,nil;
     return function ()
@@ -70,27 +63,13 @@ function _G.rpairs(t)
 end
 
 if os.Windows then
-    local _print = print;
-    function print(...)
-        local args = {...};
-        if next(args) then
-            local convert = {};
-            for _,arg in pairs(args) do
-                table.insert(convert,tostring(arg):Convert("gbk//TRANSLIT","utf-8") or arg);
-            end
-            _print(table.unpack(convert));
-        else
-            _print("nil");
-        end
-    end
-
     local _dofile = dofile;
     function dofile(filename)
         if filename then
             filename = filename:Convert("gbk//TRANSLIT","utf-8");
         end
         return _dofile(filename);
-    end;
+    end
 
     local _loadfile = loadfile;
     function loadfile(filename,...)
@@ -98,21 +77,5 @@ if os.Windows then
             filename = filename:Convert("gbk//TRANSLIT","utf-8");
         end
         return _loadfile(filename,...);
-    end;
-
-    local _error = error;
-    function error(message,level)
-        if message then
-            message = message:Convert("gbk//TRANSLIT","utf-8");
-        end
-        return _error(message,level);
-    end
-
-    local _warn = warn;
-    function warn(message,...)
-        if message then
-            message = message:Convert("gbk//TRANSLIT","utf-8");
-        end
-        return _warn(message,...);
     end
 end

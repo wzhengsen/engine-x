@@ -18,26 +18,12 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
----------------------------------------------
---  Module:	table
---  Auth:   wzhengsen
---  Date:   2019年04月03日
---  Desc:   为table新增了一些方法,如union,copy
----------------------------------------------
-
---[[-------------------------------------------
-    Func:
-    Param:	table,function
-    Return:	table
-    Desc:   会返回新表
----------------------------------------------]]
+-- 为table新增了一些方法,如Union,Copy,Filter
 
 ---筛选符合要求的键值对。
----
 ---@param t table
 ---@param f function | "function(key,value)\n    return true;\nend"
 ---@return table
----
 function table.Filter(t,f)
     local ret = {};
     for k,v in pairs(t) do
@@ -70,11 +56,9 @@ end
 
 ---拷贝一个表，使用深拷贝。
 ---userdata/thread等无法拷贝
----
 ---@param tab table
 ---@param b? boolean {false}是否拷贝元表。
 ---@return table
----
 function table.Copy(tab,b)
     local retTab = copy(tab,{});
     if b then
@@ -84,10 +68,8 @@ function table.Copy(tab,b)
 end
 
 ---合并t2表到t1表。
----
 ---@param t1 table
 ---@param t2 table
----
 function table.Merge(t1,t2)
     for k,v in pairs(t2) do
         t1[k] = v;
@@ -95,10 +77,8 @@ function table.Merge(t1,t2)
 end
 
 ---当t1表和t2表作为数组时，将t2追加到t1。
----
 ---@param t1 table
 ---@param t2 table
----
 function table.Append(t1,t2)
     local len = #t1;
     for _,v in ipairs(t2) do
@@ -108,10 +88,8 @@ function table.Append(t1,t2)
 end
 
 ---将多个表合并为一个新的表，并返回新表。
----
 ---@vararg table
 ---@return table
----
 function table.Union(...)
     local union = {};
     for _,v in pairs({...}) do
@@ -123,11 +101,9 @@ function table.Union(...)
 end
 
 ---求表中元素总数。
----
 ---@param tab table
 ---@param f? function | "function(key,value)\n    return true;\nend"
 ---@return integer
----
 function table.Count(tab,f)
     local size = 0;
     if not f then
@@ -147,12 +123,10 @@ end
 
 ---在表中查找指定元素，并返回对应的键。
 ---只返回第一个匹配的元素。
----
 ---@param tab table
 ---@param value any
 ---@param f? function | "function(v,value)\n    return true;\nend"
 ---@return any
----
 function table.Find(tab,value,f)
     if not f then
         for k,v in pairs(tab) do
@@ -171,9 +145,7 @@ function table.Find(tab,value,f)
 end
 
 ---给定一个顺序表，将其元素顺序打乱。
----
 ---@param tab table
----
 function table.Mess(tab)
     local len = #tab;
     for i = 1,len do
@@ -184,10 +156,8 @@ end
 
 ---给定一个表，返回第一个空洞的位置。
 ---一个正常的顺序表，第一个空洞在其尾部。
----
 ---@param tab table
 ---@return integer
----
 function table.Hole(tab)
     local k = 1;
     while nil ~= tab[k] do
@@ -197,11 +167,9 @@ function table.Hole(tab)
 end
 
 ---筛选给定表中的值，只保留唯一的值，并返回一个包含该值的新表。
----
 ---@param t table
 ---@param bArray? boolean {true}是否以数组返回
 ---@return table
----
 function table.Unique(t,bArray)
     bArray = nil == bArray or bArray;
     local check = {};
@@ -223,10 +191,8 @@ end
 
 ---令表只读/或取消只读属性。
 ---该操作会改变表的元表。
----
 ---@param tab table
 ---@param b? boolean {true}可以省略，默认只读。
----
 function table.ReadOnly(tab,b)
     b = nil == b or b;
 

@@ -18,17 +18,7 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
---[[-------------------------------------------
-Module: string
-Auth:   wzhengsen
-Date:   2019年04月03日
-Desc:   为string新增了一些方法,如split,trim
-
-Update: 新增了加解密（Encrypt,Decrypt）、
-        编解码（Encode,Decode）、
-        哈希值（Hash）
-        的算法
----------------------------------------------]]
+---为string新增了一些方法,如Split,Trim,Encrypt,Decrypt,Encode,Decode,Hash等。
 
 ---@class stringex
 ---@field Convert fun(to:string,from:string):string
@@ -36,11 +26,9 @@ local string = string;
 local crypto = require("crypto");
 
 ---按分隔符截取字符串。
----
 ---@param sep string (截取符集合)
 ---@param cFunc? function
 ---@return table
----
 function string:Split(sep, cFunc)
     local fields = {};
     self:gsub(
@@ -56,9 +44,7 @@ function string:Split(sep, cFunc)
 end
 
 ---除前后空白符。
----
 ---@return string
----
 function string:Trim()
     return self:match("^%s*(.-)%s*$") or "";
 end
@@ -85,10 +71,8 @@ local function DecodeUrl(input)
 end
 
 ---对字符串按指定方式编码。
----
 ---@param eType | "\"Url\"" | "\"Base64\"" | "\"Hex\""
 ---@return string?
----
 function string:Encode(eType)
     eType = eType:upper();
     local encode = eType == "URL" and EncodeUrl or crypto["Encode" .. eType];
@@ -100,10 +84,8 @@ function string:Encode(eType)
 end
 
 ---对字符串按指定方式解码。
----
 ---@param eType | "\"Url\"" | "\"Base64\"" | "\"Hex\""
 ---@return string?
----
 function string:Decode(eType)
     eType = eType:upper();
     local decode = eType == "URL" and DecodeUrl or crypto["Decode" .. eType];
@@ -115,11 +97,9 @@ function string:Decode(eType)
 end
 
 ---计算字符串的哈希值。
----
 ---@param eType | "\"Md5\"" | "\"Sha1\"" | "\"Sha224\"" | "\"Sha256\"" | "\"Sha384\"" | "\"Sha512\""
 ---@param enc? boolean {true}取哈希后是否进行16进制编码。
 ---@return string?
----
 function string:Hash(eType, enc)
     local hash = crypto[eType:upper()];
     if hash then
@@ -132,34 +112,26 @@ end
 
 
 ---加密字符串。
----
 ---@type fun(pwd:string):string
 ---@param pwd string 密码默认长度16字节,不足部分补\0,超出部分截断
 ---@return string
----
 string.Encrypt = crypto.Encrypt;
 
 ---解密字符串。
----
 ---@type fun(pwd:string):string
 ---@param pwd string 密码默认长度16字节,不足部分补\0,超出部分截断
 ---@return string
----
 string.Decrypt = crypto.Decrypt;
 
 ---获取一个尽量不重复的字符串。
----
 ---@return string
----
 function string.Unique()
     return (tostring({}) .. os.time() .. os.clock() .. math.random(1, 1000000)):Hash("Sha1");
 end
 
 ---字符串连接，类似python str.join。
----
 ---@param t table
 ---@return string
----
 function string:Join(t)
     return table.concat(t, self);
 end
