@@ -37,6 +37,7 @@ namespace network {
         };
         void Open();
         void Close();
+        virtual int Write(const std::string& msg) = 0;
         void SetHeartBeat(size_t interalMS = 15000,size_t times = 2);
         virtual ~Connection();
     protected:
@@ -70,7 +71,8 @@ namespace network {
         Server(uint16_t port, Kind kind = Kind::TCP) : Server("0.0.0.0", port, kind) {}
         ~Server();
 
-        int Send(yasio::inet::transport_handle_t transport, const std::string& msg);
+        int Write(yasio::inet::transport_handle_t transport, const std::string& msg);
+        int Write(const std::string& msg) override;
         void Close(yasio::inet::transport_handle_t transport);
 
     protected:
@@ -97,7 +99,7 @@ namespace network {
     public:
         Client(const std::string_view& addr, uint16_t port, Kind kind = Kind::TCP);
         ~Client();
-        int Send(const std::string& msg);
+        int Write(const std::string& msg) override;
 
         /**
          * @brief       Open the connection with millsecond timeout.

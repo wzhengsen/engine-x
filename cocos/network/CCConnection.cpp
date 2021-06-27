@@ -149,13 +149,27 @@ network::Server::~Server() {
     _transports.clear();
 }
 
-int network::Server::Send(transport_handle_t transport, const std::string& msg) {
+int network::Server::Write(transport_handle_t transport, const std::string& msg) {
     const auto size = static_cast<uint32_t>(msg.size());
     auto nSize = ::htonl(size + sizeof(uint32_t));
     std::unique_ptr<char[]> buff = std::make_unique<char[]>(size + sizeof(uint32_t));
     std::memcpy(buff.get(), &nSize, sizeof(uint32_t));
     std::memcpy(buff.get() + sizeof(uint32_t), msg.data(), size);
     return _service.write(transport, buff.get(), size + sizeof(uint32_t));
+}
+
+int network::Server::Write(const std::string& msg) {
+    if (_transports.size() == 0) { return 0; }
+    const auto size = static_cast<uint32_t>(msg.size());
+    auto nSize = ::htonl(size + sizeof(uint32_t));
+    std::unique_ptr<char[]> buff = std::make_unique<char[]>(size + sizeof(uint32_t));
+    std::memcpy(buff.get(), &nSize, sizeof(uint32_t));
+    std::memcpy(buff.get() + sizeof(uint32_t), msg.data(), size);
+    int write = 0;
+    for (auto iter : _transports) {
+        write += _service.write(iter.second, buff.get(), size + sizeof(uint32_t));
+    }
+    return write;
 }
 
 void network::Server::Close(transport_handle_t transport) {
@@ -229,7 +243,7 @@ network::Client::~Client() {
     }
 }
 
-int network::Client::Send(const std::string& msg) {
+int network::Client::Write(const std::string& msg) {
     const auto size = static_cast<uint32_t>(msg.size());
     auto nSize = ::htonl(size + sizeof(uint32_t));
     std::unique_ptr<char[]> buff = std::make_unique<char[]>(size + sizeof(uint32_t));
