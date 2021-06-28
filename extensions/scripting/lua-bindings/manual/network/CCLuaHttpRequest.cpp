@@ -26,6 +26,9 @@ NS_CC_BEGIN
 namespace extension {
     void LuaHttpRequest::RegisterLuaHttpRequestManual(Lua& lua) {
         cocos2d::extension::Lua::Id2Meta[typeid(LuaHttpRequest).name()] = sol::usertype_traits<LuaHttpRequest*>::metatable();
+        auto dep = lua.new_usertype<LuaHttpRequest>("deprecated.cocos2d::extension::LuaHttpRequest");
+        dep[sol::base_classes] = sol::bases<cocos2d::network::HttpRequest,cocos2d::Ref,cocos2d::extension::LuaObject>();
+
         sol::table mt = lua.NewClass(sol::usertype_traits<LuaHttpRequest*>::metatable(), sol::usertype_traits<LuaObject*>::metatable());
         lua["cc"]["HttpRequest"] = mt;
         mt[lua.OOPConfig["__new__"]] = []() {

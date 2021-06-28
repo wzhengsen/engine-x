@@ -26,6 +26,9 @@ NS_CC_BEGIN
 namespace extension {
     void LuaWebSocket::RegisterLuaWebSocketManual(Lua& lua) {
         cocos2d::extension::Lua::Id2Meta[typeid(LuaWebSocket).name()] = sol::usertype_traits<LuaWebSocket*>::metatable();
+        auto dep = lua.new_usertype<LuaWebSocket>("deprecated.cocos2d::extension::LuaWebSocket");
+        dep[sol::base_classes] = sol::bases<cocos2d::network::WebSocket,cocos2d::extension::LuaObject>();
+
         sol::table mt = lua.NewClass(sol::usertype_traits<LuaWebSocket*>::metatable(), sol::usertype_traits<LuaObject*>::metatable());
         lua["cc"]["WebSocket"] = mt;
         mt[lua.OOPConfig["__new__"]] = [](const std::string& url, const sol::object& protocols, const sol::object& caFile)->LuaWebSocket* {
