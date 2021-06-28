@@ -409,8 +409,40 @@ class NativeConstructor(NativeFunction):
             return ",".join(cxx)
 
     def __str__(self) -> str:
-        # 不再生成构造。
-        return ""
+        if self._cxxStr:
+            return self._cxxStr
+        cxx = []
+        # call 构造逻辑，先注释，在LuaOOP实现call构造后再使用。
+        # if not self._implements:
+        #     if self._useDefalut:
+        #         cxx.append("mt[sol::call_constructor]=sol::constructors<{}()>();\n".format(self._wholeFuncName))
+        # else:
+        #     cxx.append("mt[sol::call_constructor]=sol::constructors<")
+        #     cxx.append(self.GetImplStr())
+        #     cxx.append(">();\n")
+
+        # 如果没有指定new构造，则以当前构造函数生成。
+        if not self._this.NewConstructor or not self._this.NewConstructor.Supported:
+            if not self._implements:
+                if self._useDefalut:
+                    cxx.append(
+                        'mt["{}"]=[](){{return new {}();}};\n'.format(
+                            self._this._generator.LuaConfig["__new__"],
+                            self._wholeFuncName
+                        )
+                    )
+            else:
+                cxx.append(('mt["{}"]=').format(self._this._generator.LuaConfig["__new__"]))
+                if self.Overload:
+                    cxx.append("sol::overload(")
+
+                cxx.append(self.GetImplStr(True))
+
+                if self.Overload:
+                    cxx.append(")")
+                cxx.append(";")
+        _cxxStr = "".join(cxx)
+        return _cxxStr
 
 
 class NativeObject(NativeWrapper):
@@ -580,12 +612,12 @@ class NativeObject(NativeWrapper):
                 static = cursor.is_static_method()
                 if pureVirtual:
                     # 统计纯虚函数。
-                    if method._wholeName not in self._pvMethods:
-                        self._pvMethods[method._wholeName] = method
+                    if method.Name not in self._pvMethods:
+                        self._pvMethods[method.Name] = method
                 else:
                     # 消减已实现的纯虚函数。
-                    if method._wholeName in self._pvMethods:
-                        self._pvMethods.pop(method._wholeName)
+                    if method.Name in self._pvMethods:
+                        self._pvMethods.pop(method.Name)
             if cursor.access_specifier == cindex.AccessSpecifier.PUBLIC:
                 if not method.Supported or\
                         CursorHelper.GetAvailability(cursor) == CursorHelper.Availability.DEPRECATED:
@@ -697,11 +729,19 @@ class NativeObject(NativeWrapper):
                 pField if not upper else CursorHelper.UpperCamelCase(pField)
             ))
         else:
-            cxx.append('["{}"]'.format(self._generator.LuaConfig["Qualifiers"]["static"]))
+            if len(self._nNameList[1:-1]) > 0:
+                cxx.append('["{}"]'.format(self._generator.LuaConfig["Qualifiers"]["static"]))
         cxx.append('["{}"]=mt;\n'.format(self._newName if not upper else CursorHelper.UpperCamelCase(self._newName)))
 
         if not self._newCtor:
-            cxx.append('mt["{}"] = [](){{return nullptr;}};\n'.format(self._generator.LuaConfig["__new__"]))
+            if self._ctor.Supported and len(self._pvMethods) == 0:
+                # 没有可用的纯虚函数，才允许使用构造。
+                ctorStr = str(self._ctor)
+                if ctorStr:
+                    cxx.append(ctorStr)
+                    cxx.append("\n")
+            else:
+                cxx.append('mt["{}"] = [](){{return nullptr;}};\n'.format(self._generator.LuaConfig["__new__"]))
 
         # 方法生成。
         for method in self._methods.values():
