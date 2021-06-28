@@ -421,26 +421,31 @@ class NativeConstructor(NativeFunction):
         #     cxx.append(self.GetImplStr())
         #     cxx.append(">();\n")
 
-        # 如果没有指定new构造，则以当前构造函数生成。
-        if not self._this.NewConstructor or not self._this.NewConstructor.Supported:
-            if not self._implements:
-                if self._useDefalut:
-                    cxx.append(
-                        'mt["{}"]=[](){{return new {}();}};\n'.format(
-                            self._this._generator.LuaConfig["__new__"],
-                            self._wholeFuncName
-                        )
-                    )
-            else:
-                cxx.append(('mt["{}"]=').format(self._this._generator.LuaConfig["__new__"]))
-                if self.Overload:
-                    cxx.append("sol::overload(")
+        # 如果没有指定new构造，且继承于ConstructBase，则以当前构造函数生成。
+        constructBase = self._this.Generator.ConstructBase
+        if constructBase:
+            for parent in self._this.Parents:
+                if constructBase == parent.WholeName:
+                    if not self._this.NewConstructor or not self._this.NewConstructor.Supported:
+                        if not self._implements:
+                            if self._useDefalut:
+                                cxx.append(
+                                    'mt["{}"]=[](){{return new {}();}};\n'.format(
+                                        self._this.Generator.LuaConfig["__new__"],
+                                        self._wholeFuncName
+                                    )
+                                )
+                        else:
+                            cxx.append(('mt["{}"]=').format(self._this.Generator.LuaConfig["__new__"]))
+                            if self.Overload:
+                                cxx.append("sol::overload(")
 
-                cxx.append(self.GetImplStr(True))
+                            cxx.append(self.GetImplStr(True))
 
-                if self.Overload:
-                    cxx.append(")")
-                cxx.append(";")
+                            if self.Overload:
+                                cxx.append(")")
+                            cxx.append(";")
+                    break
         _cxxStr = "".join(cxx)
         return _cxxStr
 
@@ -488,6 +493,10 @@ class NativeObject(NativeWrapper):
     @ property
     def NewConstructor(self):
         return self._newCtor
+
+    @property
+    def Parents(self) -> List["NativeObject"]:
+        return self._parents
 
     def __DeepIterate(self, cursor) -> dict:
         """深度优先遍历所有子节点。"""

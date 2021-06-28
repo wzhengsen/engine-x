@@ -77,6 +77,10 @@ class BaseConfig(object):
         # 当一个方法能够接受一个参数，且前缀符合SetPrefix时，生成set属性；
         # 当一个方法能够返回一个非void值，且接受0个参数，前缀也还符合GetPrefix时，生成get属性。
         self.AutoProperties = True
+        # 对于那些没有明确指示有new函数的类型，指定一个基类名，
+        # 凡是继承此基类的，如果没有new函数，但有构造函数，也会为其生成构造代码。
+        # 使用类型全名，包含命名空间名。
+        self.ConstructBase = ""
 
         self.AndroidHeaders = []
         self.AndroidFlags = [
