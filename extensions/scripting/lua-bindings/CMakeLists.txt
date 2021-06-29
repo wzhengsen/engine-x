@@ -1,4 +1,4 @@
-set(cocos_root ${COCOS2DX_ROOT_PATH})
+set(cocos_root ${ADXE_ROOT_PATH})
 
 set(lua_bindings_manual_headers
     # manual/3d/lua_cocos2dx_3d_manual.h
@@ -165,24 +165,26 @@ set(lua_bindings_headers
 
 set(lua_bindings_files
     ${lua_bindings_files}
-    "${cocos_root}/external/yasio/bindings/lyasio.cpp"
-    "${cocos_root}/external/yasio/bindings/yasio_cclua.cpp")
+    "${cocos_root}/thirdparty/yasio/bindings/lyasio.cpp"
+    "${cocos_root}/thirdparty/yasio/bindings/yasio_cclua.cpp")
 
 list(APPEND lua_bindings_files ${lua_bindings_headers})
 aux_source_directory(auto lua_bindings_files)
 
+set(ADXE_LUA_LIB adxelua CACHE INTERNAL "The ADXE lua bindings lib name" )
+
 set(ENGINEX_LUA_LIB luacocos2d CACHE INTERNAL "The EGNX lua bindings lib name" )
 
-add_library(${ENGINEX_LUA_LIB} STATIC ${lua_bindings_files})
-target_link_libraries(${ENGINEX_LUA_LIB} ${ENGINEX_CORE_LIB})
-add_dependencies(${ENGINEX_LUA_LIB} ${ENGINEX_CORE_LIB})
+add_library(${ADXE_LUA_LIB} STATIC ${lua_bindings_files})
+target_link_libraries(${ADXE_LUA_LIB} ${ADXE_CORE_LIB})
+add_dependencies(${ADXE_LUA_LIB} ${ADXE_CORE_LIB})
 if(WINDOWS)
-    target_compile_options(${ENGINEX_LUA_LIB} PRIVATE "/bigobj")
+    target_compile_options(${ADXE_LUA_LIB} PRIVATE "/bigobj")
 endif()
 
 
-
-target_include_directories(${ENGINEX_LUA_LIB}
+target_include_directories(${ADXE_LUA_LIB}
+    PUBLIC ${cocos_root}/thirdparty/lua
     PRIVATE manual/platform/android
     PRIVATE manual/platform/android/jni
     PRIVATE ${cocos_root}/extensions/spine/runtime/include
@@ -192,10 +194,10 @@ target_include_directories(${ENGINEX_LUA_LIB}
 )
 
 if(WINDOWS)
-    target_compile_definitions(${ENGINEX_LUA_LIB} PUBLIC _USRLUASTATIC)
+    target_compile_definitions(${ADXE_LUA_LIB} PUBLIC _USRLUASTATIC)
 endif()
 
-set_target_properties(${ENGINEX_LUA_LIB}
+set_target_properties(${ADXE_LUA_LIB}
                       PROPERTIES
                       ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
                       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
@@ -203,5 +205,5 @@ set_target_properties(${ENGINEX_LUA_LIB}
                       )
 
 if(XCODE OR VS)
-    cocos_mark_code_files("${ENGINEX_LUA_LIB}")
+    cocos_mark_code_files("${ADXE_LUA_LIB}")
 endif()

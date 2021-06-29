@@ -1,7 +1,7 @@
 set(target_name ImGuiEXT)
 
 #~ if(WINDOWS)
-#~     include_directories(${COCOS2DX_ROOT_PATH}/external/win32-specific/gles/include/OGLES)
+#~     include_directories(${ADXE_ROOT_PATH}/thirdparty/win32-specific/gles/include/OGLES)
 #~ endif()
 include_directories(imgui)
 
@@ -29,6 +29,7 @@ set(SOURCE
     imgui/imgui_demo.cpp
     imgui/imgui_draw.cpp
     imgui/imgui_widgets.cpp
+    imgui/imgui_tables.cpp
     imgui/misc/cpp/imgui_stdlib.cpp
     #~ ImGuiColorTextEdit/TextEditor.cpp
     #~ implot/implot.cpp
@@ -63,6 +64,7 @@ set(SOURCE
 #~         lua-bindings/lua_implot_auto.cpp
 #~     )
 #~ endif()
+
 add_library(${target_name} STATIC 
         ${HEADER} 
         ${SOURCE})

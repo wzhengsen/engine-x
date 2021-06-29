@@ -1,12 +1,19 @@
+# See: https://github.com/yasio/ios.mini.cmake
+
+if(NOT DEFINED CMAKE_SYSTEM_NAME)
+    set(CMAKE_SYSTEM_NAME "iOS" CACHE STRING "The CMake system name for iOS")
+endif()
+
 # The best solution for fix try_compile failed with code sign currently
 # since cmake-3.18.2, not required
 # everyting for cmake toolchain config before project(xxx) is better
-set(CMAKE_SYSTEM_NAME "iOS" CACHE STRING "The CMake system name for iOS")
 set(CMAKE_TRY_COMPILE_PLATFORM_VARIABLES
+    ${CMAKE_TRY_COMPILE_PLATFORM_VARIABLES}
     "CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED"
     "CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED")
 set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED NO)
 set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED NO)
+
 
 # Default deployment target is 9.0
 # a. armv7 maximum deployment 10.x
@@ -33,6 +40,11 @@ endif()
 if(NOT DEFINED CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET)
     set(CMAKE_XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET ${CMAKE_OSX_DEPLOYMENT_TARGET} CACHE STRING "Minimum iphoneos deployment version")
 endif()
+
+# Regard x86_64 as iphonesimulator
+if("${CMAKE_OSX_ARCHITECTURES}" MATCHES "x86_64")
+    set(CMAKE_OSX_SYSROOT "iphonesimulator" CACHE STRING "")
+endif() 
 
 # Sets CMAKE_SYSTEM_PROCESSOR for iphoneos and iphonesimulator
 if("${CMAKE_OSX_SYSROOT}" MATCHES "iphonesimulator")

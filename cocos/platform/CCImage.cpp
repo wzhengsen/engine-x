@@ -132,8 +132,6 @@ extern "C"
 #define CC_GL_ATC_RGBA_EXPLICIT_ALPHA_AMD                          0x8C93
 #define CC_GL_ATC_RGBA_INTERPOLATED_ALPHA_AMD                      0x87EE
 
-#define ASTC_MAGIC_FILE_CONSTANT 0x5CA1AB13
-
 NS_CC_BEGIN
 
 //////////////////////////////////////////////////////////////////////////
@@ -443,24 +441,6 @@ namespace
 
 //////////////////////////////////////////////////////////////////////////
 
-//struct and data for ASTC struct
-namespace
-{
-    struct ASTCTexHeader
-    {
-        uint8_t magic[4];
-        uint8_t blockdim_x;
-        uint8_t blockdim_y;
-        uint8_t blockdim_z;
-        uint8_t xsize[3];			// x-size = xsize[0] + xsize[1] + xsize[2]
-        uint8_t ysize[3];			// x-size, y-size and z-size are given in texels;
-        uint8_t zsize[3];			// block count is inferred
-    };
-}
-//atitc struct end
-
-//////////////////////////////////////////////////////////////////////////
-
 namespace
 {
     typedef struct 
@@ -471,6 +451,19 @@ namespace
     }tImageSource;
  
 #if CC_USE_PNG
+    void pngWriteCallback(png_structp png_ptr, png_bytep data, size_t length)
+    {
+        if (png_ptr == NULL)
+            return;
+
+        FileStream* fileStream = (FileStream*)png_get_io_ptr(png_ptr);
+
+        const auto check = fileStream->write(data, length);
+
+        if (check != length)
+            png_error(png_ptr, "Write Error");
+    }
+
     static void pngReadCallback(png_structp png_ptr, png_bytep data, png_size_t length)
     {
         tImageSource* isource = (tImageSource*)png_get_io_ptr(png_ptr);
@@ -643,7 +636,12 @@ bool Image::initWithImageFileThreadSafe(const std::string& fullpath)
     return ret;
 }
 
-bool Image::initWithImageData(const uint8_t* data, ssize_t dataLen, bool ownData)
+bool Image::initWithImageData(const uint8_t* data, ssize_t dataLen) 
+{
+    return initWithImageData(const_cast<uint8_t*>(data), dataLen, false);
+}
+
+bool Image::initWithImageData(uint8_t* data, ssize_t dataLen, bool ownData)
 {
     bool ret = false;
     
@@ -804,11 +802,11 @@ bool Image::isATITC(const uint8_t *data, ssize_t /*dataLen*/)
 
 bool Image::isASTC(const uint8_t* data, ssize_t /*dataLen*/)
 {
-    ASTCTexHeader* hdr = (ASTCTexHeader*)data;
+    astc_header* hdr = (astc_header*)data;
 
-    uint32_t magicval = hdr->magic[0] + 256 * (uint32_t)(hdr->magic[1]) + 65536 * (uint32_t)(hdr->magic[2]) + 16777216 * (uint32_t)(hdr->magic[3]);
+    uint32_t magicval = astc_unpack_bytes(hdr->magic[0], hdr->magic[1], hdr->magic[2], hdr->magic[3]);
 
-    return (magicval == ASTC_MAGIC_FILE_CONSTANT);
+    return (magicval == ASTC_MAGIC_ID);
 }
 
 bool Image::isJpg(const uint8_t * data, ssize_t dataLen)
@@ -1793,19 +1791,25 @@ bool Image::initWithETC2Data(uint8_t* data, ssize_t dataLen, bool ownData)
 
 bool Image::initWithASTCData(uint8_t* data, ssize_t dataLen, bool ownData)
 {
-    ASTCTexHeader* header = (ASTCTexHeader*)data;
+    astc_header* hdr = (astc_header*)data;
 
     do {
-        _width = header->xsize[0] + 256 * header->xsize[1] + 65536 * header->xsize[2];
-        _height = header->ysize[0] + 256 * header->ysize[1] + 65536 * header->ysize[2];
+        // Ensure these are not zero to avoid div by zero
+        unsigned int block_x = (std::max)((unsigned int) hdr->block_x, 1u);
+        unsigned int block_y = (std::max)((unsigned int) hdr->block_y, 1u);
+        // unsigned int block_z = std::max((unsigned int) hdr->block_z, 1u);
 
-        if (0 == _width || 0 == _height)
+        unsigned int dim_x = astc_unpack_bytes(hdr->dim_x[0], hdr->dim_x[1], hdr->dim_x[2], 0);
+        unsigned int dim_y = astc_unpack_bytes(hdr->dim_y[0], hdr->dim_y[1], hdr->dim_y[2], 0);
+        // unsigned int dim_z = astc_unpack_bytes(hdr->dim_z[0], hdr->dim_z[1], hdr->dim_z[2], 0);
+
+        if (dim_x == 0 || dim_y == 0)
             break;
 
-        uint8_t xdim = header->blockdim_x;
-        uint8_t ydim = header->blockdim_y;
+        _width  = dim_x;
+        _height = dim_y;
 
-        if (xdim < 4 || ydim < 4)
+        if (block_x < 4 || block_y < 4)
         {
             CCLOG("cocos2d: The ASTC block with and height should be >= 4");
             break;
@@ -1813,29 +1817,23 @@ bool Image::initWithASTCData(uint8_t* data, ssize_t dataLen, bool ownData)
 
         if (Configuration::getInstance()->supportsASTC())
         {
-            if (xdim == 4 && ydim == 4) {
+            if (block_x == 4 && block_y == 4) {
                 _pixelFormat = backend::PixelFormat::ASTC4x4;
-            }
-            else if (xdim == 5 && ydim == 5) {
+            } else if (block_x == 5 && block_y == 5) {
                 _pixelFormat = backend::PixelFormat::ASTC5x5;
-            }
-            else if (xdim == 6 && ydim == 6) {
+            } else if (block_x == 6 && block_y == 6) {
                 _pixelFormat = backend::PixelFormat::ASTC6x6;
-            }
-            else if (xdim == 8 && ydim == 5) {
+            } else if (block_x == 8 && block_y == 5) {
                 _pixelFormat = backend::PixelFormat::ASTC8x5;
-            }
-            else if (xdim == 8 && ydim == 6) {
+            } else if (block_x == 8 && block_y == 6) {
                 _pixelFormat = backend::PixelFormat::ASTC8x6;
-            }
-            else if (xdim == 8 && ydim == 8)
+            } else if (block_x == 8 && block_y == 8)
             {
                 _pixelFormat = backend::PixelFormat::ASTC8x8;
-            }
-            else if (xdim == 10 && ydim == 5) {
+            } else if (block_x == 10 && block_y == 5) {
                 _pixelFormat = backend::PixelFormat::ASTC10x5;
             }
-
+        
             forwardPixels(data, dataLen, ASTC_HEAD_SIZE, ownData);
         }
         else
@@ -1843,8 +1841,11 @@ bool Image::initWithASTCData(uint8_t* data, ssize_t dataLen, bool ownData)
             CCLOG("cocos2d: Hardware ASTC decoder not present. Using software decoder");
 
             _dataLen = _width * _height * 4;
-            _data = static_cast<uint8_t*>(malloc(_dataLen));
-            if (UTILS_UNLIKELY(decompress_astc(static_cast<const uint8_t*>(data) + ASTC_HEAD_SIZE, _data, _width, _height, xdim, ydim, _dataLen) != 0)) {
+            _data    = static_cast<uint8_t*>(malloc(_dataLen));
+            if (UTILS_UNLIKELY(astc_decompress_image(static_cast<const uint8_t*>(data) + ASTC_HEAD_SIZE,
+                                   dataLen - ASTC_HEAD_SIZE, _data, _width,
+                                   _height, block_x, block_y)
+                               != 0)) {
                 CC_SAFE_FREE(_data);
                 _dataLen = 0;
                 break;
@@ -2161,36 +2162,38 @@ bool Image::saveImageToPNG(const std::string& filePath, bool isToRGB)
     bool ret = false;
     do
     {
-        FILE *fp;
         png_structp png_ptr;
         png_infop info_ptr;
         png_bytep *row_pointers;
+        
+        auto outStream = FileUtils::getInstance()->openFileStream(filePath, FileStream::Mode::WRITE);
 
-        fp = fopen(filePath.c_str(), "wb");
-        CC_BREAK_IF(nullptr == fp);
+        CC_BREAK_IF(nullptr == outStream);
 
         png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 
         if (nullptr == png_ptr)
         {
-            fclose(fp);
+            outStream.reset();
             break;
         }
 
         info_ptr = png_create_info_struct(png_ptr);
         if (nullptr == info_ptr)
         {
-            fclose(fp);
+            outStream.reset();
             png_destroy_write_struct(&png_ptr, nullptr);
             break;
         }
         if (setjmp(png_jmpbuf(png_ptr)))
         {
-            fclose(fp);
+            outStream.reset();
             png_destroy_write_struct(&png_ptr, &info_ptr);
             break;
         }
-        png_init_io(png_ptr, fp);
+
+        //png_init_io(png_ptr, outStream);
+        png_set_write_fn(png_ptr, outStream.get(), pngWriteCallback, nullptr);
 
         if (!isToRGB && hasAlpha())
         {
@@ -2210,7 +2213,7 @@ bool Image::saveImageToPNG(const std::string& filePath, bool isToRGB)
         row_pointers = (png_bytep *)malloc(_height * sizeof(png_bytep));
         if(row_pointers == nullptr)
         {
-            fclose(fp);
+            outStream.reset();
             png_destroy_write_struct(&png_ptr, &info_ptr);
             break;
         }
@@ -2234,7 +2237,7 @@ bool Image::saveImageToPNG(const std::string& filePath, bool isToRGB)
                 uint8_t *tempData = static_cast<uint8_t*>(malloc(_width * _height * 3));
                 if (nullptr == tempData)
                 {
-                    fclose(fp);
+                    outStream.reset();
                     png_destroy_write_struct(&png_ptr, &info_ptr);
                     
                     free(row_pointers);
@@ -2285,7 +2288,7 @@ bool Image::saveImageToPNG(const std::string& filePath, bool isToRGB)
 
         png_destroy_write_struct(&png_ptr, &info_ptr);
 
-        fclose(fp);
+        outStream.reset();
 
         ret = true;
     } while (0);
@@ -2304,7 +2307,7 @@ bool Image::saveImageToJPG(const std::string& filePath)
     {
         struct jpeg_compress_struct cinfo;
         struct jpeg_error_mgr jerr;
-        FILE * outfile;                 /* target file */
+        std::unique_ptr<FileStream> outfile;                 /* target file */
         JSAMPROW row_pointer[1];        /* pointer to JSAMPLE row[s] */
         int     row_stride;          /* physical row width in image buffer */
 
@@ -2312,9 +2315,12 @@ bool Image::saveImageToJPG(const std::string& filePath)
         /* Now we can initialize the JPEG compression object. */
         jpeg_create_compress(&cinfo);
 
-        CC_BREAK_IF((outfile = fopen(filePath.c_str(), "wb")) == nullptr);
-        
-        jpeg_stdio_dest(&cinfo, outfile);
+        outfile = FileUtils::getInstance()->openFileStream(filePath, FileStream::Mode::WRITE);
+        CC_BREAK_IF(nullptr == outfile);
+
+        unsigned char* outputBuffer = nullptr;
+        unsigned long outputSize = 0;
+        jpeg_mem_dest(&cinfo, &outputBuffer, &outputSize);
 
         cinfo.image_width = _width;    /* image width and height, in pixels */
         cinfo.image_height = _height;
@@ -2335,7 +2341,13 @@ bool Image::saveImageToJPG(const std::string& filePath)
             {
                 jpeg_finish_compress(&cinfo);
                 jpeg_destroy_compress(&cinfo);
-                fclose(outfile);
+
+                outfile.reset();
+                if (outputBuffer)
+                {
+                    free(outputBuffer);
+                    outputBuffer = nullptr;
+                }
                 break;
             }
 
@@ -2370,7 +2382,16 @@ bool Image::saveImageToJPG(const std::string& filePath)
         }
 
         jpeg_finish_compress(&cinfo);
-        fclose(outfile);
+
+        outfile->write(outputBuffer, outputSize);
+        outfile.reset();
+
+        if (outputBuffer)
+        {
+            free(outputBuffer);
+            outputBuffer = nullptr;
+        }
+
         jpeg_destroy_compress(&cinfo);
         
         ret = true;

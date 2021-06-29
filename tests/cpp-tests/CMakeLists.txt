@@ -1,27 +1,23 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.10)
 
 set(APP_NAME cpp-tests)
 
 project(${APP_NAME})
 
 if(NOT DEFINED BUILD_ENGINE_DONE)
-    set(ENGINEX_ROOT "$ENV{ENGINEX_ROOT}")
-    if(ENGINEX_ROOT STREQUAL "")
-        set(ENGINEX_ROOT "$ENV{COCOS2DX_ROOT}")
-    endif()
-
-    if(NOT (ENGINEX_ROOT STREQUAL ""))
-        set(COCOS2DX_ROOT_PATH "${ENGINEX_ROOT}")
-        file(TO_CMAKE_PATH ${COCOS2DX_ROOT_PATH} COCOS2DX_ROOT_PATH) # string(REPLACE "\\" "/" COCOS2DX_ROOT_PATH ${COCOS2DX_ROOT_PATH})
-        message(STATUS "Using system env var ENGINEX_ROOT=${ENGINEX_ROOT}")
+    set(ADXE_ROOT "$ENV{ADXE_ROOT}")
+    if(NOT (ADXE_ROOT STREQUAL ""))
+        set(ADXE_ROOT_PATH "${ADXE_ROOT}")
+        file(TO_CMAKE_PATH ${ADXE_ROOT_PATH} ADXE_ROOT_PATH) # string(REPLACE "\\" "/" ADXE_ROOT_PATH ${ADXE_ROOT_PATH})
+        message(STATUS "Using system env var ADXE_ROOT=${ADXE_ROOT}")
     else()
-        set(COCOS2DX_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../..)
+        set(ADXE_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../..)
     endif()
 
-    set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules/)
+    set(CMAKE_MODULE_PATH ${ADXE_ROOT_PATH}/cmake/Modules/)
 
     include(CocosBuildSet)
-    add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos ${ENGINE_BINARY_PATH}/cocos/core)
+    add_subdirectory(${ADXE_ROOT_PATH}/cocos ${ENGINE_BINARY_PATH}/cocos/core)
 endif()
 
 # record sources, headers, resources...
@@ -380,11 +376,52 @@ list(APPEND GAME_SOURCE
 list(APPEND GAME_HEADER
      Classes/PhysicsTest/PhysicsTest.h
      Classes/ChipmunkTest/ChipmunkTest.h
-     )
+	 )
+if(WINDOWS)
+	list(APPEND GAME_HEADER
+	    Classes/ChipmunkTestBed/Demo/ChipmunkDemo.h
+		Classes/ChipmunkTestBed/ChipmunkTestBed.h
+	)
+endif()
+
 list(APPEND GAME_SOURCE
      Classes/PhysicsTest/PhysicsTest.cpp
      Classes/ChipmunkTest/ChipmunkTest.cpp
-     )
+	 )
+if(WINDOWS)
+   set (TESTBED_C_SORUCES
+        Classes/ChipmunkTestBed/Demo/Bench.c
+        Classes/ChipmunkTestBed/Demo/Chains.c
+        Classes/ChipmunkTestBed/Demo/Convex.c
+        Classes/ChipmunkTestBed/Demo/Crane.c
+        Classes/ChipmunkTestBed/Demo/Joints.c
+        Classes/ChipmunkTestBed/Demo/LogoSmash.c
+        Classes/ChipmunkTestBed/Demo/OneWay.c
+        Classes/ChipmunkTestBed/Demo/Planet.c
+        Classes/ChipmunkTestBed/Demo/Player.c
+        Classes/ChipmunkTestBed/Demo/Plink.c
+        Classes/ChipmunkTestBed/Demo/Pump.c
+        Classes/ChipmunkTestBed/Demo/PyramidStack.c
+        Classes/ChipmunkTestBed/Demo/PyramidTopple.c
+        Classes/ChipmunkTestBed/Demo/Shatter.c
+        Classes/ChipmunkTestBed/Demo/Springies.c
+        Classes/ChipmunkTestBed/Demo/Sticky.c
+        Classes/ChipmunkTestBed/Demo/Tank.c
+        Classes/ChipmunkTestBed/Demo/TheoJansen.c
+        Classes/ChipmunkTestBed/Demo/Buoyancy.c
+        Classes/ChipmunkTestBed/Demo/ContactGraph.c
+        Classes/ChipmunkTestBed/Demo/Example.c
+        Classes/ChipmunkTestBed/Demo/Query.c
+        Classes/ChipmunkTestBed/Demo/Slice.c
+        Classes/ChipmunkTestBed/Demo/Unicycle.c
+        Classes/ChipmunkTestBed/Demo/Tumble.c)
+        set_source_files_properties(${TESTBED_C_SORUCES} PROPERTIES COMPILE_FLAGS "/TP")
+		list(APPEND GAME_SOURCE
+			${TESTBED_C_SORUCES}
+			Classes/ChipmunkTestBed/ChipmunkTestBed.cpp
+		)
+endif()
+
 
 if(NOT LINUX)
     list(APPEND GAME_SOURCE
@@ -402,7 +439,7 @@ if(NOT ANDROID)
     add_executable(${APP_NAME} ${all_code_files})
 else()
     add_library(${APP_NAME} SHARED ${all_code_files})
-    add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos/platform/android ${ENGINE_BINARY_PATH}/cocos/platform)
+    add_subdirectory(${ADXE_ROOT_PATH}/cocos/platform/android ${ENGINE_BINARY_PATH}/cocos/platform)
     target_link_libraries(${APP_NAME} -Wl,--whole-archive cpp_android_spec -Wl,--no-whole-archive)
 
     config_android_shared_libs("org.cocos2dx.lib" "${CMAKE_CURRENT_SOURCE_DIR}/proj.android/app/src")

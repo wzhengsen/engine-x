@@ -71,6 +71,8 @@ set(CMAKE_CXX_STANDARD ${CXX_STD})
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+set(CMAKE_DEBUG_POSTFIX "" CACHE STRING "Library postfix for debug builds. Normally left blank." FORCE)
+
 # check visual studio version
 if(WINDOWS)
     # not support other compile tools except MSVC for now
@@ -78,12 +80,12 @@ if(WINDOWS)
         # Visual Studio 2015, MSVC_VERSION 1900      (v140 toolset)
         # Visual Studio 2017, MSVC_VERSION 1910-1919 (v141 toolset)
         if(${MSVC_VERSION} EQUAL 1900 OR ${MSVC_VERSION} GREATER 1900)
-            message(STATUS "using Windows MSVC generate cocos2d-x project, MSVC_VERSION:${MSVC_VERSION}")
+            message(STATUS "using Windows MSVC generate adxe project, MSVC_VERSION:${MSVC_VERSION}")
         else()
-            message(FATAL_ERROR "using Windows MSVC generate cocos2d-x project, MSVC_VERSION:${MSVC_VERSION} lower than needed")
+            message(FATAL_ERROR "using Windows MSVC generate adxe project, MSVC_VERSION:${MSVC_VERSION} lower than needed")
         endif()
     else()
-        message(FATAL_ERROR "please using Windows MSVC compile cocos2d-x project, support other compile tools not yet")
+        message(FATAL_ERROR "please using Windows MSVC compile adxe project, support other compile tools not yet")
     endif()
 endif()
 

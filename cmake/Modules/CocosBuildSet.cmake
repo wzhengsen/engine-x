@@ -15,14 +15,16 @@ if(CMAKE_TOOLCHAIN_FILE)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    find_program(PYTHON_COMMAND NAMES py)
+    find_program(PYTHON_COMMAND NAMES python3 py python)
 else()
-    find_program(PYTHON_COMMAND NAMES python3)
+    find_program(PYTHON_COMMAND NAMES python3 python)
 endif()
+find_program(COCOS_COMMAND NAME adxe
+    PATHS ${ADXE_ROOT_PATH}/tools/cocos2d-console/bin $ENV{ADXE_CONSOLE_ROOT})
 
 message(STATUS "PROJECT_NAME:" ${PROJECT_NAME})
 message(STATUS "PROJECT_SOURCE_DIR:" ${PROJECT_SOURCE_DIR})
-message(STATUS "COCOS2DX_ROOT_PATH:" ${COCOS2DX_ROOT_PATH})
+message(STATUS "ADXE_ROOT_PATH:" ${ADXE_ROOT_PATH})
 message(STATUS "CMAKE_MODULE_PATH:" ${CMAKE_MODULE_PATH})
 # delete binary dir if you hope a full clean re-build
 message(STATUS "PROJECT_BINARY_DIR:" ${PROJECT_BINARY_DIR})

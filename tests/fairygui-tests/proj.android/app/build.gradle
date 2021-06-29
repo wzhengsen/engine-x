@@ -1,9 +1,19 @@
 import org.gradle.internal.os.OperatingSystem
+import java.nio.file.Paths
+import java.nio.file.Files
 
 apply plugin: 'com.android.application'
+apply from: project(':libcocos2dx').projectDir.toString() + "/adxetools.gradle"
 
 android {
     compileSdkVersion PROP_COMPILE_SDK_VERSION.toInteger()
+
+    // setup ndk
+    def ndkInfo = adxetools.findNDK("19.2.5345600+")
+    ndkVersion = ndkInfo[0]
+    if(ndkInfo[1]) {
+        ndkPath = ndkInfo[1]
+    }
 
     defaultConfig {
         applicationId "org.cocos2dx.fairygui_tests"
@@ -36,6 +46,7 @@ android {
 
     externalNativeBuild {
         cmake {
+            version "3.10.2"
             path "../../CMakeLists.txt"
         }
     }
@@ -92,4 +103,13 @@ android.applicationVariants.all { variant ->
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':libcocos2dx')
+}
+
+project.afterEvaluate {
+    if (tasks.findByName("externalNativeBuildDebug")) {
+        compileDebugJavaWithJavac.dependsOn externalNativeBuildDebug
+    }
+    if (tasks.findByName("externalNativeBuildRelease")) {
+        compileReleaseJavaWithJavac.dependsOn externalNativeBuildRelease  
+    }
 }

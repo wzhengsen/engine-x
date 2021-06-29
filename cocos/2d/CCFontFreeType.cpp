@@ -25,11 +25,15 @@ THE SOFTWARE.
 ****************************************************************************/
 
 #include "2d/CCFontFreeType.h"
+
+#include <freetype/src/truetype/ttobjs.h>
+
 #include FT_BBOX_H
 #include "edtaa3func.h"
 #include "2d/CCFontAtlas.h"
 #include "base/CCDirector.h"
 #include "base/ccUTF8.h"
+#include "freetype/internal/tttypes.h"
 #include "platform/CCFileUtils.h"
 #include "platform/CCFileStream.h"
 
@@ -68,8 +72,8 @@ static unsigned long ft_stream_read_callback(FT_Stream stream, unsigned long off
 }
 
 static void ft_stream_close_callback(FT_Stream stream) {
-    auto fd = (FileStream*)stream->descriptor.pointer;
-    if (fd) delete fd;
+    const auto* fd = (FileStream*)stream->descriptor.pointer;
+    delete fd;
     stream->size = 0;
     stream->descriptor.pointer = nullptr;
 }
@@ -174,21 +178,21 @@ bool FontFreeType::createFontObject(const std::string &fontName, float fontSize)
         auto fullPath = FileUtils::getInstance()->fullPathForFilename(fontName);
         if (fullPath.empty()) return false;
 
-        FileStream fs;
-        if (!fs.open(fullPath, FileStream::Mode::READ))
+        auto fs = FileUtils::getInstance()->openFileStream(fullPath, FileStream::Mode::READ).release();
+        if (!fs)
+        {
             return false;
+        }
 
         std::unique_ptr<FT_StreamRec> fts(new FT_StreamRec());
         fts->read = ft_stream_read_callback;
         fts->close = ft_stream_close_callback;
-        fts->size = fs.seek(0, SEEK_END);
-        fs.seek(0, SEEK_SET);
-
-        fts->descriptor.pointer = new FileStream(std::move(fs));
+        fts->size = fs->size();
+        fts->descriptor.pointer = fs;
 
         FT_Open_Args args = { 0 };
         args.flags = FT_OPEN_STREAM;
-        args.stream = fts.get();;
+        args.stream = fts.get();
 
         if (FT_Open_Face(getFTLibrary(), &args, 0, &face))
             return false;
@@ -228,8 +232,13 @@ bool FontFreeType::createFontObject(const std::string &fontName, float fontSize)
     
     // store the face globally
     _fontRef = face;
-    _lineHeight = static_cast<int>((_fontRef->size->metrics.ascender - _fontRef->size->metrics.descender) >> 6);
-    
+    auto* ttSize = (TT_Size)(_fontRef->size);
+    // Notes: 
+    //  a. ttSize->metrics->height: (ttSize->metrics->ascender - ttSize->metrics->descender)
+    //  b. ftSize->metrics.height == ttSize->metrics->height
+    //  c. the TT spec always asks for ROUND, not FLOOR or CEIL, see also freetype: ttobjs.c 
+    _lineHeight = static_cast<int>((ttSize->metrics->ascender - ttSize->metrics->descender) >> 6);
+
     // done and good
     return true;
 }
@@ -329,7 +338,7 @@ int  FontFreeType::getHorizontalKerningForChars(uint64_t firstChar, uint64_t sec
 
 int FontFreeType::getFontAscender() const
 {
-    return (static_cast<int>(_fontRef->size->metrics.ascender >> 6));
+    return (static_cast<int>(((TT_Size)_fontRef->size)->metrics->ascender >> 6));
 }
 
 const char* FontFreeType::getFontFamily() const

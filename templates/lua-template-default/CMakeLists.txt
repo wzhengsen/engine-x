@@ -21,31 +21,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 # ****************************************************************************/
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.10)
 
 set(APP_NAME StarryX)
 
 project(${APP_NAME})
 
-set(ENGINEX_ROOT "$ENV{ENGINEX_ROOT}")
-if(ENGINEX_ROOT STREQUAL "")
-    set(ENGINEX_ROOT "$ENV{COCOS2DX_ROOT}")
-endif()
+set(ADXE_ROOT "$ENV{ADXE_ROOT}")
 
-if(NOT (ENGINEX_ROOT STREQUAL ""))
-    set(COCOS2DX_ROOT_PATH "${ENGINEX_ROOT}")
-    file(TO_CMAKE_PATH ${COCOS2DX_ROOT_PATH} COCOS2DX_ROOT_PATH) # string(REPLACE "\\" "/" COCOS2DX_ROOT_PATH ${COCOS2DX_ROOT_PATH})
-    message(STATUS "Using system env var ENGINEX_ROOT=${ENGINEX_ROOT}")
+if(NOT (ADXE_ROOT STREQUAL ""))
+    set(ADXE_ROOT_PATH "${ADXE_ROOT}")
+    file(TO_CMAKE_PATH ${ADXE_ROOT_PATH} ADXE_ROOT_PATH) # string(REPLACE "\\" "/" ADXE_ROOT_PATH ${ADXE_ROOT_PATH})
+    message(STATUS "Using system env var ADXE_ROOT=${ADXE_ROOT}")
 else()
-    message(FATAL_ERROR "Please run setup.py add system env var 'ENGINEX_ROOT' to specific the engine root")
+    message(FATAL_ERROR "Please run setup.py add system env var 'ADXE_ROOT' to specific the engine root")
 endif()
 
 set(RUNTIME_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/frameworks/runtime-src)
-set(CMAKE_MODULE_PATH ${COCOS2DX_ROOT_PATH}/cmake/Modules/)
+
+set(CMAKE_MODULE_PATH ${ADXE_ROOT_PATH}/cmake/Modules/)
 
 include(CocosBuildSet)
 set(BUILD_LUA_LIBS ON)
-add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos ${ENGINE_BINARY_PATH}/cocos/core)
+add_subdirectory(${ADXE_ROOT_PATH}/cocos ${ENGINE_BINARY_PATH}/cocos/core)
 
 # script and source files info, not need to compile
 set(ori_res_folders "${CMAKE_CURRENT_SOURCE_DIR}/Resources")
@@ -134,17 +132,18 @@ if(NOT ANDROID)
     endif()
 else()
     add_library(${APP_NAME} SHARED ${APP_SRC})
-    add_subdirectory(${COCOS2DX_ROOT_PATH}/cocos/platform/android ${ENGINE_BINARY_PATH}/cocos/platform)
+    add_subdirectory(${ADXE_ROOT_PATH}/cocos/platform/android ${ENGINE_BINARY_PATH}/cocos/platform)
     target_link_libraries(${APP_NAME} -Wl,--whole-archive cpp_android_spec -Wl,--no-whole-archive)
-    add_subdirectory(${COCOS2DX_ROOT_PATH}/extensions/scripting/lua-bindings/proj.android ${ENGINE_BINARY_PATH}/cocos/lua-android)
+    add_subdirectory(${ADXE_ROOT_PATH}/extensions/scripting/lua-bindings/proj.android ${ENGINE_BINARY_PATH}/cocos/lua-android)
     target_link_libraries(${APP_NAME} -Wl,--whole-archive lua_android_spec -Wl,--no-whole-archive)
 endif()
 
 add_subdirectory(${RUNTIME_SRC_ROOT}/Classes)
 
-target_link_libraries(${APP_NAME} luacocos2d)
+target_link_libraries(${APP_NAME} ${ADXE_LUA_LIB})
 target_link_libraries(${APP_NAME} derivative)
 target_include_directories(${APP_NAME} PRIVATE ${RUNTIME_SRC_ROOT}/Classes ${RUNTIME_SRC_ROOT})
+
 
 # mark app resources, resource will be copy auto after mark
 setup_cocos_app_config(${APP_NAME})

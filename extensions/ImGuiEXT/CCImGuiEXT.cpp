@@ -31,13 +31,13 @@ public:
         auto listener = EventListenerTouchOneByOne::create();
         listener->setSwallowTouches(true);
         listener->onTouchBegan = [this](Touch* touch, Event*) -> bool {
-            return ImGui::IsAnyWindowHovered();
+            return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
         };
         _trackLayer->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, _trackLayer);
 
         // add by halx99
         auto stopAnyMouse = [=](EventMouse* event) {
-            if (ImGui::IsAnyWindowHovered()) {
+            if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
                 event->stopPropagation();
             }
         };
@@ -94,13 +94,13 @@ public:
         _touchListener->retain();
         _touchListener->setSwallowTouches(true);
         _touchListener->onTouchBegan = [this](Touch* touch, Event*) -> bool {
-            return ImGui::IsAnyWindowHovered();
+            return ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow);
         };
         eventDispatcher->addEventListenerWithFixedPriority(_touchListener, highestPriority);
 
         // add by halx99
         auto stopAnyMouse = [=](EventMouse* event) {
-            if (ImGui::IsAnyWindowHovered()) {
+            if (ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
                 event->stopPropagation();
             }
         };
@@ -201,7 +201,13 @@ void ImGuiEXT::loadCustomFonts(void* ud)
         default:;
         }
 
-        imFonts->AddFontFromFileTTF(fontInfo.first.c_str(), fontInfo.second.fontSize * contentZoomFactor, nullptr, imChars);
+        auto fontData = FileUtils::getInstance()->getDataFromFile(fontInfo.first);
+        CCASSERT(!fontData.isNull(), "Cannot load font for IMGUI");
+
+        long bufferSize = 0;
+        auto* buffer = fontData.takeBuffer(&bufferSize); // Buffer automatically freed by IMGUI
+
+        imFonts->AddFontFromMemoryTTF(buffer, bufferSize, fontInfo.second.fontSize * contentZoomFactor, nullptr, imChars);
     }
 }
 

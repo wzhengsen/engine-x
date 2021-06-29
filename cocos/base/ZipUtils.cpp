@@ -32,6 +32,8 @@
 #include "unzip.h"
 #endif
 #include "ioapi_mem.h"
+#include <ioapi.h>
+
 #include <memory>
 
 #include <zlib.h>

@@ -41,7 +41,7 @@ THE SOFTWARE.
 #endif
 
 #ifndef _unz64_H
-typedef struct unz_file_info_s unz_file_info;
+struct unz_file_info_s;
 #endif
 
 /**

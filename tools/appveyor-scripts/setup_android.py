@@ -18,15 +18,21 @@ except Exception:
     pass
 from retry import retry
 
+if(sys.version_info.major >= 3):
+    import urllib.request
+
 DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 COCOS2D_X = os.path.abspath(os.path.join(DIR_PATH, "../.."))
 # ROOT_DIR/cocos2d-x
 ROOT_DIR = os.path.abspath(os.path.join(COCOS2D_X, ".."))
 
-ANDROID_NDK = os.path.join(ROOT_DIR, "android-ndk-r16b")
+NDK_VER = "19.2.5345600" # "r19c"
+
+# ANDROID_NDK = os.path.join(ROOT_DIR, "android-ndk-" + NDK_VER)
 ANDROID_SDK = os.path.join(ROOT_DIR, "android-sdk")
-SDK_MANAGER = os.path.join(ROOT_DIR, "sdk_tools/tools/bin/sdkmanager")
+ANDROID_NDK = os.path.join(ANDROID_SDK, "ndk/" + NDK_VER)
+SDK_MANAGER = os.path.join(ROOT_DIR, "cmdline-tools/bin/sdkmanager")
 SYSTEM = platform.system().lower()
 if SYSTEM == "windows":
     SDK_MANAGER = SDK_MANAGER + ".bat"
@@ -65,12 +71,15 @@ def download(url, zip_file):
         os.remove(zip_file)
     except OSError:
         pass
-    urllib.urlretrieve(url, zip_file)
+    if(sys.version_info.major >= 3):
+        urllib.request.urlretrieve(url, zip_file)
+    else:
+        urllib.urlretrieve(url, zip_file)
 
 
 @retry(Exception, tries=5, delay=1, backoff=1)
 def install_android_ndk():
-    file_name = "android-ndk-r16b-" + SYSTEM + "-x86_64.zip"
+    file_name = "android-ndk-" + NDK_VER + "-" + SYSTEM + "-x86_64.zip"
     url = "https://dl.google.com/android/repository/" + file_name
     zip_file = os.path.abspath(os.path.join(ROOT_DIR, file_name))
 
@@ -78,29 +87,35 @@ def install_android_ndk():
     unzip(zip_file, ROOT_DIR)
 
 @retry(Exception, tries=5, delay=1, backoff=1)
-def install_android_sdk_tools():
-    file_name = "sdk-tools-{system}-3859397.zip".format(
-        system=platform.system().lower())
+def install_android_cmdline_tools():
+    file_plat = platform.system().lower()
+    if file_plat == "darwin":
+        file_plat = "mac"
+    file_name = "commandlinetools-{system}-7302050_latest.zip".format(system=file_plat)
     url = "https://dl.google.com/android/repository/" + file_name
-    zip_file = os.path.abspath(os.path.join(ROOT_DIR, file_name))
+    zip_file = os.path.abspath(os.path.join(ROOT_DIR, file_name)) # folder is cmdline-tools
 
     download(url, zip_file)
-    unzip(zip_file, os.path.join(ROOT_DIR, "sdk_tools"))
+    unzip(zip_file, os.path.join(ROOT_DIR, ""))
 
 
 @retry(Exception, tries=5, delay=1, backoff=1)
 def install_android_sdk():
+    # list packages
+    # run_with_yes(SDK_MANAGER + " --list --sdk_root=" + ANDROID_SDK)
+    
     switches = " --verbose --sdk_root=" + ANDROID_SDK + " "
-    cmd1 = SDK_MANAGER + switches
+    cmd_base = SDK_MANAGER + switches
     packages = [
-        "platforms;android-28",
-        "build-tools;29.0.2",
-        "platform-tools",
-        "tools"
+        'platform-tools',
+        'cmdline-tools;latest',
+        'platforms;android-28',
+        'build-tools;29.0.2',
+        'ndk;' + NDK_VER
     ]
 
-    cmd = cmd1 + " ".join(packages)
-    run_with_yes(cmd)
+    run_with_yes(cmd_base + " ".join(packages))
+    # run_with_yes(cmd_base + " --install ndk;" + NDK_VER)
 
 
 def export_environment(ndk_only):
@@ -109,20 +124,20 @@ def export_environment(ndk_only):
             myfile.write("export ANDROID_HOME=" + ANDROID_SDK + "\n")
             myfile.write("export ANDROID_SDK_ROOT=" + ANDROID_SDK + "\n")
         myfile.write("export ANDROID_NDK_HOME=" + ANDROID_NDK + "\n")
-        myfile.write("export NDK_ROOT=" + ANDROID_NDK + "\n")
+        myfile.write("export ANDROID_NDK=" + ANDROID_NDK + "\n")
 
     with open(os.path.join(ROOT_DIR, "environment.ps1"), "a") as myfile:
         if not ndk_only:
             myfile.write("$env:ANDROID_HOME=\"" + ANDROID_SDK + "\"\n")
             myfile.write("$env:ANDROID_SDK_ROOT=\"" + ANDROID_SDK + "\"\n")
         myfile.write("$env:ANDROID_NDK_HOME=\"" + ANDROID_NDK + "\"\n")
-        myfile.write("$env:NDK_ROOT=\"" + ANDROID_NDK + "\"\n")
+        myfile.write("$env:ANDROID_NDK=\"" + ANDROID_NDK + "\"\n")
 
 def main(ndk_only):
-    if not ndk_only:
-        install_android_sdk_tools()
-        install_android_sdk()
-    install_android_ndk()
+    # if not ndk_only:
+    install_android_cmdline_tools()
+    install_android_sdk()
+    # install_android_ndk()
     export_environment(ndk_only)
 
 

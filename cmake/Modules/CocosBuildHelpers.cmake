@@ -127,6 +127,7 @@ function(search_depend_libs_recursive cocos_target all_depends_out)
             break()
         endif()
     endwhile(true)
+    list(REMOVE_DUPLICATES all_depends_inner)
     set(${all_depends_out} ${all_depends_inner} PARENT_SCOPE)
 endfunction()
 
@@ -155,16 +156,16 @@ function(get_target_depends_ext_dlls cocos_target all_depend_dlls_out)
             endif()
         endif()
     endforeach()
-
+    list(REMOVE_DUPLICATES all_depend_ext_dlls)
     set(${all_depend_dlls_out} ${all_depend_ext_dlls} PARENT_SCOPE)
 endfunction()
 
 function(copy_thirdparty_dlls cocos_target destDir)
     # init dependency list with direct dependencies
-    get_property(DEPENDENCIES TARGET external PROPERTY LINK_LIBRARIES)
+    get_property(DEPENDENCIES TARGET ${ADXE_THIRDPARTY_NAME} PROPERTY LINK_LIBRARIES)
     # We're not intersted in interface link libraries of the top-most target
 #     if (INCLUDE_INTERFACE_LINK_LIBRARIES)
-#        get_property(INTERFACE_LINK_LIBRARIES TARGET external PROPERTY
+#        get_property(INTERFACE_LINK_LIBRARIES TARGET ${ADXE_THIRDPARTY_NAME} PROPERTY
 #   INTERFACE_LINK_LIBRARIES)
 #        list(APPEND DEPENDENCIES ${INTERFACE_LINK_LIBRARIES})
 #     endif()
@@ -181,7 +182,7 @@ function(copy_thirdparty_dlls cocos_target destDir)
     SET(EXT_LIB_FILES "")
  
     foreach(DEPENDENCY ${DEPENDENCIES})
-      # message(STATUS ${DEPENDENCY} " depends by external")
+      # message(STATUS ${DEPENDENCY} " depends by ${ADXE_THIRDPARTY_NAME}")
       get_property(IMPORTLIB TARGET ${DEPENDENCY} PROPERTY IMPORTED_IMPLIB)
       get_property(IMPORTDLL TARGET ${DEPENDENCY} PROPERTY IMPORTED_LOCATION)
       if(IMPORTLIB)
@@ -395,8 +396,13 @@ endmacro()
 # custom Xcode property for iOS target
 macro(cocos_config_target_xcode_property cocos_target)
     if(IOS)
-        set_xcode_property(${cocos_target} ENABLE_BITCODE "NO")
-        set_xcode_property(${cocos_target} ONLY_ACTIVE_ARCH "YES")
+        set(real_target)
+        get_property(real_target TARGET ${cocos_target} PROPERTY ALIASED_TARGET)
+        if (NOT real_target)
+            set(real_target ${cocos_target})
+        endif()
+        set_xcode_property(${real_target} ENABLE_BITCODE "NO")
+        set_xcode_property(${real_target} ONLY_ACTIVE_ARCH "YES")
     endif()
 endmacro()
 
