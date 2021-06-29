@@ -87,7 +87,8 @@ function Server:ctor()
 end
 
 ---向指定的传输会话或所有传输会话发送消息。
----@param transport? userdata
+---@overload fun(msgName:string,data:table)
+---@param transport userdata
 ---@param msgName string
 ---@param data table
 function Server:Send(transport,msgName,data)

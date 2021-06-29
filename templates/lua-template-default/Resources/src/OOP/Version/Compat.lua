@@ -26,5 +26,6 @@ local Compat2 = Version < 5.4 and require("OOP.Version.LowerThan54") or require(
 
 return {
     bits = Compat1.bits,
-    FunctionWrapper = Compat2.FunctionWrapper
+    FunctionWrapper = Compat2.FunctionWrapper,
+    BreakFunctionWrapper = Compat2.BreakFunctionWrapper
 };

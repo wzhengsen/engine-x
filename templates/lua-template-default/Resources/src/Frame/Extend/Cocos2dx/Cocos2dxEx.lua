@@ -38,6 +38,15 @@ function Node.set:Parent(p)
         end
     end
 end
+Node.set.X = Node.SetPositionX;
+Node.set.Y = Node.SetPositionY;
+Node.set.Z = Node.SetPositionZ;
+Node.set.XY = Node.SetPosition;
+
+Node.get.X = Node.GetPositionX;
+Node.get.Y = Node.GetPositionY;
+Node.get.Z = Node.GetPositionZ;
+Node.get.XY = Node.GetPositionXY;
 
 local Label = cc.Label;
 function Label.set:Italics(b)

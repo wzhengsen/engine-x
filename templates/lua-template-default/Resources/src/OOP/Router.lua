@@ -86,6 +86,12 @@ local Permission = {
     set = BitsMap[set],
     virtual = BitsMap[virtual]
 }
+
+local p_static = Permission.static;
+local p_virtual = Permission.virtual;
+local p_get = Permission.get;
+local p_final = Permission.final;
+
 local Router = {};
 
 local Pass = nil;
@@ -131,7 +137,7 @@ if Debug then
                 error((i18n"%s,%s,%s cannot be used at the same time."):format(get,set,const));
             else
                 local temp = bor(bit,decor);
-                if band(temp,Permission.virtual) ~= 0 and band(temp,Permission.virtual - 1) ~= 0 then
+                if band(temp,p_virtual) ~= 0 and band(temp,p_virtual - 1) ~= 0 then
                     error(i18n"It is not necessary to use pure virtual functions with other qualifiers.");
                 end
             end
@@ -141,7 +147,7 @@ if Debug then
             if get_set ~= 0 then
                 if bor(decor,0xc0) == 0xc0 then
                     Internal.CheckPermission(cls,key,false);
-                    local property = (get_set == Permission.get and ClassesReadable or ClassesWritable)[cls][key];
+                    local property = (get_set == p_get and ClassesReadable or ClassesWritable)[cls][key];
                     if property then
                         return property[1];
                     else
@@ -166,7 +172,7 @@ if Debug then
             error((i18n"You cannot qualify meta-methods. - %s"):format(key));
         end
         local vcm = VirtualClassesMembers[cls];
-        if decor == Permission.virtual then
+        if decor == p_virtual then
             if value ~= 0 then
                 error((i18n"The pure virtual function %s must be assigned a value of 0."):format(key));
             end
@@ -175,7 +181,7 @@ if Debug then
             cls = nil;
             return;
         end
-        local isStatic = band(decor,Permission.static) ~= 0;
+        local isStatic = band(decor,p_static) ~= 0;
         if isStatic and
         (key == ctor or key == dtor) then
             error((i18n"%s qualifier cannot qualify %s method."):format(static,key));
@@ -220,7 +226,7 @@ if Debug then
             -- The property is set to a special table
             -- with index 1 representing the function assigned to the property
             -- and index 2 representing whether the property is a static property.
-            (get_set == Permission.get and ClassesReadable or ClassesWritable)[cls][key] = {value,isStatic};
+            (get_set == p_get and ClassesReadable or ClassesWritable)[cls][key] = {value,isStatic};
         else
             ClassesAll[cls][key] = value;
             if key == ctor then
@@ -231,7 +237,7 @@ if Debug then
             end
         end
 
-        if band(decor,Permission.final) ~= 0 then
+        if band(decor,p_final) ~= 0 then
             FinalClassesMembers[cls][key] = true;
         end
         decor = 0;
@@ -239,9 +245,6 @@ if Debug then
     end
 else
     local ClassesMetas = Internal.ClassesMetas;
-    local sc = Permission.static;
-    local gt = Permission.get;
-    local vir = Permission.virtual;
     -- In non-debug mode, no attention is paid to any qualifiers other than static.
     Pass = function(self,key)
         local bit = BitsMap[key];
@@ -250,14 +253,14 @@ else
         else
             local get_set = band(decor,0xc0);
             if get_set ~= 0 then
-                local property = (get_set == gt and ClassesReadable or ClassesWritable)[cls][key];
+                local property = (get_set == p_get and ClassesReadable or ClassesWritable)[cls][key];
                 return property and property[1] or nil;
             end
         end
         return self;
     end
     Done = function(_,key,value)
-        if band(decor,vir) ~= 0 then
+        if band(decor,p_virtual) ~= 0 then
             -- Skip pure virtual functions.
             decor = 0;
             cls = nil;
@@ -266,14 +269,14 @@ else
         local vt = type(value);
         local isFunction = "function" == vt;
         local isTable = "table" == vt;
-        local isStatic = band(decor,sc) ~= 0;
+        local isStatic = band(decor,p_static) ~= 0;
         local get_set = band(decor,0xc0);
         if not isFunction and not isStatic and get_set == 0 and (not isTable or (not AllEnumerations[value] and not AllClasses[value])) then
             ClassesMembers[cls][key] = value;
         end
 
         if get_set ~= 0 then
-            (get_set == gt and ClassesReadable or ClassesWritable)[cls][key] = {value,isStatic};
+            (get_set == p_get and ClassesReadable or ClassesWritable)[cls][key] = {value,isStatic};
         else
             rawset(cls,key,value);
         end

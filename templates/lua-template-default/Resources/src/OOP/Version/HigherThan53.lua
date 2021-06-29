@@ -51,6 +51,22 @@ local function FunctionWrapper(cls,f)
     return newF;
 end
 
+local function BreakFunctionWrapper(f)
+    local newF = AllFunctions[f]
+    if nil == newF then
+        newF = function(...)
+            -- 0 means that any access rights can be broken.
+            insert(AccessStack,0);
+            local _<close> = RAII;
+            return f(...);
+        end
+        AllFunctions[newF] = newF;
+        AllFunctions[f] = newF;
+    end
+    return newF;
+end
+
 return {
-    FunctionWrapper = FunctionWrapper
+    FunctionWrapper = FunctionWrapper,
+    BreakFunctionWrapper = BreakFunctionWrapper
 };

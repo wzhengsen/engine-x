@@ -57,6 +57,26 @@ local function FunctionWrapper(cls,f)
     return newF;
 end
 
+local function BreakFunctionWrapper(f)
+    local newF = AllFunctions[f]
+    if nil == newF then
+        newF = function(...)
+            -- 0 means that any access rights can be broken.
+            insert(AccessStack,0);
+            local ret = {pcall(f,...)};
+            remove(AccessStack);
+            if not ret[1] then
+                error(ret[2]);
+            end
+            return unpack(ret,2);
+        end;
+        AllFunctions[newF] = newF;
+        AllFunctions[f] = newF;
+    end
+    return newF;
+end
+
 return {
-    FunctionWrapper = FunctionWrapper
+    FunctionWrapper = FunctionWrapper,
+    BreakFunctionWrapper = BreakFunctionWrapper
 };

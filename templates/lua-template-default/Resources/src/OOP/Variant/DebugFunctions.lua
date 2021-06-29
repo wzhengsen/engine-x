@@ -103,6 +103,12 @@ local AccessStack = Functions.AccessStack;
 
 local ReservedWord = Functions.ReservedWord;
 
+local p_public = Permission.public;
+local p_protected = Permission.protected;
+local p_private = Permission.private;
+local p_const = Permission.const;
+local p_static = Permission.static;
+
 ---Cascade to get permission values up to the top of the base class.
 ---
 ---@param self table
@@ -137,16 +143,21 @@ end
 ---@return boolean
 ---
 local function CheckPermission(self,key,byObj,set)
+    local stackCls = AccessStack[#AccessStack];
+    if stackCls == 0 then
+        -- 0 means that any access rights can be broken.
+        return true;
+    end
     local cls,pm = CascadeGetPermission(self,key);
     if not pm then
         return true;
     end
 
-    if byObj and band(pm,Permission.static) ~= 0 then
+    if byObj and band(pm,p_static) ~= 0 then
         error((i18n"Objects cannot access static members of a class. - %s"):format(key));
     end
     if set then
-        if band(pm,Permission.const) ~= 0 then
+        if band(pm,p_const) ~= 0 then
             -- Check const.
             if ConstBehavior ~= 2 then
                 if ConstBehavior == 0 then
@@ -167,19 +178,22 @@ local function CheckPermission(self,key,byObj,set)
         end
     end
 
-    local stackCls = AccessStack[#AccessStack];
+    if band(pm,p_public) ~= 0 then
+        -- Allow public.
+        return true;
+    end
+    if stackCls == cls then
+        return true;
+    end
+
     local _friends = ClassesFriends[cls];
     --Check if it is a friendly class.
     if not _friends or (not _friends[stackCls] and not _friends[NamedClasses[stackCls]]) then
-        if band(pm,Permission.public) == 0 then
-            -- Check public,private,protected.
-            if stackCls ~= cls then
-                if band(pm,Permission.private) ~= 0 then
-                    error((i18n"Attempt to access private members outside the permission. - %s"):format(key));
-                elseif band(pm,Permission.protected) ~= 0 and (not stackCls or not stackCls.is(cls)) then
-                    error((i18n"Attempt to access protected members outside the permission. - %s"):format(key));
-                end
-            end
+        -- Check public,private,protected.
+        if band(pm,p_private) ~= 0 then
+            error((i18n"Attempt to access private members outside the permission. - %s"):format(key));
+        elseif band(pm,p_protected) ~= 0 and (not stackCls or not stackCls.is(cls)) then
+            error((i18n"Attempt to access protected members outside the permission. - %s"):format(key));
         end
     end
     return true;
@@ -543,10 +557,10 @@ local function ClassSet(cls,key,value)
         -- Once register "__singleton__" for a class,set permission of "new","delete" method to protected.
         local pms = ClassesPermisssions[cls];
         local pm = pms[new];
-        if band(pm,Permission.private) == 0 then
-            pms[new] = Permission.static + Permission.protected;
+        if band(pm,p_private) == 0 then
+            pms[new] = p_static + p_protected;
         end
-        pms[delete] = Permission.protected;
+        pms[delete] = p_protected;
         return;
     elseif key == __new__ then
         if not isFunction then
@@ -600,7 +614,7 @@ local function ClassSet(cls,key,value)
             if not isFunction and (not isTable or (not AllEnumerations[value] and not AllClasses[value])) then
                 ClassesMembers[cls][key] = value;
             end
-            ClassesPermisssions[cls][key] = Permission.public;
+            ClassesPermisssions[cls][key] = p_public;
         end
         if isFunction then
             -- Wrap this function to include control of access permission.
@@ -654,7 +668,7 @@ function Functions.PushBase(cls,bases,base,handlers,members,metas)
         ClassesBanNew[cls] = true;
     elseif pms then
         local pm = pms[ctor];
-        if pm and band(pm,Permission.private) ~= 0 then
+        if pm and band(pm,p_private) ~= 0 then
             ClassesBanNew[cls] = true;
         end
     end
@@ -663,7 +677,7 @@ function Functions.PushBase(cls,bases,base,handlers,members,metas)
         ClassesBanDelete[cls] = true;
     elseif pms then
         local pm = pms[dtor];
-        if pm and band(pm,Permission.private) ~= 0 then
+        if pm and band(pm,p_private) ~= 0 then
             ClassesBanDelete[cls] = true;
         end
     end
@@ -740,9 +754,9 @@ local function CascadeDelete(obj,cls,called)
         local aCls = AccessStack[#AccessStack];
         local _friends = ClassesFriends[cls];
         if (not _friends or (not _friends[aCls] and not _friends[NamedClasses[cls]])) and
-        (band(pm,Permission.public) == 0) and
+        (band(pm,p_public) == 0) and
         (aCls ~= cls) and
-        (band(pm,Permission.private) ~= 0)then
+        (band(pm,p_private) ~= 0)then
             error((i18n"Attempt to access private members outside the permission. - %s"):format(dtor));
         end
     end
@@ -786,14 +800,14 @@ function Functions.AttachClassFunctions(cls,_is,_new,_delete)
     local all = ClassesAll[cls];
     local pms = ClassesPermisssions[cls];
     all[is] = _is;
-    pms[is] = Permission.public;
+    pms[is] = p_public;
     -- In debug mode,the "new" method is public and static.
     all[new] = FunctionWrapper(cls,_new);
     -- Use + instead of | to try to keep lua 5.3 or lower compatible.
-    pms[new] = Permission.public + Permission.static;
+    pms[new] = p_public + p_static;
 
     all[delete] = FunctionWrapper(cls,_delete);
-    pms[delete] = Permission.public;
+    pms[delete] = p_public;
 end
 
 return Functions;

@@ -28,6 +28,7 @@ local next = next;
 local Config = require("OOP.Config");
 local Debug = Config.Debug;
 local ctor = Config.ctor;
+local Break = Config.Break;
 
 local i18n = require("OOP.i18n");
 
@@ -122,4 +123,14 @@ function class.New(...)
     );
 
     return setmetatable(cls,ClassMeta);
+end
+
+if Debug then
+    local BreakFunctionWrapper = require("OOP.Version.Compat").BreakFunctionWrapper;
+    class[Break] = function (f)
+        assert("function" == type(f),(i18n"%s must wrap a function."):format(Break));
+        return BreakFunctionWrapper(f);
+    end
+else
+    class[Break]=function(f)return f;end
 end

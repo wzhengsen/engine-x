@@ -48,6 +48,7 @@ require("Frame.Extend.Cocos2dx.NodeEx");
 require("Frame.Extend.Cocos2dx.VideoPlayerEx");
 require("Frame.Extend.Cocos2dx.ClientEx");
 require("Frame.Extend.Cocos2dx.ServerEx");
+require("Frame.Extend.Cocos2dx.WebSocketEx");
 
 require("Utils.Convert");
 require("Utils.UserFile");
@@ -71,8 +72,11 @@ require("Math.Geometry.Polygon");
 require("Math.Geometry.Sector");
 require("Math.Geometry.Vector");
 
+require("Network.HttpInvoker");
+
 require("Base.Scene.BaseScene");
 require("Base.Scene.ILoadingScene");
+
 -- require("Application");
 
 --require("Module.Init");
@@ -178,8 +182,8 @@ if config.RequireHttpEnabled then
     local RequireHttpInvoker = class(cc.HttpInvoker);
     function RequireHttpInvoker:ctor()
         cc.HttpInvoker.ctor(self);
-        self._timeout = 3000;
-        self._async = false;
+        self.timeout = 3000;
+        self.async = false;
     end
     local rhInvoker = RequireHttpInvoker.new();
     --[[

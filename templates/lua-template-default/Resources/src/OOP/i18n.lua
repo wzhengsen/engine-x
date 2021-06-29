@@ -150,6 +150,9 @@ local LanguageMap = {
     },
     ["The pure virtual function %s cannot be overridden as a static function."] = {
         zh = "纯虚函数%s不能被重写为一个静态函数。"
+    },
+    ["%s must wrap a function."] = {
+        zh = "%必须包装一个函数。"
     }
 };
 
