@@ -7,12 +7,6 @@ project(${lib_name})
 
 set(${target_name}_src
     OO_Lua/OO_Lua.hpp
-    Network/Connection.h
-    Network/Connection.cpp
-    Network/Client.h
-    Network/Client.cpp
-    Network/Server.h
-    Network/Server.cpp
     Device/Device.h
     LuaModule/cjson/LuaRegister_cjson.h
     LuaModule/cjson/LuaRegister_cjson.cpp
@@ -24,8 +18,6 @@ set(${target_name}_src
     LuaModule/ExtLib/LuaRegisterExtLib.cpp
     LuaModule/lua-protobuf/LuaRegister_lua-protobuf.h
     LuaModule/lua-protobuf/LuaRegister_lua-protobuf.cpp
-    LuaModule/Network/LuaRegisterConnection.h
-    LuaModule/Network/LuaRegisterConnection.cpp
     LuaModule/Cocos2dx/LuaRegisterCocos2dx.h
     LuaModule/Cocos2dx/LuaRegisterCocos2dx.cpp
 )
