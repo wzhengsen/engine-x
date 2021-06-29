@@ -1,532 +1,651 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaUIAuto.hpp"
 #include "ui/CocosGUI.h"
 void RegisterLuaUIImageViewAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::ImageView>("ccui","ImageView",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol,cocos2d::BlendProtocol>());
-mt.set_function("CreateInstance",static_cast<cocos2d::Ref*(*)()>(&cocos2d::ui::ImageView::createInstance));
-mt.set_function(sol::meta_function::construct,sol::overload([](cocos2d::ui::ImageView* obj,const std::string& arg0){return obj->create(arg0);},[](cocos2d::ui::ImageView* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->create(arg0,arg1);},static_cast<cocos2d::ui::ImageView*(*)()>(&cocos2d::ui::ImageView::create)));
-mt.set_function("LoadTexture",sol::overload([](cocos2d::ui::ImageView* obj,const std::string& arg0){return obj->loadTexture(arg0);},[](cocos2d::ui::ImageView* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadTexture(arg0,arg1);}));
-mt.set_function("SetTextureRect",static_cast<void(cocos2d::ui::ImageView::*)(const cocos2d::Rect&)>(&cocos2d::ui::ImageView::setTextureRect));
-mt.set_function("SetScale9Enabled",static_cast<void(cocos2d::ui::ImageView::*)(bool)>(&cocos2d::ui::ImageView::setScale9Enabled));
-mt.set_function("IsScale9Enabled",static_cast<bool(cocos2d::ui::ImageView::*)()const>(&cocos2d::ui::ImageView::isScale9Enabled));
-mt.set_function("SetCapInsets",static_cast<void(cocos2d::ui::ImageView::*)(const cocos2d::Rect&)>(&cocos2d::ui::ImageView::setCapInsets));
-mt.set_function("GetCapInsets",static_cast<const cocos2d::Rect&(cocos2d::ui::ImageView::*)()const>(&cocos2d::ui::ImageView::getCapInsets));
-mt.set_function("GetRenderer",static_cast<cocos2d::ui::Scale9Sprite*(cocos2d::ui::ImageView::*)()const>(&cocos2d::ui::ImageView::getRenderer));
-mt.set_function("SetBlendFunc",static_cast<void(cocos2d::ui::ImageView::*)(const cocos2d::BlendFunc&)>(&cocos2d::ui::ImageView::setBlendFunc));
-mt.set_function("GetBlendFunc",static_cast<const cocos2d::BlendFunc&(cocos2d::ui::ImageView::*)()const>(&cocos2d::ui::ImageView::getBlendFunc));
-mt.set_function("IgnoreContentAdaptWithSize",static_cast<void(cocos2d::ui::ImageView::*)(bool)>(&cocos2d::ui::ImageView::ignoreContentAdaptWithSize));
-mt.set_function("GetDescription",static_cast<std::string(cocos2d::ui::ImageView::*)()const>(&cocos2d::ui::ImageView::getDescription));
-mt.set_function("GetVirtualRendererSize",static_cast<cocos2d::Size(cocos2d::ui::ImageView::*)()const>(&cocos2d::ui::ImageView::getVirtualRendererSize));
-mt.set_function("GetVirtualRenderer",static_cast<cocos2d::Node*(cocos2d::ui::ImageView::*)()>(&cocos2d::ui::ImageView::getVirtualRenderer));
-mt.set_function("GetRenderFile",static_cast<cocos2d::ResourceData(cocos2d::ui::ImageView::*)()>(&cocos2d::ui::ImageView::getRenderFile));
-mt["_Type"]=sol::var(std::ref(cocos2d::ui::ImageView::__Type));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ui::ImageView).name()] = sol::usertype_traits<cocos2d::ui::ImageView*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ui::ImageView>("deprecated.cocos2d::ui::ImageView");
+dep[sol::base_classes]=sol::bases<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol,cocos2d::BlendProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ui::ImageView*>::metatable(),sol::usertype_traits<cocos2d::ui::Widget*>::metatable(),sol::usertype_traits<cocos2d::BlendProtocol*>::metatable());
+lua["ccui"]["ImageView"]=mt;
+mt["__new__"]=sol::overload([](const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return cocos2d::ui::ImageView::create(arg0,arg1);},[](const std::string& arg0){return cocos2d::ui::ImageView::create(arg0);},static_cast<cocos2d::ui::ImageView*(*)()>(&cocos2d::ui::ImageView::create));
+mt["LoadTexture"]=sol::overload([](cocos2d::ui::ImageView* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadTexture(arg0,arg1);},[](cocos2d::ui::ImageView* obj,const std::string& arg0){return obj->loadTexture(arg0);});
+mt["SetTextureRect"]=static_cast<void(cocos2d::ui::ImageView::*)(const cocos2d::Rect&)>(&cocos2d::ui::ImageView::setTextureRect);
+mt["set"]["TextureRect"]=mt["SetTextureRect"];
+mt["SetScale9Enabled"]=static_cast<void(cocos2d::ui::ImageView::*)(bool)>(&cocos2d::ui::ImageView::setScale9Enabled);
+mt["set"]["Scale9Enabled"]=mt["SetScale9Enabled"];
+mt["IsScale9Enabled"]=static_cast<bool(cocos2d::ui::ImageView::*)()const>(&cocos2d::ui::ImageView::isScale9Enabled);
+mt["get"]["Scale9Enabled"]=mt["IsScale9Enabled"];
+mt["SetCapInsets"]=static_cast<void(cocos2d::ui::ImageView::*)(const cocos2d::Rect&)>(&cocos2d::ui::ImageView::setCapInsets);
+mt["set"]["CapInsets"]=mt["SetCapInsets"];
+mt["GetCapInsets"]=static_cast<const cocos2d::Rect&(cocos2d::ui::ImageView::*)()const>(&cocos2d::ui::ImageView::getCapInsets);
+mt["get"]["CapInsets"]=mt["GetCapInsets"];
+mt["GetRenderer"]=static_cast<cocos2d::ui::Scale9Sprite*(cocos2d::ui::ImageView::*)()const>(&cocos2d::ui::ImageView::getRenderer);
+mt["get"]["Renderer"]=mt["GetRenderer"];
+mt["GetRenderFile"]=static_cast<cocos2d::ResourceData(cocos2d::ui::ImageView::*)()>(&cocos2d::ui::ImageView::getRenderFile);
+mt["get"]["RenderFile"]=mt["GetRenderFile"];
 }
 void RegisterLuaUITextTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["ccui"];
-pTable = pTable["Text"];
-pTable.new_enum<cocos2d::ui::Text::Type>("Type",{
-{"SYSTEM",cocos2d::ui::Text::Type::SYSTEM}
-,{"TTF",cocos2d::ui::Text::Type::TTF}
-});}
+sol::table enumTable = lua.create_table_with(0,2);
+enumTable["SYSTEM"]=cocos2d::ui::Text::Type::SYSTEM;
+enumTable["TTF"]=cocos2d::ui::Text::Type::TTF;
+lua["ccui"]["Text"]["static"]["Type"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaUITextAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::Text>("ccui","Text",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol,cocos2d::BlendProtocol>());
-mt.set_function("CreateInstance",static_cast<cocos2d::Ref*(*)()>(&cocos2d::ui::Text::createInstance));
-mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::ui::Text*(*)(const std::string&,const std::string&,float)>(&cocos2d::ui::Text::create),static_cast<cocos2d::ui::Text*(*)()>(&cocos2d::ui::Text::create)));
-mt.set_function("SetString",static_cast<void(cocos2d::ui::Text::*)(const std::string&)>(&cocos2d::ui::Text::setString));
-mt.set_function("GetString",static_cast<const std::string&(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getString));
-mt.set_function("GetStringLength",static_cast<ssize_t(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getStringLength));
-mt.set_function("SetFontSize",static_cast<void(cocos2d::ui::Text::*)(float)>(&cocos2d::ui::Text::setFontSize));
-mt.set_function("GetFontSize",static_cast<float(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getFontSize));
-mt.set_function("SetFontName",static_cast<void(cocos2d::ui::Text::*)(const std::string&)>(&cocos2d::ui::Text::setFontName));
-mt.set_function("GetFontName",static_cast<const std::string&(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getFontName));
-mt.set_function("GetType",static_cast<cocos2d::ui::Text::Type(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getType));
-mt.set_function("SetTouchScaleChangeEnabled",static_cast<void(cocos2d::ui::Text::*)(bool)>(&cocos2d::ui::Text::setTouchScaleChangeEnabled));
-mt.set_function("IsTouchScaleChangeEnabled",static_cast<bool(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::isTouchScaleChangeEnabled));
-mt.set_function("GetVirtualRendererSize",static_cast<cocos2d::Size(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getVirtualRendererSize));
-mt.set_function("GetVirtualRenderer",static_cast<cocos2d::Node*(cocos2d::ui::Text::*)()>(&cocos2d::ui::Text::getVirtualRenderer));
-mt.set_function("GetAutoRenderSize",static_cast<cocos2d::Size(cocos2d::ui::Text::*)()>(&cocos2d::ui::Text::getAutoRenderSize));
-mt.set_function("GetDescription",static_cast<std::string(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getDescription));
-mt.set_function("SetTextAreaSize",static_cast<void(cocos2d::ui::Text::*)(const cocos2d::Size&)>(&cocos2d::ui::Text::setTextAreaSize));
-mt.set_function("GetTextAreaSize",static_cast<const cocos2d::Size&(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getTextAreaSize));
-mt.set_function("SetTextHorizontalAlignment",static_cast<void(cocos2d::ui::Text::*)(cocos2d::TextHAlignment)>(&cocos2d::ui::Text::setTextHorizontalAlignment));
-mt.set_function("GetTextHorizontalAlignment",static_cast<cocos2d::TextHAlignment(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getTextHorizontalAlignment));
-mt.set_function("SetTextVerticalAlignment",static_cast<void(cocos2d::ui::Text::*)(cocos2d::TextVAlignment)>(&cocos2d::ui::Text::setTextVerticalAlignment));
-mt.set_function("GetTextVerticalAlignment",static_cast<cocos2d::TextVAlignment(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getTextVerticalAlignment));
-mt.set_function("SetTextColor",static_cast<void(cocos2d::ui::Text::*)(const cocos2d::Color4B)>(&cocos2d::ui::Text::setTextColor));
-mt.set_function("GetTextColor",static_cast<const cocos2d::Color4B&(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getTextColor));
-mt.set_function("EnableShadow",sol::overload([](cocos2d::ui::Text* obj){return obj->enableShadow();},[](cocos2d::ui::Text* obj,const cocos2d::Color4B& arg0){return obj->enableShadow(arg0);},[](cocos2d::ui::Text* obj,const cocos2d::Color4B& arg0,const cocos2d::Size& arg1){return obj->enableShadow(arg0,arg1);},[](cocos2d::ui::Text* obj,const cocos2d::Color4B& arg0,const cocos2d::Size& arg1,int arg2){return obj->enableShadow(arg0,arg1,arg2);}));
-mt.set_function("EnableOutline",sol::overload([](cocos2d::ui::Text* obj,const cocos2d::Color4B& arg0){return obj->enableOutline(arg0);},[](cocos2d::ui::Text* obj,const cocos2d::Color4B& arg0,int arg1){return obj->enableOutline(arg0,arg1);}));
-mt.set_function("EnableGlow",static_cast<void(cocos2d::ui::Text::*)(const cocos2d::Color4B&)>(&cocos2d::ui::Text::enableGlow));
-mt.set_function("DisableEffect",sol::overload(static_cast<void(cocos2d::ui::Text::*)(cocos2d::LabelEffect)>(&cocos2d::ui::Text::disableEffect),static_cast<void(cocos2d::ui::Text::*)()>(&cocos2d::ui::Text::disableEffect)));
-mt.set_function("IsShadowEnabled",static_cast<bool(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::isShadowEnabled));
-mt.set_function("GetShadowOffset",static_cast<cocos2d::Size(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getShadowOffset));
-mt.set_function("GetShadowBlurRadius",static_cast<float(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getShadowBlurRadius));
-mt.set_function("GetShadowColor",static_cast<cocos2d::Color4B(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getShadowColor));
-mt.set_function("GetOutlineSize",static_cast<int(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getOutlineSize));
-mt.set_function("GetLabelEffectType",static_cast<cocos2d::LabelEffect(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getLabelEffectType));
-mt.set_function("GetEffectColor",static_cast<cocos2d::Color4B(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getEffectColor));
-mt.set_function("GetLetter",static_cast<cocos2d::Sprite*(cocos2d::ui::Text::*)(int)>(&cocos2d::ui::Text::getLetter));
-mt.set_function("SetBlendFunc",static_cast<void(cocos2d::ui::Text::*)(const cocos2d::BlendFunc&)>(&cocos2d::ui::Text::setBlendFunc));
-mt.set_function("GetBlendFunc",static_cast<const cocos2d::BlendFunc&(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getBlendFunc));
-mt["_Type"]=sol::var(std::ref(cocos2d::ui::Text::__Type));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ui::Text).name()] = sol::usertype_traits<cocos2d::ui::Text*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ui::Text>("deprecated.cocos2d::ui::Text");
+dep[sol::base_classes]=sol::bases<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol,cocos2d::BlendProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ui::Text*>::metatable(),sol::usertype_traits<cocos2d::ui::Widget*>::metatable(),sol::usertype_traits<cocos2d::BlendProtocol*>::metatable());
+lua["ccui"]["Text"]=mt;
+mt["__new__"]=sol::overload(static_cast<cocos2d::ui::Text*(*)(const std::string&,const std::string&,float)>(&cocos2d::ui::Text::create),static_cast<cocos2d::ui::Text*(*)()>(&cocos2d::ui::Text::create));
+mt["SetString"]=static_cast<void(cocos2d::ui::Text::*)(const std::string&)>(&cocos2d::ui::Text::setString);
+mt["set"]["String"]=mt["SetString"];
+mt["GetString"]=static_cast<const std::string&(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getString);
+mt["get"]["String"]=mt["GetString"];
+mt["GetStringLength"]=static_cast<ssize_t(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getStringLength);
+mt["get"]["StringLength"]=mt["GetStringLength"];
+mt["SetFontSize"]=static_cast<void(cocos2d::ui::Text::*)(float)>(&cocos2d::ui::Text::setFontSize);
+mt["set"]["FontSize"]=mt["SetFontSize"];
+mt["GetFontSize"]=static_cast<float(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getFontSize);
+mt["get"]["FontSize"]=mt["GetFontSize"];
+mt["SetFontName"]=static_cast<void(cocos2d::ui::Text::*)(const std::string&)>(&cocos2d::ui::Text::setFontName);
+mt["set"]["FontName"]=mt["SetFontName"];
+mt["GetFontName"]=static_cast<const std::string&(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getFontName);
+mt["get"]["FontName"]=mt["GetFontName"];
+mt["GetType"]=static_cast<cocos2d::ui::Text::Type(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getType);
+mt["get"]["Type"]=mt["GetType"];
+mt["SetTouchScaleChangeEnabled"]=static_cast<void(cocos2d::ui::Text::*)(bool)>(&cocos2d::ui::Text::setTouchScaleChangeEnabled);
+mt["set"]["TouchScaleChangeEnabled"]=mt["SetTouchScaleChangeEnabled"];
+mt["IsTouchScaleChangeEnabled"]=static_cast<bool(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::isTouchScaleChangeEnabled);
+mt["get"]["TouchScaleChangeEnabled"]=mt["IsTouchScaleChangeEnabled"];
+mt["GetAutoRenderSize"]=static_cast<cocos2d::Size(cocos2d::ui::Text::*)()>(&cocos2d::ui::Text::getAutoRenderSize);
+mt["get"]["AutoRenderSize"]=mt["GetAutoRenderSize"];
+mt["SetTextAreaSize"]=static_cast<void(cocos2d::ui::Text::*)(const cocos2d::Size&)>(&cocos2d::ui::Text::setTextAreaSize);
+mt["set"]["TextAreaSize"]=mt["SetTextAreaSize"];
+mt["GetTextAreaSize"]=static_cast<const cocos2d::Size&(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getTextAreaSize);
+mt["get"]["TextAreaSize"]=mt["GetTextAreaSize"];
+mt["SetTextHorizontalAlignment"]=static_cast<void(cocos2d::ui::Text::*)(cocos2d::TextHAlignment)>(&cocos2d::ui::Text::setTextHorizontalAlignment);
+mt["set"]["TextHorizontalAlignment"]=mt["SetTextHorizontalAlignment"];
+mt["GetTextHorizontalAlignment"]=static_cast<cocos2d::TextHAlignment(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getTextHorizontalAlignment);
+mt["get"]["TextHorizontalAlignment"]=mt["GetTextHorizontalAlignment"];
+mt["SetTextVerticalAlignment"]=static_cast<void(cocos2d::ui::Text::*)(cocos2d::TextVAlignment)>(&cocos2d::ui::Text::setTextVerticalAlignment);
+mt["set"]["TextVerticalAlignment"]=mt["SetTextVerticalAlignment"];
+mt["GetTextVerticalAlignment"]=static_cast<cocos2d::TextVAlignment(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getTextVerticalAlignment);
+mt["get"]["TextVerticalAlignment"]=mt["GetTextVerticalAlignment"];
+mt["SetTextColor"]=static_cast<void(cocos2d::ui::Text::*)(const cocos2d::Color4B)>(&cocos2d::ui::Text::setTextColor);
+mt["set"]["TextColor"]=mt["SetTextColor"];
+mt["GetTextColor"]=static_cast<const cocos2d::Color4B&(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getTextColor);
+mt["get"]["TextColor"]=mt["GetTextColor"];
+mt["EnableShadow"]=sol::overload([](cocos2d::ui::Text* obj,const cocos2d::Color4B& arg0,const cocos2d::Size& arg1,int arg2){return obj->enableShadow(arg0,arg1,arg2);},[](cocos2d::ui::Text* obj,const cocos2d::Color4B& arg0,const cocos2d::Size& arg1){return obj->enableShadow(arg0,arg1);},[](cocos2d::ui::Text* obj,const cocos2d::Color4B& arg0){return obj->enableShadow(arg0);},[](cocos2d::ui::Text* obj){return obj->enableShadow();});
+mt["EnableOutline"]=sol::overload([](cocos2d::ui::Text* obj,const cocos2d::Color4B& arg0,int arg1){return obj->enableOutline(arg0,arg1);},[](cocos2d::ui::Text* obj,const cocos2d::Color4B& arg0){return obj->enableOutline(arg0);});
+mt["EnableGlow"]=static_cast<void(cocos2d::ui::Text::*)(const cocos2d::Color4B&)>(&cocos2d::ui::Text::enableGlow);
+mt["DisableEffect"]=sol::overload(static_cast<void(cocos2d::ui::Text::*)(cocos2d::LabelEffect)>(&cocos2d::ui::Text::disableEffect),static_cast<void(cocos2d::ui::Text::*)()>(&cocos2d::ui::Text::disableEffect));
+mt["IsShadowEnabled"]=static_cast<bool(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::isShadowEnabled);
+mt["get"]["ShadowEnabled"]=mt["IsShadowEnabled"];
+mt["GetShadowOffset"]=static_cast<cocos2d::Size(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getShadowOffset);
+mt["get"]["ShadowOffset"]=mt["GetShadowOffset"];
+mt["GetShadowBlurRadius"]=static_cast<float(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getShadowBlurRadius);
+mt["get"]["ShadowBlurRadius"]=mt["GetShadowBlurRadius"];
+mt["GetShadowColor"]=static_cast<cocos2d::Color4B(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getShadowColor);
+mt["get"]["ShadowColor"]=mt["GetShadowColor"];
+mt["GetOutlineSize"]=static_cast<int(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getOutlineSize);
+mt["get"]["OutlineSize"]=mt["GetOutlineSize"];
+mt["GetLabelEffectType"]=static_cast<cocos2d::LabelEffect(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getLabelEffectType);
+mt["get"]["LabelEffectType"]=mt["GetLabelEffectType"];
+mt["GetEffectColor"]=static_cast<cocos2d::Color4B(cocos2d::ui::Text::*)()const>(&cocos2d::ui::Text::getEffectColor);
+mt["get"]["EffectColor"]=mt["GetEffectColor"];
+mt["GetLetter"]=static_cast<cocos2d::Sprite*(cocos2d::ui::Text::*)(int)>(&cocos2d::ui::Text::getLetter);
 RegisterLuaUITextTypeAuto(lua);
 }
 void RegisterLuaUITextAtlasAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::TextAtlas>("ccui","TextAtlas",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol>());
-mt.set_function("CreateInstance",static_cast<cocos2d::Ref*(*)()>(&cocos2d::ui::TextAtlas::createInstance));
-mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::ui::TextAtlas*(*)(const std::string&,const std::string&,int,int,const std::string&)>(&cocos2d::ui::TextAtlas::create),static_cast<cocos2d::ui::TextAtlas*(*)()>(&cocos2d::ui::TextAtlas::create)));
-mt.set_function("SetProperty",static_cast<void(cocos2d::ui::TextAtlas::*)(const std::string&,const std::string&,int,int,const std::string&)>(&cocos2d::ui::TextAtlas::setProperty));
-mt.set_function("SetString",static_cast<void(cocos2d::ui::TextAtlas::*)(const std::string&)>(&cocos2d::ui::TextAtlas::setString));
-mt.set_function("GetString",static_cast<const std::string&(cocos2d::ui::TextAtlas::*)()const>(&cocos2d::ui::TextAtlas::getString));
-mt.set_function("GetStringLength",static_cast<ssize_t(cocos2d::ui::TextAtlas::*)()const>(&cocos2d::ui::TextAtlas::getStringLength));
-mt.set_function("GetVirtualRendererSize",static_cast<cocos2d::Size(cocos2d::ui::TextAtlas::*)()const>(&cocos2d::ui::TextAtlas::getVirtualRendererSize));
-mt.set_function("GetVirtualRenderer",static_cast<cocos2d::Node*(cocos2d::ui::TextAtlas::*)()>(&cocos2d::ui::TextAtlas::getVirtualRenderer));
-mt.set_function("GetDescription",static_cast<std::string(cocos2d::ui::TextAtlas::*)()const>(&cocos2d::ui::TextAtlas::getDescription));
-mt.set_function("AdaptRenderers",static_cast<void(cocos2d::ui::TextAtlas::*)()>(&cocos2d::ui::TextAtlas::adaptRenderers));
-mt.set_function("GetRenderFile",static_cast<cocos2d::ResourceData(cocos2d::ui::TextAtlas::*)()>(&cocos2d::ui::TextAtlas::getRenderFile));
-mt["_Type"]=sol::var(std::ref(cocos2d::ui::TextAtlas::__Type));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ui::TextAtlas).name()] = sol::usertype_traits<cocos2d::ui::TextAtlas*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ui::TextAtlas>("deprecated.cocos2d::ui::TextAtlas");
+dep[sol::base_classes]=sol::bases<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ui::TextAtlas*>::metatable(),sol::usertype_traits<cocos2d::ui::Widget*>::metatable());
+lua["ccui"]["TextAtlas"]=mt;
+mt["__new__"]=sol::overload(static_cast<cocos2d::ui::TextAtlas*(*)(const std::string&,const std::string&,int,int,const std::string&)>(&cocos2d::ui::TextAtlas::create),static_cast<cocos2d::ui::TextAtlas*(*)()>(&cocos2d::ui::TextAtlas::create));
+mt["SetProperty"]=static_cast<void(cocos2d::ui::TextAtlas::*)(const std::string&,const std::string&,int,int,const std::string&)>(&cocos2d::ui::TextAtlas::setProperty);
+mt["SetString"]=static_cast<void(cocos2d::ui::TextAtlas::*)(const std::string&)>(&cocos2d::ui::TextAtlas::setString);
+mt["set"]["String"]=mt["SetString"];
+mt["GetString"]=static_cast<const std::string&(cocos2d::ui::TextAtlas::*)()const>(&cocos2d::ui::TextAtlas::getString);
+mt["get"]["String"]=mt["GetString"];
+mt["GetStringLength"]=static_cast<ssize_t(cocos2d::ui::TextAtlas::*)()const>(&cocos2d::ui::TextAtlas::getStringLength);
+mt["get"]["StringLength"]=mt["GetStringLength"];
+mt["AdaptRenderers"]=static_cast<void(cocos2d::ui::TextAtlas::*)()>(&cocos2d::ui::TextAtlas::adaptRenderers);
+mt["GetRenderFile"]=static_cast<cocos2d::ResourceData(cocos2d::ui::TextAtlas::*)()>(&cocos2d::ui::TextAtlas::getRenderFile);
+mt["get"]["RenderFile"]=mt["GetRenderFile"];
 }
 void RegisterLuaUILoadingBarDirectionAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["ccui"];
-pTable = pTable["LoadingBar"];
-pTable.new_enum<cocos2d::ui::LoadingBar::Direction>("Direction",{
-{"LEFT",cocos2d::ui::LoadingBar::Direction::LEFT}
-,{"RIGHT",cocos2d::ui::LoadingBar::Direction::RIGHT}
-});}
+sol::table enumTable = lua.create_table_with(0,2);
+enumTable["LEFT"]=cocos2d::ui::LoadingBar::Direction::LEFT;
+enumTable["RIGHT"]=cocos2d::ui::LoadingBar::Direction::RIGHT;
+lua["ccui"]["LoadingBar"]["static"]["Direction"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaUILoadingBarAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::LoadingBar>("ccui","LoadingBar",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol>());
-mt.set_function("CreateInstance",static_cast<cocos2d::Ref*(*)()>(&cocos2d::ui::LoadingBar::createInstance));
-mt.set_function(sol::meta_function::construct,sol::overload([](cocos2d::ui::LoadingBar* obj,const std::string& arg0){return obj->create(arg0);},[](cocos2d::ui::LoadingBar* obj,const std::string& arg0,float arg1){return obj->create(arg0,arg1);},static_cast<cocos2d::ui::LoadingBar*(*)()>(&cocos2d::ui::LoadingBar::create),[](cocos2d::ui::LoadingBar* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->create(arg0,arg1);},[](cocos2d::ui::LoadingBar* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1,float arg2){return obj->create(arg0,arg1,arg2);}));
-mt.set_function("SetDirection",static_cast<void(cocos2d::ui::LoadingBar::*)(cocos2d::ui::LoadingBar::Direction)>(&cocos2d::ui::LoadingBar::setDirection));
-mt.set_function("GetDirection",static_cast<cocos2d::ui::LoadingBar::Direction(cocos2d::ui::LoadingBar::*)()const>(&cocos2d::ui::LoadingBar::getDirection));
-mt.set_function("LoadTexture",sol::overload([](cocos2d::ui::LoadingBar* obj,const std::string& arg0){return obj->loadTexture(arg0);},[](cocos2d::ui::LoadingBar* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadTexture(arg0,arg1);}));
-mt.set_function("SetPercent",static_cast<void(cocos2d::ui::LoadingBar::*)(float)>(&cocos2d::ui::LoadingBar::setPercent));
-mt.set_function("GetPercent",static_cast<float(cocos2d::ui::LoadingBar::*)()const>(&cocos2d::ui::LoadingBar::getPercent));
-mt.set_function("SetScale9Enabled",static_cast<void(cocos2d::ui::LoadingBar::*)(bool)>(&cocos2d::ui::LoadingBar::setScale9Enabled));
-mt.set_function("IsScale9Enabled",static_cast<bool(cocos2d::ui::LoadingBar::*)()const>(&cocos2d::ui::LoadingBar::isScale9Enabled));
-mt.set_function("SetCapInsets",static_cast<void(cocos2d::ui::LoadingBar::*)(const cocos2d::Rect&)>(&cocos2d::ui::LoadingBar::setCapInsets));
-mt.set_function("GetCapInsets",static_cast<const cocos2d::Rect&(cocos2d::ui::LoadingBar::*)()const>(&cocos2d::ui::LoadingBar::getCapInsets));
-mt.set_function("IgnoreContentAdaptWithSize",static_cast<void(cocos2d::ui::LoadingBar::*)(bool)>(&cocos2d::ui::LoadingBar::ignoreContentAdaptWithSize));
-mt.set_function("GetVirtualRendererSize",static_cast<cocos2d::Size(cocos2d::ui::LoadingBar::*)()const>(&cocos2d::ui::LoadingBar::getVirtualRendererSize));
-mt.set_function("GetVirtualRenderer",static_cast<cocos2d::Node*(cocos2d::ui::LoadingBar::*)()>(&cocos2d::ui::LoadingBar::getVirtualRenderer));
-mt.set_function("GetDescription",static_cast<std::string(cocos2d::ui::LoadingBar::*)()const>(&cocos2d::ui::LoadingBar::getDescription));
-mt.set_function("GetRenderFile",static_cast<cocos2d::ResourceData(cocos2d::ui::LoadingBar::*)()>(&cocos2d::ui::LoadingBar::getRenderFile));
-mt["_Type"]=sol::var(std::ref(cocos2d::ui::LoadingBar::__Type));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ui::LoadingBar).name()] = sol::usertype_traits<cocos2d::ui::LoadingBar*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ui::LoadingBar>("deprecated.cocos2d::ui::LoadingBar");
+dep[sol::base_classes]=sol::bases<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ui::LoadingBar*>::metatable(),sol::usertype_traits<cocos2d::ui::Widget*>::metatable());
+lua["ccui"]["LoadingBar"]=mt;
+mt["__new__"]=sol::overload([](const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1,float arg2){return cocos2d::ui::LoadingBar::create(arg0,arg1,arg2);},[](const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return cocos2d::ui::LoadingBar::create(arg0,arg1);},[](const std::string& arg0,float arg1){return cocos2d::ui::LoadingBar::create(arg0,arg1);},[](const std::string& arg0){return cocos2d::ui::LoadingBar::create(arg0);},static_cast<cocos2d::ui::LoadingBar*(*)()>(&cocos2d::ui::LoadingBar::create));
+mt["SetDirection"]=static_cast<void(cocos2d::ui::LoadingBar::*)(cocos2d::ui::LoadingBar::Direction)>(&cocos2d::ui::LoadingBar::setDirection);
+mt["set"]["Direction"]=mt["SetDirection"];
+mt["GetDirection"]=static_cast<cocos2d::ui::LoadingBar::Direction(cocos2d::ui::LoadingBar::*)()const>(&cocos2d::ui::LoadingBar::getDirection);
+mt["get"]["Direction"]=mt["GetDirection"];
+mt["LoadTexture"]=sol::overload([](cocos2d::ui::LoadingBar* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadTexture(arg0,arg1);},[](cocos2d::ui::LoadingBar* obj,const std::string& arg0){return obj->loadTexture(arg0);});
+mt["SetPercent"]=static_cast<void(cocos2d::ui::LoadingBar::*)(float)>(&cocos2d::ui::LoadingBar::setPercent);
+mt["set"]["Percent"]=mt["SetPercent"];
+mt["GetPercent"]=static_cast<float(cocos2d::ui::LoadingBar::*)()const>(&cocos2d::ui::LoadingBar::getPercent);
+mt["get"]["Percent"]=mt["GetPercent"];
+mt["SetScale9Enabled"]=static_cast<void(cocos2d::ui::LoadingBar::*)(bool)>(&cocos2d::ui::LoadingBar::setScale9Enabled);
+mt["set"]["Scale9Enabled"]=mt["SetScale9Enabled"];
+mt["IsScale9Enabled"]=static_cast<bool(cocos2d::ui::LoadingBar::*)()const>(&cocos2d::ui::LoadingBar::isScale9Enabled);
+mt["get"]["Scale9Enabled"]=mt["IsScale9Enabled"];
+mt["SetCapInsets"]=static_cast<void(cocos2d::ui::LoadingBar::*)(const cocos2d::Rect&)>(&cocos2d::ui::LoadingBar::setCapInsets);
+mt["set"]["CapInsets"]=mt["SetCapInsets"];
+mt["GetCapInsets"]=static_cast<const cocos2d::Rect&(cocos2d::ui::LoadingBar::*)()const>(&cocos2d::ui::LoadingBar::getCapInsets);
+mt["get"]["CapInsets"]=mt["GetCapInsets"];
+mt["GetRenderFile"]=static_cast<cocos2d::ResourceData(cocos2d::ui::LoadingBar::*)()>(&cocos2d::ui::LoadingBar::getRenderFile);
+mt["get"]["RenderFile"]=mt["GetRenderFile"];
 RegisterLuaUILoadingBarDirectionAuto(lua);
 }
 void RegisterLuaUIScrollViewDirectionAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["ccui"];
-pTable = pTable["ScrollView"];
-pTable.new_enum<cocos2d::ui::ScrollView::Direction>("Direction",{
-{"NONE",cocos2d::ui::ScrollView::Direction::NONE}
-,{"VERTICAL",cocos2d::ui::ScrollView::Direction::VERTICAL}
-,{"HORIZONTAL",cocos2d::ui::ScrollView::Direction::HORIZONTAL}
-,{"BOTH",cocos2d::ui::ScrollView::Direction::BOTH}
-});}
+sol::table enumTable = lua.create_table_with(0,4);
+enumTable["NONE"]=cocos2d::ui::ScrollView::Direction::NONE;
+enumTable["VERTICAL"]=cocos2d::ui::ScrollView::Direction::VERTICAL;
+enumTable["HORIZONTAL"]=cocos2d::ui::ScrollView::Direction::HORIZONTAL;
+enumTable["BOTH"]=cocos2d::ui::ScrollView::Direction::BOTH;
+lua["ccui"]["ScrollView"]["static"]["Direction"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaUIScrollViewEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["ccui"];
-pTable = pTable["ScrollView"];
-pTable.new_enum<cocos2d::ui::ScrollView::EventType>("EventType",{
-{"SCROLL_TO_TOP",cocos2d::ui::ScrollView::EventType::SCROLL_TO_TOP}
-,{"SCROLL_TO_BOTTOM",cocos2d::ui::ScrollView::EventType::SCROLL_TO_BOTTOM}
-,{"SCROLL_TO_LEFT",cocos2d::ui::ScrollView::EventType::SCROLL_TO_LEFT}
-,{"SCROLL_TO_RIGHT",cocos2d::ui::ScrollView::EventType::SCROLL_TO_RIGHT}
-,{"SCROLLING",cocos2d::ui::ScrollView::EventType::SCROLLING}
-,{"BOUNCE_TOP",cocos2d::ui::ScrollView::EventType::BOUNCE_TOP}
-,{"BOUNCE_BOTTOM",cocos2d::ui::ScrollView::EventType::BOUNCE_BOTTOM}
-,{"BOUNCE_LEFT",cocos2d::ui::ScrollView::EventType::BOUNCE_LEFT}
-,{"BOUNCE_RIGHT",cocos2d::ui::ScrollView::EventType::BOUNCE_RIGHT}
-,{"CONTAINER_MOVED",cocos2d::ui::ScrollView::EventType::CONTAINER_MOVED}
-,{"SCROLLING_BEGAN",cocos2d::ui::ScrollView::EventType::SCROLLING_BEGAN}
-,{"SCROLLING_ENDED",cocos2d::ui::ScrollView::EventType::SCROLLING_ENDED}
-,{"AUTOSCROLL_ENDED",cocos2d::ui::ScrollView::EventType::AUTOSCROLL_ENDED}
-});}
+sol::table enumTable = lua.create_table_with(0,13);
+enumTable["SCROLL_TO_TOP"]=cocos2d::ui::ScrollView::EventType::SCROLL_TO_TOP;
+enumTable["SCROLL_TO_BOTTOM"]=cocos2d::ui::ScrollView::EventType::SCROLL_TO_BOTTOM;
+enumTable["SCROLL_TO_LEFT"]=cocos2d::ui::ScrollView::EventType::SCROLL_TO_LEFT;
+enumTable["SCROLL_TO_RIGHT"]=cocos2d::ui::ScrollView::EventType::SCROLL_TO_RIGHT;
+enumTable["SCROLLING"]=cocos2d::ui::ScrollView::EventType::SCROLLING;
+enumTable["BOUNCE_TOP"]=cocos2d::ui::ScrollView::EventType::BOUNCE_TOP;
+enumTable["BOUNCE_BOTTOM"]=cocos2d::ui::ScrollView::EventType::BOUNCE_BOTTOM;
+enumTable["BOUNCE_LEFT"]=cocos2d::ui::ScrollView::EventType::BOUNCE_LEFT;
+enumTable["BOUNCE_RIGHT"]=cocos2d::ui::ScrollView::EventType::BOUNCE_RIGHT;
+enumTable["CONTAINER_MOVED"]=cocos2d::ui::ScrollView::EventType::CONTAINER_MOVED;
+enumTable["SCROLLING_BEGAN"]=cocos2d::ui::ScrollView::EventType::SCROLLING_BEGAN;
+enumTable["SCROLLING_ENDED"]=cocos2d::ui::ScrollView::EventType::SCROLLING_ENDED;
+enumTable["AUTOSCROLL_ENDED"]=cocos2d::ui::ScrollView::EventType::AUTOSCROLL_ENDED;
+lua["ccui"]["ScrollView"]["static"]["EventType"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaUIScrollViewAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::ScrollView>("ccui","ScrollView",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ui::Layout,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol,cocos2d::ui::LayoutProtocol>());
-mt.set_function("CreateInstance",static_cast<cocos2d::Ref*(*)()>(&cocos2d::ui::ScrollView::createInstance));
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::ui::ScrollView*(*)()>(&cocos2d::ui::ScrollView::create));
-mt.set_function("SetDirection",static_cast<void(cocos2d::ui::ScrollView::*)(cocos2d::ui::ScrollView::Direction)>(&cocos2d::ui::ScrollView::setDirection));
-mt.set_function("GetDirection",static_cast<cocos2d::ui::ScrollView::Direction(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getDirection));
-mt.set_function("GetInnerContainer",static_cast<cocos2d::ui::Layout*(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getInnerContainer));
-mt.set_function("StopScroll",static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::stopScroll));
-mt.set_function("StopAutoScroll",static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::stopAutoScroll));
-mt.set_function("StopOverallScroll",static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::stopOverallScroll));
-mt.set_function("ScrollToBottom",static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToBottom));
-mt.set_function("ScrollToTop",static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToTop));
-mt.set_function("ScrollToLeft",static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToLeft));
-mt.set_function("ScrollToRight",static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToRight));
-mt.set_function("ScrollToTopLeft",static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToTopLeft));
-mt.set_function("ScrollToTopRight",static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToTopRight));
-mt.set_function("ScrollToBottomLeft",static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToBottomLeft));
-mt.set_function("ScrollToBottomRight",static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToBottomRight));
-mt.set_function("ScrollToPercentVertical",static_cast<void(cocos2d::ui::ScrollView::*)(float,float,bool)>(&cocos2d::ui::ScrollView::scrollToPercentVertical));
-mt.set_function("ScrollToPercentHorizontal",static_cast<void(cocos2d::ui::ScrollView::*)(float,float,bool)>(&cocos2d::ui::ScrollView::scrollToPercentHorizontal));
-mt.set_function("ScrollToPercentBothDirection",static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Vec2&,float,bool)>(&cocos2d::ui::ScrollView::scrollToPercentBothDirection));
-mt.set_function("GetScrolledPercentVertical",static_cast<float(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrolledPercentVertical));
-mt.set_function("GetScrolledPercentHorizontal",static_cast<float(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrolledPercentHorizontal));
-mt.set_function("GetScrolledPercentBothDirection",static_cast<cocos2d::Vec2(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrolledPercentBothDirection));
-mt.set_function("JumpToBottom",static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToBottom));
-mt.set_function("JumpToTop",static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToTop));
-mt.set_function("JumpToLeft",static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToLeft));
-mt.set_function("JumpToRight",static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToRight));
-mt.set_function("JumpToTopLeft",static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToTopLeft));
-mt.set_function("JumpToTopRight",static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToTopRight));
-mt.set_function("JumpToBottomLeft",static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToBottomLeft));
-mt.set_function("JumpToBottomRight",static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToBottomRight));
-mt.set_function("JumpToPercentVertical",static_cast<void(cocos2d::ui::ScrollView::*)(float)>(&cocos2d::ui::ScrollView::jumpToPercentVertical));
-mt.set_function("JumpToPercentHorizontal",static_cast<void(cocos2d::ui::ScrollView::*)(float)>(&cocos2d::ui::ScrollView::jumpToPercentHorizontal));
-mt.set_function("JumpToPercentBothDirection",static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Vec2&)>(&cocos2d::ui::ScrollView::jumpToPercentBothDirection));
-mt.set_function("SetInnerContainerSize",static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Size&)>(&cocos2d::ui::ScrollView::setInnerContainerSize));
-mt.set_function("GetInnerContainerSize",static_cast<const cocos2d::Size&(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getInnerContainerSize));
-mt.set_function("SetInnerContainerPosition",static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Vec2&)>(&cocos2d::ui::ScrollView::setInnerContainerPosition));
-mt.set_function("GetInnerContainerPosition",static_cast<const cocos2d::Vec2&(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getInnerContainerPosition));
-mt.set_function("AddEventListener",static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::ui::ScrollView::ccScrollViewCallback&)>(&cocos2d::ui::ScrollView::addEventListener));
-mt.set_function("AddChild",sol::overload(static_cast<void(cocos2d::ui::ScrollView::*)(cocos2d::Node*,int)>(&cocos2d::ui::ScrollView::addChild),static_cast<void(cocos2d::ui::ScrollView::*)(cocos2d::Node*)>(&cocos2d::ui::ScrollView::addChild),static_cast<void(cocos2d::ui::ScrollView::*)(cocos2d::Node*,int,int)>(&cocos2d::ui::ScrollView::addChild),static_cast<void(cocos2d::ui::ScrollView::*)(cocos2d::Node*,int,const std::string&)>(&cocos2d::ui::ScrollView::addChild)));
-mt.set_function("RemoveAllChildren",static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::removeAllChildren));
-mt.set_function("RemoveAllChildrenWithCleanup",static_cast<void(cocos2d::ui::ScrollView::*)(bool)>(&cocos2d::ui::ScrollView::removeAllChildrenWithCleanup));
-mt.set_function("RemoveChild",sol::overload([](cocos2d::ui::ScrollView* obj,cocos2d::Node* arg0){return obj->removeChild(arg0);},[](cocos2d::ui::ScrollView* obj,cocos2d::Node* arg0,bool arg1){return obj->removeChild(arg0,arg1);}));
-mt.set_function("GetChildren",sol::overload(static_cast<const cocos2d::Vector<cocos2d::Node *>&(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getChildren),static_cast<cocos2d::Vector<cocos2d::Node *>&(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::getChildren)));
-mt.set_function("GetChildrenCount",static_cast<ssize_t(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getChildrenCount));
-mt.set_function("GetChildByTag",static_cast<cocos2d::Node*(cocos2d::ui::ScrollView::*)(int)const>(&cocos2d::ui::ScrollView::getChildByTag));
-mt.set_function("GetChildByName",static_cast<cocos2d::Node*(cocos2d::ui::ScrollView::*)(const std::string&)const>(&cocos2d::ui::ScrollView::getChildByName));
-mt.set_function("OnTouchBegan",static_cast<bool(cocos2d::ui::ScrollView::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::ui::ScrollView::onTouchBegan));
-mt.set_function("OnTouchMoved",static_cast<void(cocos2d::ui::ScrollView::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::ui::ScrollView::onTouchMoved));
-mt.set_function("OnTouchEnded",static_cast<void(cocos2d::ui::ScrollView::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::ui::ScrollView::onTouchEnded));
-mt.set_function("OnTouchCancelled",static_cast<void(cocos2d::ui::ScrollView::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::ui::ScrollView::onTouchCancelled));
-mt.set_function("Update",static_cast<void(cocos2d::ui::ScrollView::*)(float)>(&cocos2d::ui::ScrollView::update));
-mt.set_function("SetBounceEnabled",static_cast<void(cocos2d::ui::ScrollView::*)(bool)>(&cocos2d::ui::ScrollView::setBounceEnabled));
-mt.set_function("IsBounceEnabled",static_cast<bool(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::isBounceEnabled));
-mt.set_function("SetInertiaScrollEnabled",static_cast<void(cocos2d::ui::ScrollView::*)(bool)>(&cocos2d::ui::ScrollView::setInertiaScrollEnabled));
-mt.set_function("IsInertiaScrollEnabled",static_cast<bool(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::isInertiaScrollEnabled));
-mt.set_function("SetScrollBarEnabled",static_cast<void(cocos2d::ui::ScrollView::*)(bool)>(&cocos2d::ui::ScrollView::setScrollBarEnabled));
-mt.set_function("IsScrollBarEnabled",static_cast<bool(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::isScrollBarEnabled));
-mt.set_function("SetScrollBarPositionFromCorner",static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Vec2&)>(&cocos2d::ui::ScrollView::setScrollBarPositionFromCorner));
-mt.set_function("SetScrollBarPositionFromCornerForVertical",static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Vec2&)>(&cocos2d::ui::ScrollView::setScrollBarPositionFromCornerForVertical));
-mt.set_function("GetScrollBarPositionFromCornerForVertical",static_cast<cocos2d::Vec2(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrollBarPositionFromCornerForVertical));
-mt.set_function("SetScrollBarPositionFromCornerForHorizontal",static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Vec2&)>(&cocos2d::ui::ScrollView::setScrollBarPositionFromCornerForHorizontal));
-mt.set_function("GetScrollBarPositionFromCornerForHorizontal",static_cast<cocos2d::Vec2(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrollBarPositionFromCornerForHorizontal));
-mt.set_function("SetScrollBarWidth",static_cast<void(cocos2d::ui::ScrollView::*)(float)>(&cocos2d::ui::ScrollView::setScrollBarWidth));
-mt.set_function("GetScrollBarWidth",static_cast<float(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrollBarWidth));
-mt.set_function("SetScrollBarColor",static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Color3B&)>(&cocos2d::ui::ScrollView::setScrollBarColor));
-mt.set_function("GetScrollBarColor",static_cast<const cocos2d::Color3B&(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrollBarColor));
-mt.set_function("SetScrollBarOpacity",static_cast<void(cocos2d::ui::ScrollView::*)(uint8_t)>(&cocos2d::ui::ScrollView::setScrollBarOpacity));
-mt.set_function("GetScrollBarOpacity",static_cast<uint8_t(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrollBarOpacity));
-mt.set_function("SetScrollBarAutoHideEnabled",static_cast<void(cocos2d::ui::ScrollView::*)(bool)>(&cocos2d::ui::ScrollView::setScrollBarAutoHideEnabled));
-mt.set_function("IsScrollBarAutoHideEnabled",static_cast<bool(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::isScrollBarAutoHideEnabled));
-mt.set_function("SetScrollBarAutoHideTime",static_cast<void(cocos2d::ui::ScrollView::*)(float)>(&cocos2d::ui::ScrollView::setScrollBarAutoHideTime));
-mt.set_function("GetScrollBarAutoHideTime",static_cast<float(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrollBarAutoHideTime));
-mt.set_function("SetTouchTotalTimeThreshold",static_cast<void(cocos2d::ui::ScrollView::*)(float)>(&cocos2d::ui::ScrollView::setTouchTotalTimeThreshold));
-mt.set_function("GetTouchTotalTimeThreshold",static_cast<float(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getTouchTotalTimeThreshold));
-mt.set_function("SetLayoutType",static_cast<void(cocos2d::ui::ScrollView::*)(cocos2d::ui::Layout::Type)>(&cocos2d::ui::ScrollView::setLayoutType));
-mt.set_function("GetLayoutType",static_cast<cocos2d::ui::Layout::Type(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getLayoutType));
-mt.set_function("GetDescription",static_cast<std::string(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getDescription));
-mt.set_function("OnEnter",static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::onEnter));
-mt.set_function("OnExit",static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::onExit));
-mt.set_function("FindNextFocusedWidget",static_cast<cocos2d::ui::Widget*(cocos2d::ui::ScrollView::*)(cocos2d::ui::Widget::FocusDirection,cocos2d::ui::Widget*)>(&cocos2d::ui::ScrollView::findNextFocusedWidget));
-mt.set_function("IsScrolling",static_cast<bool(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::isScrolling));
-mt.set_function("IsAutoScrolling",static_cast<bool(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::isAutoScrolling));
-mt["_Type"]=sol::var(std::ref(cocos2d::ui::ScrollView::__Type));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ui::ScrollView).name()] = sol::usertype_traits<cocos2d::ui::ScrollView*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ui::ScrollView>("deprecated.cocos2d::ui::ScrollView");
+dep[sol::base_classes]=sol::bases<cocos2d::ui::Layout,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol,cocos2d::ui::LayoutProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ui::ScrollView*>::metatable(),sol::usertype_traits<cocos2d::ui::Layout*>::metatable());
+lua["ccui"]["ScrollView"]=mt;
+mt["__new__"]=static_cast<cocos2d::ui::ScrollView*(*)()>(&cocos2d::ui::ScrollView::create);
+mt["SetDirection"]=static_cast<void(cocos2d::ui::ScrollView::*)(cocos2d::ui::ScrollView::Direction)>(&cocos2d::ui::ScrollView::setDirection);
+mt["set"]["Direction"]=mt["SetDirection"];
+mt["GetDirection"]=static_cast<cocos2d::ui::ScrollView::Direction(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getDirection);
+mt["get"]["Direction"]=mt["GetDirection"];
+mt["GetInnerContainer"]=static_cast<cocos2d::ui::Layout*(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getInnerContainer);
+mt["get"]["InnerContainer"]=mt["GetInnerContainer"];
+mt["StopScroll"]=static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::stopScroll);
+mt["StopAutoScroll"]=static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::stopAutoScroll);
+mt["StopOverallScroll"]=static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::stopOverallScroll);
+mt["ScrollToBottom"]=static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToBottom);
+mt["ScrollToTop"]=static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToTop);
+mt["ScrollToLeft"]=static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToLeft);
+mt["ScrollToRight"]=static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToRight);
+mt["ScrollToTopLeft"]=static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToTopLeft);
+mt["ScrollToTopRight"]=static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToTopRight);
+mt["ScrollToBottomLeft"]=static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToBottomLeft);
+mt["ScrollToBottomRight"]=static_cast<void(cocos2d::ui::ScrollView::*)(float,bool)>(&cocos2d::ui::ScrollView::scrollToBottomRight);
+mt["ScrollToPercentVertical"]=static_cast<void(cocos2d::ui::ScrollView::*)(float,float,bool)>(&cocos2d::ui::ScrollView::scrollToPercentVertical);
+mt["ScrollToPercentHorizontal"]=static_cast<void(cocos2d::ui::ScrollView::*)(float,float,bool)>(&cocos2d::ui::ScrollView::scrollToPercentHorizontal);
+mt["ScrollToPercentBothDirection"]=static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Vec2&,float,bool)>(&cocos2d::ui::ScrollView::scrollToPercentBothDirection);
+mt["GetScrolledPercentVertical"]=static_cast<float(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrolledPercentVertical);
+mt["get"]["ScrolledPercentVertical"]=mt["GetScrolledPercentVertical"];
+mt["GetScrolledPercentHorizontal"]=static_cast<float(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrolledPercentHorizontal);
+mt["get"]["ScrolledPercentHorizontal"]=mt["GetScrolledPercentHorizontal"];
+mt["GetScrolledPercentBothDirection"]=static_cast<cocos2d::Vec2(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrolledPercentBothDirection);
+mt["get"]["ScrolledPercentBothDirection"]=mt["GetScrolledPercentBothDirection"];
+mt["JumpToBottom"]=static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToBottom);
+mt["JumpToTop"]=static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToTop);
+mt["JumpToLeft"]=static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToLeft);
+mt["JumpToRight"]=static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToRight);
+mt["JumpToTopLeft"]=static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToTopLeft);
+mt["JumpToTopRight"]=static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToTopRight);
+mt["JumpToBottomLeft"]=static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToBottomLeft);
+mt["JumpToBottomRight"]=static_cast<void(cocos2d::ui::ScrollView::*)()>(&cocos2d::ui::ScrollView::jumpToBottomRight);
+mt["JumpToPercentVertical"]=static_cast<void(cocos2d::ui::ScrollView::*)(float)>(&cocos2d::ui::ScrollView::jumpToPercentVertical);
+mt["JumpToPercentHorizontal"]=static_cast<void(cocos2d::ui::ScrollView::*)(float)>(&cocos2d::ui::ScrollView::jumpToPercentHorizontal);
+mt["JumpToPercentBothDirection"]=static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Vec2&)>(&cocos2d::ui::ScrollView::jumpToPercentBothDirection);
+mt["SetInnerContainerSize"]=static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Size&)>(&cocos2d::ui::ScrollView::setInnerContainerSize);
+mt["set"]["InnerContainerSize"]=mt["SetInnerContainerSize"];
+mt["GetInnerContainerSize"]=static_cast<const cocos2d::Size&(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getInnerContainerSize);
+mt["get"]["InnerContainerSize"]=mt["GetInnerContainerSize"];
+mt["SetInnerContainerPosition"]=static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Vec2&)>(&cocos2d::ui::ScrollView::setInnerContainerPosition);
+mt["set"]["InnerContainerPosition"]=mt["SetInnerContainerPosition"];
+mt["GetInnerContainerPosition"]=static_cast<const cocos2d::Vec2&(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getInnerContainerPosition);
+mt["get"]["InnerContainerPosition"]=mt["GetInnerContainerPosition"];
+mt["AddEventListener"]=static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::ui::ScrollView::ccScrollViewCallback&)>(&cocos2d::ui::ScrollView::addEventListener);
+mt["SetBounceEnabled"]=static_cast<void(cocos2d::ui::ScrollView::*)(bool)>(&cocos2d::ui::ScrollView::setBounceEnabled);
+mt["set"]["BounceEnabled"]=mt["SetBounceEnabled"];
+mt["IsBounceEnabled"]=static_cast<bool(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::isBounceEnabled);
+mt["get"]["BounceEnabled"]=mt["IsBounceEnabled"];
+mt["SetInertiaScrollEnabled"]=static_cast<void(cocos2d::ui::ScrollView::*)(bool)>(&cocos2d::ui::ScrollView::setInertiaScrollEnabled);
+mt["set"]["InertiaScrollEnabled"]=mt["SetInertiaScrollEnabled"];
+mt["IsInertiaScrollEnabled"]=static_cast<bool(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::isInertiaScrollEnabled);
+mt["get"]["InertiaScrollEnabled"]=mt["IsInertiaScrollEnabled"];
+mt["SetScrollBarEnabled"]=static_cast<void(cocos2d::ui::ScrollView::*)(bool)>(&cocos2d::ui::ScrollView::setScrollBarEnabled);
+mt["set"]["ScrollBarEnabled"]=mt["SetScrollBarEnabled"];
+mt["IsScrollBarEnabled"]=static_cast<bool(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::isScrollBarEnabled);
+mt["get"]["ScrollBarEnabled"]=mt["IsScrollBarEnabled"];
+mt["SetScrollBarPositionFromCorner"]=static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Vec2&)>(&cocos2d::ui::ScrollView::setScrollBarPositionFromCorner);
+mt["set"]["ScrollBarPositionFromCorner"]=mt["SetScrollBarPositionFromCorner"];
+mt["SetScrollBarPositionFromCornerForVertical"]=static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Vec2&)>(&cocos2d::ui::ScrollView::setScrollBarPositionFromCornerForVertical);
+mt["set"]["ScrollBarPositionFromCornerForVertical"]=mt["SetScrollBarPositionFromCornerForVertical"];
+mt["GetScrollBarPositionFromCornerForVertical"]=static_cast<cocos2d::Vec2(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrollBarPositionFromCornerForVertical);
+mt["get"]["ScrollBarPositionFromCornerForVertical"]=mt["GetScrollBarPositionFromCornerForVertical"];
+mt["SetScrollBarPositionFromCornerForHorizontal"]=static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Vec2&)>(&cocos2d::ui::ScrollView::setScrollBarPositionFromCornerForHorizontal);
+mt["set"]["ScrollBarPositionFromCornerForHorizontal"]=mt["SetScrollBarPositionFromCornerForHorizontal"];
+mt["GetScrollBarPositionFromCornerForHorizontal"]=static_cast<cocos2d::Vec2(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrollBarPositionFromCornerForHorizontal);
+mt["get"]["ScrollBarPositionFromCornerForHorizontal"]=mt["GetScrollBarPositionFromCornerForHorizontal"];
+mt["SetScrollBarWidth"]=static_cast<void(cocos2d::ui::ScrollView::*)(float)>(&cocos2d::ui::ScrollView::setScrollBarWidth);
+mt["set"]["ScrollBarWidth"]=mt["SetScrollBarWidth"];
+mt["GetScrollBarWidth"]=static_cast<float(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrollBarWidth);
+mt["get"]["ScrollBarWidth"]=mt["GetScrollBarWidth"];
+mt["SetScrollBarColor"]=static_cast<void(cocos2d::ui::ScrollView::*)(const cocos2d::Color3B&)>(&cocos2d::ui::ScrollView::setScrollBarColor);
+mt["set"]["ScrollBarColor"]=mt["SetScrollBarColor"];
+mt["GetScrollBarColor"]=static_cast<const cocos2d::Color3B&(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrollBarColor);
+mt["get"]["ScrollBarColor"]=mt["GetScrollBarColor"];
+mt["SetScrollBarOpacity"]=static_cast<void(cocos2d::ui::ScrollView::*)(uint8_t)>(&cocos2d::ui::ScrollView::setScrollBarOpacity);
+mt["set"]["ScrollBarOpacity"]=mt["SetScrollBarOpacity"];
+mt["GetScrollBarOpacity"]=static_cast<uint8_t(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrollBarOpacity);
+mt["get"]["ScrollBarOpacity"]=mt["GetScrollBarOpacity"];
+mt["SetScrollBarAutoHideEnabled"]=static_cast<void(cocos2d::ui::ScrollView::*)(bool)>(&cocos2d::ui::ScrollView::setScrollBarAutoHideEnabled);
+mt["set"]["ScrollBarAutoHideEnabled"]=mt["SetScrollBarAutoHideEnabled"];
+mt["IsScrollBarAutoHideEnabled"]=static_cast<bool(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::isScrollBarAutoHideEnabled);
+mt["get"]["ScrollBarAutoHideEnabled"]=mt["IsScrollBarAutoHideEnabled"];
+mt["SetScrollBarAutoHideTime"]=static_cast<void(cocos2d::ui::ScrollView::*)(float)>(&cocos2d::ui::ScrollView::setScrollBarAutoHideTime);
+mt["set"]["ScrollBarAutoHideTime"]=mt["SetScrollBarAutoHideTime"];
+mt["GetScrollBarAutoHideTime"]=static_cast<float(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getScrollBarAutoHideTime);
+mt["get"]["ScrollBarAutoHideTime"]=mt["GetScrollBarAutoHideTime"];
+mt["SetTouchTotalTimeThreshold"]=static_cast<void(cocos2d::ui::ScrollView::*)(float)>(&cocos2d::ui::ScrollView::setTouchTotalTimeThreshold);
+mt["set"]["TouchTotalTimeThreshold"]=mt["SetTouchTotalTimeThreshold"];
+mt["GetTouchTotalTimeThreshold"]=static_cast<float(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::getTouchTotalTimeThreshold);
+mt["get"]["TouchTotalTimeThreshold"]=mt["GetTouchTotalTimeThreshold"];
+mt["IsScrolling"]=static_cast<bool(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::isScrolling);
+mt["get"]["Scrolling"]=mt["IsScrolling"];
+mt["IsAutoScrolling"]=static_cast<bool(cocos2d::ui::ScrollView::*)()const>(&cocos2d::ui::ScrollView::isAutoScrolling);
+mt["get"]["AutoScrolling"]=mt["IsAutoScrolling"];
 RegisterLuaUIScrollViewDirectionAuto(lua);
 RegisterLuaUIScrollViewEventTypeAuto(lua);
 }
 void RegisterLuaUIListViewGravityAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["ccui"];
-pTable = pTable["ListView"];
-pTable.new_enum<cocos2d::ui::ListView::Gravity>("Gravity",{
-{"LEFT",cocos2d::ui::ListView::Gravity::LEFT}
-,{"RIGHT",cocos2d::ui::ListView::Gravity::RIGHT}
-,{"CENTER_HORIZONTAL",cocos2d::ui::ListView::Gravity::CENTER_HORIZONTAL}
-,{"TOP",cocos2d::ui::ListView::Gravity::TOP}
-,{"BOTTOM",cocos2d::ui::ListView::Gravity::BOTTOM}
-,{"CENTER_VERTICAL",cocos2d::ui::ListView::Gravity::CENTER_VERTICAL}
-});}
+sol::table enumTable = lua.create_table_with(0,6);
+enumTable["LEFT"]=cocos2d::ui::ListView::Gravity::LEFT;
+enumTable["RIGHT"]=cocos2d::ui::ListView::Gravity::RIGHT;
+enumTable["CENTER_HORIZONTAL"]=cocos2d::ui::ListView::Gravity::CENTER_HORIZONTAL;
+enumTable["TOP"]=cocos2d::ui::ListView::Gravity::TOP;
+enumTable["BOTTOM"]=cocos2d::ui::ListView::Gravity::BOTTOM;
+enumTable["CENTER_VERTICAL"]=cocos2d::ui::ListView::Gravity::CENTER_VERTICAL;
+lua["ccui"]["ListView"]["static"]["Gravity"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaUIListViewEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["ccui"];
-pTable = pTable["ListView"];
-pTable.new_enum<cocos2d::ui::ListView::EventType>("EventType",{
-{"ON_SELECTED_ITEM_START",cocos2d::ui::ListView::EventType::ON_SELECTED_ITEM_START}
-,{"ON_SELECTED_ITEM_END",cocos2d::ui::ListView::EventType::ON_SELECTED_ITEM_END}
-});}
+sol::table enumTable = lua.create_table_with(0,2);
+enumTable["ON_SELECTED_ITEM_START"]=cocos2d::ui::ListView::EventType::ON_SELECTED_ITEM_START;
+enumTable["ON_SELECTED_ITEM_END"]=cocos2d::ui::ListView::EventType::ON_SELECTED_ITEM_END;
+lua["ccui"]["ListView"]["static"]["EventType"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaUIListViewMagneticTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["ccui"];
-pTable = pTable["ListView"];
-pTable.new_enum<cocos2d::ui::ListView::MagneticType>("MagneticType",{
-{"NONE",cocos2d::ui::ListView::MagneticType::NONE}
-,{"CENTER",cocos2d::ui::ListView::MagneticType::CENTER}
-,{"BOTH_END",cocos2d::ui::ListView::MagneticType::BOTH_END}
-,{"LEFT",cocos2d::ui::ListView::MagneticType::LEFT}
-,{"RIGHT",cocos2d::ui::ListView::MagneticType::RIGHT}
-,{"TOP",cocos2d::ui::ListView::MagneticType::TOP}
-,{"BOTTOM",cocos2d::ui::ListView::MagneticType::BOTTOM}
-});}
+sol::table enumTable = lua.create_table_with(0,7);
+enumTable["NONE"]=cocos2d::ui::ListView::MagneticType::NONE;
+enumTable["CENTER"]=cocos2d::ui::ListView::MagneticType::CENTER;
+enumTable["BOTH_END"]=cocos2d::ui::ListView::MagneticType::BOTH_END;
+enumTable["LEFT"]=cocos2d::ui::ListView::MagneticType::LEFT;
+enumTable["RIGHT"]=cocos2d::ui::ListView::MagneticType::RIGHT;
+enumTable["TOP"]=cocos2d::ui::ListView::MagneticType::TOP;
+enumTable["BOTTOM"]=cocos2d::ui::ListView::MagneticType::BOTTOM;
+lua["ccui"]["ListView"]["static"]["MagneticType"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaUIListViewAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::ListView>("ccui","ListView",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ui::ScrollView,cocos2d::ui::Layout,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol,cocos2d::ui::LayoutProtocol>());
-mt.set_function("CreateInstance",static_cast<cocos2d::Ref*(*)()>(&cocos2d::ui::ListView::createInstance));
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::ui::ListView*(*)()>(&cocos2d::ui::ListView::create));
-mt.set_function("SetItemModel",static_cast<void(cocos2d::ui::ListView::*)(cocos2d::ui::Widget*)>(&cocos2d::ui::ListView::setItemModel));
-mt.set_function("PushBackDefaultItem",static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::pushBackDefaultItem));
-mt.set_function("InsertDefaultItem",static_cast<void(cocos2d::ui::ListView::*)(ssize_t)>(&cocos2d::ui::ListView::insertDefaultItem));
-mt.set_function("PushBackCustomItem",static_cast<void(cocos2d::ui::ListView::*)(cocos2d::ui::Widget*)>(&cocos2d::ui::ListView::pushBackCustomItem));
-mt.set_function("InsertCustomItem",static_cast<void(cocos2d::ui::ListView::*)(cocos2d::ui::Widget*,ssize_t)>(&cocos2d::ui::ListView::insertCustomItem));
-mt.set_function("RemoveLastItem",static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::removeLastItem));
-mt.set_function("RemoveItem",static_cast<void(cocos2d::ui::ListView::*)(ssize_t)>(&cocos2d::ui::ListView::removeItem));
-mt.set_function("RemoveAllItems",static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::removeAllItems));
-mt.set_function("GetItem",static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)(ssize_t)const>(&cocos2d::ui::ListView::getItem));
-mt.set_function("GetItems",static_cast<cocos2d::Vector<cocos2d::ui::Widget *>&(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::getItems));
-mt.set_function("GetIndex",static_cast<ssize_t(cocos2d::ui::ListView::*)(cocos2d::ui::Widget*)const>(&cocos2d::ui::ListView::getIndex));
-mt.set_function("SetGravity",static_cast<void(cocos2d::ui::ListView::*)(cocos2d::ui::ListView::Gravity)>(&cocos2d::ui::ListView::setGravity));
-mt.set_function("SetMagneticType",static_cast<void(cocos2d::ui::ListView::*)(cocos2d::ui::ListView::MagneticType)>(&cocos2d::ui::ListView::setMagneticType));
-mt.set_function("GetMagneticType",static_cast<cocos2d::ui::ListView::MagneticType(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getMagneticType));
-mt.set_function("SetMagneticAllowedOutOfBoundary",static_cast<void(cocos2d::ui::ListView::*)(bool)>(&cocos2d::ui::ListView::setMagneticAllowedOutOfBoundary));
-mt.set_function("GetMagneticAllowedOutOfBoundary",static_cast<bool(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getMagneticAllowedOutOfBoundary));
-mt.set_function("SetItemsMargin",static_cast<void(cocos2d::ui::ListView::*)(float)>(&cocos2d::ui::ListView::setItemsMargin));
-mt.set_function("GetItemsMargin",static_cast<float(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getItemsMargin));
-mt.set_function("SetPadding",static_cast<void(cocos2d::ui::ListView::*)(float,float,float,float)>(&cocos2d::ui::ListView::setPadding));
-mt.set_function("SetLeftPadding",static_cast<void(cocos2d::ui::ListView::*)(float)>(&cocos2d::ui::ListView::setLeftPadding));
-mt.set_function("SetTopPadding",static_cast<void(cocos2d::ui::ListView::*)(float)>(&cocos2d::ui::ListView::setTopPadding));
-mt.set_function("SetRightPadding",static_cast<void(cocos2d::ui::ListView::*)(float)>(&cocos2d::ui::ListView::setRightPadding));
-mt.set_function("SetBottomPadding",static_cast<void(cocos2d::ui::ListView::*)(float)>(&cocos2d::ui::ListView::setBottomPadding));
-mt.set_function("GetLeftPadding",static_cast<float(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getLeftPadding));
-mt.set_function("GetTopPadding",static_cast<float(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getTopPadding));
-mt.set_function("GetRightPadding",static_cast<float(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getRightPadding));
-mt.set_function("GetBottomPadding",static_cast<float(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getBottomPadding));
-mt.set_function("SetScrollDuration",static_cast<void(cocos2d::ui::ListView::*)(float)>(&cocos2d::ui::ListView::setScrollDuration));
-mt.set_function("GetScrollDuration",static_cast<float(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getScrollDuration));
-mt.set_function("DoLayout",static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::doLayout));
-mt.set_function("RequestDoLayout",static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::requestDoLayout));
-mt.set_function("AddChild",sol::overload(static_cast<void(cocos2d::ui::ListView::*)(cocos2d::Node*,int)>(&cocos2d::ui::ListView::addChild),static_cast<void(cocos2d::ui::ListView::*)(cocos2d::Node*)>(&cocos2d::ui::ListView::addChild),static_cast<void(cocos2d::ui::ListView::*)(cocos2d::Node*,int,int)>(&cocos2d::ui::ListView::addChild),static_cast<void(cocos2d::ui::ListView::*)(cocos2d::Node*,int,const std::string&)>(&cocos2d::ui::ListView::addChild)));
-mt.set_function("RemoveAllChildren",static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::removeAllChildren));
-mt.set_function("RemoveAllChildrenWithCleanup",static_cast<void(cocos2d::ui::ListView::*)(bool)>(&cocos2d::ui::ListView::removeAllChildrenWithCleanup));
-mt.set_function("RemoveChild",sol::overload([](cocos2d::ui::ListView* obj,cocos2d::Node* arg0){return obj->removeChild(arg0);},[](cocos2d::ui::ListView* obj,cocos2d::Node* arg0,bool arg1){return obj->removeChild(arg0,arg1);}));
-mt.set_function("GetClosestItemToPosition",static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)(const cocos2d::Vec2&,const cocos2d::Vec2&)const>(&cocos2d::ui::ListView::getClosestItemToPosition));
-mt.set_function("GetClosestItemToPositionInCurrentView",static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)(const cocos2d::Vec2&,const cocos2d::Vec2&)const>(&cocos2d::ui::ListView::getClosestItemToPositionInCurrentView));
-mt.set_function("GetCenterItemInCurrentView",static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getCenterItemInCurrentView));
-mt.set_function("GetLeftmostItemInCurrentView",static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getLeftmostItemInCurrentView));
-mt.set_function("GetRightmostItemInCurrentView",static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getRightmostItemInCurrentView));
-mt.set_function("GetTopmostItemInCurrentView",static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getTopmostItemInCurrentView));
-mt.set_function("GetBottommostItemInCurrentView",static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getBottommostItemInCurrentView));
-mt.set_function("JumpToBottom",static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::jumpToBottom));
-mt.set_function("JumpToTop",static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::jumpToTop));
-mt.set_function("JumpToLeft",static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::jumpToLeft));
-mt.set_function("JumpToRight",static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::jumpToRight));
-mt.set_function("JumpToTopLeft",static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::jumpToTopLeft));
-mt.set_function("JumpToTopRight",static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::jumpToTopRight));
-mt.set_function("JumpToBottomLeft",static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::jumpToBottomLeft));
-mt.set_function("JumpToBottomRight",static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::jumpToBottomRight));
-mt.set_function("JumpToPercentVertical",static_cast<void(cocos2d::ui::ListView::*)(float)>(&cocos2d::ui::ListView::jumpToPercentVertical));
-mt.set_function("JumpToPercentHorizontal",static_cast<void(cocos2d::ui::ListView::*)(float)>(&cocos2d::ui::ListView::jumpToPercentHorizontal));
-mt.set_function("JumpToPercentBothDirection",static_cast<void(cocos2d::ui::ListView::*)(const cocos2d::Vec2&)>(&cocos2d::ui::ListView::jumpToPercentBothDirection));
-mt.set_function("JumpToItem",static_cast<void(cocos2d::ui::ListView::*)(ssize_t,const cocos2d::Vec2&,const cocos2d::Vec2&)>(&cocos2d::ui::ListView::jumpToItem));
-mt.set_function("ScrollToItem",sol::overload(static_cast<void(cocos2d::ui::ListView::*)(ssize_t,const cocos2d::Vec2&,const cocos2d::Vec2&,float)>(&cocos2d::ui::ListView::scrollToItem),static_cast<void(cocos2d::ui::ListView::*)(ssize_t,const cocos2d::Vec2&,const cocos2d::Vec2&)>(&cocos2d::ui::ListView::scrollToItem)));
-mt.set_function("GetCurSelectedIndex",static_cast<ssize_t(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getCurSelectedIndex));
-mt.set_function("SetCurSelectedIndex",static_cast<void(cocos2d::ui::ListView::*)(int)>(&cocos2d::ui::ListView::setCurSelectedIndex));
-mt.set_function("AddEventListener",static_cast<void(cocos2d::ui::ListView::*)(const cocos2d::ui::ListView::ccListViewCallback&)>(&cocos2d::ui::ListView::addEventListener));
-mt.set_function("SetDirection",static_cast<void(cocos2d::ui::ListView::*)(cocos2d::ui::ScrollView::Direction)>(&cocos2d::ui::ListView::setDirection));
-mt.set_function("GetDescription",static_cast<std::string(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getDescription));
-mt["_Type"]=sol::var(std::ref(cocos2d::ui::ListView::__Type));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ui::ListView).name()] = sol::usertype_traits<cocos2d::ui::ListView*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ui::ListView>("deprecated.cocos2d::ui::ListView");
+dep[sol::base_classes]=sol::bases<cocos2d::ui::ScrollView,cocos2d::ui::Layout,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol,cocos2d::ui::LayoutProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ui::ListView*>::metatable(),sol::usertype_traits<cocos2d::ui::ScrollView*>::metatable());
+lua["ccui"]["ListView"]=mt;
+mt["__new__"]=static_cast<cocos2d::ui::ListView*(*)()>(&cocos2d::ui::ListView::create);
+mt["SetItemModel"]=static_cast<void(cocos2d::ui::ListView::*)(cocos2d::ui::Widget*)>(&cocos2d::ui::ListView::setItemModel);
+mt["set"]["ItemModel"]=mt["SetItemModel"];
+mt["PushBackDefaultItem"]=static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::pushBackDefaultItem);
+mt["InsertDefaultItem"]=static_cast<void(cocos2d::ui::ListView::*)(ssize_t)>(&cocos2d::ui::ListView::insertDefaultItem);
+mt["PushBackCustomItem"]=static_cast<void(cocos2d::ui::ListView::*)(cocos2d::ui::Widget*)>(&cocos2d::ui::ListView::pushBackCustomItem);
+mt["InsertCustomItem"]=static_cast<void(cocos2d::ui::ListView::*)(cocos2d::ui::Widget*,ssize_t)>(&cocos2d::ui::ListView::insertCustomItem);
+mt["RemoveLastItem"]=static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::removeLastItem);
+mt["RemoveItem"]=static_cast<void(cocos2d::ui::ListView::*)(ssize_t)>(&cocos2d::ui::ListView::removeItem);
+mt["RemoveAllItems"]=static_cast<void(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::removeAllItems);
+mt["GetItem"]=static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)(ssize_t)const>(&cocos2d::ui::ListView::getItem);
+mt["GetItems"]=static_cast<cocos2d::Vector<cocos2d::ui::Widget *>&(cocos2d::ui::ListView::*)()>(&cocos2d::ui::ListView::getItems);
+mt["get"]["Items"]=mt["GetItems"];
+mt["GetIndex"]=static_cast<ssize_t(cocos2d::ui::ListView::*)(cocos2d::ui::Widget*)const>(&cocos2d::ui::ListView::getIndex);
+mt["SetGravity"]=static_cast<void(cocos2d::ui::ListView::*)(cocos2d::ui::ListView::Gravity)>(&cocos2d::ui::ListView::setGravity);
+mt["set"]["Gravity"]=mt["SetGravity"];
+mt["SetMagneticType"]=static_cast<void(cocos2d::ui::ListView::*)(cocos2d::ui::ListView::MagneticType)>(&cocos2d::ui::ListView::setMagneticType);
+mt["set"]["MagneticType"]=mt["SetMagneticType"];
+mt["GetMagneticType"]=static_cast<cocos2d::ui::ListView::MagneticType(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getMagneticType);
+mt["get"]["MagneticType"]=mt["GetMagneticType"];
+mt["SetMagneticAllowedOutOfBoundary"]=static_cast<void(cocos2d::ui::ListView::*)(bool)>(&cocos2d::ui::ListView::setMagneticAllowedOutOfBoundary);
+mt["set"]["MagneticAllowedOutOfBoundary"]=mt["SetMagneticAllowedOutOfBoundary"];
+mt["GetMagneticAllowedOutOfBoundary"]=static_cast<bool(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getMagneticAllowedOutOfBoundary);
+mt["get"]["MagneticAllowedOutOfBoundary"]=mt["GetMagneticAllowedOutOfBoundary"];
+mt["SetItemsMargin"]=static_cast<void(cocos2d::ui::ListView::*)(float)>(&cocos2d::ui::ListView::setItemsMargin);
+mt["set"]["ItemsMargin"]=mt["SetItemsMargin"];
+mt["GetItemsMargin"]=static_cast<float(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getItemsMargin);
+mt["get"]["ItemsMargin"]=mt["GetItemsMargin"];
+mt["SetPadding"]=static_cast<void(cocos2d::ui::ListView::*)(float,float,float,float)>(&cocos2d::ui::ListView::setPadding);
+mt["SetLeftPadding"]=static_cast<void(cocos2d::ui::ListView::*)(float)>(&cocos2d::ui::ListView::setLeftPadding);
+mt["set"]["LeftPadding"]=mt["SetLeftPadding"];
+mt["SetTopPadding"]=static_cast<void(cocos2d::ui::ListView::*)(float)>(&cocos2d::ui::ListView::setTopPadding);
+mt["set"]["TopPadding"]=mt["SetTopPadding"];
+mt["SetRightPadding"]=static_cast<void(cocos2d::ui::ListView::*)(float)>(&cocos2d::ui::ListView::setRightPadding);
+mt["set"]["RightPadding"]=mt["SetRightPadding"];
+mt["SetBottomPadding"]=static_cast<void(cocos2d::ui::ListView::*)(float)>(&cocos2d::ui::ListView::setBottomPadding);
+mt["set"]["BottomPadding"]=mt["SetBottomPadding"];
+mt["GetLeftPadding"]=static_cast<float(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getLeftPadding);
+mt["get"]["LeftPadding"]=mt["GetLeftPadding"];
+mt["GetTopPadding"]=static_cast<float(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getTopPadding);
+mt["get"]["TopPadding"]=mt["GetTopPadding"];
+mt["GetRightPadding"]=static_cast<float(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getRightPadding);
+mt["get"]["RightPadding"]=mt["GetRightPadding"];
+mt["GetBottomPadding"]=static_cast<float(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getBottomPadding);
+mt["get"]["BottomPadding"]=mt["GetBottomPadding"];
+mt["SetScrollDuration"]=static_cast<void(cocos2d::ui::ListView::*)(float)>(&cocos2d::ui::ListView::setScrollDuration);
+mt["set"]["ScrollDuration"]=mt["SetScrollDuration"];
+mt["GetScrollDuration"]=static_cast<float(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getScrollDuration);
+mt["get"]["ScrollDuration"]=mt["GetScrollDuration"];
+mt["GetClosestItemToPosition"]=static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)(const cocos2d::Vec2&,const cocos2d::Vec2&)const>(&cocos2d::ui::ListView::getClosestItemToPosition);
+mt["GetClosestItemToPositionInCurrentView"]=static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)(const cocos2d::Vec2&,const cocos2d::Vec2&)const>(&cocos2d::ui::ListView::getClosestItemToPositionInCurrentView);
+mt["GetCenterItemInCurrentView"]=static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getCenterItemInCurrentView);
+mt["get"]["CenterItemInCurrentView"]=mt["GetCenterItemInCurrentView"];
+mt["GetLeftmostItemInCurrentView"]=static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getLeftmostItemInCurrentView);
+mt["get"]["LeftmostItemInCurrentView"]=mt["GetLeftmostItemInCurrentView"];
+mt["GetRightmostItemInCurrentView"]=static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getRightmostItemInCurrentView);
+mt["get"]["RightmostItemInCurrentView"]=mt["GetRightmostItemInCurrentView"];
+mt["GetTopmostItemInCurrentView"]=static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getTopmostItemInCurrentView);
+mt["get"]["TopmostItemInCurrentView"]=mt["GetTopmostItemInCurrentView"];
+mt["GetBottommostItemInCurrentView"]=static_cast<cocos2d::ui::Widget*(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getBottommostItemInCurrentView);
+mt["get"]["BottommostItemInCurrentView"]=mt["GetBottommostItemInCurrentView"];
+mt["JumpToItem"]=static_cast<void(cocos2d::ui::ListView::*)(ssize_t,const cocos2d::Vec2&,const cocos2d::Vec2&)>(&cocos2d::ui::ListView::jumpToItem);
+mt["ScrollToItem"]=sol::overload(static_cast<void(cocos2d::ui::ListView::*)(ssize_t,const cocos2d::Vec2&,const cocos2d::Vec2&,float)>(&cocos2d::ui::ListView::scrollToItem),static_cast<void(cocos2d::ui::ListView::*)(ssize_t,const cocos2d::Vec2&,const cocos2d::Vec2&)>(&cocos2d::ui::ListView::scrollToItem));
+mt["GetCurSelectedIndex"]=static_cast<ssize_t(cocos2d::ui::ListView::*)()const>(&cocos2d::ui::ListView::getCurSelectedIndex);
+mt["get"]["CurSelectedIndex"]=mt["GetCurSelectedIndex"];
+mt["SetCurSelectedIndex"]=static_cast<void(cocos2d::ui::ListView::*)(int)>(&cocos2d::ui::ListView::setCurSelectedIndex);
+mt["set"]["CurSelectedIndex"]=mt["SetCurSelectedIndex"];
+mt["AddEventListener"]=sol::overload(static_cast<void(cocos2d::ui::ListView::*)(const cocos2d::ui::ScrollView::ccScrollViewCallback&)>(&cocos2d::ui::ListView::addEventListener),static_cast<void(cocos2d::ui::ListView::*)(const cocos2d::ui::ListView::ccListViewCallback&)>(&cocos2d::ui::ListView::addEventListener));
 RegisterLuaUIListViewGravityAuto(lua);
 RegisterLuaUIListViewEventTypeAuto(lua);
 RegisterLuaUIListViewMagneticTypeAuto(lua);
 }
 void RegisterLuaUISliderEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["ccui"];
-pTable = pTable["Slider"];
-pTable.new_enum<cocos2d::ui::Slider::EventType>("EventType",{
-{"ON_PERCENTAGE_CHANGED",cocos2d::ui::Slider::EventType::ON_PERCENTAGE_CHANGED}
-,{"ON_SLIDEBALL_DOWN",cocos2d::ui::Slider::EventType::ON_SLIDEBALL_DOWN}
-,{"ON_SLIDEBALL_UP",cocos2d::ui::Slider::EventType::ON_SLIDEBALL_UP}
-,{"ON_SLIDEBALL_CANCEL",cocos2d::ui::Slider::EventType::ON_SLIDEBALL_CANCEL}
-});}
+sol::table enumTable = lua.create_table_with(0,4);
+enumTable["ON_PERCENTAGE_CHANGED"]=cocos2d::ui::Slider::EventType::ON_PERCENTAGE_CHANGED;
+enumTable["ON_SLIDEBALL_DOWN"]=cocos2d::ui::Slider::EventType::ON_SLIDEBALL_DOWN;
+enumTable["ON_SLIDEBALL_UP"]=cocos2d::ui::Slider::EventType::ON_SLIDEBALL_UP;
+enumTable["ON_SLIDEBALL_CANCEL"]=cocos2d::ui::Slider::EventType::ON_SLIDEBALL_CANCEL;
+lua["ccui"]["Slider"]["static"]["EventType"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaUISliderAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::Slider>("ccui","Slider",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol>());
-mt.set_function("CreateInstance",static_cast<cocos2d::Ref*(*)()>(&cocos2d::ui::Slider::createInstance));
-mt.set_function(sol::meta_function::construct,sol::overload([](cocos2d::ui::Slider* obj,const std::string& arg0,const std::string& arg1){return obj->create(arg0,arg1);},[](cocos2d::ui::Slider* obj,const std::string& arg0,const std::string& arg1,cocos2d::ui::Widget::TextureResType arg2){return obj->create(arg0,arg1,arg2);},static_cast<cocos2d::ui::Slider*(*)()>(&cocos2d::ui::Slider::create)));
-mt.set_function("LoadBarTexture",sol::overload([](cocos2d::ui::Slider* obj,const std::string& arg0){return obj->loadBarTexture(arg0);},[](cocos2d::ui::Slider* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadBarTexture(arg0,arg1);}));
-mt.set_function("SetScale9Enabled",static_cast<void(cocos2d::ui::Slider::*)(bool)>(&cocos2d::ui::Slider::setScale9Enabled));
-mt.set_function("IsScale9Enabled",static_cast<bool(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::isScale9Enabled));
-mt.set_function("SetCapInsets",static_cast<void(cocos2d::ui::Slider::*)(const cocos2d::Rect&)>(&cocos2d::ui::Slider::setCapInsets));
-mt.set_function("SetCapInsetsBarRenderer",static_cast<void(cocos2d::ui::Slider::*)(const cocos2d::Rect&)>(&cocos2d::ui::Slider::setCapInsetsBarRenderer));
-mt.set_function("GetCapInsetsBarRenderer",static_cast<const cocos2d::Rect&(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getCapInsetsBarRenderer));
-mt.set_function("SetCapInsetProgressBarRenderer",static_cast<void(cocos2d::ui::Slider::*)(const cocos2d::Rect&)>(&cocos2d::ui::Slider::setCapInsetProgressBarRenderer));
-mt.set_function("GetCapInsetsProgressBarRenderer",static_cast<const cocos2d::Rect&(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getCapInsetsProgressBarRenderer));
-mt.set_function("LoadSlidBallTextures",sol::overload([](cocos2d::ui::Slider* obj,const std::string& arg0){return obj->loadSlidBallTextures(arg0);},[](cocos2d::ui::Slider* obj,const std::string& arg0,const std::string& arg1){return obj->loadSlidBallTextures(arg0,arg1);},[](cocos2d::ui::Slider* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2){return obj->loadSlidBallTextures(arg0,arg1,arg2);},[](cocos2d::ui::Slider* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2,cocos2d::ui::Widget::TextureResType arg3){return obj->loadSlidBallTextures(arg0,arg1,arg2,arg3);}));
-mt.set_function("LoadSlidBallTextureNormal",sol::overload([](cocos2d::ui::Slider* obj,const std::string& arg0){return obj->loadSlidBallTextureNormal(arg0);},[](cocos2d::ui::Slider* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadSlidBallTextureNormal(arg0,arg1);}));
-mt.set_function("LoadSlidBallTexturePressed",sol::overload([](cocos2d::ui::Slider* obj,const std::string& arg0){return obj->loadSlidBallTexturePressed(arg0);},[](cocos2d::ui::Slider* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadSlidBallTexturePressed(arg0,arg1);}));
-mt.set_function("LoadSlidBallTextureDisabled",sol::overload([](cocos2d::ui::Slider* obj,const std::string& arg0){return obj->loadSlidBallTextureDisabled(arg0);},[](cocos2d::ui::Slider* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadSlidBallTextureDisabled(arg0,arg1);}));
-mt.set_function("LoadProgressBarTexture",sol::overload([](cocos2d::ui::Slider* obj,const std::string& arg0){return obj->loadProgressBarTexture(arg0);},[](cocos2d::ui::Slider* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadProgressBarTexture(arg0,arg1);}));
-mt.set_function("SetPercent",static_cast<void(cocos2d::ui::Slider::*)(int)>(&cocos2d::ui::Slider::setPercent));
-mt.set_function("UpdateVisualSlider",static_cast<void(cocos2d::ui::Slider::*)()>(&cocos2d::ui::Slider::updateVisualSlider));
-mt.set_function("GetPercent",static_cast<int(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getPercent));
-mt.set_function("SetMaxPercent",static_cast<void(cocos2d::ui::Slider::*)(int)>(&cocos2d::ui::Slider::setMaxPercent));
-mt.set_function("GetMaxPercent",static_cast<int(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getMaxPercent));
-mt.set_function("AddEventListener",static_cast<void(cocos2d::ui::Slider::*)(const cocos2d::ui::Slider::ccSliderCallback&)>(&cocos2d::ui::Slider::addEventListener));
-mt.set_function("OnTouchBegan",static_cast<bool(cocos2d::ui::Slider::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::ui::Slider::onTouchBegan));
-mt.set_function("OnTouchMoved",static_cast<void(cocos2d::ui::Slider::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::ui::Slider::onTouchMoved));
-mt.set_function("OnTouchEnded",static_cast<void(cocos2d::ui::Slider::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::ui::Slider::onTouchEnded));
-mt.set_function("OnTouchCancelled",static_cast<void(cocos2d::ui::Slider::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::ui::Slider::onTouchCancelled));
-mt.set_function("GetVirtualRendererSize",static_cast<cocos2d::Size(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getVirtualRendererSize));
-mt.set_function("GetVirtualRenderer",static_cast<cocos2d::Node*(cocos2d::ui::Slider::*)()>(&cocos2d::ui::Slider::getVirtualRenderer));
-mt.set_function("IgnoreContentAdaptWithSize",static_cast<void(cocos2d::ui::Slider::*)(bool)>(&cocos2d::ui::Slider::ignoreContentAdaptWithSize));
-mt.set_function("HitTest",static_cast<bool(cocos2d::ui::Slider::*)(const cocos2d::Vec2&,const cocos2d::Camera*,cocos2d::Vec3*)const>(&cocos2d::ui::Slider::hitTest));
-mt.set_function("GetDescription",static_cast<std::string(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getDescription));
-mt.set_function("SetZoomScale",static_cast<void(cocos2d::ui::Slider::*)(float)>(&cocos2d::ui::Slider::setZoomScale));
-mt.set_function("GetZoomScale",static_cast<float(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getZoomScale));
-mt.set_function("GetSlidBallNormalRenderer",static_cast<cocos2d::Sprite*(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getSlidBallNormalRenderer));
-mt.set_function("GetSlidBallPressedRenderer",static_cast<cocos2d::Sprite*(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getSlidBallPressedRenderer));
-mt.set_function("GetSlidBallDisabledRenderer",static_cast<cocos2d::Sprite*(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getSlidBallDisabledRenderer));
-mt.set_function("GetSlidBallRenderer",static_cast<cocos2d::Node*(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getSlidBallRenderer));
-mt.set_function("GetBackFile",static_cast<cocos2d::ResourceData(cocos2d::ui::Slider::*)()>(&cocos2d::ui::Slider::getBackFile));
-mt.set_function("GetProgressBarFile",static_cast<cocos2d::ResourceData(cocos2d::ui::Slider::*)()>(&cocos2d::ui::Slider::getProgressBarFile));
-mt.set_function("GetBallNormalFile",static_cast<cocos2d::ResourceData(cocos2d::ui::Slider::*)()>(&cocos2d::ui::Slider::getBallNormalFile));
-mt.set_function("GetBallPressedFile",static_cast<cocos2d::ResourceData(cocos2d::ui::Slider::*)()>(&cocos2d::ui::Slider::getBallPressedFile));
-mt.set_function("GetBallDisabledFile",static_cast<cocos2d::ResourceData(cocos2d::ui::Slider::*)()>(&cocos2d::ui::Slider::getBallDisabledFile));
-mt["_Type"]=sol::var(std::ref(cocos2d::ui::Slider::__Type));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ui::Slider).name()] = sol::usertype_traits<cocos2d::ui::Slider*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ui::Slider>("deprecated.cocos2d::ui::Slider");
+dep[sol::base_classes]=sol::bases<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ui::Slider*>::metatable(),sol::usertype_traits<cocos2d::ui::Widget*>::metatable());
+lua["ccui"]["Slider"]=mt;
+mt["__new__"]=sol::overload([](const std::string& arg0,const std::string& arg1,cocos2d::ui::Widget::TextureResType arg2){return cocos2d::ui::Slider::create(arg0,arg1,arg2);},[](const std::string& arg0,const std::string& arg1){return cocos2d::ui::Slider::create(arg0,arg1);},static_cast<cocos2d::ui::Slider*(*)()>(&cocos2d::ui::Slider::create));
+mt["LoadBarTexture"]=sol::overload([](cocos2d::ui::Slider* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadBarTexture(arg0,arg1);},[](cocos2d::ui::Slider* obj,const std::string& arg0){return obj->loadBarTexture(arg0);});
+mt["SetScale9Enabled"]=static_cast<void(cocos2d::ui::Slider::*)(bool)>(&cocos2d::ui::Slider::setScale9Enabled);
+mt["set"]["Scale9Enabled"]=mt["SetScale9Enabled"];
+mt["IsScale9Enabled"]=static_cast<bool(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::isScale9Enabled);
+mt["get"]["Scale9Enabled"]=mt["IsScale9Enabled"];
+mt["SetCapInsets"]=static_cast<void(cocos2d::ui::Slider::*)(const cocos2d::Rect&)>(&cocos2d::ui::Slider::setCapInsets);
+mt["set"]["CapInsets"]=mt["SetCapInsets"];
+mt["SetCapInsetsBarRenderer"]=static_cast<void(cocos2d::ui::Slider::*)(const cocos2d::Rect&)>(&cocos2d::ui::Slider::setCapInsetsBarRenderer);
+mt["set"]["CapInsetsBarRenderer"]=mt["SetCapInsetsBarRenderer"];
+mt["GetCapInsetsBarRenderer"]=static_cast<const cocos2d::Rect&(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getCapInsetsBarRenderer);
+mt["get"]["CapInsetsBarRenderer"]=mt["GetCapInsetsBarRenderer"];
+mt["SetCapInsetProgressBarRenderer"]=static_cast<void(cocos2d::ui::Slider::*)(const cocos2d::Rect&)>(&cocos2d::ui::Slider::setCapInsetProgressBarRenderer);
+mt["set"]["CapInsetProgressBarRenderer"]=mt["SetCapInsetProgressBarRenderer"];
+mt["GetCapInsetsProgressBarRenderer"]=static_cast<const cocos2d::Rect&(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getCapInsetsProgressBarRenderer);
+mt["get"]["CapInsetsProgressBarRenderer"]=mt["GetCapInsetsProgressBarRenderer"];
+mt["LoadSlidBallTextures"]=sol::overload([](cocos2d::ui::Slider* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2,cocos2d::ui::Widget::TextureResType arg3){return obj->loadSlidBallTextures(arg0,arg1,arg2,arg3);},[](cocos2d::ui::Slider* obj,const std::string& arg0,const std::string& arg1,const std::string& arg2){return obj->loadSlidBallTextures(arg0,arg1,arg2);},[](cocos2d::ui::Slider* obj,const std::string& arg0,const std::string& arg1){return obj->loadSlidBallTextures(arg0,arg1);},[](cocos2d::ui::Slider* obj,const std::string& arg0){return obj->loadSlidBallTextures(arg0);});
+mt["LoadSlidBallTextureNormal"]=sol::overload([](cocos2d::ui::Slider* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadSlidBallTextureNormal(arg0,arg1);},[](cocos2d::ui::Slider* obj,const std::string& arg0){return obj->loadSlidBallTextureNormal(arg0);});
+mt["LoadSlidBallTexturePressed"]=sol::overload([](cocos2d::ui::Slider* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadSlidBallTexturePressed(arg0,arg1);},[](cocos2d::ui::Slider* obj,const std::string& arg0){return obj->loadSlidBallTexturePressed(arg0);});
+mt["LoadSlidBallTextureDisabled"]=sol::overload([](cocos2d::ui::Slider* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadSlidBallTextureDisabled(arg0,arg1);},[](cocos2d::ui::Slider* obj,const std::string& arg0){return obj->loadSlidBallTextureDisabled(arg0);});
+mt["LoadProgressBarTexture"]=sol::overload([](cocos2d::ui::Slider* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->loadProgressBarTexture(arg0,arg1);},[](cocos2d::ui::Slider* obj,const std::string& arg0){return obj->loadProgressBarTexture(arg0);});
+mt["SetPercent"]=static_cast<void(cocos2d::ui::Slider::*)(int)>(&cocos2d::ui::Slider::setPercent);
+mt["set"]["Percent"]=mt["SetPercent"];
+mt["UpdateVisualSlider"]=static_cast<void(cocos2d::ui::Slider::*)()>(&cocos2d::ui::Slider::updateVisualSlider);
+mt["GetPercent"]=static_cast<int(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getPercent);
+mt["get"]["Percent"]=mt["GetPercent"];
+mt["SetMaxPercent"]=static_cast<void(cocos2d::ui::Slider::*)(int)>(&cocos2d::ui::Slider::setMaxPercent);
+mt["set"]["MaxPercent"]=mt["SetMaxPercent"];
+mt["GetMaxPercent"]=static_cast<int(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getMaxPercent);
+mt["get"]["MaxPercent"]=mt["GetMaxPercent"];
+mt["AddEventListener"]=static_cast<void(cocos2d::ui::Slider::*)(const cocos2d::ui::Slider::ccSliderCallback&)>(&cocos2d::ui::Slider::addEventListener);
+mt["SetZoomScale"]=static_cast<void(cocos2d::ui::Slider::*)(float)>(&cocos2d::ui::Slider::setZoomScale);
+mt["set"]["ZoomScale"]=mt["SetZoomScale"];
+mt["GetZoomScale"]=static_cast<float(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getZoomScale);
+mt["get"]["ZoomScale"]=mt["GetZoomScale"];
+mt["GetSlidBallNormalRenderer"]=static_cast<cocos2d::Sprite*(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getSlidBallNormalRenderer);
+mt["get"]["SlidBallNormalRenderer"]=mt["GetSlidBallNormalRenderer"];
+mt["GetSlidBallPressedRenderer"]=static_cast<cocos2d::Sprite*(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getSlidBallPressedRenderer);
+mt["get"]["SlidBallPressedRenderer"]=mt["GetSlidBallPressedRenderer"];
+mt["GetSlidBallDisabledRenderer"]=static_cast<cocos2d::Sprite*(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getSlidBallDisabledRenderer);
+mt["get"]["SlidBallDisabledRenderer"]=mt["GetSlidBallDisabledRenderer"];
+mt["GetSlidBallRenderer"]=static_cast<cocos2d::Node*(cocos2d::ui::Slider::*)()const>(&cocos2d::ui::Slider::getSlidBallRenderer);
+mt["get"]["SlidBallRenderer"]=mt["GetSlidBallRenderer"];
+mt["GetBackFile"]=static_cast<cocos2d::ResourceData(cocos2d::ui::Slider::*)()>(&cocos2d::ui::Slider::getBackFile);
+mt["get"]["BackFile"]=mt["GetBackFile"];
+mt["GetProgressBarFile"]=static_cast<cocos2d::ResourceData(cocos2d::ui::Slider::*)()>(&cocos2d::ui::Slider::getProgressBarFile);
+mt["get"]["ProgressBarFile"]=mt["GetProgressBarFile"];
+mt["GetBallNormalFile"]=static_cast<cocos2d::ResourceData(cocos2d::ui::Slider::*)()>(&cocos2d::ui::Slider::getBallNormalFile);
+mt["get"]["BallNormalFile"]=mt["GetBallNormalFile"];
+mt["GetBallPressedFile"]=static_cast<cocos2d::ResourceData(cocos2d::ui::Slider::*)()>(&cocos2d::ui::Slider::getBallPressedFile);
+mt["get"]["BallPressedFile"]=mt["GetBallPressedFile"];
+mt["GetBallDisabledFile"]=static_cast<cocos2d::ResourceData(cocos2d::ui::Slider::*)()>(&cocos2d::ui::Slider::getBallDisabledFile);
+mt["get"]["BallDisabledFile"]=mt["GetBallDisabledFile"];
 RegisterLuaUISliderEventTypeAuto(lua);
 }
 void RegisterLuaUITextFieldEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["ccui"];
-pTable = pTable["TextField"];
-pTable.new_enum<cocos2d::ui::TextField::EventType>("EventType",{
-{"ATTACH_WITH_IME",cocos2d::ui::TextField::EventType::ATTACH_WITH_IME}
-,{"DETACH_WITH_IME",cocos2d::ui::TextField::EventType::DETACH_WITH_IME}
-,{"INSERT_TEXT",cocos2d::ui::TextField::EventType::INSERT_TEXT}
-,{"DELETE_BACKWARD",cocos2d::ui::TextField::EventType::DELETE_BACKWARD}
-});}
+sol::table enumTable = lua.create_table_with(0,4);
+enumTable["ATTACH_WITH_IME"]=cocos2d::ui::TextField::EventType::ATTACH_WITH_IME;
+enumTable["DETACH_WITH_IME"]=cocos2d::ui::TextField::EventType::DETACH_WITH_IME;
+enumTable["INSERT_TEXT"]=cocos2d::ui::TextField::EventType::INSERT_TEXT;
+enumTable["DELETE_BACKWARD"]=cocos2d::ui::TextField::EventType::DELETE_BACKWARD;
+lua["ccui"]["TextField"]["static"]["EventType"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaUITextFieldAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::TextField>("ccui","TextField",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol>());
-mt.set_function("CreateInstance",static_cast<cocos2d::Ref*(*)()>(&cocos2d::ui::TextField::createInstance));
-mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::ui::TextField*(*)(const std::string&,const std::string&,int)>(&cocos2d::ui::TextField::create),static_cast<cocos2d::ui::TextField*(*)()>(&cocos2d::ui::TextField::create)));
-mt.set_function("SetTouchSize",static_cast<void(cocos2d::ui::TextField::*)(const cocos2d::Size&)>(&cocos2d::ui::TextField::setTouchSize));
-mt.set_function("GetTouchSize",static_cast<cocos2d::Size(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getTouchSize));
-mt.set_function("SetTouchAreaEnabled",static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setTouchAreaEnabled));
-mt.set_function("HitTest",static_cast<bool(cocos2d::ui::TextField::*)(const cocos2d::Vec2&,const cocos2d::Camera*,cocos2d::Vec3*)const>(&cocos2d::ui::TextField::hitTest));
-mt.set_function("SetPlaceHolder",static_cast<void(cocos2d::ui::TextField::*)(const std::string&)>(&cocos2d::ui::TextField::setPlaceHolder));
-mt.set_function("GetPlaceHolder",static_cast<const std::string&(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getPlaceHolder));
-mt.set_function("GetPlaceHolderColor",static_cast<const cocos2d::Color4B&(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getPlaceHolderColor));
-mt.set_function("SetPlaceHolderColor",sol::overload(static_cast<void(cocos2d::ui::TextField::*)(const cocos2d::Color4B&)>(&cocos2d::ui::TextField::setPlaceHolderColor),static_cast<void(cocos2d::ui::TextField::*)(const cocos2d::Color3B&)>(&cocos2d::ui::TextField::setPlaceHolderColor)));
-mt.set_function("GetTextColor",static_cast<const cocos2d::Color4B&(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getTextColor));
-mt.set_function("SetTextColor",static_cast<void(cocos2d::ui::TextField::*)(const cocos2d::Color4B&)>(&cocos2d::ui::TextField::setTextColor));
-mt.set_function("SetFontSize",static_cast<void(cocos2d::ui::TextField::*)(int)>(&cocos2d::ui::TextField::setFontSize));
-mt.set_function("GetFontSize",static_cast<int(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getFontSize));
-mt.set_function("SetFontName",static_cast<void(cocos2d::ui::TextField::*)(const std::string&)>(&cocos2d::ui::TextField::setFontName));
-mt.set_function("GetFontName",static_cast<const std::string&(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getFontName));
-mt.set_function("DidNotSelectSelf",static_cast<void(cocos2d::ui::TextField::*)()>(&cocos2d::ui::TextField::didNotSelectSelf));
-mt.set_function("SetString",static_cast<void(cocos2d::ui::TextField::*)(const std::string&)>(&cocos2d::ui::TextField::setString));
-mt.set_function("GetString",static_cast<const std::string&(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getString));
-mt.set_function("OnTouchBegan",static_cast<bool(cocos2d::ui::TextField::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::ui::TextField::onTouchBegan));
-mt.set_function("SetMaxLengthEnabled",static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setMaxLengthEnabled));
-mt.set_function("IsMaxLengthEnabled",static_cast<bool(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::isMaxLengthEnabled));
-mt.set_function("SetMaxLength",static_cast<void(cocos2d::ui::TextField::*)(int)>(&cocos2d::ui::TextField::setMaxLength));
-mt.set_function("GetMaxLength",static_cast<int(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getMaxLength));
-mt.set_function("GetStringLength",static_cast<int(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getStringLength));
-mt.set_function("SetPasswordEnabled",static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setPasswordEnabled));
-mt.set_function("IsPasswordEnabled",static_cast<bool(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::isPasswordEnabled));
-mt.set_function("SetPasswordStyleText",static_cast<void(cocos2d::ui::TextField::*)(const char*)>(&cocos2d::ui::TextField::setPasswordStyleText));
-mt.set_function("GetPasswordStyleText",static_cast<const char*(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getPasswordStyleText));
-mt.set_function("Update",static_cast<void(cocos2d::ui::TextField::*)(float)>(&cocos2d::ui::TextField::update));
-mt.set_function("GetAttachWithIME",static_cast<bool(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getAttachWithIME));
-mt.set_function("SetAttachWithIME",static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setAttachWithIME));
-mt.set_function("GetDetachWithIME",static_cast<bool(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getDetachWithIME));
-mt.set_function("SetDetachWithIME",static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setDetachWithIME));
-mt.set_function("GetInsertText",static_cast<bool(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getInsertText));
-mt.set_function("SetInsertText",static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setInsertText));
-mt.set_function("GetDeleteBackward",static_cast<bool(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getDeleteBackward));
-mt.set_function("SetDeleteBackward",static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setDeleteBackward));
-mt.set_function("AddEventListener",static_cast<void(cocos2d::ui::TextField::*)(const cocos2d::ui::TextField::ccTextFieldCallback&)>(&cocos2d::ui::TextField::addEventListener));
-mt.set_function("GetDescription",static_cast<std::string(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getDescription));
-mt.set_function("GetAutoRenderSize",static_cast<cocos2d::Size(cocos2d::ui::TextField::*)()>(&cocos2d::ui::TextField::getAutoRenderSize));
-mt.set_function("GetVirtualRendererSize",static_cast<cocos2d::Size(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getVirtualRendererSize));
-mt.set_function("GetVirtualRenderer",static_cast<cocos2d::Node*(cocos2d::ui::TextField::*)()>(&cocos2d::ui::TextField::getVirtualRenderer));
-mt.set_function("OnEnter",static_cast<void(cocos2d::ui::TextField::*)()>(&cocos2d::ui::TextField::onEnter));
-mt.set_function("AttachWithIME",static_cast<void(cocos2d::ui::TextField::*)()>(&cocos2d::ui::TextField::attachWithIME));
-mt.set_function("SetTextAreaSize",static_cast<void(cocos2d::ui::TextField::*)(const cocos2d::Size&)>(&cocos2d::ui::TextField::setTextAreaSize));
-mt.set_function("SetTextHorizontalAlignment",static_cast<void(cocos2d::ui::TextField::*)(cocos2d::TextHAlignment)>(&cocos2d::ui::TextField::setTextHorizontalAlignment));
-mt.set_function("GetTextHorizontalAlignment",static_cast<cocos2d::TextHAlignment(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getTextHorizontalAlignment));
-mt.set_function("SetTextVerticalAlignment",static_cast<void(cocos2d::ui::TextField::*)(cocos2d::TextVAlignment)>(&cocos2d::ui::TextField::setTextVerticalAlignment));
-mt.set_function("GetTextVerticalAlignment",static_cast<cocos2d::TextVAlignment(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getTextVerticalAlignment));
-mt.set_function("SetCursorEnabled",static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setCursorEnabled));
-mt.set_function("SetCursorChar",static_cast<void(cocos2d::ui::TextField::*)(char)>(&cocos2d::ui::TextField::setCursorChar));
-mt.set_function("SetCursorPosition",static_cast<void(cocos2d::ui::TextField::*)(size_t)>(&cocos2d::ui::TextField::setCursorPosition));
-mt.set_function("SetCursorFromPoint",static_cast<void(cocos2d::ui::TextField::*)(const cocos2d::Vec2&,const cocos2d::Camera*)>(&cocos2d::ui::TextField::setCursorFromPoint));
-mt["_Type"]=sol::var(std::ref(cocos2d::ui::TextField::__Type));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ui::TextField).name()] = sol::usertype_traits<cocos2d::ui::TextField*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ui::TextField>("deprecated.cocos2d::ui::TextField");
+dep[sol::base_classes]=sol::bases<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ui::TextField*>::metatable(),sol::usertype_traits<cocos2d::ui::Widget*>::metatable());
+lua["ccui"]["TextField"]=mt;
+mt["__new__"]=sol::overload(static_cast<cocos2d::ui::TextField*(*)(const std::string&,const std::string&,int)>(&cocos2d::ui::TextField::create),static_cast<cocos2d::ui::TextField*(*)()>(&cocos2d::ui::TextField::create));
+mt["SetTouchSize"]=static_cast<void(cocos2d::ui::TextField::*)(const cocos2d::Size&)>(&cocos2d::ui::TextField::setTouchSize);
+mt["set"]["TouchSize"]=mt["SetTouchSize"];
+mt["GetTouchSize"]=static_cast<cocos2d::Size(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getTouchSize);
+mt["get"]["TouchSize"]=mt["GetTouchSize"];
+mt["SetTouchAreaEnabled"]=static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setTouchAreaEnabled);
+mt["set"]["TouchAreaEnabled"]=mt["SetTouchAreaEnabled"];
+mt["SetPlaceHolder"]=static_cast<void(cocos2d::ui::TextField::*)(const std::string&)>(&cocos2d::ui::TextField::setPlaceHolder);
+mt["set"]["PlaceHolder"]=mt["SetPlaceHolder"];
+mt["GetPlaceHolder"]=static_cast<const std::string&(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getPlaceHolder);
+mt["get"]["PlaceHolder"]=mt["GetPlaceHolder"];
+mt["GetPlaceHolderColor"]=static_cast<const cocos2d::Color4B&(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getPlaceHolderColor);
+mt["get"]["PlaceHolderColor"]=mt["GetPlaceHolderColor"];
+mt["SetPlaceHolderColor"]=sol::overload(static_cast<void(cocos2d::ui::TextField::*)(const cocos2d::Color4B&)>(&cocos2d::ui::TextField::setPlaceHolderColor),static_cast<void(cocos2d::ui::TextField::*)(const cocos2d::Color3B&)>(&cocos2d::ui::TextField::setPlaceHolderColor));
+mt["set"]["PlaceHolderColor"]=mt["SetPlaceHolderColor"];
+mt["GetTextColor"]=static_cast<const cocos2d::Color4B&(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getTextColor);
+mt["get"]["TextColor"]=mt["GetTextColor"];
+mt["SetTextColor"]=static_cast<void(cocos2d::ui::TextField::*)(const cocos2d::Color4B&)>(&cocos2d::ui::TextField::setTextColor);
+mt["set"]["TextColor"]=mt["SetTextColor"];
+mt["SetFontSize"]=static_cast<void(cocos2d::ui::TextField::*)(int)>(&cocos2d::ui::TextField::setFontSize);
+mt["set"]["FontSize"]=mt["SetFontSize"];
+mt["GetFontSize"]=static_cast<int(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getFontSize);
+mt["get"]["FontSize"]=mt["GetFontSize"];
+mt["SetFontName"]=static_cast<void(cocos2d::ui::TextField::*)(const std::string&)>(&cocos2d::ui::TextField::setFontName);
+mt["set"]["FontName"]=mt["SetFontName"];
+mt["GetFontName"]=static_cast<const std::string&(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getFontName);
+mt["get"]["FontName"]=mt["GetFontName"];
+mt["DidNotSelectSelf"]=static_cast<void(cocos2d::ui::TextField::*)()>(&cocos2d::ui::TextField::didNotSelectSelf);
+mt["SetString"]=static_cast<void(cocos2d::ui::TextField::*)(const std::string&)>(&cocos2d::ui::TextField::setString);
+mt["set"]["String"]=mt["SetString"];
+mt["GetString"]=static_cast<const std::string&(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getString);
+mt["get"]["String"]=mt["GetString"];
+mt["SetMaxLengthEnabled"]=static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setMaxLengthEnabled);
+mt["set"]["MaxLengthEnabled"]=mt["SetMaxLengthEnabled"];
+mt["IsMaxLengthEnabled"]=static_cast<bool(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::isMaxLengthEnabled);
+mt["get"]["MaxLengthEnabled"]=mt["IsMaxLengthEnabled"];
+mt["SetMaxLength"]=static_cast<void(cocos2d::ui::TextField::*)(int)>(&cocos2d::ui::TextField::setMaxLength);
+mt["set"]["MaxLength"]=mt["SetMaxLength"];
+mt["GetMaxLength"]=static_cast<int(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getMaxLength);
+mt["get"]["MaxLength"]=mt["GetMaxLength"];
+mt["GetStringLength"]=static_cast<int(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getStringLength);
+mt["get"]["StringLength"]=mt["GetStringLength"];
+mt["SetPasswordEnabled"]=static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setPasswordEnabled);
+mt["set"]["PasswordEnabled"]=mt["SetPasswordEnabled"];
+mt["IsPasswordEnabled"]=static_cast<bool(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::isPasswordEnabled);
+mt["get"]["PasswordEnabled"]=mt["IsPasswordEnabled"];
+mt["SetPasswordStyleText"]=static_cast<void(cocos2d::ui::TextField::*)(const char*)>(&cocos2d::ui::TextField::setPasswordStyleText);
+mt["set"]["PasswordStyleText"]=mt["SetPasswordStyleText"];
+mt["GetPasswordStyleText"]=static_cast<const char*(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getPasswordStyleText);
+mt["get"]["PasswordStyleText"]=mt["GetPasswordStyleText"];
+mt["GetAttachWithIME"]=static_cast<bool(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getAttachWithIME);
+mt["get"]["AttachWithIME"]=mt["GetAttachWithIME"];
+mt["SetAttachWithIME"]=static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setAttachWithIME);
+mt["set"]["AttachWithIME"]=mt["SetAttachWithIME"];
+mt["GetDetachWithIME"]=static_cast<bool(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getDetachWithIME);
+mt["get"]["DetachWithIME"]=mt["GetDetachWithIME"];
+mt["SetDetachWithIME"]=static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setDetachWithIME);
+mt["set"]["DetachWithIME"]=mt["SetDetachWithIME"];
+mt["GetInsertText"]=static_cast<bool(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getInsertText);
+mt["get"]["InsertText"]=mt["GetInsertText"];
+mt["SetInsertText"]=static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setInsertText);
+mt["set"]["InsertText"]=mt["SetInsertText"];
+mt["GetDeleteBackward"]=static_cast<bool(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getDeleteBackward);
+mt["get"]["DeleteBackward"]=mt["GetDeleteBackward"];
+mt["SetDeleteBackward"]=static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setDeleteBackward);
+mt["set"]["DeleteBackward"]=mt["SetDeleteBackward"];
+mt["AddEventListener"]=static_cast<void(cocos2d::ui::TextField::*)(const cocos2d::ui::TextField::ccTextFieldCallback&)>(&cocos2d::ui::TextField::addEventListener);
+mt["GetAutoRenderSize"]=static_cast<cocos2d::Size(cocos2d::ui::TextField::*)()>(&cocos2d::ui::TextField::getAutoRenderSize);
+mt["get"]["AutoRenderSize"]=mt["GetAutoRenderSize"];
+mt["AttachWithIME"]=static_cast<void(cocos2d::ui::TextField::*)()>(&cocos2d::ui::TextField::attachWithIME);
+mt["SetTextAreaSize"]=static_cast<void(cocos2d::ui::TextField::*)(const cocos2d::Size&)>(&cocos2d::ui::TextField::setTextAreaSize);
+mt["set"]["TextAreaSize"]=mt["SetTextAreaSize"];
+mt["SetTextHorizontalAlignment"]=static_cast<void(cocos2d::ui::TextField::*)(cocos2d::TextHAlignment)>(&cocos2d::ui::TextField::setTextHorizontalAlignment);
+mt["set"]["TextHorizontalAlignment"]=mt["SetTextHorizontalAlignment"];
+mt["GetTextHorizontalAlignment"]=static_cast<cocos2d::TextHAlignment(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getTextHorizontalAlignment);
+mt["get"]["TextHorizontalAlignment"]=mt["GetTextHorizontalAlignment"];
+mt["SetTextVerticalAlignment"]=static_cast<void(cocos2d::ui::TextField::*)(cocos2d::TextVAlignment)>(&cocos2d::ui::TextField::setTextVerticalAlignment);
+mt["set"]["TextVerticalAlignment"]=mt["SetTextVerticalAlignment"];
+mt["GetTextVerticalAlignment"]=static_cast<cocos2d::TextVAlignment(cocos2d::ui::TextField::*)()const>(&cocos2d::ui::TextField::getTextVerticalAlignment);
+mt["get"]["TextVerticalAlignment"]=mt["GetTextVerticalAlignment"];
+mt["SetCursorEnabled"]=static_cast<void(cocos2d::ui::TextField::*)(bool)>(&cocos2d::ui::TextField::setCursorEnabled);
+mt["set"]["CursorEnabled"]=mt["SetCursorEnabled"];
+mt["SetCursorChar"]=static_cast<void(cocos2d::ui::TextField::*)(char)>(&cocos2d::ui::TextField::setCursorChar);
+mt["set"]["CursorChar"]=mt["SetCursorChar"];
+mt["SetCursorPosition"]=static_cast<void(cocos2d::ui::TextField::*)(size_t)>(&cocos2d::ui::TextField::setCursorPosition);
+mt["set"]["CursorPosition"]=mt["SetCursorPosition"];
+mt["SetCursorFromPoint"]=static_cast<void(cocos2d::ui::TextField::*)(const cocos2d::Vec2&,const cocos2d::Camera*)>(&cocos2d::ui::TextField::setCursorFromPoint);
 RegisterLuaUITextFieldEventTypeAuto(lua);
 }
 void RegisterLuaUITextBMFontAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::TextBMFont>("ccui","TextBMFont",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol>());
-mt.set_function("CreateInstance",static_cast<cocos2d::Ref*(*)()>(&cocos2d::ui::TextBMFont::createInstance));
-mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::ui::TextBMFont*(*)(const std::string&,const std::string&)>(&cocos2d::ui::TextBMFont::create),static_cast<cocos2d::ui::TextBMFont*(*)()>(&cocos2d::ui::TextBMFont::create)));
-mt.set_function("SetFntFile",static_cast<void(cocos2d::ui::TextBMFont::*)(const std::string&)>(&cocos2d::ui::TextBMFont::setFntFile));
-mt.set_function("SetString",static_cast<void(cocos2d::ui::TextBMFont::*)(const std::string&)>(&cocos2d::ui::TextBMFont::setString));
-mt.set_function("GetString",static_cast<const std::string&(cocos2d::ui::TextBMFont::*)()const>(&cocos2d::ui::TextBMFont::getString));
-mt.set_function("GetStringLength",static_cast<ssize_t(cocos2d::ui::TextBMFont::*)()const>(&cocos2d::ui::TextBMFont::getStringLength));
-mt.set_function("GetVirtualRendererSize",static_cast<cocos2d::Size(cocos2d::ui::TextBMFont::*)()const>(&cocos2d::ui::TextBMFont::getVirtualRendererSize));
-mt.set_function("GetVirtualRenderer",static_cast<cocos2d::Node*(cocos2d::ui::TextBMFont::*)()>(&cocos2d::ui::TextBMFont::getVirtualRenderer));
-mt.set_function("GetDescription",static_cast<std::string(cocos2d::ui::TextBMFont::*)()const>(&cocos2d::ui::TextBMFont::getDescription));
-mt.set_function("GetRenderFile",static_cast<cocos2d::ResourceData(cocos2d::ui::TextBMFont::*)()>(&cocos2d::ui::TextBMFont::getRenderFile));
-mt.set_function("ResetRender",static_cast<void(cocos2d::ui::TextBMFont::*)()>(&cocos2d::ui::TextBMFont::resetRender));
-mt["_Type"]=sol::var(std::ref(cocos2d::ui::TextBMFont::__Type));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ui::TextBMFont).name()] = sol::usertype_traits<cocos2d::ui::TextBMFont*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ui::TextBMFont>("deprecated.cocos2d::ui::TextBMFont");
+dep[sol::base_classes]=sol::bases<cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ui::TextBMFont*>::metatable(),sol::usertype_traits<cocos2d::ui::Widget*>::metatable());
+lua["ccui"]["TextBMFont"]=mt;
+mt["__new__"]=sol::overload(static_cast<cocos2d::ui::TextBMFont*(*)(const std::string&,const std::string&)>(&cocos2d::ui::TextBMFont::create),static_cast<cocos2d::ui::TextBMFont*(*)()>(&cocos2d::ui::TextBMFont::create));
+mt["SetFntFile"]=static_cast<void(cocos2d::ui::TextBMFont::*)(const std::string&)>(&cocos2d::ui::TextBMFont::setFntFile);
+mt["set"]["FntFile"]=mt["SetFntFile"];
+mt["SetString"]=static_cast<void(cocos2d::ui::TextBMFont::*)(const std::string&)>(&cocos2d::ui::TextBMFont::setString);
+mt["set"]["String"]=mt["SetString"];
+mt["GetString"]=static_cast<const std::string&(cocos2d::ui::TextBMFont::*)()const>(&cocos2d::ui::TextBMFont::getString);
+mt["get"]["String"]=mt["GetString"];
+mt["GetStringLength"]=static_cast<ssize_t(cocos2d::ui::TextBMFont::*)()const>(&cocos2d::ui::TextBMFont::getStringLength);
+mt["get"]["StringLength"]=mt["GetStringLength"];
+mt["GetRenderFile"]=static_cast<cocos2d::ResourceData(cocos2d::ui::TextBMFont::*)()>(&cocos2d::ui::TextBMFont::getRenderFile);
+mt["get"]["RenderFile"]=mt["GetRenderFile"];
+mt["ResetRender"]=static_cast<void(cocos2d::ui::TextBMFont::*)()>(&cocos2d::ui::TextBMFont::resetRender);
 }
 void RegisterLuaUIPageViewEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["ccui"];
-pTable = pTable["PageView"];
-pTable.new_enum<cocos2d::ui::PageView::EventType>("EventType",{
-{"TURNING",cocos2d::ui::PageView::EventType::TURNING}
-});}
+sol::table enumTable = lua.create_table_with(0,1);
+enumTable["TURNING"]=cocos2d::ui::PageView::EventType::TURNING;
+lua["ccui"]["PageView"]["static"]["EventType"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaUIPageViewTouchDirectionAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["ccui"];
-pTable = pTable["PageView"];
-pTable.new_enum<cocos2d::ui::PageView::TouchDirection>("TouchDirection",{
-{"LEFT",cocos2d::ui::PageView::TouchDirection::LEFT}
-,{"RIGHT",cocos2d::ui::PageView::TouchDirection::RIGHT}
-,{"UP",cocos2d::ui::PageView::TouchDirection::UP}
-,{"DOWN",cocos2d::ui::PageView::TouchDirection::DOWN}
-});}
+sol::table enumTable = lua.create_table_with(0,4);
+enumTable["LEFT"]=cocos2d::ui::PageView::TouchDirection::LEFT;
+enumTable["RIGHT"]=cocos2d::ui::PageView::TouchDirection::RIGHT;
+enumTable["UP"]=cocos2d::ui::PageView::TouchDirection::UP;
+enumTable["DOWN"]=cocos2d::ui::PageView::TouchDirection::DOWN;
+lua["ccui"]["PageView"]["static"]["TouchDirection"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaUIPageViewAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ui::PageView>("ccui","PageView",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ui::ListView,cocos2d::ui::ScrollView,cocos2d::ui::Layout,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol,cocos2d::ui::LayoutProtocol>());
-mt.set_function("CreateInstance",static_cast<cocos2d::Ref*(*)()>(&cocos2d::ui::PageView::createInstance));
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::ui::PageView*(*)()>(&cocos2d::ui::PageView::create));
-mt.set_function("SetDirection",static_cast<void(cocos2d::ui::PageView::*)(cocos2d::ui::ScrollView::Direction)>(&cocos2d::ui::PageView::setDirection));
-mt.set_function("AddPage",static_cast<void(cocos2d::ui::PageView::*)(cocos2d::ui::Widget*)>(&cocos2d::ui::PageView::addPage));
-mt.set_function("InsertPage",static_cast<void(cocos2d::ui::PageView::*)(cocos2d::ui::Widget*,int)>(&cocos2d::ui::PageView::insertPage));
-mt.set_function("RemovePage",static_cast<void(cocos2d::ui::PageView::*)(cocos2d::ui::Widget*)>(&cocos2d::ui::PageView::removePage));
-mt.set_function("RemovePageAtIndex",static_cast<void(cocos2d::ui::PageView::*)(ssize_t)>(&cocos2d::ui::PageView::removePageAtIndex));
-mt.set_function("RemoveAllPages",static_cast<void(cocos2d::ui::PageView::*)()>(&cocos2d::ui::PageView::removeAllPages));
-mt.set_function("ScrollToPage",sol::overload(static_cast<void(cocos2d::ui::PageView::*)(ssize_t,float)>(&cocos2d::ui::PageView::scrollToPage),static_cast<void(cocos2d::ui::PageView::*)(ssize_t)>(&cocos2d::ui::PageView::scrollToPage)));
-mt.set_function("ScrollToItem",sol::overload(static_cast<void(cocos2d::ui::PageView::*)(ssize_t,float)>(&cocos2d::ui::PageView::scrollToItem),static_cast<void(cocos2d::ui::PageView::*)(ssize_t)>(&cocos2d::ui::PageView::scrollToItem)));
-mt.set_function("GetCurrentPageIndex",static_cast<ssize_t(cocos2d::ui::PageView::*)()>(&cocos2d::ui::PageView::getCurrentPageIndex));
-mt.set_function("SetCurrentPageIndex",static_cast<void(cocos2d::ui::PageView::*)(ssize_t)>(&cocos2d::ui::PageView::setCurrentPageIndex));
-mt.set_function("AddEventListener",static_cast<void(cocos2d::ui::PageView::*)(const cocos2d::ui::PageView::ccPageViewCallback&)>(&cocos2d::ui::PageView::addEventListener));
-mt.set_function("GetDescription",static_cast<std::string(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getDescription));
-mt.set_function("SetIndicatorEnabled",static_cast<void(cocos2d::ui::PageView::*)(bool)>(&cocos2d::ui::PageView::setIndicatorEnabled));
-mt.set_function("GetIndicatorEnabled",static_cast<bool(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorEnabled));
-mt.set_function("SetIndicatorPositionAsAnchorPoint",static_cast<void(cocos2d::ui::PageView::*)(const cocos2d::Vec2&)>(&cocos2d::ui::PageView::setIndicatorPositionAsAnchorPoint));
-mt.set_function("GetIndicatorPositionAsAnchorPoint",static_cast<const cocos2d::Vec2&(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorPositionAsAnchorPoint));
-mt.set_function("SetIndicatorPosition",static_cast<void(cocos2d::ui::PageView::*)(const cocos2d::Vec2&)>(&cocos2d::ui::PageView::setIndicatorPosition));
-mt.set_function("GetIndicatorPosition",static_cast<const cocos2d::Vec2&(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorPosition));
-mt.set_function("SetIndicatorSpaceBetweenIndexNodes",static_cast<void(cocos2d::ui::PageView::*)(float)>(&cocos2d::ui::PageView::setIndicatorSpaceBetweenIndexNodes));
-mt.set_function("GetIndicatorSpaceBetweenIndexNodes",static_cast<float(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorSpaceBetweenIndexNodes));
-mt.set_function("SetIndicatorSelectedIndexColor",static_cast<void(cocos2d::ui::PageView::*)(const cocos2d::Color3B&)>(&cocos2d::ui::PageView::setIndicatorSelectedIndexColor));
-mt.set_function("GetIndicatorSelectedIndexColor",static_cast<const cocos2d::Color3B&(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorSelectedIndexColor));
-mt.set_function("SetIndicatorIndexNodesColor",static_cast<void(cocos2d::ui::PageView::*)(const cocos2d::Color3B&)>(&cocos2d::ui::PageView::setIndicatorIndexNodesColor));
-mt.set_function("GetIndicatorIndexNodesColor",static_cast<const cocos2d::Color3B&(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorIndexNodesColor));
-mt.set_function("SetIndicatorSelectedIndexOpacity",static_cast<void(cocos2d::ui::PageView::*)(uint8_t)>(&cocos2d::ui::PageView::setIndicatorSelectedIndexOpacity));
-mt.set_function("GetIndicatorSelectedIndexOpacity",static_cast<uint8_t(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorSelectedIndexOpacity));
-mt.set_function("SetIndicatorIndexNodesOpacity",static_cast<void(cocos2d::ui::PageView::*)(uint8_t)>(&cocos2d::ui::PageView::setIndicatorIndexNodesOpacity));
-mt.set_function("GetIndicatorIndexNodesOpacity",static_cast<uint8_t(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorIndexNodesOpacity));
-mt.set_function("SetIndicatorIndexNodesScale",static_cast<void(cocos2d::ui::PageView::*)(float)>(&cocos2d::ui::PageView::setIndicatorIndexNodesScale));
-mt.set_function("SetIndicatorIndexNodesTexture",sol::overload([](cocos2d::ui::PageView* obj,const std::string& arg0){return obj->setIndicatorIndexNodesTexture(arg0);},[](cocos2d::ui::PageView* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->setIndicatorIndexNodesTexture(arg0,arg1);}));
-mt.set_function("GetIndicatorIndexNodesScale",static_cast<float(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorIndexNodesScale));
-mt.set_function("SetAutoScrollStopEpsilon",static_cast<void(cocos2d::ui::PageView::*)(float)>(&cocos2d::ui::PageView::setAutoScrollStopEpsilon));
-mt["_Type"]=sol::var(std::ref(cocos2d::ui::PageView::__Type));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ui::PageView).name()] = sol::usertype_traits<cocos2d::ui::PageView*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ui::PageView>("deprecated.cocos2d::ui::PageView");
+dep[sol::base_classes]=sol::bases<cocos2d::ui::ListView,cocos2d::ui::ScrollView,cocos2d::ui::Layout,cocos2d::ui::Widget,cocos2d::ProtectedNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::ui::LayoutParameterProtocol,cocos2d::ui::LayoutProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ui::PageView*>::metatable(),sol::usertype_traits<cocos2d::ui::ListView*>::metatable());
+lua["ccui"]["PageView"]=mt;
+mt["__new__"]=static_cast<cocos2d::ui::PageView*(*)()>(&cocos2d::ui::PageView::create);
+mt["AddPage"]=static_cast<void(cocos2d::ui::PageView::*)(cocos2d::ui::Widget*)>(&cocos2d::ui::PageView::addPage);
+mt["InsertPage"]=static_cast<void(cocos2d::ui::PageView::*)(cocos2d::ui::Widget*,int)>(&cocos2d::ui::PageView::insertPage);
+mt["RemovePage"]=static_cast<void(cocos2d::ui::PageView::*)(cocos2d::ui::Widget*)>(&cocos2d::ui::PageView::removePage);
+mt["RemovePageAtIndex"]=static_cast<void(cocos2d::ui::PageView::*)(ssize_t)>(&cocos2d::ui::PageView::removePageAtIndex);
+mt["RemoveAllPages"]=static_cast<void(cocos2d::ui::PageView::*)()>(&cocos2d::ui::PageView::removeAllPages);
+mt["ScrollToPage"]=sol::overload(static_cast<void(cocos2d::ui::PageView::*)(ssize_t,float)>(&cocos2d::ui::PageView::scrollToPage),static_cast<void(cocos2d::ui::PageView::*)(ssize_t)>(&cocos2d::ui::PageView::scrollToPage));
+mt["ScrollToItem"]=sol::overload(static_cast<void(cocos2d::ui::PageView::*)(ssize_t,float)>(&cocos2d::ui::PageView::scrollToItem),static_cast<void(cocos2d::ui::PageView::*)(ssize_t)>(&cocos2d::ui::PageView::scrollToItem));
+mt["GetCurrentPageIndex"]=static_cast<ssize_t(cocos2d::ui::PageView::*)()>(&cocos2d::ui::PageView::getCurrentPageIndex);
+mt["get"]["CurrentPageIndex"]=mt["GetCurrentPageIndex"];
+mt["SetCurrentPageIndex"]=static_cast<void(cocos2d::ui::PageView::*)(ssize_t)>(&cocos2d::ui::PageView::setCurrentPageIndex);
+mt["set"]["CurrentPageIndex"]=mt["SetCurrentPageIndex"];
+mt["AddEventListener"]=sol::overload(static_cast<void(cocos2d::ui::PageView::*)(const cocos2d::ui::ScrollView::ccScrollViewCallback&)>(&cocos2d::ui::PageView::addEventListener),static_cast<void(cocos2d::ui::PageView::*)(const cocos2d::ui::PageView::ccPageViewCallback&)>(&cocos2d::ui::PageView::addEventListener));
+mt["SetIndicatorEnabled"]=static_cast<void(cocos2d::ui::PageView::*)(bool)>(&cocos2d::ui::PageView::setIndicatorEnabled);
+mt["set"]["IndicatorEnabled"]=mt["SetIndicatorEnabled"];
+mt["GetIndicatorEnabled"]=static_cast<bool(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorEnabled);
+mt["get"]["IndicatorEnabled"]=mt["GetIndicatorEnabled"];
+mt["SetIndicatorPositionAsAnchorPoint"]=static_cast<void(cocos2d::ui::PageView::*)(const cocos2d::Vec2&)>(&cocos2d::ui::PageView::setIndicatorPositionAsAnchorPoint);
+mt["set"]["IndicatorPositionAsAnchorPoint"]=mt["SetIndicatorPositionAsAnchorPoint"];
+mt["GetIndicatorPositionAsAnchorPoint"]=static_cast<const cocos2d::Vec2&(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorPositionAsAnchorPoint);
+mt["get"]["IndicatorPositionAsAnchorPoint"]=mt["GetIndicatorPositionAsAnchorPoint"];
+mt["SetIndicatorPosition"]=static_cast<void(cocos2d::ui::PageView::*)(const cocos2d::Vec2&)>(&cocos2d::ui::PageView::setIndicatorPosition);
+mt["set"]["IndicatorPosition"]=mt["SetIndicatorPosition"];
+mt["GetIndicatorPosition"]=static_cast<const cocos2d::Vec2&(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorPosition);
+mt["get"]["IndicatorPosition"]=mt["GetIndicatorPosition"];
+mt["SetIndicatorSpaceBetweenIndexNodes"]=static_cast<void(cocos2d::ui::PageView::*)(float)>(&cocos2d::ui::PageView::setIndicatorSpaceBetweenIndexNodes);
+mt["set"]["IndicatorSpaceBetweenIndexNodes"]=mt["SetIndicatorSpaceBetweenIndexNodes"];
+mt["GetIndicatorSpaceBetweenIndexNodes"]=static_cast<float(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorSpaceBetweenIndexNodes);
+mt["get"]["IndicatorSpaceBetweenIndexNodes"]=mt["GetIndicatorSpaceBetweenIndexNodes"];
+mt["SetIndicatorSelectedIndexColor"]=static_cast<void(cocos2d::ui::PageView::*)(const cocos2d::Color3B&)>(&cocos2d::ui::PageView::setIndicatorSelectedIndexColor);
+mt["set"]["IndicatorSelectedIndexColor"]=mt["SetIndicatorSelectedIndexColor"];
+mt["GetIndicatorSelectedIndexColor"]=static_cast<const cocos2d::Color3B&(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorSelectedIndexColor);
+mt["get"]["IndicatorSelectedIndexColor"]=mt["GetIndicatorSelectedIndexColor"];
+mt["SetIndicatorIndexNodesColor"]=static_cast<void(cocos2d::ui::PageView::*)(const cocos2d::Color3B&)>(&cocos2d::ui::PageView::setIndicatorIndexNodesColor);
+mt["set"]["IndicatorIndexNodesColor"]=mt["SetIndicatorIndexNodesColor"];
+mt["GetIndicatorIndexNodesColor"]=static_cast<const cocos2d::Color3B&(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorIndexNodesColor);
+mt["get"]["IndicatorIndexNodesColor"]=mt["GetIndicatorIndexNodesColor"];
+mt["SetIndicatorSelectedIndexOpacity"]=static_cast<void(cocos2d::ui::PageView::*)(uint8_t)>(&cocos2d::ui::PageView::setIndicatorSelectedIndexOpacity);
+mt["set"]["IndicatorSelectedIndexOpacity"]=mt["SetIndicatorSelectedIndexOpacity"];
+mt["GetIndicatorSelectedIndexOpacity"]=static_cast<uint8_t(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorSelectedIndexOpacity);
+mt["get"]["IndicatorSelectedIndexOpacity"]=mt["GetIndicatorSelectedIndexOpacity"];
+mt["SetIndicatorIndexNodesOpacity"]=static_cast<void(cocos2d::ui::PageView::*)(uint8_t)>(&cocos2d::ui::PageView::setIndicatorIndexNodesOpacity);
+mt["set"]["IndicatorIndexNodesOpacity"]=mt["SetIndicatorIndexNodesOpacity"];
+mt["GetIndicatorIndexNodesOpacity"]=static_cast<uint8_t(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorIndexNodesOpacity);
+mt["get"]["IndicatorIndexNodesOpacity"]=mt["GetIndicatorIndexNodesOpacity"];
+mt["SetIndicatorIndexNodesScale"]=static_cast<void(cocos2d::ui::PageView::*)(float)>(&cocos2d::ui::PageView::setIndicatorIndexNodesScale);
+mt["set"]["IndicatorIndexNodesScale"]=mt["SetIndicatorIndexNodesScale"];
+mt["SetIndicatorIndexNodesTexture"]=sol::overload([](cocos2d::ui::PageView* obj,const std::string& arg0,cocos2d::ui::Widget::TextureResType arg1){return obj->setIndicatorIndexNodesTexture(arg0,arg1);},[](cocos2d::ui::PageView* obj,const std::string& arg0){return obj->setIndicatorIndexNodesTexture(arg0);});
+mt["set"]["IndicatorIndexNodesTexture"]=mt["SetIndicatorIndexNodesTexture"];
+mt["GetIndicatorIndexNodesScale"]=static_cast<float(cocos2d::ui::PageView::*)()const>(&cocos2d::ui::PageView::getIndicatorIndexNodesScale);
+mt["get"]["IndicatorIndexNodesScale"]=mt["GetIndicatorIndexNodesScale"];
+mt["SetAutoScrollStopEpsilon"]=static_cast<void(cocos2d::ui::PageView::*)(float)>(&cocos2d::ui::PageView::setAutoScrollStopEpsilon);
+mt["set"]["AutoScrollStopEpsilon"]=mt["SetAutoScrollStopEpsilon"];
 RegisterLuaUIPageViewEventTypeAuto(lua);
 RegisterLuaUIPageViewTouchDirectionAuto(lua);
 }

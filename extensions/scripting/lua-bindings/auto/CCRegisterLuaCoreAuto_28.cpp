@@ -8,48 +8,107 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-void RegisterLuaCoreSprite3DCacheAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Sprite3DCache>("cc","Sprite3DCache",true);
-mt.set_function("GetInstance",static_cast<cocos2d::Sprite3DCache*(*)()>(&cocos2d::Sprite3DCache::getInstance));
-mt.set_function("DestroyInstance",static_cast<void(*)()>(&cocos2d::Sprite3DCache::destroyInstance));
-mt.set_function("GetSpriteData",static_cast<cocos2d::Sprite3DCache::Sprite3DData*(cocos2d::Sprite3DCache::*)(const std::string&)const>(&cocos2d::Sprite3DCache::getSpriteData));
-mt.set_function("AddSprite3DData",static_cast<bool(cocos2d::Sprite3DCache::*)(const std::string&,cocos2d::Sprite3DCache::Sprite3DData*)>(&cocos2d::Sprite3DCache::addSprite3DData));
-mt.set_function("RemoveSprite3DData",static_cast<void(cocos2d::Sprite3DCache::*)(const std::string&)>(&cocos2d::Sprite3DCache::removeSprite3DData));
-mt.set_function("RemoveAllSprite3DData",static_cast<void(cocos2d::Sprite3DCache::*)()>(&cocos2d::Sprite3DCache::removeAllSprite3DData));
-mt["Instance"]=sol::property(&cocos2d::Sprite3DCache::getInstance,[](std::nullptr_t){cocos2d::Sprite3DCache::destroyInstance();});
+#include "network/CCConnection.h"
+void RegisterLuaCoreTMXTileAnimManagerAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TMXTileAnimManager).name()] = sol::usertype_traits<cocos2d::TMXTileAnimManager*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TMXTileAnimManager>("deprecated.cocos2d::TMXTileAnimManager");
+dep[sol::base_classes]=sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TMXTileAnimManager*>::metatable(),sol::usertype_traits<cocos2d::Ref*>::metatable());
+lua["cc"]["TMXTileAnimManager"]=mt;
+mt["__new__"]=static_cast<cocos2d::TMXTileAnimManager*(*)(cocos2d::FastTMXLayer*)>(&cocos2d::TMXTileAnimManager::create);
+mt["StartAll"]=static_cast<void(cocos2d::TMXTileAnimManager::*)()>(&cocos2d::TMXTileAnimManager::startAll);
+mt["StopAll"]=static_cast<void(cocos2d::TMXTileAnimManager::*)()>(&cocos2d::TMXTileAnimManager::stopAll);
+mt["GetTasks"]=static_cast<const cocos2d::Vector<cocos2d::TMXTileAnimTask *>&(cocos2d::TMXTileAnimManager::*)()const>(&cocos2d::TMXTileAnimManager::getTasks);
+mt["get"]["Tasks"]=mt["GetTasks"];
 }
-void RegisterLuaCoreSprite3DMaterialMaterialTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["cc"];
-pTable = pTable["Sprite3DMaterial"];
-pTable.new_enum<cocos2d::Sprite3DMaterial::MaterialType>("MaterialType",{
-{"UNLIT",cocos2d::Sprite3DMaterial::MaterialType::UNLIT}
-,{"UNLIT_NOTEX",cocos2d::Sprite3DMaterial::MaterialType::UNLIT_NOTEX}
-,{"VERTEX_LIT",cocos2d::Sprite3DMaterial::MaterialType::VERTEX_LIT}
-,{"DIFFUSE",cocos2d::Sprite3DMaterial::MaterialType::DIFFUSE}
-,{"DIFFUSE_NOTEX",cocos2d::Sprite3DMaterial::MaterialType::DIFFUSE_NOTEX}
-,{"BUMPED_DIFFUSE",cocos2d::Sprite3DMaterial::MaterialType::BUMPED_DIFFUSE}
-,{"CUSTOM",cocos2d::Sprite3DMaterial::MaterialType::CUSTOM}
-});}
-void RegisterLuaCoreSprite3DMaterialAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Sprite3DMaterial>("cc","Sprite3DMaterial",true);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Material,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function("GetMaterialType",static_cast<cocos2d::Sprite3DMaterial::MaterialType(cocos2d::Sprite3DMaterial::*)()const>(&cocos2d::Sprite3DMaterial::getMaterialType));
-mt.set_function("CreateBuiltInMaterial",sol::overload(static_cast<void(*)()>(&cocos2d::Sprite3DMaterial::createBuiltInMaterial),static_cast<cocos2d::Sprite3DMaterial*(*)(cocos2d::Sprite3DMaterial::MaterialType,bool)>(&cocos2d::Sprite3DMaterial::createBuiltInMaterial)));
-mt.set_function("CreateWithFilename",static_cast<cocos2d::Sprite3DMaterial*(*)(const std::string&)>(&cocos2d::Sprite3DMaterial::createWithFilename));
-mt.set_function("CreateWithProgramState",static_cast<cocos2d::Sprite3DMaterial*(*)(cocos2d::backend::ProgramState*)>(&cocos2d::Sprite3DMaterial::createWithProgramState));
-mt.set_function("SetTexture",static_cast<void(cocos2d::Sprite3DMaterial::*)(cocos2d::Texture2D*,cocos2d::NTextureData::Usage)>(&cocos2d::Sprite3DMaterial::setTexture));
-mt.set_function("ReleaseBuiltInMaterial",static_cast<void(*)()>(&cocos2d::Sprite3DMaterial::releaseBuiltInMaterial));
-mt.set_function("ReleaseCachedMaterial",static_cast<void(*)()>(&cocos2d::Sprite3DMaterial::releaseCachedMaterial));
-mt.set_function("Clone",static_cast<cocos2d::Material*(cocos2d::Sprite3DMaterial::*)()const>(&cocos2d::Sprite3DMaterial::clone));
-RegisterLuaCoreSprite3DMaterialMaterialTypeAuto(lua);
+void RegisterLuaCoreFastTMXTiledMapAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::FastTMXTiledMap).name()] = sol::usertype_traits<cocos2d::FastTMXTiledMap*>::metatable();
+auto dep=lua.new_usertype<cocos2d::FastTMXTiledMap>("deprecated.cocos2d::FastTMXTiledMap");
+dep[sol::base_classes]=sol::bases<cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::FastTMXTiledMap*>::metatable(),sol::usertype_traits<cocos2d::Node*>::metatable());
+lua["cc"]["FastTMXTiledMap"]=mt;
+mt["__new__"]=static_cast<cocos2d::FastTMXTiledMap*(*)(const std::string&)>(&cocos2d::FastTMXTiledMap::create);
+mt["static"]["CreateWithXML"]=static_cast<cocos2d::FastTMXTiledMap*(*)(const std::string&,const std::string&)>(&cocos2d::FastTMXTiledMap::createWithXML);
+mt["GetLayer"]=static_cast<cocos2d::FastTMXLayer*(cocos2d::FastTMXTiledMap::*)(const std::string&)const>(&cocos2d::FastTMXTiledMap::getLayer);
+mt["GetObjectGroup"]=static_cast<cocos2d::TMXObjectGroup*(cocos2d::FastTMXTiledMap::*)(const std::string&)const>(&cocos2d::FastTMXTiledMap::getObjectGroup);
+mt["GetProperty"]=static_cast<cocos2d::Value(cocos2d::FastTMXTiledMap::*)(const std::string&)const>(&cocos2d::FastTMXTiledMap::getProperty);
+mt["GetPropertiesForGID"]=static_cast<cocos2d::Value(cocos2d::FastTMXTiledMap::*)(int)const>(&cocos2d::FastTMXTiledMap::getPropertiesForGID);
+mt["GetMapSize"]=static_cast<const cocos2d::Size&(cocos2d::FastTMXTiledMap::*)()const>(&cocos2d::FastTMXTiledMap::getMapSize);
+mt["get"]["MapSize"]=mt["GetMapSize"];
+mt["SetMapSize"]=static_cast<void(cocos2d::FastTMXTiledMap::*)(const cocos2d::Size&)>(&cocos2d::FastTMXTiledMap::setMapSize);
+mt["set"]["MapSize"]=mt["SetMapSize"];
+mt["GetTileSize"]=static_cast<const cocos2d::Size&(cocos2d::FastTMXTiledMap::*)()const>(&cocos2d::FastTMXTiledMap::getTileSize);
+mt["get"]["TileSize"]=mt["GetTileSize"];
+mt["SetTileSize"]=static_cast<void(cocos2d::FastTMXTiledMap::*)(const cocos2d::Size&)>(&cocos2d::FastTMXTiledMap::setTileSize);
+mt["set"]["TileSize"]=mt["SetTileSize"];
+mt["GetMapOrientation"]=static_cast<int(cocos2d::FastTMXTiledMap::*)()const>(&cocos2d::FastTMXTiledMap::getMapOrientation);
+mt["get"]["MapOrientation"]=mt["GetMapOrientation"];
+mt["SetMapOrientation"]=static_cast<void(cocos2d::FastTMXTiledMap::*)(int)>(&cocos2d::FastTMXTiledMap::setMapOrientation);
+mt["set"]["MapOrientation"]=mt["SetMapOrientation"];
+mt["GetObjectGroups"]=static_cast<const cocos2d::Vector<cocos2d::TMXObjectGroup *>&(cocos2d::FastTMXTiledMap::*)()const>(&cocos2d::FastTMXTiledMap::getObjectGroups);
+mt["get"]["ObjectGroups"]=mt["GetObjectGroups"];
+mt["SetObjectGroups"]=static_cast<void(cocos2d::FastTMXTiledMap::*)(const cocos2d::Vector<cocos2d::TMXObjectGroup *>&)>(&cocos2d::FastTMXTiledMap::setObjectGroups);
+mt["set"]["ObjectGroups"]=mt["SetObjectGroups"];
+mt["GetProperties"]=static_cast<const cocos2d::ValueMap&(cocos2d::FastTMXTiledMap::*)()const>(&cocos2d::FastTMXTiledMap::getProperties);
+mt["get"]["Properties"]=mt["GetProperties"];
+mt["SetProperties"]=static_cast<void(cocos2d::FastTMXTiledMap::*)(const cocos2d::ValueMap&)>(&cocos2d::FastTMXTiledMap::setProperties);
+mt["set"]["Properties"]=mt["SetProperties"];
+mt["SetTileAnimEnabled"]=static_cast<void(cocos2d::FastTMXTiledMap::*)(bool)>(&cocos2d::FastTMXTiledMap::setTileAnimEnabled);
+mt["set"]["TileAnimEnabled"]=mt["SetTileAnimEnabled"];
+mt["GetLayerCount"]=static_cast<int(cocos2d::FastTMXTiledMap::*)()const>(&cocos2d::FastTMXTiledMap::getLayerCount);
+mt["get"]["LayerCount"]=mt["GetLayerCount"];
+mt["GetResourceFile"]=static_cast<const std::string&(cocos2d::FastTMXTiledMap::*)()const>(&cocos2d::FastTMXTiledMap::getResourceFile);
+mt["get"]["ResourceFile"]=mt["GetResourceFile"];
 }
-void RegisterLuaCoreSprite3DMaterialCacheAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Sprite3DMaterialCache>("cc","Sprite3DMaterialCache",true);
-mt.set_function("GetInstance",static_cast<cocos2d::Sprite3DMaterialCache*(*)()>(&cocos2d::Sprite3DMaterialCache::getInstance));
-mt.set_function("DestroyInstance",static_cast<void(*)()>(&cocos2d::Sprite3DMaterialCache::destroyInstance));
-mt.set_function("AddSprite3DMaterial",static_cast<bool(cocos2d::Sprite3DMaterialCache::*)(const std::string&,cocos2d::Texture2D*)>(&cocos2d::Sprite3DMaterialCache::addSprite3DMaterial));
-mt.set_function("GetSprite3DMaterial",static_cast<cocos2d::Texture2D*(cocos2d::Sprite3DMaterialCache::*)(const std::string&)>(&cocos2d::Sprite3DMaterialCache::getSprite3DMaterial));
-mt.set_function("RemoveAllSprite3DMaterial",static_cast<void(cocos2d::Sprite3DMaterialCache::*)()>(&cocos2d::Sprite3DMaterialCache::removeAllSprite3DMaterial));
-mt.set_function("RemoveUnusedSprite3DMaterial",static_cast<void(cocos2d::Sprite3DMaterialCache::*)()>(&cocos2d::Sprite3DMaterialCache::removeUnusedSprite3DMaterial));
-mt["Instance"]=sol::property(&cocos2d::Sprite3DMaterialCache::getInstance,[](std::nullptr_t){cocos2d::Sprite3DMaterialCache::destroyInstance();});
+void RegisterLuaCoreConnectionKindAuto(cocos2d::extension::Lua& lua) {
+sol::table enumTable = lua.create_table_with(0,3);
+enumTable["TCP"]=cocos2d::network::Connection::Kind::TCP;
+enumTable["UDP"]=cocos2d::network::Connection::Kind::UDP;
+enumTable["KCP"]=cocos2d::network::Connection::Kind::KCP;
+lua["cc"]["Connection"]["static"]["Kind"]=lua.NewEnum(enumTable);
+}
+void RegisterLuaCoreConnectionAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::network::Connection).name()] = sol::usertype_traits<cocos2d::network::Connection*>::metatable();
+auto dep=lua.new_usertype<cocos2d::network::Connection>("deprecated.cocos2d::network::Connection");
+dep[sol::base_classes]=sol::bases<cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::network::Connection*>::metatable(),sol::usertype_traits<cocos2d::extension::LuaObject*>::metatable());
+lua["cc"]["Connection"]=mt;
+mt["__new__"] = [](){return nullptr;};
+mt["Open"]=static_cast<void(cocos2d::network::Connection::*)()>(&cocos2d::network::Connection::Open);
+mt["Close"]=static_cast<void(cocos2d::network::Connection::*)()>(&cocos2d::network::Connection::Close);
+mt["Write"]=static_cast<int(cocos2d::network::Connection::*)(const std::string&)>(&cocos2d::network::Connection::Write);
+mt["SetHeartBeat"]=sol::overload([](cocos2d::network::Connection* obj,size_t arg0,size_t arg1){return obj->SetHeartBeat(arg0,arg1);},[](cocos2d::network::Connection* obj,size_t arg0){return obj->SetHeartBeat(arg0);},[](cocos2d::network::Connection* obj){return obj->SetHeartBeat();});
+mt["set"]["HeartBeat"]=mt["SetHeartBeat"];
+RegisterLuaCoreConnectionKindAuto(lua);
+}
+void RegisterLuaCoreServerAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::network::Server).name()] = sol::usertype_traits<cocos2d::network::Server*>::metatable();
+auto dep=lua.new_usertype<cocos2d::network::Server>("deprecated.cocos2d::network::Server");
+dep[sol::base_classes]=sol::bases<cocos2d::network::Connection,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::network::Server*>::metatable(),sol::usertype_traits<cocos2d::network::Connection*>::metatable());
+lua["cc"]["Server"]=mt;
+mt["__new__"]=sol::overload([](const std::string_view& arg0,uint16_t arg1,cocos2d::network::Connection::Kind arg2){return new cocos2d::network::Server(arg0,arg1,arg2);},[](uint16_t arg0,cocos2d::network::Connection::Kind arg1){return new cocos2d::network::Server(arg0,arg1);},[](const std::string_view& arg0,uint16_t arg1){return new cocos2d::network::Server(arg0,arg1);},[](uint16_t arg0){return new cocos2d::network::Server(arg0);});
+mt["SetConnectHandler"]=static_cast<void(cocos2d::network::Server::*)(const cocos2d::network::Server::SC_Handler&)>(&cocos2d::network::Server::SetConnectHandler);
+mt["set"]["ConnectHandler"]=mt["SetConnectHandler"];
+mt["SetMessageHandler"]=static_cast<void(cocos2d::network::Server::*)(const cocos2d::network::Server::SM_Handler&)>(&cocos2d::network::Server::SetMessageHandler);
+mt["set"]["MessageHandler"]=mt["SetMessageHandler"];
+mt["SetLoseHandler"]=static_cast<void(cocos2d::network::Server::*)(const cocos2d::network::Server::SL_Handler&)>(&cocos2d::network::Server::SetLoseHandler);
+mt["set"]["LoseHandler"]=mt["SetLoseHandler"];
+mt["Write"]=sol::overload(static_cast<int(cocos2d::network::Server::*)(yasio::inet::transport_handle_t,const std::string&)>(&cocos2d::network::Server::Write),static_cast<int(cocos2d::network::Server::*)(const std::string&)>(&cocos2d::network::Server::Write));
+mt["Close"]=static_cast<void(cocos2d::network::Server::*)(yasio::inet::transport_handle_t)>(&cocos2d::network::Server::Close);
+}
+void RegisterLuaCoreClientAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::network::Client).name()] = sol::usertype_traits<cocos2d::network::Client*>::metatable();
+auto dep=lua.new_usertype<cocos2d::network::Client>("deprecated.cocos2d::network::Client");
+dep[sol::base_classes]=sol::bases<cocos2d::network::Connection,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::network::Client*>::metatable(),sol::usertype_traits<cocos2d::network::Connection*>::metatable());
+lua["cc"]["Client"]=mt;
+mt["__new__"]=sol::overload([](const std::string_view& arg0,uint16_t arg1,cocos2d::network::Connection::Kind arg2){return new cocos2d::network::Client(arg0,arg1,arg2);},[](const std::string_view& arg0,uint16_t arg1){return new cocos2d::network::Client(arg0,arg1);});
+mt["SetConnectHandler"]=static_cast<void(cocos2d::network::Client::*)(const cocos2d::network::Client::CC_Handler&)>(&cocos2d::network::Client::SetConnectHandler);
+mt["set"]["ConnectHandler"]=mt["SetConnectHandler"];
+mt["SetMessageHandler"]=static_cast<void(cocos2d::network::Client::*)(const cocos2d::network::Client::CM_Handler&)>(&cocos2d::network::Client::SetMessageHandler);
+mt["set"]["MessageHandler"]=mt["SetMessageHandler"];
+mt["SetLoseHandler"]=static_cast<void(cocos2d::network::Client::*)(const cocos2d::network::Client::CL_Handler&)>(&cocos2d::network::Client::SetLoseHandler);
+mt["set"]["LoseHandler"]=mt["SetLoseHandler"];
+mt["Open"]=sol::overload(static_cast<void(cocos2d::network::Client::*)(size_t)>(&cocos2d::network::Client::Open),static_cast<void(cocos2d::network::Client::*)()>(&cocos2d::network::Client::Open));
 }

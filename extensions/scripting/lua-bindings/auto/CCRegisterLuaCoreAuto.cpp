@@ -8,8 +8,9 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+#include "network/CCConnection.h"
+extern void RegisterLuaCoreClonableAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreRefAuto(cocos2d::extension::Lua&);
-extern void RegisterLuaCoreConsoleAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreTextVAlignmentAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreTextHAlignmentAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreGlyphCollectionAuto(cocos2d::extension::Lua&);
@@ -74,6 +75,9 @@ extern void RegisterLuaCorePropertiesAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreUserDefaultAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreFileUtilsAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreLanguageTypeAuto(cocos2d::extension::Lua&);
+extern void RegisterLuaCoreZipFileAuto(cocos2d::extension::Lua&);
+extern void RegisterLuaCoreRZipFileAuto(cocos2d::extension::Lua&);
+extern void RegisterLuaCoreWZipFileAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreEventAccelerationAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreEventCustomAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreEventDispatcherAuto(cocos2d::extension::Lua&);
@@ -287,14 +291,13 @@ extern void RegisterLuaCoreFastTMXLayerAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreTMXTileAnimTaskAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreTMXTileAnimManagerAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreFastTMXTiledMapAuto(cocos2d::extension::Lua&);
-extern void RegisterLuaCoreSprite3DAuto(cocos2d::extension::Lua&);
-extern void RegisterLuaCoreSprite3DCacheAuto(cocos2d::extension::Lua&);
-extern void RegisterLuaCoreSprite3DMaterialAuto(cocos2d::extension::Lua&);
-extern void RegisterLuaCoreSprite3DMaterialCacheAuto(cocos2d::extension::Lua&);
+extern void RegisterLuaCoreConnectionAuto(cocos2d::extension::Lua&);
+extern void RegisterLuaCoreServerAuto(cocos2d::extension::Lua&);
+extern void RegisterLuaCoreClientAuto(cocos2d::extension::Lua&);
 void RegisterLuaCoreAuto(cocos2d::extension::Lua& lua){
 lua["cc"]=lua.get_or("cc",lua.create_table());
+RegisterLuaCoreClonableAuto(lua);
 RegisterLuaCoreRefAuto(lua);
-RegisterLuaCoreConsoleAuto(lua);
 RegisterLuaCoreTextVAlignmentAuto(lua);
 RegisterLuaCoreTextHAlignmentAuto(lua);
 RegisterLuaCoreGlyphCollectionAuto(lua);
@@ -359,6 +362,9 @@ RegisterLuaCorePropertiesAuto(lua);
 RegisterLuaCoreUserDefaultAuto(lua);
 RegisterLuaCoreFileUtilsAuto(lua);
 RegisterLuaCoreLanguageTypeAuto(lua);
+RegisterLuaCoreZipFileAuto(lua);
+RegisterLuaCoreRZipFileAuto(lua);
+RegisterLuaCoreWZipFileAuto(lua);
 RegisterLuaCoreEventAccelerationAuto(lua);
 RegisterLuaCoreEventCustomAuto(lua);
 RegisterLuaCoreEventDispatcherAuto(lua);
@@ -572,8 +578,7 @@ RegisterLuaCoreFastTMXLayerAuto(lua);
 RegisterLuaCoreTMXTileAnimTaskAuto(lua);
 RegisterLuaCoreTMXTileAnimManagerAuto(lua);
 RegisterLuaCoreFastTMXTiledMapAuto(lua);
-RegisterLuaCoreSprite3DAuto(lua);
-RegisterLuaCoreSprite3DCacheAuto(lua);
-RegisterLuaCoreSprite3DMaterialAuto(lua);
-RegisterLuaCoreSprite3DMaterialCacheAuto(lua);
+RegisterLuaCoreConnectionAuto(lua);
+RegisterLuaCoreServerAuto(lua);
+RegisterLuaCoreClientAuto(lua);
 }

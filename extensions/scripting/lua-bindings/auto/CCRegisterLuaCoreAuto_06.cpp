@@ -8,366 +8,427 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+#include "network/CCConnection.h"
 void RegisterLuaCoreActionFloatAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ActionFloat>("cc","ActionFloat",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::ActionFloat*(*)(float,float,float,cocos2d::ActionFloat::ActionFloatCallback)>(&cocos2d::ActionFloat::create));
-mt.set_function("StartWithTarget",static_cast<void(cocos2d::ActionFloat::*)(cocos2d::Node*)>(&cocos2d::ActionFloat::startWithTarget));
-mt.set_function("Update",static_cast<void(cocos2d::ActionFloat::*)(float)>(&cocos2d::ActionFloat::update));
-mt.set_function("Reverse",static_cast<cocos2d::ActionFloat*(cocos2d::ActionFloat::*)()const>(&cocos2d::ActionFloat::reverse));
-mt.set_function("Clone",static_cast<cocos2d::ActionFloat*(cocos2d::ActionFloat::*)()const>(&cocos2d::ActionFloat::clone));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ActionFloat).name()] = sol::usertype_traits<cocos2d::ActionFloat*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ActionFloat>("deprecated.cocos2d::ActionFloat");
+dep[sol::base_classes]=sol::bases<cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ActionFloat*>::metatable(),sol::usertype_traits<cocos2d::ActionInterval*>::metatable());
+lua["cc"]["ActionFloat"]=mt;
+mt["__new__"]=static_cast<cocos2d::ActionFloat*(*)(float,float,float,cocos2d::ActionFloat::ActionFloatCallback)>(&cocos2d::ActionFloat::create);
 }
 void RegisterLuaCoreEventKeyboardKeyCodeAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["cc"];
-pTable = pTable["EventKeyboard"];
-pTable.new_enum<cocos2d::EventKeyboard::KeyCode>("KeyCode",{
-{"KEY_NONE",cocos2d::EventKeyboard::KeyCode::KEY_NONE}
-,{"KEY_PAUSE",cocos2d::EventKeyboard::KeyCode::KEY_PAUSE}
-,{"KEY_SCROLL_LOCK",cocos2d::EventKeyboard::KeyCode::KEY_SCROLL_LOCK}
-,{"KEY_PRINT",cocos2d::EventKeyboard::KeyCode::KEY_PRINT}
-,{"KEY_SYSREQ",cocos2d::EventKeyboard::KeyCode::KEY_SYSREQ}
-,{"KEY_BREAK",cocos2d::EventKeyboard::KeyCode::KEY_BREAK}
-,{"KEY_ESCAPE",cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE}
-,{"KEY_BACK",cocos2d::EventKeyboard::KeyCode::KEY_BACK}
-,{"KEY_BACKSPACE",cocos2d::EventKeyboard::KeyCode::KEY_BACKSPACE}
-,{"KEY_TAB",cocos2d::EventKeyboard::KeyCode::KEY_TAB}
-,{"KEY_BACK_TAB",cocos2d::EventKeyboard::KeyCode::KEY_BACK_TAB}
-,{"KEY_RETURN",cocos2d::EventKeyboard::KeyCode::KEY_RETURN}
-,{"KEY_CAPS_LOCK",cocos2d::EventKeyboard::KeyCode::KEY_CAPS_LOCK}
-,{"KEY_SHIFT",cocos2d::EventKeyboard::KeyCode::KEY_SHIFT}
-,{"KEY_LEFT_SHIFT",cocos2d::EventKeyboard::KeyCode::KEY_LEFT_SHIFT}
-,{"KEY_RIGHT_SHIFT",cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_SHIFT}
-,{"KEY_CTRL",cocos2d::EventKeyboard::KeyCode::KEY_CTRL}
-,{"KEY_LEFT_CTRL",cocos2d::EventKeyboard::KeyCode::KEY_LEFT_CTRL}
-,{"KEY_RIGHT_CTRL",cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_CTRL}
-,{"KEY_ALT",cocos2d::EventKeyboard::KeyCode::KEY_ALT}
-,{"KEY_LEFT_ALT",cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ALT}
-,{"KEY_RIGHT_ALT",cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ALT}
-,{"KEY_MENU",cocos2d::EventKeyboard::KeyCode::KEY_MENU}
-,{"KEY_HYPER",cocos2d::EventKeyboard::KeyCode::KEY_HYPER}
-,{"KEY_INSERT",cocos2d::EventKeyboard::KeyCode::KEY_INSERT}
-,{"KEY_HOME",cocos2d::EventKeyboard::KeyCode::KEY_HOME}
-,{"KEY_PG_UP",cocos2d::EventKeyboard::KeyCode::KEY_PG_UP}
-,{"KEY_DELETE",cocos2d::EventKeyboard::KeyCode::KEY_DELETE}
-,{"KEY_END",cocos2d::EventKeyboard::KeyCode::KEY_END}
-,{"KEY_PG_DOWN",cocos2d::EventKeyboard::KeyCode::KEY_PG_DOWN}
-,{"KEY_LEFT_ARROW",cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW}
-,{"KEY_RIGHT_ARROW",cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW}
-,{"KEY_UP_ARROW",cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW}
-,{"KEY_DOWN_ARROW",cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW}
-,{"KEY_NUM_LOCK",cocos2d::EventKeyboard::KeyCode::KEY_NUM_LOCK}
-,{"KEY_KP_PLUS",cocos2d::EventKeyboard::KeyCode::KEY_KP_PLUS}
-,{"KEY_KP_MINUS",cocos2d::EventKeyboard::KeyCode::KEY_KP_MINUS}
-,{"KEY_KP_MULTIPLY",cocos2d::EventKeyboard::KeyCode::KEY_KP_MULTIPLY}
-,{"KEY_KP_DIVIDE",cocos2d::EventKeyboard::KeyCode::KEY_KP_DIVIDE}
-,{"KEY_KP_ENTER",cocos2d::EventKeyboard::KeyCode::KEY_KP_ENTER}
-,{"KEY_KP_HOME",cocos2d::EventKeyboard::KeyCode::KEY_KP_HOME}
-,{"KEY_KP_UP",cocos2d::EventKeyboard::KeyCode::KEY_KP_UP}
-,{"KEY_KP_PG_UP",cocos2d::EventKeyboard::KeyCode::KEY_KP_PG_UP}
-,{"KEY_KP_LEFT",cocos2d::EventKeyboard::KeyCode::KEY_KP_LEFT}
-,{"KEY_KP_FIVE",cocos2d::EventKeyboard::KeyCode::KEY_KP_FIVE}
-,{"KEY_KP_RIGHT",cocos2d::EventKeyboard::KeyCode::KEY_KP_RIGHT}
-,{"KEY_KP_END",cocos2d::EventKeyboard::KeyCode::KEY_KP_END}
-,{"KEY_KP_DOWN",cocos2d::EventKeyboard::KeyCode::KEY_KP_DOWN}
-,{"KEY_KP_PG_DOWN",cocos2d::EventKeyboard::KeyCode::KEY_KP_PG_DOWN}
-,{"KEY_KP_INSERT",cocos2d::EventKeyboard::KeyCode::KEY_KP_INSERT}
-,{"KEY_KP_DELETE",cocos2d::EventKeyboard::KeyCode::KEY_KP_DELETE}
-,{"KEY_F1",cocos2d::EventKeyboard::KeyCode::KEY_F1}
-,{"KEY_F2",cocos2d::EventKeyboard::KeyCode::KEY_F2}
-,{"KEY_F3",cocos2d::EventKeyboard::KeyCode::KEY_F3}
-,{"KEY_F4",cocos2d::EventKeyboard::KeyCode::KEY_F4}
-,{"KEY_F5",cocos2d::EventKeyboard::KeyCode::KEY_F5}
-,{"KEY_F6",cocos2d::EventKeyboard::KeyCode::KEY_F6}
-,{"KEY_F7",cocos2d::EventKeyboard::KeyCode::KEY_F7}
-,{"KEY_F8",cocos2d::EventKeyboard::KeyCode::KEY_F8}
-,{"KEY_F9",cocos2d::EventKeyboard::KeyCode::KEY_F9}
-,{"KEY_F10",cocos2d::EventKeyboard::KeyCode::KEY_F10}
-,{"KEY_F11",cocos2d::EventKeyboard::KeyCode::KEY_F11}
-,{"KEY_F12",cocos2d::EventKeyboard::KeyCode::KEY_F12}
-,{"KEY_SPACE",cocos2d::EventKeyboard::KeyCode::KEY_SPACE}
-,{"KEY_EXCLAM",cocos2d::EventKeyboard::KeyCode::KEY_EXCLAM}
-,{"KEY_QUOTE",cocos2d::EventKeyboard::KeyCode::KEY_QUOTE}
-,{"KEY_NUMBER",cocos2d::EventKeyboard::KeyCode::KEY_NUMBER}
-,{"KEY_DOLLAR",cocos2d::EventKeyboard::KeyCode::KEY_DOLLAR}
-,{"KEY_PERCENT",cocos2d::EventKeyboard::KeyCode::KEY_PERCENT}
-,{"KEY_CIRCUMFLEX",cocos2d::EventKeyboard::KeyCode::KEY_CIRCUMFLEX}
-,{"KEY_AMPERSAND",cocos2d::EventKeyboard::KeyCode::KEY_AMPERSAND}
-,{"KEY_APOSTROPHE",cocos2d::EventKeyboard::KeyCode::KEY_APOSTROPHE}
-,{"KEY_LEFT_PARENTHESIS",cocos2d::EventKeyboard::KeyCode::KEY_LEFT_PARENTHESIS}
-,{"KEY_RIGHT_PARENTHESIS",cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_PARENTHESIS}
-,{"KEY_ASTERISK",cocos2d::EventKeyboard::KeyCode::KEY_ASTERISK}
-,{"KEY_PLUS",cocos2d::EventKeyboard::KeyCode::KEY_PLUS}
-,{"KEY_COMMA",cocos2d::EventKeyboard::KeyCode::KEY_COMMA}
-,{"KEY_MINUS",cocos2d::EventKeyboard::KeyCode::KEY_MINUS}
-,{"KEY_PERIOD",cocos2d::EventKeyboard::KeyCode::KEY_PERIOD}
-,{"KEY_SLASH",cocos2d::EventKeyboard::KeyCode::KEY_SLASH}
-,{"KEY_0",cocos2d::EventKeyboard::KeyCode::KEY_0}
-,{"KEY_1",cocos2d::EventKeyboard::KeyCode::KEY_1}
-,{"KEY_2",cocos2d::EventKeyboard::KeyCode::KEY_2}
-,{"KEY_3",cocos2d::EventKeyboard::KeyCode::KEY_3}
-,{"KEY_4",cocos2d::EventKeyboard::KeyCode::KEY_4}
-,{"KEY_5",cocos2d::EventKeyboard::KeyCode::KEY_5}
-,{"KEY_6",cocos2d::EventKeyboard::KeyCode::KEY_6}
-,{"KEY_7",cocos2d::EventKeyboard::KeyCode::KEY_7}
-,{"KEY_8",cocos2d::EventKeyboard::KeyCode::KEY_8}
-,{"KEY_9",cocos2d::EventKeyboard::KeyCode::KEY_9}
-,{"KEY_COLON",cocos2d::EventKeyboard::KeyCode::KEY_COLON}
-,{"KEY_SEMICOLON",cocos2d::EventKeyboard::KeyCode::KEY_SEMICOLON}
-,{"KEY_LESS_THAN",cocos2d::EventKeyboard::KeyCode::KEY_LESS_THAN}
-,{"KEY_EQUAL",cocos2d::EventKeyboard::KeyCode::KEY_EQUAL}
-,{"KEY_GREATER_THAN",cocos2d::EventKeyboard::KeyCode::KEY_GREATER_THAN}
-,{"KEY_QUESTION",cocos2d::EventKeyboard::KeyCode::KEY_QUESTION}
-,{"KEY_AT",cocos2d::EventKeyboard::KeyCode::KEY_AT}
-,{"KEY_CAPITAL_A",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_A}
-,{"KEY_CAPITAL_B",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_B}
-,{"KEY_CAPITAL_C",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_C}
-,{"KEY_CAPITAL_D",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_D}
-,{"KEY_CAPITAL_E",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_E}
-,{"KEY_CAPITAL_F",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_F}
-,{"KEY_CAPITAL_G",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_G}
-,{"KEY_CAPITAL_H",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_H}
-,{"KEY_CAPITAL_I",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_I}
-,{"KEY_CAPITAL_J",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_J}
-,{"KEY_CAPITAL_K",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_K}
-,{"KEY_CAPITAL_L",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_L}
-,{"KEY_CAPITAL_M",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_M}
-,{"KEY_CAPITAL_N",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_N}
-,{"KEY_CAPITAL_O",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_O}
-,{"KEY_CAPITAL_P",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_P}
-,{"KEY_CAPITAL_Q",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_Q}
-,{"KEY_CAPITAL_R",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_R}
-,{"KEY_CAPITAL_S",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_S}
-,{"KEY_CAPITAL_T",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_T}
-,{"KEY_CAPITAL_U",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_U}
-,{"KEY_CAPITAL_V",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_V}
-,{"KEY_CAPITAL_W",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_W}
-,{"KEY_CAPITAL_X",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_X}
-,{"KEY_CAPITAL_Y",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_Y}
-,{"KEY_CAPITAL_Z",cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_Z}
-,{"KEY_LEFT_BRACKET",cocos2d::EventKeyboard::KeyCode::KEY_LEFT_BRACKET}
-,{"KEY_BACK_SLASH",cocos2d::EventKeyboard::KeyCode::KEY_BACK_SLASH}
-,{"KEY_RIGHT_BRACKET",cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_BRACKET}
-,{"KEY_UNDERSCORE",cocos2d::EventKeyboard::KeyCode::KEY_UNDERSCORE}
-,{"KEY_GRAVE",cocos2d::EventKeyboard::KeyCode::KEY_GRAVE}
-,{"KEY_A",cocos2d::EventKeyboard::KeyCode::KEY_A}
-,{"KEY_B",cocos2d::EventKeyboard::KeyCode::KEY_B}
-,{"KEY_C",cocos2d::EventKeyboard::KeyCode::KEY_C}
-,{"KEY_D",cocos2d::EventKeyboard::KeyCode::KEY_D}
-,{"KEY_E",cocos2d::EventKeyboard::KeyCode::KEY_E}
-,{"KEY_F",cocos2d::EventKeyboard::KeyCode::KEY_F}
-,{"KEY_G",cocos2d::EventKeyboard::KeyCode::KEY_G}
-,{"KEY_H",cocos2d::EventKeyboard::KeyCode::KEY_H}
-,{"KEY_I",cocos2d::EventKeyboard::KeyCode::KEY_I}
-,{"KEY_J",cocos2d::EventKeyboard::KeyCode::KEY_J}
-,{"KEY_K",cocos2d::EventKeyboard::KeyCode::KEY_K}
-,{"KEY_L",cocos2d::EventKeyboard::KeyCode::KEY_L}
-,{"KEY_M",cocos2d::EventKeyboard::KeyCode::KEY_M}
-,{"KEY_N",cocos2d::EventKeyboard::KeyCode::KEY_N}
-,{"KEY_O",cocos2d::EventKeyboard::KeyCode::KEY_O}
-,{"KEY_P",cocos2d::EventKeyboard::KeyCode::KEY_P}
-,{"KEY_Q",cocos2d::EventKeyboard::KeyCode::KEY_Q}
-,{"KEY_R",cocos2d::EventKeyboard::KeyCode::KEY_R}
-,{"KEY_S",cocos2d::EventKeyboard::KeyCode::KEY_S}
-,{"KEY_T",cocos2d::EventKeyboard::KeyCode::KEY_T}
-,{"KEY_U",cocos2d::EventKeyboard::KeyCode::KEY_U}
-,{"KEY_V",cocos2d::EventKeyboard::KeyCode::KEY_V}
-,{"KEY_W",cocos2d::EventKeyboard::KeyCode::KEY_W}
-,{"KEY_X",cocos2d::EventKeyboard::KeyCode::KEY_X}
-,{"KEY_Y",cocos2d::EventKeyboard::KeyCode::KEY_Y}
-,{"KEY_Z",cocos2d::EventKeyboard::KeyCode::KEY_Z}
-,{"KEY_LEFT_BRACE",cocos2d::EventKeyboard::KeyCode::KEY_LEFT_BRACE}
-,{"KEY_BAR",cocos2d::EventKeyboard::KeyCode::KEY_BAR}
-,{"KEY_RIGHT_BRACE",cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_BRACE}
-,{"KEY_TILDE",cocos2d::EventKeyboard::KeyCode::KEY_TILDE}
-,{"KEY_EURO",cocos2d::EventKeyboard::KeyCode::KEY_EURO}
-,{"KEY_POUND",cocos2d::EventKeyboard::KeyCode::KEY_POUND}
-,{"KEY_YEN",cocos2d::EventKeyboard::KeyCode::KEY_YEN}
-,{"KEY_MIDDLE_DOT",cocos2d::EventKeyboard::KeyCode::KEY_MIDDLE_DOT}
-,{"KEY_SEARCH",cocos2d::EventKeyboard::KeyCode::KEY_SEARCH}
-,{"KEY_DPAD_LEFT",cocos2d::EventKeyboard::KeyCode::KEY_DPAD_LEFT}
-,{"KEY_DPAD_RIGHT",cocos2d::EventKeyboard::KeyCode::KEY_DPAD_RIGHT}
-,{"KEY_DPAD_UP",cocos2d::EventKeyboard::KeyCode::KEY_DPAD_UP}
-,{"KEY_DPAD_DOWN",cocos2d::EventKeyboard::KeyCode::KEY_DPAD_DOWN}
-,{"KEY_DPAD_CENTER",cocos2d::EventKeyboard::KeyCode::KEY_DPAD_CENTER}
-,{"KEY_ENTER",cocos2d::EventKeyboard::KeyCode::KEY_ENTER}
-,{"KEY_PLAY",cocos2d::EventKeyboard::KeyCode::KEY_PLAY}
-});}
+sol::table enumTable = lua.create_table_with(0,170);
+enumTable["KEY_NONE"]=cocos2d::EventKeyboard::KeyCode::KEY_NONE;
+enumTable["KEY_PAUSE"]=cocos2d::EventKeyboard::KeyCode::KEY_PAUSE;
+enumTable["KEY_SCROLL_LOCK"]=cocos2d::EventKeyboard::KeyCode::KEY_SCROLL_LOCK;
+enumTable["KEY_PRINT"]=cocos2d::EventKeyboard::KeyCode::KEY_PRINT;
+enumTable["KEY_SYSREQ"]=cocos2d::EventKeyboard::KeyCode::KEY_SYSREQ;
+enumTable["KEY_BREAK"]=cocos2d::EventKeyboard::KeyCode::KEY_BREAK;
+enumTable["KEY_ESCAPE"]=cocos2d::EventKeyboard::KeyCode::KEY_ESCAPE;
+enumTable["KEY_BACK"]=cocos2d::EventKeyboard::KeyCode::KEY_BACK;
+enumTable["KEY_BACKSPACE"]=cocos2d::EventKeyboard::KeyCode::KEY_BACKSPACE;
+enumTable["KEY_TAB"]=cocos2d::EventKeyboard::KeyCode::KEY_TAB;
+enumTable["KEY_BACK_TAB"]=cocos2d::EventKeyboard::KeyCode::KEY_BACK_TAB;
+enumTable["KEY_RETURN"]=cocos2d::EventKeyboard::KeyCode::KEY_RETURN;
+enumTable["KEY_CAPS_LOCK"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPS_LOCK;
+enumTable["KEY_SHIFT"]=cocos2d::EventKeyboard::KeyCode::KEY_SHIFT;
+enumTable["KEY_LEFT_SHIFT"]=cocos2d::EventKeyboard::KeyCode::KEY_LEFT_SHIFT;
+enumTable["KEY_RIGHT_SHIFT"]=cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_SHIFT;
+enumTable["KEY_CTRL"]=cocos2d::EventKeyboard::KeyCode::KEY_CTRL;
+enumTable["KEY_LEFT_CTRL"]=cocos2d::EventKeyboard::KeyCode::KEY_LEFT_CTRL;
+enumTable["KEY_RIGHT_CTRL"]=cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_CTRL;
+enumTable["KEY_ALT"]=cocos2d::EventKeyboard::KeyCode::KEY_ALT;
+enumTable["KEY_LEFT_ALT"]=cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ALT;
+enumTable["KEY_RIGHT_ALT"]=cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ALT;
+enumTable["KEY_MENU"]=cocos2d::EventKeyboard::KeyCode::KEY_MENU;
+enumTable["KEY_HYPER"]=cocos2d::EventKeyboard::KeyCode::KEY_HYPER;
+enumTable["KEY_INSERT"]=cocos2d::EventKeyboard::KeyCode::KEY_INSERT;
+enumTable["KEY_HOME"]=cocos2d::EventKeyboard::KeyCode::KEY_HOME;
+enumTable["KEY_PG_UP"]=cocos2d::EventKeyboard::KeyCode::KEY_PG_UP;
+enumTable["KEY_DELETE"]=cocos2d::EventKeyboard::KeyCode::KEY_DELETE;
+enumTable["KEY_END"]=cocos2d::EventKeyboard::KeyCode::KEY_END;
+enumTable["KEY_PG_DOWN"]=cocos2d::EventKeyboard::KeyCode::KEY_PG_DOWN;
+enumTable["KEY_LEFT_ARROW"]=cocos2d::EventKeyboard::KeyCode::KEY_LEFT_ARROW;
+enumTable["KEY_RIGHT_ARROW"]=cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_ARROW;
+enumTable["KEY_UP_ARROW"]=cocos2d::EventKeyboard::KeyCode::KEY_UP_ARROW;
+enumTable["KEY_DOWN_ARROW"]=cocos2d::EventKeyboard::KeyCode::KEY_DOWN_ARROW;
+enumTable["KEY_NUM_LOCK"]=cocos2d::EventKeyboard::KeyCode::KEY_NUM_LOCK;
+enumTable["KEY_KP_PLUS"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_PLUS;
+enumTable["KEY_KP_MINUS"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_MINUS;
+enumTable["KEY_KP_MULTIPLY"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_MULTIPLY;
+enumTable["KEY_KP_DIVIDE"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_DIVIDE;
+enumTable["KEY_KP_ENTER"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_ENTER;
+enumTable["KEY_KP_HOME"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_HOME;
+enumTable["KEY_KP_UP"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_UP;
+enumTable["KEY_KP_PG_UP"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_PG_UP;
+enumTable["KEY_KP_LEFT"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_LEFT;
+enumTable["KEY_KP_FIVE"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_FIVE;
+enumTable["KEY_KP_RIGHT"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_RIGHT;
+enumTable["KEY_KP_END"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_END;
+enumTable["KEY_KP_DOWN"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_DOWN;
+enumTable["KEY_KP_PG_DOWN"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_PG_DOWN;
+enumTable["KEY_KP_INSERT"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_INSERT;
+enumTable["KEY_KP_DELETE"]=cocos2d::EventKeyboard::KeyCode::KEY_KP_DELETE;
+enumTable["KEY_F1"]=cocos2d::EventKeyboard::KeyCode::KEY_F1;
+enumTable["KEY_F2"]=cocos2d::EventKeyboard::KeyCode::KEY_F2;
+enumTable["KEY_F3"]=cocos2d::EventKeyboard::KeyCode::KEY_F3;
+enumTable["KEY_F4"]=cocos2d::EventKeyboard::KeyCode::KEY_F4;
+enumTable["KEY_F5"]=cocos2d::EventKeyboard::KeyCode::KEY_F5;
+enumTable["KEY_F6"]=cocos2d::EventKeyboard::KeyCode::KEY_F6;
+enumTable["KEY_F7"]=cocos2d::EventKeyboard::KeyCode::KEY_F7;
+enumTable["KEY_F8"]=cocos2d::EventKeyboard::KeyCode::KEY_F8;
+enumTable["KEY_F9"]=cocos2d::EventKeyboard::KeyCode::KEY_F9;
+enumTable["KEY_F10"]=cocos2d::EventKeyboard::KeyCode::KEY_F10;
+enumTable["KEY_F11"]=cocos2d::EventKeyboard::KeyCode::KEY_F11;
+enumTable["KEY_F12"]=cocos2d::EventKeyboard::KeyCode::KEY_F12;
+enumTable["KEY_SPACE"]=cocos2d::EventKeyboard::KeyCode::KEY_SPACE;
+enumTable["KEY_EXCLAM"]=cocos2d::EventKeyboard::KeyCode::KEY_EXCLAM;
+enumTable["KEY_QUOTE"]=cocos2d::EventKeyboard::KeyCode::KEY_QUOTE;
+enumTable["KEY_NUMBER"]=cocos2d::EventKeyboard::KeyCode::KEY_NUMBER;
+enumTable["KEY_DOLLAR"]=cocos2d::EventKeyboard::KeyCode::KEY_DOLLAR;
+enumTable["KEY_PERCENT"]=cocos2d::EventKeyboard::KeyCode::KEY_PERCENT;
+enumTable["KEY_CIRCUMFLEX"]=cocos2d::EventKeyboard::KeyCode::KEY_CIRCUMFLEX;
+enumTable["KEY_AMPERSAND"]=cocos2d::EventKeyboard::KeyCode::KEY_AMPERSAND;
+enumTable["KEY_APOSTROPHE"]=cocos2d::EventKeyboard::KeyCode::KEY_APOSTROPHE;
+enumTable["KEY_LEFT_PARENTHESIS"]=cocos2d::EventKeyboard::KeyCode::KEY_LEFT_PARENTHESIS;
+enumTable["KEY_RIGHT_PARENTHESIS"]=cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_PARENTHESIS;
+enumTable["KEY_ASTERISK"]=cocos2d::EventKeyboard::KeyCode::KEY_ASTERISK;
+enumTable["KEY_PLUS"]=cocos2d::EventKeyboard::KeyCode::KEY_PLUS;
+enumTable["KEY_COMMA"]=cocos2d::EventKeyboard::KeyCode::KEY_COMMA;
+enumTable["KEY_MINUS"]=cocos2d::EventKeyboard::KeyCode::KEY_MINUS;
+enumTable["KEY_PERIOD"]=cocos2d::EventKeyboard::KeyCode::KEY_PERIOD;
+enumTable["KEY_SLASH"]=cocos2d::EventKeyboard::KeyCode::KEY_SLASH;
+enumTable["KEY_0"]=cocos2d::EventKeyboard::KeyCode::KEY_0;
+enumTable["KEY_1"]=cocos2d::EventKeyboard::KeyCode::KEY_1;
+enumTable["KEY_2"]=cocos2d::EventKeyboard::KeyCode::KEY_2;
+enumTable["KEY_3"]=cocos2d::EventKeyboard::KeyCode::KEY_3;
+enumTable["KEY_4"]=cocos2d::EventKeyboard::KeyCode::KEY_4;
+enumTable["KEY_5"]=cocos2d::EventKeyboard::KeyCode::KEY_5;
+enumTable["KEY_6"]=cocos2d::EventKeyboard::KeyCode::KEY_6;
+enumTable["KEY_7"]=cocos2d::EventKeyboard::KeyCode::KEY_7;
+enumTable["KEY_8"]=cocos2d::EventKeyboard::KeyCode::KEY_8;
+enumTable["KEY_9"]=cocos2d::EventKeyboard::KeyCode::KEY_9;
+enumTable["KEY_COLON"]=cocos2d::EventKeyboard::KeyCode::KEY_COLON;
+enumTable["KEY_SEMICOLON"]=cocos2d::EventKeyboard::KeyCode::KEY_SEMICOLON;
+enumTable["KEY_LESS_THAN"]=cocos2d::EventKeyboard::KeyCode::KEY_LESS_THAN;
+enumTable["KEY_EQUAL"]=cocos2d::EventKeyboard::KeyCode::KEY_EQUAL;
+enumTable["KEY_GREATER_THAN"]=cocos2d::EventKeyboard::KeyCode::KEY_GREATER_THAN;
+enumTable["KEY_QUESTION"]=cocos2d::EventKeyboard::KeyCode::KEY_QUESTION;
+enumTable["KEY_AT"]=cocos2d::EventKeyboard::KeyCode::KEY_AT;
+enumTable["KEY_CAPITAL_A"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_A;
+enumTable["KEY_CAPITAL_B"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_B;
+enumTable["KEY_CAPITAL_C"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_C;
+enumTable["KEY_CAPITAL_D"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_D;
+enumTable["KEY_CAPITAL_E"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_E;
+enumTable["KEY_CAPITAL_F"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_F;
+enumTable["KEY_CAPITAL_G"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_G;
+enumTable["KEY_CAPITAL_H"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_H;
+enumTable["KEY_CAPITAL_I"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_I;
+enumTable["KEY_CAPITAL_J"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_J;
+enumTable["KEY_CAPITAL_K"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_K;
+enumTable["KEY_CAPITAL_L"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_L;
+enumTable["KEY_CAPITAL_M"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_M;
+enumTable["KEY_CAPITAL_N"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_N;
+enumTable["KEY_CAPITAL_O"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_O;
+enumTable["KEY_CAPITAL_P"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_P;
+enumTable["KEY_CAPITAL_Q"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_Q;
+enumTable["KEY_CAPITAL_R"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_R;
+enumTable["KEY_CAPITAL_S"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_S;
+enumTable["KEY_CAPITAL_T"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_T;
+enumTable["KEY_CAPITAL_U"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_U;
+enumTable["KEY_CAPITAL_V"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_V;
+enumTable["KEY_CAPITAL_W"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_W;
+enumTable["KEY_CAPITAL_X"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_X;
+enumTable["KEY_CAPITAL_Y"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_Y;
+enumTable["KEY_CAPITAL_Z"]=cocos2d::EventKeyboard::KeyCode::KEY_CAPITAL_Z;
+enumTable["KEY_LEFT_BRACKET"]=cocos2d::EventKeyboard::KeyCode::KEY_LEFT_BRACKET;
+enumTable["KEY_BACK_SLASH"]=cocos2d::EventKeyboard::KeyCode::KEY_BACK_SLASH;
+enumTable["KEY_RIGHT_BRACKET"]=cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_BRACKET;
+enumTable["KEY_UNDERSCORE"]=cocos2d::EventKeyboard::KeyCode::KEY_UNDERSCORE;
+enumTable["KEY_GRAVE"]=cocos2d::EventKeyboard::KeyCode::KEY_GRAVE;
+enumTable["KEY_A"]=cocos2d::EventKeyboard::KeyCode::KEY_A;
+enumTable["KEY_B"]=cocos2d::EventKeyboard::KeyCode::KEY_B;
+enumTable["KEY_C"]=cocos2d::EventKeyboard::KeyCode::KEY_C;
+enumTable["KEY_D"]=cocos2d::EventKeyboard::KeyCode::KEY_D;
+enumTable["KEY_E"]=cocos2d::EventKeyboard::KeyCode::KEY_E;
+enumTable["KEY_F"]=cocos2d::EventKeyboard::KeyCode::KEY_F;
+enumTable["KEY_G"]=cocos2d::EventKeyboard::KeyCode::KEY_G;
+enumTable["KEY_H"]=cocos2d::EventKeyboard::KeyCode::KEY_H;
+enumTable["KEY_I"]=cocos2d::EventKeyboard::KeyCode::KEY_I;
+enumTable["KEY_J"]=cocos2d::EventKeyboard::KeyCode::KEY_J;
+enumTable["KEY_K"]=cocos2d::EventKeyboard::KeyCode::KEY_K;
+enumTable["KEY_L"]=cocos2d::EventKeyboard::KeyCode::KEY_L;
+enumTable["KEY_M"]=cocos2d::EventKeyboard::KeyCode::KEY_M;
+enumTable["KEY_N"]=cocos2d::EventKeyboard::KeyCode::KEY_N;
+enumTable["KEY_O"]=cocos2d::EventKeyboard::KeyCode::KEY_O;
+enumTable["KEY_P"]=cocos2d::EventKeyboard::KeyCode::KEY_P;
+enumTable["KEY_Q"]=cocos2d::EventKeyboard::KeyCode::KEY_Q;
+enumTable["KEY_R"]=cocos2d::EventKeyboard::KeyCode::KEY_R;
+enumTable["KEY_S"]=cocos2d::EventKeyboard::KeyCode::KEY_S;
+enumTable["KEY_T"]=cocos2d::EventKeyboard::KeyCode::KEY_T;
+enumTable["KEY_U"]=cocos2d::EventKeyboard::KeyCode::KEY_U;
+enumTable["KEY_V"]=cocos2d::EventKeyboard::KeyCode::KEY_V;
+enumTable["KEY_W"]=cocos2d::EventKeyboard::KeyCode::KEY_W;
+enumTable["KEY_X"]=cocos2d::EventKeyboard::KeyCode::KEY_X;
+enumTable["KEY_Y"]=cocos2d::EventKeyboard::KeyCode::KEY_Y;
+enumTable["KEY_Z"]=cocos2d::EventKeyboard::KeyCode::KEY_Z;
+enumTable["KEY_LEFT_BRACE"]=cocos2d::EventKeyboard::KeyCode::KEY_LEFT_BRACE;
+enumTable["KEY_BAR"]=cocos2d::EventKeyboard::KeyCode::KEY_BAR;
+enumTable["KEY_RIGHT_BRACE"]=cocos2d::EventKeyboard::KeyCode::KEY_RIGHT_BRACE;
+enumTable["KEY_TILDE"]=cocos2d::EventKeyboard::KeyCode::KEY_TILDE;
+enumTable["KEY_EURO"]=cocos2d::EventKeyboard::KeyCode::KEY_EURO;
+enumTable["KEY_POUND"]=cocos2d::EventKeyboard::KeyCode::KEY_POUND;
+enumTable["KEY_YEN"]=cocos2d::EventKeyboard::KeyCode::KEY_YEN;
+enumTable["KEY_MIDDLE_DOT"]=cocos2d::EventKeyboard::KeyCode::KEY_MIDDLE_DOT;
+enumTable["KEY_SEARCH"]=cocos2d::EventKeyboard::KeyCode::KEY_SEARCH;
+enumTable["KEY_DPAD_LEFT"]=cocos2d::EventKeyboard::KeyCode::KEY_DPAD_LEFT;
+enumTable["KEY_DPAD_RIGHT"]=cocos2d::EventKeyboard::KeyCode::KEY_DPAD_RIGHT;
+enumTable["KEY_DPAD_UP"]=cocos2d::EventKeyboard::KeyCode::KEY_DPAD_UP;
+enumTable["KEY_DPAD_DOWN"]=cocos2d::EventKeyboard::KeyCode::KEY_DPAD_DOWN;
+enumTable["KEY_DPAD_CENTER"]=cocos2d::EventKeyboard::KeyCode::KEY_DPAD_CENTER;
+enumTable["KEY_ENTER"]=cocos2d::EventKeyboard::KeyCode::KEY_ENTER;
+enumTable["KEY_PLAY"]=cocos2d::EventKeyboard::KeyCode::KEY_PLAY;
+lua["cc"]["EventKeyboard"]["static"]["KeyCode"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaCoreEventKeyboardAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventKeyboard>("cc","EventKeyboard",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Event,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt[sol::call_constructor]=sol::constructors<cocos2d::EventKeyboard(cocos2d::EventKeyboard::KeyCode,bool)>();
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventKeyboard).name()] = sol::usertype_traits<cocos2d::EventKeyboard*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EventKeyboard>("deprecated.cocos2d::EventKeyboard");
+dep[sol::base_classes]=sol::bases<cocos2d::Event,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventKeyboard*>::metatable(),sol::usertype_traits<cocos2d::Event*>::metatable());
+lua["cc"]["EventKeyboard"]=mt;
+mt["__new__"]=[](cocos2d::EventKeyboard::KeyCode arg0,bool arg1){return new cocos2d::EventKeyboard(arg0,arg1);};
 RegisterLuaCoreEventKeyboardKeyCodeAuto(lua);
 }
 void RegisterLuaCorePropertiesAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::Properties>("cc","Properties",true);
-mt.set_function("CreateNonRefCounted",static_cast<cocos2d::Properties*(*)(const std::string&)>(&cocos2d::Properties::createNonRefCounted));
-mt.set_function("GetNextProperty",static_cast<const char*(cocos2d::Properties::*)()>(&cocos2d::Properties::getNextProperty));
-mt.set_function("GetNextNamespace",static_cast<cocos2d::Properties*(cocos2d::Properties::*)()>(&cocos2d::Properties::getNextNamespace));
-mt.set_function("Rewind",static_cast<void(cocos2d::Properties::*)()>(&cocos2d::Properties::rewind));
-mt.set_function("GetNamespace",sol::overload(static_cast<const char*(cocos2d::Properties::*)()const>(&cocos2d::Properties::getNamespace),[](cocos2d::Properties* obj,const char* arg0){return obj->getNamespace(arg0);},[](cocos2d::Properties* obj,const char* arg0,bool arg1){return obj->getNamespace(arg0,arg1);},[](cocos2d::Properties* obj,const char* arg0,bool arg1,bool arg2){return obj->getNamespace(arg0,arg1,arg2);}));
-mt.set_function("GetId",static_cast<const char*(cocos2d::Properties::*)()const>(&cocos2d::Properties::getId));
-mt.set_function("Exists",static_cast<bool(cocos2d::Properties::*)(const char*)const>(&cocos2d::Properties::exists));
-mt.set_function("GetType",sol::overload([](cocos2d::Properties* obj){return obj->getType();},[](cocos2d::Properties* obj,const char* arg0){return obj->getType(arg0);}));
-mt.set_function("GetString",sol::overload([](cocos2d::Properties* obj){return obj->getString();},[](cocos2d::Properties* obj,const char* arg0){return obj->getString(arg0);},[](cocos2d::Properties* obj,const char* arg0,const char* arg1){return obj->getString(arg0,arg1);}));
-mt.set_function("SetString",static_cast<bool(cocos2d::Properties::*)(const char*,const char*)>(&cocos2d::Properties::setString));
-mt.set_function("GetBool",sol::overload([](cocos2d::Properties* obj){return obj->getBool();},[](cocos2d::Properties* obj,const char* arg0){return obj->getBool(arg0);},[](cocos2d::Properties* obj,const char* arg0,bool arg1){return obj->getBool(arg0,arg1);}));
-mt.set_function("GetInt",sol::overload([](cocos2d::Properties* obj){return obj->getInt();},[](cocos2d::Properties* obj,const char* arg0){return obj->getInt(arg0);}));
-mt.set_function("GetFloat",sol::overload([](cocos2d::Properties* obj){return obj->getFloat();},[](cocos2d::Properties* obj,const char* arg0){return obj->getFloat(arg0);}));
-mt.set_function("GetLong",sol::overload([](cocos2d::Properties* obj){return obj->getLong();},[](cocos2d::Properties* obj,const char* arg0){return obj->getLong(arg0);}));
-mt.set_function("GetMat4",static_cast<bool(cocos2d::Properties::*)(const char*,cocos2d::Mat4*)const>(&cocos2d::Properties::getMat4));
-mt.set_function("GetVec2",static_cast<bool(cocos2d::Properties::*)(const char*,cocos2d::Vec2*)const>(&cocos2d::Properties::getVec2));
-mt.set_function("GetVec3",static_cast<bool(cocos2d::Properties::*)(const char*,cocos2d::Vec3*)const>(&cocos2d::Properties::getVec3));
-mt.set_function("GetVec4",static_cast<bool(cocos2d::Properties::*)(const char*,cocos2d::Vec4*)const>(&cocos2d::Properties::getVec4));
-mt.set_function("GetQuaternionFromAxisAngle",static_cast<bool(cocos2d::Properties::*)(const char*,cocos2d::Quaternion*)const>(&cocos2d::Properties::getQuaternionFromAxisAngle));
-mt.set_function("GetColor",sol::overload(static_cast<bool(cocos2d::Properties::*)(const char*,cocos2d::Vec4*)const>(&cocos2d::Properties::getColor),static_cast<bool(cocos2d::Properties::*)(const char*,cocos2d::Vec3*)const>(&cocos2d::Properties::getColor)));
-mt.set_function("GetPath",static_cast<bool(cocos2d::Properties::*)(const char*,std::string*)const>(&cocos2d::Properties::getPath));
-mt.set_function("GetVariable",sol::overload([](cocos2d::Properties* obj,const char* arg0){return obj->getVariable(arg0);},[](cocos2d::Properties* obj,const char* arg0,const char* arg1){return obj->getVariable(arg0,arg1);}));
-mt.set_function("SetVariable",static_cast<void(cocos2d::Properties::*)(const char*,const char*)>(&cocos2d::Properties::setVariable));
-mt.set_function("ParseVec2",static_cast<bool(*)(const char*,cocos2d::Vec2*)>(&cocos2d::Properties::parseVec2));
-mt.set_function("ParseVec3",static_cast<bool(*)(const char*,cocos2d::Vec3*)>(&cocos2d::Properties::parseVec3));
-mt.set_function("ParseVec4",static_cast<bool(*)(const char*,cocos2d::Vec4*)>(&cocos2d::Properties::parseVec4));
-mt.set_function("ParseAxisAngle",static_cast<bool(*)(const char*,cocos2d::Quaternion*)>(&cocos2d::Properties::parseAxisAngle));
-mt.set_function("ParseColor",sol::overload(static_cast<bool(*)(const char*,cocos2d::Vec4*)>(&cocos2d::Properties::parseColor),static_cast<bool(*)(const char*,cocos2d::Vec3*)>(&cocos2d::Properties::parseColor)));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Properties).name()] = sol::usertype_traits<cocos2d::Properties*>::metatable();
+auto dep=lua.new_usertype<cocos2d::Properties>("deprecated.cocos2d::Properties");
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::Properties*>::metatable());
+lua["cc"]["Properties"]=mt;
+mt["__new__"] = [](){return nullptr;};
+mt["static"]["CreateNonRefCounted"]=static_cast<cocos2d::Properties*(*)(const std::string&)>(&cocos2d::Properties::createNonRefCounted);
+mt["GetNextProperty"]=static_cast<const char*(cocos2d::Properties::*)()>(&cocos2d::Properties::getNextProperty);
+mt["get"]["NextProperty"]=mt["GetNextProperty"];
+mt["GetNextNamespace"]=static_cast<cocos2d::Properties*(cocos2d::Properties::*)()>(&cocos2d::Properties::getNextNamespace);
+mt["get"]["NextNamespace"]=mt["GetNextNamespace"];
+mt["Rewind"]=static_cast<void(cocos2d::Properties::*)()>(&cocos2d::Properties::rewind);
+mt["GetNamespace"]=sol::overload([](cocos2d::Properties* obj,const char* arg0,bool arg1,bool arg2){return obj->getNamespace(arg0,arg1,arg2);},[](cocos2d::Properties* obj,const char* arg0,bool arg1){return obj->getNamespace(arg0,arg1);},[](cocos2d::Properties* obj,const char* arg0){return obj->getNamespace(arg0);},static_cast<const char*(cocos2d::Properties::*)()const>(&cocos2d::Properties::getNamespace));
+mt["get"]["Namespace"]=mt["GetNamespace"];
+mt["GetId"]=static_cast<const char*(cocos2d::Properties::*)()const>(&cocos2d::Properties::getId);
+mt["get"]["Id"]=mt["GetId"];
+mt["Exists"]=static_cast<bool(cocos2d::Properties::*)(const char*)const>(&cocos2d::Properties::exists);
+mt["GetType"]=sol::overload([](cocos2d::Properties* obj,const char* arg0){return obj->getType(arg0);},[](cocos2d::Properties* obj){return obj->getType();});
+mt["get"]["Type"]=mt["GetType"];
+mt["GetString"]=sol::overload([](cocos2d::Properties* obj,const char* arg0,const char* arg1){return obj->getString(arg0,arg1);},[](cocos2d::Properties* obj,const char* arg0){return obj->getString(arg0);},[](cocos2d::Properties* obj){return obj->getString();});
+mt["get"]["String"]=mt["GetString"];
+mt["SetString"]=static_cast<bool(cocos2d::Properties::*)(const char*,const char*)>(&cocos2d::Properties::setString);
+mt["GetBool"]=sol::overload([](cocos2d::Properties* obj,const char* arg0,bool arg1){return obj->getBool(arg0,arg1);},[](cocos2d::Properties* obj,const char* arg0){return obj->getBool(arg0);},[](cocos2d::Properties* obj){return obj->getBool();});
+mt["get"]["Bool"]=mt["GetBool"];
+mt["GetInt"]=sol::overload([](cocos2d::Properties* obj,const char* arg0){return obj->getInt(arg0);},[](cocos2d::Properties* obj){return obj->getInt();});
+mt["get"]["Int"]=mt["GetInt"];
+mt["GetFloat"]=sol::overload([](cocos2d::Properties* obj,const char* arg0){return obj->getFloat(arg0);},[](cocos2d::Properties* obj){return obj->getFloat();});
+mt["get"]["Float"]=mt["GetFloat"];
+mt["GetLong"]=sol::overload([](cocos2d::Properties* obj,const char* arg0){return obj->getLong(arg0);},[](cocos2d::Properties* obj){return obj->getLong();});
+mt["get"]["Long"]=mt["GetLong"];
+mt["GetMat4"]=static_cast<bool(cocos2d::Properties::*)(const char*,cocos2d::Mat4*)const>(&cocos2d::Properties::getMat4);
+mt["GetVec2"]=static_cast<bool(cocos2d::Properties::*)(const char*,cocos2d::Vec2*)const>(&cocos2d::Properties::getVec2);
+mt["GetVec3"]=static_cast<bool(cocos2d::Properties::*)(const char*,cocos2d::Vec3*)const>(&cocos2d::Properties::getVec3);
+mt["GetVec4"]=static_cast<bool(cocos2d::Properties::*)(const char*,cocos2d::Vec4*)const>(&cocos2d::Properties::getVec4);
+mt["GetQuaternionFromAxisAngle"]=static_cast<bool(cocos2d::Properties::*)(const char*,cocos2d::Quaternion*)const>(&cocos2d::Properties::getQuaternionFromAxisAngle);
+mt["GetColor"]=sol::overload(static_cast<bool(cocos2d::Properties::*)(const char*,cocos2d::Vec4*)const>(&cocos2d::Properties::getColor),static_cast<bool(cocos2d::Properties::*)(const char*,cocos2d::Vec3*)const>(&cocos2d::Properties::getColor));
+mt["GetPath"]=static_cast<bool(cocos2d::Properties::*)(const char*,std::string*)const>(&cocos2d::Properties::getPath);
+mt["GetVariable"]=sol::overload([](cocos2d::Properties* obj,const char* arg0,const char* arg1){return obj->getVariable(arg0,arg1);},[](cocos2d::Properties* obj,const char* arg0){return obj->getVariable(arg0);});
+mt["SetVariable"]=static_cast<void(cocos2d::Properties::*)(const char*,const char*)>(&cocos2d::Properties::setVariable);
+mt["static"]["ParseVec2"]=static_cast<bool(*)(const char*,cocos2d::Vec2*)>(&cocos2d::Properties::parseVec2);
+mt["static"]["ParseVec3"]=static_cast<bool(*)(const char*,cocos2d::Vec3*)>(&cocos2d::Properties::parseVec3);
+mt["static"]["ParseVec4"]=static_cast<bool(*)(const char*,cocos2d::Vec4*)>(&cocos2d::Properties::parseVec4);
+mt["static"]["ParseAxisAngle"]=static_cast<bool(*)(const char*,cocos2d::Quaternion*)>(&cocos2d::Properties::parseAxisAngle);
+mt["static"]["ParseColor"]=sol::overload(static_cast<bool(*)(const char*,cocos2d::Vec4*)>(&cocos2d::Properties::parseColor),static_cast<bool(*)(const char*,cocos2d::Vec3*)>(&cocos2d::Properties::parseColor));
 }
 void RegisterLuaCoreUserDefaultAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::UserDefault>("cc","UserDefault",true);
-mt.set_function("GetBoolForKey",sol::overload(static_cast<bool(cocos2d::UserDefault::*)(const char*,bool)>(&cocos2d::UserDefault::getBoolForKey),static_cast<bool(cocos2d::UserDefault::*)(const char*)>(&cocos2d::UserDefault::getBoolForKey)));
-mt.set_function("GetIntegerForKey",sol::overload(static_cast<int(cocos2d::UserDefault::*)(const char*,int)>(&cocos2d::UserDefault::getIntegerForKey),static_cast<int(cocos2d::UserDefault::*)(const char*)>(&cocos2d::UserDefault::getIntegerForKey)));
-mt.set_function("GetLargeIntForKey",sol::overload(static_cast<int64_t(cocos2d::UserDefault::*)(const char*,int64_t)>(&cocos2d::UserDefault::getLargeIntForKey),static_cast<int64_t(cocos2d::UserDefault::*)(const char*)>(&cocos2d::UserDefault::getLargeIntForKey)));
-mt.set_function("GetFloatForKey",sol::overload(static_cast<float(cocos2d::UserDefault::*)(const char*,float)>(&cocos2d::UserDefault::getFloatForKey),static_cast<float(cocos2d::UserDefault::*)(const char*)>(&cocos2d::UserDefault::getFloatForKey)));
-mt.set_function("GetDoubleForKey",sol::overload(static_cast<double(cocos2d::UserDefault::*)(const char*,double)>(&cocos2d::UserDefault::getDoubleForKey),static_cast<double(cocos2d::UserDefault::*)(const char*)>(&cocos2d::UserDefault::getDoubleForKey)));
-mt.set_function("GetStringForKey",sol::overload(static_cast<std::string(cocos2d::UserDefault::*)(const char*,const std::string&)>(&cocos2d::UserDefault::getStringForKey),static_cast<std::string(cocos2d::UserDefault::*)(const char*)>(&cocos2d::UserDefault::getStringForKey)));
-mt.set_function("SetBoolForKey",static_cast<void(cocos2d::UserDefault::*)(const char*,bool)>(&cocos2d::UserDefault::setBoolForKey));
-mt.set_function("SetIntegerForKey",static_cast<void(cocos2d::UserDefault::*)(const char*,int)>(&cocos2d::UserDefault::setIntegerForKey));
-mt.set_function("SetLargeIntForKey",static_cast<void(cocos2d::UserDefault::*)(const char*,int64_t)>(&cocos2d::UserDefault::setLargeIntForKey));
-mt.set_function("SetFloatForKey",static_cast<void(cocos2d::UserDefault::*)(const char*,float)>(&cocos2d::UserDefault::setFloatForKey));
-mt.set_function("SetDoubleForKey",static_cast<void(cocos2d::UserDefault::*)(const char*,double)>(&cocos2d::UserDefault::setDoubleForKey));
-mt.set_function("SetStringForKey",static_cast<void(cocos2d::UserDefault::*)(const char*,const std::string&)>(&cocos2d::UserDefault::setStringForKey));
-mt.set_function("Flush",static_cast<void(cocos2d::UserDefault::*)()>(&cocos2d::UserDefault::flush));
-mt.set_function("DeleteValueForKey",static_cast<void(cocos2d::UserDefault::*)(const char*)>(&cocos2d::UserDefault::deleteValueForKey));
-mt.set_function("Clear",static_cast<void(cocos2d::UserDefault::*)()>(&cocos2d::UserDefault::Clear));
-mt.set_function("GetInstance",static_cast<cocos2d::UserDefault*(*)()>(&cocos2d::UserDefault::getInstance));
-mt.set_function("DestroyInstance",static_cast<void(*)()>(&cocos2d::UserDefault::destroyInstance));
-mt.set_function("SetDelegate",static_cast<void(*)(cocos2d::UserDefault*)>(&cocos2d::UserDefault::setDelegate));
-mt.set_function("SetEncryptEnabled",static_cast<void(cocos2d::UserDefault::*)(bool,cxx17::string_view,cxx17::string_view)>(&cocos2d::UserDefault::setEncryptEnabled));
-mt.set_function("Encrypt",sol::overload(static_cast<void(cocos2d::UserDefault::*)(std::string&,int)>(&cocos2d::UserDefault::encrypt),static_cast<void(cocos2d::UserDefault::*)(char*,size_t,int)>(&cocos2d::UserDefault::encrypt)));
-mt["Instance"]=sol::property(&cocos2d::UserDefault::getInstance,[](std::nullptr_t){cocos2d::UserDefault::destroyInstance();});
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::UserDefault).name()] = sol::usertype_traits<cocos2d::UserDefault*>::metatable();
+auto dep=lua.new_usertype<cocos2d::UserDefault>("deprecated.cocos2d::UserDefault");
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::UserDefault*>::metatable());
+lua["cc"]["UserDefault"]=mt;
+mt["__new__"] = [](){return nullptr;};
+mt["GetBoolForKey"]=sol::overload(static_cast<bool(cocos2d::UserDefault::*)(const char*,bool)>(&cocos2d::UserDefault::getBoolForKey),static_cast<bool(cocos2d::UserDefault::*)(const char*)>(&cocos2d::UserDefault::getBoolForKey));
+mt["GetIntegerForKey"]=sol::overload(static_cast<int(cocos2d::UserDefault::*)(const char*,int)>(&cocos2d::UserDefault::getIntegerForKey),static_cast<int(cocos2d::UserDefault::*)(const char*)>(&cocos2d::UserDefault::getIntegerForKey));
+mt["GetLargeIntForKey"]=sol::overload(static_cast<int64_t(cocos2d::UserDefault::*)(const char*,int64_t)>(&cocos2d::UserDefault::getLargeIntForKey),static_cast<int64_t(cocos2d::UserDefault::*)(const char*)>(&cocos2d::UserDefault::getLargeIntForKey));
+mt["GetFloatForKey"]=sol::overload(static_cast<float(cocos2d::UserDefault::*)(const char*,float)>(&cocos2d::UserDefault::getFloatForKey),static_cast<float(cocos2d::UserDefault::*)(const char*)>(&cocos2d::UserDefault::getFloatForKey));
+mt["GetDoubleForKey"]=sol::overload(static_cast<double(cocos2d::UserDefault::*)(const char*,double)>(&cocos2d::UserDefault::getDoubleForKey),static_cast<double(cocos2d::UserDefault::*)(const char*)>(&cocos2d::UserDefault::getDoubleForKey));
+mt["GetStringForKey"]=sol::overload(static_cast<std::string(cocos2d::UserDefault::*)(const char*,const std::string&)>(&cocos2d::UserDefault::getStringForKey),static_cast<std::string(cocos2d::UserDefault::*)(const char*)>(&cocos2d::UserDefault::getStringForKey));
+mt["SetBoolForKey"]=static_cast<void(cocos2d::UserDefault::*)(const char*,bool)>(&cocos2d::UserDefault::setBoolForKey);
+mt["SetIntegerForKey"]=static_cast<void(cocos2d::UserDefault::*)(const char*,int)>(&cocos2d::UserDefault::setIntegerForKey);
+mt["SetLargeIntForKey"]=static_cast<void(cocos2d::UserDefault::*)(const char*,int64_t)>(&cocos2d::UserDefault::setLargeIntForKey);
+mt["SetFloatForKey"]=static_cast<void(cocos2d::UserDefault::*)(const char*,float)>(&cocos2d::UserDefault::setFloatForKey);
+mt["SetDoubleForKey"]=static_cast<void(cocos2d::UserDefault::*)(const char*,double)>(&cocos2d::UserDefault::setDoubleForKey);
+mt["SetStringForKey"]=static_cast<void(cocos2d::UserDefault::*)(const char*,const std::string&)>(&cocos2d::UserDefault::setStringForKey);
+mt["Flush"]=static_cast<void(cocos2d::UserDefault::*)()>(&cocos2d::UserDefault::flush);
+mt["DeleteValueForKey"]=static_cast<void(cocos2d::UserDefault::*)(const char*)>(&cocos2d::UserDefault::deleteValueForKey);
+mt["Clear"]=static_cast<void(cocos2d::UserDefault::*)()>(&cocos2d::UserDefault::Clear);
+mt["static"]["GetInstance"]=static_cast<cocos2d::UserDefault*(*)()>(&cocos2d::UserDefault::getInstance);
+mt["static"]["DestroyInstance"]=static_cast<void(*)()>(&cocos2d::UserDefault::destroyInstance);
+mt["static"]["SetDelegate"]=static_cast<void(*)(cocos2d::UserDefault*)>(&cocos2d::UserDefault::setDelegate);
+mt["static"]["set"]["Delegate"]=mt["SetDelegate"];
+mt["SetEncryptEnabled"]=static_cast<void(cocos2d::UserDefault::*)(bool,cxx17::string_view,cxx17::string_view)>(&cocos2d::UserDefault::setEncryptEnabled);
+mt["Encrypt"]=sol::overload(static_cast<void(cocos2d::UserDefault::*)(char*,size_t,int)>(&cocos2d::UserDefault::encrypt),static_cast<void(cocos2d::UserDefault::*)(std::string&,int)>(&cocos2d::UserDefault::encrypt));
+mt["static"]["get"]["Instance"]=&cocos2d::UserDefault::getInstance;
+mt["static"]["set"]["Instance"]=[](std::nullptr_t){cocos2d::UserDefault::destroyInstance();};
 }
 void RegisterLuaCoreFileUtilsAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::FileUtils>("cc","FileUtils",true);
-mt.set_function("GetInstance",static_cast<cocos2d::FileUtils*(*)()>(&cocos2d::FileUtils::getInstance));
-mt.set_function("DestroyInstance",static_cast<void(*)()>(&cocos2d::FileUtils::destroyInstance));
-mt.set_function("SetDelegate",static_cast<void(*)(cocos2d::FileUtils*)>(&cocos2d::FileUtils::setDelegate));
-mt.set_function("PurgeCachedEntries",static_cast<void(cocos2d::FileUtils::*)()>(&cocos2d::FileUtils::purgeCachedEntries));
-mt.set_function("GetStringFromFile",sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (std::basic_string<char, std::char_traits<char>, std::allocator<char> >)>)const>(&cocos2d::FileUtils::getStringFromFile),static_cast<std::string(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getStringFromFile)));
-mt.set_function("GetDataFromFile",sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (cocos2d::Data)>)const>(&cocos2d::FileUtils::getDataFromFile),static_cast<cocos2d::Data(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getDataFromFile)));
-mt.set_function("GetContents",static_cast<cocos2d::FileUtils::Status(cocos2d::FileUtils::*)(const std::string&,cocos2d::ResizableBuffer*)const>(&cocos2d::FileUtils::getContents));
-mt.set_function("FullPathForFilename",static_cast<std::string(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::fullPathForFilename));
-mt.set_function("LoadFilenameLookup",static_cast<void(cocos2d::FileUtils::*)(const std::string&)>(&cocos2d::FileUtils::loadFilenameLookupDictionaryFromFile));
-mt.set_function("SetFilenameLookupDictionary",static_cast<void(cocos2d::FileUtils::*)(const cocos2d::ValueMap&)>(&cocos2d::FileUtils::setFilenameLookupDictionary));
-mt.set_function("FullPathFromRelativeFile",static_cast<std::string(cocos2d::FileUtils::*)(const std::string&,const std::string&)const>(&cocos2d::FileUtils::fullPathFromRelativeFile));
-mt.set_function("SetSearchResolutionsOrder",static_cast<void(cocos2d::FileUtils::*)(const std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&)>(&cocos2d::FileUtils::setSearchResolutionsOrder));
-mt.set_function("AddSearchResolutionsOrder",sol::overload([](cocos2d::FileUtils* obj,const std::string& arg0){return obj->addSearchResolutionsOrder(arg0);},[](cocos2d::FileUtils* obj,const std::string& arg0,const bool arg1){return obj->addSearchResolutionsOrder(arg0,arg1);}));
-mt.set_function("GetSearchResolutionsOrder",static_cast<const std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::getSearchResolutionsOrder));
-mt.set_function("SetSearchPaths",static_cast<void(cocos2d::FileUtils::*)(const std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&)>(&cocos2d::FileUtils::setSearchPaths));
-mt.set_function("GetDefaultResourceRootPath",static_cast<const std::string(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::getDefaultResourceRootPath));
-mt.set_function("SetDefaultResourceRootPath",static_cast<void(cocos2d::FileUtils::*)(const std::string&)>(&cocos2d::FileUtils::setDefaultResourceRootPath));
-mt.set_function("AddSearchPath",sol::overload([](cocos2d::FileUtils* obj,const std::string& arg0){return obj->addSearchPath(arg0);},[](cocos2d::FileUtils* obj,const std::string& arg0,const bool arg1){return obj->addSearchPath(arg0,arg1);}));
-mt.set_function("GetSearchPaths",static_cast<const std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::getSearchPaths));
-mt.set_function("GetOriginalSearchPaths",static_cast<const std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::getOriginalSearchPaths));
-mt.set_function("GetWritablePath",static_cast<std::string(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::getWritablePath));
-mt.set_function("SetWritablePath",static_cast<void(cocos2d::FileUtils::*)(const std::string&)>(&cocos2d::FileUtils::setWritablePath));
-mt.set_function("SetPopupNotify",static_cast<void(cocos2d::FileUtils::*)(bool)>(&cocos2d::FileUtils::setPopupNotify));
-mt.set_function("IsPopupNotify",static_cast<bool(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::isPopupNotify));
-mt.set_function("GetValueMapFromFile",static_cast<cocos2d::ValueMap(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getValueMapFromFile));
-mt.set_function("GetValueMapFromData",static_cast<cocos2d::ValueMap(cocos2d::FileUtils::*)(const char*,int)const>(&cocos2d::FileUtils::getValueMapFromData));
-mt.set_function("WriteToFile",static_cast<bool(cocos2d::FileUtils::*)(const cocos2d::ValueMap&,const std::string&)const>(&cocos2d::FileUtils::writeToFile));
-mt.set_function("WriteStringToFile",sol::overload(static_cast<void(cocos2d::FileUtils::*)(std::string,const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::writeStringToFile),static_cast<bool(cocos2d::FileUtils::*)(const std::string&,const std::string&)const>(&cocos2d::FileUtils::writeStringToFile)));
-mt.set_function("WriteDataToFile",sol::overload(static_cast<void(cocos2d::FileUtils::*)(cocos2d::Data,const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::writeDataToFile),static_cast<bool(cocos2d::FileUtils::*)(const cocos2d::Data&,const std::string&)const>(&cocos2d::FileUtils::writeDataToFile)));
-mt.set_function("WriteBinaryToFile",static_cast<bool(*)(const void*,size_t,const std::string&)>(&cocos2d::FileUtils::writeBinaryToFile));
-mt.set_function("WriteValueMapToFile",sol::overload(static_cast<void(cocos2d::FileUtils::*)(cocos2d::ValueMap,const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::writeValueMapToFile),static_cast<bool(cocos2d::FileUtils::*)(const cocos2d::ValueMap&,const std::string&)const>(&cocos2d::FileUtils::writeValueMapToFile)));
-mt.set_function("WriteValueVectorToFile",sol::overload(static_cast<void(cocos2d::FileUtils::*)(cocos2d::ValueVector,const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::writeValueVectorToFile),static_cast<bool(cocos2d::FileUtils::*)(const cocos2d::ValueVector&,const std::string&)const>(&cocos2d::FileUtils::writeValueVectorToFile)));
-mt.set_function("GetValueVectorFromFile",static_cast<cocos2d::ValueVector(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getValueVectorFromFile));
-mt.set_function("IsFileExist",sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::isFileExist),static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::isFileExist)));
-mt.set_function("GetFileExtension",static_cast<std::string(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getFileExtension));
-mt.set_function("GetFileShortName",static_cast<std::string(*)(const std::string&)>(&cocos2d::FileUtils::getFileShortName));
-mt.set_function("IsAbsolutePath",static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::isAbsolutePath));
-mt.set_function("IsDirectoryExist",sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::isDirectoryExist),static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::isDirectoryExist)));
-mt.set_function("CreateDirectory",sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::createDirectory),static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::createDirectory)));
-mt.set_function("RemoveDirectory",sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::removeDirectory),static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::removeDirectory)));
-mt.set_function("RemoveFile",sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::removeFile),static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::removeFile)));
-mt.set_function("RenameFile",sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,const std::string&,const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::renameFile),static_cast<bool(cocos2d::FileUtils::*)(const std::string&,const std::string&,const std::string&)const>(&cocos2d::FileUtils::renameFile),static_cast<bool(cocos2d::FileUtils::*)(const std::string&,const std::string&)const>(&cocos2d::FileUtils::renameFile),static_cast<void(cocos2d::FileUtils::*)(const std::string&,const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::renameFile)));
-mt.set_function("GetFileSize",sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (long long)>)const>(&cocos2d::FileUtils::getFileSize),static_cast<int64_t(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getFileSize)));
-mt.set_function("ListFiles",static_cast<std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::listFiles));
-mt.set_function("ListFilesAsync",static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >)>)const>(&cocos2d::FileUtils::listFilesAsync));
-mt.set_function("ListFilesRecursively",static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >*)const>(&cocos2d::FileUtils::listFilesRecursively));
-mt.set_function("ListFilesRecursivelyAsync",static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >)>)const>(&cocos2d::FileUtils::listFilesRecursivelyAsync));
-mt.set_function("GetFullPathCache",static_cast<const std::unordered_map<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::hash<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::equal_to<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::getFullPathCache));
-mt.set_function("GetNewFilename",static_cast<std::string(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getNewFilename));
-mt.set_function("IsFileExistInternal",static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::isFileExistInternal));
-mt.set_function("IsDirectoryExistInternal",static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::isDirectoryExistInternal));
-mt["Instance"]=sol::property(&cocos2d::FileUtils::getInstance,[](std::nullptr_t){cocos2d::FileUtils::destroyInstance();});
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::FileUtils).name()] = sol::usertype_traits<cocos2d::FileUtils*>::metatable();
+auto dep=lua.new_usertype<cocos2d::FileUtils>("deprecated.cocos2d::FileUtils");
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::FileUtils*>::metatable());
+lua["cc"]["FileUtils"]=mt;
+mt["__new__"] = [](){return nullptr;};
+mt["static"]["GetInstance"]=static_cast<cocos2d::FileUtils*(*)()>(&cocos2d::FileUtils::getInstance);
+mt["static"]["DestroyInstance"]=static_cast<void(*)()>(&cocos2d::FileUtils::destroyInstance);
+mt["static"]["SetDelegate"]=static_cast<void(*)(cocos2d::FileUtils*)>(&cocos2d::FileUtils::setDelegate);
+mt["static"]["set"]["Delegate"]=mt["SetDelegate"];
+mt["PurgeCachedEntries"]=static_cast<void(cocos2d::FileUtils::*)()>(&cocos2d::FileUtils::purgeCachedEntries);
+mt["GetStringFromFile"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (std::basic_string<char, std::char_traits<char>, std::allocator<char> >)>)const>(&cocos2d::FileUtils::getStringFromFile),static_cast<std::string(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getStringFromFile));
+mt["GetDataFromFile"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (cocos2d::Data)>)const>(&cocos2d::FileUtils::getDataFromFile),static_cast<cocos2d::Data(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getDataFromFile));
+mt["GetContents"]=static_cast<cocos2d::FileUtils::Status(cocos2d::FileUtils::*)(const std::string&,cocos2d::ResizableBuffer*)const>(&cocos2d::FileUtils::getContents);
+mt["FullPathForFilename"]=static_cast<std::string(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::fullPathForFilename);
+mt["LoadFilenameLookup"]=static_cast<void(cocos2d::FileUtils::*)(const std::string&)>(&cocos2d::FileUtils::loadFilenameLookupDictionaryFromFile);
+mt["SetFilenameLookupDictionary"]=static_cast<void(cocos2d::FileUtils::*)(const cocos2d::ValueMap&)>(&cocos2d::FileUtils::setFilenameLookupDictionary);
+mt["set"]["FilenameLookupDictionary"]=mt["SetFilenameLookupDictionary"];
+mt["FullPathFromRelativeFile"]=static_cast<std::string(cocos2d::FileUtils::*)(const std::string&,const std::string&)const>(&cocos2d::FileUtils::fullPathFromRelativeFile);
+mt["SetSearchResolutionsOrder"]=static_cast<void(cocos2d::FileUtils::*)(const std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&)>(&cocos2d::FileUtils::setSearchResolutionsOrder);
+mt["set"]["SearchResolutionsOrder"]=mt["SetSearchResolutionsOrder"];
+mt["AddSearchResolutionsOrder"]=sol::overload([](cocos2d::FileUtils* obj,const std::string& arg0,const bool arg1){return obj->addSearchResolutionsOrder(arg0,arg1);},[](cocos2d::FileUtils* obj,const std::string& arg0){return obj->addSearchResolutionsOrder(arg0);});
+mt["GetSearchResolutionsOrder"]=static_cast<const std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::getSearchResolutionsOrder);
+mt["get"]["SearchResolutionsOrder"]=mt["GetSearchResolutionsOrder"];
+mt["SetSearchPaths"]=static_cast<void(cocos2d::FileUtils::*)(const std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&)>(&cocos2d::FileUtils::setSearchPaths);
+mt["set"]["SearchPaths"]=mt["SetSearchPaths"];
+mt["GetDefaultResourceRootPath"]=static_cast<const std::string(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::getDefaultResourceRootPath);
+mt["get"]["DefaultResourceRootPath"]=mt["GetDefaultResourceRootPath"];
+mt["SetDefaultResourceRootPath"]=static_cast<void(cocos2d::FileUtils::*)(const std::string&)>(&cocos2d::FileUtils::setDefaultResourceRootPath);
+mt["set"]["DefaultResourceRootPath"]=mt["SetDefaultResourceRootPath"];
+mt["AddSearchPath"]=sol::overload([](cocos2d::FileUtils* obj,const std::string& arg0,const bool arg1){return obj->addSearchPath(arg0,arg1);},[](cocos2d::FileUtils* obj,const std::string& arg0){return obj->addSearchPath(arg0);});
+mt["GetSearchPaths"]=static_cast<const std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::getSearchPaths);
+mt["get"]["SearchPaths"]=mt["GetSearchPaths"];
+mt["GetOriginalSearchPaths"]=static_cast<const std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::getOriginalSearchPaths);
+mt["get"]["OriginalSearchPaths"]=mt["GetOriginalSearchPaths"];
+mt["GetWritablePath"]=static_cast<std::string(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::getWritablePath);
+mt["get"]["WritablePath"]=mt["GetWritablePath"];
+mt["SetWritablePath"]=static_cast<void(cocos2d::FileUtils::*)(const std::string&)>(&cocos2d::FileUtils::setWritablePath);
+mt["set"]["WritablePath"]=mt["SetWritablePath"];
+mt["SetPopupNotify"]=static_cast<void(cocos2d::FileUtils::*)(bool)>(&cocos2d::FileUtils::setPopupNotify);
+mt["set"]["PopupNotify"]=mt["SetPopupNotify"];
+mt["IsPopupNotify"]=static_cast<bool(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::isPopupNotify);
+mt["get"]["PopupNotify"]=mt["IsPopupNotify"];
+mt["GetValueMapFromFile"]=static_cast<cocos2d::ValueMap(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getValueMapFromFile);
+mt["GetValueMapFromData"]=static_cast<cocos2d::ValueMap(cocos2d::FileUtils::*)(const char*,int)const>(&cocos2d::FileUtils::getValueMapFromData);
+mt["WriteToFile"]=static_cast<bool(cocos2d::FileUtils::*)(const cocos2d::ValueMap&,const std::string&)const>(&cocos2d::FileUtils::writeToFile);
+mt["WriteStringToFile"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(std::string,const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::writeStringToFile),static_cast<bool(cocos2d::FileUtils::*)(const std::string&,const std::string&)const>(&cocos2d::FileUtils::writeStringToFile));
+mt["WriteDataToFile"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(cocos2d::Data,const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::writeDataToFile),static_cast<bool(cocos2d::FileUtils::*)(const cocos2d::Data&,const std::string&)const>(&cocos2d::FileUtils::writeDataToFile));
+mt["static"]["WriteBinaryToFile"]=static_cast<bool(*)(const void*,size_t,const std::string&)>(&cocos2d::FileUtils::writeBinaryToFile);
+mt["WriteValueMapToFile"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(cocos2d::ValueMap,const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::writeValueMapToFile),static_cast<bool(cocos2d::FileUtils::*)(const cocos2d::ValueMap&,const std::string&)const>(&cocos2d::FileUtils::writeValueMapToFile));
+mt["WriteValueVectorToFile"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(cocos2d::ValueVector,const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::writeValueVectorToFile),static_cast<bool(cocos2d::FileUtils::*)(const cocos2d::ValueVector&,const std::string&)const>(&cocos2d::FileUtils::writeValueVectorToFile));
+mt["GetValueVectorFromFile"]=static_cast<cocos2d::ValueVector(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getValueVectorFromFile);
+mt["IsFileExist"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::isFileExist),static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::isFileExist));
+mt["GetFileExtension"]=static_cast<std::string(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getFileExtension);
+mt["static"]["GetFileShortName"]=static_cast<std::string(*)(const std::string&)>(&cocos2d::FileUtils::getFileShortName);
+mt["IsAbsolutePath"]=static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::isAbsolutePath);
+mt["IsDirectoryExist"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::isDirectoryExist),static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::isDirectoryExist));
+mt["CreateDirectory"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::createDirectory),static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::createDirectory));
+mt["RemoveDirectory"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::removeDirectory),static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::removeDirectory));
+mt["RemoveFile"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::removeFile),static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::removeFile));
+mt["RenameFile"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,const std::string&,const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::renameFile),static_cast<void(cocos2d::FileUtils::*)(const std::string&,const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::renameFile),static_cast<bool(cocos2d::FileUtils::*)(const std::string&,const std::string&,const std::string&)const>(&cocos2d::FileUtils::renameFile),static_cast<bool(cocos2d::FileUtils::*)(const std::string&,const std::string&)const>(&cocos2d::FileUtils::renameFile));
+mt["GetFileSize"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (long long)>)const>(&cocos2d::FileUtils::getFileSize),static_cast<int64_t(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getFileSize));
+mt["ListFiles"]=static_cast<std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::listFiles);
+mt["ListFilesAsync"]=static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >)>)const>(&cocos2d::FileUtils::listFilesAsync);
+mt["ListFilesRecursively"]=static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >*)const>(&cocos2d::FileUtils::listFilesRecursively);
+mt["ListFilesRecursivelyAsync"]=static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >)>)const>(&cocos2d::FileUtils::listFilesRecursivelyAsync);
+mt["GetFullPathCache"]=static_cast<const std::unordered_map<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::hash<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::equal_to<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::getFullPathCache);
+mt["get"]["FullPathCache"]=mt["GetFullPathCache"];
+mt["GetNewFilename"]=static_cast<std::string(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getNewFilename);
+mt["IsFileExistInternal"]=static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::isFileExistInternal);
+mt["IsDirectoryExistInternal"]=static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::isDirectoryExistInternal);
+mt["static"]["get"]["Instance"]=&cocos2d::FileUtils::getInstance;
+mt["static"]["set"]["Instance"]=[](std::nullptr_t){cocos2d::FileUtils::destroyInstance();};
 }
 void RegisterLuaCoreLanguageTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["cc"];
-pTable.new_enum<cocos2d::LanguageType>("LanguageType",{
-{"ENGLISH",cocos2d::LanguageType::ENGLISH}
-,{"CHINESE",cocos2d::LanguageType::CHINESE}
-,{"FRENCH",cocos2d::LanguageType::FRENCH}
-,{"ITALIAN",cocos2d::LanguageType::ITALIAN}
-,{"GERMAN",cocos2d::LanguageType::GERMAN}
-,{"SPANISH",cocos2d::LanguageType::SPANISH}
-,{"DUTCH",cocos2d::LanguageType::DUTCH}
-,{"RUSSIAN",cocos2d::LanguageType::RUSSIAN}
-,{"KOREAN",cocos2d::LanguageType::KOREAN}
-,{"JAPANESE",cocos2d::LanguageType::JAPANESE}
-,{"HUNGARIAN",cocos2d::LanguageType::HUNGARIAN}
-,{"PORTUGUESE",cocos2d::LanguageType::PORTUGUESE}
-,{"ARABIC",cocos2d::LanguageType::ARABIC}
-,{"NORWEGIAN",cocos2d::LanguageType::NORWEGIAN}
-,{"POLISH",cocos2d::LanguageType::POLISH}
-,{"TURKISH",cocos2d::LanguageType::TURKISH}
-,{"UKRAINIAN",cocos2d::LanguageType::UKRAINIAN}
-,{"ROMANIAN",cocos2d::LanguageType::ROMANIAN}
-,{"BULGARIAN",cocos2d::LanguageType::BULGARIAN}
-,{"BELARUSIAN",cocos2d::LanguageType::BELARUSIAN}
-});}
+sol::table enumTable = lua.create_table_with(0,20);
+enumTable["ENGLISH"]=cocos2d::LanguageType::ENGLISH;
+enumTable["CHINESE"]=cocos2d::LanguageType::CHINESE;
+enumTable["FRENCH"]=cocos2d::LanguageType::FRENCH;
+enumTable["ITALIAN"]=cocos2d::LanguageType::ITALIAN;
+enumTable["GERMAN"]=cocos2d::LanguageType::GERMAN;
+enumTable["SPANISH"]=cocos2d::LanguageType::SPANISH;
+enumTable["DUTCH"]=cocos2d::LanguageType::DUTCH;
+enumTable["RUSSIAN"]=cocos2d::LanguageType::RUSSIAN;
+enumTable["KOREAN"]=cocos2d::LanguageType::KOREAN;
+enumTable["JAPANESE"]=cocos2d::LanguageType::JAPANESE;
+enumTable["HUNGARIAN"]=cocos2d::LanguageType::HUNGARIAN;
+enumTable["PORTUGUESE"]=cocos2d::LanguageType::PORTUGUESE;
+enumTable["ARABIC"]=cocos2d::LanguageType::ARABIC;
+enumTable["NORWEGIAN"]=cocos2d::LanguageType::NORWEGIAN;
+enumTable["POLISH"]=cocos2d::LanguageType::POLISH;
+enumTable["TURKISH"]=cocos2d::LanguageType::TURKISH;
+enumTable["UKRAINIAN"]=cocos2d::LanguageType::UKRAINIAN;
+enumTable["ROMANIAN"]=cocos2d::LanguageType::ROMANIAN;
+enumTable["BULGARIAN"]=cocos2d::LanguageType::BULGARIAN;
+enumTable["BELARUSIAN"]=cocos2d::LanguageType::BELARUSIAN;
+lua["cc"]["LanguageType"]=lua.NewEnum(enumTable);
+}
+void RegisterLuaCoreZipFileAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ZipFile).name()] = sol::usertype_traits<cocos2d::ZipFile*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ZipFile>("deprecated.cocos2d::ZipFile");
+dep[sol::base_classes]=sol::bases<cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ZipFile*>::metatable(),sol::usertype_traits<cocos2d::extension::LuaObject*>::metatable());
+lua["cc"]["ZipFile"]=mt;
+mt["__new__"] = [](){return nullptr;};
+mt["SetProcessHandler"]=static_cast<void(cocos2d::ZipFile::*)(const cocos2d::ZipFile::ProcessHandler&)>(&cocos2d::ZipFile::SetProcessHandler);
+mt["set"]["ProcessHandler"]=mt["SetProcessHandler"];
+mt["SetErrorHandler"]=static_cast<void(cocos2d::ZipFile::*)(const cocos2d::ZipFile::ErrorHandler&)>(&cocos2d::ZipFile::SetErrorHandler);
+mt["set"]["ErrorHandler"]=mt["SetErrorHandler"];
+mt["Work"]=sol::overload([](cocos2d::ZipFile* obj,const std::string& arg0,const char* arg1){return obj->Work(arg0,arg1);},[](cocos2d::ZipFile* obj,const std::string& arg0){return obj->Work(arg0);});
+mt["WorkAsync"]=sol::overload([](cocos2d::ZipFile* obj,const std::string& arg0,const char* arg1){return obj->WorkAsync(arg0,arg1);},[](cocos2d::ZipFile* obj,const std::string& arg0){return obj->WorkAsync(arg0);});
+}
+void RegisterLuaCoreRZipFileZipItemAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::RZipFile::ZipItem).name()] = sol::usertype_traits<cocos2d::RZipFile::ZipItem*>::metatable();
+auto dep=lua.new_usertype<cocos2d::RZipFile::ZipItem>("deprecated.cocos2d::RZipFile::ZipItem");
+dep[sol::base_classes]=sol::bases<cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::RZipFile::ZipItem*>::metatable(),sol::usertype_traits<cocos2d::extension::LuaObject*>::metatable());
+lua["cc"]["RZipFile"]["static"]["ZipItem"]=mt;
+mt["__new__"]=[](cocos2d::RZipFile* arg0,const cocos2d::RZipFile::ZipInfo& arg1){return new cocos2d::RZipFile::ZipItem(arg0,arg1);};
+mt["GetInfo"]=static_cast<const cocos2d::RZipFile::ZipInfo&(cocos2d::RZipFile::ZipItem::*)()const>(&cocos2d::RZipFile::ZipItem::GetInfo);
+mt["get"]["Info"]=mt["GetInfo"];
+}
+void RegisterLuaCoreRZipFileEncodingAuto(cocos2d::extension::Lua& lua) {
+sol::table enumTable = lua.create_table_with(0,3);
+enumTable["Auto"]=cocos2d::RZipFile::Encoding::Auto;
+enumTable["Utf8"]=cocos2d::RZipFile::Encoding::Utf8;
+enumTable["Gbk"]=cocos2d::RZipFile::Encoding::Gbk;
+lua["cc"]["RZipFile"]["static"]["Encoding"]=lua.NewEnum(enumTable);
+}
+void RegisterLuaCoreRZipFileAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::RZipFile).name()] = sol::usertype_traits<cocos2d::RZipFile*>::metatable();
+auto dep=lua.new_usertype<cocos2d::RZipFile>("deprecated.cocos2d::RZipFile");
+dep[sol::base_classes]=sol::bases<cocos2d::ZipFile,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::RZipFile*>::metatable(),sol::usertype_traits<cocos2d::ZipFile*>::metatable());
+lua["cc"]["RZipFile"]=mt;
+mt["__new__"]=sol::overload([](const std::string& arg0,cocos2d::RZipFile::Encoding arg1){return cocos2d::RZipFile::Create(arg0,arg1);},[](const std::string& arg0){return cocos2d::RZipFile::Create(arg0);});
+mt["Locate"]=static_cast<const cocos2d::RZipFile::ZipItem*(cocos2d::RZipFile::*)(const std::string&)>(&cocos2d::RZipFile::Locate);
+mt["Match"]=static_cast<std::vector<const cocos2d::RZipFile::ZipItem *, std::allocator<const cocos2d::RZipFile::ZipItem *> >(cocos2d::RZipFile::*)(const std::string&)>(&cocos2d::RZipFile::Match);
+RegisterLuaCoreRZipFileZipItemAuto(lua);
+RegisterLuaCoreRZipFileEncodingAuto(lua);
+}
+void RegisterLuaCoreWZipFileAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::WZipFile).name()] = sol::usertype_traits<cocos2d::WZipFile*>::metatable();
+auto dep=lua.new_usertype<cocos2d::WZipFile>("deprecated.cocos2d::WZipFile");
+dep[sol::base_classes]=sol::bases<cocos2d::ZipFile,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::WZipFile*>::metatable(),sol::usertype_traits<cocos2d::ZipFile*>::metatable());
+lua["cc"]["WZipFile"]=mt;
+mt["__new__"]=static_cast<cocos2d::WZipFile*(*)(const std::string&)>(&cocos2d::WZipFile::Create);
+}
 void RegisterLuaCoreEventAccelerationAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventAcceleration>("cc","EventAcceleration",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Event,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt[sol::call_constructor]=sol::constructors<cocos2d::EventAcceleration(const cocos2d::Acceleration&)>();
-}
-void RegisterLuaCoreEventCustomAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventCustom>("cc","EventCustom",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Event,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function("SetUserData",static_cast<void(cocos2d::EventCustom::*)(void*)>(&cocos2d::EventCustom::setUserData));
-mt.set_function("GetUserData",static_cast<void*(cocos2d::EventCustom::*)()const>(&cocos2d::EventCustom::getUserData));
-mt.set_function("GetEventName",static_cast<const std::string&(cocos2d::EventCustom::*)()const>(&cocos2d::EventCustom::getEventName));
-mt[sol::call_constructor]=sol::constructors<cocos2d::EventCustom(const std::string&)>();
-}
-void RegisterLuaCoreEventDispatcherAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventDispatcher>("cc","EventDispatcher",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function("AddEventListenerWithSceneGraphPriority",static_cast<void(cocos2d::EventDispatcher::*)(cocos2d::EventListener*,cocos2d::Node*)>(&cocos2d::EventDispatcher::addEventListenerWithSceneGraphPriority));
-mt.set_function("AddEventListenerWithFixedPriority",static_cast<void(cocos2d::EventDispatcher::*)(cocos2d::EventListener*,int)>(&cocos2d::EventDispatcher::addEventListenerWithFixedPriority));
-mt.set_function("AddCustomEventListener",static_cast<cocos2d::EventListenerCustom*(cocos2d::EventDispatcher::*)(const std::string&,const std::function<void (cocos2d::EventCustom *)>&)>(&cocos2d::EventDispatcher::addCustomEventListener));
-mt.set_function("RemoveEventListener",static_cast<void(cocos2d::EventDispatcher::*)(cocos2d::EventListener*)>(&cocos2d::EventDispatcher::removeEventListener));
-mt.set_function("RemoveEventListenersForType",static_cast<void(cocos2d::EventDispatcher::*)(cocos2d::EventListener::Type)>(&cocos2d::EventDispatcher::removeEventListenersForType));
-mt.set_function("RemoveEventListenersForTarget",sol::overload([](cocos2d::EventDispatcher* obj,cocos2d::Node* arg0){return obj->removeEventListenersForTarget(arg0);},[](cocos2d::EventDispatcher* obj,cocos2d::Node* arg0,bool arg1){return obj->removeEventListenersForTarget(arg0,arg1);}));
-mt.set_function("RemoveCustomEventListeners",static_cast<void(cocos2d::EventDispatcher::*)(const std::string&)>(&cocos2d::EventDispatcher::removeCustomEventListeners));
-mt.set_function("RemoveAllEventListeners",static_cast<void(cocos2d::EventDispatcher::*)()>(&cocos2d::EventDispatcher::removeAllEventListeners));
-mt.set_function("PauseEventListenersForTarget",sol::overload([](cocos2d::EventDispatcher* obj,cocos2d::Node* arg0){return obj->pauseEventListenersForTarget(arg0);},[](cocos2d::EventDispatcher* obj,cocos2d::Node* arg0,bool arg1){return obj->pauseEventListenersForTarget(arg0,arg1);}));
-mt.set_function("ResumeEventListenersForTarget",sol::overload([](cocos2d::EventDispatcher* obj,cocos2d::Node* arg0){return obj->resumeEventListenersForTarget(arg0);},[](cocos2d::EventDispatcher* obj,cocos2d::Node* arg0,bool arg1){return obj->resumeEventListenersForTarget(arg0,arg1);}));
-mt.set_function("SetPriority",static_cast<void(cocos2d::EventDispatcher::*)(cocos2d::EventListener*,int)>(&cocos2d::EventDispatcher::setPriority));
-mt.set_function("SetEnabled",static_cast<void(cocos2d::EventDispatcher::*)(bool)>(&cocos2d::EventDispatcher::setEnabled));
-mt.set_function("IsEnabled",static_cast<bool(cocos2d::EventDispatcher::*)()const>(&cocos2d::EventDispatcher::isEnabled));
-mt.set_function("DispatchEvent",static_cast<void(cocos2d::EventDispatcher::*)(cocos2d::Event*)>(&cocos2d::EventDispatcher::dispatchEvent));
-mt.set_function("DispatchCustomEvent",sol::overload([](cocos2d::EventDispatcher* obj,const std::string& arg0){return obj->dispatchCustomEvent(arg0);},[](cocos2d::EventDispatcher* obj,const std::string& arg0,void* arg1){return obj->dispatchCustomEvent(arg0,arg1);}));
-mt.set_function("HasEventListener",static_cast<bool(cocos2d::EventDispatcher::*)(const cocos2d::EventListener::ListenerID&)const>(&cocos2d::EventDispatcher::hasEventListener));
-mt[sol::call_constructor]=sol::constructors<cocos2d::EventDispatcher()>();
-}
-void RegisterLuaCoreEventFocusAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventFocus>("cc","EventFocus",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Event,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt[sol::call_constructor]=sol::constructors<cocos2d::EventFocus(cocos2d::ui::Widget*,cocos2d::ui::Widget*)>();
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventAcceleration).name()] = sol::usertype_traits<cocos2d::EventAcceleration*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EventAcceleration>("deprecated.cocos2d::EventAcceleration");
+dep[sol::base_classes]=sol::bases<cocos2d::Event,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventAcceleration*>::metatable(),sol::usertype_traits<cocos2d::Event*>::metatable());
+lua["cc"]["EventAcceleration"]=mt;
+mt["__new__"]=[](const cocos2d::Acceleration& arg0){return new cocos2d::EventAcceleration(arg0);};
 }

@@ -8,64 +8,86 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+#include "network/CCConnection.h"
+void RegisterLuaCoreTransitionJumpZoomAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionJumpZoom).name()] = sol::usertype_traits<cocos2d::TransitionJumpZoom*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TransitionJumpZoom>("deprecated.cocos2d::TransitionJumpZoom");
+dep[sol::base_classes]=sol::bases<cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionJumpZoom*>::metatable(),sol::usertype_traits<cocos2d::TransitionScene*>::metatable());
+lua["cc"]["TransitionJumpZoom"]=mt;
+mt["__new__"]=static_cast<cocos2d::TransitionJumpZoom*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionJumpZoom::create);
+}
+void RegisterLuaCoreTransitionMoveInLAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionMoveInL).name()] = sol::usertype_traits<cocos2d::TransitionMoveInL*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TransitionMoveInL>("deprecated.cocos2d::TransitionMoveInL");
+dep[sol::base_classes]=sol::bases<cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionMoveInL*>::metatable(),sol::usertype_traits<cocos2d::TransitionScene*>::metatable(),sol::usertype_traits<cocos2d::TransitionEaseScene*>::metatable());
+lua["cc"]["TransitionMoveInL"]=mt;
+mt["__new__"]=static_cast<cocos2d::TransitionMoveInL*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionMoveInL::create);
+mt["Action"]=static_cast<cocos2d::ActionInterval*(cocos2d::TransitionMoveInL::*)()>(&cocos2d::TransitionMoveInL::action);
+}
+void RegisterLuaCoreTransitionMoveInRAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionMoveInR).name()] = sol::usertype_traits<cocos2d::TransitionMoveInR*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TransitionMoveInR>("deprecated.cocos2d::TransitionMoveInR");
+dep[sol::base_classes]=sol::bases<cocos2d::TransitionMoveInL,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionMoveInR*>::metatable(),sol::usertype_traits<cocos2d::TransitionMoveInL*>::metatable());
+lua["cc"]["TransitionMoveInR"]=mt;
+mt["__new__"]=static_cast<cocos2d::TransitionMoveInR*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionMoveInR::create);
+}
 void RegisterLuaCoreTransitionMoveInTAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TransitionMoveInT>("cc","TransitionMoveInT",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionMoveInL,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::TransitionMoveInT*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionMoveInT::create));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionMoveInT).name()] = sol::usertype_traits<cocos2d::TransitionMoveInT*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TransitionMoveInT>("deprecated.cocos2d::TransitionMoveInT");
+dep[sol::base_classes]=sol::bases<cocos2d::TransitionMoveInL,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionMoveInT*>::metatable(),sol::usertype_traits<cocos2d::TransitionMoveInL*>::metatable());
+lua["cc"]["TransitionMoveInT"]=mt;
+mt["__new__"]=static_cast<cocos2d::TransitionMoveInT*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionMoveInT::create);
 }
 void RegisterLuaCoreTransitionMoveInBAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TransitionMoveInB>("cc","TransitionMoveInB",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionMoveInL,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::TransitionMoveInB*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionMoveInB::create));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionMoveInB).name()] = sol::usertype_traits<cocos2d::TransitionMoveInB*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TransitionMoveInB>("deprecated.cocos2d::TransitionMoveInB");
+dep[sol::base_classes]=sol::bases<cocos2d::TransitionMoveInL,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionMoveInB*>::metatable(),sol::usertype_traits<cocos2d::TransitionMoveInL*>::metatable());
+lua["cc"]["TransitionMoveInB"]=mt;
+mt["__new__"]=static_cast<cocos2d::TransitionMoveInB*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionMoveInB::create);
 }
 void RegisterLuaCoreTransitionSlideInLAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TransitionSlideInL>("cc","TransitionSlideInL",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::TransitionSlideInL*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionSlideInL::create));
-mt.set_function("EaseActionWithAction",static_cast<cocos2d::ActionInterval*(cocos2d::TransitionSlideInL::*)(cocos2d::ActionInterval*)>(&cocos2d::TransitionSlideInL::easeActionWithAction));
-mt.set_function("Action",static_cast<cocos2d::ActionInterval*(cocos2d::TransitionSlideInL::*)()>(&cocos2d::TransitionSlideInL::action));
-mt.set_function("OnEnter",static_cast<void(cocos2d::TransitionSlideInL::*)()>(&cocos2d::TransitionSlideInL::onEnter));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionSlideInL).name()] = sol::usertype_traits<cocos2d::TransitionSlideInL*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TransitionSlideInL>("deprecated.cocos2d::TransitionSlideInL");
+dep[sol::base_classes]=sol::bases<cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionSlideInL*>::metatable(),sol::usertype_traits<cocos2d::TransitionScene*>::metatable(),sol::usertype_traits<cocos2d::TransitionEaseScene*>::metatable());
+lua["cc"]["TransitionSlideInL"]=mt;
+mt["__new__"]=static_cast<cocos2d::TransitionSlideInL*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionSlideInL::create);
+mt["Action"]=static_cast<cocos2d::ActionInterval*(cocos2d::TransitionSlideInL::*)()>(&cocos2d::TransitionSlideInL::action);
 }
 void RegisterLuaCoreTransitionSlideInRAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TransitionSlideInR>("cc","TransitionSlideInR",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionSlideInL,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::TransitionSlideInR*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionSlideInR::create));
-mt.set_function("Action",static_cast<cocos2d::ActionInterval*(cocos2d::TransitionSlideInR::*)()>(&cocos2d::TransitionSlideInR::action));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionSlideInR).name()] = sol::usertype_traits<cocos2d::TransitionSlideInR*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TransitionSlideInR>("deprecated.cocos2d::TransitionSlideInR");
+dep[sol::base_classes]=sol::bases<cocos2d::TransitionSlideInL,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionSlideInR*>::metatable(),sol::usertype_traits<cocos2d::TransitionSlideInL*>::metatable());
+lua["cc"]["TransitionSlideInR"]=mt;
+mt["__new__"]=static_cast<cocos2d::TransitionSlideInR*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionSlideInR::create);
 }
 void RegisterLuaCoreTransitionSlideInBAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TransitionSlideInB>("cc","TransitionSlideInB",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionSlideInL,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::TransitionSlideInB*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionSlideInB::create));
-mt.set_function("Action",static_cast<cocos2d::ActionInterval*(cocos2d::TransitionSlideInB::*)()>(&cocos2d::TransitionSlideInB::action));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionSlideInB).name()] = sol::usertype_traits<cocos2d::TransitionSlideInB*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TransitionSlideInB>("deprecated.cocos2d::TransitionSlideInB");
+dep[sol::base_classes]=sol::bases<cocos2d::TransitionSlideInL,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionSlideInB*>::metatable(),sol::usertype_traits<cocos2d::TransitionSlideInL*>::metatable());
+lua["cc"]["TransitionSlideInB"]=mt;
+mt["__new__"]=static_cast<cocos2d::TransitionSlideInB*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionSlideInB::create);
 }
 void RegisterLuaCoreTransitionSlideInTAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TransitionSlideInT>("cc","TransitionSlideInT",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionSlideInL,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::TransitionSlideInT*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionSlideInT::create));
-mt.set_function("Action",static_cast<cocos2d::ActionInterval*(cocos2d::TransitionSlideInT::*)()>(&cocos2d::TransitionSlideInT::action));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionSlideInT).name()] = sol::usertype_traits<cocos2d::TransitionSlideInT*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TransitionSlideInT>("deprecated.cocos2d::TransitionSlideInT");
+dep[sol::base_classes]=sol::bases<cocos2d::TransitionSlideInL,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionSlideInT*>::metatable(),sol::usertype_traits<cocos2d::TransitionSlideInL*>::metatable());
+lua["cc"]["TransitionSlideInT"]=mt;
+mt["__new__"]=static_cast<cocos2d::TransitionSlideInT*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionSlideInT::create);
 }
 void RegisterLuaCoreTransitionShrinkGrowAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TransitionShrinkGrow>("cc","TransitionShrinkGrow",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::TransitionShrinkGrow*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionShrinkGrow::create));
-mt.set_function("OnEnter",static_cast<void(cocos2d::TransitionShrinkGrow::*)()>(&cocos2d::TransitionShrinkGrow::onEnter));
-mt.set_function("EaseActionWithAction",static_cast<cocos2d::ActionInterval*(cocos2d::TransitionShrinkGrow::*)(cocos2d::ActionInterval*)>(&cocos2d::TransitionShrinkGrow::easeActionWithAction));
-}
-void RegisterLuaCoreTransitionFlipXAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TransitionFlipX>("cc","TransitionFlipX",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionSceneOriented,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::TransitionFlipX*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionFlipX::create),static_cast<cocos2d::TransitionFlipX*(*)(float,cocos2d::Scene*,cocos2d::TransitionScene::Orientation)>(&cocos2d::TransitionFlipX::create)));
-mt.set_function("OnEnter",static_cast<void(cocos2d::TransitionFlipX::*)()>(&cocos2d::TransitionFlipX::onEnter));
-}
-void RegisterLuaCoreTransitionFlipYAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TransitionFlipY>("cc","TransitionFlipY",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionSceneOriented,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::TransitionFlipY*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionFlipY::create),static_cast<cocos2d::TransitionFlipY*(*)(float,cocos2d::Scene*,cocos2d::TransitionScene::Orientation)>(&cocos2d::TransitionFlipY::create)));
-mt.set_function("OnEnter",static_cast<void(cocos2d::TransitionFlipY::*)()>(&cocos2d::TransitionFlipY::onEnter));
-}
-void RegisterLuaCoreTransitionFlipAngularAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::TransitionFlipAngular>("cc","TransitionFlipAngular",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::TransitionSceneOriented,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,sol::overload(static_cast<cocos2d::TransitionFlipAngular*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionFlipAngular::create),static_cast<cocos2d::TransitionFlipAngular*(*)(float,cocos2d::Scene*,cocos2d::TransitionScene::Orientation)>(&cocos2d::TransitionFlipAngular::create)));
-mt.set_function("OnEnter",static_cast<void(cocos2d::TransitionFlipAngular::*)()>(&cocos2d::TransitionFlipAngular::onEnter));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionShrinkGrow).name()] = sol::usertype_traits<cocos2d::TransitionShrinkGrow*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TransitionShrinkGrow>("deprecated.cocos2d::TransitionShrinkGrow");
+dep[sol::base_classes]=sol::bases<cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionShrinkGrow*>::metatable(),sol::usertype_traits<cocos2d::TransitionScene*>::metatable(),sol::usertype_traits<cocos2d::TransitionEaseScene*>::metatable());
+lua["cc"]["TransitionShrinkGrow"]=mt;
+mt["__new__"]=static_cast<cocos2d::TransitionShrinkGrow*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionShrinkGrow::create);
 }

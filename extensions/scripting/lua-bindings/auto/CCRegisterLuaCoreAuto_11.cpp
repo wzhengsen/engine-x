@@ -8,81 +8,84 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+#include "network/CCConnection.h"
+void RegisterLuaCoreEaseQuinticActionInAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseQuinticActionIn).name()] = sol::usertype_traits<cocos2d::EaseQuinticActionIn*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EaseQuinticActionIn>("deprecated.cocos2d::EaseQuinticActionIn");
+dep[sol::base_classes]=sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EaseQuinticActionIn*>::metatable(),sol::usertype_traits<cocos2d::ActionEase*>::metatable());
+lua["cc"]["EaseQuinticActionIn"]=mt;
+mt["__new__"]=static_cast<cocos2d::EaseQuinticActionIn*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseQuinticActionIn::create);
+}
+void RegisterLuaCoreEaseQuinticActionOutAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseQuinticActionOut).name()] = sol::usertype_traits<cocos2d::EaseQuinticActionOut*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EaseQuinticActionOut>("deprecated.cocos2d::EaseQuinticActionOut");
+dep[sol::base_classes]=sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EaseQuinticActionOut*>::metatable(),sol::usertype_traits<cocos2d::ActionEase*>::metatable());
+lua["cc"]["EaseQuinticActionOut"]=mt;
+mt["__new__"]=static_cast<cocos2d::EaseQuinticActionOut*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseQuinticActionOut::create);
+}
+void RegisterLuaCoreEaseQuinticActionInOutAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseQuinticActionInOut).name()] = sol::usertype_traits<cocos2d::EaseQuinticActionInOut*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EaseQuinticActionInOut>("deprecated.cocos2d::EaseQuinticActionInOut");
+dep[sol::base_classes]=sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EaseQuinticActionInOut*>::metatable(),sol::usertype_traits<cocos2d::ActionEase*>::metatable());
+lua["cc"]["EaseQuinticActionInOut"]=mt;
+mt["__new__"]=static_cast<cocos2d::EaseQuinticActionInOut*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseQuinticActionInOut::create);
+}
 void RegisterLuaCoreEaseCircleActionInAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseCircleActionIn>("cc","EaseCircleActionIn",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EaseCircleActionIn*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseCircleActionIn::create));
-mt.set_function("Clone",static_cast<cocos2d::EaseCircleActionIn*(cocos2d::EaseCircleActionIn::*)()const>(&cocos2d::EaseCircleActionIn::clone));
-mt.set_function("Update",static_cast<void(cocos2d::EaseCircleActionIn::*)(float)>(&cocos2d::EaseCircleActionIn::update));
-mt.set_function("Reverse",static_cast<cocos2d::ActionEase*(cocos2d::EaseCircleActionIn::*)()const>(&cocos2d::EaseCircleActionIn::reverse));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseCircleActionIn).name()] = sol::usertype_traits<cocos2d::EaseCircleActionIn*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EaseCircleActionIn>("deprecated.cocos2d::EaseCircleActionIn");
+dep[sol::base_classes]=sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EaseCircleActionIn*>::metatable(),sol::usertype_traits<cocos2d::ActionEase*>::metatable());
+lua["cc"]["EaseCircleActionIn"]=mt;
+mt["__new__"]=static_cast<cocos2d::EaseCircleActionIn*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseCircleActionIn::create);
 }
 void RegisterLuaCoreEaseCircleActionOutAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseCircleActionOut>("cc","EaseCircleActionOut",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EaseCircleActionOut*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseCircleActionOut::create));
-mt.set_function("Clone",static_cast<cocos2d::EaseCircleActionOut*(cocos2d::EaseCircleActionOut::*)()const>(&cocos2d::EaseCircleActionOut::clone));
-mt.set_function("Update",static_cast<void(cocos2d::EaseCircleActionOut::*)(float)>(&cocos2d::EaseCircleActionOut::update));
-mt.set_function("Reverse",static_cast<cocos2d::ActionEase*(cocos2d::EaseCircleActionOut::*)()const>(&cocos2d::EaseCircleActionOut::reverse));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseCircleActionOut).name()] = sol::usertype_traits<cocos2d::EaseCircleActionOut*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EaseCircleActionOut>("deprecated.cocos2d::EaseCircleActionOut");
+dep[sol::base_classes]=sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EaseCircleActionOut*>::metatable(),sol::usertype_traits<cocos2d::ActionEase*>::metatable());
+lua["cc"]["EaseCircleActionOut"]=mt;
+mt["__new__"]=static_cast<cocos2d::EaseCircleActionOut*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseCircleActionOut::create);
 }
 void RegisterLuaCoreEaseCircleActionInOutAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseCircleActionInOut>("cc","EaseCircleActionInOut",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EaseCircleActionInOut*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseCircleActionInOut::create));
-mt.set_function("Clone",static_cast<cocos2d::EaseCircleActionInOut*(cocos2d::EaseCircleActionInOut::*)()const>(&cocos2d::EaseCircleActionInOut::clone));
-mt.set_function("Update",static_cast<void(cocos2d::EaseCircleActionInOut::*)(float)>(&cocos2d::EaseCircleActionInOut::update));
-mt.set_function("Reverse",static_cast<cocos2d::ActionEase*(cocos2d::EaseCircleActionInOut::*)()const>(&cocos2d::EaseCircleActionInOut::reverse));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseCircleActionInOut).name()] = sol::usertype_traits<cocos2d::EaseCircleActionInOut*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EaseCircleActionInOut>("deprecated.cocos2d::EaseCircleActionInOut");
+dep[sol::base_classes]=sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EaseCircleActionInOut*>::metatable(),sol::usertype_traits<cocos2d::ActionEase*>::metatable());
+lua["cc"]["EaseCircleActionInOut"]=mt;
+mt["__new__"]=static_cast<cocos2d::EaseCircleActionInOut*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseCircleActionInOut::create);
 }
 void RegisterLuaCoreEaseCubicActionInAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseCubicActionIn>("cc","EaseCubicActionIn",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EaseCubicActionIn*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseCubicActionIn::create));
-mt.set_function("Clone",static_cast<cocos2d::EaseCubicActionIn*(cocos2d::EaseCubicActionIn::*)()const>(&cocos2d::EaseCubicActionIn::clone));
-mt.set_function("Update",static_cast<void(cocos2d::EaseCubicActionIn::*)(float)>(&cocos2d::EaseCubicActionIn::update));
-mt.set_function("Reverse",static_cast<cocos2d::ActionEase*(cocos2d::EaseCubicActionIn::*)()const>(&cocos2d::EaseCubicActionIn::reverse));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseCubicActionIn).name()] = sol::usertype_traits<cocos2d::EaseCubicActionIn*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EaseCubicActionIn>("deprecated.cocos2d::EaseCubicActionIn");
+dep[sol::base_classes]=sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EaseCubicActionIn*>::metatable(),sol::usertype_traits<cocos2d::ActionEase*>::metatable());
+lua["cc"]["EaseCubicActionIn"]=mt;
+mt["__new__"]=static_cast<cocos2d::EaseCubicActionIn*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseCubicActionIn::create);
 }
 void RegisterLuaCoreEaseCubicActionOutAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseCubicActionOut>("cc","EaseCubicActionOut",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EaseCubicActionOut*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseCubicActionOut::create));
-mt.set_function("Clone",static_cast<cocos2d::EaseCubicActionOut*(cocos2d::EaseCubicActionOut::*)()const>(&cocos2d::EaseCubicActionOut::clone));
-mt.set_function("Update",static_cast<void(cocos2d::EaseCubicActionOut::*)(float)>(&cocos2d::EaseCubicActionOut::update));
-mt.set_function("Reverse",static_cast<cocos2d::ActionEase*(cocos2d::EaseCubicActionOut::*)()const>(&cocos2d::EaseCubicActionOut::reverse));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseCubicActionOut).name()] = sol::usertype_traits<cocos2d::EaseCubicActionOut*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EaseCubicActionOut>("deprecated.cocos2d::EaseCubicActionOut");
+dep[sol::base_classes]=sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EaseCubicActionOut*>::metatable(),sol::usertype_traits<cocos2d::ActionEase*>::metatable());
+lua["cc"]["EaseCubicActionOut"]=mt;
+mt["__new__"]=static_cast<cocos2d::EaseCubicActionOut*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseCubicActionOut::create);
 }
 void RegisterLuaCoreEaseCubicActionInOutAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseCubicActionInOut>("cc","EaseCubicActionInOut",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EaseCubicActionInOut*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseCubicActionInOut::create));
-mt.set_function("Clone",static_cast<cocos2d::EaseCubicActionInOut*(cocos2d::EaseCubicActionInOut::*)()const>(&cocos2d::EaseCubicActionInOut::clone));
-mt.set_function("Update",static_cast<void(cocos2d::EaseCubicActionInOut::*)(float)>(&cocos2d::EaseCubicActionInOut::update));
-mt.set_function("Reverse",static_cast<cocos2d::ActionEase*(cocos2d::EaseCubicActionInOut::*)()const>(&cocos2d::EaseCubicActionInOut::reverse));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseCubicActionInOut).name()] = sol::usertype_traits<cocos2d::EaseCubicActionInOut*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EaseCubicActionInOut>("deprecated.cocos2d::EaseCubicActionInOut");
+dep[sol::base_classes]=sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EaseCubicActionInOut*>::metatable(),sol::usertype_traits<cocos2d::ActionEase*>::metatable());
+lua["cc"]["EaseCubicActionInOut"]=mt;
+mt["__new__"]=static_cast<cocos2d::EaseCubicActionInOut*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseCubicActionInOut::create);
 }
 void RegisterLuaCoreEaseInAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseIn>("cc","EaseIn",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::EaseRateAction,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EaseIn*(*)(cocos2d::ActionInterval*,float)>(&cocos2d::EaseIn::create));
-mt.set_function("Clone",static_cast<cocos2d::EaseIn*(cocos2d::EaseIn::*)()const>(&cocos2d::EaseIn::clone));
-mt.set_function("Update",static_cast<void(cocos2d::EaseIn::*)(float)>(&cocos2d::EaseIn::update));
-mt.set_function("Reverse",static_cast<cocos2d::EaseRateAction*(cocos2d::EaseIn::*)()const>(&cocos2d::EaseIn::reverse));
-}
-void RegisterLuaCoreEaseOutAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseOut>("cc","EaseOut",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::EaseRateAction,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EaseOut*(*)(cocos2d::ActionInterval*,float)>(&cocos2d::EaseOut::create));
-mt.set_function("Clone",static_cast<cocos2d::EaseOut*(cocos2d::EaseOut::*)()const>(&cocos2d::EaseOut::clone));
-mt.set_function("Update",static_cast<void(cocos2d::EaseOut::*)(float)>(&cocos2d::EaseOut::update));
-mt.set_function("Reverse",static_cast<cocos2d::EaseRateAction*(cocos2d::EaseOut::*)()const>(&cocos2d::EaseOut::reverse));
-}
-void RegisterLuaCoreEaseInOutAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseInOut>("cc","EaseInOut",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::EaseRateAction,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EaseInOut*(*)(cocos2d::ActionInterval*,float)>(&cocos2d::EaseInOut::create));
-mt.set_function("Clone",static_cast<cocos2d::EaseInOut*(cocos2d::EaseInOut::*)()const>(&cocos2d::EaseInOut::clone));
-mt.set_function("Update",static_cast<void(cocos2d::EaseInOut::*)(float)>(&cocos2d::EaseInOut::update));
-mt.set_function("Reverse",static_cast<cocos2d::EaseRateAction*(cocos2d::EaseInOut::*)()const>(&cocos2d::EaseInOut::reverse));
-}
-void RegisterLuaCoreEaseElasticAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EaseElastic>("cc","EaseElastic",true);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function("GetPeriod",static_cast<float(cocos2d::EaseElastic::*)()const>(&cocos2d::EaseElastic::getPeriod));
-mt.set_function("SetPeriod",static_cast<void(cocos2d::EaseElastic::*)(float)>(&cocos2d::EaseElastic::setPeriod));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseIn).name()] = sol::usertype_traits<cocos2d::EaseIn*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EaseIn>("deprecated.cocos2d::EaseIn");
+dep[sol::base_classes]=sol::bases<cocos2d::EaseRateAction,cocos2d::ActionEase,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EaseIn*>::metatable(),sol::usertype_traits<cocos2d::EaseRateAction*>::metatable());
+lua["cc"]["EaseIn"]=mt;
+mt["__new__"]=static_cast<cocos2d::EaseIn*(*)(cocos2d::ActionInterval*,float)>(&cocos2d::EaseIn::create);
 }

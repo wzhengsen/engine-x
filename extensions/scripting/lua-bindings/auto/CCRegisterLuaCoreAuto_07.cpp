@@ -8,162 +8,187 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+#include "network/CCConnection.h"
+void RegisterLuaCoreEventCustomAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventCustom).name()] = sol::usertype_traits<cocos2d::EventCustom*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EventCustom>("deprecated.cocos2d::EventCustom");
+dep[sol::base_classes]=sol::bases<cocos2d::Event,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventCustom*>::metatable(),sol::usertype_traits<cocos2d::Event*>::metatable());
+lua["cc"]["EventCustom"]=mt;
+mt["__new__"]=[](const std::string& arg0){return new cocos2d::EventCustom(arg0);};
+mt["SetUserData"]=static_cast<void(cocos2d::EventCustom::*)(void*)>(&cocos2d::EventCustom::setUserData);
+mt["set"]["UserData"]=mt["SetUserData"];
+mt["GetUserData"]=static_cast<void*(cocos2d::EventCustom::*)()const>(&cocos2d::EventCustom::getUserData);
+mt["get"]["UserData"]=mt["GetUserData"];
+mt["GetEventName"]=static_cast<const std::string&(cocos2d::EventCustom::*)()const>(&cocos2d::EventCustom::getEventName);
+mt["get"]["EventName"]=mt["GetEventName"];
+}
+void RegisterLuaCoreEventDispatcherAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventDispatcher).name()] = sol::usertype_traits<cocos2d::EventDispatcher*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EventDispatcher>("deprecated.cocos2d::EventDispatcher");
+dep[sol::base_classes]=sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventDispatcher*>::metatable(),sol::usertype_traits<cocos2d::Ref*>::metatable());
+lua["cc"]["EventDispatcher"]=mt;
+mt["__new__"]=[](){return new cocos2d::EventDispatcher();};
+mt["AddEventListenerWithSceneGraphPriority"]=static_cast<void(cocos2d::EventDispatcher::*)(cocos2d::EventListener*,cocos2d::Node*)>(&cocos2d::EventDispatcher::addEventListenerWithSceneGraphPriority);
+mt["AddEventListenerWithFixedPriority"]=static_cast<void(cocos2d::EventDispatcher::*)(cocos2d::EventListener*,int)>(&cocos2d::EventDispatcher::addEventListenerWithFixedPriority);
+mt["AddCustomEventListener"]=static_cast<cocos2d::EventListenerCustom*(cocos2d::EventDispatcher::*)(const std::string&,const std::function<void (cocos2d::EventCustom *)>&)>(&cocos2d::EventDispatcher::addCustomEventListener);
+mt["RemoveEventListener"]=static_cast<void(cocos2d::EventDispatcher::*)(cocos2d::EventListener*)>(&cocos2d::EventDispatcher::removeEventListener);
+mt["RemoveEventListenersForType"]=static_cast<void(cocos2d::EventDispatcher::*)(cocos2d::EventListener::Type)>(&cocos2d::EventDispatcher::removeEventListenersForType);
+mt["RemoveEventListenersForTarget"]=sol::overload([](cocos2d::EventDispatcher* obj,cocos2d::Node* arg0,bool arg1){return obj->removeEventListenersForTarget(arg0,arg1);},[](cocos2d::EventDispatcher* obj,cocos2d::Node* arg0){return obj->removeEventListenersForTarget(arg0);});
+mt["RemoveCustomEventListeners"]=static_cast<void(cocos2d::EventDispatcher::*)(const std::string&)>(&cocos2d::EventDispatcher::removeCustomEventListeners);
+mt["RemoveAllEventListeners"]=static_cast<void(cocos2d::EventDispatcher::*)()>(&cocos2d::EventDispatcher::removeAllEventListeners);
+mt["PauseEventListenersForTarget"]=sol::overload([](cocos2d::EventDispatcher* obj,cocos2d::Node* arg0,bool arg1){return obj->pauseEventListenersForTarget(arg0,arg1);},[](cocos2d::EventDispatcher* obj,cocos2d::Node* arg0){return obj->pauseEventListenersForTarget(arg0);});
+mt["ResumeEventListenersForTarget"]=sol::overload([](cocos2d::EventDispatcher* obj,cocos2d::Node* arg0,bool arg1){return obj->resumeEventListenersForTarget(arg0,arg1);},[](cocos2d::EventDispatcher* obj,cocos2d::Node* arg0){return obj->resumeEventListenersForTarget(arg0);});
+mt["SetPriority"]=static_cast<void(cocos2d::EventDispatcher::*)(cocos2d::EventListener*,int)>(&cocos2d::EventDispatcher::setPriority);
+mt["SetEnabled"]=static_cast<void(cocos2d::EventDispatcher::*)(bool)>(&cocos2d::EventDispatcher::setEnabled);
+mt["set"]["Enabled"]=mt["SetEnabled"];
+mt["IsEnabled"]=static_cast<bool(cocos2d::EventDispatcher::*)()const>(&cocos2d::EventDispatcher::isEnabled);
+mt["get"]["Enabled"]=mt["IsEnabled"];
+mt["DispatchEvent"]=static_cast<void(cocos2d::EventDispatcher::*)(cocos2d::Event*)>(&cocos2d::EventDispatcher::dispatchEvent);
+mt["DispatchCustomEvent"]=sol::overload([](cocos2d::EventDispatcher* obj,const std::string& arg0,void* arg1){return obj->dispatchCustomEvent(arg0,arg1);},[](cocos2d::EventDispatcher* obj,const std::string& arg0){return obj->dispatchCustomEvent(arg0);});
+mt["HasEventListener"]=static_cast<bool(cocos2d::EventDispatcher::*)(const cocos2d::EventListener::ListenerID&)const>(&cocos2d::EventDispatcher::hasEventListener);
+}
+void RegisterLuaCoreEventFocusAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventFocus).name()] = sol::usertype_traits<cocos2d::EventFocus*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EventFocus>("deprecated.cocos2d::EventFocus");
+dep[sol::base_classes]=sol::bases<cocos2d::Event,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventFocus*>::metatable(),sol::usertype_traits<cocos2d::Event*>::metatable());
+lua["cc"]["EventFocus"]=mt;
+mt["__new__"]=[](cocos2d::ui::Widget* arg0,cocos2d::ui::Widget* arg1){return new cocos2d::EventFocus(arg0,arg1);};
+}
 void RegisterLuaCoreEventListenerAccelerationAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventListenerAcceleration>("cc","EventListenerAcceleration",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EventListenerAcceleration*(*)(const std::function<void (cocos2d::Acceleration *, cocos2d::Event *)>&)>(&cocos2d::EventListenerAcceleration::create));
-mt.set_function("Clone",static_cast<cocos2d::EventListenerAcceleration*(cocos2d::EventListenerAcceleration::*)()>(&cocos2d::EventListenerAcceleration::clone));
-mt.set_function("CheckAvailable",static_cast<bool(cocos2d::EventListenerAcceleration::*)()>(&cocos2d::EventListenerAcceleration::checkAvailable));
-mt["LISTENER_ID"]=sol::var(std::ref(cocos2d::EventListenerAcceleration::LISTENER_ID));
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventListenerAcceleration).name()] = sol::usertype_traits<cocos2d::EventListenerAcceleration*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EventListenerAcceleration>("deprecated.cocos2d::EventListenerAcceleration");
+dep[sol::base_classes]=sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventListenerAcceleration*>::metatable(),sol::usertype_traits<cocos2d::EventListener*>::metatable());
+lua["cc"]["EventListenerAcceleration"]=mt;
+mt["__new__"]=static_cast<cocos2d::EventListenerAcceleration*(*)(const std::function<void (cocos2d::Acceleration *, cocos2d::Event *)>&)>(&cocos2d::EventListenerAcceleration::create);
+mt["get"]["LISTENER_ID"]=[](){return cocos2d::EventListenerAcceleration::LISTENER_ID;};;
 }
 void RegisterLuaCoreEventListenerFocusAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventListenerFocus>("cc","EventListenerFocus",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EventListenerFocus*(*)()>(&cocos2d::EventListenerFocus::create));
-mt.set_function("Clone",static_cast<cocos2d::EventListenerFocus*(cocos2d::EventListenerFocus::*)()>(&cocos2d::EventListenerFocus::clone));
-mt.set_function("CheckAvailable",static_cast<bool(cocos2d::EventListenerFocus::*)()>(&cocos2d::EventListenerFocus::checkAvailable));
-mt["LISTENER_ID"]=sol::var(std::ref(cocos2d::EventListenerFocus::LISTENER_ID));
-mt["OnFocusChanged"]=&cocos2d::EventListenerFocus::onFocusChanged;
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventListenerFocus).name()] = sol::usertype_traits<cocos2d::EventListenerFocus*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EventListenerFocus>("deprecated.cocos2d::EventListenerFocus");
+dep[sol::base_classes]=sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventListenerFocus*>::metatable(),sol::usertype_traits<cocos2d::EventListener*>::metatable());
+lua["cc"]["EventListenerFocus"]=mt;
+mt["__new__"]=static_cast<cocos2d::EventListenerFocus*(*)()>(&cocos2d::EventListenerFocus::create);
+mt["get"]["LISTENER_ID"]=[](){return cocos2d::EventListenerFocus::LISTENER_ID;};;
+mt["get"]["OnFocusChanged"]=[](cocos2d::EventListenerFocus* obj){return obj->onFocusChanged;};;
 }
 void RegisterLuaCoreEventListenerKeyboardAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventListenerKeyboard>("cc","EventListenerKeyboard",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EventListenerKeyboard*(*)()>(&cocos2d::EventListenerKeyboard::create));
-mt.set_function("Clone",static_cast<cocos2d::EventListenerKeyboard*(cocos2d::EventListenerKeyboard::*)()>(&cocos2d::EventListenerKeyboard::clone));
-mt.set_function("CheckAvailable",static_cast<bool(cocos2d::EventListenerKeyboard::*)()>(&cocos2d::EventListenerKeyboard::checkAvailable));
-mt["LISTENER_ID"]=sol::var(std::ref(cocos2d::EventListenerKeyboard::LISTENER_ID));
-mt["OnKeyPressed"]=&cocos2d::EventListenerKeyboard::onKeyPressed;
-mt["OnKeyReleased"]=&cocos2d::EventListenerKeyboard::onKeyReleased;
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventListenerKeyboard).name()] = sol::usertype_traits<cocos2d::EventListenerKeyboard*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EventListenerKeyboard>("deprecated.cocos2d::EventListenerKeyboard");
+dep[sol::base_classes]=sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventListenerKeyboard*>::metatable(),sol::usertype_traits<cocos2d::EventListener*>::metatable());
+lua["cc"]["EventListenerKeyboard"]=mt;
+mt["__new__"]=static_cast<cocos2d::EventListenerKeyboard*(*)()>(&cocos2d::EventListenerKeyboard::create);
+mt["get"]["LISTENER_ID"]=[](){return cocos2d::EventListenerKeyboard::LISTENER_ID;};;
+mt["get"]["OnKeyPressed"]=[](cocos2d::EventListenerKeyboard* obj){return obj->onKeyPressed;};;
+mt["get"]["OnKeyReleased"]=[](cocos2d::EventListenerKeyboard* obj){return obj->onKeyReleased;};;
 }
 void RegisterLuaCoreEventMouseMouseEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["cc"];
-pTable = pTable["EventMouse"];
-pTable.new_enum<cocos2d::EventMouse::MouseEventType>("MouseEventType",{
-{"MOUSE_NONE",cocos2d::EventMouse::MouseEventType::MOUSE_NONE}
-,{"MOUSE_DOWN",cocos2d::EventMouse::MouseEventType::MOUSE_DOWN}
-,{"MOUSE_UP",cocos2d::EventMouse::MouseEventType::MOUSE_UP}
-,{"MOUSE_MOVE",cocos2d::EventMouse::MouseEventType::MOUSE_MOVE}
-,{"MOUSE_SCROLL",cocos2d::EventMouse::MouseEventType::MOUSE_SCROLL}
-});}
+sol::table enumTable = lua.create_table_with(0,5);
+enumTable["MOUSE_NONE"]=cocos2d::EventMouse::MouseEventType::MOUSE_NONE;
+enumTable["MOUSE_DOWN"]=cocos2d::EventMouse::MouseEventType::MOUSE_DOWN;
+enumTable["MOUSE_UP"]=cocos2d::EventMouse::MouseEventType::MOUSE_UP;
+enumTable["MOUSE_MOVE"]=cocos2d::EventMouse::MouseEventType::MOUSE_MOVE;
+enumTable["MOUSE_SCROLL"]=cocos2d::EventMouse::MouseEventType::MOUSE_SCROLL;
+lua["cc"]["EventMouse"]["static"]["MouseEventType"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaCoreEventMouseMouseButtonAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["cc"];
-pTable = pTable["EventMouse"];
-pTable.new_enum<cocos2d::EventMouse::MouseButton>("MouseButton",{
-{"BUTTON_UNSET",cocos2d::EventMouse::MouseButton::BUTTON_UNSET}
-,{"BUTTON_LEFT",cocos2d::EventMouse::MouseButton::BUTTON_LEFT}
-,{"BUTTON_RIGHT",cocos2d::EventMouse::MouseButton::BUTTON_RIGHT}
-,{"BUTTON_MIDDLE",cocos2d::EventMouse::MouseButton::BUTTON_MIDDLE}
-,{"BUTTON_4",cocos2d::EventMouse::MouseButton::BUTTON_4}
-,{"BUTTON_5",cocos2d::EventMouse::MouseButton::BUTTON_5}
-,{"BUTTON_6",cocos2d::EventMouse::MouseButton::BUTTON_6}
-,{"BUTTON_7",cocos2d::EventMouse::MouseButton::BUTTON_7}
-,{"BUTTON_8",cocos2d::EventMouse::MouseButton::BUTTON_8}
-});}
+sol::table enumTable = lua.create_table_with(0,9);
+enumTable["BUTTON_UNSET"]=cocos2d::EventMouse::MouseButton::BUTTON_UNSET;
+enumTable["BUTTON_LEFT"]=cocos2d::EventMouse::MouseButton::BUTTON_LEFT;
+enumTable["BUTTON_RIGHT"]=cocos2d::EventMouse::MouseButton::BUTTON_RIGHT;
+enumTable["BUTTON_MIDDLE"]=cocos2d::EventMouse::MouseButton::BUTTON_MIDDLE;
+enumTable["BUTTON_4"]=cocos2d::EventMouse::MouseButton::BUTTON_4;
+enumTable["BUTTON_5"]=cocos2d::EventMouse::MouseButton::BUTTON_5;
+enumTable["BUTTON_6"]=cocos2d::EventMouse::MouseButton::BUTTON_6;
+enumTable["BUTTON_7"]=cocos2d::EventMouse::MouseButton::BUTTON_7;
+enumTable["BUTTON_8"]=cocos2d::EventMouse::MouseButton::BUTTON_8;
+lua["cc"]["EventMouse"]["static"]["MouseButton"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaCoreEventMouseAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventMouse>("cc","EventMouse",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Event,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function("SetScrollData",static_cast<void(cocos2d::EventMouse::*)(float,float)>(&cocos2d::EventMouse::setScrollData));
-mt.set_function("GetScrollX",static_cast<float(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getScrollX));
-mt.set_function("GetScrollY",static_cast<float(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getScrollY));
-mt.set_function("SetCursorPosition",static_cast<void(cocos2d::EventMouse::*)(float,float)>(&cocos2d::EventMouse::setCursorPosition));
-mt.set_function("SetMouseButton",static_cast<void(cocos2d::EventMouse::*)(cocos2d::EventMouse::MouseButton)>(&cocos2d::EventMouse::setMouseButton));
-mt.set_function("GetMouseButton",static_cast<cocos2d::EventMouse::MouseButton(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getMouseButton));
-mt.set_function("GetCursorX",static_cast<float(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getCursorX));
-mt.set_function("GetCursorY",static_cast<float(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getCursorY));
-mt.set_function("GetLocation",static_cast<cocos2d::Vec2(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getLocation));
-mt.set_function("GetPreviousLocation",static_cast<cocos2d::Vec2(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getPreviousLocation));
-mt.set_function("GetStartLocation",static_cast<cocos2d::Vec2(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getStartLocation));
-mt.set_function("GetDelta",static_cast<cocos2d::Vec2(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getDelta));
-mt.set_function("GetLocationInView",static_cast<cocos2d::Vec2(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getLocationInView));
-mt.set_function("GetPreviousLocationInView",static_cast<cocos2d::Vec2(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getPreviousLocationInView));
-mt.set_function("GetStartLocationInView",static_cast<cocos2d::Vec2(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getStartLocationInView));
-mt[sol::call_constructor]=sol::constructors<cocos2d::EventMouse(cocos2d::EventMouse::MouseEventType)>();
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventMouse).name()] = sol::usertype_traits<cocos2d::EventMouse*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EventMouse>("deprecated.cocos2d::EventMouse");
+dep[sol::base_classes]=sol::bases<cocos2d::Event,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventMouse*>::metatable(),sol::usertype_traits<cocos2d::Event*>::metatable());
+lua["cc"]["EventMouse"]=mt;
+mt["__new__"]=[](cocos2d::EventMouse::MouseEventType arg0){return new cocos2d::EventMouse(arg0);};
+mt["SetScrollData"]=static_cast<void(cocos2d::EventMouse::*)(float,float)>(&cocos2d::EventMouse::setScrollData);
+mt["GetScrollX"]=static_cast<float(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getScrollX);
+mt["get"]["ScrollX"]=mt["GetScrollX"];
+mt["GetScrollY"]=static_cast<float(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getScrollY);
+mt["get"]["ScrollY"]=mt["GetScrollY"];
+mt["SetCursorPosition"]=static_cast<void(cocos2d::EventMouse::*)(float,float)>(&cocos2d::EventMouse::setCursorPosition);
+mt["SetMouseButton"]=static_cast<void(cocos2d::EventMouse::*)(cocos2d::EventMouse::MouseButton)>(&cocos2d::EventMouse::setMouseButton);
+mt["set"]["MouseButton"]=mt["SetMouseButton"];
+mt["GetMouseButton"]=static_cast<cocos2d::EventMouse::MouseButton(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getMouseButton);
+mt["get"]["MouseButton"]=mt["GetMouseButton"];
+mt["GetCursorX"]=static_cast<float(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getCursorX);
+mt["get"]["CursorX"]=mt["GetCursorX"];
+mt["GetCursorY"]=static_cast<float(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getCursorY);
+mt["get"]["CursorY"]=mt["GetCursorY"];
+mt["GetLocation"]=static_cast<cocos2d::Vec2(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getLocation);
+mt["get"]["Location"]=mt["GetLocation"];
+mt["GetPreviousLocation"]=static_cast<cocos2d::Vec2(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getPreviousLocation);
+mt["get"]["PreviousLocation"]=mt["GetPreviousLocation"];
+mt["GetStartLocation"]=static_cast<cocos2d::Vec2(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getStartLocation);
+mt["get"]["StartLocation"]=mt["GetStartLocation"];
+mt["GetDelta"]=static_cast<cocos2d::Vec2(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getDelta);
+mt["get"]["Delta"]=mt["GetDelta"];
+mt["GetLocationInView"]=static_cast<cocos2d::Vec2(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getLocationInView);
+mt["get"]["LocationInView"]=mt["GetLocationInView"];
+mt["GetPreviousLocationInView"]=static_cast<cocos2d::Vec2(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getPreviousLocationInView);
+mt["get"]["PreviousLocationInView"]=mt["GetPreviousLocationInView"];
+mt["GetStartLocationInView"]=static_cast<cocos2d::Vec2(cocos2d::EventMouse::*)()const>(&cocos2d::EventMouse::getStartLocationInView);
+mt["get"]["StartLocationInView"]=mt["GetStartLocationInView"];
 RegisterLuaCoreEventMouseMouseEventTypeAuto(lua);
 RegisterLuaCoreEventMouseMouseButtonAuto(lua);
 }
 void RegisterLuaCoreEventListenerMouseAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventListenerMouse>("cc","EventListenerMouse",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EventListenerMouse*(*)()>(&cocos2d::EventListenerMouse::create));
-mt.set_function("Clone",static_cast<cocos2d::EventListenerMouse*(cocos2d::EventListenerMouse::*)()>(&cocos2d::EventListenerMouse::clone));
-mt.set_function("CheckAvailable",static_cast<bool(cocos2d::EventListenerMouse::*)()>(&cocos2d::EventListenerMouse::checkAvailable));
-mt["LISTENER_ID"]=sol::var(std::ref(cocos2d::EventListenerMouse::LISTENER_ID));
-mt["OnMouseDown"]=&cocos2d::EventListenerMouse::onMouseDown;
-mt["OnMouseUp"]=&cocos2d::EventListenerMouse::onMouseUp;
-mt["OnMouseMove"]=&cocos2d::EventListenerMouse::onMouseMove;
-mt["OnMouseScroll"]=&cocos2d::EventListenerMouse::onMouseScroll;
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventListenerMouse).name()] = sol::usertype_traits<cocos2d::EventListenerMouse*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EventListenerMouse>("deprecated.cocos2d::EventListenerMouse");
+dep[sol::base_classes]=sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventListenerMouse*>::metatable(),sol::usertype_traits<cocos2d::EventListener*>::metatable());
+lua["cc"]["EventListenerMouse"]=mt;
+mt["__new__"]=static_cast<cocos2d::EventListenerMouse*(*)()>(&cocos2d::EventListenerMouse::create);
+mt["get"]["LISTENER_ID"]=[](){return cocos2d::EventListenerMouse::LISTENER_ID;};;
+mt["get"]["OnMouseDown"]=[](cocos2d::EventListenerMouse* obj){return obj->onMouseDown;};;
+mt["get"]["OnMouseUp"]=[](cocos2d::EventListenerMouse* obj){return obj->onMouseUp;};;
+mt["get"]["OnMouseMove"]=[](cocos2d::EventListenerMouse* obj){return obj->onMouseMove;};;
+mt["get"]["OnMouseScroll"]=[](cocos2d::EventListenerMouse* obj){return obj->onMouseScroll;};;
 }
 void RegisterLuaCoreEventListenerControllerAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventListenerController>("cc","EventListenerController",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EventListenerController*(*)()>(&cocos2d::EventListenerController::create));
-mt.set_function("CheckAvailable",static_cast<bool(cocos2d::EventListenerController::*)()>(&cocos2d::EventListenerController::checkAvailable));
-mt.set_function("Clone",static_cast<cocos2d::EventListenerController*(cocos2d::EventListenerController::*)()>(&cocos2d::EventListenerController::clone));
-mt["LISTENER_ID"]=sol::var(std::ref(cocos2d::EventListenerController::LISTENER_ID));
-mt["OnConnected"]=&cocos2d::EventListenerController::onConnected;
-mt["OnDisconnected"]=&cocos2d::EventListenerController::onDisconnected;
-mt["OnKeyDown"]=&cocos2d::EventListenerController::onKeyDown;
-mt["OnKeyUp"]=&cocos2d::EventListenerController::onKeyUp;
-mt["OnKeyRepeat"]=&cocos2d::EventListenerController::onKeyRepeat;
-mt["OnAxisEvent"]=&cocos2d::EventListenerController::onAxisEvent;
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventListenerController).name()] = sol::usertype_traits<cocos2d::EventListenerController*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EventListenerController>("deprecated.cocos2d::EventListenerController");
+dep[sol::base_classes]=sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventListenerController*>::metatable(),sol::usertype_traits<cocos2d::EventListener*>::metatable());
+lua["cc"]["EventListenerController"]=mt;
+mt["__new__"]=static_cast<cocos2d::EventListenerController*(*)()>(&cocos2d::EventListenerController::create);
+mt["get"]["LISTENER_ID"]=[](){return cocos2d::EventListenerController::LISTENER_ID;};;
+mt["get"]["OnConnected"]=[](cocos2d::EventListenerController* obj){return obj->onConnected;};;
+mt["get"]["OnDisconnected"]=[](cocos2d::EventListenerController* obj){return obj->onDisconnected;};;
+mt["get"]["OnKeyDown"]=[](cocos2d::EventListenerController* obj){return obj->onKeyDown;};;
+mt["get"]["OnKeyUp"]=[](cocos2d::EventListenerController* obj){return obj->onKeyUp;};;
+mt["get"]["OnKeyRepeat"]=[](cocos2d::EventListenerController* obj){return obj->onKeyRepeat;};;
+mt["get"]["OnAxisEvent"]=[](cocos2d::EventListenerController* obj){return obj->onAxisEvent;};;
 }
 void RegisterLuaCoreEventListenerTouchOneByOneAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventListenerTouchOneByOne>("cc","EventListenerTouchOneByOne",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EventListenerTouchOneByOne*(*)()>(&cocos2d::EventListenerTouchOneByOne::create));
-mt.set_function("SetSwallowTouches",static_cast<void(cocos2d::EventListenerTouchOneByOne::*)(bool)>(&cocos2d::EventListenerTouchOneByOne::setSwallowTouches));
-mt.set_function("IsSwallowTouches",static_cast<bool(cocos2d::EventListenerTouchOneByOne::*)()>(&cocos2d::EventListenerTouchOneByOne::isSwallowTouches));
-mt.set_function("Clone",static_cast<cocos2d::EventListenerTouchOneByOne*(cocos2d::EventListenerTouchOneByOne::*)()>(&cocos2d::EventListenerTouchOneByOne::clone));
-mt.set_function("CheckAvailable",static_cast<bool(cocos2d::EventListenerTouchOneByOne::*)()>(&cocos2d::EventListenerTouchOneByOne::checkAvailable));
-mt["LISTENER_ID"]=sol::var(std::ref(cocos2d::EventListenerTouchOneByOne::LISTENER_ID));
-mt["OnTouchBegan"]=&cocos2d::EventListenerTouchOneByOne::onTouchBegan;
-mt["OnTouchMoved"]=&cocos2d::EventListenerTouchOneByOne::onTouchMoved;
-mt["OnTouchEnded"]=&cocos2d::EventListenerTouchOneByOne::onTouchEnded;
-mt["OnTouchCancelled"]=&cocos2d::EventListenerTouchOneByOne::onTouchCancelled;
-}
-void RegisterLuaCoreEventListenerTouchAllAtOnceAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventListenerTouchAllAtOnce>("cc","EventListenerTouchAllAtOnce",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function(sol::meta_function::construct,static_cast<cocos2d::EventListenerTouchAllAtOnce*(*)()>(&cocos2d::EventListenerTouchAllAtOnce::create));
-mt.set_function("Clone",static_cast<cocos2d::EventListenerTouchAllAtOnce*(cocos2d::EventListenerTouchAllAtOnce::*)()>(&cocos2d::EventListenerTouchAllAtOnce::clone));
-mt.set_function("CheckAvailable",static_cast<bool(cocos2d::EventListenerTouchAllAtOnce::*)()>(&cocos2d::EventListenerTouchAllAtOnce::checkAvailable));
-mt["LISTENER_ID"]=sol::var(std::ref(cocos2d::EventListenerTouchAllAtOnce::LISTENER_ID));
-mt["OnTouchesBegan"]=&cocos2d::EventListenerTouchAllAtOnce::onTouchesBegan;
-mt["OnTouchesMoved"]=&cocos2d::EventListenerTouchAllAtOnce::onTouchesMoved;
-mt["OnTouchesEnded"]=&cocos2d::EventListenerTouchAllAtOnce::onTouchesEnded;
-mt["OnTouchesCancelled"]=&cocos2d::EventListenerTouchAllAtOnce::onTouchesCancelled;
-}
-void RegisterLuaCoreEventControllerControllerEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["cc"];
-pTable = pTable["EventController"];
-pTable.new_enum<cocos2d::EventController::ControllerEventType>("ControllerEventType",{
-{"CONNECTION",cocos2d::EventController::ControllerEventType::CONNECTION}
-,{"BUTTON_STATUS_CHANGED",cocos2d::EventController::ControllerEventType::BUTTON_STATUS_CHANGED}
-,{"AXIS_STATUS_CHANGED",cocos2d::EventController::ControllerEventType::AXIS_STATUS_CHANGED}
-});}
-void RegisterLuaCoreEventControllerAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::EventController>("cc","EventController",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::Event,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function("GetControllerEventType",static_cast<cocos2d::EventController::ControllerEventType(cocos2d::EventController::*)()const>(&cocos2d::EventController::getControllerEventType));
-mt.set_function("GetController",static_cast<cocos2d::Controller*(cocos2d::EventController::*)()const>(&cocos2d::EventController::getController));
-mt.set_function("GetKeyCode",static_cast<int(cocos2d::EventController::*)()const>(&cocos2d::EventController::getKeyCode));
-mt.set_function("SetKeyCode",static_cast<void(cocos2d::EventController::*)(int)>(&cocos2d::EventController::setKeyCode));
-mt.set_function("SetConnectStatus",static_cast<void(cocos2d::EventController::*)(bool)>(&cocos2d::EventController::setConnectStatus));
-mt.set_function("IsConnected",static_cast<bool(cocos2d::EventController::*)()const>(&cocos2d::EventController::isConnected));
-mt[sol::call_constructor]=sol::constructors<cocos2d::EventController(cocos2d::EventController::ControllerEventType,cocos2d::Controller*,int),cocos2d::EventController(cocos2d::EventController::ControllerEventType,cocos2d::Controller*,bool)>();
-RegisterLuaCoreEventControllerControllerEventTypeAuto(lua);
-}
-void RegisterLuaCoreActionCameraAuto(cocos2d::extension::Lua& lua){
-auto mt=lua.NewUserType<cocos2d::ActionCamera>("cc","ActionCamera",false);
-cocos2d::extension::Lua::SetBases(mt,sol::bases<cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject>());
-mt.set_function("StartWithTarget",static_cast<void(cocos2d::ActionCamera::*)(cocos2d::Node*)>(&cocos2d::ActionCamera::startWithTarget));
-mt.set_function("Reverse",static_cast<cocos2d::ActionCamera*(cocos2d::ActionCamera::*)()const>(&cocos2d::ActionCamera::reverse));
-mt.set_function("Clone",static_cast<cocos2d::ActionCamera*(cocos2d::ActionCamera::*)()const>(&cocos2d::ActionCamera::clone));
-mt.set_function("SetEye",sol::overload(static_cast<void(cocos2d::ActionCamera::*)(float,float,float)>(&cocos2d::ActionCamera::setEye),static_cast<void(cocos2d::ActionCamera::*)(const cocos2d::Vec3&)>(&cocos2d::ActionCamera::setEye)));
-mt.set_function("GetEye",static_cast<const cocos2d::Vec3&(cocos2d::ActionCamera::*)()const>(&cocos2d::ActionCamera::getEye));
-mt.set_function("SetCenter",static_cast<void(cocos2d::ActionCamera::*)(const cocos2d::Vec3&)>(&cocos2d::ActionCamera::setCenter));
-mt.set_function("GetCenter",static_cast<const cocos2d::Vec3&(cocos2d::ActionCamera::*)()const>(&cocos2d::ActionCamera::getCenter));
-mt.set_function("SetUp",static_cast<void(cocos2d::ActionCamera::*)(const cocos2d::Vec3&)>(&cocos2d::ActionCamera::setUp));
-mt.set_function("GetUp",static_cast<const cocos2d::Vec3&(cocos2d::ActionCamera::*)()const>(&cocos2d::ActionCamera::getUp));
-mt[sol::call_constructor]=sol::constructors<cocos2d::ActionCamera()>();
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventListenerTouchOneByOne).name()] = sol::usertype_traits<cocos2d::EventListenerTouchOneByOne*>::metatable();
+auto dep=lua.new_usertype<cocos2d::EventListenerTouchOneByOne>("deprecated.cocos2d::EventListenerTouchOneByOne");
+dep[sol::base_classes]=sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventListenerTouchOneByOne*>::metatable(),sol::usertype_traits<cocos2d::EventListener*>::metatable());
+lua["cc"]["EventListenerTouchOneByOne"]=mt;
+mt["__new__"]=static_cast<cocos2d::EventListenerTouchOneByOne*(*)()>(&cocos2d::EventListenerTouchOneByOne::create);
+mt["SetSwallowTouches"]=static_cast<void(cocos2d::EventListenerTouchOneByOne::*)(bool)>(&cocos2d::EventListenerTouchOneByOne::setSwallowTouches);
+mt["set"]["SwallowTouches"]=mt["SetSwallowTouches"];
+mt["IsSwallowTouches"]=static_cast<bool(cocos2d::EventListenerTouchOneByOne::*)()>(&cocos2d::EventListenerTouchOneByOne::isSwallowTouches);
+mt["get"]["SwallowTouches"]=mt["IsSwallowTouches"];
+mt["get"]["LISTENER_ID"]=[](){return cocos2d::EventListenerTouchOneByOne::LISTENER_ID;};;
+mt["get"]["OnTouchBegan"]=[](cocos2d::EventListenerTouchOneByOne* obj){return obj->onTouchBegan;};;
+mt["get"]["OnTouchMoved"]=[](cocos2d::EventListenerTouchOneByOne* obj){return obj->onTouchMoved;};;
+mt["get"]["OnTouchEnded"]=[](cocos2d::EventListenerTouchOneByOne* obj){return obj->onTouchEnded;};;
+mt["get"]["OnTouchCancelled"]=[](cocos2d::EventListenerTouchOneByOne* obj){return obj->onTouchCancelled;};;
 }
