@@ -51,7 +51,19 @@ frand_unit_circle(){
 	return (cpvlengthsq(v) < 1.0f ? v : frand_unit_circle());
 }
 
-
+typedef struct {
+    float x, y;
+} float2;
+typedef struct {
+    uint8_t r, g, b, a;
+} RGBA8;
+typedef struct {
+    float2 pos;
+    float2 uv;
+    float r;
+    RGBA8 fill, outline;
+} Vertex;
+typedef uint16_t Index;
 
 
 extern int ChipmunkDemoTicks;
@@ -60,11 +72,10 @@ extern cpVect ChipmunkDemoKeyboard;
 extern cpVect ChipmunkDemoMouse;
 extern cpBool ChipmunkDemoRightClick;
 extern cpBool ChipmunkDemoRightDown;
-
 extern float ChipmunkDebugDrawPointLineScale;
 
 extern char const *ChipmunkDemoMessageString;
-void ChipmunkDemoPrintString(char const *fmt, ...);
+extern void ChipmunkDemoPrintString(char const* fmt, ...);
 
 extern cpShapeFilter GRAB_FILTER;
 extern cpShapeFilter NOT_GRABBABLE_FILTER;
@@ -82,4 +93,3 @@ void ChipmunkDebugDrawDot(cpFloat size, cpVect pos, cpSpaceDebugColor fillColor)
 void ChipmunkDebugDrawBB(cpBB bb, cpSpaceDebugColor outlineColor);
 cpSpaceDebugColor LAColor(float l, float a);
 cpSpaceDebugColor RGBAColor(float r, float g, float b, float a);
-

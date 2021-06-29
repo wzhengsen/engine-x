@@ -1,8 +1,6 @@
 /****************************************************************************
- Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
- 
- http://www.cocos2d-x.org
- 
+ * Copyright (c) 2021 @aismann; Peter Eismann, Germany; dreifrankensoft
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -35,36 +33,6 @@
 
 #include "demo/ChipmunkDemo.h"
 
-extern ChipmunkDemo Example; // Use as template for new Chipmunk2D demos
-
-extern ChipmunkDemo LogoSmash;
-extern ChipmunkDemo PyramidStack;
-extern ChipmunkDemo Plink;
-extern ChipmunkDemo BouncyHexagons;
-extern ChipmunkDemo Tumble;
-extern ChipmunkDemo PyramidTopple;
-extern ChipmunkDemo Planet;
-extern ChipmunkDemo Springies;
-extern ChipmunkDemo Pump;
-extern ChipmunkDemo TheoJansen;
-extern ChipmunkDemo Query;
-extern ChipmunkDemo OneWay;
-extern ChipmunkDemo PlatformerPlayer;
-extern ChipmunkDemo Joints;
-extern ChipmunkDemo Tank;
-extern ChipmunkDemo Chains;
-extern ChipmunkDemo Crane;
-extern ChipmunkDemo Buoyancy;
-extern ChipmunkDemo ContactGraph;
-extern ChipmunkDemo Slice;
-extern ChipmunkDemo Convex;
-extern ChipmunkDemo Unicycle;
-extern ChipmunkDemo Sticky;
-extern ChipmunkDemo Shatter;
-extern ChipmunkDemo GJK;
-
-extern ChipmunkDemo bench_list[];
-extern int bench_count;
 
 class KeyboardNotificationLayer;
 
@@ -88,17 +56,19 @@ public:
     void onMouseDown(cocos2d::Event* event);
     void onMouseUp(cocos2d::Event* event);
     void onMouseMove(cocos2d::Event* event);
-    void onMouseScroll(cocos2d::Event* event);
+
+    void DrawInfo();
+    void updateInit(ChipmunkDemo tt);
 
     cpSpace* _space; // strong ref
-
-    cocos2d::Size orgSize; 
+    cocos2d::extension::PhysicsDebugNode* _debugLayer; // weak ref
 
 private: 
-    cocos2d::extension::PhysicsDebugNode* _debugLayer; // weak ref
+
     cocos2d::EventListenerMouse* _mouseListener;
-    cocos2d::Label* label;
     cocos2d::Node* _trackNode;
+    cocos2d::DrawNode* draw;
+    cocos2d::Label* drawInfo;
 };
 
 class LogoSmashDemo : public ChipmunkTestBed {
@@ -201,9 +171,9 @@ public:
     virtual void update(float dt) override;
 };
 
-class BouncyHexagonsDemo : public ChipmunkTestBed {
+class BenchDemo : public ChipmunkTestBed {
 public:
-    CREATE_FUNC(BouncyHexagonsDemo);
+    CREATE_FUNC(BenchDemo);
     virtual std::string title() const override;
     virtual void onEnter() override;
 
@@ -291,12 +261,6 @@ public:
     virtual void update(float dt) override;
 };
 
-
-
-
-
-
-
 class QueryDemo : public ChipmunkTestBed {
 public:
     CREATE_FUNC(QueryDemo);
@@ -318,7 +282,6 @@ public:
     virtual void update(float dt) override;
 };
 
-
 class BuoyancyDemo : public ChipmunkTestBed {
 public:
     CREATE_FUNC(BuoyancyDemo);
@@ -328,7 +291,6 @@ public:
     void initPhysics() override;
     virtual void update(float dt) override;
 };
-
 
 class SliceDemo : public ChipmunkTestBed {
 public:
@@ -340,7 +302,6 @@ public:
     virtual void update(float dt) override;
 };
 
-
 class UnicycleDemo : public ChipmunkTestBed {
 public:
     CREATE_FUNC(UnicycleDemo);
@@ -351,10 +312,6 @@ public:
     virtual void update(float dt) override;
 };
 
-
-
-
-
 class ExampleDemo : public ChipmunkTestBed {
 public:
     CREATE_FUNC(ExampleDemo);
@@ -364,12 +321,6 @@ public:
     void initPhysics() override;
     virtual void update(float dt) override;
 };
-
-
-
-
-    
-
 DEFINE_TEST_SUITE(ChipmunkTestBedTests);
 
 #endif /* __CHIPMUNKTESTBED_H__ */
