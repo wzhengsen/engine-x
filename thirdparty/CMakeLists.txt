@@ -197,9 +197,9 @@ endif(BUILD_EXT_ASTC)
 # use lua/js specific libs by property to prevent conflict
 if(BUILD_LUA_LIBS)
     add_subdirectory(lua/${LUA_ENGINE})
-    add_subdirectory(lua/tolua)
+    # add_subdirectory(lua/tolua)
     set_property(TARGET thirdparty APPEND PROPERTY 
-        CC_LUA_DEPEND ${LUA_ENGINE} tolua
+        CC_LUA_DEPEND ${LUA_ENGINE} #tolua
     )
 endif()
 
