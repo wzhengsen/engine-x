@@ -4,7 +4,7 @@
 			"path": ".."
 		},
 		{
-			"path": "${env:ENGINEX_ROOT}"
+			"path": "${env:ADXE_ROOT}"
 		}
 	],
 	"settings": {

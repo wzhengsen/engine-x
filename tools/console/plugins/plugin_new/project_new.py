@@ -567,6 +567,20 @@ class TPCreator(object):
             shutil.copy2(src, dst)
 
 # project cmd
+    def replace_workspace(self, v):
+        """ will modify the workspace["path:{$env:ADXE_ROOT}"]
+        """
+        dst_project_dir = self.project_dir
+        files = v['files']
+        engine_root = os.environ["ADXE_ROOT"]
+        if sys.platform == "win32":
+            engine_root = engine_root.replace("\\", "/")
+        for f in files:
+            dst_file_path = os.path.join(dst_project_dir, f)
+            replace_string(dst_file_path, "${env:ADXE_ROOT}", engine_root)
+            repFileName = f.replace("workspace.code-workspace", os.path.basename(dst_project_dir)+".code-workspace")
+            os.rename(os.path.join(dst_project_dir, f), os.path.join(dst_project_dir, repFileName))
+
     def project_rename(self, v):
         """ will modify the file name of the file
         """
@@ -627,7 +641,7 @@ class TPCreator(object):
         dst_package_name = self.package_name
         if dst_package_name == src_package_name:
             return
-
+        dst_package_name = dst_package_name.lower()
         adxe.Logging.info(MultiLanguage.get_string('NEW_INFO_STEP_REPLACE_PKG_FMT',
                                                     (src_package_name, dst_package_name)))
         files = v['files']
@@ -678,7 +692,7 @@ class TPCreator(object):
         dst_bundleid = self.mac_bundleid
         if src_bundleid == dst_bundleid:
             return
-
+        dst_bundleid = dst_bundleid.lower()
         adxe.Logging.info(MultiLanguage.get_string('NEW_INFO_STEP_MAC_BUNDLEID_FMT',
                                                     (src_bundleid, dst_bundleid)))
         files = v['files']
@@ -703,7 +717,7 @@ class TPCreator(object):
         dst_bundleid = self.ios_bundleid
         if src_bundleid == dst_bundleid:
             return
-
+        dst_bundleid = dst_bundleid.lower()
         adxe.Logging.info(MultiLanguage.get_string('NEW_INFO_STEP_IOS_BUNDLEID_FMT',
                                                     (src_bundleid, dst_bundleid)))
         files = v['files']

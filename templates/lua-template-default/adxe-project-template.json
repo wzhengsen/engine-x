@@ -3,30 +3,19 @@
         "exclude_from_template": [
             "frameworks/runtime-src",
             "runtime/config.json",
-            "runtime/version.json"
+            "runtime/version.json",
+            ".settings",
+            ".project",
+            ".gitignore-lua-template"
         ],
         "project_replace_project_name": {
-            "src_project_name": "HelloLua",
-            "files": [
-                "config.json",
-                ".project"
-            ]
+            "src_project_name": "StarryX",
+            "files": []
         },
-        "append_dir": [
+        "append_file": [
             {
-                "from": "extensions/scripting/lua-bindings/script",
-                "to": "src/cocos",
-                "exclude": []
-            },
-            {
-                "from": "templates/lua-template-default/src",
-                "to": "src",
-                "exclude": []
-            },
-            {
-                "from": "templates/lua-template-default/res",
-                "to": "res",
-                "exclude": []
+                "from": "templates/lua-template-default/.gitignore-lua-template",
+                "to": ".gitignore"
             }
         ]
     },
@@ -49,17 +38,20 @@
                 "to": "frameworks/runtime-src/Classes/"
             }
         ],
-        "project_rename": {
-            "src_project_name": "HelloLua",
+        "replace_workspace": {
+            "src_project_name": "StarryX",
             "files": [
+                ".vscode/workspace.code-workspace"
             ]
         },
+        "project_rename": {
+            "src_project_name": "StarryX",
+            "files": []
+        },
         "project_replace_project_name": {
-            "src_project_name": "HelloLua",
+            "src_project_name": "StarryX",
             "files": [
-                "config.json",
-                ".project",
-                "frameworks/runtime-src/proj.win32/main.cpp",
+                "frameworks/runtime-src/proj.windows/main.cpp",
                 "frameworks/runtime-src/proj.android/settings.gradle",
                 "frameworks/runtime-src/proj.android/app/res/values/strings.xml",
                 "frameworks/runtime-src/proj.ios_mac/ios/main.m",
@@ -68,10 +60,11 @@
             ]
         },
         "project_replace_package_name": {
-            "src_package_name": "org.cocos2dx.hellolua",
+            "src_package_name": "org.cocos2dx.starryx",
             "files": [
                 "frameworks/runtime-src/proj.android/app/build.gradle",
-                "frameworks/runtime-src/proj.android/app/AndroidManifest.xml"            ]
+                "frameworks/runtime-src/proj.android/app/AndroidManifest.xml"
+            ]
         },
         "project_replace_so_name": {
             "src_so_name": "HelloLua",
@@ -80,13 +73,13 @@
             ]
         },
         "project_replace_mac_bundleid": {
-            "src_bundle_id": "org.cocos2dx.hellolua",
+            "src_bundle_id": "org.cocos2dx.starryx",
             "files": [
                 "frameworks/runtime-src/proj.ios_mac/mac/Info.plist"
             ]
         },
         "project_replace_ios_bundleid": {
-            "src_bundle_id": "org.cocos2dx.hellolua",
+            "src_bundle_id": "org.cocos2dx.starryx",
             "files": [
                 "frameworks/runtime-src/proj.ios_mac/ios/Info.plist"
             ]
