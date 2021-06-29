@@ -18,6 +18,8 @@ target_compile_definitions(${target_name}
     PRIVATE _WINSOCK_DEPRECATED_NO_WARNINGS
     )
 
+target_compile_definitions(${target_name} PUBLIC LUA_FLOORN2I=1)
+
 if(${LUA_VERSION} VERSION_GREATER_EQUAL "5.4.0") # !important: traditional lua bindings solution tolua++ not support yet
   target_compile_definitions(${target_name} PUBLIC LUA_COMPAT_APIINTCASTS=1)
 elseif(${LUA_VERSION} VERSION_GREATER_EQUAL "5.3.0")
