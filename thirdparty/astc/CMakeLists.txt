@@ -40,7 +40,7 @@ add_library(${target_name} STATIC
 )
 
 target_compile_definitions(${target_name}
-            PRIVATE ASTCENC_DECOMPRESS_ONLY)
+            PUBLIC ASTCENC_DECOMPRESS_ONLY)
             
 if (NOT DEFINED ISA_SIMD)
     ### check -msse2 flag
