@@ -173,8 +173,6 @@ aux_source_directory(auto lua_bindings_files)
 
 set(ADXE_LUA_LIB adxelua CACHE INTERNAL "The ADXE lua bindings lib name" )
 
-set(ENGINEX_LUA_LIB luacocos2d CACHE INTERNAL "The EGNX lua bindings lib name" )
-
 add_library(${ADXE_LUA_LIB} STATIC ${lua_bindings_files})
 target_link_libraries(${ADXE_LUA_LIB} ${ADXE_CORE_LIB})
 add_dependencies(${ADXE_LUA_LIB} ${ADXE_CORE_LIB})
