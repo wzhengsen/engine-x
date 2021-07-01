@@ -268,6 +268,12 @@ THE SOFTWARE.
 #include "3d/CCTerrain.h"
 #include "3d/CCVertexAttribBinding.h"
 
+//crypto
+#include "crypto/CCCrypto.h"
+
+//network
+#include "network/CCConnection.h"
+
 NS_CC_BEGIN
 
 CC_DLL const char* cocos2dVersion();

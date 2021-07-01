@@ -55,6 +55,7 @@ include(base/CMakeLists.txt)
 include(ui/CMakeLists.txt)
 include(network/CMakeLists.txt)
 include(audio/CMakeLists.txt)
+include(crypto/CMakeLists.txt)
 
 set(COCOS_HEADER cocos2d.h
     ${COCOS_2D_HEADER}
@@ -69,6 +70,7 @@ set(COCOS_HEADER cocos2d.h
     ${COCOS_AUDIO_HEADER}
     ${COCOS_UI_HEADER}
     ${COCOS_NETWORK_HEADER}
+    ${COCOS_CRYPTO_HEADER}
     )
 
 set(COCOS_SRC cocos2d.cpp
@@ -84,6 +86,7 @@ set(COCOS_SRC cocos2d.cpp
     ${COCOS_AUDIO_SRC}
     ${COCOS_UI_SRC}
     ${COCOS_NETWORK_SRC}
+    ${COCOS_CRYPTO_SRC}
     )
 
 list(APPEND COCOS_SRC ${COCOS_HEADER})
