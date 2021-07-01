@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreEaseOutAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseOut).name()] = sol::usertype_traits<cocos2d::EaseOut*>::metatable();
 auto dep=lua.new_usertype<cocos2d::EaseOut>("deprecated.cocos2d::EaseOut");

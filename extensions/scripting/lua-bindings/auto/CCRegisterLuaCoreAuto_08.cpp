@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreEventListenerTouchAllAtOnceAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventListenerTouchAllAtOnce).name()] = sol::usertype_traits<cocos2d::EventListenerTouchAllAtOnce*>::metatable();
 auto dep=lua.new_usertype<cocos2d::EventListenerTouchAllAtOnce>("deprecated.cocos2d::EventListenerTouchAllAtOnce");

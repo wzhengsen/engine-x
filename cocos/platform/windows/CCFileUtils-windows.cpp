@@ -26,7 +26,7 @@ THE SOFTWARE.
 #include "platform/windows/CCFileUtils-windows.h"
 #include "platform/CCCommon.h"
 #include "tinydir/tinydir.h"
-#include "openssl/aes.h"
+#include "crypto/CCCrypto.h"
 #include <Shlobj.h>
 #include <cstdlib>
 #include <regex>
@@ -42,7 +42,7 @@ using namespace std;
 
 #define DECLARE_GUARD (void)0 // std::lock_guard<std::recursive_mutex> mutexGuard(_mutex)
 
-// 直接使用当前路径作为可写路径
+// Use the current path directly as a writable path.
 #define USE_MODULE_WRITABLE_PATH
 
 NS_CC_BEGIN
@@ -207,11 +207,7 @@ FileUtils::Status FileUtilsWin32::getContents(const std::string& filename, Resiz
     }
 
     if (isAes) {
-        uint8_t iv[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-        AES_KEY aeskey = {};
-        int num = 0;
-        AES_set_encrypt_key(reinterpret_cast<uint8_t*>(AES_SignPassword), 128, &aeskey);
-        AES_cfb128_encrypt(reinterpret_cast<uint8_t*>(buffer->buffer()), reinterpret_cast<uint8_t*>(buffer->buffer()), size, & aeskey, iv, &num, AES_DECRYPT);
+        Crypto::CFB128(buffer->buffer(), size, buffer->buffer(), size, AES_SignPassword, std::strlen(AES_SignPassword), nullptr, 0, false);
     }
 
     return FileUtils::Status::OK;

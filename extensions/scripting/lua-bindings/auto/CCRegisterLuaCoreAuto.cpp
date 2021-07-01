@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 extern void RegisterLuaCoreClonableAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreRefAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreTextVAlignmentAuto(cocos2d::extension::Lua&);
@@ -291,6 +290,7 @@ extern void RegisterLuaCoreFastTMXLayerAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreTMXTileAnimTaskAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreTMXTileAnimManagerAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreFastTMXTiledMapAuto(cocos2d::extension::Lua&);
+extern void RegisterLuaCoreCryptoAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreConnectionAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreServerAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreClientAuto(cocos2d::extension::Lua&);
@@ -578,6 +578,7 @@ RegisterLuaCoreFastTMXLayerAuto(lua);
 RegisterLuaCoreTMXTileAnimTaskAuto(lua);
 RegisterLuaCoreTMXTileAnimManagerAuto(lua);
 RegisterLuaCoreFastTMXTiledMapAuto(lua);
+RegisterLuaCoreCryptoAuto(lua);
 RegisterLuaCoreConnectionAuto(lua);
 RegisterLuaCoreServerAuto(lua);
 RegisterLuaCoreClientAuto(lua);

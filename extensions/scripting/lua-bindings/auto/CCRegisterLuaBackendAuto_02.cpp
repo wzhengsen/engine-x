@@ -8,43 +8,6 @@
 #include "renderer/backend/CommandBuffer.h"
 #include "renderer/backend/Buffer.h"
 #include "renderer/backend/RenderPipeline.h"
-void RegisterLuaBackendProgramTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,33);
-enumTable["POSITION_COLOR_LENGTH_TEXTURE"]=cocos2d::backend::ProgramType::POSITION_COLOR_LENGTH_TEXTURE;
-enumTable["POSITION_COLOR_TEXTURE_AS_POINTSIZE"]=cocos2d::backend::ProgramType::POSITION_COLOR_TEXTURE_AS_POINTSIZE;
-enumTable["POSITION_COLOR"]=cocos2d::backend::ProgramType::POSITION_COLOR;
-enumTable["POSITION_UCOLOR"]=cocos2d::backend::ProgramType::POSITION_UCOLOR;
-enumTable["POSITION_TEXTURE"]=cocos2d::backend::ProgramType::POSITION_TEXTURE;
-enumTable["POSITION_TEXTURE_COLOR"]=cocos2d::backend::ProgramType::POSITION_TEXTURE_COLOR;
-enumTable["POSITION_TEXTURE_COLOR_ALPHA_TEST"]=cocos2d::backend::ProgramType::POSITION_TEXTURE_COLOR_ALPHA_TEST;
-enumTable["LABEL_NORMAL"]=cocos2d::backend::ProgramType::LABEL_NORMAL;
-enumTable["LABLE_OUTLINE"]=cocos2d::backend::ProgramType::LABLE_OUTLINE;
-enumTable["LABLE_DISTANCEFIELD_GLOW"]=cocos2d::backend::ProgramType::LABLE_DISTANCEFIELD_GLOW;
-enumTable["LABEL_DISTANCE_NORMAL"]=cocos2d::backend::ProgramType::LABEL_DISTANCE_NORMAL;
-enumTable["LAYER_RADIA_GRADIENT"]=cocos2d::backend::ProgramType::LAYER_RADIA_GRADIENT;
-enumTable["ETC1"]=cocos2d::backend::ProgramType::ETC1;
-enumTable["ETC1_GRAY"]=cocos2d::backend::ProgramType::ETC1_GRAY;
-enumTable["GRAY_SCALE"]=cocos2d::backend::ProgramType::GRAY_SCALE;
-enumTable["CAMERA_CLEAR"]=cocos2d::backend::ProgramType::CAMERA_CLEAR;
-enumTable["TERRAIN_3D"]=cocos2d::backend::ProgramType::TERRAIN_3D;
-enumTable["LINE_COLOR_3D"]=cocos2d::backend::ProgramType::LINE_COLOR_3D;
-enumTable["SKYBOX_3D"]=cocos2d::backend::ProgramType::SKYBOX_3D;
-enumTable["SKINPOSITION_TEXTURE_3D"]=cocos2d::backend::ProgramType::SKINPOSITION_TEXTURE_3D;
-enumTable["SKINPOSITION_NORMAL_TEXTURE_3D"]=cocos2d::backend::ProgramType::SKINPOSITION_NORMAL_TEXTURE_3D;
-enumTable["POSITION_NORMAL_TEXTURE_3D"]=cocos2d::backend::ProgramType::POSITION_NORMAL_TEXTURE_3D;
-enumTable["POSITION_NORMAL_3D"]=cocos2d::backend::ProgramType::POSITION_NORMAL_3D;
-enumTable["POSITION_TEXTURE_3D"]=cocos2d::backend::ProgramType::POSITION_TEXTURE_3D;
-enumTable["POSITION_3D"]=cocos2d::backend::ProgramType::POSITION_3D;
-enumTable["POSITION_BUMPEDNORMAL_TEXTURE_3D"]=cocos2d::backend::ProgramType::POSITION_BUMPEDNORMAL_TEXTURE_3D;
-enumTable["SKINPOSITION_BUMPEDNORMAL_TEXTURE_3D"]=cocos2d::backend::ProgramType::SKINPOSITION_BUMPEDNORMAL_TEXTURE_3D;
-enumTable["PARTICLE_TEXTURE_3D"]=cocos2d::backend::ProgramType::PARTICLE_TEXTURE_3D;
-enumTable["PARTICLE_COLOR_3D"]=cocos2d::backend::ProgramType::PARTICLE_COLOR_3D;
-enumTable["HSV"]=cocos2d::backend::ProgramType::HSV;
-enumTable["HSV_ETC1"]=cocos2d::backend::ProgramType::HSV_ETC1;
-enumTable["BUILTIN_COUNT"]=cocos2d::backend::ProgramType::BUILTIN_COUNT;
-enumTable["CUSTOM_PROGRAM"]=cocos2d::backend::ProgramType::CUSTOM_PROGRAM;
-lua["ccb"]["ProgramType"]=lua.NewEnum(enumTable);
-}
 void RegisterLuaBackendShaderCacheAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::backend::ShaderCache).name()] = sol::usertype_traits<cocos2d::backend::ShaderCache*>::metatable();
 auto dep=lua.new_usertype<cocos2d::backend::ShaderCache>("deprecated.cocos2d::backend::ShaderCache");

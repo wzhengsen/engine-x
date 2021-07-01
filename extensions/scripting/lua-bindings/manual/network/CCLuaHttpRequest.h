@@ -33,14 +33,14 @@ namespace extension {
         void AddHeaders(const sol::table& headers);
         void SetHeaders(const sol::table& headers);
         void SetData(const std::string_view& data);
-        void SetHandler(const std::function<void(LuaHttpRequest*, int, const std::string_view&, const std::string_view&)>& handler);
+        void SetHandler(const std::function<void(LuaHttpRequest*, int, const HttpResponse::ResponseHeaderMap&, const std::string_view&)>& handler);
         void Send(const std::string_view& url);
         void Get(const std::string_view& url);
         void Post(const std::string_view& url);
         void Delete(const std::string_view& url);
         void Put(const std::string_view& url);
 
-        std::function<void(LuaHttpRequest*, int, const std::string_view&, const std::string_view&)> _handler = nullptr;
+        std::function<void(LuaHttpRequest*, int, const HttpResponse::ResponseHeaderMap&, const std::string_view&)> _handler = nullptr;
         std::unordered_map<std::string, std::string> _headersMap = {};
     };
 }

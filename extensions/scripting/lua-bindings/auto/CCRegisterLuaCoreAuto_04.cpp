@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreRotateByAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::RotateBy).name()] = sol::usertype_traits<cocos2d::RotateBy*>::metatable();
 auto dep=lua.new_usertype<cocos2d::RotateBy>("deprecated.cocos2d::RotateBy");

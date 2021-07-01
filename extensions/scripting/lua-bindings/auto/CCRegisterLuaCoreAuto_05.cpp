@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreScaleByAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ScaleBy).name()] = sol::usertype_traits<cocos2d::ScaleBy*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ScaleBy>("deprecated.cocos2d::ScaleBy");

@@ -33,9 +33,9 @@ THE SOFTWARE.
 #include "base/ccMacros.h"
 #include "base/CCDirector.h"
 #include "platform/CCSAXParser.h"
-#include "openssl/aes.h"
 //#include "base/ccUtils.h"
 #include "platform/CCPosixFileStream.h"
+#include "crypto/CCCrypto.h"
 
 #ifdef MINIZIP_FROM_SYSTEM
 #include <minizip/unzip.h>
@@ -586,10 +586,6 @@ FileUtils::Status FileUtils::getContents(const std::string& filename, ResizableB
     if (filename.empty())
         return Status::NotExists;
 
-    auto fileUtils = FileUtils::getInstance();
-
-    const auto fullPath = fileUtils->fullPathForFilename(filename);
-
     auto fs = FileUtils::getInstance();
 
     std::string fullPath = fs->fullPathForFilename(filename);
@@ -639,21 +635,16 @@ FileUtils::Status FileUtils::getContents(const std::string& filename, ResizableB
     }
 
     buffer->resize(size);
+    const auto sizeRead = std::fread(buffer->buffer(), 1, size, fp);
 
-    const auto sizeRead = fileStream->read(buffer->buffer(), (unsigned)size);
     if (sizeRead < size) {
         buffer->resize(sizeRead);
         return Status::ReadFailed;
     }
 
     if (isAes) {
-        uint8_t iv[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-        AES_KEY aeskey = {};
-        int num = 0;
-        AES_set_encrypt_key(reinterpret_cast<uint8_t*>(AES_SignPassword), 128, &aeskey);
-        AES_cfb128_encrypt(reinterpret_cast<uint8_t*>(buffer->buffer()), reinterpret_cast<uint8_t*>(buffer->buffer()), size, &aeskey, iv, &num, AES_DECRYPT);
+        Crypto::CFB128(buffer->buffer(), size, buffer->buffer(), size, AES_SignPassword, std::strlen(AES_SignPassword), nullptr, 0, false);
     }
-
 
     return Status::OK;
 }

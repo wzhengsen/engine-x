@@ -34,7 +34,8 @@ class Cocos2dxGeneratorPhysics(Cocos2dxGenerator):
         ]
         self.ExtraArgs += [
             "-I{}/cocos/platform/android".format(self.CocosRoot),
-            "-I{}/thirdparty".format(self.CocosRoot)
+            "-I{}/thirdparty".format(self.CocosRoot),
+            "-I{}/thirdparty/openssl/include".format(self.CocosRoot)
         ]
         self.Classes += [
             "Event(.*(Physics).*)", "Physics.*"

@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreGrid3DAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Grid3D).name()] = sol::usertype_traits<cocos2d::Grid3D*>::metatable();
 auto dep=lua.new_usertype<cocos2d::Grid3D>("deprecated.cocos2d::Grid3D");

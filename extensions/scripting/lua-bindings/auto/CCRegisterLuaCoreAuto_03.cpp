@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreAutoPolygonAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::AutoPolygon).name()] = sol::usertype_traits<cocos2d::AutoPolygon*>::metatable();
 auto dep=lua.new_usertype<cocos2d::AutoPolygon>("deprecated.cocos2d::AutoPolygon");

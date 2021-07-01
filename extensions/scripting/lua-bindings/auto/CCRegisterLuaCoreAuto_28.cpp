@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreTMXTileAnimManagerAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TMXTileAnimManager).name()] = sol::usertype_traits<cocos2d::TMXTileAnimManager*>::metatable();
 auto dep=lua.new_usertype<cocos2d::TMXTileAnimManager>("deprecated.cocos2d::TMXTileAnimManager");
@@ -59,6 +58,44 @@ mt["GetLayerCount"]=static_cast<int(cocos2d::FastTMXTiledMap::*)()const>(&cocos2
 mt["get"]["LayerCount"]=mt["GetLayerCount"];
 mt["GetResourceFile"]=static_cast<const std::string&(cocos2d::FastTMXTiledMap::*)()const>(&cocos2d::FastTMXTiledMap::getResourceFile);
 mt["get"]["ResourceFile"]=mt["GetResourceFile"];
+}
+void RegisterLuaCoreCryptoEncodeModeAuto(cocos2d::extension::Lua& lua) {
+sol::table enumTable = lua.create_table_with(0,3);
+enumTable["BASE64"]=cocos2d::Crypto::EncodeMode::BASE64;
+enumTable["HEX"]=cocos2d::Crypto::EncodeMode::HEX;
+enumTable["URL"]=cocos2d::Crypto::EncodeMode::URL;
+lua["cc"]["Crypto"]["static"]["EncodeMode"]=lua.NewEnum(enumTable);
+}
+void RegisterLuaCoreCryptoHashModeAuto(cocos2d::extension::Lua& lua) {
+sol::table enumTable = lua.create_table_with(0,6);
+enumTable["SHA1"]=cocos2d::Crypto::HashMode::SHA1;
+enumTable["SHA224"]=cocos2d::Crypto::HashMode::SHA224;
+enumTable["SHA256"]=cocos2d::Crypto::HashMode::SHA256;
+enumTable["SHA384"]=cocos2d::Crypto::HashMode::SHA384;
+enumTable["SHA512"]=cocos2d::Crypto::HashMode::SHA512;
+enumTable["MD5"]=cocos2d::Crypto::HashMode::MD5;
+lua["cc"]["Crypto"]["static"]["HashMode"]=lua.NewEnum(enumTable);
+}
+void RegisterLuaCoreCryptoAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Crypto).name()] = sol::usertype_traits<cocos2d::Crypto*>::metatable();
+auto dep=lua.new_usertype<cocos2d::Crypto>("deprecated.cocos2d::Crypto");
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::Crypto*>::metatable());
+lua["cc"]["Crypto"]=mt;
+mt["__new__"] = [](){return nullptr;};
+mt["static"]["Encode"]=static_cast<std::string(*)(const std::string&,cocos2d::Crypto::EncodeMode)>(&cocos2d::Crypto::Encode);
+mt["static"]["Decode"]=static_cast<std::string(*)(const std::string&,cocos2d::Crypto::DecodeMode)>(&cocos2d::Crypto::Decode);
+mt["static"]["Hash"]=sol::overload([](const std::string& arg0,cocos2d::Crypto::HashMode arg1,bool arg2){return cocos2d::Crypto::Hash(arg0,arg1,arg2);},[](const std::string& arg0,cocos2d::Crypto::HashMode arg1){return cocos2d::Crypto::Hash(arg0,arg1);});
+mt["static"]["SHA1"]=static_cast<std::string(*)(const std::string&)>(&cocos2d::Crypto::SHA1);
+mt["static"]["SHA224"]=static_cast<std::string(*)(const std::string&)>(&cocos2d::Crypto::SHA224);
+mt["static"]["SHA256"]=static_cast<std::string(*)(const std::string&)>(&cocos2d::Crypto::SHA256);
+mt["static"]["SHA384"]=static_cast<std::string(*)(const std::string&)>(&cocos2d::Crypto::SHA384);
+mt["static"]["SHA512"]=static_cast<std::string(*)(const std::string&)>(&cocos2d::Crypto::SHA512);
+mt["static"]["MD5"]=static_cast<std::string(*)(const std::string&)>(&cocos2d::Crypto::MD5);
+mt["static"]["Encrypt"]=sol::overload([](const std::string& arg0,const std::string& arg1,const std::string& arg2){return cocos2d::Crypto::Encrypt(arg0,arg1,arg2);},[](const std::string& arg0,const std::string& arg1){return cocos2d::Crypto::Encrypt(arg0,arg1);});
+mt["static"]["Decrypt"]=sol::overload([](const std::string& arg0,const std::string& arg1,const std::string& arg2){return cocos2d::Crypto::Decrypt(arg0,arg1,arg2);},[](const std::string& arg0,const std::string& arg1){return cocos2d::Crypto::Decrypt(arg0,arg1);});
+mt["static"]["CFB128"]=static_cast<void(*)(const void*,size_t,void*,size_t,const char*,uint8_t,const char*,uint8_t,bool)>(&cocos2d::Crypto::CFB128);
+RegisterLuaCoreCryptoEncodeModeAuto(lua);
+RegisterLuaCoreCryptoHashModeAuto(lua);
 }
 void RegisterLuaCoreConnectionKindAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,3);

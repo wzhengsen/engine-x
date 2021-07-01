@@ -471,11 +471,12 @@ void SIOClientImpl::handshakeResponse(HttpClient* /*sender*/, HttpResponse *resp
     if (!response->isSucceed())
     {
         CCLOGERROR("SIOClientImpl::handshake() failed");
-        CCLOGERROR("error buffer: %s", response->getErrorBuffer());
+        std::string err = "error code:" + std::to_string(response->getResponseCode());
+        CCLOGERROR(err.c_str());
 
         for (auto& client : _clients)
         {
-            client.second->getDelegate()->onError(client.second, response->getErrorBuffer());
+            client.second->getDelegate()->onError(client.second, err);
         }
 
         return;

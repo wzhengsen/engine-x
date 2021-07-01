@@ -35,7 +35,8 @@ class Cocos2dxGeneratorSpine(Cocos2dxGenerator):
             "-I{}/cocos/platform/android".format(self.CocosRoot),
             "-I{}/thirdparty".format(self.CocosRoot),
             "-I{}/extensions/spine".format(self.CocosRoot),
-            "-I{}/extensions/spine/runtime/include".format(self.CocosRoot)
+            "-I{}/extensions/spine/runtime/include".format(self.CocosRoot),
+            "-I{}/thirdparty/openssl/include".format(self.CocosRoot)
         ]
         self.Classes += [
             "SkeletonRenderer", "SkeletonAnimation"

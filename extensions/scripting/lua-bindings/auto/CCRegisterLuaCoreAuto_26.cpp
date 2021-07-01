@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreMaterialAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Material).name()] = sol::usertype_traits<cocos2d::Material*>::metatable();
 auto dep=lua.new_usertype<cocos2d::Material>("deprecated.cocos2d::Material");
@@ -179,6 +178,8 @@ mt["GetScissorRect"]=static_cast<const cocos2d::ScissorRect&(cocos2d::Renderer::
 mt["get"]["ScissorRect"]=mt["GetScissorRect"];
 mt["CheckVisibility"]=static_cast<bool(cocos2d::Renderer::*)(const cocos2d::Mat4&,const cocos2d::Size&)>(&cocos2d::Renderer::checkVisibility);
 mt["ReadPixels"]=static_cast<void(cocos2d::Renderer::*)(cocos2d::backend::RenderTarget*,std::function<void (const cocos2d::backend::PixelBufferDescriptor &)>)>(&cocos2d::Renderer::readPixels);
+mt["BeginRenderPass"]=static_cast<void(cocos2d::Renderer::*)()>(&cocos2d::Renderer::beginRenderPass);
+mt["EndRenderPass"]=static_cast<void(cocos2d::Renderer::*)()>(&cocos2d::Renderer::endRenderPass);
 mt["get"]["VBO_SIZE"]=[](){return cocos2d::Renderer::VBO_SIZE;};;
 mt["get"]["INDEX_VBO_SIZE"]=[](){return cocos2d::Renderer::INDEX_VBO_SIZE;};;
 mt["get"]["BATCH_TRIAGCOMMAND_RESERVED_SIZE"]=[](){return cocos2d::Renderer::BATCH_TRIAGCOMMAND_RESERVED_SIZE;};;

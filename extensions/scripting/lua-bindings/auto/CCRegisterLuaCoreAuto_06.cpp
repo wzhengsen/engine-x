@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreActionFloatAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ActionFloat).name()] = sol::usertype_traits<cocos2d::ActionFloat*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ActionFloat>("deprecated.cocos2d::ActionFloat");
@@ -312,6 +311,8 @@ mt["GetOriginalSearchPaths"]=static_cast<const std::vector<std::basic_string<cha
 mt["get"]["OriginalSearchPaths"]=mt["GetOriginalSearchPaths"];
 mt["GetWritablePath"]=static_cast<std::string(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::getWritablePath);
 mt["get"]["WritablePath"]=mt["GetWritablePath"];
+mt["GetNativeWritableAbsolutePath"]=static_cast<std::string(cocos2d::FileUtils::*)()const>(&cocos2d::FileUtils::getNativeWritableAbsolutePath);
+mt["get"]["NativeWritableAbsolutePath"]=mt["GetNativeWritableAbsolutePath"];
 mt["SetWritablePath"]=static_cast<void(cocos2d::FileUtils::*)(const std::string&)>(&cocos2d::FileUtils::setWritablePath);
 mt["set"]["WritablePath"]=mt["SetWritablePath"];
 mt["SetPopupNotify"]=static_cast<void(cocos2d::FileUtils::*)(bool)>(&cocos2d::FileUtils::setPopupNotify);
@@ -346,6 +347,7 @@ mt["get"]["FullPathCache"]=mt["GetFullPathCache"];
 mt["GetNewFilename"]=static_cast<std::string(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getNewFilename);
 mt["IsFileExistInternal"]=static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::isFileExistInternal);
 mt["IsDirectoryExistInternal"]=static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::isDirectoryExistInternal);
+mt["OpenFileStream"]=static_cast<std::unique_ptr<cocos2d::FileStream, std::default_delete<cocos2d::FileStream> >(cocos2d::FileUtils::*)(const std::string&,cocos2d::FileStream::Mode)>(&cocos2d::FileUtils::openFileStream);
 mt["static"]["get"]["Instance"]=&cocos2d::FileUtils::getInstance;
 mt["static"]["set"]["Instance"]=[](std::nullptr_t){cocos2d::FileUtils::destroyInstance();};
 }

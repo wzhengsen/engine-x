@@ -42,7 +42,7 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
         self.ExtraArgs += [
             "-I{}/cocos/platform/android".format(self.CocosRoot),
             "-I{}/thirdparty".format(self.CocosRoot),
-            "-I{}/thirdparty/openssl/include/android".format(self.CocosRoot)
+            "-I{}/thirdparty/openssl/include".format(self.CocosRoot)
         ]
         self.Classes += [
             "New.*", "Sprite((?!3D).)*", "Scene", "Node.*", "Director", "Layer.*", "Menu.*", "Touch", ".*Action.*", "Move.*",

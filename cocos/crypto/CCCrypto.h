@@ -88,31 +88,28 @@ public:
         return Crypto::Hash(src, HashMode::MD5);
     };
 
-    enum class EncryptMode {
-        CFB128
-    };
-    typedef EncryptMode DecryptMode;
+    static std::string Encrypt(const std::string& src, const std::string& key, const std::string& iv = "");
+    static std::string Decrypt(const std::string& src, const std::string& key, const std::string& iv = "");
 
-    inline static std::string Encrypt(const std::string& src, const std::string& key, EncryptMode mode = EncryptMode::CFB128) {
-        auto e = std::string(src.length(), 0);
-        Crypto::Encrypt(src.data(), src.length(), e.data(), e.length(), key.data(), static_cast<uint8_t>(key.length()), nullptr, 0, mode);
-        return e;
-    }
-    inline static std::string Decrypt(const std::string& src, const std::string& key, DecryptMode mode = DecryptMode::CFB128) {
-        auto e = std::string(src.length(), 0);
-        Crypto::Decrypt(src.data(), src.length(), e.data(), e.length(), key.data(), static_cast<uint8_t>(key.length()), nullptr, 0, mode);
-        return e;
-    }
-    inline static std::string Encrypt(const std::string& src, const std::string& key, const std::string& iv, EncryptMode mode = EncryptMode::CFB128) {
-        auto e = std::string(src.length(), 0);
-        Crypto::Encrypt(src.data(), src.length(), e.data(), e.length(), key.data(), static_cast<uint8_t>(key.length()), iv.data(), static_cast<uint8_t>(iv.length()), mode);
-        return e;
-    };
-    inline static std::string Decrypt(const std::string& src, const std::string& key, const std::string& iv, DecryptMode mode = DecryptMode::CFB128) {
-        auto e = std::string(src.length(), 0);
-        Crypto::Decrypt(src.data(), src.length(), e.data(), e.length(), key.data(), static_cast<uint8_t>(key.length()), iv.data(), static_cast<uint8_t>(iv.length()), mode);
-        return e;
-    }
+    /**
+    * @brief        Encryption and decryption with CFB128.
+    * @param[in]    src         The data source for the memory area.
+    * @param        srcLen      The lenght of the memory area.
+    * @param[out]   dst         The memory area of the outputing.
+    * @param        dstLen      The length of the memory area of the outputing.
+    * @param[in]    key         The key.
+    * @param        keyLen      The length of key,if less than 16,then fill \0 to 16 bytes,
+    *                           if greater than 16, only the first 16 bytes are intercepted.
+    * @param[in]    iv          The iv.
+    * @param        ivLen       The length of iv,like keyLen parameter.
+    */
+    static void CFB128(
+        const void* src, size_t srcLen,
+        void* dst, size_t dstLen,
+        const char* key, uint8_t keyLen,
+        const char* iv, uint8_t ivLen,
+        bool encrypt
+    );
 private:
     static void EncodeBase64(const void* src, size_t srcLen, void* dst, size_t& dstLen);
     static void DecodeBase64(const void* src, size_t srcLen, void* dst, size_t& dstLen);
@@ -124,41 +121,6 @@ private:
     static void EncodeUrl(const void* src, size_t srcLen, void* dst, size_t& dstLen);
     static void DecodeUrl(const void* src, size_t srcLen, void* dst, size_t& dstLen);
     static std::string Codec(const std::string& src, EncodeMode mode, bool encode);
-
-    /**
-    * @brief        Encryption and decryption.
-    * @param[in]    src         The data source for the memory area.
-    * @param        srcLen      The lenght of the memory area.
-    * @param[out]   dst         The memory area of the outputing.
-    * @param        dstLen      The length of the memory area of the outputing.
-    * @param[in]    key         The key.
-    * @param        keyLen      The length of key,if less than 16,then fill \0 to 16 bytes,
-    *                           if greater than 16, only the first 16 bytes are intercepted.
-    * @param[in]    iv          The iv.
-    * @param        ivLen       The length of iv,like keyLen parameter.
-    * @param        mode        Now only CFB128 is supported.
-    */
-    static void Encrypt(
-        const void* src, size_t srcLen,
-        void* dst, size_t dstLen,
-        const char* key, uint8_t keyLen,
-        const char* iv, uint8_t ivLen,
-        EncryptMode mode
-    );
-    static void Decrypt(
-        const void* src, size_t srcLen,
-        void* dst, size_t dstLen,
-        const char* key, uint8_t keyLen,
-        const char* iv, uint8_t ivLen,
-        DecryptMode mode
-    );
-    static void CFB128(
-        const void* src, size_t srcLen,
-        void* dst, size_t dstLen,
-        const char* key, uint8_t keyLen,
-        const char* iv, uint8_t ivLen,
-        bool encrypt
-    );
 
     Crypto() = delete;
 };

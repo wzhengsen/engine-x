@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreReuseGridAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ReuseGrid).name()] = sol::usertype_traits<cocos2d::ReuseGrid*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ReuseGrid>("deprecated.cocos2d::ReuseGrid");

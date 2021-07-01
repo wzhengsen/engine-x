@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreDirectorAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Director).name()] = sol::usertype_traits<cocos2d::Director*>::metatable();
 auto dep=lua.new_usertype<cocos2d::Director>("deprecated.cocos2d::Director");
@@ -303,7 +302,7 @@ mt["static"]["set"]["PNGPremultipliedAlphaEnabled"]=mt["SetPNGPremultipliedAlpha
 mt["static"]["SetCompressedImagesHavePMA"]=static_cast<void(*)(uint32_t,bool)>(&cocos2d::Image::setCompressedImagesHavePMA);
 mt["static"]["IsCompressedImageHavePMA"]=static_cast<bool(*)(uint32_t)>(&cocos2d::Image::isCompressedImageHavePMA);
 mt["InitWithImageFile"]=static_cast<bool(cocos2d::Image::*)(const std::string&)>(&cocos2d::Image::initWithImageFile);
-mt["InitWithImageData"]=sol::overload([](cocos2d::Image* obj,const uint8_t* arg0,ssize_t arg1,bool arg2){return obj->initWithImageData(arg0,arg1,arg2);},[](cocos2d::Image* obj,const uint8_t* arg0,ssize_t arg1){return obj->initWithImageData(arg0,arg1);});
+mt["InitWithImageData"]=sol::overload(static_cast<bool(cocos2d::Image::*)(uint8_t*,ssize_t,bool)>(&cocos2d::Image::initWithImageData),static_cast<bool(cocos2d::Image::*)(const uint8_t*,ssize_t)>(&cocos2d::Image::initWithImageData));
 mt["InitWithRawData"]=sol::overload([](cocos2d::Image* obj,const uint8_t* arg0,ssize_t arg1,int arg2,int arg3,int arg4,bool arg5){return obj->initWithRawData(arg0,arg1,arg2,arg3,arg4,arg5);},[](cocos2d::Image* obj,const uint8_t* arg0,ssize_t arg1,int arg2,int arg3,int arg4){return obj->initWithRawData(arg0,arg1,arg2,arg3,arg4);});
 mt["GetData"]=static_cast<uint8_t*(cocos2d::Image::*)()>(&cocos2d::Image::getData);
 mt["get"]["Data"]=mt["GetData"];

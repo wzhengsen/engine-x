@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreParticleSystemQuadAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleSystemQuad).name()] = sol::usertype_traits<cocos2d::ParticleSystemQuad*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ParticleSystemQuad>("deprecated.cocos2d::ParticleSystemQuad");

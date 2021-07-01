@@ -22,12 +22,13 @@ option(BUILD_EXT_CONVERTUTF "Build with internal ConvertUTF support" ON)
 option(BUILD_EXT_POLY2TRI "Build with internal poly2tri support" ON)
 option(BUILD_EXT_ZLIB "Build with internal zlib support" ON)
 option(BUILD_EXT_CURL "Build with internal curl support" ON)
-option(BUILD_EXT_UNZIP "Build with internal unzip support" ON)
+option(BUILD_EXT_MINIZIP "Build with internal minizip support" ON)
 option(BUILD_EXT_ASTC "Build with internal ASTC support" ON)
 option(BUILD_EXT_ALSOFT "Build with internal openal-soft support" ${OPT_ALSOFT_DEFAULT})
 option(BUILD_EXT_CARES "Build with internal c-ares support" OFF)
 option(BUILD_EXT_KCP "Build with internal kcp support" OFF)
 option(BUILD_DEP_LLHTTP "Build with lhttp support" ON)
+option(BUILD_EXT_WEBSOCKETS "Build with internal websockets support" ON)
 
 set(ANDROID_SHARED_LOADS "" CACHE INTERNAL "The android shared libraries load source code" )
 set(ANDROID_SHARED_LOAD_FILE_NAME "SharedLoader.java" CACHE INTERNAL "The android shared load java file name" )
@@ -194,6 +195,12 @@ if(BUILD_EXT_ASTC)
     configure_target_outdir(astc)
 endif(BUILD_EXT_ASTC)
 
+if(BUILD_EXT_WEBSOCKETS)
+    add_subdirectory(websockets)
+    add_subdirectory(uv)
+    target_link_libraries(thirdparty websockets uv)
+endif(BUILD_EXT_WEBSOCKETS)
+
 # use lua/js specific libs by property to prevent conflict
 if(BUILD_LUA_LIBS)
     add_subdirectory(lua/${LUA_ENGINE})
@@ -260,13 +267,21 @@ configure_target_outdir(ogg)
 
 if(WINDOWS OR LINUX)
     add_subdirectory(glad)
-    target_link_libraries(thirdparty glad)
+    add_subdirectory(cef)
+    add_subdirectory(vlc)
+    target_link_libraries(thirdparty
+        glad
+        ext_libcef
+        ext_libcef_dll_wrapper
+        ext_libvlc
+        ext_libvlccore
+    )
     configure_target_outdir(glad)
 endif()
 
 if(WINDOWS)
-    add_subdirectory(win32-specific/iconv)
-    target_link_libraries(thirdparty ext_iconv)
+    add_subdirectory(windows-specific/iconv)
+    target_link_libraries(thirdparty iconv)
 endif()
 
 if(WINDOWS OR MACOSX OR LINUX)
@@ -294,12 +309,12 @@ if(NOT LINUX)
     configure_target_outdir(png)
 endif()
 
-# unzip depend on zlib
-if(BUILD_EXT_UNZIP)
-    add_subdirectory(unzip)
-    target_link_libraries(thirdparty unzip)
-    configure_target_outdir(unzip)
-endif(BUILD_EXT_UNZIP)
+# minizip depend on zlib
+if(BUILD_EXT_MINIZIP)
+    add_subdirectory(minizip)
+    target_link_libraries(thirdparty minizip)
+    configure_target_outdir(minizip)
+endif(BUILD_EXT_MINIZIP)
 
 if(BUILD_EXT_CARES)
     set(CARES_STATIC ON CACHE BOOL "Build c-ares as static library" FORCE)

@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreClonableAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Clonable).name()] = sol::usertype_traits<cocos2d::Clonable*>::metatable();
 auto dep=lua.new_usertype<cocos2d::Clonable>("deprecated.cocos2d::Clonable");
@@ -114,7 +113,7 @@ mt["static"]["GetDefaultAlphaPixelFormat"]=static_cast<cocos2d::backend::PixelFo
 mt["static"]["get"]["DefaultAlphaPixelFormat"]=mt["GetDefaultAlphaPixelFormat"];
 mt["InitWithData"]=sol::overload([](cocos2d::Texture2D* obj,const void* arg0,ssize_t arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5,const cocos2d::Size& arg6,bool arg7){return obj->initWithData(arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7);},[](cocos2d::Texture2D* obj,const void* arg0,ssize_t arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5,const cocos2d::Size& arg6){return obj->initWithData(arg0,arg1,arg2,arg3,arg4,arg5,arg6);},[](cocos2d::Texture2D* obj,const void* arg0,ssize_t arg1,cocos2d::backend::PixelFormat arg2,int arg3,int arg4,const cocos2d::Size& arg5,bool arg6){return obj->initWithData(arg0,arg1,arg2,arg3,arg4,arg5,arg6);},[](cocos2d::Texture2D* obj,const void* arg0,ssize_t arg1,cocos2d::backend::PixelFormat arg2,int arg3,int arg4,const cocos2d::Size& arg5){return obj->initWithData(arg0,arg1,arg2,arg3,arg4,arg5);});
 mt["InitWithMipmaps"]=sol::overload([](cocos2d::Texture2D* obj,cocos2d::MipmapInfo* arg0,int arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5,bool arg6){return obj->initWithMipmaps(arg0,arg1,arg2,arg3,arg4,arg5,arg6);},[](cocos2d::Texture2D* obj,cocos2d::MipmapInfo* arg0,int arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5){return obj->initWithMipmaps(arg0,arg1,arg2,arg3,arg4,arg5);});
-mt["UpdateWithImage"]=sol::overload([](cocos2d::Texture2D* obj,cocos2d::Image* arg0,cocos2d::backend::PixelFormat arg1,int arg2,int arg3){return obj->updateWithImage(arg0,arg1,arg2,arg3);},[](cocos2d::Texture2D* obj,cocos2d::Image* arg0,cocos2d::backend::PixelFormat arg1,int arg2){return obj->updateWithImage(arg0,arg1,arg2);},[](cocos2d::Texture2D* obj,cocos2d::Image* arg0,cocos2d::backend::PixelFormat arg1){return obj->updateWithImage(arg0,arg1);});
+mt["UpdateWithImage"]=sol::overload([](cocos2d::Texture2D* obj,cocos2d::Image* arg0,cocos2d::backend::PixelFormat arg1,int arg2){return obj->updateWithImage(arg0,arg1,arg2);},[](cocos2d::Texture2D* obj,cocos2d::Image* arg0,cocos2d::backend::PixelFormat arg1){return obj->updateWithImage(arg0,arg1);});
 mt["UpdateWithData"]=sol::overload([](cocos2d::Texture2D* obj,const void* arg0,ssize_t arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5,const cocos2d::Size& arg6,bool arg7,int arg8){return obj->updateWithData(arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8);},[](cocos2d::Texture2D* obj,const void* arg0,ssize_t arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5,const cocos2d::Size& arg6,bool arg7){return obj->updateWithData(arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7);});
 mt["UpdateWithMipmaps"]=sol::overload([](cocos2d::Texture2D* obj,cocos2d::MipmapInfo* arg0,int arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5,bool arg6,int arg7){return obj->updateWithMipmaps(arg0,arg1,arg2,arg3,arg4,arg5,arg6,arg7);},[](cocos2d::Texture2D* obj,cocos2d::MipmapInfo* arg0,int arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5,bool arg6){return obj->updateWithMipmaps(arg0,arg1,arg2,arg3,arg4,arg5,arg6);},[](cocos2d::Texture2D* obj,cocos2d::MipmapInfo* arg0,int arg1,cocos2d::backend::PixelFormat arg2,cocos2d::backend::PixelFormat arg3,int arg4,int arg5){return obj->updateWithMipmaps(arg0,arg1,arg2,arg3,arg4,arg5);});
 mt["UpdateWithSubData"]=sol::overload([](cocos2d::Texture2D* obj,void* arg0,int arg1,int arg2,int arg3,int arg4,int arg5){return obj->updateWithSubData(arg0,arg1,arg2,arg3,arg4,arg5);},[](cocos2d::Texture2D* obj,void* arg0,int arg1,int arg2,int arg3,int arg4){return obj->updateWithSubData(arg0,arg1,arg2,arg3,arg4);});
@@ -144,8 +143,8 @@ mt["set"]["PremultipliedAlpha"]=mt["SetPremultipliedAlpha"];
 mt["HasMipmaps"]=static_cast<bool(cocos2d::Texture2D::*)()const>(&cocos2d::Texture2D::hasMipmaps);
 mt["GetPixelFormat"]=static_cast<cocos2d::backend::PixelFormat(cocos2d::Texture2D::*)()const>(&cocos2d::Texture2D::getPixelFormat);
 mt["get"]["PixelFormat"]=mt["GetPixelFormat"];
-mt["GetTextureFormatEXT"]=static_cast<int(cocos2d::Texture2D::*)()const>(&cocos2d::Texture2D::getTextureFormatEXT);
-mt["get"]["TextureFormatEXT"]=mt["GetTextureFormatEXT"];
+mt["GetSamplerFlags"]=static_cast<int(cocos2d::Texture2D::*)()const>(&cocos2d::Texture2D::getSamplerFlags);
+mt["get"]["SamplerFlags"]=mt["GetSamplerFlags"];
 mt["GetPixelsWide"]=static_cast<int(cocos2d::Texture2D::*)()const>(&cocos2d::Texture2D::getPixelsWide);
 mt["get"]["PixelsWide"]=mt["GetPixelsWide"];
 mt["GetPixelsHigh"]=static_cast<int(cocos2d::Texture2D::*)()const>(&cocos2d::Texture2D::getPixelsHigh);

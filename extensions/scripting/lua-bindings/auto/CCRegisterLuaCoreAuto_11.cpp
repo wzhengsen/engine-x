@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreEaseQuinticActionInAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseQuinticActionIn).name()] = sol::usertype_traits<cocos2d::EaseQuinticActionIn*>::metatable();
 auto dep=lua.new_usertype<cocos2d::EaseQuinticActionIn>("deprecated.cocos2d::EaseQuinticActionIn");

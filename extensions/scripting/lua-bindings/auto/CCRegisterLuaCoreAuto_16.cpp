@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreJumpTiles3DAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::JumpTiles3D).name()] = sol::usertype_traits<cocos2d::JumpTiles3D*>::metatable();
 auto dep=lua.new_usertype<cocos2d::JumpTiles3D>("deprecated.cocos2d::JumpTiles3D");

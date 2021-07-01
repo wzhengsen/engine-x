@@ -8,7 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-#include "network/CCConnection.h"
 void RegisterLuaCoreParticleSnowAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleSnow).name()] = sol::usertype_traits<cocos2d::ParticleSnow*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ParticleSnow>("deprecated.cocos2d::ParticleSnow");

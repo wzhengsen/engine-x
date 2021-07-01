@@ -253,36 +253,16 @@ std::string Crypto::Hash(const std::string& src, HashMode mode, bool encode) {
 /****************Hash End****************/
 
 /****************Crypto Begin****************/
-void Crypto::Encrypt(
-    const void* src, size_t srcLen,
-    void* dst, size_t dstLen,
-    const char* key, uint8_t keyLen,
-    const char* iv, uint8_t ivLen,
-    EncryptMode mode
-) {
-    switch (mode) {
-    case EncryptMode::CFB128:
-        CFB128(src, srcLen, dst, dstLen, key, keyLen, iv, ivLen, true);
-        break;
-    default:
-        break;
-    }
-}
 
-void Crypto::Decrypt(
-    const void* src, size_t srcLen,
-    void* dst, size_t dstLen,
-    const char* key, uint8_t keyLen,
-    const char* iv, uint8_t ivLen,
-    DecryptMode mode
-) {
-    switch (mode) {
-    case EncryptMode::CFB128:
-        CFB128(src, srcLen, dst, dstLen, key, keyLen, iv, ivLen, false);
-        break;
-    default:
-        break;
-    }
+std::string Crypto::Encrypt(const std::string& src, const std::string& key, const std::string& iv) {
+    auto e = std::string(src.length(), 0);
+    Crypto::CFB128(src.data(), src.length(), e.data(), e.length(), key.data(), static_cast<uint8_t>(key.length()), iv.data(), static_cast<uint8_t>(iv.length()), true);
+    return e;
+};
+std::string Crypto::Decrypt(const std::string& src, const std::string& key, const std::string& iv) {
+    auto e = std::string(src.length(), 0);
+    Crypto::CFB128(src.data(), src.length(), e.data(), e.length(), key.data(), static_cast<uint8_t>(key.length()), iv.data(), static_cast<uint8_t>(iv.length()), false);
+    return e;
 }
 
 void Crypto::CFB128(
