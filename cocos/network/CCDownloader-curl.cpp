@@ -449,8 +449,8 @@ private:
         //            {
         //                curl_easy_setopt(curl, CURLOPT_PROXY, sProxy.c_str());
         //            }
-        if (hints.timeoutInSeconds) {
-            curl_easy_setopt(handle, CURLOPT_CONNECTTIMEOUT, hints.timeoutInSeconds);
+        if (hints.timeoutInMS) {
+            curl_easy_setopt(handle, CURLOPT_CONNECTTIMEOUT_MS, hints.timeoutInMS);
         }
 
         static const long LOW_SPEED_LIMIT = 1;
