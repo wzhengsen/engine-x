@@ -35,7 +35,7 @@ class Cocos2dxGenerator3D(Cocos2dxGenerator):
         ]
         self.ExtraArgs += [
             "-I{}/cocos/platform/android".format(self.CocosRoot),
-            "-I{}/external".format(self.CocosRoot)
+            "-I{}/thirdparty".format(self.CocosRoot)
         ]
         self.Classes += [
             "Animate3D", "Sprite3D", "Animation3D", "Skeleton3D", "^Mesh$", "AttachNode", "BillBoard", "Sprite3DCache", "TextureCube", "Skybox",

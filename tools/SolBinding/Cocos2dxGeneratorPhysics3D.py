@@ -35,8 +35,8 @@ class Cocos2dxGeneratorPhysics3D(Cocos2dxGenerator):
         ]
         self.ExtraArgs += [
             "-I{}/cocos/platform/android".format(self.CocosRoot),
-            "-I{}/external".format(self.CocosRoot),
-            "-I{}/external/bullet".format(self.CocosRoot)
+            "-I{}/thirdparty".format(self.CocosRoot),
+            "-I{}/thirdparty/bullet".format(self.CocosRoot)
         ]
         self.Classes += [
             "Physics3DWorld", "Physics3DShape", "PhysicsSprite3D", "Physics3DObject", "Physics3DRigidBody", "Physics3DShapesk", "Physics3DComponent", "Physics3DConstraint", "Physics3DPointToPointConstraint", "Physics3DHingeConstraint",

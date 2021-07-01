@@ -41,7 +41,7 @@ class Cocos2dxGeneratorBackend(Cocos2dxGenerator):
         ]
         self.ExtraArgs += [
             "-I{}/cocos/platform/android".format(self.CocosRoot),
-            "-I{}/external".format(self.CocosRoot)
+            "-I{}/thirdparty".format(self.CocosRoot)
         ]
         self.Classes += [
             "VertexLayout", "BufferUsage", "BufferType", "ShaderStage", "VertexFormat", "PixelFormat", "TextureUsage", "IndexFormat", "VertexStepMode", "PrimitiveType",

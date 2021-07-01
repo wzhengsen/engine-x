@@ -35,13 +35,13 @@ class Cocos2dxGeneratorNavMesh(Cocos2dxGenerator):
         ]
         self.ExtraArgs += [
             "-I{}/cocos/platform/android".format(self.CocosRoot),
-            "-I{}/external".format(self.CocosRoot),
-            "-I{}/external/recast/Detour".format(self.CocosRoot),
-            "-I{}/external/recast/DetourCrowd".format(self.CocosRoot),
-            "-I{}/external/recast/DetourTileCache".format(self.CocosRoot),
-            "-I{}/external/recast/DebugUtils".format(self.CocosRoot),
-            "-I{}/external/recast/fastlz".format(self.CocosRoot),
-            "-I{}/external/recast/Recast".format(self.CocosRoot)
+            "-I{}/thirdparty".format(self.CocosRoot),
+            "-I{}/thirdparty/recast/Detour".format(self.CocosRoot),
+            "-I{}/thirdparty/recast/DetourCrowd".format(self.CocosRoot),
+            "-I{}/thirdparty/recast/DetourTileCache".format(self.CocosRoot),
+            "-I{}/thirdparty/recast/DebugUtils".format(self.CocosRoot),
+            "-I{}/thirdparty/recast/fastlz".format(self.CocosRoot),
+            "-I{}/thirdparty/recast/Recast".format(self.CocosRoot)
         ]
         self.Classes += [
             "NavMesh", "NavMeshAgent.*", "NavMeshObstacle.*"

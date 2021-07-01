@@ -49,7 +49,7 @@ class BaseConfig(object):
         defaultInclude = EnvChecker.DefaultIncludePath()
         gccToolChain = EnvChecker.Find_GCC_ToolChain()
         llvmToolChain = EnvChecker.Find_LLVM_ToolChain()
-        egx = os.environ.get("ENGINEX_ROOT")
+        egx = os.environ.get("ADXE_ROOT")
         if not ndkRoot or not defaultInclude or not gccToolChain or not llvmToolChain or not egx:
             raise NotFoundFileException()
 

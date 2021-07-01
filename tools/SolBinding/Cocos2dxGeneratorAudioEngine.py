@@ -34,7 +34,7 @@ class Cocos2dxGeneratorAudioEngine(Cocos2dxGenerator):
         self.ExtraArgs += [
             "-I{}".format(self.CocosRoot),
             "-I{}/cocos/platform/android".format(self.CocosRoot),
-            "-I{}/external".format(self.CocosRoot)
+            "-I{}/thirdparty".format(self.CocosRoot)
         ]
         self.Classes += [
             "AudioEngine", "AudioProfile"

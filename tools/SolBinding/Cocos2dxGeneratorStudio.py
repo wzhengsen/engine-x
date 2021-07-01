@@ -34,7 +34,7 @@ class Cocos2dxGeneratorStudio(Cocos2dxGenerator):
         ]
         self.ExtraArgs += [
             "-I{}/cocos/platform/android".format(self.CocosRoot),
-            "-I{}/external".format(self.CocosRoot),
+            "-I{}/thirdparty".format(self.CocosRoot),
             "-I{}/extensions/cocostudio".format(self.CocosRoot)
         ]
         self.Classes += [

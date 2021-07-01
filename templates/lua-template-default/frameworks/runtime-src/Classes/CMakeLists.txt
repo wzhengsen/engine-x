@@ -51,9 +51,9 @@ target_include_directories(${target_name}
     PRIVATE OO_Lua
     PRIVATE Network
     PUBLIC LuaModule
-    PRIVATE ${COCOS2DX_ROOT_PATH}/cocos
-    PRIVATE ${COCOS2DX_ROOT_PATH}/external
-    PRIVATE ${COCOS2DX_ROOT_PATH}/external/windows-specific/zlib/include
+    PRIVATE ${ADXE_ROOT_PATH}/cocos
+    PRIVATE ${ADXE_ROOT_PATH}/external
+    PRIVATE ${ADXE_ROOT_PATH}/external/windows-specific/zlib/include
     PUBLIC .
     )
 

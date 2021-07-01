@@ -29,20 +29,20 @@ function(cocos_sync_target_res cocos_target)
     if(MSVC OR XCODE)
         add_custom_command(TARGET SYNC_RESOURCE-${cocos_target} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E echo "    syncing and deploy to ${link_folder_abs}"
-        COMMAND ${PYTHON_COMMAND} ARGS ${COCOS2DX_ROOT_PATH}/tools/Project/main.py
+        COMMAND ${PYTHON_COMMAND} ARGS ${ADXE_ROOT_PATH}/tools/Project/main.py
             --$<CONFIG> -s ${opt_FOLDERS} -d ${link_folder_abs}
         )
     else()
         if("${CMAKE_BUILD_TYPE}" MATCHES "Rel")
             add_custom_command(TARGET SYNC_RESOURCE-${cocos_target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E echo "    syncing and deploy to ${link_folder_abs}"
-            COMMAND ${PYTHON_COMMAND} ARGS ${COCOS2DX_ROOT_PATH}/tools/Project/main.py
+            COMMAND ${PYTHON_COMMAND} ARGS ${ADXE_ROOT_PATH}/tools/Project/main.py
                 --release -s ${opt_FOLDERS} -d ${link_folder_abs}
             )
         else()
             add_custom_command(TARGET SYNC_RESOURCE-${cocos_target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E echo "    syncing to ${link_folder_abs}"
-            COMMAND ${PYTHON_COMMAND} ARGS ${COCOS2DX_ROOT_PATH}/tools/Project/main.py
+            COMMAND ${PYTHON_COMMAND} ARGS ${ADXE_ROOT_PATH}/tools/Project/main.py
                 --debug -s ${opt_FOLDERS} -d ${link_folder_abs}
             )
         endif()
@@ -221,59 +221,59 @@ function(cocos_copy_target_dll cocos_target)
         # Copy windows cef binaries
         add_custom_command(TARGET ${cocos_target}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/windows/libGLESv2.dll
-                    ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/windows/libEGL.dll
-                    ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/windows/d3dcompiler_47.dll
-                    ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/windows/chrome_elf.dll
+                    ${ADXE_ROOT_PATH}/external/cef/prebuilt/windows/libGLESv2.dll
+                    ${ADXE_ROOT_PATH}/external/cef/prebuilt/windows/libEGL.dll
+                    ${ADXE_ROOT_PATH}/external/cef/prebuilt/windows/d3dcompiler_47.dll
+                    ${ADXE_ROOT_PATH}/external/cef/prebuilt/windows/chrome_elf.dll
                     $<TARGET_FILE_DIR:${cocos_target}>
                 )
 
         add_custom_command(
             TARGET ${cocos_target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E
-            copy_directory ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/windows/swiftshader
+            copy_directory ${ADXE_ROOT_PATH}/external/cef/prebuilt/windows/swiftshader
             "$<TARGET_FILE_DIR:${cocos_target}>/swiftshader"
         )
 
         add_custom_command(
             TARGET ${cocos_target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E
-            copy_directory ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/windows/Resources
+            copy_directory ${ADXE_ROOT_PATH}/external/cef/prebuilt/windows/Resources
             "$<TARGET_FILE_DIR:${cocos_target}>"
         )
 
         add_custom_command(
             TARGET ${cocos_target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E
-            copy_directory ${COCOS2DX_ROOT_PATH}/external/vlc/prebuilt/windows/plugins
+            copy_directory ${ADXE_ROOT_PATH}/external/vlc/prebuilt/windows/plugins
             "$<TARGET_FILE_DIR:${cocos_target}>/plugins"
         )
     elseif(LINUX)
         add_custom_command(TARGET ${cocos_target}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                    ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/linux/libGLESv2.so
-                    ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/linux/libEGL.so
+                    ${ADXE_ROOT_PATH}/external/cef/prebuilt/linux/libGLESv2.so
+                    ${ADXE_ROOT_PATH}/external/cef/prebuilt/linux/libEGL.so
                     $<TARGET_FILE_DIR:${cocos_target}>
                 )
 
         add_custom_command(
             TARGET ${cocos_target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E
-            copy_directory ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/linux/swiftshader
+            copy_directory ${ADXE_ROOT_PATH}/external/cef/prebuilt/linux/swiftshader
             "$<TARGET_FILE_DIR:${cocos_target}>/swiftshader"
         )
 
         add_custom_command(
             TARGET ${cocos_target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E
-            copy_directory ${COCOS2DX_ROOT_PATH}/external/cef/prebuilt/linux/Resources
+            copy_directory ${ADXE_ROOT_PATH}/external/cef/prebuilt/linux/Resources
             "$<TARGET_FILE_DIR:${cocos_target}>"
         )
 
         add_custom_command(
             TARGET ${cocos_target} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E
-            copy_directory ${COCOS2DX_ROOT_PATH}/external/vlc/prebuilt/linux/plugins
+            copy_directory ${ADXE_ROOT_PATH}/external/vlc/prebuilt/linux/plugins
             "$<TARGET_FILE_DIR:${cocos_target}>/plugins"
         )
     endif()
