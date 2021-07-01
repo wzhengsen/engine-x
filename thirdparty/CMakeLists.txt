@@ -197,10 +197,18 @@ endif(BUILD_EXT_ASTC)
 # use lua/js specific libs by property to prevent conflict
 if(BUILD_LUA_LIBS)
     add_subdirectory(lua/${LUA_ENGINE})
+    add_subdirectory(lua/luasocket)
+    add_subdirectory(lua/cjson)
+    add_subdirectory(lua/lua-protobuf)
+    configure_target_outdir(${LUA_ENGINE})
+    configure_target_outdir(luasocket)
+    configure_target_outdir(cjson)
+    configure_target_outdir(lua-protobuf)
     # add_subdirectory(lua/tolua)
     set_property(TARGET thirdparty APPEND PROPERTY 
         CC_LUA_DEPEND ${LUA_ENGINE} #tolua
     )
+    target_link_libraries(thirdparty ${LUA_ENGINE} luasocket cjson lua-protobuf)
 endif()
 
 if(NOT LINUX)

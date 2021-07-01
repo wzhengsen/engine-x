@@ -43,14 +43,6 @@ set_target_properties(${target_name} PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "${LUA_SRC_PATH}"
 )
 
-set_target_properties(${target_name}
-    PROPERTIES
-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-    FOLDER "ThirdParty"
-)
-
 if(WIN32 OR MACOSX)
   
   function (add_lua_bin target_name src_files)
