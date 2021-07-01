@@ -11,6 +11,19 @@ extern "C" {
 } // extern "C"
 #endif
 
+extern "C" {
+#include "lua_cjson.h"
+}
+
+extern "C" {
+LUALIB_API int luaopen_pb_conv(lua_State* L);
+LUALIB_API int luaopen_pb_buffer(lua_State* L);
+LUALIB_API int luaopen_pb_slice(lua_State* L);
+LUALIB_API int luaopen_pb(lua_State* L);
+LUALIB_API int luaopen_pb_io(lua_State* L);
+LUALIB_API int luaopen_pb_unsafe(lua_State* L);
+}
+
 #include "2d/CCTMXXMLParser.h"
 #include "platform/CCApplication.h"
 #include "platform/CCDevice.h"
@@ -86,6 +99,18 @@ static void RegisterLuaCoreZipFileManual(extension::Lua& lua) {
             return item;
         };
     };
+}
+
+static void RegisterLua_ProtobufManual(extension::Lua& lua) {
+    static luaL_Reg reg[] = {{"pb", luaopen_pb}, {"pb.io", luaopen_pb_io}, {"pb.conv", luaopen_pb_conv},
+        {"pb.slice", luaopen_pb_slice}, {"pb.buffer", luaopen_pb_buffer}, {"pb.unsafe", luaopen_pb_unsafe}};
+    for (const auto v : reg) {
+        lua["package"]["preload"][v.name] = &v.func;
+    }
+}
+
+static void RegisterCJsonManual(extension::Lua& lua) {
+    lua["package"]["preload"]["cjson"]    = &luaopen_cjson_safe;
 }
 
 static void RegisterLuaSocketManual(extension::Lua& lua) {
@@ -325,6 +350,8 @@ inline static void RegisterLuaCoreTMXTilesetInfoManual(extension::Lua& lua) {
 }
 
 void RegisterLuaManual(extension::Lua& lua) {
+    RegisterCJsonManual(lua);
+    RegisterLua_ProtobufManual(lua);
     RegisterLuaSocketManual(lua);
     RegisterLuaCoreTMXMapInfoManual(lua);
     RegisterLuaCoreApplicationManual(lua);
