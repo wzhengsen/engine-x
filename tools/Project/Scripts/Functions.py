@@ -240,7 +240,7 @@ def CompileLua(src, luac=None, remove=True):
     '''
 
     if not luac:
-        egxRoot = os.environ["ENGINEX_ROOT"]
+        egxRoot = os.environ["ADXE_ROOT"]
         luac = "tools/Project/ThirdParty/Mac/luac54"
         if platform.system() == 'Windows':
             luac = "tools/Project/ThirdParty/Windows/luac54.exe"
@@ -293,7 +293,7 @@ def CompressPng(src, pngquant=None, qMin=50, qMax=85):
     '''
 
     if not pngquant:
-        egxRoot = os.environ["ENGINEX_ROOT"]
+        egxRoot = os.environ["ADXE_ROOT"]
         pngquant = "tools/Project/ThirdParty/Mac/pngquant-openmp"
         if(platform.system() == 'Windows'):
             pngquant = "tools/Project/ThirdParty/Windows/pngquant.exe"
