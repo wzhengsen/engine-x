@@ -32,13 +32,20 @@
 
 #include "platform/CCPlatformMacros.h"
 
+#if CC_ENABLE_LUA_BINDING
+#include "scripting/lua-bindings/CCLuaObject.h"
+#endif
+
 namespace cocos2d { namespace network {
 
     class IDownloadTask;
     class IDownloaderImpl;
     class Downloader;
-
+#if CC_ENABLE_LUA_BINDING
+    class CC_DLL DownloadTask final : public cocos2d::extension::LuaObject
+#else
     class CC_DLL DownloadTask final
+#endif
     {
     public:
         const static int ERROR_NO_ERROR = 0;
@@ -56,7 +63,7 @@ namespace cocos2d { namespace network {
         std::string requestURL;
         std::string storagePath;
 
-        struct {
+        struct ProgressInfo {
             // progress
             int64_t  totalBytesExpected = 0;
             int64_t  bytesReceived = 0;
@@ -91,31 +98,34 @@ namespace cocos2d { namespace network {
         uint32_t timeoutInMS = 45000;
         std::string tempFileNameSuffix = ".temp";
     };
-
+#if CC_ENABLE_LUA_BINDING
+    class CC_DLL Downloader final : public cocos2d::extension::LuaObject
+#else
     class CC_DLL Downloader final
+#endif
     {
     public:
         Downloader();
         Downloader(const DownloaderHints& hints);
         ~Downloader();
 
-        std::function<void(const DownloadTask& task,
+        std::function<void(const DownloadTask* task,
                            std::vector<unsigned char>& data)> onDataTaskSuccess;
 
-        std::function<void(const DownloadTask& task)> onFileTaskSuccess;
+        std::function<void(const DownloadTask* task)> onFileTaskSuccess;
 
-        std::function<void(const DownloadTask& task)> onTaskProgress;
+        std::function<void(const DownloadTask* task)> onTaskProgress;
 
-        std::function<void(const DownloadTask& task,
+        std::function<void(const DownloadTask* task,
                            int errorCode,
                            int errorCodeInternal,
                            const std::string& errorStr)> onTaskError;
         
-        void setOnFileTaskSuccess(const std::function<void(const DownloadTask& task)>& callback) {onFileTaskSuccess = callback;};
+        void setOnFileTaskSuccess(const std::function<void(const DownloadTask* task)>& callback) {onFileTaskSuccess = callback;};
         
-        void setOnTaskProgress(const std::function<void(const DownloadTask& task)>& callback) {onTaskProgress = callback;};
+        void setOnTaskProgress(const std::function<void(const DownloadTask* task)>& callback) {onTaskProgress = callback;};
         
-        void setOnTaskError(const std::function<void(const DownloadTask& task,
+        void setOnTaskError(const std::function<void(const DownloadTask* task,
                                                int errorCode,
                                                int errorCodeInternal,
                                                const std::string& errorStr)>& callback) {onTaskError = callback;};

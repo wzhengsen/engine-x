@@ -65,14 +65,14 @@ Downloader::Downloader() : Downloader(DownloaderHints{6, 45, ".tmp"}) {}
 Downloader::Downloader(const DownloaderHints& hints) {
     DLLOG("Construct Downloader %p", this);
     _impl.reset(new DownloaderImpl(hints));
-    _impl->onTaskProgress = [this](const DownloadTask& task,
+    _impl->onTaskProgress = [this](const DownloadTask* task,
                                 std::function<int64_t(void* buffer, int64_t len)>& /*transferDataToBuffer*/) {
         if (onTaskProgress) {
             onTaskProgress(task);
         }
     };
 
-    _impl->onTaskFinish = [this](const DownloadTask& task, int errorCode, int errorCodeInternal,
+    _impl->onTaskFinish = [this](const DownloadTask* task, int errorCode, int errorCodeInternal,
                               const std::string& errorStr, std::vector<unsigned char>& data) {
         if (DownloadTask::ERROR_NO_ERROR != errorCode) {
             if (onTaskError) {
@@ -82,7 +82,7 @@ Downloader::Downloader(const DownloaderHints& hints) {
         }
 
         // success callback
-        if (task.storagePath.length()) {
+        if (task->storagePath.length()) {
             if (onFileTaskSuccess) {
                 onFileTaskSuccess(task);
             }
@@ -106,7 +106,7 @@ std::shared_ptr<DownloadTask> Downloader::createDownloadDataTask(
     do {
         if (srcUrl.empty()) {
             if (onTaskError) {
-                onTaskError(*task, DownloadTask::ERROR_INVALID_PARAMS, 0, "URL or is empty.");
+                onTaskError(task.get(), DownloadTask::ERROR_INVALID_PARAMS, 0, "URL or is empty.");
             }
             task.reset();
             break;
@@ -123,7 +123,7 @@ std::shared_ptr<DownloadTask> Downloader::createDownloadFileTask(const std::stri
     do {
         if (srcUrl.empty() || storagePath.empty()) {
             if (onTaskError) {
-                onTaskError(*task, DownloadTask::ERROR_INVALID_PARAMS, 0, "URL or storage path is empty.");
+                onTaskError(task.get(), DownloadTask::ERROR_INVALID_PARAMS, 0, "URL or storage path is empty.");
             }
             task.reset();
             break;

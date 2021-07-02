@@ -800,7 +800,7 @@ void DownloaderCURL::_onDownloadFinished(TaskWrapper&& wrapper, int checkState) 
         task.progressInfo.totalBytesReceived = coTask._totalBytesReceived;
         task.progressInfo.totalBytesExpected = coTask._totalBytesExpected;
         task.progressInfo.speedInBytes       = coTask._speed;
-        onTaskProgress(task, _transferDataToBuffer);
+        onTaskProgress(&task, _transferDataToBuffer);
         coTask._bytesReceived = 0;
         _currTask             = nullptr;
     }
@@ -827,7 +827,7 @@ void DownloaderCURL::_onDownloadFinished(TaskWrapper&& wrapper, int checkState) 
 
                     pFileUtils->removeFile(coTask._tempFileName);
 
-                    onTaskProgress(task, _transferDataToBuffer);
+                    onTaskProgress(&task, _transferDataToBuffer);
 
                     fsOrigin = nullptr;
                 } else {
@@ -893,7 +893,7 @@ void DownloaderCURL::_onDownloadFinished(TaskWrapper&& wrapper, int checkState) 
     }
 
     // needn't lock coTask here, because tasks has removed form _impl
-    onTaskFinish(task, coTask._errCode, coTask._errCodeInternal, coTask._errDescription, coTask._buf);
+    onTaskFinish(&task, coTask._errCode, coTask._errCodeInternal, coTask._errDescription, coTask._buf);
     DLLOG("    DownloaderCURL: finish Task: Id(%d)", coTask.serialId);
 }
 
@@ -913,7 +913,7 @@ void DownloaderCURL::_onDownloadProgress() {
             task.progressInfo.totalBytesReceived = coTask._totalBytesReceived;
             task.progressInfo.totalBytesExpected = coTask._totalBytesExpected;
             task.progressInfo.speedInBytes       = coTask._speed;
-            onTaskProgress(task, _transferDataToBuffer);
+            onTaskProgress(&task, _transferDataToBuffer);
             _currTask             = nullptr;
             coTask._bytesReceived = 0;
         }

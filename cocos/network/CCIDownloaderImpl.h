@@ -54,9 +54,9 @@ namespace cocos2d { namespace network
     public:
         virtual ~IDownloaderImpl(){}
 
-        std::function<void(const DownloadTask& task, std::function<int64_t(void *buffer, int64_t len)>& transferDataToBuffer)> onTaskProgress;
+        std::function<void(const DownloadTask* task, std::function<int64_t(void *buffer, int64_t len)>& transferDataToBuffer)> onTaskProgress;
 
-        std::function<void(const DownloadTask& task,
+        std::function<void(const DownloadTask* task,
                            int errorCode,
                            int errorCodeInternal,
                            const std::string& errorStr,
