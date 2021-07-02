@@ -105,7 +105,7 @@ static void RegisterLua_ProtobufManual(extension::Lua& lua) {
     static luaL_Reg reg[] = {{"pb", luaopen_pb}, {"pb.io", luaopen_pb_io}, {"pb.conv", luaopen_pb_conv},
         {"pb.slice", luaopen_pb_slice}, {"pb.buffer", luaopen_pb_buffer}, {"pb.unsafe", luaopen_pb_unsafe}};
     for (const auto v : reg) {
-        lua["package"]["preload"][v.name] = &v.func;
+        lua["package"]["preload"][v.name] = v.func;
     }
 }
 
