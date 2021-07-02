@@ -20,10 +20,6 @@ set_target_properties(${target_name} PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS "LWS_WITH_LIBUV"
 )
 
-set_property(TARGET ${target_name} APPEND PROPERTY INTERFACE_LINK_LIBRARIES "ext_ssl")
-set_property(TARGET ${target_name} APPEND PROPERTY INTERFACE_LINK_LIBRARIES "ext_crypto")
-set_property(TARGET ${target_name} APPEND PROPERTY INTERFACE_LINK_LIBRARIES "ext_uv")
-
 if(WINDOWS)
   set_target_properties(${target_name} PROPERTIES
     IMPORTED_LOCATION "${platform_spec_path}/${lib_name}.dll"
