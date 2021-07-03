@@ -150,8 +150,10 @@ class NativeAnonymousEnum(NativeEnum):
                     ))
 
                 for key, value in kvMap.items():
-                    strList.append('pTable["{}"]["{}"] = {};\n'.format(
-                        self._generator.LuaConfig["Qualifiers"]["static"], key if not upper else CursorHelper.UpperCamelCase(
+                    strList.append('pTable["{}"]["{}"]["{}"] = {};\n'.format(
+                        self._generator.LuaConfig["Qualifiers"]["static"],
+                        self._generator.LuaConfig["Qualifiers"]["const"],
+                        key if not upper else CursorHelper.UpperCamelCase(
                             key), value
                     ))
                 strList.append("}")

@@ -39,21 +39,32 @@ class NativeField(NativeMember):
         """
         if not self._cxxStr:
             upper = self._generator.UpperCamelCase
+            strList = []
+            isPointer = self._cursor.type.kind == cindex.TypeKind.POINTER
             if not self._const:
-                implStr = "[]({}* obj,const {}& value){{obj->{} = value;}};".format(
+                # 对于非指针类型，直接使用const Type& 类型为其赋值即可；
+                # 对于指针类型，使用Type*类型，避免使用const Type* const&类型的各种麻烦。
+                implStr = "[]({}* obj,{}{}{} value){{obj->{} = value;}}".format(
                     CursorHelper.GetPrefixName(self._cursor),
+                    "" if isPointer else "const ",
                     CursorHelper.GetArgName(self._cursor.type, False),
+                    "" if isPointer else "&",
                     self._name
                 )
-                strList = ['mt["{}"]["{}"]={};\n'.format(
+                strList.append('mt["{}"]["{}"]={};\n'.format(
                     self._generator.LuaConfig["set"], self._newName if not upper else CursorHelper.UpperCamelCase(
                         self._newName), implStr
-                )]
-            implStr = "[]({}* obj){{return obj->{};}};".format(CursorHelper.GetPrefixName(self._cursor), self._name)
-            strList = ['mt["{}"]["{}"]={};'.format(
+                ))
+            implStr = "[]({}* obj)->const {}{}{{return obj->{};}}".format(
+                CursorHelper.GetPrefixName(self._cursor),
+                CursorHelper.GetArgName(self._cursor.type, False),
+                "" if isPointer else "&",
+                self._name
+            )
+            strList.append('mt["{}"]["{}"]={};'.format(
                 self._generator.LuaConfig["get"], self._newName if not upper else CursorHelper.UpperCamelCase(
                     self._newName), implStr
-            )]
+            ))
             self._cxxStr = ''.join(strList)
         return self._cxxStr
 
@@ -68,25 +79,36 @@ class NativeStaticField(NativeMember):
         依照 mt["get"|"set"]["self._newName"] = [](...){...};的方式生成。
         """
         if not self._cxxStr:
+            static = self._generator.LuaConfig["Qualifiers"]["static"]
             upper = self._generator.UpperCamelCase
+            isPointer = self._cursor.type.kind == cindex.TypeKind.POINTER
+            strList = []
             if not self._const:
-                implStr = "[](const sol::object&,const {}& value){{{}::{} = value;}};".format(
+                implStr = "[](const sol::object&,{}{}{} value){{{}::{} = value;}}".format(
+                    "" if isPointer else "const ",
                     CursorHelper.GetArgName(self._cursor.type, False),
+                    "" if isPointer else "&",
                     CursorHelper.GetPrefixName(self._cursor),
                     self._name
                 )
-                strList = ['mt["{}"]["{}"]={};\n'.format(
+                strList.append('mt["{}"]["{}"]["{}"]={};\n'.format(
+                    static,
                     self._generator.LuaConfig["set"],
                     self._newName if not upper else CursorHelper.UpperCamelCase(self._newName),
                     implStr
-                )]
-
-            implStr = "[](){{return {}::{};}};".format(CursorHelper.GetPrefixName(self._cursor), self._name)
-            strList = ['mt["{}"]["{}"]={};'.format(
+                ))
+            implStr = "[]()->const {}{}{{return {}::{};}}".format(
+                CursorHelper.GetArgName(self._cursor.type, False),
+                "" if isPointer else "&",
+                CursorHelper.GetPrefixName(self._cursor),
+                self._name
+            )
+            strList.append('mt["{}"]["{}"]["{}"]={};'.format(
+                static,
                 self._generator.LuaConfig["get"],
                 self._newName if not upper else CursorHelper.UpperCamelCase(self._newName),
                 implStr
-            )]
+            ))
             self._cxxStr = ''.join(strList)
         return self._cxxStr
 

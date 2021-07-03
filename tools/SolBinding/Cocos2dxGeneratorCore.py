@@ -48,7 +48,7 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "New.*", "Sprite((?!3D).)*", "Scene", "Node.*", "Director", "Layer.*", "Menu.*", "Touch", ".*Action.*", "Move.*",
             "Rotate.*", "Blink.*", "Tint.*", "Sequence", "Repeat.*", "Fade.*", "Ease.*", "Scale.*", "Transition.*", "Spawn",
             "Animat((?!3D).)*", "Flip.*", "Delay.*", "Skew.*", "Jump.*", "Place.*", "Show.*", "Progress.*", "PointArray", "ToggleVisibility.*",
-            "RemoveSelf", "Hide", "Particle.*", "Label.*", "Atlas.*", "TextureCache.*", "Texture2D", "Cardinal.*", "CatmullRom.*", "ParallaxNode",
+            "RemoveSelf", "Hide", "Particle((?!Data).)*", "Label.*", "Atlas.*", "TextureCache.*", "Texture2D", "Cardinal.*", "CatmullRom.*", "ParallaxNode",
             "TileMap.*", ".*TMX.*", "CallFunc", "RenderTexture", "GridAction", "Grid3DAction", "GridBase$", ".+Grid", "Shaky3D", "Waves3D",
             "FlipX3D", "FlipY3D", "Speed", "ActionManager", "Set", "Scheduler", "Timer", "Orbit.*", "Follow.*", "Bezier.*",
             "CardinalSpline.*", "Camera.*", "DrawNode", "Liquid$", "Waves$", "ShuffleTiles$", "TurnOffTiles$", "Split.*", "Twirl$", "FileUtils$",
@@ -57,7 +57,7 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "Material", "Properties", "Technique", "Pass", "PolygonInfo", "AutoPolygon", "BoneNode", "SkeletonNode", "ComponentLua", "PipelineDescriptor",
             "Renderer", "FastTMXLayer", "FastTMXTiledMap", "LanguageType", "PHYSICS.*_MATERIAL_DEFAULT", "GlyphCollection", "MATRIX_STACK_TYPE", "LightType", "LightFlag", "Image::Format",
             "Text(H|V)Alignment", "ResolutionPolicy", "Lens3D", "Ripple3D", "WavesTiles3D", "JumpTiles3D", "Grid3D", ".*ZipFile", "RZipFile::ZipItem", "Touch::DispatchMode",
-            "RZipFile::Encoding", "Clonable", "Connection", "Server", "Client", "Connection::Kind", "Crypto", "Crypto::.*"
+            "RZipFile::Encoding", "Clonable", "Connection", "Server", "Client", "Connection::Kind", "Crypto", "Crypto::.*", "Downloader", "DownloadTask"
         ]
         self.Skip |= {
             "TMXMapInfo": ["startElement", "endElement"],
@@ -70,7 +70,8 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "RZipFile::ZipItem": ["Read"],
             "RZipFile": ["begin", "end"],
             "Node": ["onEnter.*", "onExit.*", "_setLocalZOrder"],
-            "Component": ["onEnter", "onExit", "onAdd", "onRemove"]
+            "Component": ["onEnter", "onExit", "onAdd", "onRemove"],
+            "Director": ["EVENT_.*"]
         }
         self.RenameMembers |= {
             "SpriteFrameCache": {"addSpriteFramesWithFile": "addSpriteFrames", "getSpriteFrameByName": "getSpriteFrame"},
@@ -78,7 +79,8 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "AnimationCache": {"addAnimationsWithFile": "addAnimations"},
             "GLProgram": {"setUniformLocationWith1i": "setUniformLocationI32"},
             "Touch": {"getID": "getId"},
-            "FileUtils": {"loadFilenameLookupDictionaryFromFile": "loadFilenameLookup"}
+            "FileUtils": {"loadFilenameLookupDictionaryFromFile": "loadFilenameLookup"},
+            "Downloader": {"createDownloadDataTask": "DownloadData", "createDownloadFileTask": "DownloadFile"}
         }
         if not self.UpperCamelCase:
             self.RenameMembers |= {

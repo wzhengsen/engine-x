@@ -139,15 +139,18 @@ class CursorHelper:
         """获得参数名，也可用于获得返回值名（获取的是类型名，而不是变量名）。"""
 
         if ntype.kind == cindex.TypeKind.POINTER:
-            return CursorHelper.GetArgName(ntype.get_pointee()) + "*"
+            return CursorHelper.GetArgName(ntype.get_pointee()) + "*" + (" const" if ntype.is_const_qualified() and useConst else "")
         elif ntype.kind == cindex.TypeKind.LVALUEREFERENCE:
             return CursorHelper.GetArgName(ntype.get_pointee()) + "&"
         else:
             decl = ntype.get_declaration()
+            const = ntype.is_const_qualified()
             if decl.kind == cindex.CursorKind.NO_DECL_FOUND:
+                if not useConst and const:
+                    return ntype.spelling.replace("__ndk1::", "").replace("const ", "")
                 return ntype.spelling.replace("__ndk1::", "")
             name = CursorHelper.GetWholeName(decl)
-            return (("const " if ntype.is_const_qualified() and useConst else "") + name).replace("__ndk1::", "")
+            return (("const " if const and useConst else "") + name).replace("__ndk1::", "")
 
     @staticmethod
     def UpperCamelCase(name: str) -> str:
