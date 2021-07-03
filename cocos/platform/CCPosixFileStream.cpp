@@ -114,9 +114,12 @@ PosixFileStream::~PosixFileStream()
     internalClose();
 }
 
-bool PosixFileStream::open(const std::string& path, FileStream::Mode mode)
+bool PosixFileStream::open(std::string path, FileStream::Mode mode)
 {
     bool ok = false;
+#if _WIN32
+    path = utils::Utf8ToGbk(path);
+#endif
 #if CC_TARGET_PLATFORM != CC_PLATFORM_ANDROID
     ok = pfs_posix_open(path, mode, _handle) != -1;
 #else // Android

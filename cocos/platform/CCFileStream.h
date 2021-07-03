@@ -25,7 +25,7 @@ public:
     *  @param mode File open mode, being READ | WRITE | APPEND
     *  @return true if successful, false if not
     */
-    virtual bool open(const std::string& path, FileStream::Mode mode) = 0;
+    virtual bool open(std::string path, FileStream::Mode mode) = 0;
 
     /**
     *  Close a file stream

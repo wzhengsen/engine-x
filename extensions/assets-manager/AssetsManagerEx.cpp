@@ -508,8 +508,8 @@ bool AssetsManagerEx::decompress(const std::string &zip)
             unzClose(zipfile);
             return false;
         }
-        const auto gbkFullPath = utils::Utf8ToGbk(rootPath) + fileName;
-        const std::string fullPath = rootPath + utils::GbkToUtf8(fileName, ::strlen(fileName));
+
+        const std::string fullPath = rootPath + fileName;
         
         // Check if this entry is a directory or a file.
         const size_t filenameLength = strlen(fileName);
@@ -520,7 +520,7 @@ bool AssetsManagerEx::decompress(const std::string &zip)
             if ( !_fileUtils->createDirectory(basename(fullPath)) )
             {
                 // Failed to create directory
-                CCLOG("AssetsManagerEx : can not create directory %s\n", gbkFullPath.c_str());
+                CCLOG("AssetsManagerEx : can not create directory %s\n", fullPath.c_str());
                 unzClose(zipfile);
                 return false;
             }
@@ -532,7 +532,7 @@ bool AssetsManagerEx::decompress(const std::string &zip)
             if (!_fileUtils->isDirectoryExist(dir)) {
                 if (!_fileUtils->createDirectory(dir)) {
                     // Failed to create directory
-                    CCLOG("AssetsManagerEx : can not create directory %s\n", gbkFullPath.c_str());
+                    CCLOG("AssetsManagerEx : can not create directory %s\n", fullPath.c_str());
                     unzClose(zipfile);
                     return false;
                 }
@@ -547,10 +547,10 @@ bool AssetsManagerEx::decompress(const std::string &zip)
             }
             
             // Create a file to store current file.
-            FILE* out = fopen(gbkFullPath.c_str(), "wb");
+            auto out = FileUtils::getInstance()->openFileStream(fullPath, FileStream::Mode::WRITE);
             if (!out)
             {
-                CCLOG("AssetsManagerEx : can not create decompress destination file %s (errno: %d)\n", gbkFullPath.c_str(), errno);
+                CCLOG("AssetsManagerEx : can not create decompress destination file %s (errno: %d)\n", fullPath.c_str(), errno);
                 unzCloseCurrentFile(zipfile);
                 unzClose(zipfile);
                 return false;
@@ -564,7 +564,7 @@ bool AssetsManagerEx::decompress(const std::string &zip)
                 if (error < 0)
                 {
                     CCLOG("AssetsManagerEx : can not read zip file %s, error code is %d\n", fileName, error);
-                    fclose(out);
+                    out->close();
                     unzCloseCurrentFile(zipfile);
                     unzClose(zipfile);
                     return false;
@@ -572,11 +572,11 @@ bool AssetsManagerEx::decompress(const std::string &zip)
                 
                 if (error > 0)
                 {
-                    fwrite(readBuffer, error, 1, out);
+                    out->write(readBuffer, error);
                 }
             } while(error > 0);
             
-            fclose(out);
+            out->close();
         }
         
         unzCloseCurrentFile(zipfile);

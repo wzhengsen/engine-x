@@ -105,7 +105,7 @@ public:
         APPEND,
     };
 
-    bool open(const std::string& path, FileStream::Mode mode) override;
+    bool open(std::string path, FileStream::Mode mode) override;
     int close() override;
 
     int seek(long offset, int origin) override;
