@@ -501,3 +501,30 @@ int sol_lua_push(sol::types<cocos2d::RZipFile::ZipInfo>, lua_State* L, const coc
     }
     return 1;
 }
+
+// Convert cocos2d::network::DownloaderHints
+int sol_lua_push(sol::types<cocos2d::network::DownloaderHints>, lua_State* L, const cocos2d::network::DownloaderHints& val) {
+    lua_createtable(L, 0, 3);
+    sol::stack::raw_set_field(L, "countOfMaxProcessingTasks", val.countOfMaxProcessingTasks);
+    sol::stack::raw_set_field(L, "tempFileNameSuffix", val.tempFileNameSuffix);
+    sol::stack::raw_set_field(L, "timeoutInMS", val.timeoutInMS);
+    return 1;
+}
+cocos2d::network::DownloaderHints sol_lua_get(sol::types<cocos2d::network::DownloaderHints>, lua_State* L, int idx, sol::stack::record& tracking) {
+    static const cocos2d::network::DownloaderHints dh = {};
+    sol::table t = sol::table(L, idx);
+    uint32_t countOfMaxProcessingTasks = t.get_or("countOfMaxProcessingTasks", dh.countOfMaxProcessingTasks);
+    std::string tempFileNameSuffix = t.get_or("tempFileNameSuffix", dh.tempFileNameSuffix);
+    uint32_t timeoutInMS = t.get_or("timeoutInMS", dh.timeoutInMS);
+    tracking.use(1);
+    return { countOfMaxProcessingTasks,timeoutInMS,tempFileNameSuffix };
+}
+
+int sol_lua_push(sol::types<cocos2d::network::DownloadTask::ProgressInfo>, lua_State* L, const cocos2d::network::DownloadTask::ProgressInfo& val) {
+    lua_createtable(L, 0, 4);
+    sol::stack::raw_set_field(L, "totalBytesReceived", val.totalBytesReceived);
+    sol::stack::raw_set_field(L, "totalBytesExpected", val.totalBytesExpected);
+    sol::stack::raw_set_field(L, "speedInBytes", val.speedInBytes);
+    sol::stack::raw_set_field(L, "bytesReceived", val.bytesReceived);
+    return 1;
+}

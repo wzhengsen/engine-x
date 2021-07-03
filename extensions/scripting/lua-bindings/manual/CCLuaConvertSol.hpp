@@ -281,3 +281,54 @@ cocos2d::backend::AttributeBindInfo sol_lua_get(sol::types<cocos2d::backend::Att
 
 // Convert cocos2d::RZipFile::ZipInfo
 int sol_lua_push(sol::types<cocos2d::RZipFile::ZipInfo>, lua_State* L, const cocos2d::RZipFile::ZipInfo& val);
+
+// Convert cocos2d::network::DownloaderHints
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::network::DownloaderHints>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, handler, tracking);
+}
+int sol_lua_push(sol::types<cocos2d::network::DownloaderHints>, lua_State* L, const cocos2d::network::DownloaderHints& val);
+cocos2d::network::DownloaderHints sol_lua_get(sol::types<cocos2d::network::DownloaderHints>, lua_State* L, int idx, sol::stack::record& tracking);
+
+// Convert cocos2d::network::DownloadTask::ProgressInfo
+int sol_lua_push(sol::types<cocos2d::network::DownloadTask::ProgressInfo>, lua_State* L, const cocos2d::network::DownloadTask::ProgressInfo& val);
+
+// Convert std::vector<char/unsigned char>
+template <typename Handler,typename T,typename = typename std::enable_if<std::is_same<T,char>::value || std::is_same<T, unsigned char>::value>::type>
+bool sol_lua_check(sol::types<std::vector<T>>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    bool success = sol::stack::check<std::string>(L, index, handler);
+    tracking.use(1);
+    return success;
+}
+template <typename T, typename = typename std::enable_if<std::is_same<T, char>::value || std::is_same<T, unsigned char>::value>::type>
+std::vector<T> sol_lua_get(std::vector<T>, lua_State* L, int idx, sol::stack::record& tracking) {
+    size_t strLen = 0;
+    const char* str = luaL_checklstring(L, idx, strLen);
+    const T* tStr = reinterpret_cast<const T*>(str);
+    auto vec = std::vector<T>(strLen);
+    vec.insert(vec.end(), tStr, tStr + strLen);
+    tracking.use(1);
+    return vec;
+}
+template <typename T, typename = typename std::enable_if<std::is_same<T, char>::value || std::is_same<T, unsigned char>::value>::type>
+int sol_lua_push(sol::types<std::vector<T>>, lua_State* L, const std::vector<T>& val) {
+    auto buff = luaL_Buffer();
+    char* str = luaL_buffinitsize(L, &buff, val.size());
+    std::memcpy(str, val.data(), val.size());
+    luaL_pushresultsize(&buff, val.size());
+    return 1;
+}
+
+template <typename T, typename = typename std::enable_if<std::is_same<T, char>::value || std::is_same<T, unsigned char>::value>::type>
+int sol_lua_push(sol::types<const std::vector<T>*>, lua_State* L, const std::vector<T>* val) {
+    if (!val) {
+        lua_pushnil(L);
+        return 1;
+    }
+    return sol_lua_push(sol::types<std::vector<T>>(), L, *val);
+}
+
+template <typename T, typename = typename std::enable_if<std::is_same<T, char>::value || std::is_same<T, unsigned char>::value>::type>
+int sol_lua_push(sol::types<std::vector<T>*>, lua_State* L, const std::vector<T>* val) {
+    return sol_lua_push(sol::types<const std::vector<T>*>(), L, val);
+}

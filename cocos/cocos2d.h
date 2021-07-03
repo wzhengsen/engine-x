@@ -273,6 +273,7 @@ THE SOFTWARE.
 
 //network
 #include "network/CCConnection.h"
+#include "network/CCDownloader.h"
 
 NS_CC_BEGIN
 

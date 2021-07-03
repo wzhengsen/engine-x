@@ -31,39 +31,41 @@ THE SOFTWARE.
 
 #include "base/CCConsole.h"
 
-// #define CC_DOWNLOADER_DEBUG
-#if defined(CC_DOWNLOADER_DEBUG) || defined(_DEBUG)
+//#define CC_DOWNLOADER_DEBUG
+#ifdef  CC_DOWNLOADER_DEBUG
 #define DLLOG(format, ...)      cocos2d::log(format, ##__VA_ARGS__)
 #else
 #define DLLOG(...)       do {} while (0)
 #endif
 
-namespace cocos2d { namespace network
-{
-    class DownloadTask;
-
-    class CC_DLL IDownloadTask
+namespace cocos2d {
+    namespace network
     {
-    public:
-        virtual ~IDownloadTask(){}
-        virtual void cancel() {}
-    };
+        class DownloadTask;
 
-    class IDownloaderImpl
-    {
-    public:
-        virtual ~IDownloaderImpl(){}
+        class CC_DLL IDownloadTask
+        {
+        public:
+            virtual ~IDownloadTask() {}
+            virtual void cancel() {}
+        };
 
-        std::function<void(const DownloadTask* task, std::function<int64_t(void *buffer, int64_t len)>& transferDataToBuffer)> onTaskProgress;
+        class IDownloaderImpl
+        {
+        public:
+            virtual ~IDownloaderImpl() {}
 
-        std::function<void(const DownloadTask* task,
-                           int errorCode,
-                           int errorCodeInternal,
-                           const std::string& errorStr,
-                           std::vector<unsigned char>& data)> onTaskFinish;
+            std::function<void(const DownloadTask& task, std::function<int64_t(void* buffer, int64_t len)>& transferDataToBuffer)> onTaskProgress;
 
-        virtual IDownloadTask *createCoTask(std::shared_ptr<DownloadTask>& task) = 0;
-    };
+            std::function<void(const DownloadTask& task,
+                int errorCode,
+                int errorCodeInternal,
+                const std::string& errorStr,
+                std::vector<unsigned char>& data)> onTaskFinish;
 
-}}  // namespace cocos2d::network
+            virtual IDownloadTask* createCoTask(std::shared_ptr<DownloadTask>& task) = 0;
+        };
+
+    }
+}  // namespace cocos2d::network
 

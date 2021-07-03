@@ -204,13 +204,13 @@ AssetsManagerEx::AssetsManagerEx(const std::string& manifestUrl, const std::stri
     };
     _downloader = std::shared_ptr<network::Downloader>(new network::Downloader(hints));
     _downloader->onTaskError = std::bind(&AssetsManagerEx::onError, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
-    _downloader->onTaskProgress = [this](const network::DownloadTask& task)
+    _downloader->onTaskProgress = [this](const network::DownloadTask* task)
     {
-        this->onProgress(task.progressInfo.totalBytesExpected, task.progressInfo.totalBytesReceived, task.requestURL, task.identifier);
+        this->onProgress(task->progressInfo.totalBytesExpected, task->progressInfo.totalBytesReceived, task->requestURL, task->identifier);
     };
-    _downloader->onFileTaskSuccess = [this](const network::DownloadTask& task)
+    _downloader->onFileTaskSuccess = [this](const network::DownloadTask* task)
     {
-        this->onSuccess(task.requestURL, task.storagePath, task.identifier);
+        this->onSuccess(task->requestURL, task->storagePath, task->identifier);
     };
     
     _manifestPath = manifestUrl;
@@ -1146,26 +1146,26 @@ void AssetsManagerEx::fileSuccess(const std::string &customId, const std::string
     queueDowload();
 }
 
-void AssetsManagerEx::onError(const network::DownloadTask& task,
+void AssetsManagerEx::onError(const network::DownloadTask* task,
                               int errorCode,
                               int errorCodeInternal,
                               const std::string& errorStr)
 {
     // Skip version error occurred
-    if (task.identifier == VERSION_ID)
+    if (task->identifier == VERSION_ID)
     {
         CCLOG("AssetsManagerEx : Fail to download version file, step skipped\n");
         _updateState = State::PREDOWNLOAD_MANIFEST;
         downloadManifest();
     }
-    else if (task.identifier == MANIFEST_ID)
+    else if (task->identifier == MANIFEST_ID)
     {
-        dispatchUpdateEvent(EventAssetsManagerEx::EventCode::ERROR_DOWNLOAD_MANIFEST, task.identifier, errorStr, errorCode, errorCodeInternal);
+        dispatchUpdateEvent(EventAssetsManagerEx::EventCode::ERROR_DOWNLOAD_MANIFEST, task->identifier, errorStr, errorCode, errorCodeInternal);
         _updateState = State::FAIL_TO_UPDATE;
     }
     else
     {
-        fileError(task.identifier, errorStr, errorCode, errorCodeInternal);
+        fileError(task->identifier, errorStr, errorCode, errorCodeInternal);
     }
 }
 

@@ -192,7 +192,7 @@ protected:
      * @js NA
      * @lua NA
      */
-    virtual void onError(const network::DownloadTask& task,
+    virtual void onError(const network::DownloadTask* task,
                          int errorCode,
                          int errorCodeInternal,
                          const std::string& errorStr);

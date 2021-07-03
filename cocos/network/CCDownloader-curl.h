@@ -1,15 +1,19 @@
 /****************************************************************************
  Copyright (c) 2015-2016 Chukong Technologies Inc.
  Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
+
  http://www.cocos2d-x.org
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -27,32 +31,35 @@ namespace cocos2d {
     class Scheduler;
 }
 
-namespace cocos2d { namespace network
-{
-    class DownloadTaskCURL;
-    class DownloaderHints;
-	class DownloaderCURL;
-	typedef std::pair< std::shared_ptr<DownloadTask>, DownloadTaskCURL *> TaskWrapper;
-    class DownloaderCURL : public IDownloaderImpl
+namespace cocos2d {
+    namespace network
     {
-    public:
-        DownloaderCURL(const DownloaderHints& hints);
-        virtual ~DownloaderCURL();
+        class DownloadTaskCURL;
+        class DownloaderHints;
+        class DownloaderCURL;
+        typedef std::pair< std::shared_ptr<DownloadTask>, DownloadTaskCURL*> TaskWrapper;
+        class DownloaderCURL : public IDownloaderImpl
+        {
+        public:
+            DownloaderCURL(const DownloaderHints& hints);
+            virtual ~DownloaderCURL();
 
-        virtual IDownloadTask *createCoTask(std::shared_ptr<DownloadTask>& task) override;
+            virtual IDownloadTask* createCoTask(std::shared_ptr<DownloadTask>& task) override;
 
-    protected:
-        class Impl;
-        std::shared_ptr<Impl>   _impl;
+        protected:
+            class Impl;
+            std::shared_ptr<Impl>   _impl;
 
-        // for transfer data on schedule
-        DownloadTaskCURL* _currTask;        // temp ref
-        std::function<int64_t(void*, int64_t)> _transferDataToBuffer;
+            // for transfer data on schedule
+            DownloadTaskCURL* _currTask;        // temp ref
+            std::function<int64_t(void*, int64_t)> _transferDataToBuffer;
 
-        // scheduler for update processing and finished task in main schedule
-        void _onDownloadProgress();
+            // scheduler for update processing and finished task in main schedule
+            void _onSchedule(float);
+            std::string             _schedulerKey;
+            Scheduler* _scheduler;
+        };
 
-		void _onDownloadFinished(TaskWrapper&& task, int checkState = 0);
-    };
+    }
+}  // namespace cocos2d::network
 
-}}  // namespace cocos2d::network
