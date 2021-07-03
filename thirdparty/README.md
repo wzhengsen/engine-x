@@ -6,7 +6,7 @@
 
 ## astc
 - Upstream: https://github.com/ARM-software/astc-encoder
-- Version: git a3b8609 (1010)
+- Version: git 3.0-2003150 (1076)
 - License: Apache-2.0
 
 ## Box2D
@@ -66,7 +66,7 @@
 
 ## glfw
 - Upstream: https://github.com/glfw/glfw
-- Version: git 0e9ec77 (4239)
+- Version: git 6876cf8 (4261)
 - License: zlib
 
 ## glsl-optimizer
