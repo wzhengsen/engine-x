@@ -86,6 +86,16 @@ static Director *s_SharedDirector = nullptr;
 #define kDefaultFPS        60  // 60 frames per second
 extern const char* cocos2dVersion();
 
+const char *Director::EVENT_BEFORE_SET_NEXT_SCENE = "director_before_set_next_scene";
+const char *Director::EVENT_AFTER_SET_NEXT_SCENE = "director_after_set_next_scene";
+const char *Director::EVENT_PROJECTION_CHANGED = "director_projection_changed";
+const char *Director::EVENT_AFTER_DRAW = "director_after_draw";
+const char *Director::EVENT_AFTER_VISIT = "director_after_visit";
+const char *Director::EVENT_BEFORE_UPDATE = "director_before_update";
+const char *Director::EVENT_AFTER_UPDATE = "director_after_update";
+const char *Director::EVENT_RESET = "director_reset";
+const char *Director::EVENT_BEFORE_DRAW = "director_before_draw";
+
 Director* Director::getInstance()
 {
     if (!s_SharedDirector)

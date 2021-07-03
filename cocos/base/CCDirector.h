@@ -90,24 +90,24 @@ class CC_DLL Director : public Ref
 {
 public:
     /** Director will trigger an event before set next scene. */
-    inline static const constexpr char* EVENT_BEFORE_SET_NEXT_SCENE = "director_before_set_next_scene";
+    static const char* EVENT_BEFORE_SET_NEXT_SCENE;
     /** Director will trigger an event after set next scene. */
-    inline static const constexpr char* EVENT_AFTER_SET_NEXT_SCENE = "director_after_set_next_scene";
+    static const char* EVENT_AFTER_SET_NEXT_SCENE;
     
     /** Director will trigger an event when projection type is changed. */
-    inline static const constexpr char* EVENT_PROJECTION_CHANGED = "director_projection_changed";
+    static const char* EVENT_PROJECTION_CHANGED;
     /** Director will trigger an event before Schedule::update() is invoked. */
-    inline static const constexpr char* EVENT_BEFORE_UPDATE = "director_before_update";
+    static const char* EVENT_BEFORE_UPDATE;
     /** Director will trigger an event after Schedule::update() is invoked. */
-    inline static const constexpr char* EVENT_AFTER_UPDATE = "director_after_update";
+    static const char* EVENT_AFTER_UPDATE;
     /** Director will trigger an event while resetting Director */
-    inline static const constexpr char* EVENT_RESET = "director_reset";
+    static const char* EVENT_RESET;
     /** Director will trigger an event after Scene::render() is invoked. */
-    inline static const constexpr char* EVENT_AFTER_VISIT = "director_after_visit";
+    static const char* EVENT_AFTER_VISIT;
     /** Director will trigger an event after a scene is drawn, the data is sent to GPU. */
-    inline static const constexpr char* EVENT_AFTER_DRAW = "director_after_draw";
+    static const char* EVENT_AFTER_DRAW;
     /** Director will trigger an event before a scene is drawn, right after clear. */
-    inline static const constexpr char* EVENT_BEFORE_DRAW = "director_before_draw";
+    static const char* EVENT_BEFORE_DRAW;
 
     /**
      * @brief Possible OpenGL projections used by director
