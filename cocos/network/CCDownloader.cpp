@@ -26,155 +26,125 @@
 #include "network/CCDownloader.h"
 
 #include "network/CCDownloader-curl.h"
-#define DownloaderImpl  DownloaderCURL
+#define DownloaderImpl DownloaderCURL
 
 namespace cocos2d {
-    namespace network {
+namespace network {
 
-        DownloadTask::DownloadTask()
-        {
-            DLLOG("Construct DownloadTask %p", this);
+DownloadTask::DownloadTask() {
+    DLLOG("Construct DownloadTask %p", this);
+}
+
+DownloadTask::DownloadTask(const std::string& srcUrl, const std::string& identifier) {
+    this->requestURL = srcUrl;
+    this->identifier = identifier;
+    this->background = false;
+}
+
+DownloadTask::DownloadTask(const std::string& srcUrl, const std::string& storagePath, const std::string& checksum,
+    const std::string& identifier, bool background) {
+    this->requestURL  = srcUrl;
+    this->storagePath = storagePath;
+    this->checksum    = checksum;
+    this->identifier  = identifier;
+    this->background  = background;
+}
+
+DownloadTask::~DownloadTask() {
+    DLLOG("Destruct DownloadTask %p", this);
+}
+
+
+void DownloadTask::cancel() {
+    if (_coTask)
+        _coTask->cancel();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//  Implement Downloader
+Downloader::Downloader() : Downloader(DownloaderHints{6, 45, ".tmp"}) {}
+
+Downloader::Downloader(const DownloaderHints& hints) {
+    DLLOG("Construct Downloader %p", this);
+    _impl.reset(new DownloaderImpl(hints));
+    _impl->onTaskProgress = [this](const DownloadTask& task,
+                                std::function<int64_t(void* buffer, int64_t len)>& /*transferDataToBuffer*/) {
+        if (onTaskProgress) {
+            onTaskProgress(task);
+        }
+    };
+
+    _impl->onTaskFinish = [this](const DownloadTask& task, int errorCode, int errorCodeInternal,
+                              const std::string& errorStr, std::vector<unsigned char>& data) {
+        if (DownloadTask::ERROR_NO_ERROR != errorCode) {
+            if (onTaskError) {
+                onTaskError(task, errorCode, errorCodeInternal, errorStr);
+            }
+            return;
         }
 
-        DownloadTask::DownloadTask(const std::string& srcUrl, const std::string& identifier)
-        {
-            this->requestURL = srcUrl;
-            this->identifier = identifier;
+        // success callback
+        if (task.storagePath.length()) {
+            if (onFileTaskSuccess) {
+                onFileTaskSuccess(task);
+            }
+        } else {
+            // data task
+            if (onDataTaskSuccess) {
+                onDataTaskSuccess(task, data);
+            }
         }
+    };
+}
 
-        DownloadTask::DownloadTask(const std::string& srcUrl,
-            const std::string& storagePath,
-            const std::string& checksum,
-            const std::string& identifier)
-        {
-            this->requestURL = srcUrl;
-            this->storagePath = storagePath;
-            this->checksum = checksum;
-            this->identifier = identifier;
+Downloader::~Downloader() {
+    DLLOG("Destruct Downloader %p", this);
+}
+
+std::shared_ptr<DownloadTask> Downloader::createDownloadDataTask(
+    const std::string& srcUrl, const std::string& identifier /* = ""*/) {
+    auto task = std::make_shared<DownloadTask>(srcUrl, identifier);
+
+    do {
+        if (srcUrl.empty()) {
+            if (onTaskError) {
+                onTaskError(*task, DownloadTask::ERROR_INVALID_PARAMS, 0, "URL or is empty.");
+            }
+            task.reset();
+            break;
         }
+        task->_coTask.reset(_impl->createCoTask(task));
+    } while (0);
 
-        DownloadTask::~DownloadTask()
-        {
-            DLLOG("Destruct DownloadTask %p", this);
+    return task;
+}
+
+std::shared_ptr<DownloadTask> Downloader::createDownloadFileTask(const std::string& srcUrl,
+    const std::string& storagePath, const std::string& identifier, const std::string& md5checksum, bool background) {
+    auto task = std::make_shared<DownloadTask>(srcUrl, storagePath, md5checksum, identifier, background);
+    do {
+        if (srcUrl.empty() || storagePath.empty()) {
+            if (onTaskError) {
+                onTaskError(*task, DownloadTask::ERROR_INVALID_PARAMS, 0, "URL or storage path is empty.");
+            }
+            task.reset();
+            break;
         }
+        task->_coTask.reset(_impl->createCoTask(task));
+    } while (0);
 
+    return task;
+}
 
-        void DownloadTask::cancel()
-        {
-            if (_coTask)
-                _coTask->cancel();
-        }
+// std::string Downloader::getFileNameFromUrl(const std::string& srcUrl)
+//{
+//    // Find file name and file extension
+//    std::string filename;
+//    unsigned long found = srcUrl.find_last_of("/\\");
+//    if (found != std::string::npos)
+//        filename = srcUrl.substr(found+1);
+//    return filename;
+//}
 
-        ////////////////////////////////////////////////////////////////////////////////
-        //  Implement Downloader
-        Downloader::Downloader() : Downloader(DownloaderHints()) { }
-
-        Downloader::Downloader(const DownloaderHints& hints)
-        {
-            DLLOG("Construct Downloader %p", this);
-            _impl.reset(new DownloaderImpl(hints));
-            _impl->onTaskProgress = [this](const DownloadTask& task,
-                std::function<int64_t(void* buffer, int64_t len)>& /*transferDataToBuffer*/)
-            {
-                if (onTaskProgress)
-                {
-                    onTaskProgress(&task);
-                }
-            };
-
-            _impl->onTaskFinish = [this](const DownloadTask& task,
-                int errorCode,
-                int errorCodeInternal,
-                const std::string& errorStr,
-                std::vector<unsigned char>& data)
-            {
-                if (DownloadTask::ERROR_NO_ERROR != errorCode)
-                {
-                    if (onTaskError)
-                    {
-                        onTaskError(&task, errorCode, errorCodeInternal, errorStr);
-                    }
-                    return;
-                }
-
-                // success callback
-                if (task.storagePath.length())
-                {
-                    if (onFileTaskSuccess)
-                    {
-                        onFileTaskSuccess(&task);
-                    }
-                }
-                else
-                {
-                    // data task
-                    if (onDataTaskSuccess)
-                    {
-                        onDataTaskSuccess(&task, data);
-                    }
-                }
-            };
-        }
-
-        Downloader::~Downloader()
-        {
-            DLLOG("Destruct Downloader %p", this);
-        }
-
-        std::shared_ptr<DownloadTask> Downloader::createDownloadDataTask(const std::string& srcUrl, const std::string& identifier/* = ""*/)
-        {
-            auto task = std::make_shared<DownloadTask>(srcUrl, identifier);
-
-            do
-            {
-                if (srcUrl.empty())
-                {
-                    if (onTaskError)
-                    {
-                        onTaskError(task.get(), DownloadTask::ERROR_INVALID_PARAMS, 0, "URL or is empty.");
-                    }
-                    task.reset();
-                    break;
-                }
-                task->_coTask.reset(_impl->createCoTask(task));
-            } while (0);
-
-            return task;
-        }
-
-        std::shared_ptr<DownloadTask> Downloader::createDownloadFileTask(const std::string& srcUrl,
-            const std::string& storagePath,
-            const std::string& md5checksum,
-            const std::string& identifier/* = ""*/)
-        {
-            auto task = std::make_shared< DownloadTask>(srcUrl, storagePath, md5checksum, identifier);
-            do
-            {
-                if (srcUrl.empty() || storagePath.empty())
-                {
-                    if (onTaskError)
-                    {
-                        onTaskError(task.get(), DownloadTask::ERROR_INVALID_PARAMS, 0, "URL or storage path is empty.");
-                    }
-                    task.reset();
-                    break;
-                }
-                task->_coTask.reset(_impl->createCoTask(task));
-            } while (0);
-
-            return task;
-        }
-
-        //std::string Downloader::getFileNameFromUrl(const std::string& srcUrl)
-        //{
-        //    // Find file name and file extension
-        //    std::string filename;
-        //    unsigned long found = srcUrl.find_last_of("/\\");
-        //    if (found != std::string::npos)
-        //        filename = srcUrl.substr(found+1);
-        //    return filename;
-        //}
-
-    }
-}  //  namespace cocos2d::network
-
+} // namespace network
+} // namespace cocos2d
