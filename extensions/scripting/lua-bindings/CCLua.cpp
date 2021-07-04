@@ -220,10 +220,10 @@ namespace cocos2d {
         }
 
         void Lua::RegisterAuto() {
-            RegisterLua3DAuto(*this);
             RegisterLuaCoreAuto(*this);
-            RegisterLuaControllerAuto(*this);
             RegisterLuaExtensionAuto(*this);
+            RegisterLua3DAuto(*this);
+            RegisterLuaControllerAuto(*this);
             RegisterLuaPhysicsAuto(*this);
             RegisterLuaSpineAuto(*this);
             RegisterLuaStudioAuto(*this);
