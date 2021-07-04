@@ -63,13 +63,8 @@ namespace cocos2d {
                 const std::string& errorStr,
                 std::vector<unsigned char>& data)> onTaskFinish;
 
-        std::function<void(const DownloadTask& task,
-                           int errorCode,
-                           int errorCodeInternal,
-                           const std::string& errorStr,
-                           std::vector<unsigned char>& data)> onTaskFinish;
-
         virtual void createCoTask(std::shared_ptr<DownloadTask>& task) = 0;
+        };
 
     }
 }  // namespace cocos2d::network
