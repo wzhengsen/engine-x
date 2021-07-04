@@ -62,7 +62,7 @@ public:
     std::string requestURL;
     std::string storagePath;
 
-    struct {
+    struct ProgressInfo {
         // progress
         int64_t totalBytesExpected = 0;
         int64_t bytesReceived      = 0;
