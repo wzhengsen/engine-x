@@ -468,12 +468,15 @@ private:
         //            {
         //                curl_easy_setopt(curl, CURLOPT_PROXY, sProxy.c_str());
         //            }
-        if (hints.timeoutInSeconds) {
-            curl_easy_setopt(handle, CURLOPT_CONNECTTIMEOUT, hints.timeoutInSeconds);
+        if (hints.timeoutInMS) {
+            curl_easy_setopt(handle, CURLOPT_CONNECTTIMEOUT_MS, hints.timeoutInMS);
         }
 
         static const long LOW_SPEED_LIMIT = 1;
-        static const long LOW_SPEED_TIME  = 10;
+        long LOW_SPEED_TIME  = 10;
+        if (hints.timeoutInMS) {
+            LOW_SPEED_TIME = hints.timeoutInMS / 1000;
+        }
         curl_easy_setopt(handle, CURLOPT_LOW_SPEED_LIMIT, LOW_SPEED_LIMIT);
         curl_easy_setopt(handle, CURLOPT_LOW_SPEED_TIME, LOW_SPEED_TIME);
 
