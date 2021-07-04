@@ -143,7 +143,9 @@ add_subdirectory(${RUNTIME_SRC_ROOT}/Classes)
 target_link_libraries(${APP_NAME} ${ADXE_LUA_LIB})
 target_link_libraries(${APP_NAME} derivative)
 target_include_directories(${APP_NAME} PRIVATE ${RUNTIME_SRC_ROOT}/Classes ${RUNTIME_SRC_ROOT})
-
+if(WINDOWS)
+    target_link_options(${APP_NAME} PRIVATE "/INCREMENTAL:NO")
+endif()
 
 # mark app resources, resource will be copy auto after mark
 setup_cocos_app_config(${APP_NAME})
