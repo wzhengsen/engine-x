@@ -41,6 +41,8 @@ namespace network {
 class IDownloadTask;
 class IDownloaderImpl;
 class Downloader;
+class DownloaderCURL;
+
 #if CC_ENABLE_LUA_BINDING
 class CC_DLL DownloadTask final : public cocos2d::extension::LuaObject {
 #else
@@ -87,6 +89,7 @@ public:
 
 private:
     friend class Downloader;
+    friend class DownloaderCURL;
     std::unique_ptr<IDownloadTask> _coTask;
 };
 
