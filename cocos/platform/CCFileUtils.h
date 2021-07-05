@@ -124,11 +124,6 @@ public:
     static FileUtils* getInstance();
 
     /**
-     *  Destroys the instance of FileUtils.
-     */
-    static void destroyInstance();
-
-    /**
      * You can inherit from platform dependent implementation of FileUtils, such as FileUtilsAndroid,
      * and use this function to set delegate, then FileUtils will invoke delegate's implementation.
      * For example, your resources are encrypted, so you need to decrypt it after reading data from
@@ -864,6 +859,11 @@ protected:
     FileUtils();
 
     /**
+     *  Destroys the instance of FileUtils.
+     */
+    static void destroyInstance();
+
+    /**
      *  Initializes the instance of FileUtils. It will set _searchPathArray and _searchResolutionsOrderArray to default values.
      *
      *  @note When you are porting Cocos2d-x to a new platform, you may need to take care of this method.
@@ -1001,6 +1001,8 @@ protected:
     static constexpr size_t EncryptSignLen = 16;
     static constexpr char AES_Sign[EncryptSignLen + 1]     = ")(@%%AES_Sign_@_";
     static char* AES_SignPassword;
+
+    friend cocos2d::Director;
 };
 
 // end of support group
