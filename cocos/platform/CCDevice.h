@@ -89,17 +89,85 @@ public:
      * If vibrate is not supported, then invoking this method has no effect.
      * Some platforms limit to a maximum duration of 5 seconds.
      * Duration is ignored on iOS due to API limitations.
-     * @param duration The duration in seconds.
+     * @param duration The duration in millseconds.
      */
-    static void vibrate(float duration);
+    static void vibrate(uint32_t duration);
 
     /**
      * Gets texture data for text.
      */
     static Data getTextureDataForText(const char * text, const FontDefinition& textDefinition, TextAlign align, int &width, int &height, bool& hasPremultipliedAlpha);
 
+
+    /**
+    * @return 0-1
+    */
+    static double GetBatteryPercent() noexcept;
+    static bool IsBatteryCharge() noexcept;
+
+    enum class NetworkType {
+        None,
+        Wifi,
+        Mobile,
+        Other
+    };
+    /**
+    * @return   NetworkType::None will be returned if there is no connection.
+    */
+    static NetworkType GetNetwork() noexcept;
+
+    /**
+    * @return   0-5.
+    *           1 is the weakest,
+    *           5 is the strongest,
+    *           and 0 is no wifi signal (possibly other connections).
+    */
+    static uint8_t GetWifiLevel() noexcept;
+
+    enum class OrientationType {
+        Landscape,
+        Portrait,
+        // Automatic type, following the system, are not always available on PC.
+        Auto
+    };
+
+    /**
+    * @brief    Set the orientation of the current device.
+    * @note     After setting the orientation,the screen will immediately rotate
+    *           and lock to the current orientation unless the function is used again to change the orientation.
+    */
+    static void SetOrientation(OrientationType ot);
+
+    /**
+    * @return   Only OrientationType::Landscape or OrientationType::Portrait will be returned,
+    *           not OrientationType::Auto.
+    *           If you need to get whether the current orientation is automatic, use IsAutoOrientation.
+    */
+    static OrientationType GetOrientation();
+
+    static bool IsAutoOrientation() noexcept;
+
+    /**
+    * @return The empty string will be returned on failure.
+    */
+    static std::string GetIp();
+
+    static std::string GetId();
+
 private:
     CC_DISALLOW_IMPLICIT_CONSTRUCTORS(Device);
+
+private:
+    inline static OrientationType curOriType = OrientationType::Landscape;
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 ||\
+    CC_TARGET_PLATFORM == CC_PLATFORM_LINUX ||\
+    CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+    inline static bool isAutoOri = false;
+    inline static bool firstGetOri = false;
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_IOS
+public:
+    inline static int InterfaceOrientationMask = UIInterfaceOrientationMaskLandscape;
+#endif
 };
 
 // end group

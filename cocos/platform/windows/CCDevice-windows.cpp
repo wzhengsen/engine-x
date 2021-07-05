@@ -26,9 +26,26 @@ THE SOFTWARE.
 #include "platform/CCDevice.h"
 #include "platform/CCFileUtils.h"
 #include "platform/CCStdC.h"
+#include "rapidjson/document.h"
+#include "rapidjson/reader.h"
+#include <winbase.h>
+#include <wlanapi.h>
+#include <wininet.h>
+#include <thread>
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <IPTypes.h>
+#include <iphlpapi.h>
 
 #define NTCVT_CP_DEFAULT CP_UTF8
 #include "windows-specific/ntcvt/ntcvt.hpp"
+
+// Need to link with Wlanapi.lib
+#pragma comment(lib, "wlanapi.lib")
+#pragma comment(lib, "wininet.lib")
+#pragma comment(lib, "Iphlpapi.lib")
+
+using namespace rapidjson;
 
 NS_CC_BEGIN
 
@@ -472,15 +489,13 @@ void Device::setKeepScreenOn(bool value)
     CC_UNUSED_PARAM(value);
 }
 
-/* 在windows下以窗口震动实现。 */
-void Device::vibrate(float duration) {
+void Device::vibrate(uint32_t duration) {
     static bool inVibrate = false;
-    const uint32_t time = duration * 1000;
-    if (inVibrate || time <= 0) {
+    if (inVibrate || duration == 0) {
         return;
     }
 
-    uint32_t repeat = time / 10 + 1;
+    uint32_t repeat = duration / 20 + 1;
     cocos2d::Director* director = cocos2d::Director::getInstance();
     HWND hwnd = director->getOpenGLView()->getWin32Window();
     cocos2d::Scheduler* sh = director->getScheduler();
@@ -489,7 +504,7 @@ void Device::vibrate(float duration) {
     if (GetWindowRect(hwnd, &rect)) {
         inVibrate = true;
         sh->schedule(
-            [=](float dt) mutable noexcept{
+            [=](float dt) mutable noexcept {
                 if(--repeat <= 0) {
                     MoveWindow(
                         hwnd,
@@ -509,10 +524,187 @@ void Device::vibrate(float duration) {
                 }
             },
             director,
-            0.01f,repeat - 1,0.0f,
+            0.02f,repeat - 1,0.0f,
             false,"WindowVibrate"
         );
     }
 }
+
+double Device::GetBatteryPercent() noexcept {
+    _SYSTEM_POWER_STATUS sps = {};
+    const auto ret = GetSystemPowerStatus(&sps);
+    if (!ret) {
+        return 0.;
+    }
+    const auto bp = sps.BatteryLifePercent;
+    return BATTERY_PERCENTAGE_UNKNOWN == bp ? 0. : static_cast<double>(bp) / 100;
+}
+
+bool Device::IsBatteryCharge() noexcept {
+    _SYSTEM_POWER_STATUS sps = {};
+    const auto ret = GetSystemPowerStatus(&sps);
+    if (!ret) {
+        return false;
+    }
+    const auto bf = sps.BatteryFlag;
+    return BATTERY_FLAG_UNKNOWN == bf ? false : bf & BATTERY_FLAG_CHARGING;
+}
+
+uint8_t Device::GetWifiLevel() noexcept {
+    HANDLE hClient = nullptr;
+    DWORD dwCurVersion = 0;
+    if (ERROR_SUCCESS != WlanOpenHandle(2, 0, &dwCurVersion, &hClient)) {
+        return 0;
+    }
+
+    PWLAN_INTERFACE_INFO_LIST pIfList = nullptr;
+    if (ERROR_SUCCESS != WlanEnumInterfaces(hClient, NULL, &pIfList)) {
+        WlanCloseHandle(hClient, nullptr);
+        return 0;
+    }
+
+    PWLAN_INTERFACE_INFO pIfInfo = nullptr;
+    // Loop through the List to find the connected Interface
+    for (DWORD i = 0; i < pIfList->dwNumberOfItems; i++) {
+        PWLAN_INTERFACE_INFO tempIfInfo = &pIfList->InterfaceInfo[i];
+        if (tempIfInfo->isState == wlan_interface_state_connected) {
+            pIfInfo = tempIfInfo;
+            break;
+        }
+    }
+    if (!pIfInfo) {
+        WlanFreeMemory(pIfList);
+        WlanCloseHandle(hClient, nullptr);
+        return 0;
+    }
+
+    PWLAN_AVAILABLE_NETWORK_LIST pBssList = nullptr;
+    PWLAN_AVAILABLE_NETWORK pBssEntry = nullptr;
+    if (ERROR_SUCCESS == WlanGetAvailableNetworkList(hClient,
+        &pIfInfo->InterfaceGuid,
+        0,
+        nullptr,
+        &pBssList)) {
+
+        for (DWORD j = 0; j < pBssList->dwNumberOfItems; j++) {
+            PWLAN_AVAILABLE_NETWORK tempBssEntry = &pBssList->Network[j];
+            if (tempBssEntry->dwFlags) {
+                if (tempBssEntry->dwFlags & WLAN_AVAILABLE_NETWORK_CONNECTED) {
+                    // Get to the currently connected network.
+                    pBssEntry = tempBssEntry;
+                    break;
+                }
+            }
+        }
+    }
+    else {
+        WlanFreeMemory(pIfList);
+        WlanCloseHandle(hClient, nullptr);
+        return 0;
+    }
+
+    uint8_t wLevel = 0;
+    if (pBssEntry) {
+        if (0 == pBssEntry->wlanSignalQuality) {
+            wLevel = 0;
+        }
+        else {
+            wLevel = static_cast<uint8_t>((pBssEntry->wlanSignalQuality - 1) / 20 + 1);
+        }
+    }
+
+    WlanFreeMemory(pIfList);
+    WlanFreeMemory(pBssList);
+    WlanCloseHandle(hClient, nullptr);
+
+    return wLevel > 5 ? 5 : wLevel;
+}
+
+Device::NetworkType Device::GetNetwork() noexcept {
+    DWORD flags = 0;
+    const BOOL m_bOnline = InternetGetConnectedState(&flags, 0);
+    if (!m_bOnline) {
+        // No network.
+        return NetworkType::None;
+    }
+
+    HANDLE hClient = nullptr;
+    DWORD dwCurVersion = 0;
+    if (ERROR_SUCCESS != WlanOpenHandle(2, nullptr, &dwCurVersion, &hClient)) {
+        return NetworkType::Other;
+    }
+
+    PWLAN_INTERFACE_INFO_LIST pIfList = nullptr;
+    if (ERROR_SUCCESS != WlanEnumInterfaces(hClient, nullptr, &pIfList)) {
+        WlanCloseHandle(hClient, nullptr);
+        return NetworkType::Other;
+    }
+
+    PWLAN_INTERFACE_INFO pIfInfo = nullptr;
+    // Loop through the List to find the connected Interface
+    for (DWORD i = 0; i < pIfList->dwNumberOfItems; i++) {
+        PWLAN_INTERFACE_INFO tempIfInfo = &pIfList->InterfaceInfo[i];
+        if (tempIfInfo->isState == wlan_interface_state_connected) {
+            pIfInfo = tempIfInfo;
+            break;
+        }
+    }
+
+    WlanFreeMemory(pIfList);
+    WlanCloseHandle(hClient, nullptr);
+
+    return pIfInfo ? NetworkType::Wifi : NetworkType::Other;
+}
+
+std::string Device::GetIp() {
+    WSADATA wsaData = {};
+    char ip[16] = {};
+
+    if (WSAStartup(MAKEWORD(2, 0), &wsaData) == 0) {
+        addrinfo hints = {};
+        addrinfo* res = nullptr;
+        sockaddr_in* addr = nullptr;
+        const char name[155] = {};
+
+        hints.ai_family = AF_INET; /* Allow IPv4 */
+        hints.ai_flags = AI_PASSIVE; /* For wildcard IP address */
+        hints.ai_protocol = 0; /* Any protocol */
+        hints.ai_socktype = SOCK_STREAM;
+
+        const int ret = ::getaddrinfo(name, nullptr, &hints, &res);
+        if (ret == 0 && res) {
+            addr = reinterpret_cast<sockaddr_in*>(res->ai_addr);
+            ::inet_ntop(AF_INET, &addr->sin_addr, ip, 16);
+        }
+        WSACleanup();
+    }
+    return ip;
+}
+
+std::string Device::GetId() {
+    // Allocate information
+    IP_ADAPTER_INFO AdapterInfo[16] = {};
+    // for up to 16 NICs
+    DWORD dwBufLen = sizeof(AdapterInfo);  // Save memory size of buffer
+
+    std::string id = {};
+    const DWORD dwStatus = GetAdaptersInfo(      // Call GetAdapterInfo
+        AdapterInfo,                // [out] buffer to receive data
+        &dwBufLen);                  // [in] size of receive data buffer
+    if (dwStatus == NO_ERROR) {
+        const auto addr = AdapterInfo->Address;
+
+        char str[32] = {};
+        sprintf_s(
+            str,
+            "%02X-%02X-%02X-%02X-%02X-%02X",
+            addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]
+        );
+        id = str;
+    }
+
+    return id;
+}
+
 
 NS_CC_END

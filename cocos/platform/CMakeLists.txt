@@ -169,4 +169,5 @@ set(COCOS_PLATFORM_SRC
     platform/CCImage.cpp
     platform/CCFileStream.cpp
     platform/CCPosixFileStream.cpp
+    platform/CCDevice.cpp
     )
