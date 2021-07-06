@@ -27,11 +27,11 @@
 
 
 #include "Box2DTest/Box2dTest.h"
-//#include "Box2DTestBed/Box2dView.h"
+#include "Box2DTestBed/Box2DTestBed.h"
 
 
 #include "ChipmunkTest/ChipmunkTest.h"
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+#if defined(CC_PLATFORM_PC)
 #include "ChipmunkTestBed/ChipmunkTestBed.h"
 #endif
 
