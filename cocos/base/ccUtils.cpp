@@ -61,6 +61,16 @@ THE SOFTWARE.
 #include <iconv.h>
 #endif
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX \
+    || CC_TARGET_PLATFORM == CC_PLATFORM_MAC \
+    || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+#include "glfw3.h"
+#elif ANDROID || __ANDROID__
+#include <jni.h>
+#include "platform/android/jni/JniHelper.h"
+static const std::string HelperClassName = "org.cocos2dx.lib.Cocos2dxHelper";
+#endif
+
 NS_CC_BEGIN
 
 int ccNextPOT(int x)
@@ -721,20 +731,23 @@ static std::string IconvTo(const char* to, const char* from, uint8_t sizeRate, c
     return std::string();
 }
 
+std::string Convert(const std::string_view& content, const std::string_view& from, const std::string_view& to, bool* fullSuc) {
+    return IconvTo(to.data(), from.data(), 4, content.data(), content.size());
+}
 
-CC_DLL std::string Utf8ToGbk(const char* c, size_t len, bool* fullSuc) {
+std::string Utf8ToGbk(const char* c, size_t len, bool* fullSuc) {
     return IconvTo("gbk//TRANSLIT", "utf-8", 1, c, len, fullSuc);
 }
 
-CC_DLL std::string Utf8ToGbk(const std::string& str, bool* fullSuc) {
+std::string Utf8ToGbk(const std::string& str, bool* fullSuc) {
     return Utf8ToGbk(str.c_str(), str.length(), fullSuc);
 }
 
-CC_DLL std::string GbkToUtf8(const char* c, size_t len, bool* fullSuc) {
+std::string GbkToUtf8(const char* c, size_t len, bool* fullSuc) {
     return IconvTo("utf-8//TRANSLIT", "gbk", 2, c, len, fullSuc);
 }
 
-CC_DLL std::string GbkToUtf8(const std::string& str, bool* fullSuc) {
+std::string GbkToUtf8(const std::string& str, bool* fullSuc) {
     return GbkToUtf8(str.c_str(), str.length(), fullSuc);
 }
 
@@ -796,7 +809,33 @@ time_t DosDate2Time(uint32_t dt) {
     };
     return ::mktime(&stm);
 }
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX \
+    || CC_TARGET_PLATFORM == CC_PLATFORM_MAC \
+    || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32\
+    || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+std::string GetClipboard() {
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+    return cocos2d::JniHelper::callStaticStringMethod(HelperClassName, "GetClipboard");
+#else
+    const char* c = ::glfwGetClipboardString(nullptr);
+    return c ? c : "";
+#endif
+}
+#endif
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_LINUX \
+    || CC_TARGET_PLATFORM == CC_PLATFORM_MAC \
+    || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32\
+    || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
+void SetClipbord(const char* content) {
+    if (!content) { return; }
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+    cocos2d::JniHelper::callStaticVoidMethod(HelperClassName, "SetClipboard", content);
+#else
+    ::glfwSetClipboardString(nullptr, content);
+#endif
+}
+#endif
 }
 
 NS_CC_END

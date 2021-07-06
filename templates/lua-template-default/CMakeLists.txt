@@ -138,10 +138,7 @@ else()
     target_link_libraries(${APP_NAME} -Wl,--whole-archive lua_android_spec -Wl,--no-whole-archive)
 endif()
 
-add_subdirectory(${RUNTIME_SRC_ROOT}/Classes)
-
 target_link_libraries(${APP_NAME} ${ADXE_LUA_LIB})
-target_link_libraries(${APP_NAME} derivative)
 target_include_directories(${APP_NAME} PRIVATE ${RUNTIME_SRC_ROOT}/Classes ${RUNTIME_SRC_ROOT})
 if(WINDOWS)
     target_link_options(${APP_NAME} PRIVATE "/INCREMENTAL:NO")

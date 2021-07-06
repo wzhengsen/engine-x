@@ -355,6 +355,8 @@ namespace utils
         return ((number > 0) && (number & (number - 1)) == 0);
     }
 
+    CC_DLL std::string Convert(const std::string_view& content, const std::string_view& from, const std::string_view& to,bool* fullSuc = nullptr);
+
     CC_DLL std::string Utf8ToGbk(const char* c, size_t len, bool* fullSuc = nullptr);
     CC_DLL std::string Utf8ToGbk(const std::string& str, bool* fullSuc = nullptr);
     CC_DLL std::string GbkToUtf8(const char* c, size_t len, bool* fullSuc = nullptr);
@@ -363,6 +365,19 @@ namespace utils
     CC_DLL uint32_t Time2DosDate(time_t t);
     CC_DLL uint32_t Time2DosDate();
     CC_DLL time_t DosDate2Time(uint32_t dt);
+
+    /**
+    * @brief    Get the contents of the global clipboard.
+    *           Only string type content can be returned,
+    *           other types are not supported yet.
+    * @return   The string content of the clipboard.
+    */
+    CC_DLL std::string GetClipboard();
+
+    /**
+    * @brief    Set the contents of the global clipboard.
+    */
+    CC_DLL void SetClipbord(const char* content);
 }
 
 NS_CC_END
