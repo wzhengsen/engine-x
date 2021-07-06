@@ -45,6 +45,7 @@ namespace cocos2d {
         protected:
             LuaObject() = default;
         private:
+            bool _deleteFormLua = false;
             std::function<void(LuaObject*)> _deleteHandler = nullptr;
         };
     }// namespace cocos2d::extension

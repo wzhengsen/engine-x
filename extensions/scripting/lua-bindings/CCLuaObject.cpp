@@ -25,7 +25,7 @@
 namespace cocos2d {
     namespace extension {
         LuaObject::~LuaObject() {
-            if (_deleteHandler) {
+            if (!_deleteFormLua && _deleteHandler) {
                 _deleteHandler(this);
             }
             Lua::GetInstance()->ReleaseInLua(this);
@@ -35,6 +35,7 @@ namespace cocos2d {
         }
 
         void LuaObject::__delete__() {
+            _deleteFormLua = true;
             delete this;
         }
     }// namespace cocos2d::extension
