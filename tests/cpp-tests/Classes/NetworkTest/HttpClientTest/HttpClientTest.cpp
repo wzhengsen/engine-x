@@ -96,20 +96,36 @@ HttpClientTest::~HttpClientTest()
 }
 
 void HttpClientTest::onMenuGetTestClicked(cocos2d::Ref *sender)
-{    
-    // test 1
+{   
+    // test 1(sync request test)
+    {
+        HttpRequest* request = new (std::nothrow) HttpRequest();
+        request->setUrl("https://tool.chinaz.com");
+        request->setRequestType(HttpRequest::Type::GET);
+        request->setHeaders(std::vector<std::string>{CHROME_UA});
+        // request->setResponseCallback(CC_CALLBACK_2(HttpClientTest::onHttpRequestCompleted, this));
+        request->setTag("GET test1");
+        HttpResponse* response = HttpClient::getInstance()->sendSync(request);
+        if (response) {
+            onHttpRequestCompleted(HttpClient::getInstance(), response);
+            response->release();
+        }
+        request->release();
+    }
+
+    // test 2
     {
         HttpRequest* request = new (std::nothrow) HttpRequest();
         request->setUrl("https://just-make-this-request-failed.com");
         request->setRequestType(HttpRequest::Type::GET);
         request->setHeaders(std::vector<std::string>{CHROME_UA});
         request->setResponseCallback(CC_CALLBACK_2(HttpClientTest::onHttpRequestCompleted, this));
-        request->setTag("GET test1");
+        request->setTag("GET test2");
         HttpClient::getInstance()->send(request);
         request->release();
     }
     
-    // test 2
+    // test 3
     {
         HttpRequest* request = new (std::nothrow) HttpRequest();
         // required fields
@@ -117,32 +133,32 @@ void HttpClientTest::onMenuGetTestClicked(cocos2d::Ref *sender)
         request->setRequestType(HttpRequest::Type::GET);
         request->setHeaders(std::vector<std::string>{CHROME_UA});
         request->setResponseCallback(CC_CALLBACK_2(HttpClientTest::onHttpRequestCompleted, this));
-        request->setTag("GET test2");
+        request->setTag("GET test3");
         HttpClient::getInstance()->send(request);
         // don't forget to release it, pair to new
         request->release();
     }
     
-    // test 3   
+    // test 4   
     {
         HttpRequest* request = new (std::nothrow) HttpRequest();
         request->setUrl("https://httpbin.org/get");
         request->setRequestType(HttpRequest::Type::GET);
         request->setHeaders(std::vector<std::string>{CHROME_UA});
         request->setResponseCallback(CC_CALLBACK_2(HttpClientTest::onHttpRequestCompleted, this));
-        request->setTag("GET test3");
+        request->setTag("GET test4");
         HttpClient::getInstance()->send(request);
         request->release();
     }
 
-    // test 3
+    // test 5
     {
         HttpRequest* request = new (std::nothrow) HttpRequest();
         request->setUrl("https://github.com/yasio/yasio");
         request->setRequestType(HttpRequest::Type::GET);
         request->setHeaders(std::vector<std::string>{CHROME_UA});
         request->setResponseCallback(CC_CALLBACK_2(HttpClientTest::onHttpRequestCompleted, this));
-        request->setTag("GET test3");
+        request->setTag("GET test5");
         HttpClient::getInstance()->send(request);
         request->release();
     }

@@ -107,7 +107,7 @@ public:
     const std::string& getSSLVerification();
 
     /**
-     * Add a get request to task queue
+     * Send http request concurrently, non-blocking
      *
      * @param request a HttpRequest object, which includes url, response callback etc.
                       please make sure request->_requestData is clear before calling "send" here.
@@ -120,6 +120,12 @@ public:
      *      https://stackoverflow.com/questions/23714383/what-are-all-the-possible-values-for-http-content-type-header
      */
     bool send(HttpRequest* request);
+
+    /**
+     * Send http request sync, will block caller thread until request finished.
+     * @remark  You need call release manually after you don't want use the returned response
+     */
+    HttpResponse* sendSync(HttpRequest* request);
 
     /**
      * Set the timeout value for connecting.
