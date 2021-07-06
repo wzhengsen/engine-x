@@ -89,7 +89,8 @@ namespace extension {
 
             release();
         });
-        HttpClient::getInstance()->setTimeoutForConnect(_timeout);
+        HttpClient::getInstance()->setTimeoutForConnect(_timeout / 1000);
+        HttpClient::getInstance()->setTimeoutForRead(_timeout / 1000);
         if (_isAsync) {
             HttpClient::getInstance()->send(this);
         }
