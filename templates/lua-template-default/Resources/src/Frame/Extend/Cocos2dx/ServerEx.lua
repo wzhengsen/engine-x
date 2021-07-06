@@ -50,40 +50,43 @@ function Server:OnLose(_) return true;end
 
 function Server:ctor()
     self.HeartBeat = config.SocketHeartBeat;
-    self.ConnectHandler = function (sender,transport,_,ip,port)
-        -- sokect连接事件。
-        if not sender:OnConnect(transport,ip,port) then
-            event.SocketConnect(sender,transport,ip,port);
-        end
-    end;
-    self.MessageHandler = function(sender,transport,msg)
-        -- sokect收到消息事件。
-        local msgName,body = nil,nil;
-        if self.ProtocolType == "json" then
-            body = cjson.decode(msg)
-            if type(body) ~= "table" then return warn("无法解析的消息。");end
-            msgName = body.msgName;
-            body.msgName = nil;
-        elseif self.ProtocolType == "lua-protobuf" then
-            local offset = msg:find("\0");
-            if nil == offset then return warn("无法解析的消息。");end
-            msgName = msg:sub(1,offset - 1);
-            local ret = msg:sub(offset + 1);
-            ret,body = pcall(pb.decode,msgName,ret);
-            if not ret then return warn("无法解析的消息。-" .. (msgName or ""));end
-        else
-            return;
-        end
-        if not self:OnMessage(transport,msgName,body) then
-            Event.SocketMessage(sender,transport,msgName,body);
-        end
-    end;
-    self.LoseHandler = function (sender,transport)
-        -- sokect连接丢失事件。
-        if not sender:OnLose(transport) then
-            event.SocketLose(sender,transport);
-        end
-    end;
+    self.ConnectHandler = Server.OnConnectHandler;
+    self.MessageHandler = Server.OnMessageHandler;
+    self.LoseHandler = Server.OnLoseHandler;
+end
+
+function Server.private:OnConnectHandler(transport,_,ip,port)
+    if not self:OnConnect(transport,ip,port) then
+        event.SocketConnect(self,transport,ip,port);
+    end
+end
+
+function Server.private:OnMessageHandler(transport,msg)
+    local msgName,body = nil,nil;
+    if self.ProtocolType == "json" then
+        body = cjson.decode(msg)
+        if type(body) ~= "table" then return warn("无法解析的消息。");end
+        msgName = body.msgName;
+        body.msgName = nil;
+    elseif self.ProtocolType == "lua-protobuf" then
+        local offset = msg:find("\0");
+        if nil == offset then return warn("无法解析的消息。");end
+        msgName = msg:sub(1,offset - 1);
+        local ret = msg:sub(offset + 1);
+        ret,body = pcall(pb.decode,msgName,ret);
+        if not ret then return warn("无法解析的消息。-" .. (msgName or ""));end
+    else
+        return;
+    end
+    if not self:OnMessage(transport,msgName,body) then
+        event.SocketMessage(self,transport,msgName,body);
+    end
+end
+
+function Server.private:OnLoseHandler(transport)
+    if not self:OnLose(transport) then
+        event.SocketLose(self,transport);
+    end
 end
 
 ---向指定的传输会话或所有传输会话发送消息。

@@ -28,8 +28,8 @@ local i18n = require("OOP.i18n");
 local Internal = require("OOP.Variant.Internal");
 local ClassesMembers = Internal.ClassesMembers;
 
-local Compat = require("OOP.Version.Compat");
-local bits = Compat.bits;
+local BaseFunctions = require("OOP.BaseFunctions");
+local bits = BaseFunctions.bits;
 local band = bits.band;
 local bor = bits.bor;
 local Debug = Config.Debug;
@@ -39,6 +39,7 @@ local AllEnumerations = Internal.AllEnumerations;
 local AllClasses = Internal.AllClasses;
 local ClassesReadable = Internal.ClassesReadable;
 local ClassesWritable = Internal.ClassesWritable;
+local ClassesStatic = Internal.ClassesStatic;
 
 local new = Config.new;
 local delete = Config.delete;
@@ -52,6 +53,9 @@ local final = Config.Qualifiers.final;
 local virtual = Config.Qualifiers.virtual;
 local get = Config.get;
 local set = Config.set;
+
+local class = require("OOP.BaseClass");
+local c_delete = class.delete;
 
 local BitsMap = {
     [public] = 2 ^ 0,
@@ -91,6 +95,7 @@ local p_static = Permission.static;
 local p_virtual = Permission.virtual;
 local p_get = Permission.get;
 local p_final = Permission.final;
+local p_private = Permission.private;
 
 local Router = {};
 
@@ -108,11 +113,15 @@ if Debug then
     local ctor = Config.ctor;
     local dtor = Config.dtor;
 
-    local FunctionWrapper = Compat.FunctionWrapper;
+    local FunctionWrapper = BaseFunctions.FunctionWrapper;
+    local Update2Children = BaseFunctions.Update2Children;
+    local Update2ChildrenWithKey = BaseFunctions.Update2ChildrenWithKey;
     local ClassesAll = Internal.ClassesAll;
     local FinalClassesMembers = Internal.FinalClassesMembers;
     local ClassesPermisssions = Internal.ClassesPermisssions;
     local VirtualClassesMembers = Internal.VirtualClassesMembers;
+    local ClassesBanNew = Internal.ClassesBanNew;
+    local ClassesBanDelete = Internal.ClassesBanDelete;
 
     local RouterReservedWord = Internal.RouterReservedWord;
     -- It is only under debug that the values need to be routed to the corresponding fields of the types.
@@ -177,6 +186,7 @@ if Debug then
                 error((i18n"The pure virtual function %s must be assigned a value of 0."):format(key));
             end
             vcm[key] = true;
+            Update2ChildrenWithKey(cls,VirtualClassesMembers,key,true);
             decor = 0;
             cls = nil;
             return;
@@ -203,6 +213,7 @@ if Debug then
             vcm[key] = nil;
         end
         local get_set = band(decor,0xc0);
+        local oVal = value;
         if isFunction then
             value = FunctionWrapper(cls,value);
         elseif get_set == 0 then
@@ -211,10 +222,19 @@ if Debug then
             -- add to the member table and generate it for each instance.
             if not isStatic and (not isTable or (not AllEnumerations[value] and not AllClasses[value])) then
                 ClassesMembers[cls][key] = value;
+                Update2ChildrenWithKey(cls,ClassesMembers,key,value);
             end
         end
 
         local pms = ClassesPermisssions[cls];
+        -- Instead of identifying the property with static,
+        -- attach static to the property to avoid static checks occurring before taking the property
+        -- (the property can have the same name as the static member).
+        if isStatic then
+            if get_set ~= 0 or ClassesReadable[cls][key] or ClassesWritable[cls][key] then
+                decor = decor - p_static;
+            end
+        end
         pms[key] = decor;
         if get_set ~= 0 then
             if not isFunction then
@@ -228,17 +248,22 @@ if Debug then
             -- and index 2 representing whether the property is a static property.
             (get_set == p_get and ClassesReadable or ClassesWritable)[cls][key] = {value,isStatic};
         else
-            ClassesAll[cls][key] = value;
+            (isStatic and ClassesStatic or ClassesAll)[cls][key] = value;
             if key == ctor then
                 -- Reassign permissions to "new", which are the same as ctor with the static qualifier.
                 pms[new] = bor(decor,0x8);
+                local ban = band(decor,p_private) ~= 0 or oVal == c_delete;
+                Update2Children(cls,ClassesBanNew,ban);
             elseif key == dtor then
                 pms[delete] = decor;
+                local ban = band(decor,p_private) ~= 0 or oVal == c_delete;
+                Update2Children(cls,ClassesBanDelete,ban);
             end
         end
 
         if band(decor,p_final) ~= 0 then
             FinalClassesMembers[cls][key] = true;
+            Update2ChildrenWithKey(cls,FinalClassesMembers,key,true);
         end
         decor = 0;
         cls = nil;
@@ -278,7 +303,12 @@ else
         if get_set ~= 0 then
             (get_set == p_get and ClassesReadable or ClassesWritable)[cls][key] = {value,isStatic};
         else
-            rawset(cls,key,value);
+            if isStatic then
+                ClassesStatic[cls][key] = value;
+            else
+                rawset(cls,key,value);
+                ClassesStatic[cls][key] = nil;
+            end
         end
         decor = 0;
         cls = nil;

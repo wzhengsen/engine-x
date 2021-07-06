@@ -32,6 +32,9 @@ local Config = {
 
     class = "class",
 
+    ["class.default"] = "default",
+    ["class.delete"] = "delete",
+
     enum = "enum",
 
     event = "event",

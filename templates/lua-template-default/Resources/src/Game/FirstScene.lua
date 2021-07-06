@@ -1,7 +1,8 @@
-local FirstScene = class(syx.BaseScene);
+local FirstScene = class(cc.BaseScene);
+local Label = require("Others.Label");
 
 function FirstScene:ctor()
-    syx.BaseScene.ctor(self)
+    cc.BaseScene.ctor(self)
     local img = ccui.ImageView.new("HelloWorld.png");
     img.Parent = self;
     img:Layout({
@@ -10,11 +11,11 @@ function FirstScene:ctor()
     });
     img.TouchEnabled = true;
     img.ClickHandler = function(sender)
-        sender.Grayed = not sender.Grayed;
+        cc.AppDelegate.Instance = nil;
     end;
 
-    local lbl = syx.Label.new(65);
-    lbl.Text = "Hello World!";
+    local lbl = Label.new("simkai.ttf",65);
+    lbl.String = "Hello World!";
     lbl.Parent = self;
     lbl:Layout({
         px = 0.5,

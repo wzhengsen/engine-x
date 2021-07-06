@@ -20,20 +20,24 @@
 -- THE SOFTWARE.
 
 local getmetatable = getmetatable;
+local setmetatable = setmetatable;
+local d_setmetatable = debug.setmetatable;
 local rawset = rawset;
 local rawget = rawget;
 local type = type;
 local pairs = pairs;
 local ipairs = ipairs;
+local warn = warn or print;
 
 local Config = require("OOP.Config");
-local Version = Config.Version;
 local i18n = require("OOP.i18n");
 
-local Compat = require("OOP.Version.Compat");
-local bits = Compat.bits;
+local BaseFunctions = require("OOP.BaseFunctions");
+local bits = BaseFunctions.bits;
 local band = bits.band;
-local FunctionWrapper = Compat.FunctionWrapper;
+local FunctionWrapper = BaseFunctions.FunctionWrapper;
+local Update2Children = BaseFunctions.Update2Children;
+local Update2ChildrenWithKey = BaseFunctions.Update2ChildrenWithKey;
 
 local E_Handlers = require("OOP.Event").handlers;
 
@@ -69,7 +73,7 @@ local MetaMapName = Config.MetaMapName;
 local PropertyBehavior = Config.PropertyBehavior;
 local ConstBehavior = Config.ConstBehavior;
 
-local Functions = require("OOP.Variant.BaseFunctions");
+local Functions = require("OOP.Variant.ReleaseFunctions");
 local GetSingleton = Functions.GetSingleton;
 local DestroySingleton = Functions.DestroySingleton;
 local RetrofiteMetaMethod = Functions.RetrofiteMetaMethod;
@@ -95,6 +99,7 @@ local ClassesDelete = Functions.ClassesDelete;
 local ObjectsAll = Functions.ObjectsAll;
 local ObjectsCls = Functions.ObjectsCls;
 local CreateClassTables = Functions.CreateClassTables;
+local ClassesStatic = Functions.ClassesStatic;
 
 local ClassesAll = Functions.ClassesAll;
 local ClassesPermisssions = Functions.ClassesPermisssions;
@@ -108,6 +113,9 @@ local p_protected = Permission.protected;
 local p_private = Permission.private;
 local p_const = Permission.const;
 local p_static = Permission.static;
+
+local class = require("OOP.BaseClass");
+local c_delete = class.delete;
 
 ---Cascade to get permission values up to the top of the base class.
 ---
@@ -161,9 +169,7 @@ local function CheckPermission(self,key,byObj,set)
             -- Check const.
             if ConstBehavior ~= 2 then
                 if ConstBehavior == 0 then
-                    if Version > 5.4 then
-                        warn(("You cannot change the const value. - %s"):format(key));
-                    end
+                    warn(("You cannot change the const value. - %s"):format(key));
                 elseif ConstBehavior == 1 then
                     error((i18n"You cannot change the const value. - %s"):format(key));
                 end
@@ -207,38 +213,57 @@ Functions.CheckPermission = CheckPermission;
 ---@param cls table
 ---@param key any
 ---@param called table
+---@param byObject? boolean
 ---@return any
 ---
-local function CascadeGet(cls,key,called)
+local function CascadeGet(cls,key,called,byObject)
     if called[cls] then
         return nil;
     end
     called[cls] = true;
+    local ret = rawget(cls,key);
+    if nil ~= ret then
+        return ret;
+    end
     local all = ClassesAll[cls];
     if nil ~= all then
-        local ret = all[key];
+        ret = all[key];
         if nil ~= ret then
             return ret;
+        end
+        if byObject then
+            ret = ClassesStatic[cls];
+            if ret then
+                ret = ret[key];
+                if nil ~= ret then
+                    return ret;
+                end
+            end
         end
         local bases = ClassesBases[cls];
         if bases then
             for _,base in ipairs(bases) do
-                ret = CascadeGet(base,key,called);
+                ret = CascadeGet(base,key,called,byObject);
                 if nil ~= ret then
                     return ret;
                 end
             end
         end
     else
-        return cls[key];
+        ret = ClassesStatic[cls];
+        if ret then
+            ret = ret[key];
+            if nil ~= ret then
+                return ret;
+            end
+        end
     end
 end
 
-local HandlersControl = setmetatable({
-    obj = nil
-},{
-    __newindex = function (hc,key,value)
-        if nil == hc.obj then
+local HandlersControlObj = nil;
+local HandlersControl = setmetatable({},{
+    __newindex = function (_,key,value)
+        if nil == HandlersControlObj then
             return;
         end
         if "string" ~= type(key) then
@@ -250,17 +275,17 @@ local HandlersControl = setmetatable({
         end
         if nil == value then
             -- If value is nil,we remove the response of this event name.
-            E_Handlers.Remove(key,hc.obj);
+            E_Handlers.Remove(key,HandlersControlObj);
         else
             -- If value is a number,we sort it.
-            E_Handlers.Order(key,hc.obj,math.floor(value));
+            E_Handlers.Order(key,HandlersControlObj,math.floor(value));
         end
     end
 });
 
 local function GetAndCheck(cls,key,sender,metas)
     if key == handlers then
-        rawset(HandlersControl,"obj",sender);
+        HandlersControlObj = sender;
         return HandlersControl;
     end
     local cCls = nil;
@@ -293,15 +318,14 @@ local function GetAndCheck(cls,key,sender,metas)
     end
     -- Check the properties of current class.
     local property = ClassesReadable[cCls][key];
-    if property then
+    if property and not property[2] then
         return property[1](sender);
     else
-        if ClassesWritable[cCls][key] then
+        property = ClassesWritable[cCls][key];
+        if property and not property[2] then
             if PropertyBehavior ~= 2 then
                 if PropertyBehavior == 0 then
-                    if Version > 5.4 then
-                        warn(("You can't read a write-only property. - %s"):format(key));
-                    end
+                    warn(("You can't read a write-only property. - %s"):format(key));
                 elseif PropertyBehavior == 1 then
                     error((i18n"You can't read a write-only property. - %s"):format(key));
                 end
@@ -316,7 +340,7 @@ local function GetAndCheck(cls,key,sender,metas)
     end
     -- Check bases.
     for _, base in ipairs(ClassesBases[cCls]) do
-        ret = CascadeGet(base,key,{});
+        ret = CascadeGet(base,key,{},true);
         if nil ~= ret then
             return ret;
         end
@@ -347,20 +371,23 @@ function Functions.MakeInternalObjectMeta(cls,metas)
         else
             cCls = cls;
         end
+        -- The reserved words cannot be used.
+        if ReservedWord[key] then
+            error((i18n"%s is a reserved word and you can't set it."):format(key));
+        end
         if not CheckPermission(cCls,key,true,true) then
             return;
         end
         local property = ClassesWritable[cCls][key];
-        if property then
+        if property and not property[2] then
             property[1](sender,value);
             return;
         else
-            if ClassesReadable[cCls][key] then
+            property = ClassesReadable[cCls][key];
+            if property and not property[2] then
                 if PropertyBehavior ~= 2 then
                     if PropertyBehavior == 0 then
-                        if Version > 5.4 then
-                            warn(("You can't write a read-only property. - %s"):format(key));
-                        end
+                        warn(("You can't write a read-only property. - %s"):format(key));
                     elseif PropertyBehavior == 1 then
                         error((i18n"You can't write a read-only property. - %s"):format(key));
                     end
@@ -428,20 +455,23 @@ local function RetrofiteUserDataObjectMetaExternal(obj,meta,cls)
     rawset(meta,"__newindex",function (sender,key,value)
         local cls = ObjectsCls[sender];
         if cls then
+            -- The reserved words cannot be used.
+            if ReservedWord[key] then
+                error((i18n"%s is a reserved word and you can't set it."):format(key));
+            end
             if not CheckPermission(cls,key,true,true) then
                 return;
             end
             local property = ClassesWritable[cls][key];
-            if property then
+            if property and not property[2] then
                 property[1](sender,value);
                 return;
             else
-                if ClassesReadable[cls][key] then
+                property = ClassesReadable[cls][key];
+                if property and not property[2] then
                     if PropertyBehavior ~= 2 then
                         if PropertyBehavior == 0 then
-                            if Version > 5.4 then
-                                warn(("You can't write a read-only property. - %s"):format(key));
-                            end
+                            warn(("You can't write a read-only property. - %s"):format(key));
                         elseif PropertyBehavior == 1 then
                             error((i18n"You can't write a read-only property. - %s"):format(key));
                         end
@@ -495,12 +525,11 @@ local function ClassGet(cls,key)
             return property[1]();
         end
     else
-        if ClassesWritable[cls][key] then
+        property = ClassesWritable[cls][key];
+        if property and property[2] then
             if PropertyBehavior ~= 2 then
                 if PropertyBehavior == 0 then
-                    if Version > 5.4 then
-                        warn(("You can't read a write-only property. - %s"):format(key));
-                    end
+                    warn(("You can't read a write-only property. - %s"):format(key));
                 elseif PropertyBehavior == 1 then
                     error((i18n"You can't read a write-only property. - %s"):format(key));
                 end
@@ -509,6 +538,10 @@ local function ClassGet(cls,key)
         end
     end
     local ret = ClassesAll[cls][key];
+    if nil ~= ret then
+        return ret;
+    end
+    ret = ClassesStatic[cls][key];
     if nil ~= ret then
         return ret;
     end
@@ -543,6 +576,18 @@ local function ClassSet(cls,key,value)
 
     local vt = type(value);
     local isFunction = "function" == vt;
+
+    if key == ctor or key == dtor then
+        if not isFunction then
+            error((i18n"%s reserved word must be assigned to a function."):format(key));
+        end
+        local isCtor = key == ctor;
+        local ban = value == c_delete;
+        local keyTable = isCtor and ClassesBanNew or ClassesBanDelete;
+        keyTable[cls] = ban;
+        Update2Children(cls,keyTable,ban);
+    end
+
     if key == __singleton__ then
         if not isFunction then
             error((i18n"%s reserved word must be assigned to a function."):format(key));
@@ -566,13 +611,17 @@ local function ClassSet(cls,key,value)
         if not isFunction then
             error((i18n"%s reserved word must be assigned to a function."):format(key));
         end
-        ClassesNew[cls] = FunctionWrapper(cls,value);
+        value = FunctionWrapper(cls,value);
+        ClassesNew[cls] = value;
+        Update2Children(cls,ClassesNew,value);
         return;
     elseif key == __delete__ then
         if not isFunction then
             error((i18n"%s reserved word must be assigned to a function."):format(key));
         end
-        ClassesDelete[cls] = FunctionWrapper(cls,value);
+        value = FunctionWrapper(cls,value);
+        ClassesDelete[cls] = value;
+        Update2Children(cls,ClassesDelete,value);
         return;
     else
         local vcm = VirtualClassesMembers[cls];
@@ -582,6 +631,7 @@ local function ClassSet(cls,key,value)
                 error((i18n"%s must be overridden as a function."):format(key));
             end
             vcm[key] = nil;
+            Update2ChildrenWithKey(cls,VirtualClassesMembers,key,nil);
         else
             if not CheckPermission(cls,key,false,true) then
                 return;
@@ -593,12 +643,11 @@ local function ClassSet(cls,key,value)
                     return;
                 end
             else
-                if ClassesWritable[cls][key] then
+                property = ClassesWritable[cls][key];
+                if property and property[2] then
                     if PropertyBehavior ~= 2 then
                         if PropertyBehavior == 0 then
-                            if Version > 5.4 then
-                                warn(("You can't write a read-only property. - %s"):format(key));
-                            end
+                            warn(("You can't write a read-only property. - %s"):format(key));
                         elseif PropertyBehavior == 1 then
                             error((i18n"You can't write a read-only property. - %s"):format(key));
                         end
@@ -613,6 +662,7 @@ local function ClassSet(cls,key,value)
             local isTable = "table" == vt;
             if not isFunction and (not isTable or (not AllEnumerations[value] and not AllClasses[value])) then
                 ClassesMembers[cls][key] = value;
+                Update2ChildrenWithKey(cls,ClassesMembers,key,value);
             end
             ClassesPermisssions[cls][key] = p_public;
         end
@@ -621,11 +671,13 @@ local function ClassSet(cls,key,value)
             value = FunctionWrapper(cls,value);
         end
         all[key] = value;
+        ClassesStatic[cls][key] = nil;
     end
     local meta = MetaMapName[key];
     if meta then
         local metas = ClassesMetas[cls];
         metas[meta] = value;
+        Update2ChildrenWithKey(cls,ClassesMetas,meta,value);
     end
 end
 
@@ -641,7 +693,9 @@ local function MakeClassHandlersTable(cls,handlers)
             end
             assert("function" == type(value),i18n"event handler must be a function.");
             -- Ensure that event response functions have access to member variables.
-            rawset(t,key,FunctionWrapper(cls,value));
+            value = FunctionWrapper(cls,value)
+            rawset(t,key,value);
+            Update2ChildrenWithKey(cls,ClassesHandlers,key,value);
         end
     });
 end
@@ -784,13 +838,20 @@ end
 
 function Functions.CreateClassDelete(cls)
     return function (self)
+        if ClassesBanDelete[cls] then
+            error(i18n"The class/base classes destructor is not accessible.");
+        end
+        CascadeDelete(self,cls,{});
         local d = ClassesDelete[cls];
         if d then
             d(self);
         else
-            CascadeDelete(self,cls,{});
-            setmetatable(self,nil);
-            self[DeathMarker] = true;
+            if "userdata" == type(self) then
+                d_setmetatable(self,nil);
+            else
+                setmetatable(self,nil);
+                self[DeathMarker] = true;
+            end
         end
         ObjectsAll[self] = nil;
     end
@@ -798,11 +859,12 @@ end
 
 function Functions.AttachClassFunctions(cls,_is,_new,_delete)
     local all = ClassesAll[cls];
+    local static = ClassesStatic[cls];
     local pms = ClassesPermisssions[cls];
     all[is] = _is;
     pms[is] = p_public;
     -- In debug mode,the "new" method is public and static.
-    all[new] = FunctionWrapper(cls,_new);
+    static[new] = FunctionWrapper(cls,_new);
     -- Use + instead of | to try to keep lua 5.3 or lower compatible.
     pms[new] = p_public + p_static;
 

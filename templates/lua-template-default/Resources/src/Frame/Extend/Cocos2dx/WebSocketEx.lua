@@ -27,24 +27,32 @@ function WebSocket:OnClose()end
 function WebSocket:OnError(_)end
 
 function WebSocket:ctor()
-    self.OpenHandler = function (sender)
-        if not sender:OnOpen() then
-            Event.WebSocketOpen(sender);
-        end
-    end;
-    self.MessageHandler = function (sender,data,isBin)
-        if not sender:OnMessage(data,isBin) then
-            Event.WebSocketMessage(sender,data,isBin);
-        end
-    end;
-    self.CloseHandler = function (sender)
-        if not sender:OnClose() then
-            Event.WebSocketClose(sender);
-        end
-    end;
-    self.ErrorHandler = function (sender,err)
-        if not sender:OnError(err) then
-            Event.WebSocketError(sender,err);
-        end
-    end;
+    self.OpenHandler = WebSocket.OnOpenHandler;
+    self.MessageHandler = WebSocket.OnMessageHandler;
+    self.CloseHandler = WebSocket.OnCloseHandler;
+    self.ErrorHandler = WebSocket.OnErrorHandler;
+end
+
+function WebSocket.private:OnOpenHandler()
+    if not self:OnOpen() then
+        event.WebSocketOpen(self);
+    end
+end
+
+function WebSocket.private:OnMessageHandler(data,isBin)
+    if not self:OnMessage(data,isBin) then
+        event.WebSocketMessage(self,data,isBin);
+    end
+end
+
+function WebSocket.private:OnCloseHandler()
+    if not self:OnClose() then
+        event.WebSocketClose(self);
+    end
+end
+
+function WebSocket.private:OnErrorHandler(err)
+    if not self:OnError() then
+        event.WebSocketError(self,err);
+    end
 end

@@ -24,7 +24,7 @@ THE SOFTWARE.
 ---@class cc.Label
 
 ---简单地封装了Label，使其可以自动换行。
-local Label = class();
+local Label = class(cc.Label);
 Label.static.protected._DefaultFont = ""
 
 ---@param font? string 字体。
@@ -37,7 +37,7 @@ function Label.__new__(font,fontSize,maxWidth,align)
         align = maxWidth;
         maxWidth = fontSize;
         fontSize = font;
-        font = Label.DefaultFont or "";
+        font = Label._DefaultFont or "";
     end
 
     maxWidth = maxWidth or 0;
@@ -51,7 +51,7 @@ function Label.__new__(font,fontSize,maxWidth,align)
         return self;
     end
 
-    return cc.Label.createWithTTFConfig(
+    return cc.Label.CreateWithTTF(
         {
             fontFilePath = font,
             fontSize = fontSize

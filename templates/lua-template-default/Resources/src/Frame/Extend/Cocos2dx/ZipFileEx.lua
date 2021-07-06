@@ -20,44 +20,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ]]
 
-local Sound = require("Audio.Sound");
----场景基类。
-local BaseScene = class(cc.Scene)
+local ZipFile = cc.ZipFile;
 
-BaseScene.PreloadRes = {
-    Sound = {},
-    Animation = {},
-    SpriteFrame = {},
-    Texture = {},
-};
+function ZipFile:OnProcess(_,_,_)end
+function ZipFile:OnError(_,_)end
 
-function BaseScene:ctor()
-    self.EnableEvents = true;
-    self.EnableDelEvent = true;
+function ZipFile:ctor()
+    self.ProcessHandler = ZipFile.OnProcessHandler;
+    self.ErrorHandler = ZipFile.OnErrorHandler;
 end
 
-function BaseScene:Run()
-    if class.IsNull(D.RunningScene) then
-        D:RunWithScene(self)
-    else
-        D:ReplaceScene(self)
+function ZipFile.private:OnProcessHandler(path,idx,count)
+    if not self:OnProcess(path,idx,count) then
+        event.ZipFileProcess(self,path,idx,count);
     end
 end
 
-function BaseScene:dtor()
-    for _,v in pairs(self.PreloadRes.Sound or {}) do
-        Sound.Uncache(v)
+function ZipFile.private:OnErrorHandler(code,reason)
+    if not self:OnError(code,reason) then
+        event.ZipFileError(self,code,reason);
     end
 end
-
-function BaseScene.handlers:OnDeviceToPortrait()
-    self.Size = D.OpenGLView.FrameSize;
-    self:Layout();
-end
-
-function BaseScene.handlers:OnDeviceToLandscape()
-    self.Size = D.OpenGLView.FrameSize;
-    self:Layout();
-end
-cc.BaseScene = BaseScene;
-return BaseScene;

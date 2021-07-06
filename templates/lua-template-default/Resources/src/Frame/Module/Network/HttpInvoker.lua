@@ -86,7 +86,7 @@ function HttpInvoker:AddParams(pKey,pValue)
     end
 end
 
-function HttpInvoker.protected:_OnResponse(_,url,code,headerStr,response,sendTime)
+function HttpInvoker.protected:_OnResponse(_,url,code,rHeaders,response,sendTime)
     local suc = code == 200;
     local headers = {};
     local ret = {
@@ -96,15 +96,11 @@ function HttpInvoker.protected:_OnResponse(_,url,code,headerStr,response,sendTim
         delay = floor(clock() * 1000 - sendTime)
     };
 
-    -- 以\n和:分割出响应头信息。
-    for _,v in ipairs(headerStr:Split("\n")) do
-        local snap = v:find(":");
-        if snap then
-            headers[v:sub(1,snap - 1)] = v:sub(snap + 1):Trim();
-        end
+    for k,v in pairs(rHeaders) do
+        headers[k] = v;
     end
 
-    local ct = headers["Content-Type"];
+    local ct = headers["Content-Type"] or headers["CONTENT-TYPE"] or headers["content-type"];
     if ct and ct:lower():find("application/json") then
         -- json响应类型，要求返回json能解析为一个表。
         local tab = decode(response);

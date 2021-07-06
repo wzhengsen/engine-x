@@ -18,52 +18,48 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
+
 local setmetatable = setmetatable;
 local insert = table.insert;
 local remove = table.remove;
----
----Wrapping the given function so that it handles the push and pop of the access stack correctly anyway,
---to avoid the access stack being corrupted by an error being thrown in one of the callbacks.
----@param aStack table
----@param cls table
----@param f function
----@vararg any
----@return ...
----
-local AllFunctions = setmetatable({},{__mode = "k"});
+
+local modeK = {__mode = "k"};
+local AllFunctions = setmetatable({},modeK);
 local AccessStack = require("OOP.Variant.Internal").AccessStack;
 local RAII = setmetatable({},{
     __close = function ()
         remove(AccessStack);
     end
 });
+---
+---Wrapping the given function so that it handles the push and pop of the access stack correctly anyway,
+---to avoid the access stack being corrupted by an error being thrown in one of the callbacks.
+---@param cls table
+---@param f function
+---@return function
+---
 local function FunctionWrapper(cls,f)
-    local newF = AllFunctions[f]
+    local clsFunctions = AllFunctions[cls];
+    if not clsFunctions then
+        clsFunctions = setmetatable({},modeK);
+        AllFunctions[cls] = clsFunctions;
+    end
+    local newF = clsFunctions[f];
     if nil == newF then
         newF = function(...)
             insert(AccessStack,cls);
             local _<close> = RAII;
             return f(...);
         end
-        AllFunctions[newF] = newF;
-        AllFunctions[f] = newF;
+        clsFunctions[newF] = newF;
+        clsFunctions[f] = newF;
     end
     return newF;
 end
 
 local function BreakFunctionWrapper(f)
-    local newF = AllFunctions[f]
-    if nil == newF then
-        newF = function(...)
-            -- 0 means that any access rights can be broken.
-            insert(AccessStack,0);
-            local _<close> = RAII;
-            return f(...);
-        end
-        AllFunctions[newF] = newF;
-        AllFunctions[f] = newF;
-    end
-    return newF;
+    -- 0 means that any access permissions can be broken.
+    return FunctionWrapper(0,f);
 end
 
 return {

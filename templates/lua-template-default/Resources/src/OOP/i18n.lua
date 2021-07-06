@@ -106,8 +106,11 @@ local LanguageMap = {
     ["It is not possible to inherit from the same class repeatedly."] = {
         zh = "不能重复继承同一个类。"
     },
-    ["The base classes constructor is not accessible."] = {
-        zh = "基类构造不可访问。"
+    ["The class/base classes constructor is not accessible."] = {
+        zh = "类/基类构造不可访问。"
+    },
+    ["The class/base classes destructor is not accessible."] = {
+        zh = "类/基类析构不可访问。"
     },
     ["Only strings or tables can be used to generate a enumeration."] = {
         zh = "生成枚举时只能使用字符串或表。"
@@ -153,6 +156,9 @@ local LanguageMap = {
     },
     ["%s must wrap a function."] = {
         zh = "%必须包装一个函数。"
+    },
+    ["This is the function that has been deleted."] = {
+        zh = "这是已删除的函数。"
     }
 };
 

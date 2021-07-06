@@ -20,10 +20,10 @@
 
 ---为string新增了一些方法,如Split,Trim,Encrypt,Decrypt,Encode,Decode,Hash等。
 
----@class stringex
+---@class string
 ---@field Convert fun(to:string,from:string):string
-local string = string;
-local crypto = require("crypto");
+
+local crypto = cc.Crypto;
 
 ---按分隔符截取字符串。
 ---@param sep string (截取符集合)
@@ -49,77 +49,38 @@ function string:Trim()
     return self:match("^%s*(.-)%s*$") or "";
 end
 
-local function EncodeUrl(input)
-    -- convert line endings
-    return input:gsub("\n", "\r\n"):gsub(
-        -- escape all characters but alphanumeric, -_.!~*'()
-        "([^%w%-%_%.%!%~%*%'%(%) ])",
-        function(char)
-            return "%" .. ("%02X"):format(char:byte());
-        end
-    ):gsub(" ", "+");
-    -- convert spaces to "+" symbols
-end
-
-local function DecodeUrl(input)
-    return input:gsub("+", " "):gsub(
-        "%%(%x%x)",
-        function(h)
-            return string.char(tonumber(h, 16));
-        end
-    ):gsub("\r\n", "\n");
-end
-
 ---对字符串按指定方式编码。
----@param eType | "\"Url\"" | "\"Base64\"" | "\"Hex\""
----@return string?
-function string:Encode(eType)
-    eType = eType:upper();
-    local encode = eType == "URL" and EncodeUrl or crypto["Encode" .. eType];
-    if encode then
-        -- 强制返回一个值。
-        return (encode(self));
-    end
-    return nil;
+---@param codec | "\"Url\"" | "\"Base64\"" | "\"Hex\""
+---@return string
+function string:Encode(codec)
+    return crypto.Encode(self,crypto.EncodeMode[codec:upper()]);
 end
 
 ---对字符串按指定方式解码。
----@param eType | "\"Url\"" | "\"Base64\"" | "\"Hex\""
----@return string?
-function string:Decode(eType)
-    eType = eType:upper();
-    local decode = eType == "URL" and DecodeUrl or crypto["Decode" .. eType];
-    if decode then
-        -- 强制返回一个值。
-        return (decode(self));
-    end
-    return nil;
+---@param codec | "\"Url\"" | "\"Base64\"" | "\"Hex\""
+---@return string
+function string:Decode(codec)
+    return crypto.Decode(self,crypto.EncodeMode[codec:upper()]);
 end
 
 ---计算字符串的哈希值。
----@param eType | "\"Md5\"" | "\"Sha1\"" | "\"Sha224\"" | "\"Sha256\"" | "\"Sha384\"" | "\"Sha512\""
----@param enc? boolean {true}取哈希后是否进行16进制编码。
----@return string?
-function string:Hash(eType, enc)
-    local hash = crypto[eType:upper()];
-    if hash then
-        if enc == nil or enc then
-            return hash(self):Encode("hex");
-        end
-        return hash(self);
-    end
+---@param hash | "\"Md5\"" | "\"Sha1\"" | "\"Sha224\"" | "\"Sha256\"" | "\"Sha384\"" | "\"Sha512\""
+---@return string
+function string:Hash(hash)
+    return crypto[hash:upper()](self);
 end
 
-
 ---加密字符串。
----@type fun(pwd:string):string
+---@type fun(pwd:string,iv?:string):string
 ---@param pwd string 密码默认长度16字节,不足部分补\0,超出部分截断
+---@param iv? string 初始向量默认长度16字节,不足部分补\0,超出部分截断
 ---@return string
 string.Encrypt = crypto.Encrypt;
 
 ---解密字符串。
----@type fun(pwd:string):string
+---@type fun(pwd:string,iv?:string):string
 ---@param pwd string 密码默认长度16字节,不足部分补\0,超出部分截断
+---@param iv? string 初始向量默认长度16字节,不足部分补\0,超出部分截断
 ---@return string
 string.Decrypt = crypto.Decrypt;
 

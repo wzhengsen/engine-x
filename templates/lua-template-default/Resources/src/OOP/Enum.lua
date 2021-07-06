@@ -23,9 +23,9 @@ local require = require;
 local rawset = rawset;
 local type = type;
 local select = select;
+local warn = warn or print;
 
 local Config = require("OOP.Config");
-local Version = Config.Version;
 local i18n = require("OOP.i18n");
 local EnumBehavior = Config.EnumBehavior;
 local Auto = Config.Auto;
@@ -71,9 +71,7 @@ if Config.Debug then
             __index = e,
             __newindex = function ()
                 if EnumBehavior == 0 then
-                    if Version > 5.4 then
-                        warn("You can't edit a enumeration.");
-                    end
+                    warn("You can't edit a enumeration.");
                 elseif EnumBehavior == 1 then
                     error(i18n"You can't edit a enumeration.");
                 end

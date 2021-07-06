@@ -25,8 +25,13 @@ package.path = path;
 local cpath = package.cpath;
 package.cpath = cpath;
 
+require("AppDelegate");
+
 _G.cjson = require("cjson");
 _G.D = cc.Director.Instance;
+_G.A = cc.AppDelegate.Instance;
+_G.F = cc.FileUtils.Instance;
+
 
 require("Frame.Extend.Lua.MathEx");
 require("Frame.Extend.Lua.StringEx");
@@ -48,6 +53,8 @@ require("Frame.Extend.Cocos2dx.NodeEx");
 require("Frame.Extend.Cocos2dx.VideoPlayerEx");
 require("Frame.Extend.Cocos2dx.ClientEx");
 require("Frame.Extend.Cocos2dx.ServerEx");
+require("Frame.Extend.Cocos2dx.ZipFileEx");
+require("Frame.Extend.Cocos2dx.DownloaderEx");
 require("Frame.Extend.Cocos2dx.WebSocketEx");
 
 require("Utils.Convert");
@@ -58,10 +65,13 @@ require("Audio.Sound");
 require("Audio.Effect");
 require("Audio.Music");
 
+require("Network.HttpInvoker");
+
 require("Others.Alarm");
 require("Others.Label");
 
 require("FSM");
+require("VersionManager");
 
 require("Math.Algorithm.RatePool");
 require("Math.Algorithm.Stack");
@@ -72,20 +82,14 @@ require("Math.Geometry.Polygon");
 require("Math.Geometry.Sector");
 require("Math.Geometry.Vector");
 
-require("Network.HttpInvoker");
-
 require("Base.Scene.BaseScene");
 require("Base.Scene.ILoadingScene");
-
--- require("Application");
-
---require("Module.Init");
 
 local config = require("config");
 
 if config.DisableGlobal then
     local __g = _G;
-    _G.globals = setmetatable({}, {
+    __g.globals = setmetatable({}, {
         __newindex = function(_, name, value)
             rawset(__g, name, value);
         end,

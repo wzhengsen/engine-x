@@ -28,19 +28,25 @@ local remove = table.remove;
 local pcall = pcall;
 local error = error;
 
+
+local modeK = {__mode = "k"};
+local AllFunctions = setmetatable({},modeK);
+local AccessStack = require("OOP.Variant.Internal").AccessStack;
+
 ---
 ---Wrapping the given function so that it handles the push and pop of the access stack correctly anyway,
---to avoid the access stack being corrupted by an error being thrown in one of the callbacks.
----@param aStack table
+---to avoid the access stack being corrupted by an error being thrown in one of the callbacks.
 ---@param cls table
 ---@param f function
----@vararg any
----@return ...
+---@return function
 ---
-local AllFunctions = setmetatable({},{__mode = "k"});
-local AccessStack = require("OOP.Variant.Internal").AccessStack;
 local function FunctionWrapper(cls,f)
-    local newF = AllFunctions[f]
+    local clsFunctions = AllFunctions[cls];
+    if not clsFunctions then
+        clsFunctions = setmetatable({},modeK);
+        AllFunctions[cls] = clsFunctions;
+    end
+    local newF = clsFunctions[f];
     if nil == newF then
         newF = function(...)
             insert(AccessStack,cls);
@@ -51,29 +57,15 @@ local function FunctionWrapper(cls,f)
             end
             return unpack(ret,2);
         end;
-        AllFunctions[newF] = newF;
-        AllFunctions[f] = newF;
+        clsFunctions[newF] = newF;
+        clsFunctions[f] = newF;
     end
     return newF;
 end
 
 local function BreakFunctionWrapper(f)
-    local newF = AllFunctions[f]
-    if nil == newF then
-        newF = function(...)
-            -- 0 means that any access rights can be broken.
-            insert(AccessStack,0);
-            local ret = {pcall(f,...)};
-            remove(AccessStack);
-            if not ret[1] then
-                error(ret[2]);
-            end
-            return unpack(ret,2);
-        end;
-        AllFunctions[newF] = newF;
-        AllFunctions[f] = newF;
-    end
-    return newF;
+    -- 0 means that any access permissions can be broken.
+    return FunctionWrapper(0,f);
 end
 
 return {

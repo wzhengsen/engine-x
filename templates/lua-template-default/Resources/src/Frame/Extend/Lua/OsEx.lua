@@ -36,9 +36,7 @@
 ---@field public static any
 ---@field public const any
 os = class(os);
-function os.private:ctor()end
-function os.private:dtor()end
-function os.__new__()end
+os.ctor = class.delete;
 
 os.PlatformType = cc.ApplicationProtocol.Platform;
 os.LanguageType = cc.LanguageType;

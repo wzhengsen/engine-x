@@ -34,6 +34,6 @@ local function main()
         _G.LuaUDS = reg["UD🌙"];
     end
     require("Frame.Init");
-    --cc.Application.Instance:Start();
+    A:Start();
 end
 main();

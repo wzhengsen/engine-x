@@ -48,40 +48,43 @@ function Client:OnMessage(_,_) return false;end
 function Client:OnLose() return false;end
 function Client:ctor()
     self.HeartBeat = config.SocketHeartBeat;
-    self.ConnectHandler = function (sender,suc)
-        -- sokect连接事件。
-        if not sender:OnConnect(suc) then
-            event.SocketConnect(sender,suc);
-        end
-    end;
-    self.MessageHandler = function(sender,msg)
-        -- sokect收到消息事件。
-        local msgName,body = nil,nil;
-        if self.ProtocolType == "json" then
-            body = cjson.decode(msg)
-            if type(body) ~= "table" then return warn("无法解析的消息。");end
-            msgName = body.msgName;
-            body.msgName = nil;
-        elseif self.ProtocolType == "lua-protobuf" then
-            local offset = msg:find("\0");
-            if nil == offset then return warn("无法解析的消息。");end
-            msgName = msg:sub(1,offset - 1);
-            local ret = msg:sub(offset + 1);
-            ret,body = pcall(pb.decode,msgName,ret);
-            if not ret then return warn("无法解析的消息。-" .. (msgName or ""));end
-        else
-            return;
-        end
-        if not self:OnMessage(msgName,body) then
-            Event.SocketMessage(sender,msgName,body);
-        end
-    end;
-    self.LoseHandler = function (sender)
-        -- sokect连接丢失事件。
-        if not sender:OnLose() then
-            event.SocketLose(sender);
-        end
-    end;
+    self.ConnectHandler = Client.OnConnectHandler;
+    self.MessageHandler = Client.OnMessageHandler;
+    self.LoseHandler = Client.OnLoseHandler;
+end
+
+function Client.private:OnConnectHandler(suc)
+    if not self:OnConnect(suc) then
+        event.SocketConnect(self,suc);
+    end
+end
+
+function Client.private:OnMessageHandler(msg)
+    local msgName,body = nil,nil;
+    if self.ProtocolType == "json" then
+        body = cjson.decode(msg)
+        if type(body) ~= "table" then return warn("无法解析的消息。");end
+        msgName = body.msgName;
+        body.msgName = nil;
+    elseif self.ProtocolType == "lua-protobuf" then
+        local offset = msg:find("\0");
+        if nil == offset then return warn("无法解析的消息。");end
+        msgName = msg:sub(1,offset - 1);
+        local ret = msg:sub(offset + 1);
+        ret,body = pcall(pb.decode,msgName,ret);
+        if not ret then return warn("无法解析的消息。-" .. (msgName or ""));end
+    else
+        return;
+    end
+    if not self:OnMessage(msgName,body) then
+        event.SocketMessage(self,msgName,body);
+    end
+end
+
+function Client.private:OnLoseHandler()
+    if not self:OnLose() then
+        event.SocketLose(self);
+    end
 end
 
 ---向对等连接发送消息。

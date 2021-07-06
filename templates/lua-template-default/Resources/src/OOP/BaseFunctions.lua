@@ -23,9 +23,63 @@ local Config = require("OOP.Config");
 local Version = Config.Version;
 local Compat1 = Version < 5.3 and require("OOP.Version.LowerThan53") or require("OOP.Version.HigherThan52");
 local Compat2 = Version < 5.4 and require("OOP.Version.LowerThan54") or require("OOP.Version.HigherThan53");
+local Internal = require("OOP.Variant.Internal");
+local ClassesChildren = Internal.ClassesChildren;
+
+---Maps some value changes to subclasses.
+---@param cls table
+---@param keyTable table
+---@param value any
+local function Update2Children(cls,keyTable,value)
+    local children = ClassesChildren[cls];
+    for _,child in ipairs(children) do
+        if nil == keyTable[child] then
+            keyTable[child] = value;
+        end
+        Update2Children(child,keyTable,value)
+    end
+end
+local function Update2ChildrenWithKey(cls,keyTable,key,value)
+    local children = ClassesChildren[cls];
+    for _,child in ipairs(children) do
+        local t = keyTable[child];
+        if t and nil == t[key]  then
+            t[key] = value;
+        end
+        Update2ChildrenWithKey(child,keyTable,key,value)
+    end
+end
+
+---Copy any value.
+---
+---@param any any
+---@return any
+---
+local function Copy(any,existTab)
+    if type(any) ~= "table" then
+        return any;
+    end
+    if existTab then
+        local ret = existTab[any];
+        if nil ~= ret then
+            return ret;
+        end
+    end
+
+    existTab = existTab or {};
+    local tempTab = {};
+    existTab[any] = tempTab;
+    for k,v in pairs(any) do
+        tempTab[Copy(k,existTab)] = Copy(v,existTab);
+    end
+    return tempTab;
+end
 
 return {
     bits = Compat1.bits,
     FunctionWrapper = Compat2.FunctionWrapper,
-    BreakFunctionWrapper = Compat2.BreakFunctionWrapper
+    BreakFunctionWrapper = Compat2.BreakFunctionWrapper,
+    Update2Children = Update2Children,
+    Update2ChildrenWithKey = Update2ChildrenWithKey,
+    Copy = Copy
 };
