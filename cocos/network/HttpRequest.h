@@ -332,7 +332,7 @@ public:
      * @param timeout Use millisecond.
     */
     void SetTimeout(uint32_t timeout) noexcept {
-        _timeout = timeout;
+        _timeout = timeout ? timeout : DefaultTimeoutMillisecond;
     }
 
     /**

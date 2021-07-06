@@ -81,17 +81,29 @@ namespace extension {
         }
         setResponseCallback([this](HttpClient*, HttpResponse* response) {
             if (_handler) {
-                const auto headers = response->getResponseHeaders();
-
                 const std::vector<char>* data = response->getResponseData();
                 const std::string_view svData = { data->data(),data->size() };
 
-                _handler(this, response->getResponseCode(), headers, svData);
+                _handler(this, response->getResponseCode(), response->getResponseHeaders(), svData);
             }
 
             release();
         });
-        HttpClient::getInstance()->send(this);
+        HttpClient::getInstance()->setTimeoutForConnect(_timeout);
+        if (_isAsync) {
+            HttpClient::getInstance()->send(this);
+        }
+        else {
+            auto response = HttpClient::getInstance()->sendSync(this);
+            if (_handler) {
+                const std::vector<char>* data = response->getResponseData();
+                const std::string_view svData = { data->data(),data->size() };
+
+                _handler(this, response->getResponseCode(), response->getResponseHeaders(), svData);
+            }
+            response->release();
+            release();
+        }
     }
 
     void LuaHttpRequest::Get(const std::string_view& url) {
