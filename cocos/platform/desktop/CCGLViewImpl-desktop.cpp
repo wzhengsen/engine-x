@@ -40,11 +40,9 @@ THE SOFTWARE.
 #include "base/ccUTF8.h"
 #include "2d/CCCamera.h"
 
-#include "glfw3.h"
-#if GLFW_VERSION_MAJOR >= 3 && GLFW_VERSION_MINOR >= 4
-#define USEGLFW3EXT
-#endif
-#if defined(_WIN32) && defined(USEGLFW3EXT)
+#include "renderer/backend/opengl/MacrosGL.h"
+
+#if defined(_WIN32)
 #include "glfw3ext.h"
 #endif
 
