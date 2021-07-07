@@ -377,7 +377,7 @@ namespace utils
     /**
     * @brief    Set the contents of the global clipboard.
     */
-    CC_DLL void SetClipbord(const char* content);
+    CC_DLL void SetClipboard(const char* content);
 }
 
 NS_CC_END

@@ -37,7 +37,7 @@ std::string GetClipboard() {
     return content;
 }
 
-void SetClipbord(const char* content) {
+void SetClipboard(const char* content) {
     if (!content){ return; }
     UIPasteboard* pBoard = [UIPasteboard generalPasteboard];
     if (!pBoard){ return; }

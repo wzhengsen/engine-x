@@ -827,7 +827,7 @@ std::string GetClipboard() {
     || CC_TARGET_PLATFORM == CC_PLATFORM_MAC \
     || CC_TARGET_PLATFORM == CC_PLATFORM_WIN32\
     || CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID)
-void SetClipbord(const char* content) {
+void SetClipboard(const char* content) {
     if (!content) { return; }
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
     cocos2d::JniHelper::callStaticVoidMethod(HelperClassName, "SetClipboard", content);

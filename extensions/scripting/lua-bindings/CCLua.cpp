@@ -38,6 +38,7 @@
 #include "auto/CCRegisterLuaPhysics3DAuto.hpp"
 #include "auto/CCRegisterLuaNavMeshAuto.hpp"
 #include "auto/CCRegisterLuaBackendAuto.hpp"
+#include "auto/CCRegisterLuaUtilsAuto.hpp"
 // Manual.
 #include "manual/CCRegisterLuaManual.h"
 
@@ -233,6 +234,7 @@ namespace cocos2d {
             RegisterLuaPhysics3DAuto(*this);
             RegisterLuaNavMeshAuto(*this);
             RegisterLuaBackendAuto(*this);
+            RegisterLuaUtilsAuto(*this);
         }
 
         void Lua::RegisterManual() {

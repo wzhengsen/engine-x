@@ -3,6 +3,11 @@ if(APPLE)
     set(COCOS_BASE_SPECIFIC_SRC
         base/CCController-apple.mm
         )
+    if(IOS)
+    set(COCOS_BASE_SPECIFIC_SRC
+        base/ccUtils.mm
+        )
+    endif()
 
 elseif(ANDROID)
     set(COCOS_BASE_SPECIFIC_SRC
