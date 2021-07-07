@@ -130,7 +130,7 @@ public:
     /**
      * Set the timeout value for connecting.
      *
-     * @param value the timeout value for connecting.
+     * @param value the timeout value for connecting(ms).
      */
     void setTimeoutForConnect(int value);
 
@@ -144,7 +144,7 @@ public:
     /**
      * Set the timeout value for reading.
      *
-     * @param value the timeout value for reading.
+     * @param value the timeout value for reading(ms).
      */
     void setTimeoutForRead(int value);
 

@@ -92,7 +92,7 @@ void HttpClient::setSSLVerification(const std::string& caFile) {
 }
 
 HttpClient::HttpClient()
-    : _isInited(false), _dispatchOnWorkThread(false), _timeoutForConnect(30), _timeoutForRead(60), _cookie(nullptr),
+    : _isInited(false), _dispatchOnWorkThread(false), _timeoutForConnect(30000), _timeoutForRead(60000), _cookie(nullptr),
       _clearResponsePredicate(nullptr) {
     CCLOG("In the constructor of HttpClient!");
     _scheduler = Director::getInstance()->getScheduler();
@@ -267,7 +267,7 @@ void HttpClient::handleNetworkEvent(yasio::io_event* event) {
 
             auto& timerForRead = channel->get_user_timer();
             timerForRead.cancel(*_service);
-            timerForRead.expires_from_now(std::chrono::seconds(this->_timeoutForRead));
+            timerForRead.expires_from_now(std::chrono::milliseconds(this->_timeoutForRead));
             timerForRead.async_wait(*_service, [=](io_service& s) {
                 response->updateInternalCode(yasio::errc::read_timeout);
                 s.close(channelIndex); // timeout
@@ -355,7 +355,7 @@ void HttpClient::clearResponseQueue() {
 void HttpClient::setTimeoutForConnect(int value) {
     std::lock_guard<std::recursive_mutex> lock(_timeoutForConnectMutex);
     _timeoutForConnect = value;
-    _service->set_option(YOPT_S_CONNECT_TIMEOUT, value);
+    _service->set_option(YOPT_S_CONNECT_TIMEOUTMS, value);
 }
 
 int HttpClient::getTimeoutForConnect() {

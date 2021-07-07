@@ -253,6 +253,6 @@ int network::Client::Write(const std::string& msg) {
 }
 
 void network::Client::Open(size_t mSec) {
-    _service.set_option(YOPT_S_CONNECT_TIMEOUT, static_cast<int>(mSec / 1000));
+    _service.set_option(YOPT_S_CONNECT_TIMEOUTMS, static_cast<int>(mSec));
     Open();
 }

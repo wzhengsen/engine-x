@@ -104,8 +104,6 @@ namespace network {
         /**
          * @brief       Open the connection with millsecond timeout.
          * @param mSec  The millseconds timeout you wish.
-         *              The millseconds will be converted to seconds in factly.
-         *              Keep millsecond implementation for future support of second.
         */
         void Open(size_t mSec);
         using Connection::Open;
