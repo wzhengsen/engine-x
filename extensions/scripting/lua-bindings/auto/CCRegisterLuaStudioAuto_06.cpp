@@ -16,6 +16,7 @@ mt["SetActionTag"]=static_cast<void(cocostudio::ComExtensionData::*)(int)>(&coco
 mt["set"]["ActionTag"]=mt["SetActionTag"];
 mt["GetActionTag"]=static_cast<int(cocostudio::ComExtensionData::*)()const>(&cocostudio::ComExtensionData::getActionTag);
 mt["get"]["ActionTag"]=mt["GetActionTag"];
-mt["get"]["Type"]=[](){return cocostudio::ComExtensionData::Type;};;
-mt["get"]["COMPONENT_NAME"]=[](){return cocostudio::ComExtensionData::COMPONENT_NAME;};;
+mt["static"]["set"]["Type"]=[](const sol::object&,const cocos2d::ObjectFactory::TInfo& value){cocostudio::ComExtensionData::Type = value;};
+mt["static"]["get"]["Type"]=[]()->const cocos2d::ObjectFactory::TInfo&{return cocostudio::ComExtensionData::Type;};
+mt["static"]["get"]["COMPONENT_NAME"]=[]()->const std::string&{return cocostudio::ComExtensionData::COMPONENT_NAME;};
 }

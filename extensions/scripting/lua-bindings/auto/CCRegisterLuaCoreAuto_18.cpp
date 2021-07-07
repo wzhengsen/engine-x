@@ -172,38 +172,6 @@ mt["get"]["TextureAtlas"]=mt["GetTextureAtlas"];
 mt["SetTextureAtlas"]=static_cast<void(cocos2d::ParticleBatchNode::*)(cocos2d::TextureAtlas*)>(&cocos2d::ParticleBatchNode::setTextureAtlas);
 mt["set"]["TextureAtlas"]=mt["SetTextureAtlas"];
 }
-void RegisterLuaCoreParticleDataAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleData).name()] = sol::usertype_traits<cocos2d::ParticleData*>::metatable();
-auto dep=lua.new_usertype<cocos2d::ParticleData>("deprecated.cocos2d::ParticleData");
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ParticleData*>::metatable());
-lua["cc"]["ParticleData"]=mt;
-mt["Init"]=static_cast<bool(cocos2d::ParticleData::*)(int)>(&cocos2d::ParticleData::init);
-mt["Release"]=static_cast<void(cocos2d::ParticleData::*)()>(&cocos2d::ParticleData::release);
-mt["GetMaxCount"]=static_cast<unsigned int(cocos2d::ParticleData::*)()>(&cocos2d::ParticleData::getMaxCount);
-mt["get"]["MaxCount"]=mt["GetMaxCount"];
-mt["CopyParticle"]=static_cast<void(cocos2d::ParticleData::*)(int,int)>(&cocos2d::ParticleData::copyParticle);
-mt["get"]["Posx"]=[](cocos2d::ParticleData* obj){return obj->posx;};;
-mt["get"]["Posy"]=[](cocos2d::ParticleData* obj){return obj->posy;};;
-mt["get"]["StartPosX"]=[](cocos2d::ParticleData* obj){return obj->startPosX;};;
-mt["get"]["StartPosY"]=[](cocos2d::ParticleData* obj){return obj->startPosY;};;
-mt["get"]["ColorR"]=[](cocos2d::ParticleData* obj){return obj->colorR;};;
-mt["get"]["ColorG"]=[](cocos2d::ParticleData* obj){return obj->colorG;};;
-mt["get"]["ColorB"]=[](cocos2d::ParticleData* obj){return obj->colorB;};;
-mt["get"]["ColorA"]=[](cocos2d::ParticleData* obj){return obj->colorA;};;
-mt["get"]["DeltaColorR"]=[](cocos2d::ParticleData* obj){return obj->deltaColorR;};;
-mt["get"]["DeltaColorG"]=[](cocos2d::ParticleData* obj){return obj->deltaColorG;};;
-mt["get"]["DeltaColorB"]=[](cocos2d::ParticleData* obj){return obj->deltaColorB;};;
-mt["get"]["DeltaColorA"]=[](cocos2d::ParticleData* obj){return obj->deltaColorA;};;
-mt["get"]["Size"]=[](cocos2d::ParticleData* obj){return obj->size;};;
-mt["get"]["DeltaSize"]=[](cocos2d::ParticleData* obj){return obj->deltaSize;};;
-mt["get"]["Rotation"]=[](cocos2d::ParticleData* obj){return obj->rotation;};;
-mt["get"]["DeltaRotation"]=[](cocos2d::ParticleData* obj){return obj->deltaRotation;};;
-mt["get"]["TimeToLive"]=[](cocos2d::ParticleData* obj){return obj->timeToLive;};;
-mt["get"]["AtlasIndex"]=[](cocos2d::ParticleData* obj){return obj->atlasIndex;};;
-mt["get"]["ModeA"]=[](cocos2d::ParticleData* obj){return obj->modeA;};;
-mt["get"]["ModeB"]=[](cocos2d::ParticleData* obj){return obj->modeB;};;
-mt["get"]["MaxCount"]=[](cocos2d::ParticleData* obj){return obj->maxCount;};;
-}
 void RegisterLuaCoreParticleSystemModeAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,2);
 enumTable["GRAVITY"]=cocos2d::ParticleSystem::Mode::GRAVITY;
@@ -220,9 +188,9 @@ lua["cc"]["ParticleSystem"]["static"]["PositionType"]=lua.NewEnum(enumTable);
 void RegisterLuaCoreParticleSystem_AE_5a335f3592950f0f3daff6aec20cf00c_Auto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["cc"];
 pTable = pTable["ParticleSystem"];
-pTable["static"]["DURATION_INFINITY"] = cocos2d::ParticleSystem::DURATION_INFINITY;
-pTable["static"]["START_SIZE_EQUAL_TO_END_SIZE"] = cocos2d::ParticleSystem::START_SIZE_EQUAL_TO_END_SIZE;
-pTable["static"]["START_RADIUS_EQUAL_TO_END_RADIUS"] = cocos2d::ParticleSystem::START_RADIUS_EQUAL_TO_END_RADIUS;
+pTable["static"]["const"]["DURATION_INFINITY"] = cocos2d::ParticleSystem::DURATION_INFINITY;
+pTable["static"]["const"]["START_SIZE_EQUAL_TO_END_SIZE"] = cocos2d::ParticleSystem::START_SIZE_EQUAL_TO_END_SIZE;
+pTable["static"]["const"]["START_RADIUS_EQUAL_TO_END_RADIUS"] = cocos2d::ParticleSystem::START_RADIUS_EQUAL_TO_END_RADIUS;
 }
 void RegisterLuaCoreParticleSystemAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleSystem).name()] = sol::usertype_traits<cocos2d::ParticleSystem*>::metatable();
@@ -419,4 +387,17 @@ mt["get"]["SourcePositionCompatible"]=mt["IsSourcePositionCompatible"];
 RegisterLuaCoreParticleSystemModeAuto(lua);
 RegisterLuaCoreParticleSystemPositionTypeAuto(lua);
 RegisterLuaCoreParticleSystem_AE_5a335f3592950f0f3daff6aec20cf00c_Auto(lua);
+}
+void RegisterLuaCoreParticleSystemQuadAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleSystemQuad).name()] = sol::usertype_traits<cocos2d::ParticleSystemQuad*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ParticleSystemQuad>("deprecated.cocos2d::ParticleSystemQuad");
+dep[sol::base_classes]=sol::bases<cocos2d::ParticleSystem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TextureProtocol,cocos2d::BlendProtocol,cocos2d::PlayableProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ParticleSystemQuad*>::metatable(),sol::usertype_traits<cocos2d::ParticleSystem*>::metatable());
+lua["cc"]["ParticleSystemQuad"]=mt;
+mt["__new__"]=sol::overload(static_cast<cocos2d::ParticleSystemQuad*(*)(cocos2d::ValueMap&)>(&cocos2d::ParticleSystemQuad::create),static_cast<cocos2d::ParticleSystemQuad*(*)(const std::string&)>(&cocos2d::ParticleSystemQuad::create),static_cast<cocos2d::ParticleSystemQuad*(*)()>(&cocos2d::ParticleSystemQuad::create));
+mt["static"]["CreateWithTotalParticles"]=static_cast<cocos2d::ParticleSystemQuad*(*)(int)>(&cocos2d::ParticleSystemQuad::createWithTotalParticles);
+mt["SetDisplayFrame"]=static_cast<void(cocos2d::ParticleSystemQuad::*)(cocos2d::SpriteFrame*)>(&cocos2d::ParticleSystemQuad::setDisplayFrame);
+mt["set"]["DisplayFrame"]=mt["SetDisplayFrame"];
+mt["SetTextureWithRect"]=static_cast<void(cocos2d::ParticleSystemQuad::*)(cocos2d::Texture2D*,const cocos2d::Rect&)>(&cocos2d::ParticleSystemQuad::setTextureWithRect);
+mt["ListenRendererRecreated"]=static_cast<void(cocos2d::ParticleSystemQuad::*)(cocos2d::EventCustom*)>(&cocos2d::ParticleSystemQuad::listenRendererRecreated);
 }

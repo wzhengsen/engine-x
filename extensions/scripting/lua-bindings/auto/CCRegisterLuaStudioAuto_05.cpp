@@ -49,7 +49,7 @@ mt["GetPlayableAct"]=static_cast<std::string(cocostudio::timeline::PlayableFrame
 mt["get"]["PlayableAct"]=mt["GetPlayableAct"];
 mt["SetPlayableAct"]=static_cast<void(cocostudio::timeline::PlayableFrame::*)(std::string)>(&cocostudio::timeline::PlayableFrame::setPlayableAct);
 mt["set"]["PlayableAct"]=mt["SetPlayableAct"];
-mt["get"]["PLAYABLE_EXTENTION"]=[](){return cocostudio::timeline::PlayableFrame::PLAYABLE_EXTENTION;};;
+mt["static"]["get"]["PLAYABLE_EXTENTION"]=[]()->const std::string&{return cocostudio::timeline::PlayableFrame::PLAYABLE_EXTENTION;};
 }
 void RegisterLuaStudioTimelineAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::timeline::Timeline).name()] = sol::usertype_traits<cocostudio::timeline::Timeline*>::metatable();

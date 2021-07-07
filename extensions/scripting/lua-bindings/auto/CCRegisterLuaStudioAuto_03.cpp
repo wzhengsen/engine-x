@@ -17,8 +17,9 @@ mt["GetFloat"]=sol::overload([](cocostudio::ComAttribute* obj,const std::string&
 mt["GetBool"]=sol::overload([](cocostudio::ComAttribute* obj,const std::string& arg0,bool arg1){return obj->getBool(arg0,arg1);},[](cocostudio::ComAttribute* obj,const std::string& arg0){return obj->getBool(arg0);});
 mt["GetString"]=sol::overload([](cocostudio::ComAttribute* obj,const std::string& arg0,const std::string& arg1){return obj->getString(arg0,arg1);},[](cocostudio::ComAttribute* obj,const std::string& arg0){return obj->getString(arg0);});
 mt["Parse"]=static_cast<bool(cocostudio::ComAttribute::*)(const std::string&)>(&cocostudio::ComAttribute::parse);
-mt["get"]["Type"]=[](){return cocostudio::ComAttribute::Type;};;
-mt["get"]["COMPONENT_NAME"]=[](){return cocostudio::ComAttribute::COMPONENT_NAME;};;
+mt["static"]["set"]["Type"]=[](const sol::object&,const cocos2d::ObjectFactory::TInfo& value){cocostudio::ComAttribute::Type = value;};
+mt["static"]["get"]["Type"]=[]()->const cocos2d::ObjectFactory::TInfo&{return cocostudio::ComAttribute::Type;};
+mt["static"]["get"]["COMPONENT_NAME"]=[]()->const std::string&{return cocostudio::ComAttribute::COMPONENT_NAME;};
 }
 void RegisterLuaStudioComAudioAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::ComAudio).name()] = sol::usertype_traits<cocostudio::ComAudio*>::metatable();
@@ -62,8 +63,9 @@ mt["SetLoop"]=static_cast<void(cocostudio::ComAudio::*)(bool)>(&cocostudio::ComA
 mt["set"]["Loop"]=mt["SetLoop"];
 mt["IsLoop"]=static_cast<bool(cocostudio::ComAudio::*)()>(&cocostudio::ComAudio::isLoop);
 mt["get"]["Loop"]=mt["IsLoop"];
-mt["get"]["Type"]=[](){return cocostudio::ComAudio::Type;};;
-mt["get"]["COMPONENT_NAME"]=[](){return cocostudio::ComAudio::COMPONENT_NAME;};;
+mt["static"]["set"]["Type"]=[](const sol::object&,const cocos2d::ObjectFactory::TInfo& value){cocostudio::ComAudio::Type = value;};
+mt["static"]["get"]["Type"]=[]()->const cocos2d::ObjectFactory::TInfo&{return cocostudio::ComAudio::Type;};
+mt["static"]["get"]["COMPONENT_NAME"]=[]()->const std::string&{return cocostudio::ComAudio::COMPONENT_NAME;};
 }
 void RegisterLuaStudioComControllerAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::ComController).name()] = sol::usertype_traits<cocostudio::ComController*>::metatable();
@@ -72,8 +74,9 @@ dep[sol::base_classes]=sol::bases<cocos2d::Component,cocos2d::Ref,cocos2d::exten
 sol::table mt=lua.NewClass(sol::usertype_traits<cocostudio::ComController*>::metatable(),sol::usertype_traits<cocos2d::Component*>::metatable(),sol::usertype_traits<cocostudio::InputDelegate*>::metatable());
 lua["ccs"]["ComController"]=mt;
 mt["__new__"]=static_cast<cocostudio::ComController*(*)()>(&cocostudio::ComController::create);
-mt["get"]["Type"]=[](){return cocostudio::ComController::Type;};;
-mt["get"]["COMPONENT_NAME"]=[](){return cocostudio::ComController::COMPONENT_NAME;};;
+mt["static"]["set"]["Type"]=[](const sol::object&,const cocos2d::ObjectFactory::TInfo& value){cocostudio::ComController::Type = value;};
+mt["static"]["get"]["Type"]=[]()->const cocos2d::ObjectFactory::TInfo&{return cocostudio::ComController::Type;};
+mt["static"]["get"]["COMPONENT_NAME"]=[]()->const std::string&{return cocostudio::ComController::COMPONENT_NAME;};
 }
 void RegisterLuaStudioComRenderAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::ComRender).name()] = sol::usertype_traits<cocostudio::ComRender*>::metatable();
@@ -86,8 +89,9 @@ mt["GetNode"]=static_cast<cocos2d::Node*(cocostudio::ComRender::*)()>(&cocostudi
 mt["get"]["Node"]=mt["GetNode"];
 mt["SetNode"]=static_cast<void(cocostudio::ComRender::*)(cocos2d::Node*)>(&cocostudio::ComRender::setNode);
 mt["set"]["Node"]=mt["SetNode"];
-mt["get"]["Type"]=[](){return cocostudio::ComRender::Type;};;
-mt["get"]["COMPONENT_NAME"]=[](){return cocostudio::ComRender::COMPONENT_NAME;};;
+mt["static"]["set"]["Type"]=[](const sol::object&,const cocos2d::ObjectFactory::TInfo& value){cocostudio::ComRender::Type = value;};
+mt["static"]["get"]["Type"]=[]()->const cocos2d::ObjectFactory::TInfo&{return cocostudio::ComRender::Type;};
+mt["static"]["get"]["COMPONENT_NAME"]=[]()->const std::string&{return cocostudio::ComRender::COMPONENT_NAME;};
 }
 void RegisterLuaStudioGUIReaderAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::GUIReader).name()] = sol::usertype_traits<cocostudio::GUIReader*>::metatable();

@@ -8,31 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-void RegisterLuaCoreSpriteFrameCacheAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::SpriteFrameCache).name()] = sol::usertype_traits<cocos2d::SpriteFrameCache*>::metatable();
-auto dep=lua.new_usertype<cocos2d::SpriteFrameCache>("deprecated.cocos2d::SpriteFrameCache");
-dep[sol::base_classes]=sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::SpriteFrameCache*>::metatable(),sol::usertype_traits<cocos2d::Ref*>::metatable());
-lua["cc"]["SpriteFrameCache"]=mt;
-mt["__new__"] = [](){return nullptr;};
-mt["static"]["GetInstance"]=static_cast<cocos2d::SpriteFrameCache*(*)()>(&cocos2d::SpriteFrameCache::getInstance);
-mt["static"]["DestroyInstance"]=static_cast<void(*)()>(&cocos2d::SpriteFrameCache::destroyInstance);
-mt["Init"]=static_cast<bool(cocos2d::SpriteFrameCache::*)()>(&cocos2d::SpriteFrameCache::init);
-mt["AddSpriteFrames"]=sol::overload(static_cast<void(cocos2d::SpriteFrameCache::*)(const std::string&,cocos2d::Texture2D*)>(&cocos2d::SpriteFrameCache::addSpriteFramesWithFile),static_cast<void(cocos2d::SpriteFrameCache::*)(const std::string&,const std::string&)>(&cocos2d::SpriteFrameCache::addSpriteFramesWithFile),static_cast<void(cocos2d::SpriteFrameCache::*)(const std::string&)>(&cocos2d::SpriteFrameCache::addSpriteFramesWithFile));
-mt["AddSpriteFramesWithFileContent"]=static_cast<void(cocos2d::SpriteFrameCache::*)(const std::string&,cocos2d::Texture2D*)>(&cocos2d::SpriteFrameCache::addSpriteFramesWithFileContent);
-mt["AddSpriteFrame"]=static_cast<void(cocos2d::SpriteFrameCache::*)(cocos2d::SpriteFrame*,const std::string&)>(&cocos2d::SpriteFrameCache::addSpriteFrame);
-mt["IsSpriteFramesWithFileLoaded"]=static_cast<bool(cocos2d::SpriteFrameCache::*)(const std::string&)const>(&cocos2d::SpriteFrameCache::isSpriteFramesWithFileLoaded);
-mt["RemoveSpriteFrames"]=static_cast<void(cocos2d::SpriteFrameCache::*)()>(&cocos2d::SpriteFrameCache::removeSpriteFrames);
-mt["RemoveUnusedSpriteFrames"]=static_cast<void(cocos2d::SpriteFrameCache::*)()>(&cocos2d::SpriteFrameCache::removeUnusedSpriteFrames);
-mt["RemoveSpriteFrameByName"]=static_cast<void(cocos2d::SpriteFrameCache::*)(const std::string&)>(&cocos2d::SpriteFrameCache::removeSpriteFrameByName);
-mt["RemoveSpriteFramesFromFile"]=static_cast<void(cocos2d::SpriteFrameCache::*)(const std::string&)>(&cocos2d::SpriteFrameCache::removeSpriteFramesFromFile);
-mt["RemoveSpriteFramesFromFileContent"]=static_cast<void(cocos2d::SpriteFrameCache::*)(const std::string&)>(&cocos2d::SpriteFrameCache::removeSpriteFramesFromFileContent);
-mt["RemoveSpriteFramesFromTexture"]=static_cast<void(cocos2d::SpriteFrameCache::*)(cocos2d::Texture2D*)>(&cocos2d::SpriteFrameCache::removeSpriteFramesFromTexture);
-mt["GetSpriteFrame"]=static_cast<cocos2d::SpriteFrame*(cocos2d::SpriteFrameCache::*)(const std::string&)>(&cocos2d::SpriteFrameCache::getSpriteFrameByName);
-mt["ReloadTexture"]=static_cast<bool(cocos2d::SpriteFrameCache::*)(const std::string&)>(&cocos2d::SpriteFrameCache::reloadTexture);
-mt["static"]["get"]["Instance"]=&cocos2d::SpriteFrameCache::getInstance;
-mt["static"]["set"]["Instance"]=[](std::nullptr_t){cocos2d::SpriteFrameCache::destroyInstance();};
-}
 void RegisterLuaCoreParallaxNodeAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParallaxNode).name()] = sol::usertype_traits<cocos2d::ParallaxNode*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ParallaxNode>("deprecated.cocos2d::ParallaxNode");
@@ -88,14 +63,22 @@ mt["SetProperties"]=static_cast<void(cocos2d::TMXLayerInfo::*)(cocos2d::ValueMap
 mt["set"]["Properties"]=mt["SetProperties"];
 mt["GetProperties"]=static_cast<cocos2d::ValueMap&(cocos2d::TMXLayerInfo::*)()>(&cocos2d::TMXLayerInfo::getProperties);
 mt["get"]["Properties"]=mt["GetProperties"];
-mt["get"]["Properties"]=[](cocos2d::TMXLayerInfo* obj){return obj->_properties;};;
-mt["get"]["Name"]=[](cocos2d::TMXLayerInfo* obj){return obj->_name;};;
-mt["get"]["LayerSize"]=[](cocos2d::TMXLayerInfo* obj){return obj->_layerSize;};;
-mt["get"]["Tiles"]=[](cocos2d::TMXLayerInfo* obj){return obj->_tiles;};;
-mt["get"]["Visible"]=[](cocos2d::TMXLayerInfo* obj){return obj->_visible;};;
-mt["get"]["Opacity"]=[](cocos2d::TMXLayerInfo* obj){return obj->_opacity;};;
-mt["get"]["OwnTiles"]=[](cocos2d::TMXLayerInfo* obj){return obj->_ownTiles;};;
-mt["get"]["Offset"]=[](cocos2d::TMXLayerInfo* obj){return obj->_offset;};;
+mt["set"]["Properties"]=[](cocos2d::TMXLayerInfo* obj,const cocos2d::ValueMap& value){obj->_properties = value;};
+mt["get"]["Properties"]=[](cocos2d::TMXLayerInfo* obj)->const cocos2d::ValueMap&{return obj->_properties;};
+mt["set"]["Name"]=[](cocos2d::TMXLayerInfo* obj,const std::string& value){obj->_name = value;};
+mt["get"]["Name"]=[](cocos2d::TMXLayerInfo* obj)->const std::string&{return obj->_name;};
+mt["set"]["LayerSize"]=[](cocos2d::TMXLayerInfo* obj,const cocos2d::Size& value){obj->_layerSize = value;};
+mt["get"]["LayerSize"]=[](cocos2d::TMXLayerInfo* obj)->const cocos2d::Size&{return obj->_layerSize;};
+mt["set"]["Tiles"]=[](cocos2d::TMXLayerInfo* obj,uint32_t* value){obj->_tiles = value;};
+mt["get"]["Tiles"]=[](cocos2d::TMXLayerInfo* obj)->const uint32_t*{return obj->_tiles;};
+mt["set"]["Visible"]=[](cocos2d::TMXLayerInfo* obj,const bool& value){obj->_visible = value;};
+mt["get"]["Visible"]=[](cocos2d::TMXLayerInfo* obj)->const bool&{return obj->_visible;};
+mt["set"]["Opacity"]=[](cocos2d::TMXLayerInfo* obj,const unsigned char& value){obj->_opacity = value;};
+mt["get"]["Opacity"]=[](cocos2d::TMXLayerInfo* obj)->const unsigned char&{return obj->_opacity;};
+mt["set"]["OwnTiles"]=[](cocos2d::TMXLayerInfo* obj,const bool& value){obj->_ownTiles = value;};
+mt["get"]["OwnTiles"]=[](cocos2d::TMXLayerInfo* obj)->const bool&{return obj->_ownTiles;};
+mt["set"]["Offset"]=[](cocos2d::TMXLayerInfo* obj,const cocos2d::Vec2& value){obj->_offset = value;};
+mt["get"]["Offset"]=[](cocos2d::TMXLayerInfo* obj)->const cocos2d::Vec2&{return obj->_offset;};
 }
 void RegisterLuaCoreTMXTilesetInfoAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TMXTilesetInfo).name()] = sol::usertype_traits<cocos2d::TMXTilesetInfo*>::metatable();
@@ -105,15 +88,24 @@ sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TMXTilesetInfo*>::metat
 lua["cc"]["TMXTilesetInfo"]=mt;
 mt["__new__"]=[](){return new cocos2d::TMXTilesetInfo();};
 mt["GetRectForGID"]=static_cast<cocos2d::Rect(cocos2d::TMXTilesetInfo::*)(uint32_t)>(&cocos2d::TMXTilesetInfo::getRectForGID);
-mt["get"]["Name"]=[](cocos2d::TMXTilesetInfo* obj){return obj->_name;};;
-mt["get"]["FirstGid"]=[](cocos2d::TMXTilesetInfo* obj){return obj->_firstGid;};;
-mt["get"]["TileSize"]=[](cocos2d::TMXTilesetInfo* obj){return obj->_tileSize;};;
-mt["get"]["Spacing"]=[](cocos2d::TMXTilesetInfo* obj){return obj->_spacing;};;
-mt["get"]["Margin"]=[](cocos2d::TMXTilesetInfo* obj){return obj->_margin;};;
-mt["get"]["TileOffset"]=[](cocos2d::TMXTilesetInfo* obj){return obj->_tileOffset;};;
-mt["get"]["SourceImage"]=[](cocos2d::TMXTilesetInfo* obj){return obj->_sourceImage;};;
-mt["get"]["ImageSize"]=[](cocos2d::TMXTilesetInfo* obj){return obj->_imageSize;};;
-mt["get"]["OriginSourceImage"]=[](cocos2d::TMXTilesetInfo* obj){return obj->_originSourceImage;};;
+mt["set"]["Name"]=[](cocos2d::TMXTilesetInfo* obj,const std::string& value){obj->_name = value;};
+mt["get"]["Name"]=[](cocos2d::TMXTilesetInfo* obj)->const std::string&{return obj->_name;};
+mt["set"]["FirstGid"]=[](cocos2d::TMXTilesetInfo* obj,const int& value){obj->_firstGid = value;};
+mt["get"]["FirstGid"]=[](cocos2d::TMXTilesetInfo* obj)->const int&{return obj->_firstGid;};
+mt["set"]["TileSize"]=[](cocos2d::TMXTilesetInfo* obj,const cocos2d::Size& value){obj->_tileSize = value;};
+mt["get"]["TileSize"]=[](cocos2d::TMXTilesetInfo* obj)->const cocos2d::Size&{return obj->_tileSize;};
+mt["set"]["Spacing"]=[](cocos2d::TMXTilesetInfo* obj,const int& value){obj->_spacing = value;};
+mt["get"]["Spacing"]=[](cocos2d::TMXTilesetInfo* obj)->const int&{return obj->_spacing;};
+mt["set"]["Margin"]=[](cocos2d::TMXTilesetInfo* obj,const int& value){obj->_margin = value;};
+mt["get"]["Margin"]=[](cocos2d::TMXTilesetInfo* obj)->const int&{return obj->_margin;};
+mt["set"]["TileOffset"]=[](cocos2d::TMXTilesetInfo* obj,const cocos2d::Vec2& value){obj->_tileOffset = value;};
+mt["get"]["TileOffset"]=[](cocos2d::TMXTilesetInfo* obj)->const cocos2d::Vec2&{return obj->_tileOffset;};
+mt["set"]["SourceImage"]=[](cocos2d::TMXTilesetInfo* obj,const std::string& value){obj->_sourceImage = value;};
+mt["get"]["SourceImage"]=[](cocos2d::TMXTilesetInfo* obj)->const std::string&{return obj->_sourceImage;};
+mt["set"]["ImageSize"]=[](cocos2d::TMXTilesetInfo* obj,const cocos2d::Size& value){obj->_imageSize = value;};
+mt["get"]["ImageSize"]=[](cocos2d::TMXTilesetInfo* obj)->const cocos2d::Size&{return obj->_imageSize;};
+mt["set"]["OriginSourceImage"]=[](cocos2d::TMXTilesetInfo* obj,const std::string& value){obj->_originSourceImage = value;};
+mt["get"]["OriginSourceImage"]=[](cocos2d::TMXTilesetInfo* obj)->const std::string&{return obj->_originSourceImage;};
 }
 void RegisterLuaCoreTMXMapInfoAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TMXMapInfo).name()] = sol::usertype_traits<cocos2d::TMXMapInfo*>::metatable();
@@ -262,9 +254,9 @@ mt["get"]["AnimTileCoord"]=mt["GetAnimTileCoord"];
 mt["HasTileAnimation"]=static_cast<bool(cocos2d::FastTMXLayer::*)()const>(&cocos2d::FastTMXLayer::hasTileAnimation);
 mt["GetTileAnimManager"]=static_cast<cocos2d::TMXTileAnimManager*(cocos2d::FastTMXLayer::*)()const>(&cocos2d::FastTMXLayer::getTileAnimManager);
 mt["get"]["TileAnimManager"]=mt["GetTileAnimManager"];
-mt["get"]["FAST_TMX_ORIENTATION_ORTHO"]=[](){return cocos2d::FastTMXLayer::FAST_TMX_ORIENTATION_ORTHO;};;
-mt["get"]["FAST_TMX_ORIENTATION_HEX"]=[](){return cocos2d::FastTMXLayer::FAST_TMX_ORIENTATION_HEX;};;
-mt["get"]["FAST_TMX_ORIENTATION_ISO"]=[](){return cocos2d::FastTMXLayer::FAST_TMX_ORIENTATION_ISO;};;
+mt["static"]["get"]["FAST_TMX_ORIENTATION_ORTHO"]=[]()->const int&{return cocos2d::FastTMXLayer::FAST_TMX_ORIENTATION_ORTHO;};
+mt["static"]["get"]["FAST_TMX_ORIENTATION_HEX"]=[]()->const int&{return cocos2d::FastTMXLayer::FAST_TMX_ORIENTATION_HEX;};
+mt["static"]["get"]["FAST_TMX_ORIENTATION_ISO"]=[]()->const int&{return cocos2d::FastTMXLayer::FAST_TMX_ORIENTATION_ISO;};
 }
 void RegisterLuaCoreTMXTileAnimTaskAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TMXTileAnimTask).name()] = sol::usertype_traits<cocos2d::TMXTileAnimTask*>::metatable();
@@ -277,4 +269,16 @@ mt["Start"]=static_cast<void(cocos2d::TMXTileAnimTask::*)()>(&cocos2d::TMXTileAn
 mt["Stop"]=static_cast<void(cocos2d::TMXTileAnimTask::*)()>(&cocos2d::TMXTileAnimTask::stop);
 mt["IsRunning"]=static_cast<bool(cocos2d::TMXTileAnimTask::*)()const>(&cocos2d::TMXTileAnimTask::isRunning);
 mt["get"]["Running"]=mt["IsRunning"];
+}
+void RegisterLuaCoreTMXTileAnimManagerAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TMXTileAnimManager).name()] = sol::usertype_traits<cocos2d::TMXTileAnimManager*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TMXTileAnimManager>("deprecated.cocos2d::TMXTileAnimManager");
+dep[sol::base_classes]=sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TMXTileAnimManager*>::metatable(),sol::usertype_traits<cocos2d::Ref*>::metatable());
+lua["cc"]["TMXTileAnimManager"]=mt;
+mt["__new__"]=static_cast<cocos2d::TMXTileAnimManager*(*)(cocos2d::FastTMXLayer*)>(&cocos2d::TMXTileAnimManager::create);
+mt["StartAll"]=static_cast<void(cocos2d::TMXTileAnimManager::*)()>(&cocos2d::TMXTileAnimManager::startAll);
+mt["StopAll"]=static_cast<void(cocos2d::TMXTileAnimManager::*)()>(&cocos2d::TMXTileAnimManager::stopAll);
+mt["GetTasks"]=static_cast<const cocos2d::Vector<cocos2d::TMXTileAnimTask *>&(cocos2d::TMXTileAnimManager::*)()const>(&cocos2d::TMXTileAnimManager::getTasks);
+mt["get"]["Tasks"]=mt["GetTasks"];
 }

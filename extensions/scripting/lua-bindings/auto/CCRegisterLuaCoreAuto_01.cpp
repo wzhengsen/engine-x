@@ -52,10 +52,10 @@ pTable["PHYSICSBODY_MATERIAL_DEFAULT"] = cocos2d::PHYSICSBODY_MATERIAL_DEFAULT;
 void RegisterLuaCoreNode_AE_fbd064b4c8d215365796c22d16742590_Auto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["cc"];
 pTable = pTable["Node"];
-pTable["static"]["FLAGS_TRANSFORM_DIRTY"] = cocos2d::Node::FLAGS_TRANSFORM_DIRTY;
-pTable["static"]["FLAGS_CONTENT_SIZE_DIRTY"] = cocos2d::Node::FLAGS_CONTENT_SIZE_DIRTY;
-pTable["static"]["FLAGS_RENDER_AS_3D"] = cocos2d::Node::FLAGS_RENDER_AS_3D;
-pTable["static"]["FLAGS_DIRTY_MASK"] = cocos2d::Node::FLAGS_DIRTY_MASK;
+pTable["static"]["const"]["FLAGS_TRANSFORM_DIRTY"] = cocos2d::Node::FLAGS_TRANSFORM_DIRTY;
+pTable["static"]["const"]["FLAGS_CONTENT_SIZE_DIRTY"] = cocos2d::Node::FLAGS_CONTENT_SIZE_DIRTY;
+pTable["static"]["const"]["FLAGS_RENDER_AS_3D"] = cocos2d::Node::FLAGS_RENDER_AS_3D;
+pTable["static"]["const"]["FLAGS_DIRTY_MASK"] = cocos2d::Node::FLAGS_DIRTY_MASK;
 }
 void RegisterLuaCoreNodeAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Node).name()] = sol::usertype_traits<cocos2d::Node*>::metatable();
@@ -339,8 +339,9 @@ mt["SetPhysicsBody"]=static_cast<void(cocos2d::Node::*)(cocos2d::PhysicsBody*)>(
 mt["set"]["PhysicsBody"]=mt["SetPhysicsBody"];
 mt["GetPhysicsBody"]=static_cast<cocos2d::PhysicsBody*(cocos2d::Node::*)()const>(&cocos2d::Node::getPhysicsBody);
 mt["get"]["PhysicsBody"]=mt["GetPhysicsBody"];
-mt["get"]["INVALID_TAG"]=[](){return cocos2d::Node::INVALID_TAG;};;
-mt["get"]["AttachedNodeCount"]=[](){return cocos2d::Node::__attachedNodeCount;};;
+mt["static"]["get"]["INVALID_TAG"]=[]()->const int&{return cocos2d::Node::INVALID_TAG;};
+mt["static"]["set"]["AttachedNodeCount"]=[](const sol::object&,const int& value){cocos2d::Node::__attachedNodeCount = value;};
+mt["static"]["get"]["AttachedNodeCount"]=[]()->const int&{return cocos2d::Node::__attachedNodeCount;};
 RegisterLuaCoreNode_AE_fbd064b4c8d215365796c22d16742590_Auto(lua);
 }
 void RegisterLuaCoreSceneAuto(cocos2d::extension::Lua& lua){
@@ -419,7 +420,7 @@ mt["SetEventCode"]=static_cast<void(cocos2d::EventTouch::*)(cocos2d::EventTouch:
 mt["set"]["EventCode"]=mt["SetEventCode"];
 mt["SetTouches"]=static_cast<void(cocos2d::EventTouch::*)(const std::vector<cocos2d::Touch *, std::allocator<cocos2d::Touch *> >&)>(&cocos2d::EventTouch::setTouches);
 mt["set"]["Touches"]=mt["SetTouches"];
-mt["get"]["MAX_TOUCHES"]=[](){return cocos2d::EventTouch::MAX_TOUCHES;};;
+mt["static"]["get"]["MAX_TOUCHES"]=[]()->const int&{return cocos2d::EventTouch::MAX_TOUCHES;};
 RegisterLuaCoreEventTouchEventCodeAuto(lua);
 }
 void RegisterLuaCoreResolutionPolicyAuto(cocos2d::extension::Lua& lua) {
@@ -508,7 +509,8 @@ mt["get"]["ScaleY"]=mt["GetScaleY"];
 mt["GetResolutionPolicy"]=static_cast<cocos2d::ResolutionPolicy(cocos2d::GLView::*)()const>(&cocos2d::GLView::getResolutionPolicy);
 mt["get"]["ResolutionPolicy"]=mt["GetResolutionPolicy"];
 mt["RenderScene"]=static_cast<void(cocos2d::GLView::*)(cocos2d::Scene*,cocos2d::Renderer*)>(&cocos2d::GLView::renderScene);
-mt["get"]["GlContextAttrs"]=[](){return cocos2d::GLView::_glContextAttrs;};;
+mt["static"]["set"]["GlContextAttrs"]=[](const sol::object&,const GLContextAttrs& value){cocos2d::GLView::_glContextAttrs = value;};
+mt["static"]["get"]["GlContextAttrs"]=[]()->const GLContextAttrs&{return cocos2d::GLView::_glContextAttrs;};
 }
 void RegisterLuaCoreMATRIX_STACK_TYPEAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,3);

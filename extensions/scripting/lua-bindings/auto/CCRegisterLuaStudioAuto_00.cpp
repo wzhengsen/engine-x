@@ -67,7 +67,8 @@ mt["SetRotation"]=static_cast<void(cocostudio::ActionRotationFrame::*)(float)>(&
 mt["set"]["Rotation"]=mt["SetRotation"];
 mt["GetRotation"]=static_cast<float(cocostudio::ActionRotationFrame::*)()>(&cocostudio::ActionRotationFrame::getRotation);
 mt["get"]["Rotation"]=mt["GetRotation"];
-mt["get"]["Rotation"]=[](cocostudio::ActionRotationFrame* obj){return obj->_rotation;};;
+mt["set"]["Rotation"]=[](cocostudio::ActionRotationFrame* obj,const float& value){obj->_rotation = value;};
+mt["get"]["Rotation"]=[](cocostudio::ActionRotationFrame* obj)->const float&{return obj->_rotation;};
 }
 void RegisterLuaStudioActionFadeFrameAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::ActionFadeFrame).name()] = sol::usertype_traits<cocostudio::ActionFadeFrame*>::metatable();
@@ -163,19 +164,32 @@ mt["SetColor"]=static_cast<void(cocostudio::BaseData::*)(const cocos2d::Color4B&
 mt["set"]["Color"]=mt["SetColor"];
 mt["GetColor"]=static_cast<cocos2d::Color4B(cocostudio::BaseData::*)()>(&cocostudio::BaseData::getColor);
 mt["get"]["Color"]=mt["GetColor"];
-mt["get"]["X"]=[](cocostudio::BaseData* obj){return obj->x;};;
-mt["get"]["Y"]=[](cocostudio::BaseData* obj){return obj->y;};;
-mt["get"]["ZOrder"]=[](cocostudio::BaseData* obj){return obj->zOrder;};;
-mt["get"]["SkewX"]=[](cocostudio::BaseData* obj){return obj->skewX;};;
-mt["get"]["SkewY"]=[](cocostudio::BaseData* obj){return obj->skewY;};;
-mt["get"]["ScaleX"]=[](cocostudio::BaseData* obj){return obj->scaleX;};;
-mt["get"]["ScaleY"]=[](cocostudio::BaseData* obj){return obj->scaleY;};;
-mt["get"]["TweenRotate"]=[](cocostudio::BaseData* obj){return obj->tweenRotate;};;
-mt["get"]["IsUseColorInfo"]=[](cocostudio::BaseData* obj){return obj->isUseColorInfo;};;
-mt["get"]["A"]=[](cocostudio::BaseData* obj){return obj->a;};;
-mt["get"]["R"]=[](cocostudio::BaseData* obj){return obj->r;};;
-mt["get"]["G"]=[](cocostudio::BaseData* obj){return obj->g;};;
-mt["get"]["B"]=[](cocostudio::BaseData* obj){return obj->b;};;
+mt["set"]["X"]=[](cocostudio::BaseData* obj,const float& value){obj->x = value;};
+mt["get"]["X"]=[](cocostudio::BaseData* obj)->const float&{return obj->x;};
+mt["set"]["Y"]=[](cocostudio::BaseData* obj,const float& value){obj->y = value;};
+mt["get"]["Y"]=[](cocostudio::BaseData* obj)->const float&{return obj->y;};
+mt["set"]["ZOrder"]=[](cocostudio::BaseData* obj,const int& value){obj->zOrder = value;};
+mt["get"]["ZOrder"]=[](cocostudio::BaseData* obj)->const int&{return obj->zOrder;};
+mt["set"]["SkewX"]=[](cocostudio::BaseData* obj,const float& value){obj->skewX = value;};
+mt["get"]["SkewX"]=[](cocostudio::BaseData* obj)->const float&{return obj->skewX;};
+mt["set"]["SkewY"]=[](cocostudio::BaseData* obj,const float& value){obj->skewY = value;};
+mt["get"]["SkewY"]=[](cocostudio::BaseData* obj)->const float&{return obj->skewY;};
+mt["set"]["ScaleX"]=[](cocostudio::BaseData* obj,const float& value){obj->scaleX = value;};
+mt["get"]["ScaleX"]=[](cocostudio::BaseData* obj)->const float&{return obj->scaleX;};
+mt["set"]["ScaleY"]=[](cocostudio::BaseData* obj,const float& value){obj->scaleY = value;};
+mt["get"]["ScaleY"]=[](cocostudio::BaseData* obj)->const float&{return obj->scaleY;};
+mt["set"]["TweenRotate"]=[](cocostudio::BaseData* obj,const float& value){obj->tweenRotate = value;};
+mt["get"]["TweenRotate"]=[](cocostudio::BaseData* obj)->const float&{return obj->tweenRotate;};
+mt["set"]["IsUseColorInfo"]=[](cocostudio::BaseData* obj,const bool& value){obj->isUseColorInfo = value;};
+mt["get"]["IsUseColorInfo"]=[](cocostudio::BaseData* obj)->const bool&{return obj->isUseColorInfo;};
+mt["set"]["A"]=[](cocostudio::BaseData* obj,const int& value){obj->a = value;};
+mt["get"]["A"]=[](cocostudio::BaseData* obj)->const int&{return obj->a;};
+mt["set"]["R"]=[](cocostudio::BaseData* obj,const int& value){obj->r = value;};
+mt["get"]["R"]=[](cocostudio::BaseData* obj)->const int&{return obj->r;};
+mt["set"]["G"]=[](cocostudio::BaseData* obj,const int& value){obj->g = value;};
+mt["get"]["G"]=[](cocostudio::BaseData* obj)->const int&{return obj->g;};
+mt["set"]["B"]=[](cocostudio::BaseData* obj,const int& value){obj->b = value;};
+mt["get"]["B"]=[](cocostudio::BaseData* obj)->const int&{return obj->b;};
 }
 void RegisterLuaStudioDisplayDataAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::DisplayData).name()] = sol::usertype_traits<cocostudio::DisplayData*>::metatable();
@@ -186,6 +200,8 @@ lua["ccs"]["DisplayData"]=mt;
 mt["__new__"]=static_cast<cocostudio::DisplayData*(*)()>(&cocostudio::DisplayData::create);
 mt["static"]["ChangeDisplayToTexture"]=static_cast<std::string(*)(const std::string&)>(&cocostudio::DisplayData::changeDisplayToTexture);
 mt["Copy"]=static_cast<void(cocostudio::DisplayData::*)(cocostudio::DisplayData*)>(&cocostudio::DisplayData::copy);
-mt["get"]["DisplayType"]=[](cocostudio::DisplayData* obj){return obj->displayType;};;
-mt["get"]["DisplayName"]=[](cocostudio::DisplayData* obj){return obj->displayName;};;
+mt["set"]["DisplayType"]=[](cocostudio::DisplayData* obj,const cocostudio::DisplayType& value){obj->displayType = value;};
+mt["get"]["DisplayType"]=[](cocostudio::DisplayData* obj)->const cocostudio::DisplayType&{return obj->displayType;};
+mt["set"]["DisplayName"]=[](cocostudio::DisplayData* obj,const std::string& value){obj->displayName = value;};
+mt["get"]["DisplayName"]=[](cocostudio::DisplayData* obj)->const std::string&{return obj->displayName;};
 }

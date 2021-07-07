@@ -283,7 +283,7 @@ mt["SetTag"]=static_cast<void(cocos2d::PhysicsBody::*)(int)>(&cocos2d::PhysicsBo
 mt["set"]["Tag"]=mt["SetTag"];
 mt["World2Local"]=static_cast<cocos2d::Vec2(cocos2d::PhysicsBody::*)(const cocos2d::Vec2&)>(&cocos2d::PhysicsBody::world2Local);
 mt["Local2World"]=static_cast<cocos2d::Vec2(cocos2d::PhysicsBody::*)(const cocos2d::Vec2&)>(&cocos2d::PhysicsBody::local2World);
-mt["get"]["COMPONENT_NAME"]=[](){return cocos2d::PhysicsBody::COMPONENT_NAME;};;
+mt["static"]["get"]["COMPONENT_NAME"]=[]()->const std::string&{return cocos2d::PhysicsBody::COMPONENT_NAME;};
 }
 void RegisterLuaPhysicsPhysicsContactEventCodeAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,5);

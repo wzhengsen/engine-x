@@ -8,15 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-void RegisterLuaCoreParticleSnowAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleSnow).name()] = sol::usertype_traits<cocos2d::ParticleSnow*>::metatable();
-auto dep=lua.new_usertype<cocos2d::ParticleSnow>("deprecated.cocos2d::ParticleSnow");
-dep[sol::base_classes]=sol::bases<cocos2d::ParticleSystemQuad,cocos2d::ParticleSystem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TextureProtocol,cocos2d::BlendProtocol,cocos2d::PlayableProtocol>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ParticleSnow*>::metatable(),sol::usertype_traits<cocos2d::ParticleSystemQuad*>::metatable());
-lua["cc"]["ParticleSnow"]=mt;
-mt["__new__"]=static_cast<cocos2d::ParticleSnow*(*)()>(&cocos2d::ParticleSnow::create);
-mt["static"]["CreateWithTotalParticles"]=static_cast<cocos2d::ParticleSnow*(*)(int)>(&cocos2d::ParticleSnow::createWithTotalParticles);
-}
 void RegisterLuaCoreParticleRainAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleRain).name()] = sol::usertype_traits<cocos2d::ParticleRain*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ParticleRain>("deprecated.cocos2d::ParticleRain");
@@ -166,7 +157,7 @@ mt["get"]["ResourceType"]=mt["GetResourceType"];
 mt["GetResourceName"]=static_cast<const std::string&(cocos2d::Sprite::*)()const>(&cocos2d::Sprite::getResourceName);
 mt["get"]["ResourceName"]=mt["GetResourceName"];
 mt["SetVertexLayout"]=static_cast<void(cocos2d::Sprite::*)()>(&cocos2d::Sprite::setVertexLayout);
-mt["get"]["INDEX_NOT_INITIALIZED"]=[](){return cocos2d::Sprite::INDEX_NOT_INITIALIZED;};;
+mt["static"]["get"]["INDEX_NOT_INITIALIZED"]=[]()->const int&{return cocos2d::Sprite::INDEX_NOT_INITIALIZED;};
 RegisterLuaCoreSpriteRenderModeAuto(lua);
 }
 void RegisterLuaCoreRenderTextureAuto(cocos2d::extension::Lua& lua){
@@ -261,4 +252,12 @@ dep[sol::base_classes]=sol::bases<cocos2d::TransitionScene,cocos2d::Scene,cocos2
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionRotoZoom*>::metatable(),sol::usertype_traits<cocos2d::TransitionScene*>::metatable());
 lua["cc"]["TransitionRotoZoom"]=mt;
 mt["__new__"]=static_cast<cocos2d::TransitionRotoZoom*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionRotoZoom::create);
+}
+void RegisterLuaCoreTransitionJumpZoomAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionJumpZoom).name()] = sol::usertype_traits<cocos2d::TransitionJumpZoom*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TransitionJumpZoom>("deprecated.cocos2d::TransitionJumpZoom");
+dep[sol::base_classes]=sol::bases<cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionJumpZoom*>::metatable(),sol::usertype_traits<cocos2d::TransitionScene*>::metatable());
+lua["cc"]["TransitionJumpZoom"]=mt;
+mt["__new__"]=static_cast<cocos2d::TransitionJumpZoom*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionJumpZoom::create);
 }

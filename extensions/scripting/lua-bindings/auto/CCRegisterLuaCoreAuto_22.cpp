@@ -8,14 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-void RegisterLuaCoreTransitionFlipXAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionFlipX).name()] = sol::usertype_traits<cocos2d::TransitionFlipX*>::metatable();
-auto dep=lua.new_usertype<cocos2d::TransitionFlipX>("deprecated.cocos2d::TransitionFlipX");
-dep[sol::base_classes]=sol::bases<cocos2d::TransitionSceneOriented,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionFlipX*>::metatable(),sol::usertype_traits<cocos2d::TransitionSceneOriented*>::metatable());
-lua["cc"]["TransitionFlipX"]=mt;
-mt["__new__"]=sol::overload(static_cast<cocos2d::TransitionFlipX*(*)(float,cocos2d::Scene*,cocos2d::TransitionScene::Orientation)>(&cocos2d::TransitionFlipX::create),static_cast<cocos2d::TransitionFlipX*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionFlipX::create));
-}
 void RegisterLuaCoreTransitionFlipYAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionFlipY).name()] = sol::usertype_traits<cocos2d::TransitionFlipY*>::metatable();
 auto dep=lua.new_usertype<cocos2d::TransitionFlipY>("deprecated.cocos2d::TransitionFlipY");
@@ -88,4 +80,12 @@ sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionSplitCols*>::
 lua["cc"]["TransitionSplitCols"]=mt;
 mt["__new__"]=static_cast<cocos2d::TransitionSplitCols*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionSplitCols::create);
 mt["Action"]=static_cast<cocos2d::ActionInterval*(cocos2d::TransitionSplitCols::*)()>(&cocos2d::TransitionSplitCols::action);
+}
+void RegisterLuaCoreTransitionSplitRowsAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionSplitRows).name()] = sol::usertype_traits<cocos2d::TransitionSplitRows*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TransitionSplitRows>("deprecated.cocos2d::TransitionSplitRows");
+dep[sol::base_classes]=sol::bases<cocos2d::TransitionSplitCols,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionSplitRows*>::metatable(),sol::usertype_traits<cocos2d::TransitionSplitCols*>::metatable());
+lua["cc"]["TransitionSplitRows"]=mt;
+mt["__new__"]=static_cast<cocos2d::TransitionSplitRows*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionSplitRows::create);
 }

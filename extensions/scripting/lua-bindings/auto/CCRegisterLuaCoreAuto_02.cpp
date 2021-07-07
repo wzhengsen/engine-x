@@ -120,15 +120,6 @@ mt["GetCocos2DThreadId"]=static_cast<const std::thread::id&(cocos2d::Director::*
 mt["get"]["Cocos2DThreadId"]=mt["GetCocos2DThreadId"];
 mt["IsValid"]=static_cast<bool(cocos2d::Director::*)()const>(&cocos2d::Director::isValid);
 mt["get"]["Valid"]=mt["IsValid"];
-mt["get"]["EVENT_BEFORE_SET_NEXT_SCENE"]=[](){return cocos2d::Director::EVENT_BEFORE_SET_NEXT_SCENE;};;
-mt["get"]["EVENT_AFTER_SET_NEXT_SCENE"]=[](){return cocos2d::Director::EVENT_AFTER_SET_NEXT_SCENE;};;
-mt["get"]["EVENT_PROJECTION_CHANGED"]=[](){return cocos2d::Director::EVENT_PROJECTION_CHANGED;};;
-mt["get"]["EVENT_BEFORE_UPDATE"]=[](){return cocos2d::Director::EVENT_BEFORE_UPDATE;};;
-mt["get"]["EVENT_AFTER_UPDATE"]=[](){return cocos2d::Director::EVENT_AFTER_UPDATE;};;
-mt["get"]["EVENT_RESET"]=[](){return cocos2d::Director::EVENT_RESET;};;
-mt["get"]["EVENT_AFTER_VISIT"]=[](){return cocos2d::Director::EVENT_AFTER_VISIT;};;
-mt["get"]["EVENT_AFTER_DRAW"]=[](){return cocos2d::Director::EVENT_AFTER_DRAW;};;
-mt["get"]["EVENT_BEFORE_DRAW"]=[](){return cocos2d::Director::EVENT_BEFORE_DRAW;};;
 mt["static"]["get"]["Instance"]=&cocos2d::Director::getInstance;
 }
 void RegisterLuaCoreTimerAuto(cocos2d::extension::Lua& lua){
@@ -175,8 +166,8 @@ mt["PauseAllTargetsWithMinPriority"]=static_cast<std::set<void *, std::less<void
 mt["ResumeTargets"]=static_cast<void(cocos2d::Scheduler::*)(const std::set<void *, std::less<void *>, std::allocator<void *> >&)>(&cocos2d::Scheduler::resumeTargets);
 mt["PerformFunctionInCocosThread"]=static_cast<void(cocos2d::Scheduler::*)(std::function<void ()>)>(&cocos2d::Scheduler::performFunctionInCocosThread);
 mt["RemoveAllFunctionsToBePerformedInCocosThread"]=static_cast<void(cocos2d::Scheduler::*)()>(&cocos2d::Scheduler::removeAllFunctionsToBePerformedInCocosThread);
-mt["get"]["PRIORITY_SYSTEM"]=[](){return cocos2d::Scheduler::PRIORITY_SYSTEM;};;
-mt["get"]["PRIORITY_NON_SYSTEM_MIN"]=[](){return cocos2d::Scheduler::PRIORITY_NON_SYSTEM_MIN;};;
+mt["static"]["get"]["PRIORITY_SYSTEM"]=[]()->const int&{return cocos2d::Scheduler::PRIORITY_SYSTEM;};
+mt["static"]["get"]["PRIORITY_NON_SYSTEM_MIN"]=[]()->const int&{return cocos2d::Scheduler::PRIORITY_NON_SYSTEM_MIN;};
 }
 void RegisterLuaCoreAsyncTaskPoolTaskTypeAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,4);
@@ -230,7 +221,7 @@ mt["GetFlags"]=static_cast<unsigned int(cocos2d::Action::*)()const>(&cocos2d::Ac
 mt["get"]["Flags"]=mt["GetFlags"];
 mt["SetFlags"]=static_cast<void(cocos2d::Action::*)(unsigned int)>(&cocos2d::Action::setFlags);
 mt["set"]["Flags"]=mt["SetFlags"];
-mt["get"]["INVALID_TAG"]=[](){return cocos2d::Action::INVALID_TAG;};;
+mt["static"]["get"]["INVALID_TAG"]=[]()->const int&{return cocos2d::Action::INVALID_TAG;};
 }
 void RegisterLuaCoreFiniteTimeActionAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::FiniteTimeAction).name()] = sol::usertype_traits<cocos2d::FiniteTimeAction*>::metatable();
@@ -358,5 +349,6 @@ mt["GetFilename"]=static_cast<const std::string&(cocos2d::PolygonInfo::*)()const
 mt["get"]["Filename"]=mt["GetFilename"];
 mt["SetFilename"]=static_cast<void(cocos2d::PolygonInfo::*)(const std::string&)>(&cocos2d::PolygonInfo::setFilename);
 mt["set"]["Filename"]=mt["SetFilename"];
-mt["get"]["Triangles"]=[](cocos2d::PolygonInfo* obj){return obj->triangles;};;
+mt["set"]["Triangles"]=[](cocos2d::PolygonInfo* obj,const cocos2d::TrianglesCommand::Triangles& value){obj->triangles = value;};
+mt["get"]["Triangles"]=[](cocos2d::PolygonInfo* obj)->const cocos2d::TrianglesCommand::Triangles&{return obj->triangles;};
 }

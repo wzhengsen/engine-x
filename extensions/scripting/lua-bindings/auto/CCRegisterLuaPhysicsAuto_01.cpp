@@ -41,10 +41,14 @@ dep[sol::base_classes]=sol::bases<cocos2d::EventListenerCustom,cocos2d::EventLis
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventListenerPhysicsContact*>::metatable(),sol::usertype_traits<cocos2d::EventListenerCustom*>::metatable());
 lua["cc"]["EventListenerPhysicsContact"]=mt;
 mt["__new__"]=static_cast<cocos2d::EventListenerPhysicsContact*(*)()>(&cocos2d::EventListenerPhysicsContact::create);
-mt["get"]["OnContactBegin"]=[](cocos2d::EventListenerPhysicsContact* obj){return obj->onContactBegin;};;
-mt["get"]["OnContactPreSolve"]=[](cocos2d::EventListenerPhysicsContact* obj){return obj->onContactPreSolve;};;
-mt["get"]["OnContactPostSolve"]=[](cocos2d::EventListenerPhysicsContact* obj){return obj->onContactPostSolve;};;
-mt["get"]["OnContactSeparate"]=[](cocos2d::EventListenerPhysicsContact* obj){return obj->onContactSeparate;};;
+mt["set"]["OnContactBegin"]=[](cocos2d::EventListenerPhysicsContact* obj,const std::function<bool (cocos2d::PhysicsContact &)>& value){obj->onContactBegin = value;};
+mt["get"]["OnContactBegin"]=[](cocos2d::EventListenerPhysicsContact* obj)->const std::function<bool (cocos2d::PhysicsContact &)>&{return obj->onContactBegin;};
+mt["set"]["OnContactPreSolve"]=[](cocos2d::EventListenerPhysicsContact* obj,const std::function<bool (cocos2d::PhysicsContact &, cocos2d::PhysicsContactPreSolve &)>& value){obj->onContactPreSolve = value;};
+mt["get"]["OnContactPreSolve"]=[](cocos2d::EventListenerPhysicsContact* obj)->const std::function<bool (cocos2d::PhysicsContact &, cocos2d::PhysicsContactPreSolve &)>&{return obj->onContactPreSolve;};
+mt["set"]["OnContactPostSolve"]=[](cocos2d::EventListenerPhysicsContact* obj,const std::function<void (cocos2d::PhysicsContact &, const cocos2d::PhysicsContactPostSolve &)>& value){obj->onContactPostSolve = value;};
+mt["get"]["OnContactPostSolve"]=[](cocos2d::EventListenerPhysicsContact* obj)->const std::function<void (cocos2d::PhysicsContact &, const cocos2d::PhysicsContactPostSolve &)>&{return obj->onContactPostSolve;};
+mt["set"]["OnContactSeparate"]=[](cocos2d::EventListenerPhysicsContact* obj,const std::function<void (cocos2d::PhysicsContact &)>& value){obj->onContactSeparate = value;};
+mt["get"]["OnContactSeparate"]=[](cocos2d::EventListenerPhysicsContact* obj)->const std::function<void (cocos2d::PhysicsContact &)>&{return obj->onContactSeparate;};
 }
 void RegisterLuaPhysicsEventListenerPhysicsContactWithBodiesAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventListenerPhysicsContactWithBodies).name()] = sol::usertype_traits<cocos2d::EventListenerPhysicsContactWithBodies*>::metatable();

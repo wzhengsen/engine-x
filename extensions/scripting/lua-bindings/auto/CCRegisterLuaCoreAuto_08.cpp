@@ -15,11 +15,15 @@ dep[sol::base_classes]=sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::e
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventListenerTouchAllAtOnce*>::metatable(),sol::usertype_traits<cocos2d::EventListener*>::metatable());
 lua["cc"]["EventListenerTouchAllAtOnce"]=mt;
 mt["__new__"]=static_cast<cocos2d::EventListenerTouchAllAtOnce*(*)()>(&cocos2d::EventListenerTouchAllAtOnce::create);
-mt["get"]["LISTENER_ID"]=[](){return cocos2d::EventListenerTouchAllAtOnce::LISTENER_ID;};;
-mt["get"]["OnTouchesBegan"]=[](cocos2d::EventListenerTouchAllAtOnce* obj){return obj->onTouchesBegan;};;
-mt["get"]["OnTouchesMoved"]=[](cocos2d::EventListenerTouchAllAtOnce* obj){return obj->onTouchesMoved;};;
-mt["get"]["OnTouchesEnded"]=[](cocos2d::EventListenerTouchAllAtOnce* obj){return obj->onTouchesEnded;};;
-mt["get"]["OnTouchesCancelled"]=[](cocos2d::EventListenerTouchAllAtOnce* obj){return obj->onTouchesCancelled;};;
+mt["static"]["get"]["LISTENER_ID"]=[]()->const std::string&{return cocos2d::EventListenerTouchAllAtOnce::LISTENER_ID;};
+mt["set"]["OnTouchesBegan"]=[](cocos2d::EventListenerTouchAllAtOnce* obj,const cocos2d::EventListenerTouchAllAtOnce::ccTouchesCallback& value){obj->onTouchesBegan = value;};
+mt["get"]["OnTouchesBegan"]=[](cocos2d::EventListenerTouchAllAtOnce* obj)->const cocos2d::EventListenerTouchAllAtOnce::ccTouchesCallback&{return obj->onTouchesBegan;};
+mt["set"]["OnTouchesMoved"]=[](cocos2d::EventListenerTouchAllAtOnce* obj,const cocos2d::EventListenerTouchAllAtOnce::ccTouchesCallback& value){obj->onTouchesMoved = value;};
+mt["get"]["OnTouchesMoved"]=[](cocos2d::EventListenerTouchAllAtOnce* obj)->const cocos2d::EventListenerTouchAllAtOnce::ccTouchesCallback&{return obj->onTouchesMoved;};
+mt["set"]["OnTouchesEnded"]=[](cocos2d::EventListenerTouchAllAtOnce* obj,const cocos2d::EventListenerTouchAllAtOnce::ccTouchesCallback& value){obj->onTouchesEnded = value;};
+mt["get"]["OnTouchesEnded"]=[](cocos2d::EventListenerTouchAllAtOnce* obj)->const cocos2d::EventListenerTouchAllAtOnce::ccTouchesCallback&{return obj->onTouchesEnded;};
+mt["set"]["OnTouchesCancelled"]=[](cocos2d::EventListenerTouchAllAtOnce* obj,const cocos2d::EventListenerTouchAllAtOnce::ccTouchesCallback& value){obj->onTouchesCancelled = value;};
+mt["get"]["OnTouchesCancelled"]=[](cocos2d::EventListenerTouchAllAtOnce* obj)->const cocos2d::EventListenerTouchAllAtOnce::ccTouchesCallback&{return obj->onTouchesCancelled;};
 }
 void RegisterLuaCoreEventControllerControllerEventTypeAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,3);

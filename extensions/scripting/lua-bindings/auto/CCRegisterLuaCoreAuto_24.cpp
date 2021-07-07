@@ -8,14 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-void RegisterLuaCoreTransitionProgressVerticalAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionProgressVertical).name()] = sol::usertype_traits<cocos2d::TransitionProgressVertical*>::metatable();
-auto dep=lua.new_usertype<cocos2d::TransitionProgressVertical>("deprecated.cocos2d::TransitionProgressVertical");
-dep[sol::base_classes]=sol::bases<cocos2d::TransitionProgress,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionProgressVertical*>::metatable(),sol::usertype_traits<cocos2d::TransitionProgress*>::metatable());
-lua["cc"]["TransitionProgressVertical"]=mt;
-mt["__new__"]=static_cast<cocos2d::TransitionProgressVertical*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionProgressVertical::create);
-}
 void RegisterLuaCoreTransitionProgressInOutAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionProgressInOut).name()] = sol::usertype_traits<cocos2d::TransitionProgressInOut*>::metatable();
 auto dep=lua.new_usertype<cocos2d::TransitionProgressInOut>("deprecated.cocos2d::TransitionProgressInOut");
@@ -213,4 +205,19 @@ mt["SetGridRect"]=static_cast<void(cocos2d::GridBase::*)(const cocos2d::Rect&)>(
 mt["set"]["GridRect"]=mt["SetGridRect"];
 mt["GetGridRect"]=static_cast<const cocos2d::Rect&(cocos2d::GridBase::*)()const>(&cocos2d::GridBase::getGridRect);
 mt["get"]["GridRect"]=mt["GetGridRect"];
+}
+void RegisterLuaCoreGrid3DAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Grid3D).name()] = sol::usertype_traits<cocos2d::Grid3D*>::metatable();
+auto dep=lua.new_usertype<cocos2d::Grid3D>("deprecated.cocos2d::Grid3D");
+dep[sol::base_classes]=sol::bases<cocos2d::GridBase,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::Grid3D*>::metatable(),sol::usertype_traits<cocos2d::GridBase*>::metatable());
+lua["cc"]["Grid3D"]=mt;
+mt["__new__"]=sol::overload(static_cast<cocos2d::Grid3D*(*)(const cocos2d::Size&,cocos2d::Texture2D*,bool,const cocos2d::Rect&)>(&cocos2d::Grid3D::create),static_cast<cocos2d::Grid3D*(*)(const cocos2d::Size&,cocos2d::Texture2D*,bool)>(&cocos2d::Grid3D::create),static_cast<cocos2d::Grid3D*(*)(const cocos2d::Size&,const cocos2d::Rect&)>(&cocos2d::Grid3D::create),static_cast<cocos2d::Grid3D*(*)(const cocos2d::Size&)>(&cocos2d::Grid3D::create));
+mt["GetVertex"]=static_cast<cocos2d::Vec3(cocos2d::Grid3D::*)(const cocos2d::Vec2&)const>(&cocos2d::Grid3D::getVertex);
+mt["GetOriginalVertex"]=static_cast<cocos2d::Vec3(cocos2d::Grid3D::*)(const cocos2d::Vec2&)const>(&cocos2d::Grid3D::getOriginalVertex);
+mt["SetVertex"]=static_cast<void(cocos2d::Grid3D::*)(const cocos2d::Vec2&,const cocos2d::Vec3&)>(&cocos2d::Grid3D::setVertex);
+mt["SetNeedDepthTestForBlit"]=static_cast<void(cocos2d::Grid3D::*)(bool)>(&cocos2d::Grid3D::setNeedDepthTestForBlit);
+mt["set"]["NeedDepthTestForBlit"]=mt["SetNeedDepthTestForBlit"];
+mt["GetNeedDepthTestForBlit"]=static_cast<bool(cocos2d::Grid3D::*)()const>(&cocos2d::Grid3D::getNeedDepthTestForBlit);
+mt["get"]["NeedDepthTestForBlit"]=mt["GetNeedDepthTestForBlit"];
 }

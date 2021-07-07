@@ -8,40 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-void RegisterLuaCoreMaterialAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Material).name()] = sol::usertype_traits<cocos2d::Material*>::metatable();
-auto dep=lua.new_usertype<cocos2d::Material>("deprecated.cocos2d::Material");
-dep[sol::base_classes]=sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::Material*>::metatable(),sol::usertype_traits<cocos2d::Ref*>::metatable());
-lua["cc"]["Material"]=mt;
-mt["__new__"] = [](){return nullptr;};
-mt["static"]["CreateWithFilename"]=static_cast<cocos2d::Material*(*)(const std::string&)>(&cocos2d::Material::createWithFilename);
-mt["static"]["CreateWithProgramState"]=static_cast<cocos2d::Material*(*)(cocos2d::backend::ProgramState*)>(&cocos2d::Material::createWithProgramState);
-mt["static"]["CreateWithProperties"]=static_cast<cocos2d::Material*(*)(cocos2d::Properties*)>(&cocos2d::Material::createWithProperties);
-mt["Draw"]=static_cast<void(cocos2d::Material::*)(cocos2d::MeshCommand*,float,cocos2d::backend::Buffer*,cocos2d::backend::Buffer*,cocos2d::CustomCommand::PrimitiveType,cocos2d::CustomCommand::IndexFormat,unsigned int,const cocos2d::Mat4&)>(&cocos2d::Material::draw);
-mt["GetName"]=static_cast<std::string(cocos2d::Material::*)()const>(&cocos2d::Material::getName);
-mt["get"]["Name"]=mt["GetName"];
-mt["SetName"]=static_cast<void(cocos2d::Material::*)(const std::string&)>(&cocos2d::Material::setName);
-mt["set"]["Name"]=mt["SetName"];
-mt["GetTechniqueByName"]=static_cast<cocos2d::Technique*(cocos2d::Material::*)(const std::string&)>(&cocos2d::Material::getTechniqueByName);
-mt["GetTechniqueByIndex"]=static_cast<cocos2d::Technique*(cocos2d::Material::*)(ssize_t)>(&cocos2d::Material::getTechniqueByIndex);
-mt["GetTechnique"]=static_cast<cocos2d::Technique*(cocos2d::Material::*)()const>(&cocos2d::Material::getTechnique);
-mt["get"]["Technique"]=mt["GetTechnique"];
-mt["GetTechniques"]=static_cast<const cocos2d::Vector<cocos2d::Technique *>&(cocos2d::Material::*)()const>(&cocos2d::Material::getTechniques);
-mt["get"]["Techniques"]=mt["GetTechniques"];
-mt["GetTechniqueCount"]=static_cast<ssize_t(cocos2d::Material::*)()const>(&cocos2d::Material::getTechniqueCount);
-mt["get"]["TechniqueCount"]=mt["GetTechniqueCount"];
-mt["AddTechnique"]=static_cast<void(cocos2d::Material::*)(cocos2d::Technique*)>(&cocos2d::Material::addTechnique);
-mt["SetTechnique"]=static_cast<void(cocos2d::Material::*)(const std::string&)>(&cocos2d::Material::setTechnique);
-mt["set"]["Technique"]=mt["SetTechnique"];
-mt["Clone"]=static_cast<cocos2d::Material*(cocos2d::Material::*)()const>(&cocos2d::Material::clone);
-mt["GetStateBlock"]=static_cast<cocos2d::RenderState::StateBlock&(cocos2d::Material::*)()>(&cocos2d::Material::getStateBlock);
-mt["get"]["StateBlock"]=mt["GetStateBlock"];
-mt["SetStateBlock"]=static_cast<void(cocos2d::Material::*)(const cocos2d::RenderState::StateBlock&)>(&cocos2d::Material::setStateBlock);
-mt["set"]["StateBlock"]=mt["SetStateBlock"];
-mt["GetRenderState"]=static_cast<cocos2d::RenderState*(cocos2d::Material::*)()>(&cocos2d::Material::getRenderState);
-mt["get"]["RenderState"]=mt["GetRenderState"];
-}
 void RegisterLuaCorePassAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Pass).name()] = sol::usertype_traits<cocos2d::Pass*>::metatable();
 auto dep=lua.new_usertype<cocos2d::Pass>("deprecated.cocos2d::Pass");
@@ -180,10 +146,10 @@ mt["CheckVisibility"]=static_cast<bool(cocos2d::Renderer::*)(const cocos2d::Mat4
 mt["ReadPixels"]=static_cast<void(cocos2d::Renderer::*)(cocos2d::backend::RenderTarget*,std::function<void (const cocos2d::backend::PixelBufferDescriptor &)>)>(&cocos2d::Renderer::readPixels);
 mt["BeginRenderPass"]=static_cast<void(cocos2d::Renderer::*)()>(&cocos2d::Renderer::beginRenderPass);
 mt["EndRenderPass"]=static_cast<void(cocos2d::Renderer::*)()>(&cocos2d::Renderer::endRenderPass);
-mt["get"]["VBO_SIZE"]=[](){return cocos2d::Renderer::VBO_SIZE;};;
-mt["get"]["INDEX_VBO_SIZE"]=[](){return cocos2d::Renderer::INDEX_VBO_SIZE;};;
-mt["get"]["BATCH_TRIAGCOMMAND_RESERVED_SIZE"]=[](){return cocos2d::Renderer::BATCH_TRIAGCOMMAND_RESERVED_SIZE;};;
-mt["get"]["MATERIAL_ID_DO_NOT_BATCH"]=[](){return cocos2d::Renderer::MATERIAL_ID_DO_NOT_BATCH;};;
+mt["static"]["get"]["VBO_SIZE"]=[]()->const int&{return cocos2d::Renderer::VBO_SIZE;};
+mt["static"]["get"]["INDEX_VBO_SIZE"]=[]()->const int&{return cocos2d::Renderer::INDEX_VBO_SIZE;};
+mt["static"]["get"]["BATCH_TRIAGCOMMAND_RESERVED_SIZE"]=[]()->const int&{return cocos2d::Renderer::BATCH_TRIAGCOMMAND_RESERVED_SIZE;};
+mt["static"]["get"]["MATERIAL_ID_DO_NOT_BATCH"]=[]()->const int&{return cocos2d::Renderer::MATERIAL_ID_DO_NOT_BATCH;};
 }
 void RegisterLuaCoreTextureCacheAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TextureCache).name()] = sol::usertype_traits<cocos2d::TextureCache*>::metatable();
@@ -214,6 +180,34 @@ mt["WaitForQuit"]=static_cast<void(cocos2d::TextureCache::*)()>(&cocos2d::Textur
 mt["GetTextureFilePath"]=static_cast<std::string(cocos2d::TextureCache::*)(cocos2d::Texture2D*)const>(&cocos2d::TextureCache::getTextureFilePath);
 mt["RenameTextureWithKey"]=static_cast<void(cocos2d::TextureCache::*)(const std::string&,const std::string&)>(&cocos2d::TextureCache::renameTextureWithKey);
 }
+void RegisterLuaCoreDeviceTextAlignAuto(cocos2d::extension::Lua& lua) {
+sol::table enumTable = lua.create_table_with(0,9);
+enumTable["CENTER"]=cocos2d::Device::TextAlign::CENTER;
+enumTable["TOP"]=cocos2d::Device::TextAlign::TOP;
+enumTable["TOP_RIGHT"]=cocos2d::Device::TextAlign::TOP_RIGHT;
+enumTable["RIGHT"]=cocos2d::Device::TextAlign::RIGHT;
+enumTable["BOTTOM_RIGHT"]=cocos2d::Device::TextAlign::BOTTOM_RIGHT;
+enumTable["BOTTOM"]=cocos2d::Device::TextAlign::BOTTOM;
+enumTable["BOTTOM_LEFT"]=cocos2d::Device::TextAlign::BOTTOM_LEFT;
+enumTable["LEFT"]=cocos2d::Device::TextAlign::LEFT;
+enumTable["TOP_LEFT"]=cocos2d::Device::TextAlign::TOP_LEFT;
+lua["cc"]["Device"]["static"]["TextAlign"]=lua.NewEnum(enumTable);
+}
+void RegisterLuaCoreDeviceNetworkTypeAuto(cocos2d::extension::Lua& lua) {
+sol::table enumTable = lua.create_table_with(0,4);
+enumTable["None"]=cocos2d::Device::NetworkType::None;
+enumTable["Wifi"]=cocos2d::Device::NetworkType::Wifi;
+enumTable["Mobile"]=cocos2d::Device::NetworkType::Mobile;
+enumTable["Other"]=cocos2d::Device::NetworkType::Other;
+lua["cc"]["Device"]["static"]["NetworkType"]=lua.NewEnum(enumTable);
+}
+void RegisterLuaCoreDeviceOrientationTypeAuto(cocos2d::extension::Lua& lua) {
+sol::table enumTable = lua.create_table_with(0,3);
+enumTable["Landscape"]=cocos2d::Device::OrientationType::Landscape;
+enumTable["Portrait"]=cocos2d::Device::OrientationType::Portrait;
+enumTable["Auto"]=cocos2d::Device::OrientationType::Auto;
+lua["cc"]["Device"]["static"]["OrientationType"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaCoreDeviceAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Device).name()] = sol::usertype_traits<cocos2d::Device*>::metatable();
 auto dep=lua.new_usertype<cocos2d::Device>("deprecated.cocos2d::Device");
@@ -228,7 +222,28 @@ mt["static"]["SetAccelerometerInterval"]=static_cast<void(*)(float)>(&cocos2d::D
 mt["static"]["set"]["AccelerometerInterval"]=mt["SetAccelerometerInterval"];
 mt["static"]["SetKeepScreenOn"]=static_cast<void(*)(bool)>(&cocos2d::Device::setKeepScreenOn);
 mt["static"]["set"]["KeepScreenOn"]=mt["SetKeepScreenOn"];
-mt["static"]["Vibrate"]=static_cast<void(*)(float)>(&cocos2d::Device::vibrate);
+mt["static"]["Vibrate"]=static_cast<void(*)(uint32_t)>(&cocos2d::Device::vibrate);
+mt["static"]["GetBatteryPercent"]=static_cast<double(*)()>(&cocos2d::Device::GetBatteryPercent);
+mt["static"]["get"]["BatteryPercent"]=mt["GetBatteryPercent"];
+mt["static"]["IsBatteryCharge"]=static_cast<bool(*)()>(&cocos2d::Device::IsBatteryCharge);
+mt["static"]["get"]["BatteryCharge"]=mt["IsBatteryCharge"];
+mt["static"]["GetNetwork"]=static_cast<cocos2d::Device::NetworkType(*)()>(&cocos2d::Device::GetNetwork);
+mt["static"]["get"]["Network"]=mt["GetNetwork"];
+mt["static"]["GetWifiLevel"]=static_cast<uint8_t(*)()>(&cocos2d::Device::GetWifiLevel);
+mt["static"]["get"]["WifiLevel"]=mt["GetWifiLevel"];
+mt["static"]["SetOrientation"]=static_cast<void(*)(cocos2d::Device::OrientationType)>(&cocos2d::Device::SetOrientation);
+mt["static"]["set"]["Orientation"]=mt["SetOrientation"];
+mt["static"]["GetOrientation"]=static_cast<cocos2d::Device::OrientationType(*)()>(&cocos2d::Device::GetOrientation);
+mt["static"]["get"]["Orientation"]=mt["GetOrientation"];
+mt["static"]["IsAutoOrientation"]=static_cast<bool(*)()>(&cocos2d::Device::IsAutoOrientation);
+mt["static"]["get"]["AutoOrientation"]=mt["IsAutoOrientation"];
+mt["static"]["GetIp"]=static_cast<std::string(*)()>(&cocos2d::Device::GetIp);
+mt["static"]["get"]["Ip"]=mt["GetIp"];
+mt["static"]["GetId"]=static_cast<std::string(*)()>(&cocos2d::Device::GetId);
+mt["static"]["get"]["Id"]=mt["GetId"];
+RegisterLuaCoreDeviceTextAlignAuto(lua);
+RegisterLuaCoreDeviceNetworkTypeAuto(lua);
+RegisterLuaCoreDeviceOrientationTypeAuto(lua);
 }
 void RegisterLuaCoreApplicationProtocolPlatformAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,6);
@@ -246,9 +261,6 @@ auto dep=lua.new_usertype<cocos2d::ApplicationProtocol>("deprecated.cocos2d::App
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ApplicationProtocol*>::metatable());
 lua["cc"]["ApplicationProtocol"]=mt;
 mt["__new__"] = [](){return nullptr;};
-mt["ApplicationDidFinishLaunching"]=static_cast<bool(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::applicationDidFinishLaunching);
-mt["ApplicationDidEnterBackground"]=static_cast<void(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::applicationDidEnterBackground);
-mt["ApplicationWillEnterForeground"]=static_cast<void(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::applicationWillEnterForeground);
 mt["SetAnimationInterval"]=static_cast<void(cocos2d::ApplicationProtocol::*)(float)>(&cocos2d::ApplicationProtocol::setAnimationInterval);
 mt["set"]["AnimationInterval"]=mt["SetAnimationInterval"];
 mt["InitGLContextAttrs"]=static_cast<void(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::initGLContextAttrs);
@@ -263,8 +275,6 @@ mt["get"]["Version"]=mt["GetVersion"];
 mt["GetCompileVersion"]=static_cast<int64_t(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::GetCompileVersion);
 mt["get"]["CompileVersion"]=mt["GetCompileVersion"];
 mt["OpenURL"]=static_cast<bool(cocos2d::ApplicationProtocol::*)(const std::string&)>(&cocos2d::ApplicationProtocol::openURL);
-mt["RestartLuaEngine"]=static_cast<bool(cocos2d::ApplicationProtocol::*)()>(&cocos2d::ApplicationProtocol::RestartLuaEngine);
-mt["Dialog"]=sol::overload([](cocos2d::ApplicationProtocol* obj,const std::string& arg0,const std::string& arg1,const std::function<void ()>& arg2,const std::function<void ()>& arg3){return obj->Dialog(arg0,arg1,arg2,arg3);},[](cocos2d::ApplicationProtocol* obj,const std::string& arg0,const std::string& arg1,const std::function<void ()>& arg2){return obj->Dialog(arg0,arg1,arg2);},[](cocos2d::ApplicationProtocol* obj,const std::string& arg0,const std::string& arg1){return obj->Dialog(arg0,arg1);});
 mt["Notify"]=sol::overload([](cocos2d::ApplicationProtocol* obj,const std::string& arg0,const std::string& arg1,const std::function<void ()>& arg2){return obj->Notify(arg0,arg1,arg2);},[](cocos2d::ApplicationProtocol* obj,const std::string& arg0,const std::string& arg1){return obj->Notify(arg0,arg1);});
 RegisterLuaCoreApplicationProtocolPlatformAuto(lua);
 }
@@ -333,4 +343,29 @@ mt["ReorderBatch"]=static_cast<void(cocos2d::SpriteBatchNode::*)(bool)>(&cocos2d
 mt["InsertQuadFromSprite"]=static_cast<void(cocos2d::SpriteBatchNode::*)(cocos2d::Sprite*,ssize_t)>(&cocos2d::SpriteBatchNode::insertQuadFromSprite);
 mt["AddSpriteWithoutQuad"]=static_cast<cocos2d::SpriteBatchNode*(cocos2d::SpriteBatchNode::*)(cocos2d::Sprite*,int,int)>(&cocos2d::SpriteBatchNode::addSpriteWithoutQuad);
 mt["ReserveCapacity"]=static_cast<void(cocos2d::SpriteBatchNode::*)(ssize_t)>(&cocos2d::SpriteBatchNode::reserveCapacity);
+}
+void RegisterLuaCoreSpriteFrameCacheAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::SpriteFrameCache).name()] = sol::usertype_traits<cocos2d::SpriteFrameCache*>::metatable();
+auto dep=lua.new_usertype<cocos2d::SpriteFrameCache>("deprecated.cocos2d::SpriteFrameCache");
+dep[sol::base_classes]=sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::SpriteFrameCache*>::metatable(),sol::usertype_traits<cocos2d::Ref*>::metatable());
+lua["cc"]["SpriteFrameCache"]=mt;
+mt["__new__"] = [](){return nullptr;};
+mt["static"]["GetInstance"]=static_cast<cocos2d::SpriteFrameCache*(*)()>(&cocos2d::SpriteFrameCache::getInstance);
+mt["static"]["DestroyInstance"]=static_cast<void(*)()>(&cocos2d::SpriteFrameCache::destroyInstance);
+mt["Init"]=static_cast<bool(cocos2d::SpriteFrameCache::*)()>(&cocos2d::SpriteFrameCache::init);
+mt["AddSpriteFrames"]=sol::overload(static_cast<void(cocos2d::SpriteFrameCache::*)(const std::string&,cocos2d::Texture2D*)>(&cocos2d::SpriteFrameCache::addSpriteFramesWithFile),static_cast<void(cocos2d::SpriteFrameCache::*)(const std::string&,const std::string&)>(&cocos2d::SpriteFrameCache::addSpriteFramesWithFile),static_cast<void(cocos2d::SpriteFrameCache::*)(const std::string&)>(&cocos2d::SpriteFrameCache::addSpriteFramesWithFile));
+mt["AddSpriteFramesWithFileContent"]=static_cast<void(cocos2d::SpriteFrameCache::*)(const std::string&,cocos2d::Texture2D*)>(&cocos2d::SpriteFrameCache::addSpriteFramesWithFileContent);
+mt["AddSpriteFrame"]=static_cast<void(cocos2d::SpriteFrameCache::*)(cocos2d::SpriteFrame*,const std::string&)>(&cocos2d::SpriteFrameCache::addSpriteFrame);
+mt["IsSpriteFramesWithFileLoaded"]=static_cast<bool(cocos2d::SpriteFrameCache::*)(const std::string&)const>(&cocos2d::SpriteFrameCache::isSpriteFramesWithFileLoaded);
+mt["RemoveSpriteFrames"]=static_cast<void(cocos2d::SpriteFrameCache::*)()>(&cocos2d::SpriteFrameCache::removeSpriteFrames);
+mt["RemoveUnusedSpriteFrames"]=static_cast<void(cocos2d::SpriteFrameCache::*)()>(&cocos2d::SpriteFrameCache::removeUnusedSpriteFrames);
+mt["RemoveSpriteFrameByName"]=static_cast<void(cocos2d::SpriteFrameCache::*)(const std::string&)>(&cocos2d::SpriteFrameCache::removeSpriteFrameByName);
+mt["RemoveSpriteFramesFromFile"]=static_cast<void(cocos2d::SpriteFrameCache::*)(const std::string&)>(&cocos2d::SpriteFrameCache::removeSpriteFramesFromFile);
+mt["RemoveSpriteFramesFromFileContent"]=static_cast<void(cocos2d::SpriteFrameCache::*)(const std::string&)>(&cocos2d::SpriteFrameCache::removeSpriteFramesFromFileContent);
+mt["RemoveSpriteFramesFromTexture"]=static_cast<void(cocos2d::SpriteFrameCache::*)(cocos2d::Texture2D*)>(&cocos2d::SpriteFrameCache::removeSpriteFramesFromTexture);
+mt["GetSpriteFrame"]=static_cast<cocos2d::SpriteFrame*(cocos2d::SpriteFrameCache::*)(const std::string&)>(&cocos2d::SpriteFrameCache::getSpriteFrameByName);
+mt["ReloadTexture"]=static_cast<bool(cocos2d::SpriteFrameCache::*)(const std::string&)>(&cocos2d::SpriteFrameCache::reloadTexture);
+mt["static"]["get"]["Instance"]=&cocos2d::SpriteFrameCache::getInstance;
+mt["static"]["set"]["Instance"]=[](std::nullptr_t){cocos2d::SpriteFrameCache::destroyInstance();};
 }

@@ -11,11 +11,16 @@ mt["__new__"]=static_cast<cocostudio::TextureData*(*)()>(&cocostudio::TextureDat
 mt["Init"]=static_cast<bool(cocostudio::TextureData::*)()>(&cocostudio::TextureData::init);
 mt["AddContourData"]=static_cast<void(cocostudio::TextureData::*)(cocostudio::ContourData*)>(&cocostudio::TextureData::addContourData);
 mt["GetContourData"]=static_cast<cocostudio::ContourData*(cocostudio::TextureData::*)(int)>(&cocostudio::TextureData::getContourData);
-mt["get"]["Height"]=[](cocostudio::TextureData* obj){return obj->height;};;
-mt["get"]["Width"]=[](cocostudio::TextureData* obj){return obj->width;};;
-mt["get"]["PivotX"]=[](cocostudio::TextureData* obj){return obj->pivotX;};;
-mt["get"]["PivotY"]=[](cocostudio::TextureData* obj){return obj->pivotY;};;
-mt["get"]["Name"]=[](cocostudio::TextureData* obj){return obj->name;};;
+mt["set"]["Height"]=[](cocostudio::TextureData* obj,const float& value){obj->height = value;};
+mt["get"]["Height"]=[](cocostudio::TextureData* obj)->const float&{return obj->height;};
+mt["set"]["Width"]=[](cocostudio::TextureData* obj,const float& value){obj->width = value;};
+mt["get"]["Width"]=[](cocostudio::TextureData* obj)->const float&{return obj->width;};
+mt["set"]["PivotX"]=[](cocostudio::TextureData* obj,const float& value){obj->pivotX = value;};
+mt["get"]["PivotX"]=[](cocostudio::TextureData* obj)->const float&{return obj->pivotX;};
+mt["set"]["PivotY"]=[](cocostudio::TextureData* obj,const float& value){obj->pivotY = value;};
+mt["get"]["PivotY"]=[](cocostudio::TextureData* obj)->const float&{return obj->pivotY;};
+mt["set"]["Name"]=[](cocostudio::TextureData* obj,const std::string& value){obj->name = value;};
+mt["get"]["Name"]=[](cocostudio::TextureData* obj)->const std::string&{return obj->name;};
 }
 void RegisterLuaStudioTweenAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::Tween).name()] = sol::usertype_traits<cocostudio::Tween*>::metatable();

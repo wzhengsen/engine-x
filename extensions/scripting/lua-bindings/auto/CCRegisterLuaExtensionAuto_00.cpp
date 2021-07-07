@@ -75,7 +75,7 @@ mt["GetVersion"]=static_cast<const std::string&(cocos2d::extension::Manifest::*)
 mt["get"]["Version"]=mt["GetVersion"];
 mt["GetSearchPaths"]=static_cast<std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >(cocos2d::extension::Manifest::*)()const>(&cocos2d::extension::Manifest::getSearchPaths);
 mt["get"]["SearchPaths"]=mt["GetSearchPaths"];
-mt["get"]["ValZipFileName"]=[](){return cocos2d::extension::Manifest::ValZipFileName;};;
+mt["static"]["get"]["ValZipFileName"]=[]()->const std::string&{return cocos2d::extension::Manifest::ValZipFileName;};
 }
 void RegisterLuaExtensionAssetsManagerExAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::extension::AssetsManagerEx).name()] = sol::usertype_traits<cocos2d::extension::AssetsManagerEx*>::metatable();
@@ -103,9 +103,9 @@ mt["SetVersionCompareHandle"]=static_cast<void(cocos2d::extension::AssetsManager
 mt["set"]["VersionCompareHandle"]=mt["SetVersionCompareHandle"];
 mt["SetVerifyCallback"]=static_cast<void(cocos2d::extension::AssetsManagerEx::*)(const std::function<bool (const std::basic_string<char, std::char_traits<char>, std::allocator<char> > &, cocos2d::extension::ManifestAsset)>&)>(&cocos2d::extension::AssetsManagerEx::setVerifyCallback);
 mt["set"]["VerifyCallback"]=mt["SetVerifyCallback"];
-mt["get"]["VERSION_ID"]=[](){return cocos2d::extension::AssetsManagerEx::VERSION_ID;};;
-mt["get"]["MANIFEST_ID"]=[](){return cocos2d::extension::AssetsManagerEx::MANIFEST_ID;};;
-mt["get"]["DEFAULT_CONNECTION_TIMEOUT_MS"]=[](){return cocos2d::extension::AssetsManagerEx::DEFAULT_CONNECTION_TIMEOUT_MS;};;
+mt["static"]["get"]["VERSION_ID"]=[]()->const std::string&{return cocos2d::extension::AssetsManagerEx::VERSION_ID;};
+mt["static"]["get"]["MANIFEST_ID"]=[]()->const std::string&{return cocos2d::extension::AssetsManagerEx::MANIFEST_ID;};
+mt["static"]["get"]["DEFAULT_CONNECTION_TIMEOUT_MS"]=[]()->const uint32_t&{return cocos2d::extension::AssetsManagerEx::DEFAULT_CONNECTION_TIMEOUT_MS;};
 }
 void RegisterLuaExtensionEventListenerAssetsManagerExAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::extension::EventListenerAssetsManagerEx).name()] = sol::usertype_traits<cocos2d::extension::EventListenerAssetsManagerEx*>::metatable();

@@ -8,14 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-void RegisterLuaCoreTransitionSplitRowsAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionSplitRows).name()] = sol::usertype_traits<cocos2d::TransitionSplitRows*>::metatable();
-auto dep=lua.new_usertype<cocos2d::TransitionSplitRows>("deprecated.cocos2d::TransitionSplitRows");
-dep[sol::base_classes]=sol::bases<cocos2d::TransitionSplitCols,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionSplitRows*>::metatable(),sol::usertype_traits<cocos2d::TransitionSplitCols*>::metatable());
-lua["cc"]["TransitionSplitRows"]=mt;
-mt["__new__"]=static_cast<cocos2d::TransitionSplitRows*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionSplitRows::create);
-}
 void RegisterLuaCoreTransitionFadeTRAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionFadeTR).name()] = sol::usertype_traits<cocos2d::TransitionFadeTR*>::metatable();
 auto dep=lua.new_usertype<cocos2d::TransitionFadeTR>("deprecated.cocos2d::TransitionFadeTR");
@@ -90,4 +82,12 @@ dep[sol::base_classes]=sol::bases<cocos2d::TransitionProgress,cocos2d::Transitio
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionProgressHorizontal*>::metatable(),sol::usertype_traits<cocos2d::TransitionProgress*>::metatable());
 lua["cc"]["TransitionProgressHorizontal"]=mt;
 mt["__new__"]=static_cast<cocos2d::TransitionProgressHorizontal*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionProgressHorizontal::create);
+}
+void RegisterLuaCoreTransitionProgressVerticalAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionProgressVertical).name()] = sol::usertype_traits<cocos2d::TransitionProgressVertical*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TransitionProgressVertical>("deprecated.cocos2d::TransitionProgressVertical");
+dep[sol::base_classes]=sol::bases<cocos2d::TransitionProgress,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionProgressVertical*>::metatable(),sol::usertype_traits<cocos2d::TransitionProgress*>::metatable());
+lua["cc"]["TransitionProgressVertical"]=mt;
+mt["__new__"]=static_cast<cocos2d::TransitionProgressVertical*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionProgressVertical::create);
 }

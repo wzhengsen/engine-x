@@ -121,7 +121,7 @@ mt["SetSingleFrameIndex"]=static_cast<void(cocostudio::timeline::InnerActionFram
 mt["set"]["SingleFrameIndex"]=mt["SetSingleFrameIndex"];
 mt["GetSingleFrameIndex"]=static_cast<int(cocostudio::timeline::InnerActionFrame::*)()const>(&cocostudio::timeline::InnerActionFrame::getSingleFrameIndex);
 mt["get"]["SingleFrameIndex"]=mt["GetSingleFrameIndex"];
-mt["get"]["AnimationAllName"]=[](){return cocostudio::timeline::InnerActionFrame::AnimationAllName;};;
+mt["static"]["get"]["AnimationAllName"]=[]()->const std::string&{return cocostudio::timeline::InnerActionFrame::AnimationAllName;};
 }
 void RegisterLuaStudioColorFrameAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::timeline::ColorFrame).name()] = sol::usertype_traits<cocostudio::timeline::ColorFrame*>::metatable();

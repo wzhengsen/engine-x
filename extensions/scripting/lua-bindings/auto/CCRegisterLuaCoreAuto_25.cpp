@@ -8,21 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-void RegisterLuaCoreGrid3DAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Grid3D).name()] = sol::usertype_traits<cocos2d::Grid3D*>::metatable();
-auto dep=lua.new_usertype<cocos2d::Grid3D>("deprecated.cocos2d::Grid3D");
-dep[sol::base_classes]=sol::bases<cocos2d::GridBase,cocos2d::Ref,cocos2d::extension::LuaObject>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::Grid3D*>::metatable(),sol::usertype_traits<cocos2d::GridBase*>::metatable());
-lua["cc"]["Grid3D"]=mt;
-mt["__new__"]=sol::overload(static_cast<cocos2d::Grid3D*(*)(const cocos2d::Size&,cocos2d::Texture2D*,bool,const cocos2d::Rect&)>(&cocos2d::Grid3D::create),static_cast<cocos2d::Grid3D*(*)(const cocos2d::Size&,cocos2d::Texture2D*,bool)>(&cocos2d::Grid3D::create),static_cast<cocos2d::Grid3D*(*)(const cocos2d::Size&,const cocos2d::Rect&)>(&cocos2d::Grid3D::create),static_cast<cocos2d::Grid3D*(*)(const cocos2d::Size&)>(&cocos2d::Grid3D::create));
-mt["GetVertex"]=static_cast<cocos2d::Vec3(cocos2d::Grid3D::*)(const cocos2d::Vec2&)const>(&cocos2d::Grid3D::getVertex);
-mt["GetOriginalVertex"]=static_cast<cocos2d::Vec3(cocos2d::Grid3D::*)(const cocos2d::Vec2&)const>(&cocos2d::Grid3D::getOriginalVertex);
-mt["SetVertex"]=static_cast<void(cocos2d::Grid3D::*)(const cocos2d::Vec2&,const cocos2d::Vec3&)>(&cocos2d::Grid3D::setVertex);
-mt["SetNeedDepthTestForBlit"]=static_cast<void(cocos2d::Grid3D::*)(bool)>(&cocos2d::Grid3D::setNeedDepthTestForBlit);
-mt["set"]["NeedDepthTestForBlit"]=mt["SetNeedDepthTestForBlit"];
-mt["GetNeedDepthTestForBlit"]=static_cast<bool(cocos2d::Grid3D::*)()const>(&cocos2d::Grid3D::getNeedDepthTestForBlit);
-mt["get"]["NeedDepthTestForBlit"]=mt["GetNeedDepthTestForBlit"];
-}
 void RegisterLuaCoreLightTypeAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,4);
 enumTable["DIRECTIONAL"]=cocos2d::LightType::DIRECTIONAL;
@@ -171,4 +156,38 @@ mt["SetMaterial"]=static_cast<void(cocos2d::Technique::*)(cocos2d::Material*)>(&
 mt["set"]["Material"]=mt["SetMaterial"];
 mt["GetStateBlock"]=static_cast<cocos2d::RenderState::StateBlock&(cocos2d::Technique::*)()>(&cocos2d::Technique::getStateBlock);
 mt["get"]["StateBlock"]=mt["GetStateBlock"];
+}
+void RegisterLuaCoreMaterialAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Material).name()] = sol::usertype_traits<cocos2d::Material*>::metatable();
+auto dep=lua.new_usertype<cocos2d::Material>("deprecated.cocos2d::Material");
+dep[sol::base_classes]=sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::Material*>::metatable(),sol::usertype_traits<cocos2d::Ref*>::metatable());
+lua["cc"]["Material"]=mt;
+mt["__new__"] = [](){return nullptr;};
+mt["static"]["CreateWithFilename"]=static_cast<cocos2d::Material*(*)(const std::string&)>(&cocos2d::Material::createWithFilename);
+mt["static"]["CreateWithProgramState"]=static_cast<cocos2d::Material*(*)(cocos2d::backend::ProgramState*)>(&cocos2d::Material::createWithProgramState);
+mt["static"]["CreateWithProperties"]=static_cast<cocos2d::Material*(*)(cocos2d::Properties*)>(&cocos2d::Material::createWithProperties);
+mt["Draw"]=static_cast<void(cocos2d::Material::*)(cocos2d::MeshCommand*,float,cocos2d::backend::Buffer*,cocos2d::backend::Buffer*,cocos2d::CustomCommand::PrimitiveType,cocos2d::CustomCommand::IndexFormat,unsigned int,const cocos2d::Mat4&)>(&cocos2d::Material::draw);
+mt["GetName"]=static_cast<std::string(cocos2d::Material::*)()const>(&cocos2d::Material::getName);
+mt["get"]["Name"]=mt["GetName"];
+mt["SetName"]=static_cast<void(cocos2d::Material::*)(const std::string&)>(&cocos2d::Material::setName);
+mt["set"]["Name"]=mt["SetName"];
+mt["GetTechniqueByName"]=static_cast<cocos2d::Technique*(cocos2d::Material::*)(const std::string&)>(&cocos2d::Material::getTechniqueByName);
+mt["GetTechniqueByIndex"]=static_cast<cocos2d::Technique*(cocos2d::Material::*)(ssize_t)>(&cocos2d::Material::getTechniqueByIndex);
+mt["GetTechnique"]=static_cast<cocos2d::Technique*(cocos2d::Material::*)()const>(&cocos2d::Material::getTechnique);
+mt["get"]["Technique"]=mt["GetTechnique"];
+mt["GetTechniques"]=static_cast<const cocos2d::Vector<cocos2d::Technique *>&(cocos2d::Material::*)()const>(&cocos2d::Material::getTechniques);
+mt["get"]["Techniques"]=mt["GetTechniques"];
+mt["GetTechniqueCount"]=static_cast<ssize_t(cocos2d::Material::*)()const>(&cocos2d::Material::getTechniqueCount);
+mt["get"]["TechniqueCount"]=mt["GetTechniqueCount"];
+mt["AddTechnique"]=static_cast<void(cocos2d::Material::*)(cocos2d::Technique*)>(&cocos2d::Material::addTechnique);
+mt["SetTechnique"]=static_cast<void(cocos2d::Material::*)(const std::string&)>(&cocos2d::Material::setTechnique);
+mt["set"]["Technique"]=mt["SetTechnique"];
+mt["Clone"]=static_cast<cocos2d::Material*(cocos2d::Material::*)()const>(&cocos2d::Material::clone);
+mt["GetStateBlock"]=static_cast<cocos2d::RenderState::StateBlock&(cocos2d::Material::*)()>(&cocos2d::Material::getStateBlock);
+mt["get"]["StateBlock"]=mt["GetStateBlock"];
+mt["SetStateBlock"]=static_cast<void(cocos2d::Material::*)(const cocos2d::RenderState::StateBlock&)>(&cocos2d::Material::setStateBlock);
+mt["set"]["StateBlock"]=mt["SetStateBlock"];
+mt["GetRenderState"]=static_cast<cocos2d::RenderState*(cocos2d::Material::*)()>(&cocos2d::Material::getRenderState);
+mt["get"]["RenderState"]=mt["GetRenderState"];
 }

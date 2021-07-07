@@ -63,7 +63,7 @@ dep[sol::base_classes]=sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::e
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventListenerAcceleration*>::metatable(),sol::usertype_traits<cocos2d::EventListener*>::metatable());
 lua["cc"]["EventListenerAcceleration"]=mt;
 mt["__new__"]=static_cast<cocos2d::EventListenerAcceleration*(*)(const std::function<void (cocos2d::Acceleration *, cocos2d::Event *)>&)>(&cocos2d::EventListenerAcceleration::create);
-mt["get"]["LISTENER_ID"]=[](){return cocos2d::EventListenerAcceleration::LISTENER_ID;};;
+mt["static"]["get"]["LISTENER_ID"]=[]()->const std::string&{return cocos2d::EventListenerAcceleration::LISTENER_ID;};
 }
 void RegisterLuaCoreEventListenerFocusAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventListenerFocus).name()] = sol::usertype_traits<cocos2d::EventListenerFocus*>::metatable();
@@ -72,8 +72,9 @@ dep[sol::base_classes]=sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::e
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventListenerFocus*>::metatable(),sol::usertype_traits<cocos2d::EventListener*>::metatable());
 lua["cc"]["EventListenerFocus"]=mt;
 mt["__new__"]=static_cast<cocos2d::EventListenerFocus*(*)()>(&cocos2d::EventListenerFocus::create);
-mt["get"]["LISTENER_ID"]=[](){return cocos2d::EventListenerFocus::LISTENER_ID;};;
-mt["get"]["OnFocusChanged"]=[](cocos2d::EventListenerFocus* obj){return obj->onFocusChanged;};;
+mt["static"]["get"]["LISTENER_ID"]=[]()->const std::string&{return cocos2d::EventListenerFocus::LISTENER_ID;};
+mt["set"]["OnFocusChanged"]=[](cocos2d::EventListenerFocus* obj,const std::function<void (cocos2d::ui::Widget *, cocos2d::ui::Widget *)>& value){obj->onFocusChanged = value;};
+mt["get"]["OnFocusChanged"]=[](cocos2d::EventListenerFocus* obj)->const std::function<void (cocos2d::ui::Widget *, cocos2d::ui::Widget *)>&{return obj->onFocusChanged;};
 }
 void RegisterLuaCoreEventListenerKeyboardAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventListenerKeyboard).name()] = sol::usertype_traits<cocos2d::EventListenerKeyboard*>::metatable();
@@ -82,9 +83,11 @@ dep[sol::base_classes]=sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::e
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventListenerKeyboard*>::metatable(),sol::usertype_traits<cocos2d::EventListener*>::metatable());
 lua["cc"]["EventListenerKeyboard"]=mt;
 mt["__new__"]=static_cast<cocos2d::EventListenerKeyboard*(*)()>(&cocos2d::EventListenerKeyboard::create);
-mt["get"]["LISTENER_ID"]=[](){return cocos2d::EventListenerKeyboard::LISTENER_ID;};;
-mt["get"]["OnKeyPressed"]=[](cocos2d::EventListenerKeyboard* obj){return obj->onKeyPressed;};;
-mt["get"]["OnKeyReleased"]=[](cocos2d::EventListenerKeyboard* obj){return obj->onKeyReleased;};;
+mt["static"]["get"]["LISTENER_ID"]=[]()->const std::string&{return cocos2d::EventListenerKeyboard::LISTENER_ID;};
+mt["set"]["OnKeyPressed"]=[](cocos2d::EventListenerKeyboard* obj,const std::function<void (cocos2d::EventKeyboard::KeyCode, cocos2d::Event *)>& value){obj->onKeyPressed = value;};
+mt["get"]["OnKeyPressed"]=[](cocos2d::EventListenerKeyboard* obj)->const std::function<void (cocos2d::EventKeyboard::KeyCode, cocos2d::Event *)>&{return obj->onKeyPressed;};
+mt["set"]["OnKeyReleased"]=[](cocos2d::EventListenerKeyboard* obj,const std::function<void (cocos2d::EventKeyboard::KeyCode, cocos2d::Event *)>& value){obj->onKeyReleased = value;};
+mt["get"]["OnKeyReleased"]=[](cocos2d::EventListenerKeyboard* obj)->const std::function<void (cocos2d::EventKeyboard::KeyCode, cocos2d::Event *)>&{return obj->onKeyReleased;};
 }
 void RegisterLuaCoreEventMouseMouseEventTypeAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,5);
@@ -153,11 +156,15 @@ dep[sol::base_classes]=sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::e
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventListenerMouse*>::metatable(),sol::usertype_traits<cocos2d::EventListener*>::metatable());
 lua["cc"]["EventListenerMouse"]=mt;
 mt["__new__"]=static_cast<cocos2d::EventListenerMouse*(*)()>(&cocos2d::EventListenerMouse::create);
-mt["get"]["LISTENER_ID"]=[](){return cocos2d::EventListenerMouse::LISTENER_ID;};;
-mt["get"]["OnMouseDown"]=[](cocos2d::EventListenerMouse* obj){return obj->onMouseDown;};;
-mt["get"]["OnMouseUp"]=[](cocos2d::EventListenerMouse* obj){return obj->onMouseUp;};;
-mt["get"]["OnMouseMove"]=[](cocos2d::EventListenerMouse* obj){return obj->onMouseMove;};;
-mt["get"]["OnMouseScroll"]=[](cocos2d::EventListenerMouse* obj){return obj->onMouseScroll;};;
+mt["static"]["get"]["LISTENER_ID"]=[]()->const std::string&{return cocos2d::EventListenerMouse::LISTENER_ID;};
+mt["set"]["OnMouseDown"]=[](cocos2d::EventListenerMouse* obj,const std::function<void (cocos2d::EventMouse *)>& value){obj->onMouseDown = value;};
+mt["get"]["OnMouseDown"]=[](cocos2d::EventListenerMouse* obj)->const std::function<void (cocos2d::EventMouse *)>&{return obj->onMouseDown;};
+mt["set"]["OnMouseUp"]=[](cocos2d::EventListenerMouse* obj,const std::function<void (cocos2d::EventMouse *)>& value){obj->onMouseUp = value;};
+mt["get"]["OnMouseUp"]=[](cocos2d::EventListenerMouse* obj)->const std::function<void (cocos2d::EventMouse *)>&{return obj->onMouseUp;};
+mt["set"]["OnMouseMove"]=[](cocos2d::EventListenerMouse* obj,const std::function<void (cocos2d::EventMouse *)>& value){obj->onMouseMove = value;};
+mt["get"]["OnMouseMove"]=[](cocos2d::EventListenerMouse* obj)->const std::function<void (cocos2d::EventMouse *)>&{return obj->onMouseMove;};
+mt["set"]["OnMouseScroll"]=[](cocos2d::EventListenerMouse* obj,const std::function<void (cocos2d::EventMouse *)>& value){obj->onMouseScroll = value;};
+mt["get"]["OnMouseScroll"]=[](cocos2d::EventListenerMouse* obj)->const std::function<void (cocos2d::EventMouse *)>&{return obj->onMouseScroll;};
 }
 void RegisterLuaCoreEventListenerControllerAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventListenerController).name()] = sol::usertype_traits<cocos2d::EventListenerController*>::metatable();
@@ -166,13 +173,19 @@ dep[sol::base_classes]=sol::bases<cocos2d::EventListener,cocos2d::Ref,cocos2d::e
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventListenerController*>::metatable(),sol::usertype_traits<cocos2d::EventListener*>::metatable());
 lua["cc"]["EventListenerController"]=mt;
 mt["__new__"]=static_cast<cocos2d::EventListenerController*(*)()>(&cocos2d::EventListenerController::create);
-mt["get"]["LISTENER_ID"]=[](){return cocos2d::EventListenerController::LISTENER_ID;};;
-mt["get"]["OnConnected"]=[](cocos2d::EventListenerController* obj){return obj->onConnected;};;
-mt["get"]["OnDisconnected"]=[](cocos2d::EventListenerController* obj){return obj->onDisconnected;};;
-mt["get"]["OnKeyDown"]=[](cocos2d::EventListenerController* obj){return obj->onKeyDown;};;
-mt["get"]["OnKeyUp"]=[](cocos2d::EventListenerController* obj){return obj->onKeyUp;};;
-mt["get"]["OnKeyRepeat"]=[](cocos2d::EventListenerController* obj){return obj->onKeyRepeat;};;
-mt["get"]["OnAxisEvent"]=[](cocos2d::EventListenerController* obj){return obj->onAxisEvent;};;
+mt["static"]["get"]["LISTENER_ID"]=[]()->const std::string&{return cocos2d::EventListenerController::LISTENER_ID;};
+mt["set"]["OnConnected"]=[](cocos2d::EventListenerController* obj,const std::function<void (cocos2d::Controller *, cocos2d::Event *)>& value){obj->onConnected = value;};
+mt["get"]["OnConnected"]=[](cocos2d::EventListenerController* obj)->const std::function<void (cocos2d::Controller *, cocos2d::Event *)>&{return obj->onConnected;};
+mt["set"]["OnDisconnected"]=[](cocos2d::EventListenerController* obj,const std::function<void (cocos2d::Controller *, cocos2d::Event *)>& value){obj->onDisconnected = value;};
+mt["get"]["OnDisconnected"]=[](cocos2d::EventListenerController* obj)->const std::function<void (cocos2d::Controller *, cocos2d::Event *)>&{return obj->onDisconnected;};
+mt["set"]["OnKeyDown"]=[](cocos2d::EventListenerController* obj,const std::function<void (cocos2d::Controller *, int, cocos2d::Event *)>& value){obj->onKeyDown = value;};
+mt["get"]["OnKeyDown"]=[](cocos2d::EventListenerController* obj)->const std::function<void (cocos2d::Controller *, int, cocos2d::Event *)>&{return obj->onKeyDown;};
+mt["set"]["OnKeyUp"]=[](cocos2d::EventListenerController* obj,const std::function<void (cocos2d::Controller *, int, cocos2d::Event *)>& value){obj->onKeyUp = value;};
+mt["get"]["OnKeyUp"]=[](cocos2d::EventListenerController* obj)->const std::function<void (cocos2d::Controller *, int, cocos2d::Event *)>&{return obj->onKeyUp;};
+mt["set"]["OnKeyRepeat"]=[](cocos2d::EventListenerController* obj,const std::function<void (cocos2d::Controller *, int, cocos2d::Event *)>& value){obj->onKeyRepeat = value;};
+mt["get"]["OnKeyRepeat"]=[](cocos2d::EventListenerController* obj)->const std::function<void (cocos2d::Controller *, int, cocos2d::Event *)>&{return obj->onKeyRepeat;};
+mt["set"]["OnAxisEvent"]=[](cocos2d::EventListenerController* obj,const std::function<void (cocos2d::Controller *, int, cocos2d::Event *)>& value){obj->onAxisEvent = value;};
+mt["get"]["OnAxisEvent"]=[](cocos2d::EventListenerController* obj)->const std::function<void (cocos2d::Controller *, int, cocos2d::Event *)>&{return obj->onAxisEvent;};
 }
 void RegisterLuaCoreEventListenerTouchOneByOneAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventListenerTouchOneByOne).name()] = sol::usertype_traits<cocos2d::EventListenerTouchOneByOne*>::metatable();
@@ -185,9 +198,13 @@ mt["SetSwallowTouches"]=static_cast<void(cocos2d::EventListenerTouchOneByOne::*)
 mt["set"]["SwallowTouches"]=mt["SetSwallowTouches"];
 mt["IsSwallowTouches"]=static_cast<bool(cocos2d::EventListenerTouchOneByOne::*)()>(&cocos2d::EventListenerTouchOneByOne::isSwallowTouches);
 mt["get"]["SwallowTouches"]=mt["IsSwallowTouches"];
-mt["get"]["LISTENER_ID"]=[](){return cocos2d::EventListenerTouchOneByOne::LISTENER_ID;};;
-mt["get"]["OnTouchBegan"]=[](cocos2d::EventListenerTouchOneByOne* obj){return obj->onTouchBegan;};;
-mt["get"]["OnTouchMoved"]=[](cocos2d::EventListenerTouchOneByOne* obj){return obj->onTouchMoved;};;
-mt["get"]["OnTouchEnded"]=[](cocos2d::EventListenerTouchOneByOne* obj){return obj->onTouchEnded;};;
-mt["get"]["OnTouchCancelled"]=[](cocos2d::EventListenerTouchOneByOne* obj){return obj->onTouchCancelled;};;
+mt["static"]["get"]["LISTENER_ID"]=[]()->const std::string&{return cocos2d::EventListenerTouchOneByOne::LISTENER_ID;};
+mt["set"]["OnTouchBegan"]=[](cocos2d::EventListenerTouchOneByOne* obj,const cocos2d::EventListenerTouchOneByOne::ccTouchBeganCallback& value){obj->onTouchBegan = value;};
+mt["get"]["OnTouchBegan"]=[](cocos2d::EventListenerTouchOneByOne* obj)->const cocos2d::EventListenerTouchOneByOne::ccTouchBeganCallback&{return obj->onTouchBegan;};
+mt["set"]["OnTouchMoved"]=[](cocos2d::EventListenerTouchOneByOne* obj,const cocos2d::EventListenerTouchOneByOne::ccTouchCallback& value){obj->onTouchMoved = value;};
+mt["get"]["OnTouchMoved"]=[](cocos2d::EventListenerTouchOneByOne* obj)->const cocos2d::EventListenerTouchOneByOne::ccTouchCallback&{return obj->onTouchMoved;};
+mt["set"]["OnTouchEnded"]=[](cocos2d::EventListenerTouchOneByOne* obj,const cocos2d::EventListenerTouchOneByOne::ccTouchCallback& value){obj->onTouchEnded = value;};
+mt["get"]["OnTouchEnded"]=[](cocos2d::EventListenerTouchOneByOne* obj)->const cocos2d::EventListenerTouchOneByOne::ccTouchCallback&{return obj->onTouchEnded;};
+mt["set"]["OnTouchCancelled"]=[](cocos2d::EventListenerTouchOneByOne* obj,const cocos2d::EventListenerTouchOneByOne::ccTouchCallback& value){obj->onTouchCancelled = value;};
+mt["get"]["OnTouchCancelled"]=[](cocos2d::EventListenerTouchOneByOne* obj)->const cocos2d::EventListenerTouchOneByOne::ccTouchCallback&{return obj->onTouchCancelled;};
 }

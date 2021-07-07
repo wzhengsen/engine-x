@@ -265,8 +265,10 @@ mt["SetLayoutComponentEnabled"]=static_cast<void(cocos2d::ui::Widget::*)(bool)>(
 mt["set"]["LayoutComponentEnabled"]=mt["SetLayoutComponentEnabled"];
 mt["IsLayoutComponentEnabled"]=static_cast<bool(cocos2d::ui::Widget::*)()const>(&cocos2d::ui::Widget::isLayoutComponentEnabled);
 mt["get"]["LayoutComponentEnabled"]=mt["IsLayoutComponentEnabled"];
-mt["get"]["OnFocusChanged"]=[](cocos2d::ui::Widget* obj){return obj->onFocusChanged;};;
-mt["get"]["OnNextFocusedWidget"]=[](cocos2d::ui::Widget* obj){return obj->onNextFocusedWidget;};;
+mt["set"]["OnFocusChanged"]=[](cocos2d::ui::Widget* obj,const std::function<void (cocos2d::ui::Widget *, cocos2d::ui::Widget *)>& value){obj->onFocusChanged = value;};
+mt["get"]["OnFocusChanged"]=[](cocos2d::ui::Widget* obj)->const std::function<void (cocos2d::ui::Widget *, cocos2d::ui::Widget *)>&{return obj->onFocusChanged;};
+mt["set"]["OnNextFocusedWidget"]=[](cocos2d::ui::Widget* obj,const std::function<cocos2d::ui::Widget *(cocos2d::ui::Widget::FocusDirection)>& value){obj->onNextFocusedWidget = value;};
+mt["get"]["OnNextFocusedWidget"]=[](cocos2d::ui::Widget* obj)->const std::function<cocos2d::ui::Widget *(cocos2d::ui::Widget::FocusDirection)>&{return obj->onNextFocusedWidget;};
 RegisterLuaUIWidgetFocusDirectionAuto(lua);
 RegisterLuaUIWidgetPositionTypeAuto(lua);
 RegisterLuaUIWidgetSizeTypeAuto(lua);
@@ -368,7 +370,8 @@ mt["IsPassFocusToChild"]=static_cast<bool(cocos2d::ui::Layout::*)()const>(&cocos
 mt["get"]["PassFocusToChild"]=mt["IsPassFocusToChild"];
 mt["GetRenderFile"]=static_cast<cocos2d::ResourceData(cocos2d::ui::Layout::*)()>(&cocos2d::ui::Layout::getRenderFile);
 mt["get"]["RenderFile"]=mt["GetRenderFile"];
-mt["get"]["OnPassFocusToChild"]=[](cocos2d::ui::Layout* obj){return obj->onPassFocusToChild;};;
+mt["set"]["OnPassFocusToChild"]=[](cocos2d::ui::Layout* obj,const std::function<int (cocos2d::ui::Widget::FocusDirection, cocos2d::ui::Widget *)>& value){obj->onPassFocusToChild = value;};
+mt["get"]["OnPassFocusToChild"]=[](cocos2d::ui::Layout* obj)->const std::function<int (cocos2d::ui::Widget::FocusDirection, cocos2d::ui::Widget *)>&{return obj->onPassFocusToChild;};
 RegisterLuaUILayoutTypeAuto(lua);
 RegisterLuaUILayoutClippingTypeAuto(lua);
 RegisterLuaUILayoutBackGroundColorTypeAuto(lua);

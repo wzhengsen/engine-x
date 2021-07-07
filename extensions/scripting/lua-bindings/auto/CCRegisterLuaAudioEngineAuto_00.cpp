@@ -7,9 +7,12 @@ dep[sol::base_classes]=sol::bases<cocos2d::extension::LuaObject>();
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::AudioProfile*>::metatable(),sol::usertype_traits<cocos2d::extension::LuaObject*>::metatable());
 lua["cc"]["AudioProfile"]=mt;
 mt["__new__"]=[](){return new cocos2d::AudioProfile();};
-mt["get"]["Name"]=[](cocos2d::AudioProfile* obj){return obj->name;};;
-mt["get"]["MaxInstances"]=[](cocos2d::AudioProfile* obj){return obj->maxInstances;};;
-mt["get"]["MinDelay"]=[](cocos2d::AudioProfile* obj){return obj->minDelay;};;
+mt["set"]["Name"]=[](cocos2d::AudioProfile* obj,const std::string& value){obj->name = value;};
+mt["get"]["Name"]=[](cocos2d::AudioProfile* obj)->const std::string&{return obj->name;};
+mt["set"]["MaxInstances"]=[](cocos2d::AudioProfile* obj,const unsigned int& value){obj->maxInstances = value;};
+mt["get"]["MaxInstances"]=[](cocos2d::AudioProfile* obj)->const unsigned int&{return obj->maxInstances;};
+mt["set"]["MinDelay"]=[](cocos2d::AudioProfile* obj,const double& value){obj->minDelay = value;};
+mt["get"]["MinDelay"]=[](cocos2d::AudioProfile* obj)->const double&{return obj->minDelay;};
 }
 void RegisterLuaAudioEngineAudioEngineAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::AudioEngine).name()] = sol::usertype_traits<cocos2d::AudioEngine*>::metatable();
@@ -53,6 +56,6 @@ mt["static"]["SetEnabled"]=static_cast<void(*)(bool)>(&cocos2d::AudioEngine::set
 mt["static"]["set"]["Enabled"]=mt["SetEnabled"];
 mt["static"]["IsEnabled"]=static_cast<bool(*)()>(&cocos2d::AudioEngine::isEnabled);
 mt["static"]["get"]["Enabled"]=mt["IsEnabled"];
-mt["get"]["INVALID_AUDIO_ID"]=[](){return cocos2d::AudioEngine::INVALID_AUDIO_ID;};;
-mt["get"]["TIME_UNKNOWN"]=[](){return cocos2d::AudioEngine::TIME_UNKNOWN;};;
+mt["static"]["get"]["INVALID_AUDIO_ID"]=[]()->const int&{return cocos2d::AudioEngine::INVALID_AUDIO_ID;};
+mt["static"]["get"]["TIME_UNKNOWN"]=[]()->const float&{return cocos2d::AudioEngine::TIME_UNKNOWN;};
 }

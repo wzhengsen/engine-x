@@ -8,19 +8,6 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
-void RegisterLuaCoreParticleSystemQuadAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleSystemQuad).name()] = sol::usertype_traits<cocos2d::ParticleSystemQuad*>::metatable();
-auto dep=lua.new_usertype<cocos2d::ParticleSystemQuad>("deprecated.cocos2d::ParticleSystemQuad");
-dep[sol::base_classes]=sol::bases<cocos2d::ParticleSystem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TextureProtocol,cocos2d::BlendProtocol,cocos2d::PlayableProtocol>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ParticleSystemQuad*>::metatable(),sol::usertype_traits<cocos2d::ParticleSystem*>::metatable());
-lua["cc"]["ParticleSystemQuad"]=mt;
-mt["__new__"]=sol::overload(static_cast<cocos2d::ParticleSystemQuad*(*)(cocos2d::ValueMap&)>(&cocos2d::ParticleSystemQuad::create),static_cast<cocos2d::ParticleSystemQuad*(*)(const std::string&)>(&cocos2d::ParticleSystemQuad::create),static_cast<cocos2d::ParticleSystemQuad*(*)()>(&cocos2d::ParticleSystemQuad::create));
-mt["static"]["CreateWithTotalParticles"]=static_cast<cocos2d::ParticleSystemQuad*(*)(int)>(&cocos2d::ParticleSystemQuad::createWithTotalParticles);
-mt["SetDisplayFrame"]=static_cast<void(cocos2d::ParticleSystemQuad::*)(cocos2d::SpriteFrame*)>(&cocos2d::ParticleSystemQuad::setDisplayFrame);
-mt["set"]["DisplayFrame"]=mt["SetDisplayFrame"];
-mt["SetTextureWithRect"]=static_cast<void(cocos2d::ParticleSystemQuad::*)(cocos2d::Texture2D*,const cocos2d::Rect&)>(&cocos2d::ParticleSystemQuad::setTextureWithRect);
-mt["ListenRendererRecreated"]=static_cast<void(cocos2d::ParticleSystemQuad::*)(cocos2d::EventCustom*)>(&cocos2d::ParticleSystemQuad::listenRendererRecreated);
-}
 void RegisterLuaCoreParticleFireAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleFire).name()] = sol::usertype_traits<cocos2d::ParticleFire*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ParticleFire>("deprecated.cocos2d::ParticleFire");
@@ -101,4 +88,13 @@ sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ParticleSmoke*>::metata
 lua["cc"]["ParticleSmoke"]=mt;
 mt["__new__"]=static_cast<cocos2d::ParticleSmoke*(*)()>(&cocos2d::ParticleSmoke::create);
 mt["static"]["CreateWithTotalParticles"]=static_cast<cocos2d::ParticleSmoke*(*)(int)>(&cocos2d::ParticleSmoke::createWithTotalParticles);
+}
+void RegisterLuaCoreParticleSnowAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleSnow).name()] = sol::usertype_traits<cocos2d::ParticleSnow*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ParticleSnow>("deprecated.cocos2d::ParticleSnow");
+dep[sol::base_classes]=sol::bases<cocos2d::ParticleSystemQuad,cocos2d::ParticleSystem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TextureProtocol,cocos2d::BlendProtocol,cocos2d::PlayableProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ParticleSnow*>::metatable(),sol::usertype_traits<cocos2d::ParticleSystemQuad*>::metatable());
+lua["cc"]["ParticleSnow"]=mt;
+mt["__new__"]=static_cast<cocos2d::ParticleSnow*(*)()>(&cocos2d::ParticleSnow::create);
+mt["static"]["CreateWithTotalParticles"]=static_cast<cocos2d::ParticleSnow*(*)(int)>(&cocos2d::ParticleSnow::createWithTotalParticles);
 }

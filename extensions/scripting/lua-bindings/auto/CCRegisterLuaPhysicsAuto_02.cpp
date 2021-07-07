@@ -215,10 +215,10 @@ mt["set"]["AutoStep"]=mt["SetAutoStep"];
 mt["IsAutoStep"]=static_cast<bool(cocos2d::PhysicsWorld::*)()>(&cocos2d::PhysicsWorld::isAutoStep);
 mt["get"]["AutoStep"]=mt["IsAutoStep"];
 mt["Step"]=static_cast<void(cocos2d::PhysicsWorld::*)(float)>(&cocos2d::PhysicsWorld::step);
-mt["get"]["DEBUGDRAW_NONE"]=[](){return cocos2d::PhysicsWorld::DEBUGDRAW_NONE;};;
-mt["get"]["DEBUGDRAW_SHAPE"]=[](){return cocos2d::PhysicsWorld::DEBUGDRAW_SHAPE;};;
-mt["get"]["DEBUGDRAW_JOINT"]=[](){return cocos2d::PhysicsWorld::DEBUGDRAW_JOINT;};;
-mt["get"]["DEBUGDRAW_CONTACT"]=[](){return cocos2d::PhysicsWorld::DEBUGDRAW_CONTACT;};;
-mt["get"]["DEBUGDRAW_ALL"]=[](){return cocos2d::PhysicsWorld::DEBUGDRAW_ALL;};;
+mt["static"]["get"]["DEBUGDRAW_NONE"]=[]()->const int&{return cocos2d::PhysicsWorld::DEBUGDRAW_NONE;};
+mt["static"]["get"]["DEBUGDRAW_SHAPE"]=[]()->const int&{return cocos2d::PhysicsWorld::DEBUGDRAW_SHAPE;};
+mt["static"]["get"]["DEBUGDRAW_JOINT"]=[]()->const int&{return cocos2d::PhysicsWorld::DEBUGDRAW_JOINT;};
+mt["static"]["get"]["DEBUGDRAW_CONTACT"]=[]()->const int&{return cocos2d::PhysicsWorld::DEBUGDRAW_CONTACT;};
+mt["static"]["get"]["DEBUGDRAW_ALL"]=[]()->const int&{return cocos2d::PhysicsWorld::DEBUGDRAW_ALL;};
 }
 #endif

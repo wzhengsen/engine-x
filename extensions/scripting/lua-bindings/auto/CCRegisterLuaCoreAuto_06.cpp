@@ -281,7 +281,6 @@ sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::FileUtils*>::metatable(
 lua["cc"]["FileUtils"]=mt;
 mt["__new__"] = [](){return nullptr;};
 mt["static"]["GetInstance"]=static_cast<cocos2d::FileUtils*(*)()>(&cocos2d::FileUtils::getInstance);
-mt["static"]["DestroyInstance"]=static_cast<void(*)()>(&cocos2d::FileUtils::destroyInstance);
 mt["static"]["SetDelegate"]=static_cast<void(*)(cocos2d::FileUtils*)>(&cocos2d::FileUtils::setDelegate);
 mt["static"]["set"]["Delegate"]=mt["SetDelegate"];
 mt["PurgeCachedEntries"]=static_cast<void(cocos2d::FileUtils::*)()>(&cocos2d::FileUtils::purgeCachedEntries);
@@ -349,7 +348,6 @@ mt["IsFileExistInternal"]=static_cast<bool(cocos2d::FileUtils::*)(const std::str
 mt["IsDirectoryExistInternal"]=static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::isDirectoryExistInternal);
 mt["OpenFileStream"]=static_cast<std::unique_ptr<cocos2d::FileStream, std::default_delete<cocos2d::FileStream> >(cocos2d::FileUtils::*)(const std::string&,cocos2d::FileStream::Mode)>(&cocos2d::FileUtils::openFileStream);
 mt["static"]["get"]["Instance"]=&cocos2d::FileUtils::getInstance;
-mt["static"]["set"]["Instance"]=[](std::nullptr_t){cocos2d::FileUtils::destroyInstance();};
 }
 void RegisterLuaCoreLanguageTypeAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,20);
