@@ -35,6 +35,7 @@ from Cocos2dxGeneratorPhysics3D import Cocos2dxGeneratorPhysics3D
 from Cocos2dxGeneratorSpine import Cocos2dxGeneratorSpine
 from Cocos2dxGeneratorStudio import Cocos2dxGeneratorStudio
 from Cocos2dxGeneratorUI import Cocos2dxGeneratorUI
+from Cocos2dxGeneratorUtils import Cocos2dxGeneratorUtils
 
 
 # 是否使用多进程。
@@ -60,7 +61,8 @@ if __name__ == "__main__":
         [Cocos2dxGeneratorPhysics3D, ""],
         [Cocos2dxGeneratorSpine, ""],
         [Cocos2dxGeneratorStudio, ""],
-        [Cocos2dxGeneratorUI, ""]
+        [Cocos2dxGeneratorUI, ""],
+        [Cocos2dxGeneratorUtils, ""]
     ]
     if len(sys.argv) > 1:
         for ele in genList:

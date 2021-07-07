@@ -173,3 +173,9 @@ class CursorHelper:
             upper = not alpha
 
         return "".join(ret)
+
+    @staticmethod
+    def GetWholeFuncName(cursor) -> str:
+        pName = CursorHelper.GetPrefixName(cursor)
+        funcName = cursor.spelling
+        return pName + "::" + funcName

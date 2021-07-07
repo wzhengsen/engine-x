@@ -28,7 +28,7 @@ from Util.CursorHelper import CursorHelper
 from Config.BaseConfig import BaseConfig
 from Native.NativeObject import NativeClass, NativeStruct
 from Native.NativeEnum import NativeAnonymousEnum, NativeEnum
-from Native.NativeBase import NativeGlobal
+from Native.NativeBase import NativeGlobal, NativeGlobalFunction
 
 
 class BaseGenerator(BaseConfig):
@@ -133,7 +133,7 @@ class BaseGenerator(BaseConfig):
                 if self._enumForLua and isinstance(c, NativeEnum):
                     continue
                 strList.append("extern void RegisterLua{}{}Auto(cocos2d::extension::Lua&);\n".format(
-                    self.Tag, "".join(c.NameList[1:])))
+                    self.Tag, c.FuncName if isinstance(c, NativeGlobalFunction) else "".join(c.NameList[1:])))
 
             strList.append("void RegisterLua{}Auto(cocos2d::extension::Lua& lua){{\n".format(self.Tag))
             if self.MacroJudgement:
@@ -142,7 +142,12 @@ class BaseGenerator(BaseConfig):
             for c in self._nativeObjects.values():
                 if self._enumForLua and isinstance(c, NativeEnum):
                     continue
-                strList.append("RegisterLua{}{}Auto(lua);\n".format(self.Tag, "".join(c.NameList[1:])))
+                strList.append(
+                    "RegisterLua{}{}Auto(lua);\n".format(
+                        self.Tag,
+                        c.FuncName if isinstance(c, NativeGlobalFunction) else "".join(c.NameList[1:])
+                    )
+                )
             if self.MacroJudgement:
                 strList.append("#endif\n")
             strList.append("}")
@@ -249,7 +254,7 @@ class BaseGenerator(BaseConfig):
         return funcName
 
     def RenameClass(self, className: str) -> str:
-        """重命名给定的类（结构体，枚举）。
+        """重命名给定的类（结构体，枚举，全局函数）。
 
         参数：
 
@@ -268,7 +273,7 @@ class BaseGenerator(BaseConfig):
 
         参数：
 
-            className           类名，可也以是结构体名或枚举名。
+            className           类名，可也以是结构体名或枚举名或全局函数名。
             funcName            成员函数名/成员变量名，可以为空，此时只检查类名。
         """
         if not className:
@@ -313,23 +318,26 @@ class BaseGenerator(BaseConfig):
             self._DeepIterate(tu.cursor)
 
     def _DeepIterate(self, cursor):
-        if next(cursor.get_children(), None) is None:
+        if next(cursor.get_children(), None) is None\
+                and cursor.kind != cindex.CursorKind.FUNCTION_DECL:
             return
 
         if (cursor.kind == cindex.CursorKind.CLASS_DECL
                 or (self.AllowStruct and cursor.kind == cindex.CursorKind.STRUCT_DECL))\
                 or cursor.kind == cindex.CursorKind.ENUM_DECL\
-                or cursor.kind == cindex.CursorKind.VAR_DECL:
-            if (cursor.kind == cindex.CursorKind.VAR_DECL or cursor == cursor.type.get_declaration())\
+                or cursor.kind == cindex.CursorKind.VAR_DECL\
+                or cursor.kind == cindex.CursorKind.FUNCTION_DECL:
+            if (cursor.kind == cindex.CursorKind.VAR_DECL or cursor.kind == cindex.CursorKind.FUNCTION_DECL or cursor == cursor.type.get_declaration())\
                     and CursorHelper.GetNameSpace(cursor) in self.CppNameSpace:
                 name = CursorHelper.GetName(cursor)
                 # 匿名判断不使用cursor.is_anonymous()获取，此处直接简单判断名字作为匿名标准。
                 if name:
-                    # 具名枚举和类。
+                    # 具名枚举、类、全局函数和全局变量。
                     wholeName = CursorHelper.GetWholeName(cursor)
-                    if wholeName in self.AllNativeObjects.keys():
+                    if wholeName in self.AllNativeObjects.keys() and cursor.kind != cindex.CursorKind.FUNCTION_DECL:
+                        # 函数类型较特殊，由于存在重载，所以重复的不能被排除。
                         return
-                    if wholeName not in self._nativeObjects.keys():
+                    if wholeName not in self._nativeObjects.keys() or cursor.kind == cindex.CursorKind.FUNCTION_DECL:
                         nativeWrapper = None
                         if cursor.kind == cindex.CursorKind.ENUM_DECL:
                             nativeWrapper = NativeEnum(cursor, self)
@@ -337,6 +345,15 @@ class BaseGenerator(BaseConfig):
                             nativeWrapper = NativeClass(cursor, self)
                         elif cursor.kind == cindex.CursorKind.VAR_DECL:
                             nativeWrapper = NativeGlobal(cursor, self)
+                        elif cursor.kind == cindex.CursorKind.FUNCTION_DECL:
+                            wholeName = CursorHelper.GetWholeFuncName(cursor)
+                            if wholeName not in self._nativeObjects.keys():
+                                nativeWrapper = NativeGlobalFunction(cursor, self)
+                            else:
+                                nativeWrapper: NativeGlobalFunction = self._nativeObjects[wholeName]
+                                # 增加重载实现。
+                                nativeWrapper.AddImplements(cursor)
+                                return
                         else:
                             nativeWrapper = NativeStruct(cursor, self)
                         if nativeWrapper and nativeWrapper.Generatable:

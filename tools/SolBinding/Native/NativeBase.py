@@ -286,3 +286,58 @@ class NativeGlobal(NativeWrapper):
             ))
             self._cxxStr = ''.join(strList)
         return self._cxxStr
+
+
+class NativeGlobalFunction(NativeWrapper, NativeFunction):
+    def __init__(self, cursor, generator: BaseConfig) -> None:
+        NativeFunction.__init__(self, cursor, generator)
+        NativeWrapper.__init__(self, cursor, generator)
+
+        pList = CursorHelper.GetClassesNameList(cursor)
+        self._generatable = not generator.ShouldSkip("::".join([*pList, self._funcName]))
+
+        if self._generatable:
+            for pClass in pList:
+                if generator.ShouldSkip(pClass):
+                    self._generatable = False
+                    break
+        self._funcName = generator.RenameClass(self._funcName)
+
+    def __str__(self):
+        if not self._cxxStr:
+            upper = self._generator.UpperCamelCase
+            name = self._funcName if not upper else CursorHelper.UpperCamelCase(self._funcName)
+            strList = ["void RegisterLua{}{}Auto(cocos2d::extension::Lua& lua) {{\n".format(
+                self._generator.Tag, self._funcName)]
+            strList.append('sol::table pTable = lua["{}"];\n'.format(self._simpleNS))
+            strList.append('pTable["{}"] = {};\n}}\n'.format(
+                name, self.GetImplStr()
+            ))
+            self._cxxStr = ''.join(strList)
+        return self._cxxStr
+
+    def GetImplStr(self) -> str:
+        cxx = []
+        for impl in self._implements:
+            line = []
+            if not impl.Default:
+                line.append("static_cast<" + impl.Result + "(*)(")
+                line.append(",".join(impl.Args))
+                line.append(")>(&")
+                line.append(self._wholeFuncName + ")")
+            else:
+                line.append("[](")
+                args = []
+                for idx, arg in enumerate(impl.Args):
+                    args.append(arg + " arg{}".format(idx))
+                line.append(",".join(args))
+                line.append("){return ")
+                line.append(self._wholeFuncName + "(")
+                args.clear()
+                for idx in range(len(impl.Args)):
+                    args.append("arg{}".format(idx))
+                line.append(",".join(args))
+                line.append(");}")
+            cxx.append("".join(line))
+
+        return ",".join(cxx)

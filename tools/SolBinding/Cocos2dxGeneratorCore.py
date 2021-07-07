@@ -27,7 +27,7 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
         super().__init__(**args)
         self.TargetNamespace = "cc"
         # 尽量确保嵌套层数较深的命名空间位于列表前端。
-        self.CppNameSpace += ["cocos2d", "cocos2d::network"]
+        self.CppNameSpace += ["cocos2d::network", "cocos2d"]
         self.Headers += [
             "{}/cocos/cocos2d.h".format(self.CocosRoot),
             "{}/cocos/2d/CCProtectedNode.h".format(self.CocosRoot),
@@ -62,7 +62,8 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
         ]
         self.Skip |= {
             "TMXMapInfo": ["startElement", "endElement"],
-            "Application": ["^application.*", "Notify", "Dialog"],
+            "Application": ["applicationScreenSizeChanged"],
+            "ApplicationProtocol": ["^application.*", "RestartLuaEngine", "Dialog"],
             "Device": ["getTextureDataForText"],
             "RenderTexture": ["newImage"],
             "ParallaxNode": ["(s|g)etParallaxArray"],
