@@ -4,6 +4,8 @@ name: docs-ci
 # events but only for the master branch
 on: 
   push:
+    branches:
+      - dev
     paths:
       - cocos/**/*
       - docs/**/*
@@ -22,6 +24,10 @@ jobs:
       with:
           doxyfile-path: ./doxygen.config
           working-directory: ./docs
+          
+    - name: Add custom domain
+      run: |
+        echo -n "docs.adxe.org">./docs/html/CNAME
     
     # Deploy the HTML documentation to GitHub Pages
     - name: GH Pages Deployment
