@@ -173,13 +173,6 @@ static void RegisterLuaCoreApplicationManual(extension::Lua& lua) {
         }
     };
 #endif
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
-    app["Notify"] = [](Application* app, const std::string& title, const std::string& content, sol::variadic_args va) {
-        app->Notify(title, content,
-            va.size() == 0 ? std::function<void()>(nullptr) : va[0].as<sol::function>()
-        );
-    };
-#endif
 }
 
 static void RegisterLuaCoreDeviceManual(extension::Lua& lua) {

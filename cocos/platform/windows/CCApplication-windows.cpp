@@ -64,13 +64,7 @@ void Application::NotifyProc(HWND hwnd, WPARAM wParam, LPARAM lParam) {
     if (msg >= WM_MOUSEFIRST && msg <= WM_MOUSELAST) {
         return;
     }
-    UINT uID = 0;
-    if (IsWindows10OrGreater()) {
-        uID = LOWORD(wParam);
-    }
-    else {
-        uID = HIWORD(lParam);
-    }
+    const UINT uID = LOWORD(wParam);
     const auto it = MapNotifyWrapper.find(uID);
     if (it == MapNotifyWrapper.cend()) {
         return;
@@ -155,9 +149,9 @@ void Application::Notify(
     nd.uID = NotifyID;
     nd.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP | NIF_INFO;
     nd.uCallbackMessage = WM_USER + NotifyMsgID;
-    wcscpy_s(nd.szTip, wstrT.c_str());
-    wcscpy_s(nd.szInfo, wstrC.c_str());
-    wcscpy_s(nd.szInfoTitle, wstrT.c_str());
+    wcscpy_s(nd.szTip, sizeof(nd.szTip) / sizeof(WCHAR), wstrT.c_str());
+    wcscpy_s(nd.szInfo, sizeof(nd.szInfo) / sizeof(WCHAR),wstrC.c_str());
+    wcscpy_s(nd.szInfoTitle, sizeof(nd.szInfoTitle) / sizeof(WCHAR), wstrT.c_str());
     nd.hIcon = LoadIcon(_instance, MAKEINTRESOURCE(_iconRes));
     nd.hBalloonIcon = LoadIcon(_instance, MAKEINTRESOURCE(_iconRes));
     nd.dwInfoFlags = NIIF_USER | NIIF_LARGE_ICON;
