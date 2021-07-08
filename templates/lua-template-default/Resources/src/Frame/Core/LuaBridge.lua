@@ -106,7 +106,7 @@ LuaBridge.LastError = LuaBridge.Error.OK;
 
 rawset(_G,"LuaBridge",LuaBridge);
 
-if not os.Android and not os.Apple then
+if not os.android and not os.apple then
     return LuaBridge;
 end
 local type = type;
@@ -115,7 +115,7 @@ local table = table;
 local ipairs = ipairs;
 local print = print;
 
-if os.Android then
+if os.android then
     LuaBridge._className = "org.cocos2dx.lib.Cocos2dxHelper";
     LuaBridge._callStaticMethod = LuaJavaBridge.callStaticMethod;
     LuaBridge._javaReturnSignMap = {
@@ -198,9 +198,9 @@ if os.Android then
     if not ok then
         error("GetStaticMethodsSignature failed!");
     end
-    local signatures = ret:Split("\n");
+    local signatures = ret:split("\n");
     for _,s in ipairs(signatures) do
-        local paramTypes = s:Split(";");
+        local paramTypes = s:split(";");
         local methodName = table.remove(paramTypes);
         local returnType = table.remove(paramTypes);
         local sign = {"("};
@@ -230,7 +230,7 @@ if os.Android then
         table.insert(methodTable,signTable);
         ::continue::;
     end
-elseif os.Apple then
+elseif os.apple then
     LuaBridge._className = "Cocos2dxHelper";
     LuaBridge._callStaticMethod = LuaObjcBridge.callStaticMethod;
 end
@@ -240,7 +240,7 @@ local methodMeta = {};
 methodMeta.__call = function(t,...)
     local methodName = t._methodName;
     local ok,ret,sign = nil,nil,nil;
-    if os.Android then
+    if os.android then
         ret,sign = LuaBridge._checkMethodSign(methodName,...);
         if not ret then
             ok,ret = LuaBridge._callStaticMethod(LuaBridge._className,methodName,sign,...);

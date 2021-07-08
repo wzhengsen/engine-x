@@ -51,7 +51,7 @@ function LocalFile:Open()
     local fileContent = file:read("a");
     if self.__key then
         -- 存在密码先解密。
-        fileContent = fileContent:Decrypt(self.__key);
+        fileContent = fileContent:decrypt(self.__key);
     end
     -- 尝试json解码。
     fileContent = cjson.decode(fileContent);
@@ -87,7 +87,7 @@ function LocalFile:Flush()
     local tabStr = cjson.encode(fileData);
     if tabStr then
         if self.__key then
-            tabStr = tabStr:Encrypt(self.__key);
+            tabStr = tabStr:encrypt(self.__key);
         end
         -- 关闭原句柄。
         file:close();

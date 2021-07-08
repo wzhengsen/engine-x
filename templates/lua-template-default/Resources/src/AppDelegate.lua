@@ -44,7 +44,7 @@ function AppDelegate:ctor()
     eventDispatcher:AddCustomEventListener("applicationDidEnterBackground",event.AppEnterBackground);
 
     -- 不同设备，不同的监听转屏方法。
-    if os.Android then
+    if os.android then
         LuaBridge.SetOnLuaOrientationChanged(function(ori)
             if ori == 1 then
                 self:OnDeviceToPortrait();
@@ -205,11 +205,11 @@ function AppDelegate:Start()
     Entrance.Instance:Enter();
 end
 
-if os.Apple or os.Android then
+if os.apple or os.android then
     function AppDelegate:Notify(...)
         LuaBridge.Notify(...);
     end
-    if os.Android then
+    if os.android then
         function AppDelegate:Dialog(...)
             LuaBridge.Dialog(...);
         end

@@ -39,7 +39,7 @@ Effect.static.private.Preload               = forbiddenMethod;
 Effect.static.private.GetMaxAudioInstance   = forbiddenMethod;
 Effect.static.private.SetMaxAudioInstance   = forbiddenMethod;
 
-Effect.static.protected._DefaultVolume = UserFile.EffectDefaultVolume and math.Limit(cc.ToInteger(UserFile.EffectDefaultVolume),0,1) or Sound.DefaultVolume or 0.8;
+Effect.static.protected._DefaultVolume = UserFile.EffectDefaultVolume and math.limit(cc.ToInteger(UserFile.EffectDefaultVolume),0,1) or Sound.DefaultVolume or 0.8;
 Effect.static.protected._Silence = UserFile.EffectSilence or false;
 
 -- 记录所有当前运行的声音句柄
@@ -47,7 +47,7 @@ Effect.static.private.AllInst = {};
 Effect.private.ecfb = nil;
 function Effect:ctor(filePath,loop,vol)
     Sound.ctor(self,filePath,loop,vol)
-    self.sVol = vol and math.Limit(vol,0,1) or Effect.DefaultVolume;
+    self.sVol = vol and math.limit(vol,0,1) or Effect.DefaultVolume;
 
     self.cfb = function(_,str)
         if self.ecfb then
@@ -99,7 +99,7 @@ function Effect.set:FinishHandler(fcb)
 end
 
 function Effect.static.set.DefaultVolume(vol)
-    vol = math.Limit(vol,0,1);
+    vol = math.limit(vol,0,1);
     UserFile.EffectDefaultVolume = vol;
     Effect._DefaultVolume = vol;
 end

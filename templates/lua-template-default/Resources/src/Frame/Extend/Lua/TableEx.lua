@@ -24,7 +24,7 @@
 ---@param t table
 ---@param f function | "function(key,value)\n    return true;\nend"
 ---@return table
-function table.Filter(t,f)
+function table.filter(t,f)
     local ret = {};
     for k,v in pairs(t) do
         if f(k,v) then
@@ -59,7 +59,7 @@ end
 ---@param tab table
 ---@param b? boolean {false}是否拷贝元表。
 ---@return table
-function table.Copy(tab,b)
+function table.copy(tab,b)
     local retTab = copy(tab,{});
     if b then
         setmetatable(retTab,getmetatable(tab));
@@ -70,7 +70,7 @@ end
 ---合并t2表到t1表。
 ---@param t1 table
 ---@param t2 table
-function table.Merge(t1,t2)
+function table.merge(t1,t2)
     for k,v in pairs(t2) do
         t1[k] = v;
     end
@@ -79,7 +79,7 @@ end
 ---当t1表和t2表作为数组时，将t2追加到t1。
 ---@param t1 table
 ---@param t2 table
-function table.Append(t1,t2)
+function table.append(t1,t2)
     local len = #t1;
     for _,v in ipairs(t2) do
         len = len + 1;
@@ -90,7 +90,7 @@ end
 ---将多个表合并为一个新的表，并返回新表。
 ---@vararg table
 ---@return table
-function table.Union(...)
+function table.union(...)
     local union = {};
     for _,v in pairs({...}) do
         for k,v_v in pairs(v) do
@@ -104,7 +104,7 @@ end
 ---@param tab table
 ---@param f? function | "function(key,value)\n    return true;\nend"
 ---@return integer
-function table.Count(tab,f)
+function table.count(tab,f)
     local size = 0;
     if not f then
         for _,_ in pairs(tab) do
@@ -127,7 +127,7 @@ end
 ---@param value any
 ---@param f? function | "function(v,value)\n    return true;\nend"
 ---@return any
-function table.Find(tab,value,f)
+function table.find(tab,value,f)
     if not f then
         for k,v in pairs(tab) do
             if v == value then
@@ -146,7 +146,7 @@ end
 
 ---给定一个顺序表，将其元素顺序打乱。
 ---@param tab table
-function table.Mess(tab)
+function table.mess(tab)
     local len = #tab;
     for i = 1,len do
         local index = math.random(1,len);
@@ -158,7 +158,7 @@ end
 ---一个正常的顺序表，第一个空洞在其尾部。
 ---@param tab table
 ---@return integer
-function table.Hole(tab)
+function table.hole(tab)
     local k = 1;
     while nil ~= tab[k] do
         k = k + 1;
@@ -170,7 +170,7 @@ end
 ---@param t table
 ---@param bArray? boolean {true}是否以数组返回
 ---@return table
-function table.Unique(t,bArray)
+function table.unique(t,bArray)
     bArray = nil == bArray or bArray;
     local check = {};
     local n = {};
@@ -193,7 +193,7 @@ end
 ---该操作会改变表的元表。
 ---@param tab table
 ---@param b? boolean {true}可以省略，默认只读。
-function table.ReadOnly(tab,b)
+function table.readonly(tab,b)
     b = nil == b or b;
 
     local mt = getmetatable(tab);

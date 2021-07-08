@@ -21,6 +21,9 @@
 
 local type = type;
 local table = table;
+local insert = table.insert;
+local remove = table.remove;
+local next = next;
 
 -- 重写一些lua库函数和增加一些库函数。
 
@@ -37,11 +40,11 @@ function _G.apairs(t)
         ::begin::
         key,val = next(curTable,key);
         if "table" == type(val) then
-            table.insert(tabList,val);
+            insert(tabList,val);
         end
         if nil == key then
             if #tabList > 0 then
-                curTable = table.remove(tabList);
+                curTable = remove(tabList);
                 goto begin
             else
                 curTable = nil;
@@ -62,11 +65,11 @@ function _G.rpairs(t)
     end
 end
 
-if os.Windows then
+if os.windows then
     local _dofile = dofile;
     function dofile(filename)
         if filename then
-            filename = filename:Convert("gbk//TRANSLIT","utf-8");
+            filename = filename:convert("utf-8","gbk//TRANSLIT");
         end
         return _dofile(filename);
     end
@@ -74,7 +77,7 @@ if os.Windows then
     local _loadfile = loadfile;
     function loadfile(filename,...)
         if filename then
-            filename = filename:Convert("gbk//TRANSLIT","utf-8");
+            filename = filename:convert("utf-8","gbk//TRANSLIT");
         end
         return _loadfile(filename,...);
     end

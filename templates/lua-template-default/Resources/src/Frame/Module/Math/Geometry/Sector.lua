@@ -19,11 +19,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ]]
-local Limit = math.Limit;
+local limit = math.limit;
 local pi = math.pi;
 local acos = math.acos;
 local tan = math.tan;
-local Distance = math.Distance;
+local distance = math.distance;
 
 local IShape = require("Math.Geometry.IShape");
 ---扇形类。
@@ -40,7 +40,7 @@ Sector.protected.sectorD = nil;
 ---@param rad number 弧度
 ---@param direct number 中分线方向
 function Sector:ctor(x,y,r,rad,direct)
-    rad = Limit(rad,0,2 * pi);
+    rad = limit(rad,0,2 * pi);
 
     local locX,locY = self.shapeLocsX,self.shapeLocsY;
     locX[1],locY[1] = x,y;
@@ -65,7 +65,7 @@ end
 ---@return boolean
 function Sector:IsPointIn(x,y)
     local cX,cY = self.shapeLocsX[1],self.shapeLocsY[1];
-    local dis = Distance(x,y,cX,cY);
+    local dis = distance(x,y,cX,cY);
     if dis > self.sectorR then
         return false;
     end

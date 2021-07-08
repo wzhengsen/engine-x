@@ -76,7 +76,7 @@ setmetatable(UserFile,
                 else
                     v = tostring(v);
                 end
-                UserDefault.Instance:SetStringForKey(k,prefix .. (_key and v:Encrypt(_key) or v));
+                UserDefault.Instance:SetStringForKey(k,prefix .. (_key and v:encrypt(_key) or v));
             end
         end
     end,
@@ -98,7 +98,7 @@ setmetatable(UserFile,
         if vType then
             local ret = v:sub(6);
             local _key = t.Key;
-            ret = _key and ret:Decrypt(_key) or ret;
+            ret = _key and ret:decrypt(_key) or ret;
             if TypePrefix.number == vType then
                 return cc.ToNumber(ret);
             elseif TypePrefix.string == vType then

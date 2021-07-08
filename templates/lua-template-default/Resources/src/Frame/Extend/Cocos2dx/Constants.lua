@@ -66,9 +66,9 @@ Color = setmetatable(
         __call = function(_, r, g, b)
             return setmetatable(
                 {
-                    r = math.Limit(math.tointeger(r), 0, 255),
-                    g = math.Limit(math.tointeger(g), 0, 255),
-                    b = math.Limit(math.tointeger(b), 0, 255)
+                    r = math.limit(math.tointeger(r), 0, 255),
+                    g = math.limit(math.tointeger(g), 0, 255),
+                    b = math.limit(math.tointeger(b), 0, 255)
                 },
                 Color
             )

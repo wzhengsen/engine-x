@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 local floor = math.floor;
 local random = math.random;
-local Find = table.Find;
+local find = table.find;
 local insert = table.insert;
 local remove = table.remove;
 ---概率池类型，将不同值以指定的比重推入概率池，以便以对应的概率取出。
@@ -41,7 +41,7 @@ function RatePool:Push(e,rate)
     rate = floor(rate);
     if 0 == rate then return;end
 
-    local idx = Find(self.ratePool,e,function(value,v)
+    local idx = find(self.ratePool,e,function(value,v)
         return value.e == v;
     end);
     if not idx then
@@ -138,7 +138,7 @@ end
 ---@param e any
 function RatePool:Remove(e)
     local rp = self.ratePool;
-    local idx = Find(rp,e,function(value,v)
+    local idx = find(rp,e,function(value,v)
         return value.e == v;
     end);
     if nil == idx then

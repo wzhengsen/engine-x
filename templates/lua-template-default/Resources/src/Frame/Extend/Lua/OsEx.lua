@@ -20,17 +20,18 @@
 
 -- 令os继承自己，并使其不能实例化，主要是为了使用__properties__方法。
 ---@class osex
----@field Platform integer
----@field Language integer
----@field Windows boolean
----@field Android boolean
----@field Mac boolean
----@field Iphone boolean
----@field Ipad boolean
----@field Ios boolean
----@field Apple boolean
----@field Linux boolean
----@field Mobile boolean
+---@field platform integer
+---@field language integer
+---@field windows boolean
+---@field android boolean
+---@field mac boolean
+---@field iphone boolean
+---@field ipad boolean
+---@field ios boolean
+---@field apple boolean
+---@field linux boolean
+---@field mobile boolean
+---@field clipboard string
 ---@field public private any
 ---@field public get any
 ---@field public static any
@@ -38,43 +39,47 @@
 os = class(os);
 os.ctor = class.delete;
 
-os.PlatformType = cc.ApplicationProtocol.Platform;
-os.LanguageType = cc.LanguageType;
+os.platformtype = cc.ApplicationProtocol.Platform;
+os.languagetype = cc.LanguageType;
 
 local app = cc.Application.Instance;
 local targetPlatform<const> = app:GetTargetPlatform();
 
-os.static.const.Platform = targetPlatform;
-os.static.const.Language = app:GetCurrentLanguage();
-os.static.const.Windows = targetPlatform == os.PlatformType.OS_WINDOWS;
-os.static.const.Android = targetPlatform == os.PlatformType.OS_ANDROID;
-os.static.const.Mac = targetPlatform == os.PlatformType.OS_MAC;
-os.static.const.Iphone = targetPlatform == os.PlatformType.OS_IPHONE;
-os.static.const.Ipad = targetPlatform == os.PlatformType.OS_IPAD;
-os.static.const.Ios = targetPlatform == os.PlatformType.OS_IPHONE or targetPlatform == os.PlatformType.OS_IPAD;
-os.static.const.Apple = targetPlatform == os.PlatformType.OS_IPHONE or targetPlatform == os.PlatformType.OS_IPAD or targetPlatform == os.PlatformType.OS_MAC;
-os.static.const.Linux = targetPlatform == os.PlatformType.OS_LINUX;
-os.static.const.Mobile = targetPlatform == os.PlatformType.OS_ANDROID or targetPlatform == os.PlatformType.OS_IPHONE or targetPlatform == os.PlatformType.OS_IPAD;
+os.static.const.platform = targetPlatform;
+os.static.const.language = app:GetCurrentLanguage();
+os.static.const.windows = targetPlatform == os.platformtype.OS_WINDOWS;
+os.static.const.android = targetPlatform == os.platformtype.OS_ANDROID;
+os.static.const.mac = targetPlatform == os.platformtype.OS_MAC;
+os.static.const.iphone = targetPlatform == os.platformtype.OS_IPHONE;
+os.static.const.ipad = targetPlatform == os.platformtype.OS_IPAD;
+os.static.const.ios = targetPlatform == os.platformtype.OS_IPHONE or targetPlatform == os.platformtype.OS_IPAD;
+os.static.const.apple = targetPlatform == os.platformtype.OS_IPHONE or targetPlatform == os.platformtype.OS_IPAD or targetPlatform == os.platformtype.OS_MAC;
+os.static.const.linux = targetPlatform == os.platformtype.OS_LINUX;
+os.static.const.mobile = targetPlatform == os.platformtype.OS_ANDROID or targetPlatform == os.platformtype.OS_IPHONE or targetPlatform == os.platformtype.OS_IPAD;
+os.static.const.pc = not os.mobile;
 
-if os.Windows then
+os.static.get.clipboard = ccu.GetClipboard;
+os.static.set.clipboard = ccu.SetClipboard;
+
+if os.windows then
     local _execute = os.execute;
     function os.execute(command)
         if command then
-            command = command:Convert("gbk//TRANSLIT","utf-8");
+            command = command:convert("utf-8","gbk//TRANSLIT");
         end
         return _execute(command);
     end
 
     local _remove = os.remove;
     function os.remove(filename)
-        filename = filename:Convert("gbk//TRANSLIT","utf-8");
+        filename = filename:convert("utf-8","gbk//TRANSLIT");
         return _remove(filename);
     end
 
     local _rename = os.rename;
     function os.rename(oldname,newname)
-        oldname = oldname:Convert("gbk//TRANSLIT","utf-8");
-        newname = newname:Convert("gbk//TRANSLIT","utf-8");
+        oldname = oldname:convert("utf-8","gbk//TRANSLIT");
+        newname = newname:convert("utf-8","gbk//TRANSLIT");
         return _rename(oldname,newname);
     end
 end

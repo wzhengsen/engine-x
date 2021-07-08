@@ -21,7 +21,7 @@ THE SOFTWARE.
 ]]
 
 local insert = table.insert;
-local Distance = math.Distance;
+local distance = math.distance;
 local IShape = require("Math.Geometry.IShape");
 local Circle = class(IShape);
 
@@ -42,7 +42,7 @@ end
 ---@param y number
 ---@return boolean
 function Circle:IsPointIn(x,y)
-    return Distance(x,y,self.shapeLocsX[1],self.shapeLocsY[1]) <= self.circleR;
+    return distance(x,y,self.shapeLocsX[1],self.shapeLocsY[1]) <= self.circleR;
 end
 
 cc.Geometry = cc.Geometry or {};

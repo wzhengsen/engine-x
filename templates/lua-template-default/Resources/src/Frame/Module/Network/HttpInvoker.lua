@@ -18,15 +18,14 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
-local Merge = table.Merge;
-local Union = table.Union;
+local merge = table.merge;
+local union = table.union;
 local clock = os.clock;
 local floor = math.floor;
 local decode = cjson.decode;
 local encode = cjson.encode;
 local insert = table.insert;
 local type = type;
-local ipairs = ipairs;
 local next = next;
 local concat = table.concat;
 local tostring = tostring;
@@ -68,7 +67,7 @@ end
 ---@param hValue any
 function HttpInvoker:AddHeaders(hKey,hValue)
     if type(hKey) == "table" and hValue == nil then
-        Merge(self.headers,hKey);
+        merge(self.headers,hKey);
     else
         self.headers[hKey] = hValue;
     end
@@ -80,7 +79,7 @@ end
 ---@param pValue any
 function HttpInvoker:AddParams(pKey,pValue)
     if type(pKey) == "table" and pValue == nil then
-        Merge(self.params,pKey);
+        merge(self.params,pKey);
     else
         self.params[pKey] = pValue;
     end
@@ -116,8 +115,8 @@ function HttpInvoker.protected:_OnResponse(_,url,code,rHeaders,response,sendTime
 
     self.responseCache = suc and ret.response or nil;
 
-    if not self:OnResponse(suc,ret) then
-        event.Http(self,suc,ret);
+    if not self:OnResponse(ret) then
+        event.Http(self,ret);
     end
 end
 
@@ -133,7 +132,7 @@ function HttpInvoker.protected:Prepare(url,method)
         hr.Async = self.async;
     end
     if next(self.headers) then
-        hr.Headers = Union(self.headers,{["Content-Type"] = self.contentType.name});
+        hr.Headers = union(self.headers,{["Content-Type"] = self.contentType.name});
     end
 
     local ps = {};
@@ -141,14 +140,14 @@ function HttpInvoker.protected:Prepare(url,method)
         insert(ps,encode(self.params));
     else
         for k, v in pairs(self.params) do
-            insert(ps,tostring(k):Encode("url") .. "=" .. tostring(v):Encode("url"));
+            insert(ps,tostring(k):encode("url") .. "=" .. tostring(v):encode("url"));
         end
     end
 
     return hr,concat(ps,"&");
 end
 
-function HttpInvoker:OnResponse(suc,ret)
+function HttpInvoker:OnResponse(ret)
 end
 
 ---发送Get请求。

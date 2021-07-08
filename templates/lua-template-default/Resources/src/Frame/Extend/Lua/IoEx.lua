@@ -18,7 +18,7 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
-if os.Windows then
+if os.windows then
     local _open = io.open;
     ---
     ---@param filename string
@@ -27,7 +27,7 @@ if os.Windows then
     ---@return string? errmsg
     ---
     function io.open(filename,mode)
-        filename = filename:Convert("gbk//TRANSLIT","utf-8");
+        filename = filename:convert("utf-8","gbk//TRANSLIT");
         return _open(filename,mode);
     end
 
@@ -39,7 +39,7 @@ if os.Windows then
     ---@return string? errmsg
     ---
     function io.popen(prog,mode)
-        prog = prog:Convert("gbk//TRANSLIT","utf-8");
+        prog = prog:convert("utf-8","gbk//TRANSLIT");
         return _popen(prog,mode);
     end
 end

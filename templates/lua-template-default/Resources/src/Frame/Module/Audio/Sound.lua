@@ -32,7 +32,7 @@ Sound.static.State = enum {
 };
 -- 指示获取的持续时间是否是未知的。
 Sound.static.UnkownTime = AudioEngine.TIME_UNKNOWN;
-Sound.static.protected._DefaultVolume = math.Limit(UserFile.SoundDefaultVolume or 0.8,0,1);
+Sound.static.protected._DefaultVolume = math.limit(UserFile.SoundDefaultVolume or 0.8,0,1);
 Sound.static.protected._Silence = UserFile.SoundSilence or false;
 
 Sound.protected.sInst = AudioEngine.INVALID_AUDIO_ID;
@@ -49,7 +49,7 @@ function Sound:ctor(filePath,loop,vol)
     if loop then
         self.sLoop = loop;
     end
-    self.sVol = vol and math.Limit(vol,0,1) or Sound.DefaultVolume;
+    self.sVol = vol and math.limit(vol,0,1) or Sound.DefaultVolume;
 end
 
 
@@ -95,7 +95,7 @@ function Sound.get:Loop()
 end
 
 function Sound.set:Volume(vol)
-    self._sVol = math.Limit(vol,0,1);
+    self._sVol = math.limit(vol,0,1);
     AudioEngine.SetVolume(self._sInst,vol);
 end
 
@@ -175,7 +175,7 @@ function Sound.static.Preload(sounds,callBack)
 end
 
 function Sound.static.set.DefaultVolume(vol)
-    vol = math.Limit(vol,0,1);
+    vol = math.limit(vol,0,1);
     UserFile.SoundDefaultVolume = vol;
     Sound._DefaultVolume = vol;
 end

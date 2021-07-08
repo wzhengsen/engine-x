@@ -36,7 +36,7 @@ function VideoPlayer.handlers:OnAppEnterBackground()
     end
 end
 
-if os.Linux then
+if os.linux then
     function VideoPlayer.handlers:OnKeyDown(key)
         if key == cc.EventKeyboard.KeyCode.KEY_ENTER and self.UserInputEnabled then
             if self.Playing then

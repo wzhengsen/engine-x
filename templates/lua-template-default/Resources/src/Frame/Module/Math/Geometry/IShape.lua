@@ -20,8 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ]]
 
-local Polar = math.Polar;
-local Distance = math.Distance;
+local polar = math.polar;
+local distance = math.distance;
 ---几何形状类接口。
 local IShape = class();
 
@@ -55,7 +55,7 @@ function IShape:Rotate(x,y,rad)
     local locY = self.shapeLocsY;
 
     for i = 1,#locX do
-        locX[i],locY[i] = Polar(x,y,rad,Distance(x,y,locX[i],locY[i]));
+        locX[i],locY[i] = polar(x,y,rad,distance(x,y,locX[i],locY[i]));
     end
 end
 

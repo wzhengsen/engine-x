@@ -19,17 +19,17 @@
 -- THE SOFTWARE.
 
 ---为string新增了一些方法,如Split,Trim,Encrypt,Decrypt,Encode,Decode,Hash等。
-
----@class string
----@field Convert fun(to:string,from:string):string
-
 local crypto = cc.Crypto;
+local clock = os.clock;
+local time = os.time;
+local random = math.random;
+local concat = table.concat;
 
 ---按分隔符截取字符串。
 ---@param sep string (截取符集合)
 ---@param cFunc? function
 ---@return table
-function string:Split(sep, cFunc)
+function string:split(sep, cFunc)
     local fields = {};
     self:gsub(
         "([^" .. sep .. "]*)",
@@ -45,54 +45,66 @@ end
 
 ---除前后空白符。
 ---@return string
-function string:Trim()
+function string:trim()
     return self:match("^%s*(.-)%s*$") or "";
 end
 
 ---对字符串按指定方式编码。
----@param codec | "\"Url\"" | "\"Base64\"" | "\"Hex\""
+---@param codec | "\"url\"" | "\"base64\"" | "\"hex\""
 ---@return string
-function string:Encode(codec)
+function string:encode(codec)
     return crypto.Encode(self,crypto.EncodeMode[codec:upper()]);
 end
 
 ---对字符串按指定方式解码。
----@param codec | "\"Url\"" | "\"Base64\"" | "\"Hex\""
+---@param codec | "\"url\"" | "\"base64\"" | "\"hex\""
 ---@return string
-function string:Decode(codec)
+function string:decode(codec)
     return crypto.Decode(self,crypto.EncodeMode[codec:upper()]);
 end
 
 ---计算字符串的哈希值。
----@param hash | "\"Md5\"" | "\"Sha1\"" | "\"Sha224\"" | "\"Sha256\"" | "\"Sha384\"" | "\"Sha512\""
+---@param hash | "\"md5\"" | "\"sha1\"" | "\"sha224\"" | "\"sha256\"" | "\"sha384\"" | "\"sha512\""
 ---@return string
-function string:Hash(hash)
+function string:hash(hash)
     return crypto[hash:upper()](self);
 end
 
 ---加密字符串。
----@type fun(pwd:string,iv?:string):string
----@param pwd string 密码默认长度16字节,不足部分补\0,超出部分截断
----@param iv? string 初始向量默认长度16字节,不足部分补\0,超出部分截断
+---@type fun(str:string,pwd:string,iv?:string):string
+---@param str string 待加密字符串。
+---@param pwd string 密码默认长度16字节,不足部分补\0,超出部分截断。
+---@param iv? string 初始向量默认长度16字节,不足部分补\0,超出部分截断。
 ---@return string
-string.Encrypt = crypto.Encrypt;
+string.encrypt = crypto.Encrypt;
 
 ---解密字符串。
----@type fun(pwd:string,iv?:string):string
----@param pwd string 密码默认长度16字节,不足部分补\0,超出部分截断
----@param iv? string 初始向量默认长度16字节,不足部分补\0,超出部分截断
+---@type fun(str:string,pwd:string,iv?:string):string
+---@param str string 待解密字符串。
+---@param pwd string 密码默认长度16字节,不足部分补\0,超出部分截断。
+---@param iv? string 初始向量默认长度16字节,不足部分补\0,超出部分截断。
 ---@return string
-string.Decrypt = crypto.Decrypt;
+string.decrypt = crypto.Decrypt;
+
+---将字符串从一种编码转换到另一种编码。
+---如：("你好世界！"):convert("utf-8","gbk//TRANSLIT");
+---@type fun(str:string,from:string,to:string):string,boolean
+---@param str   string  待转换的字符串。
+---@param from  string  原字符串的编码。
+---@param to    string  欲转换到的编码。
+---@return string       转换后的结果。
+---@return boolean      是否所有字符都全部转换。
+string.convert = ccu.Convert;
 
 ---获取一个尽量不重复的字符串。
 ---@return string
-function string.Unique()
-    return (tostring({}) .. os.time() .. os.clock() .. math.random(1, 1000000)):Hash("Sha1");
+function string.unique()
+    return (tostring({}) .. time() .. clock() .. random(1, 1000000)):hash("sha1");
 end
 
 ---字符串连接，类似python str.join。
 ---@param t table
 ---@return string
-function string:Join(t)
-    return table.concat(t, self);
+function string:join(t)
+    return concat(t, self);
 end

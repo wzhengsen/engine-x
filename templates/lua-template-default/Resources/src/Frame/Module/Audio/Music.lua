@@ -43,7 +43,7 @@ Music.static.private.SetMaxAudioInstance   = forbiddenMethod;
 Music.private.set.Loop                     = forbiddenMethod;
 Music.private.get.Loop                     = forbiddenMethod;
 
-Music.static.protected._DefaultVolume = UserFile.MusicDefaultVolume and math.Limit(cc.ToInteger(UserFile.MusicDefaultVolume),0,1) or Sound.DefaultVolume or 0.8;
+Music.static.protected._DefaultVolume = UserFile.MusicDefaultVolume and math.limit(cc.ToInteger(UserFile.MusicDefaultVolume),0,1) or Sound.DefaultVolume or 0.8;
 Music.static._Silence = UserFile.MusicSilence or false;
 
 -- 音乐播放模式
@@ -58,7 +58,7 @@ Music.static.PlayMode = enum {
     ListLoop = {}
 };
 
-Music.protected.sVol = math.Limit(Music.DefaultVolume,0,1);
+Music.protected.sVol = math.limit(Music.DefaultVolume,0,1);
 Music.protected.sFilePath = "";
 Music.protected.playList = {};
 Music.protected.playMode = Music.PlayMode.ListLoop;
@@ -67,7 +67,7 @@ Music.protected.curPlayIndex = nil;
 Music.private.mcfb = nil;
 function Music:ctor()
     Sound.ctor(self)
-    self.sVol = math.Limit(Music.DefaultVolume,0,1);
+    self.sVol = math.limit(Music.DefaultVolume,0,1);
     self.cfb = function(_,str)
         if self.mcfb then
             self:mcfb(str);
@@ -149,7 +149,7 @@ function Music.set:FinishHandler(fcb)
 end
 
 function Music.static.set.DefaultVolume(vol)
-    vol = math.Limit(vol,0,1);
+    vol = math.limit(vol,0,1);
     UserFile.MusicDefaultVolume = vol;
     Music._DefaultVolume = vol;
 end

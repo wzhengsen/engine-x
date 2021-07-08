@@ -35,7 +35,7 @@ function Alarm:ctor(time,func,rep)
     rep = rep or 1;
 
     self.time = time;
-    self.uniStr = string.Unique();
+    self.uniStr = string.unique();
     D.Scheduler:Schedule(function(_)
         local roundOver = false;
         self.curRound = self.curRound + 1;
