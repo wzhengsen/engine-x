@@ -44,6 +44,7 @@ THE SOFTWARE.
 #include "renderer/CCMaterial.h"
 #include "math/TransformUtils.h"
 #include "renderer/backend/ProgramStateRegistry.h"
+#include "base/CCTouch.h"
 
 
 #if CC_NODE_RENDER_SUBPIXEL

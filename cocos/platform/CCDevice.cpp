@@ -19,9 +19,12 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 ||\
-CC_TARGET_PLATFORM == CC_PLATFORM_LINUX ||\
-CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+#include "CCPlatformConfig.h"
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32) ||\
+(CC_TARGET_PLATFORM == CC_PLATFORM_LINUX) ||\
+(CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
+
 #include "platform/CCDevice.h"
 #include "platform/CCFileUtils.h"
 #include "platform/CCStdC.h"
