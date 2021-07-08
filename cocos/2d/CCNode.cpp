@@ -58,7 +58,60 @@ NS_CC_BEGIN
 
 // MARK: Constructor, Destructor, Init
 
-Node::Node() {
+Node::Node()
+: _rotationX(0.0f)
+, _rotationY(0.0f)
+, _rotationZ_X(0.0f)
+, _rotationZ_Y(0.0f)
+, _scaleX(1.0f)
+, _scaleY(1.0f)
+, _scaleZ(1.0f)
+, _positionZ(0.0f)
+, _usingNormalizedPosition(false)
+, _normalizedPositionDirty(false)
+, _skewX(0.0f)
+, _skewY(0.0f)
+, _anchorPoint(0, 0)
+, _contentSize(Size::ZERO)
+, _contentSizeDirty(true)
+, _transformDirty(true)
+, _inverseDirty(true)
+, _additionalTransform(nullptr)
+, _additionalTransformDirty(false)
+, _transformUpdated(true)
+// children (lazy allocs)
+// lazy alloc
+, _localZOrder$Arrival(0LL)
+, _globalZOrder(0)
+, _parent(nullptr)
+// "whole screen" objects. like Scenes and Layers, should set _ignoreAnchorPointForPosition to true
+, _tag(Node::INVALID_TAG)
+, _name("")
+, _hashOfName(0)
+// userData is always inited as nil
+, _userData(nullptr)
+, _userObject(nullptr)
+, _running(false)
+, _visible(true)
+, _ignoreAnchorPointForPosition(false)
+, _reorderChildDirty(false)
+, _isTransitionFinished(false)
+, _componentContainer(nullptr)
+, _displayedOpacity(255)
+, _realOpacity(255)
+, _displayedColor(Color3B::WHITE)
+, _realColor(Color3B::WHITE)
+, _cascadeColorEnabled(false)
+, _cascadeOpacityEnabled(false)
+, _cameraMask(1)
+, _onEnterCallback(nullptr)
+, _onExitCallback(nullptr)
+, _onEnterTransitionDidFinishCallback(nullptr)
+, _onExitTransitionDidStartCallback(nullptr)
+#if CC_USE_PHYSICS
+, _physicsBody(nullptr)
+#endif
+{
     // set default scheduler and actionManager
     _director = Director::getInstance();
     _actionManager = _director->getActionManager();
