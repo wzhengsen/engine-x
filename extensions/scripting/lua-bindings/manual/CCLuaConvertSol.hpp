@@ -303,7 +303,7 @@ bool sol_lua_check(sol::types<std::vector<T>>, lua_State* L, int index, Handler&
 template <typename T, typename = typename std::enable_if<std::is_same<T, char>::value || std::is_same<T, unsigned char>::value>::type>
 std::vector<T> sol_lua_get(std::vector<T>, lua_State* L, int idx, sol::stack::record& tracking) {
     size_t strLen = 0;
-    const char* str = luaL_checklstring(L, idx, strLen);
+    const char* str = luaL_checklstring(L, idx, &strLen);
     const T* tStr = reinterpret_cast<const T*>(str);
     auto vec = std::vector<T>(strLen);
     vec.insert(vec.end(), tStr, tStr + strLen);
@@ -332,3 +332,13 @@ template <typename T, typename = typename std::enable_if<std::is_same<T, char>::
 int sol_lua_push(sol::types<std::vector<T>*>, lua_State* L, const std::vector<T>* val) {
     return sol_lua_push(sol::types<const std::vector<T>*>(), L, val);
 }
+
+// Convert cocos2d::Data
+template <typename Handler>
+bool sol_lua_check(sol::types<cocos2d::Data>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    bool success = sol::stack::check<std::string>(L, index, handler);
+    tracking.use(1);
+    return success;
+}
+int sol_lua_push(sol::types<cocos2d::Data>, lua_State* L, const cocos2d::Data& val);
+cocos2d::Data sol_lua_get(sol::types<cocos2d::Data>, lua_State* L, int idx, sol::stack::record& tracking);

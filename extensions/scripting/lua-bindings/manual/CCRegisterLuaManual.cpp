@@ -45,6 +45,7 @@ LUALIB_API int luaopen_pb_unsafe(lua_State* L);
 #include "network/CCLuaWebSocket.h"
 #include "network/CCLuaHttpRequest.h"
 #include "base/CCZipFile.h"
+#include "base/ccUtils.h"
 
 using namespace cocos2d;
 
@@ -342,6 +343,38 @@ inline static void RegisterLuaCoreTMXTilesetInfoManual(extension::Lua& lua) {
     Cocos2dxMapToTable<cocos2d::TMXTilesetInfo>(lua, "cc", "TMXTilesetInfo", "_animationInfo", &cocos2d::TMXTilesetInfo::_animationInfo);
 }
 
+static void RegisterLuaCoreUtilsManual(extension::Lua& lua) {
+    sol::table ccu = lua["ccu"];
+    ccu["CaptureScreen"] = [](const sol::function& f) {
+        utils::captureScreen(
+            [f](RefPtr<Image> refPtr) {
+                f(refPtr.get());
+            }
+        );
+    };
+
+    ccu["captureNode"] = [](Node* startNode, const sol::function& f, const sol::variadic_args& var) {
+        if (var.size() == 0) {
+            utils::captureNode(
+                startNode,
+                [f](RefPtr<Image> refPtr) {
+                    f(refPtr.get());
+                }
+            );
+        }
+        else {
+            utils::captureNode(
+                startNode,
+                [f](RefPtr<Image> refPtr) {
+                    f(refPtr.get());
+                }, 
+                var[0].as<float>()
+            );
+        }
+        
+    }
+}
+
 void RegisterLuaManual(extension::Lua& lua) {
     RegisterCJsonManual(lua);
     RegisterLua_ProtobufManual(lua);
@@ -363,4 +396,5 @@ void RegisterLuaManual(extension::Lua& lua) {
     extension::LuaWebSocket::RegisterLuaWebSocketManual(lua);
     extension::LuaHttpRequest::RegisterLuaHttpRequestManual(lua);
     RegisterLuaCoreZipFileManual(lua);
+    RegisterLuaCoreUtilsManual(lua);
 }

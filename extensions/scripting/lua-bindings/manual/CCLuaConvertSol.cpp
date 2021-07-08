@@ -528,3 +528,20 @@ int sol_lua_push(sol::types<cocos2d::network::DownloadTask::ProgressInfo>, lua_S
     sol::stack::raw_set_field(L, "bytesReceived", val.bytesReceived);
     return 1;
 }
+
+// Convert cocos2d::Data
+int sol_lua_push(sol::types<cocos2d::Data>, lua_State* L, const cocos2d::Data& val) {
+    auto buff = luaL_Buffer();
+    char* str = luaL_buffinitsize(L, &buff, val.getSize());
+    std::memcpy(str, val.getBytes(), val.getSize());
+    luaL_pushresultsize(&buff, val.getSize());
+    return 1;
+}
+cocos2d::Data sol_lua_get(sol::types<cocos2d::Data>, lua_State* L, int idx, sol::stack::record& tracking) {
+    size_t strLen = 0;
+    const uint8_t* str = reinterpret_cast<const uint8_t*>(luaL_checklstring(L, idx, &strLen));
+    cocos2d::Data data = {};
+    data.copy(str, strLen);
+    tracking.use(1);
+    return data;
+}
