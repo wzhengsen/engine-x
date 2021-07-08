@@ -1,5 +1,15 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaUtilsAuto.hpp"
 #include "base/ccUtils.h"
+void RegisterLuaUtilstoBackendSamplerFilterAuto(cocos2d::extension::Lua& lua) {
+sol::table pTable = lua["ccu"];
+pTable["ToBackendSamplerFilter"] = static_cast<cocos2d::backend::SamplerFilter(*)(int)>(&cocos2d::utils::toBackendSamplerFilter);
+}
+
+void RegisterLuaUtilstoBackendAddressModeAuto(cocos2d::extension::Lua& lua) {
+sol::table pTable = lua["ccu"];
+pTable["ToBackendAddressMode"] = static_cast<cocos2d::backend::SamplerAddressMode(*)(int)>(&cocos2d::utils::toBackendAddressMode);
+}
+
 void RegisterLuaUtilsparseIntegerListAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccu"];
 pTable["ParseIntegerList"] = static_cast<std::vector<int, std::allocator<int> >(*)(const std::string&)>(&cocos2d::utils::parseIntegerList);

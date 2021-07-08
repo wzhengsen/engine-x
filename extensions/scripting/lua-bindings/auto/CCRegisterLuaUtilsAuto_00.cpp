@@ -25,6 +25,16 @@ sol::table pTable = lua["ccu"];
 pTable["CreateSpriteFromBase64"] = static_cast<cocos2d::Sprite*(*)(const char*)>(&cocos2d::utils::createSpriteFromBase64);
 }
 
+void RegisterLuaUtilsgetFileMD5HashAuto(cocos2d::extension::Lua& lua) {
+sol::table pTable = lua["ccu"];
+pTable["GetFileMD5Hash"] = static_cast<std::string(*)(const std::string&)>(&cocos2d::utils::getFileMD5Hash);
+}
+
+void RegisterLuaUtilsgetDataMD5HashAuto(cocos2d::extension::Lua& lua) {
+sol::table pTable = lua["ccu"];
+pTable["GetDataMD5Hash"] = static_cast<std::string(*)(const cocos2d::Data&)>(&cocos2d::utils::getDataMD5Hash);
+}
+
 void RegisterLuaUtilsgetLanguageTypeByISO2Auto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccu"];
 pTable["GetLanguageTypeByISO2"] = static_cast<cocos2d::LanguageType(*)(const char*)>(&cocos2d::utils::getLanguageTypeByISO2);
@@ -38,15 +48,5 @@ pTable["ToBackendBlendFactor"] = static_cast<cocos2d::backend::BlendFactor(*)(in
 void RegisterLuaUtilstoGLBlendFactorAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccu"];
 pTable["ToGLBlendFactor"] = static_cast<int(*)(cocos2d::backend::BlendFactor)>(&cocos2d::utils::toGLBlendFactor);
-}
-
-void RegisterLuaUtilstoBackendSamplerFilterAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["ccu"];
-pTable["ToBackendSamplerFilter"] = static_cast<cocos2d::backend::SamplerFilter(*)(int)>(&cocos2d::utils::toBackendSamplerFilter);
-}
-
-void RegisterLuaUtilstoBackendAddressModeAuto(cocos2d::extension::Lua& lua) {
-sol::table pTable = lua["ccu"];
-pTable["ToBackendAddressMode"] = static_cast<cocos2d::backend::SamplerAddressMode(*)(int)>(&cocos2d::utils::toBackendAddressMode);
 }
 
