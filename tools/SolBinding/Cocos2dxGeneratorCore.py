@@ -56,9 +56,9 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "Component", "ProtectedNode", "GLProgramCache", "GLProgramState", "Device", "ClippingRectangleNode", ".*Light$", "AsyncTaskPool.*", "RenderState",
             "Material", "Properties", "Technique", "Pass", "PolygonInfo", "AutoPolygon", "BoneNode", "SkeletonNode", "ComponentLua", "PipelineDescriptor",
             "Renderer", "FastTMXLayer", "FastTMXTiledMap", "LanguageType", "PHYSICS.*_MATERIAL_DEFAULT", "GlyphCollection", "MATRIX_STACK_TYPE", "LightType", "LightFlag", "Image::Format",
-            "Text(H|V)Alignment", "ResolutionPolicy", "Lens3D", "Ripple3D", "WavesTiles3D", "JumpTiles3D", "Grid3D", ".*ZipFile", "RZipFile::ZipItem", "Touch::DispatchMode",
-            "RZipFile::Encoding", "Clonable", "Connection", "Server", "Client", "Connection::Kind", "Crypto", "Crypto::.*", "Downloader", "DownloadTask",
-            "Device::.*"
+            "Text(H|V)Alignment", "ResolutionPolicy", "Lens3D", "Ripple3D", "WavesTiles3D", "JumpTiles3D", "Grid3D", "(W|R)Zip", "RZip::ZipItem", "Zip",
+            "Touch::DispatchMode", "RZip::Encoding", "Clonable", "Connection", "Server", "Client", "Connection::Kind", "Crypto", "Crypto::.*", "Downloader",
+            "DownloadTask", "Device::.*"
         ]
         self.Skip |= {
             "TMXMapInfo": ["startElement", "endElement"],
@@ -69,8 +69,8 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "ParallaxNode": ["(s|g)etParallaxArray"],
             "TMXTilesetInfo": ["_animationInfo"],
             "AsyncTaskPool": ["enqueue"],
-            "RZipFile::ZipItem": ["Read"],
-            "RZipFile": ["begin", "end"],
+            "RZip::ZipItem": ["Read"],
+            "RZip": ["begin", "end"],
             "Node": ["onEnter.*", "onExit.*", "_setLocalZOrder"],
             "Component": ["onEnter", "onExit", "onAdd", "onRemove"],
             "Director": ["EVENT_.*"],

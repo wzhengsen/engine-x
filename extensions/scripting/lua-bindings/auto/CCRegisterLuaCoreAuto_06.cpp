@@ -373,56 +373,56 @@ enumTable["BULGARIAN"]=cocos2d::LanguageType::BULGARIAN;
 enumTable["BELARUSIAN"]=cocos2d::LanguageType::BELARUSIAN;
 lua["cc"]["LanguageType"]=lua.NewEnum(enumTable);
 }
-void RegisterLuaCoreZipFileAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ZipFile).name()] = sol::usertype_traits<cocos2d::ZipFile*>::metatable();
-auto dep=lua.new_usertype<cocos2d::ZipFile>("deprecated.cocos2d::ZipFile");
+void RegisterLuaCoreZipAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Zip).name()] = sol::usertype_traits<cocos2d::Zip*>::metatable();
+auto dep=lua.new_usertype<cocos2d::Zip>("deprecated.cocos2d::Zip");
 dep[sol::base_classes]=sol::bases<cocos2d::extension::LuaObject>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ZipFile*>::metatable(),sol::usertype_traits<cocos2d::extension::LuaObject*>::metatable());
-lua["cc"]["ZipFile"]=mt;
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::Zip*>::metatable(),sol::usertype_traits<cocos2d::extension::LuaObject*>::metatable());
+lua["cc"]["Zip"]=mt;
 mt["__new__"] = [](){return nullptr;};
-mt["SetProcessHandler"]=static_cast<void(cocos2d::ZipFile::*)(const cocos2d::ZipFile::ProcessHandler&)>(&cocos2d::ZipFile::SetProcessHandler);
+mt["SetProcessHandler"]=static_cast<void(cocos2d::Zip::*)(const cocos2d::Zip::ProcessHandler&)>(&cocos2d::Zip::SetProcessHandler);
 mt["set"]["ProcessHandler"]=mt["SetProcessHandler"];
-mt["SetErrorHandler"]=static_cast<void(cocos2d::ZipFile::*)(const cocos2d::ZipFile::ErrorHandler&)>(&cocos2d::ZipFile::SetErrorHandler);
+mt["SetErrorHandler"]=static_cast<void(cocos2d::Zip::*)(const cocos2d::Zip::ErrorHandler&)>(&cocos2d::Zip::SetErrorHandler);
 mt["set"]["ErrorHandler"]=mt["SetErrorHandler"];
-mt["Work"]=sol::overload([](cocos2d::ZipFile* obj,const std::string& arg0,const char* arg1){return obj->Work(arg0,arg1);},[](cocos2d::ZipFile* obj,const std::string& arg0){return obj->Work(arg0);});
-mt["WorkAsync"]=sol::overload([](cocos2d::ZipFile* obj,const std::string& arg0,const char* arg1){return obj->WorkAsync(arg0,arg1);},[](cocos2d::ZipFile* obj,const std::string& arg0){return obj->WorkAsync(arg0);});
+mt["Work"]=sol::overload([](cocos2d::Zip* obj,const std::string& arg0,const char* arg1){return obj->Work(arg0,arg1);},[](cocos2d::Zip* obj,const std::string& arg0){return obj->Work(arg0);});
+mt["WorkAsync"]=sol::overload([](cocos2d::Zip* obj,const std::string& arg0,const char* arg1){return obj->WorkAsync(arg0,arg1);},[](cocos2d::Zip* obj,const std::string& arg0){return obj->WorkAsync(arg0);});
 }
-void RegisterLuaCoreRZipFileZipItemAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::RZipFile::ZipItem).name()] = sol::usertype_traits<cocos2d::RZipFile::ZipItem*>::metatable();
-auto dep=lua.new_usertype<cocos2d::RZipFile::ZipItem>("deprecated.cocos2d::RZipFile::ZipItem");
+void RegisterLuaCoreRZipZipItemAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::RZip::ZipItem).name()] = sol::usertype_traits<cocos2d::RZip::ZipItem*>::metatable();
+auto dep=lua.new_usertype<cocos2d::RZip::ZipItem>("deprecated.cocos2d::RZip::ZipItem");
 dep[sol::base_classes]=sol::bases<cocos2d::extension::LuaObject>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::RZipFile::ZipItem*>::metatable(),sol::usertype_traits<cocos2d::extension::LuaObject*>::metatable());
-lua["cc"]["RZipFile"]["static"]["ZipItem"]=mt;
-mt["__new__"]=[](cocos2d::RZipFile* arg0,const cocos2d::RZipFile::ZipInfo& arg1){return new cocos2d::RZipFile::ZipItem(arg0,arg1);};
-mt["GetInfo"]=static_cast<const cocos2d::RZipFile::ZipInfo&(cocos2d::RZipFile::ZipItem::*)()const>(&cocos2d::RZipFile::ZipItem::GetInfo);
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::RZip::ZipItem*>::metatable(),sol::usertype_traits<cocos2d::extension::LuaObject*>::metatable());
+lua["cc"]["RZip"]["static"]["ZipItem"]=mt;
+mt["__new__"]=[](cocos2d::RZip* arg0,const cocos2d::RZip::ZipInfo& arg1){return new cocos2d::RZip::ZipItem(arg0,arg1);};
+mt["GetInfo"]=static_cast<const cocos2d::RZip::ZipInfo&(cocos2d::RZip::ZipItem::*)()const>(&cocos2d::RZip::ZipItem::GetInfo);
 mt["get"]["Info"]=mt["GetInfo"];
 }
-void RegisterLuaCoreRZipFileEncodingAuto(cocos2d::extension::Lua& lua) {
+void RegisterLuaCoreRZipEncodingAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,3);
-enumTable["Auto"]=cocos2d::RZipFile::Encoding::Auto;
-enumTable["Utf8"]=cocos2d::RZipFile::Encoding::Utf8;
-enumTable["Gbk"]=cocos2d::RZipFile::Encoding::Gbk;
-lua["cc"]["RZipFile"]["static"]["Encoding"]=lua.NewEnum(enumTable);
+enumTable["Auto"]=cocos2d::RZip::Encoding::Auto;
+enumTable["Utf8"]=cocos2d::RZip::Encoding::Utf8;
+enumTable["Gbk"]=cocos2d::RZip::Encoding::Gbk;
+lua["cc"]["RZip"]["static"]["Encoding"]=lua.NewEnum(enumTable);
 }
-void RegisterLuaCoreRZipFileAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::RZipFile).name()] = sol::usertype_traits<cocos2d::RZipFile*>::metatable();
-auto dep=lua.new_usertype<cocos2d::RZipFile>("deprecated.cocos2d::RZipFile");
-dep[sol::base_classes]=sol::bases<cocos2d::ZipFile,cocos2d::extension::LuaObject>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::RZipFile*>::metatable(),sol::usertype_traits<cocos2d::ZipFile*>::metatable());
-lua["cc"]["RZipFile"]=mt;
-mt["__new__"]=sol::overload([](const std::string& arg0,cocos2d::RZipFile::Encoding arg1){return cocos2d::RZipFile::Create(arg0,arg1);},[](const std::string& arg0){return cocos2d::RZipFile::Create(arg0);});
-mt["Locate"]=static_cast<const cocos2d::RZipFile::ZipItem*(cocos2d::RZipFile::*)(const std::string&)>(&cocos2d::RZipFile::Locate);
-mt["Match"]=static_cast<std::vector<const cocos2d::RZipFile::ZipItem *, std::allocator<const cocos2d::RZipFile::ZipItem *> >(cocos2d::RZipFile::*)(const std::string&)>(&cocos2d::RZipFile::Match);
-RegisterLuaCoreRZipFileZipItemAuto(lua);
-RegisterLuaCoreRZipFileEncodingAuto(lua);
+void RegisterLuaCoreRZipAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::RZip).name()] = sol::usertype_traits<cocos2d::RZip*>::metatable();
+auto dep=lua.new_usertype<cocos2d::RZip>("deprecated.cocos2d::RZip");
+dep[sol::base_classes]=sol::bases<cocos2d::Zip,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::RZip*>::metatable(),sol::usertype_traits<cocos2d::Zip*>::metatable());
+lua["cc"]["RZip"]=mt;
+mt["__new__"]=sol::overload([](const std::string& arg0,cocos2d::RZip::Encoding arg1){return cocos2d::RZip::Create(arg0,arg1);},[](const std::string& arg0){return cocos2d::RZip::Create(arg0);});
+mt["Locate"]=static_cast<const cocos2d::RZip::ZipItem*(cocos2d::RZip::*)(const std::string&)>(&cocos2d::RZip::Locate);
+mt["Match"]=static_cast<std::vector<const cocos2d::RZip::ZipItem *, std::allocator<const cocos2d::RZip::ZipItem *> >(cocos2d::RZip::*)(const std::string&)>(&cocos2d::RZip::Match);
+RegisterLuaCoreRZipZipItemAuto(lua);
+RegisterLuaCoreRZipEncodingAuto(lua);
 }
-void RegisterLuaCoreWZipFileAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::WZipFile).name()] = sol::usertype_traits<cocos2d::WZipFile*>::metatable();
-auto dep=lua.new_usertype<cocos2d::WZipFile>("deprecated.cocos2d::WZipFile");
-dep[sol::base_classes]=sol::bases<cocos2d::ZipFile,cocos2d::extension::LuaObject>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::WZipFile*>::metatable(),sol::usertype_traits<cocos2d::ZipFile*>::metatable());
-lua["cc"]["WZipFile"]=mt;
-mt["__new__"]=static_cast<cocos2d::WZipFile*(*)(const std::string&)>(&cocos2d::WZipFile::Create);
+void RegisterLuaCoreWZipAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::WZip).name()] = sol::usertype_traits<cocos2d::WZip*>::metatable();
+auto dep=lua.new_usertype<cocos2d::WZip>("deprecated.cocos2d::WZip");
+dep[sol::base_classes]=sol::bases<cocos2d::Zip,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::WZip*>::metatable(),sol::usertype_traits<cocos2d::Zip*>::metatable());
+lua["cc"]["WZip"]=mt;
+mt["__new__"]=static_cast<cocos2d::WZip*(*)(const std::string&)>(&cocos2d::WZip::Create);
 }
 void RegisterLuaCoreEventAccelerationAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventAcceleration).name()] = sol::usertype_traits<cocos2d::EventAcceleration*>::metatable();

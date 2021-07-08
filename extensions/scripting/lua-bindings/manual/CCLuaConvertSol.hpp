@@ -279,8 +279,8 @@ bool sol_lua_check(sol::types<cocos2d::backend::AttributeBindInfo>, lua_State* L
 int sol_lua_push(sol::types<cocos2d::backend::AttributeBindInfo>, lua_State* L, const cocos2d::backend::AttributeBindInfo& val);
 cocos2d::backend::AttributeBindInfo sol_lua_get(sol::types<cocos2d::backend::AttributeBindInfo>, lua_State* L, int idx, sol::stack::record& tracking);
 
-// Convert cocos2d::RZipFile::ZipInfo
-int sol_lua_push(sol::types<cocos2d::RZipFile::ZipInfo>, lua_State* L, const cocos2d::RZipFile::ZipInfo& val);
+// Convert cocos2d::RZip::ZipInfo
+int sol_lua_push(sol::types<cocos2d::RZip::ZipInfo>, lua_State* L, const cocos2d::RZip::ZipInfo& val);
 
 // Convert cocos2d::network::DownloaderHints
 template <typename Handler>

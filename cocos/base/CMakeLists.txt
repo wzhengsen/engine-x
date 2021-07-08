@@ -84,7 +84,7 @@ set(COCOS_BASE_HEADER
     base/CCScheduler.h
     base/CCEventType.h
     base/CCIMEDispatcher.h
-    base/CCZipFile.h
+    base/CCZip.h
     )
 
 set(COCOS_BASE_SRC
@@ -140,6 +140,6 @@ set(COCOS_BASE_SRC
     base/pvr.cpp
     base/s3tc.cpp
     base/astc.cpp
-    base/CCZipFile.cpp
+    base/CCZip.cpp
     ${COCOS_BASE_SPECIFIC_SRC}
     )

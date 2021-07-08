@@ -67,7 +67,7 @@ THE SOFTWARE.
 #include "base/ccTypes.h"
 #include "base/ccUTF8.h"
 #include "base/ccUtils.h"
-#include "base/CCZipFile.h"
+#include "base/CCZip.h"
 
 // EventDispatcher
 #include "base/CCEventAcceleration.h"

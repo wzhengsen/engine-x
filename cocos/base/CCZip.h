@@ -34,14 +34,14 @@
 #define UNZ_MAXFILENAMEINZIP 256
 
 namespace cocos2d {
-    /****************ZipFile begin****************/
+    /****************Zip begin****************/
     /**
-     * @brief The base of RZipFile and WZipFile.
+     * @brief The base of RZip and WZip.
     */
 #if CC_ENABLE_LUA_BINDING
-    class CC_DLL ZipFile : public cocos2d::extension::LuaObject {
+    class CC_DLL Zip : public cocos2d::extension::LuaObject {
 #else
-    class CC_DLL ZipFile {
+    class CC_DLL Zip {
 #endif
     public:
         enum class ErrorCode {
@@ -71,18 +71,18 @@ namespace cocos2d {
 
         /**
          * @param sender It is self.
-         * @param path The internal path in ZipFile.
+         * @param path The internal path in Zip.
          * @param idx Current index.
          * @param count The count of items.
         */
-        typedef std::function<void(ZipFile* sender, const std::string& path, uint32_t idx, uint32_t count)> ProcessHandler;
+        typedef std::function<void(Zip* sender, const std::string& path, uint32_t idx, uint32_t count)> ProcessHandler;
 
         /**
          * @param sender It is self.
          * @param code Error type.
          * @param reason Why failed?
         */
-        typedef std::function<void(ZipFile* sender, ErrorCode code, const std::string& reason)> ErrorHandler;
+        typedef std::function<void(Zip* sender, ErrorCode code, const std::string& reason)> ErrorHandler;
 
         /**
          * @brief       Set the handler function that indicates the process.
@@ -97,20 +97,19 @@ namespace cocos2d {
         /**
          * @brief       Start working immediately.
          * @param       path The work path.
-         * @param       password? The password of ZipFile.Specifically, the empty string is also a password.
+         * @param       password? The password of Zip.Specifically, the empty string is also a password.
         */
         virtual void Work(const std::string& path, const char* password = nullptr) = 0;
 
         /**
          * @brief       Start asynchronous work.
          * @param       path The work path.
-         * @param       password? The password of ZipFile.Specifically, the empty string is also a password.
+         * @param       password? The password of Zip.Specifically, the empty string is also a password.
         */
         void WorkAsync(const std::string& path, const char* password = nullptr);
     protected:
-        ZipFile(const std::string& filePath);
-        ZipFile(const ZipFile&) = delete;
-        ZipFile& operator=(const ZipFile&) = delete;
+        Zip(const std::string& filePath);
+        Zip(const Zip&) = delete;
 
         ProcessHandler _processHandler = nullptr;
         ErrorHandler _errorHandler = nullptr;
@@ -129,13 +128,13 @@ namespace cocos2d {
         static uint32_t MakeItemDosDate(const char* path) noexcept;
         static uLong MakeItemCrc32(FILE* inf);
     };
-    /****************ZipFile end****************/
+    /****************Zip end****************/
 
-    /****************RZipFile begin****************/
+    /****************RZip begin****************/
     /**
      * @brief This class provides the ability to read zip files.
     */
-    class CC_DLL RZipFile : public cocos2d::ZipFile {
+    class CC_DLL RZip : public cocos2d::Zip {
     public:
         class ZipItemIterator;
         struct ZipInfo {
@@ -150,11 +149,11 @@ namespace cocos2d {
             ZipInfo() = default;
             ZipInfo(const std::string& name, int64_t date, size_t size, bool encrypt, const unz_file_pos& pos)
                 :name(name), date(date), size(size), encrypt(encrypt), pos(pos) {}
-            friend class RZipFile;
+            friend class RZip;
         };
 
         /**
-         * @brief This class indicates each item in ZipFile, including files and directories.
+         * @brief This class indicates each item in Zip, including files and directories.
         */
 #if CC_ENABLE_LUA_BINDING
         class ZipItem : public cocos2d::extension::LuaObject {
@@ -183,36 +182,36 @@ namespace cocos2d {
             */
             bool Read(std::vector<const ZipItem*>& vecItem) const;
             const ZipInfo& GetInfo() const noexcept;
-            ZipItem(RZipFile* rZip, const ZipInfo& info) noexcept :_rZip(rZip), _info(info) {};
+            ZipItem(RZip* rZip, const ZipInfo& info) noexcept :_rZip(rZip), _info(info) {};
         private:
             ZipInfo _info = {};
-            RZipFile* _rZip = nullptr;
-            friend class RZipFile;
+            RZip* _rZip = nullptr;
+            friend class RZip;
             friend class ZipItemIterator;
         };
 
         /**
-         * @brief Used to access the elements in a ZipFile.
+         * @brief Used to access the elements in a Zip.
         */
         class CC_DLL ZipItemIterator {
         public:
             // For warning STL4015.
             typedef std::forward_iterator_tag iterator_category;
-            typedef RZipFile::ZipItem value_type;
+            typedef RZip::ZipItem value_type;
             typedef ptrdiff_t difference_type;
-            typedef RZipFile::ZipItem* pointer;
-            typedef RZipFile::ZipItem& reference;
+            typedef RZip::ZipItem* pointer;
+            typedef RZip::ZipItem& reference;
 
-            ZipItemIterator(const RZipFile::ZipItem* item) :_item(item) {}
+            ZipItemIterator(const RZip::ZipItem* item) :_item(item) {}
 
             ZipItemIterator& operator=(const ZipItemIterator& iter);
             bool operator!=(const ZipItemIterator& iter) const;
             bool operator==(const ZipItemIterator& iter) const;
             ZipItemIterator& operator++();
             ZipItemIterator operator++(int);
-            const RZipFile::ZipItem& operator*() const;
+            const RZip::ZipItem& operator*() const;
         private:
-            const RZipFile::ZipItem* _item = nullptr;
+            const RZip::ZipItem* _item = nullptr;
         };
 
         enum class Encoding {
@@ -222,13 +221,13 @@ namespace cocos2d {
         };
 
         /**
-         * @brief       Create a RZipFile instance,if filePath isn't valid,returns nullptr.
+         * @brief       Create a RZip instance,if filePath isn't valid,returns nullptr.
          * @param       filePath The path of the zip file you want to read.
          * @param       code Possible encoding methods for zip file internal filenames.
-         * @return      RZipFile instance or nullptr.
+         * @return      RZip instance or nullptr.
         */
-        static RZipFile* Create(const std::string& filePath,Encoding code = Encoding::Auto);
-        virtual ~RZipFile();
+        static RZip* Create(const std::string& filePath,Encoding code = Encoding::Auto);
+        virtual ~RZip();
 
         /**
          * @brief       Locate a Item.
@@ -239,7 +238,7 @@ namespace cocos2d {
 
         /**
         * @brief        Get all item which match the pattern.
-        * @param        fileName The file name you want to get£¬can be a regex pattern.
+        * @param        fileName The file name you want to get,can be a regex pattern.
         * @return       vector,but returns an empty vector when not found.
         */
         std::vector<const ZipItem*> Match(const std::string& fileName);
@@ -252,8 +251,8 @@ namespace cocos2d {
         ZipItemIterator begin();
         const static ZipItemIterator& end();
     protected:
-        using ZipFile::ZipFile;
-        RZipFile(const std::string& filePath,Encoding code = Encoding::Auto) :ZipFile(filePath), _code(code) {};
+        using Zip::Zip;
+        RZip(const std::string& filePath,Encoding code = Encoding::Auto) :Zip(filePath), _code(code) {};
 
         const ZipItem* _curZipItem = nullptr;
         uint32_t _itemCount = 0;
@@ -298,28 +297,28 @@ namespace cocos2d {
         friend class ZipItem;
         friend class ZipItemIterator;
     };
-    /****************RZipFile end****************/
+    /****************RZip end****************/
 
-    /****************WZipFile begin****************/
+    /****************WZip begin****************/
     /**
      * @brief This class provides the ability to write zip files.
     */
-    class CC_DLL WZipFile : public cocos2d::ZipFile {
+    class CC_DLL WZip : public cocos2d::Zip {
     public:
         /**
-         * @brief       Create a WZipFile instance,if filePath isn't valid,returns nullptr.
+         * @brief       Create a WZip instance,if filePath isn't valid,returns nullptr.
          * @param       filePath The path of the zip file you want to write to.
-         * @return      WZipFile instance or nullptr.
+         * @return      WZip instance or nullptr.
         */
-        static WZipFile* Create(const std::string& filePath);
-        virtual ~WZipFile();
+        static WZip* Create(const std::string& filePath);
+        virtual ~WZip();
 
         void Work(const std::string& path, const char* password = nullptr) override;
     protected:
-        using ZipFile::ZipFile;
+        using Zip::Zip;
 
         bool Open() override;
-        void Close();
+        void Close() override;
 
         void PushDir(const std::string& dir, const char* password = nullptr);
         void PushFile(const std::string& file, const char* password = nullptr);
@@ -333,5 +332,5 @@ namespace cocos2d {
         static constexpr uint16_t MadeBy = 0x0314;
 #endif
     };
-    /****************WZipFile end****************/
+    /****************WZip end****************/
 }

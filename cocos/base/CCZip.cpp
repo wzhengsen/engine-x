@@ -19,7 +19,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-#include "CCZipFile.h"
+#include "CCZip.h"
 #include <regex>
 using namespace cocos2d;
 
@@ -56,27 +56,27 @@ static int LocateFileByUtf8(unzFile zip, const std::string_view& fileName) {
     });
 }
 
-/****************ZipFile begin****************/
-ZipFile::ZipFile(const std::string& filePath) {
+/****************Zip begin****************/
+Zip::Zip(const std::string& filePath) {
     _fOpenFilePath = TryU2G(FileUtils::getInstance()->fullPathForFilename(filePath));
     if (_fOpenFilePath.empty()) {
         _fOpenFilePath = TryU2G(filePath);
     }
 }
 
-bool ZipFile::IsValid() const noexcept {
+bool Zip::IsValid() const noexcept {
     return _zip != nullptr;
 }
 
-void ZipFile::SetProcessHandler(const ProcessHandler& handler) {
+void Zip::SetProcessHandler(const ProcessHandler& handler) {
     _processHandler = handler;
 }
 
-void ZipFile::SetErrorHandler(const ErrorHandler& handler) {
+void Zip::SetErrorHandler(const ErrorHandler& handler) {
     _errorHandler = handler;
 }
 
-void ZipFile::OnProcess(const std::string& fileName, uint32_t idx, uint32_t count) {
+void Zip::OnProcess(const std::string& fileName, uint32_t idx, uint32_t count) {
     if (!_processHandler) {
         return;
     }
@@ -90,7 +90,7 @@ void ZipFile::OnProcess(const std::string& fileName, uint32_t idx, uint32_t coun
     }
 }
 
-void ZipFile::OnError(ErrorCode code, const std::string& reason) {
+void Zip::OnError(ErrorCode code, const std::string& reason) {
     if (!_errorHandler) {
         return;
     }
@@ -104,7 +104,7 @@ void ZipFile::OnError(ErrorCode code, const std::string& reason) {
     }
 }
 
-void ZipFile::WorkAsync(const std::string& path, const char* password) {
+void Zip::WorkAsync(const std::string& path, const char* password) {
     std::string passwordStr = password ? password : "";
     std::string _path = path;
     AsyncTaskPool::getInstance()->enqueue(
@@ -121,7 +121,7 @@ void ZipFile::WorkAsync(const std::string& path, const char* password) {
     });
 }
 
-uint32_t ZipFile::MakeItemDosDate(const char* path) noexcept {
+uint32_t Zip::MakeItemDosDate(const char* path) noexcept {
     uint32_t dos_date = 0;
 #ifdef _WIN32
     const auto gbk = TryU2G(path);
@@ -161,7 +161,7 @@ uint32_t ZipFile::MakeItemDosDate(const char* path) noexcept {
     return dos_date;
 }
 
-uLong ZipFile::MakeItemCrc32(FILE* inf) {
+uLong Zip::MakeItemCrc32(FILE* inf) {
     if (!inf) {
         return 0;
     }
@@ -181,14 +181,14 @@ uLong ZipFile::MakeItemCrc32(FILE* inf) {
 
     return calculate_crc;
 }
-/****************ZipFile end****************/
+/****************Zip end****************/
 
-/****************RZipFile begin****************/
-const RZipFile::ZipInfo& RZipFile::ZipItem::GetInfo() const noexcept {
+/****************RZip begin****************/
+const RZip::ZipInfo& RZip::ZipItem::GetInfo() const noexcept {
     return _info;
 }
 
-bool RZipFile::ZipItem::Read(void* buff, size_t len, const char* password) const {
+bool RZip::ZipItem::Read(void* buff, size_t len, const char* password) const {
     if (!_rZip->_zip) {
         return false;
     }
@@ -200,7 +200,7 @@ bool RZipFile::ZipItem::Read(void* buff, size_t len, const char* password) const
         return false;
     }
 
-    // If RZipFile has old file pos,record it.
+    // If RZip has old file pos,record it.
     unz_file_pos oldFilePos = {};
     const bool hasOldPos = unzGetFilePos(_rZip->_zip, &oldFilePos) == UNZ_OK;
 
@@ -218,7 +218,7 @@ bool RZipFile::ZipItem::Read(void* buff, size_t len, const char* password) const
     return ret;
 }
 
-bool RZipFile::ZipItem::Read(std::vector<const ZipItem*>& vecItem) const {
+bool RZip::ZipItem::Read(std::vector<const ZipItem*>& vecItem) const {
     if (!_rZip->_zip) {
         return false;
     }
@@ -230,7 +230,7 @@ bool RZipFile::ZipItem::Read(std::vector<const ZipItem*>& vecItem) const {
         return false;
     }
 
-    // If RZipFile has old file pos,record it.
+    // If RZip has old file pos,record it.
     unz_file_pos oldFilePos = {};
     const bool hasOldPos = unzGetFilePos(_rZip->_zip, &oldFilePos) == UNZ_OK;
 
@@ -255,33 +255,33 @@ bool RZipFile::ZipItem::Read(std::vector<const ZipItem*>& vecItem) const {
     return true;
 }
 
-RZipFile::ZipItemIterator& RZipFile::ZipItemIterator::operator=(const RZipFile::ZipItemIterator& iter) {
+RZip::ZipItemIterator& RZip::ZipItemIterator::operator=(const RZip::ZipItemIterator& iter) {
     _item = iter._item;
     return *this;
 }
-bool RZipFile::ZipItemIterator::operator!=(const RZipFile::ZipItemIterator& iter) const {
+bool RZip::ZipItemIterator::operator!=(const RZip::ZipItemIterator& iter) const {
     return _item != iter._item;
 }
-bool RZipFile::ZipItemIterator::operator==(const RZipFile::ZipItemIterator& iter) const {
+bool RZip::ZipItemIterator::operator==(const RZip::ZipItemIterator& iter) const {
     return _item == iter._item;
 }
-RZipFile::ZipItemIterator& RZipFile::ZipItemIterator::operator++() {
+RZip::ZipItemIterator& RZip::ZipItemIterator::operator++() {
     _item->_rZip->GoTo(_item);
     _item = _item->_rZip->Next();
     return *this;
 }
-RZipFile::ZipItemIterator RZipFile::ZipItemIterator::operator++(int) {
+RZip::ZipItemIterator RZip::ZipItemIterator::operator++(int) {
     ZipItemIterator tmp = *this;
     _item->_rZip->GoTo(_item);
     _item = _item->_rZip->Next();
     return tmp;
 }
-const RZipFile::ZipItem& RZipFile::ZipItemIterator::operator* () const {
+const RZip::ZipItem& RZip::ZipItemIterator::operator* () const {
     return *_item;
 }
 
-RZipFile* RZipFile::Create(const std::string& filePath, Encoding code) {
-    auto rZip = new RZipFile(filePath, code);
+RZip* RZip::Create(const std::string& filePath, Encoding code) {
+    auto rZip = new RZip(filePath, code);
     if (!rZip->Open()) {
         delete rZip;
         return nullptr;
@@ -290,11 +290,11 @@ RZipFile* RZipFile::Create(const std::string& filePath, Encoding code) {
 }
 
 
-RZipFile::~RZipFile() {
+RZip::~RZip() {
     Close();
 }
 
-bool RZipFile::Open() {
+bool RZip::Open() {
     if (_zip) {
         return true;
     }
@@ -313,7 +313,7 @@ bool RZipFile::Open() {
     return IsValid();
 }
 
-void RZipFile::Close() {
+void RZip::Close() {
     if (_zip) {
         unzClose(_zip);
         _zip = nullptr;
@@ -321,7 +321,7 @@ void RZipFile::Close() {
     _mapZipItem.clear();
 }
 
-const RZipFile::ZipItem* RZipFile::Current() {
+const RZip::ZipItem* RZip::Current() {
     if (!_zip) {
         _curZipItem = nullptr;
         return _curZipItem;
@@ -340,7 +340,7 @@ const RZipFile::ZipItem* RZipFile::Current() {
     const bool isNew = CheckZipItem(pos);
     if (isNew) {
         unz_file_info fileInfo = {};
-        char fileName[RZipFile::ZipInfo::MaxFileNameInZip] = { 0 };
+        char fileName[RZip::ZipInfo::MaxFileNameInZip] = { 0 };
 
         // Set info for new item.
         if (unzGetCurrentFileInfo(_zip, &fileInfo, fileName, sizeof(fileName), nullptr, 0, nullptr, 0) == UNZ_OK) {
@@ -371,11 +371,11 @@ const RZipFile::ZipItem* RZipFile::Current() {
     return _curZipItem;
 }
 
-bool RZipFile::CheckZipItem(uint32_t pos) const noexcept {
+bool RZip::CheckZipItem(uint32_t pos) const noexcept {
     return _mapZipItem.find(pos) == _mapZipItem.cend();
 }
 
-const RZipFile::ZipItem* RZipFile::First() {
+const RZip::ZipItem* RZip::First() {
     if (!_zip || unzGoToFirstFile(_zip) != UNZ_OK) {
         // No first file.
         _curZipItem = nullptr;
@@ -385,7 +385,7 @@ const RZipFile::ZipItem* RZipFile::First() {
     return Current();
 }
 
-const RZipFile::ZipItem* RZipFile::Next() {
+const RZip::ZipItem* RZip::Next() {
     if (!_zip || !_curZipItem || unzGoToNextFile(_zip) != UNZ_OK) {
         // No next file.
         _curZipItem = nullptr;
@@ -395,7 +395,7 @@ const RZipFile::ZipItem* RZipFile::Next() {
     return Current();
 }
 
-void RZipFile::GoTo(const RZipFile::ZipItem* item) {
+void RZip::GoTo(const RZip::ZipItem* item) {
     if (!_zip || !item) {
         return;
     }
@@ -405,7 +405,7 @@ void RZipFile::GoTo(const RZipFile::ZipItem* item) {
     }
 }
 
-const RZipFile::ZipItem* RZipFile::Locate(const std::string& fileName) {
+const RZip::ZipItem* RZip::Locate(const std::string& fileName) {
     if (!_zip) {
         return nullptr;
     }
@@ -422,7 +422,7 @@ const RZipFile::ZipItem* RZipFile::Locate(const std::string& fileName) {
     return ret;
 }
 
-std::vector<const RZipFile::ZipItem*> RZipFile::Match(const std::string& fileName) {
+std::vector<const RZip::ZipItem*> RZip::Match(const std::string& fileName) {
     std::vector<const ZipItem*> items = {};
 
     auto cur = Current();
@@ -435,9 +435,9 @@ std::vector<const RZipFile::ZipItem*> RZipFile::Match(const std::string& fileNam
     return items;
 }
 
-void RZipFile::Work(const std::string& path, const char* password) {
+void RZip::Work(const std::string& path, const char* password) {
     if (!_zip) {
-        return OnError(ErrorCode::ZipError, "Can't read ZipFile,maybe closed?");
+        return OnError(ErrorCode::ZipError, "Can't read Zip,maybe closed?");
     }
     if (path.empty()) {
         return OnError(ErrorCode::PathEmptyError, "You passed a empty path param.");
@@ -564,20 +564,20 @@ void RZipFile::Work(const std::string& path, const char* password) {
     }
 }
 
-RZipFile::ZipItemIterator RZipFile::begin() {
+RZip::ZipItemIterator RZip::begin() {
     return ZipItemIterator(First());
 }
 
-const RZipFile::ZipItemIterator& RZipFile::end() {
+const RZip::ZipItemIterator& RZip::end() {
     static auto zi = ZipItemIterator(nullptr);
     return zi;
 }
 
-/****************RZipFile end****************/
+/****************RZip end****************/
 
-/****************WZipFile begin****************/
-WZipFile* WZipFile::Create(const std::string& filePath) {
-    auto wZip = new WZipFile(filePath);
+/****************WZip begin****************/
+WZip* WZip::Create(const std::string& filePath) {
+    auto wZip = new WZip(filePath);
     if (!wZip->Open()) {
         delete wZip;
         return nullptr;
@@ -585,11 +585,11 @@ WZipFile* WZipFile::Create(const std::string& filePath) {
     return wZip;
 }
 
-WZipFile::~WZipFile() {
+WZip::~WZip() {
     Close();
 }
 
-bool WZipFile::Open() {
+bool WZip::Open() {
     if (_zip) {
         return true;
     }
@@ -603,16 +603,16 @@ bool WZipFile::Open() {
     return IsValid();
 }
 
-void WZipFile::Close() {
+void WZip::Close() {
     if (_zip) {
         zipClose(_zip, nullptr);
         _zip = nullptr;
     }
 }
 
-void WZipFile::Work(const std::string& path, const char* password) {
+void WZip::Work(const std::string& path, const char* password) {
     if (!_zip) {
-        return OnError(ErrorCode::ZipError, "Can't write ZipFile,maybe closed?");
+        return OnError(ErrorCode::ZipError, "Can't write Zip,maybe closed?");
     }
     if (path.empty()) {
         return OnError(ErrorCode::PathEmptyError, "You passed a empty path param.");
@@ -641,7 +641,7 @@ void WZipFile::Work(const std::string& path, const char* password) {
     }
 }
 
-bool WZipFile::CloseUnzipAndReopenZip(unzFile unz) {
+bool WZip::CloseUnzipAndReopenZip(unzFile unz) {
     if (unz) {
         unzClose(unz);
     }
@@ -653,7 +653,7 @@ bool WZipFile::CloseUnzipAndReopenZip(unzFile unz) {
     return true;
 }
 
-void WZipFile::PushDir(const std::string& dir, const char* password) {
+void WZip::PushDir(const std::string& dir, const char* password) {
     std::string newDir = dir;
     if (dir[dir.length() - 1] != '/') {
         newDir += '/';
@@ -745,7 +745,7 @@ void WZipFile::PushDir(const std::string& dir, const char* password) {
     }
 }
 
-void WZipFile::PushFile(const std::string& file, const char* password) {
+void WZip::PushFile(const std::string& file, const char* password) {
     const auto fullPath = FileUtils::getInstance()->fullPathForFilename(file);
     const std::string inFile = TryU2G(fullPath);
     const auto idx = fullPath.find_last_of("/");
@@ -814,4 +814,4 @@ void WZipFile::PushFile(const std::string& file, const char* password) {
     return OnProcess(baseName, 1, 1);
 }
 
-/****************WZipFile end****************/
+/****************WZip end****************/

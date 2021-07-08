@@ -44,14 +44,14 @@ LUALIB_API int luaopen_pb_unsafe(lua_State* L);
 #include "ActionTimeline/CCSkeletonNode.h"
 #include "network/CCLuaWebSocket.h"
 #include "network/CCLuaHttpRequest.h"
-#include "base/CCZipFile.h"
+#include "base/CCZip.h"
 #include "base/ccUtils.h"
 
 using namespace cocos2d;
 
-static void RegisterLuaCoreZipFileManual(extension::Lua& lua) {
-    sol::table zItem = lua["cc"]["RZipFile"]["ZipItem"];
-    zItem["Read"] = [&lua](const RZipFile::ZipItem& item, const sol::variadic_args& va) {
+static void RegisterLuaCoreZipManual(extension::Lua& lua) {
+    sol::table zItem = lua["cc"]["RZip"]["ZipItem"];
+    zItem["Read"] = [&lua](const RZip::ZipItem& item, const sol::variadic_args& va) {
         const char* pwd = nullptr;
         std::string pwdStr = {};
         if (va.size() >= 1) {
@@ -62,7 +62,7 @@ static void RegisterLuaCoreZipFileManual(extension::Lua& lua) {
         const auto& name = info.name;
         auto L = lua.lua_state();
         if (name.length() > 0 && name[name.length() - 1] == '/') {
-            std::vector<const RZipFile::ZipItem*> vecItem = {};
+            std::vector<const RZip::ZipItem*> vecItem = {};
             bool ret = item.Read(vecItem);
             if (ret) {
                 lua_createtable(L, static_cast<int>(vecItem.size()), 0);
@@ -89,12 +89,12 @@ static void RegisterLuaCoreZipFileManual(extension::Lua& lua) {
         return sol::object(L);
     };
 
-    sol::table rZip = lua["cc"]["RZipFile"];
-    rZip["__pairs__"] = [](RZipFile* rZip) {
+    sol::table rZip = lua["cc"]["RZip"];
+    rZip["__pairs__"] = [](RZip* rZip) {
         auto begin = rZip->begin();
         return [=]() mutable {
-            const RZipFile::ZipItem* item = nullptr;
-            if (begin != RZipFile::end()) {
+            const RZip::ZipItem* item = nullptr;
+            if (begin != RZip::end()) {
                 item = &*(begin++);
             }
             return item;
@@ -367,12 +367,11 @@ static void RegisterLuaCoreUtilsManual(extension::Lua& lua) {
                 startNode,
                 [f](RefPtr<Image> refPtr) {
                     f(refPtr.get());
-                }, 
+                },
                 var[0].as<float>()
             );
         }
-        
-    }
+    };
 }
 
 void RegisterLuaManual(extension::Lua& lua) {
@@ -395,6 +394,6 @@ void RegisterLuaManual(extension::Lua& lua) {
     RegisterLuaStudioMovementDataManual(lua);
     extension::LuaWebSocket::RegisterLuaWebSocketManual(lua);
     extension::LuaHttpRequest::RegisterLuaHttpRequestManual(lua);
-    RegisterLuaCoreZipFileManual(lua);
+    RegisterLuaCoreZipManual(lua);
     RegisterLuaCoreUtilsManual(lua);
 }
