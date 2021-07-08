@@ -37,7 +37,7 @@ class Cocos2dxGeneratorUtils(Cocos2dxGenerator):
         self.Classes += [
             "gettime", "getTimeInMilliseconds", "getCascadeBoundingBox", "createSpriteFromBase64.*", "getLanguageTypeByISO2", "toBackendBlendFactor",
             "toGLBlendFactor", "toBackendSamplerFilter", "toBackendAddressMode", "parseIntegerList", "bin2hex", "killCurrentProcess",
-            "Convert", "GetClipboard", "SetClipboard"
+            "Convert", "GetClipboard", "SetClipboard", "getFileMD5Hash", "getDataMD5Hash"
         ]
         self.RenameClasses |= {
             "gettime": "GetTime",
