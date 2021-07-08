@@ -3,19 +3,15 @@ Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2013-2016 Chukong Technologies Inc.
 Copyright (c) 2017-2018 Xiamen Yaji Software Co., Ltd.
 Copyright (c) 2020 c4games.com
-
 http://www.cocos2d-x.org
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in
 all copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -206,6 +202,125 @@ namespace cocos2d
         static unsigned int s_uEncryptedPvrKeyParts[4];
         static unsigned int s_uEncryptionKey[1024];
         static bool s_bEncryptionKeyIsValid;
+    };
+
+    // forward declaration
+    struct ZipEntryInfo;
+    struct ZipFilePrivate;
+  
+    struct ZipFileStream
+    {
+        ZipEntryInfo* entry;
+        long offset;
+    };
+    /**
+    * Zip file - reader helper class.
+    *
+    * It will cache the file list of a particular zip file with positions inside an archive,
+    * so it would be much faster to read some particular files or to check their existence.
+    *
+    * @since v2.0.5
+    */
+    class CC_DLL ZipFile
+    {
+    public:
+        /**
+        * Constructor, open zip file and store file list.
+        *
+        * @param zipFile Zip file name
+        * @param filter The first part of file names, which should be accessible.
+        *               For example, "assets/". Other files will be missed.
+        *
+        * @since v2.0.5
+        */
+        ZipFile(const std::string &zipFile, const std::string &filter = std::string());
+        virtual ~ZipFile();
+
+        /**
+        * Regenerate accessible file list based on a new filter string.
+        *
+        * @param filter New filter string (first part of files names)
+        * @return true whenever zip file is open successfully and it is possible to locate
+        *              at least the first file, false otherwise
+        *
+        * @since v2.0.5
+        */
+        bool setFilter(const std::string &filter);
+
+        /**
+        * Check does a file exists or not in zip file
+        *
+        * @param fileName File to be checked on existence
+        * @return true whenever file exists, false otherwise
+        *
+        * @since v2.0.5
+        */
+        bool fileExists(const std::string &fileName) const;
+
+
+        /**
+         * Get files and folders in pathname
+         *
+         * @param dirname
+         * @return
+         */
+        std::vector<std::string> listFiles(const std::string &pathname) const;
+
+
+        /**
+        * Get resource file data from a zip file.
+        * @param fileName File name
+        * @param[out] size If the file read operation succeeds, it will be the data size, otherwise 0.
+        * @return Upon success, a pointer to the data is returned, otherwise nullptr.
+        * @warning Recall: you are responsible for calling free() on any Non-nullptr pointer returned.
+        *
+        * @since v2.0.5
+        */
+        unsigned char *getFileData(const std::string &fileName, ssize_t *size);
+        
+        /**
+        * Get resource file data from a zip file.
+        * @param fileName File name
+        * @param[out] buffer If the file read operation succeeds, if will contain the file data.
+        * @param[out] size The size of file data.
+        * @return True if successful.
+        */
+        bool getFileData(const std::string &fileName, ResizableBuffer* buffer,size_t* size = nullptr);
+
+        std::string getFirstFilename();
+        std::string getNextFilename();
+
+        static ZipFile *createWithBuffer(const void* buffer, unsigned long size);
+
+        /**
+        * zipFile Streaming support, !!!important, the file in zip must no compress level, otherwise
+        *  stream seek doesn't work.
+        */
+        bool zfopen(const std::string& fileName, ZipFileStream* zfs);
+        int zfread(ZipFileStream* zfs, void* buf, unsigned int size);
+        long zfseek(ZipFileStream* zfs, long offset, int origin);
+        void zfclose(ZipFileStream* zfs);
+        long long zfsize(ZipFileStream* zfs);
+
+        /**
+        *  Gets resource file data from a zip file.
+        *
+        *  @param[in]  filename The resource file name which contains the relative path of the zip file.
+        *  @param[out] size If the file read operation succeeds, it will be the data size, otherwise 0.
+        *  @return Upon success, a pointer to the data is returned, otherwise nullptr.
+        *  @warning Recall: you are responsible for calling free() on any Non-nullptr pointer returned.
+        */
+        CC_DEPRECATED() static unsigned char* getFileDataFromZip(const std::string& zipFilePath, const std::string& filename, ssize_t* size);
+        
+    private:
+        /* Only used internal for createWithBuffer() */
+        ZipFile();
+        
+        bool initWithBuffer(const void *buffer, unsigned long size);
+        int getCurrentFileInfo(std::string* filename, unz_file_info_s* info);
+        
+        /** Internal data like zip file pointer / file list array and so on */
+        ZipFilePrivate *_data;
     };
 } // end of namespace cocos2d
 

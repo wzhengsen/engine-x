@@ -19,7 +19,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-#include "CCZip.h"
+#include "base/CCZip.h"
 #include <regex>
 using namespace cocos2d;
 

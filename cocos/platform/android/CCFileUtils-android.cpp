@@ -31,7 +31,7 @@ THE SOFTWARE.
 #include "android/asset_manager.h"
 #include "android/asset_manager_jni.h"
 #include "base/ZipUtils.h"
-#include "openssl/aes.h"
+#include "crypto/CCCrypto.h"
 
 #include <stdlib.h>
 #include <sys/types.h>
@@ -358,8 +358,21 @@ FileUtils::Status FileUtilsAndroid::getContents(const std::string& filename, Res
 
     if (obbfile)
     {
-        if (obbfile->getFileData(relativePath, buffer))
+        size_t size = 0;
+        if (obbfile->getFileData(relativePath, buffer, &size)) {
+            if (size >= EncryptSignLen && std::memcmp(buffer->buffer(),AES_Sign,EncryptSignLen) != 0) {
+                //aes
+                size -= EncryptSignLen;
+                Crypto::CFB128(reinterpret_cast<char*>(buffer->buffer()) + EncryptSignLen,size,
+                               buffer->buffer(),size,
+                               AES_SignPassword,std::strlen(AES_SignPassword),
+                               nullptr,0,
+                               false);
+            }
+            buffer->resize(size);
             return FileUtils::Status::OK;
+        }
+
     }
 
     if (nullptr == assetmanager) {
@@ -377,10 +390,9 @@ FileUtils::Status FileUtilsAndroid::getContents(const std::string& filename, Res
 
     bool isAes = false;
     static char preSignBuffer[EncryptSignLen + 1] = { 0 };
-    ::memset(preSignBuffer, 0, EncryptSignLen + 1);
 
     AAsset_read(asset, preSignBuffer, EncryptSignLen);
-    if(::memcmp(preSignBuffer, AES_Sign, EncryptSignLen) == 0) {
+    if(std::memcmp(preSignBuffer, AES_Sign, EncryptSignLen) == 0) {
         size -= EncryptSignLen;
         isAes = true;
     }
@@ -393,21 +405,23 @@ FileUtils::Status FileUtilsAndroid::getContents(const std::string& filename, Res
 
     buffer->resize(size);
 
-    int readsize = AAsset_read(asset, buffer->buffer(), size);
+    int readSize = AAsset_read(asset, buffer->buffer(), size);
     AAsset_close(asset);
 
-    if (readsize < size) {
-        if (readsize >= 0)
-            buffer->resize(readsize);
+    if (readSize < size) {
+        if (readSize >= 0)
+            buffer->resize(readSize);
         return FileUtils::Status::ReadFailed;
     }
 
     if (isAes) {
-        uint8_t iv[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-        AES_KEY aeskey = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-        int num = 0;
-        AES_set_encrypt_key(reinterpret_cast<uint8_t*>(AES_SignPassword), 128, &aeskey);
-        AES_cfb128_encrypt(reinterpret_cast<uint8_t*>(buffer->buffer()), reinterpret_cast<uint8_t*>(buffer->buffer()), size, &aeskey, iv, &num, AES_DECRYPT);
+        Crypto::CFB128(
+                buffer->buffer(),size,
+                buffer->buffer(),size,
+                AES_SignPassword,std::strlen(AES_SignPassword),
+                nullptr,0,
+                false
+                );
     }
 
     return FileUtils::Status::OK;

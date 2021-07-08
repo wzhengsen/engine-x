@@ -104,10 +104,6 @@ Node::Node()
 , _cascadeColorEnabled(false)
 , _cascadeOpacityEnabled(false)
 , _cameraMask(1)
-, _onEnterCallback(nullptr)
-, _onExitCallback(nullptr)
-, _onEnterTransitionDidFinishCallback(nullptr)
-, _onExitTransitionDidStartCallback(nullptr)
 #if CC_USE_PHYSICS
 , _physicsBody(nullptr)
 #endif
