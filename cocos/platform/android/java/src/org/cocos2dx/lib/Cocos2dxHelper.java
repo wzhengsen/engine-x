@@ -92,6 +92,7 @@ import com.enhance.gameservice.IGameTuningService;
 import java.io.IOException;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -953,8 +954,6 @@ public class Cocos2dxHelper {
 
 
     public static void setEditTextDialogResult(final String pResult) {
-        final byte[] bytesUTF8 = pResult.getBytes(StandardCharsets.UTF_8);
-
         try {
             final byte[] bytesUTF8 = pResult.getBytes("UTF8");
 
