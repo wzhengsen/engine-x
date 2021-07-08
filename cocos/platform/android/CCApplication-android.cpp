@@ -140,8 +140,7 @@ void Application::Dialog(const std::string &title, const std::string &content,
 }
 
 void Application::Notify(const std::string &title, const std::string &content,
-                         const std::function<void()>& clickCallback,
-                         const std::function<void()>& closeCallback) {
+                         const std::function<void()>& clickCallback) {
     // Omit the c++ implementation and use luaj
 }
 
