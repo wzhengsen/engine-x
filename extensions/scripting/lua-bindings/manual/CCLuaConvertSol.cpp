@@ -96,7 +96,8 @@ int sol_lua_push(sol::types<cocos2d::PhysicsRayCastInfo>, lua_State* L, const co
     }
     return 1;
 }
-int sol_lua_push(sol::types<cocos2d::PhysicsRayCastInfo*>, lua_State* L, const cocos2d::PhysicsRayCastInfo* val) {
+
+int sol_lua_push(sol::types<const cocos2d::PhysicsRayCastInfo*>, lua_State* L, const cocos2d::PhysicsRayCastInfo* val) {
     if (val) {
         sol_lua_push(sol::types<cocos2d::PhysicsRayCastInfo>(), L, *val);
     }
@@ -104,6 +105,10 @@ int sol_lua_push(sol::types<cocos2d::PhysicsRayCastInfo*>, lua_State* L, const c
         lua_pushnil(L);
     }
     return 1;
+}
+
+int sol_lua_push(sol::types<cocos2d::PhysicsRayCastInfo*>, lua_State* L, const cocos2d::PhysicsRayCastInfo* val) {
+    return sol_lua_push(sol::types<const cocos2d::PhysicsRayCastInfo*>(), L, val);
 }
 cocos2d::PhysicsRayCastInfo sol_lua_get(sol::types<cocos2d::PhysicsRayCastInfo>, lua_State* L, int idx, sol::stack::record& tracking) {
     int absIdx = lua_absindex(L, idx);
@@ -136,7 +141,7 @@ int sol_lua_push(sol::types<cocos2d::PhysicsContactData>, lua_State* L, const co
     sol::stack::raw_set_field(L, "normal", val.normal);
     return 1;
 }
-int sol_lua_push(sol::types<cocos2d::PhysicsContactData*>, lua_State* L, const cocos2d::PhysicsContactData* val) {
+int sol_lua_push(sol::types<const cocos2d::PhysicsContactData*>, lua_State* L, const cocos2d::PhysicsContactData* val) {
     if (!val) {
         lua_pushnil(L);
     }
@@ -544,4 +549,72 @@ cocos2d::Data sol_lua_get(sol::types<cocos2d::Data>, lua_State* L, int idx, sol:
     data.copy(str, strLen);
     tracking.use(1);
     return data;
+}
+
+// Convert cocos2d::ui::Margin
+int sol_lua_push(sol::types<cocos2d::ui::Margin>, lua_State* L, const cocos2d::ui::Margin& val) {
+    lua_createtable(L, 0, 4);
+    sol::stack::raw_set_field(L, "left", val.left);
+    sol::stack::raw_set_field(L, "top", val.top);
+    sol::stack::raw_set_field(L, "right", val.right);
+    sol::stack::raw_set_field(L, "bottom", val.bottom);
+    return 1;
+}
+cocos2d::ui::Margin sol_lua_get(sol::types<cocos2d::ui::Margin>, lua_State* L, int idx, sol::stack::record& tracking) {
+    sol::table t = sol::table(L, idx);
+    const float left = t["left"];
+    const float top = t["top"];
+    const float right = t["right"];
+    const float bottom = t["bottom"];
+    tracking.use(1);
+    return { left,top,right,bottom };
+}
+
+std::vector<char> sol_lua_get(sol::types<std::vector<char>>, lua_State* L, int idx, sol::stack::record& tracking) {
+    size_t strLen = 0;
+    const char* str = luaL_checklstring(L, idx, &strLen);
+    auto vec = std::vector<char>(strLen);
+    vec.insert(vec.end(), str, str + strLen);
+    tracking.use(1);
+    return vec;
+}
+
+std::vector<unsigned char> sol_lua_get(sol::types<std::vector<unsigned char>>, lua_State* L, int idx, sol::stack::record& tracking) {
+    size_t strLen = 0;
+    const unsigned char* str = reinterpret_cast<const unsigned char*>(luaL_checklstring(L, idx, &strLen));
+    auto vec = std::vector<unsigned char>(strLen);
+    vec.insert(vec.end(), str, str + strLen);
+    tracking.use(1);
+    return vec;
+}
+
+int sol_lua_push(sol::types<std::vector<char>>, lua_State* L, const std::vector<char>& val) {
+    auto buff = luaL_Buffer();
+    char* str = luaL_buffinitsize(L, &buff, val.size());
+    std::memcpy(str, val.data(), val.size());
+    luaL_pushresultsize(&buff, val.size());
+    return 1;
+}
+
+int sol_lua_push(sol::types<std::vector<unsigned char>>, lua_State* L, const std::vector<unsigned char>& val) {
+    auto buff = luaL_Buffer();
+    char* str = luaL_buffinitsize(L, &buff, val.size());
+    std::memcpy(str, val.data(), val.size());
+    luaL_pushresultsize(&buff, val.size());
+    return 1;
+}
+
+int sol_lua_push(sol::types<const std::vector<char>*>, lua_State* L, const std::vector<char>* val) {
+    if (!val) {
+        lua_pushnil(L);
+        return 1;
+    }
+    return sol_lua_push(sol::types<std::vector<char>>(), L, *val);
+}
+int sol_lua_push(sol::types<const std::vector<unsigned char>*>, lua_State* L, const std::vector<unsigned char>* val) {
+    if (!val) {
+        lua_pushnil(L);
+        return 1;
+    }
+    return sol_lua_push(sol::types<std::vector<unsigned char>>(), L, *val);
 }
