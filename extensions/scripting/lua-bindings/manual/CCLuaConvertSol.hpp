@@ -373,3 +373,71 @@ bool sol_lua_check(sol::types<cocos2d::ui::Margin>, lua_State* L, int index, Han
 }
 int sol_lua_push(sol::types<cocos2d::ui::Margin>, lua_State* L, const cocos2d::ui::Margin& val);
 cocos2d::ui::Margin sol_lua_get(sol::types<cocos2d::ui::Margin>, lua_State* L, int idx, sol::stack::record& tracking);
+
+// Convert std::map<K,V>/std::unordered_map<K,V>
+template <typename Handler,typename K,typename V>
+bool sol_lua_check(sol::types<std::map<K, V>>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return CheckSimpleTable(L, index, std::forward<Handler>(handler), tracking);
+}
+
+template <typename Handler, typename K, typename V>
+bool sol_lua_check(sol::types<std::unordered_map<K, V>>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+    return sol_lua_check(sol::types<std::map<K, V>>(), L, index, std::forward<Handler>(handler), tracking);
+}
+
+template <typename K, typename V>
+std::map<K, V> sol_lua_get(sol::types<std::map<K, V>>, lua_State* L, int idx, sol::stack::record& tracking) {
+    std::map<K, V> _map = {};
+    sol::table t = sol::table(L, idx);
+    t.for_each([&_map](const sol::object& k, const sol::object& v) {
+        _map[k.as<K>()] = v.as<V>();
+        });
+    tracking.use(1);
+    return _map;
+}
+template <typename K, typename V>
+std::unordered_map<K, V> sol_lua_get(sol::types<std::unordered_map<K, V>>, lua_State* L, int idx, sol::stack::record& tracking) {
+    std::unordered_map<K, V> _map = {};
+    sol::table t = sol::table(L, idx);
+    t.for_each([&_map](const sol::object& k, const sol::object& v) {
+        _map[k.as<K>()] = v.as<V>();
+        });
+    tracking.use(1);
+    return _map;
+}
+
+template <typename K, typename V>
+int sol_lua_push(sol::types<std::map<K, V>>, lua_State* L, const std::map<K, V>& val) {
+    lua_createtable(L, 0,static_cast<int>(val.size()));
+    for (const auto iter : val) {
+        sol::stack::raw_set_field(L, iter.first, iter.second);
+    }
+    return 1;
+}
+
+template <typename K, typename V>
+int sol_lua_push(sol::types<std::map<K, V>*>, lua_State* L, const std::map<K, V>* val) {
+    if (!val) {
+        lua_pushnil(L);
+        return 1;
+    }
+    return sol_lua_push(sol::types<std::map<K, V>>(), L, *val);
+}
+
+template <typename K, typename V>
+int sol_lua_push(sol::types<std::unordered_map<K, V>>, lua_State* L, const std::unordered_map<K, V>& val) {
+    lua_createtable(L, 0, static_cast<int>(val.size()));
+    for (const auto iter : val) {
+        sol::stack::raw_set_field(L, iter.first, iter.second);
+    }
+    return 1;
+}
+
+template <typename K, typename V>
+int sol_lua_push(sol::types<std::unordered_map<K, V>*>, lua_State* L, const std::unordered_map<K, V>* val) {
+    if (!val) {
+        lua_pushnil(L);
+        return 1;
+    }
+    return sol_lua_push(sol::types<std::unordered_map<K, V>>(), L, *val);
+}
