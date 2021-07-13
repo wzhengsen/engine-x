@@ -30,6 +30,7 @@ THE SOFTWARE.
 #include "ui/UIScrollViewBar.h"
 #include "2d/CCTweenFunction.h"
 #include "2d/CCCamera.h"
+#include "base/CCTouch.h"
 NS_CC_BEGIN
 
 static const int NUMBER_OF_GATHERED_TOUCHES_FOR_MOVE_SPEED = 5;

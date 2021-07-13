@@ -20,6 +20,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+#include <string>
 #include "crypto/CCCrypto.h"
 #include "openssl/aes.h"
 #include "openssl/md5.h"
@@ -65,12 +66,12 @@ void Crypto::DecodeBase64(const void* src, size_t srcLen, void* dst, size_t& dst
 
 void Crypto::EncodeHex(const void* src, size_t srcLen, void* dst) {
     static char HexMap[] = "0123456789ABCDEF";
-    const uint8_t* u8Src = reinterpret_cast<const uint8_t*>(src);
-    uint8_t* u8Dst = reinterpret_cast<uint8_t*>(dst);
+    const auto* u8Src = reinterpret_cast<const uint8_t*>(src);
+    auto* u8Dst = reinterpret_cast<uint8_t*>(dst);
 
     for (size_t i = 0; i < srcLen; i++) {
-        u8Dst[i * 2] = HexMap[u8Src[i] >> 4];
-        u8Dst[i * 2 + 1] = HexMap[u8Src[i] & 0xf];
+        u8Dst[i * 2] = HexMap[u8Src[i] >> 4u];
+        u8Dst[i * 2 + 1] = HexMap[u8Src[i] & 0xfu];
     }
 }
 
@@ -98,8 +99,8 @@ void Crypto::DecodeHex(const void* src, size_t srcLen, void* dst, size_t& dstLen
     };
     dstLen = 0;
     if (srcLen % 2) { return; }
-    const uint8_t* u8Src = reinterpret_cast<const uint8_t*>(src);
-    uint8_t* u8Dst = reinterpret_cast<uint8_t*>(dst);
+    const auto* u8Src = reinterpret_cast<const uint8_t*>(src);
+    auto* u8Dst = reinterpret_cast<uint8_t*>(dst);
 
     for (size_t i = 0; i < srcLen / 2; i++) {
         const uint8_t high = HexMap[u8Src[i * 2]];
@@ -112,14 +113,14 @@ void Crypto::DecodeHex(const void* src, size_t srcLen, void* dst, size_t& dstLen
             dstLen = 0;
             return;
         }
-        u8Dst[i] = (high << 4) + low;
+        u8Dst[i] = (high << 4u) + low;
         dstLen++;
     }
 }
 
 void Crypto::EncodeUrl(const void* src, size_t srcLen, void* dst, size_t& dstLen) {
-    const uint8_t* u8Src = reinterpret_cast<const uint8_t*>(src);
-    uint8_t* u8Dst = reinterpret_cast<uint8_t*>(dst);
+    const auto* u8Src = reinterpret_cast<const uint8_t*>(src);
+    auto* u8Dst = reinterpret_cast<uint8_t*>(dst);
 
     dstLen = 0;
     for (size_t i = 0; i < srcLen; i++) {
@@ -143,8 +144,8 @@ void Crypto::EncodeUrl(const void* src, size_t srcLen, void* dst, size_t& dstLen
 }
 
 void Crypto::DecodeUrl(const void* src, size_t srcLen, void* dst, size_t& dstLen) {
-    const uint8_t* u8Src = reinterpret_cast<const uint8_t*>(src);
-    uint8_t* u8Dst = reinterpret_cast<uint8_t*>(dst);
+    const auto* u8Src = reinterpret_cast<const uint8_t*>(src);
+    auto* u8Dst = reinterpret_cast<uint8_t*>(dst);
 
     dstLen = 0;
     for (size_t i = 0; i < srcLen; i++) {
@@ -153,7 +154,7 @@ void Crypto::DecodeUrl(const void* src, size_t srcLen, void* dst, size_t& dstLen
             ch = ' ';
         else if (ch == '%') {
             size_t len = 1;
-            DecodeHex(u8Src + i + 1, std::min(2ull, srcLen - i - 1), &ch, len);
+            DecodeHex(u8Src + i + 1, std::min(static_cast<size_t>(2), srcLen - i - 1), &ch, len);
             if (len != 1) {
                 dstLen = 0;
                 return;
@@ -258,7 +259,7 @@ std::string Crypto::Encrypt(const std::string& src, const std::string& key, cons
     auto e = std::string(src.length(), 0);
     Crypto::CFB128(src.data(), src.length(), e.data(), e.length(), key.data(), static_cast<uint8_t>(key.length()), iv.data(), static_cast<uint8_t>(iv.length()), true);
     return e;
-};
+}
 std::string Crypto::Decrypt(const std::string& src, const std::string& key, const std::string& iv) {
     auto e = std::string(src.length(), 0);
     Crypto::CFB128(src.data(), src.length(), e.data(), e.length(), key.data(), static_cast<uint8_t>(key.length()), iv.data(), static_cast<uint8_t>(iv.length()), false);

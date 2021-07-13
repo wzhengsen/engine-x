@@ -192,11 +192,11 @@ if(BUILD_DEP_ASTC)
     configure_target_outdir(astc)
 endif(BUILD_DEP_ASTC)
 
-if(BUILD_EXT_WEBSOCKETS)
+if(BUILD_DEP_WEBSOCKETS)
     add_subdirectory(websockets)
     add_subdirectory(uv)
     target_link_libraries(thirdparty websockets uv)
-endif(BUILD_EXT_WEBSOCKETS)
+endif(BUILD_DEP_WEBSOCKETS)
 
 # use lua/js specific libs by property to prevent conflict
 if(BUILD_LUA_LIBS)

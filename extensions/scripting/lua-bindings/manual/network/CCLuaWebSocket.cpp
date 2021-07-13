@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) wzhengsen
+ Copyright (c) 2021 wzhengsen
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -19,6 +19,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
 #include "CCLuaWebSocket.h"
 using namespace cocos2d::network;
 
@@ -35,7 +36,7 @@ namespace extension {
             auto ws = new (std::nothrow) LuaWebSocket();
             const auto pType = protocols.get_type();
             std::vector<std::string>* pVec = nullptr;
-            std::string caStr = "";
+            std::string caStr = {};
             if (pType == sol::type::table) {
                 sol::table pTab = protocols;
                 std::vector<std::string> vecP = std::vector<std::string>(pTab.size());
@@ -58,10 +59,10 @@ namespace extension {
             return ws;
         };
         mt["Send"] = [](lua_State* L)->int {
-            LuaWebSocket** ws = reinterpret_cast<LuaWebSocket**>(lua_touserdata(L, 1));
+            auto** ws = reinterpret_cast<LuaWebSocket**>(lua_touserdata(L, 1));
             if (ws && *ws) {
                 size_t strLen = 0;
-                const unsigned char* str = reinterpret_cast<const unsigned char*>(luaL_checklstring(L, 2, &strLen));
+                const auto* str = reinterpret_cast<const unsigned char*>(luaL_checklstring(L, 2, &strLen));
                 (*ws)->send(str, static_cast<unsigned int>(strLen));
             }
             return 0;

@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "2d/CCSprite.h"
 #include "2d/CCCamera.h"
 #include "renderer/ccShaders.h"
+#include "base/CCTouch.h"
 NS_CC_BEGIN
 
 /* FIXME:

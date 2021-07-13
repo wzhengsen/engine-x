@@ -20,6 +20,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 #include "network/CCConnection.h"
+#include "cocos2d.h"
 
 using namespace cocos2d;
 using namespace yasio::inet;
@@ -36,7 +37,7 @@ network::Connection::Connection() {
             std::string text = "yasio Level " + std::to_string(level) + "->" + msg;
             cocos2d::log(text.c_str());
         });
-        Director::getInstance()->getScheduler()->schedule([this](float) {
+        Director::getInstance()->getScheduler()->schedule([](float) {
             // Copy it,Avoid destroying the service in the next message dispatch.
             auto tempSV = ServiceVec;
             for (auto s : tempSV) {
@@ -159,7 +160,7 @@ int network::Server::Write(transport_handle_t transport, const std::string& msg)
 }
 
 int network::Server::Write(const std::string& msg) {
-    if (_transports.size() == 0) { return 0; }
+    if (_transports.empty()) { return 0; }
     const auto size = static_cast<uint32_t>(msg.size());
     auto nSize = ::htonl(size + sizeof(uint32_t));
     std::unique_ptr<char[]> buff = std::make_unique<char[]>(size + sizeof(uint32_t));

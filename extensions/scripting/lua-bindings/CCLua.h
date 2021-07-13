@@ -37,7 +37,7 @@ namespace cocos2d {
             /**
             * @brief    Get lua instance.
             *           Will create a new sol::state as lua state on first call or after called Lua::Close().
-            *           The lua stack will keep alive utill call Lua::Close().
+            *           The lua stack will keep alive until call Lua::Close().
             * @return   cocos2d::Lua*
             */
             static Lua* GetInstance();

@@ -32,10 +32,6 @@
 #define  LOG_TAG    "luajc"
 #define  LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
 
-extern "C" {
-#include "scripting/lua-bindings/manual/tolua_fix.h"
-}
-
 LuaJavaBridge::CallInfo::~CallInfo()
 {
 	if (m_returnType == TypeString && m_ret.stringValue)

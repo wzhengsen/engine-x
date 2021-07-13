@@ -36,6 +36,7 @@ THE SOFTWARE.
 #include "2d/CCCamera.h"
 #include "2d/CCSprite.h"
 #include "ui/UIScale9Sprite.h"
+#include "base/CCTouch.h"
 
 NS_CC_BEGIN
 

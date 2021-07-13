@@ -20,4 +20,5 @@ target_include_directories(${target_name}
   PRIVATE ../manual/platform/android
   PRIVATE ${lua_header}
   PRIVATE ../../../../cocos
+  PRIVATE ../../../../thirdparty/lua
 )

@@ -39,6 +39,7 @@
 #include "base/CCDirector.h"
 #include "base/CCEventType.h"
 #include "2d/CCCamera.h"
+#include "base/CCTouch.h"
 
 #define DUMP_LISTENER_ITEM_PRIORITY_INFO 0
 
