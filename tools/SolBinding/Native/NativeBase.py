@@ -303,6 +303,10 @@ class NativeGlobalFunction(NativeWrapper, NativeFunction):
                     break
         self._funcName = generator.RenameClass(self._funcName)
 
+    @property
+    def Overload(self):
+        return len(self._implements) > 1
+
     def __str__(self):
         if not self._cxxStr:
             upper = self._generator.UpperCamelCase
@@ -311,7 +315,7 @@ class NativeGlobalFunction(NativeWrapper, NativeFunction):
                 self._generator.Tag, self._funcName)]
             strList.append('sol::table pTable = lua["{}"];\n'.format(self._simpleNS))
             strList.append('pTable["{}"] = {};\n}}\n'.format(
-                name, self.GetImplStr()
+                name, ("sol::overload(" if self.Overload else "") + self.GetImplStr() + (")" if self.Overload else "")
             ))
             self._cxxStr = ''.join(strList)
         return self._cxxStr
