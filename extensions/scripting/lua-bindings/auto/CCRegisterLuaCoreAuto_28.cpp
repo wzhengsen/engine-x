@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreFastTMXTiledMapAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::FastTMXTiledMap).name()] = sol::usertype_traits<cocos2d::FastTMXTiledMap*>::metatable();
 auto dep=lua.new_usertype<cocos2d::FastTMXTiledMap>("deprecated.cocos2d::FastTMXTiledMap");
@@ -185,4 +186,5 @@ mt["set"]["OnTaskProgress"]=[](cocos2d::network::Downloader* obj,const std::func
 mt["get"]["OnTaskProgress"]=[](cocos2d::network::Downloader* obj)->const std::function<void (const cocos2d::network::DownloadTask *)>&{return obj->onTaskProgress;};
 mt["set"]["OnTaskError"]=[](cocos2d::network::Downloader* obj,const std::function<void (const cocos2d::network::DownloadTask *, int, int, const std::basic_string<char, std::char_traits<char>, std::allocator<char> > &)>& value){obj->onTaskError = value;};
 mt["get"]["OnTaskError"]=[](cocos2d::network::Downloader* obj)->const std::function<void (const cocos2d::network::DownloadTask *, int, int, const std::basic_string<char, std::char_traits<char>, std::allocator<char> > &)>&{return obj->onTaskError;};
+}
 }

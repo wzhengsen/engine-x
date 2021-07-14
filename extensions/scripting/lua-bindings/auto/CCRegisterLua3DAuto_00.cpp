@@ -2,6 +2,7 @@
 #include "cocos2d.h"
 #include "3d/CCBundle3D.h"
 #include "renderer/backend/Buffer.h"
+namespace cocos2d{
 void RegisterLua3DAnimation3DAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Animation3D).name()] = sol::usertype_traits<cocos2d::Animation3D*>::metatable();
 auto dep=lua.new_usertype<cocos2d::Animation3D>("deprecated.cocos2d::Animation3D");
@@ -234,4 +235,5 @@ mt["RemoveSprite3DData"]=static_cast<void(cocos2d::Sprite3DCache::*)(const std::
 mt["RemoveAllSprite3DData"]=static_cast<void(cocos2d::Sprite3DCache::*)()>(&cocos2d::Sprite3DCache::removeAllSprite3DData);
 mt["static"]["get"]["Instance"]=&cocos2d::Sprite3DCache::getInstance;
 mt["static"]["set"]["Instance"]=[](std::nullptr_t){cocos2d::Sprite3DCache::destroyInstance();};
+}
 }

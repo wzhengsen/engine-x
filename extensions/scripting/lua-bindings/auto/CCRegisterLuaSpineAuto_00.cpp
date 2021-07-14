@@ -1,5 +1,6 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaSpineAuto.hpp"
 #include "spine/spine-cocos2dx.h"
+namespace cocos2d{
 void RegisterLuaSpineSkeletonRendererAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(spine::SkeletonRenderer).name()] = sol::usertype_traits<spine::SkeletonRenderer*>::metatable();
 auto dep=lua.new_usertype<spine::SkeletonRenderer>("deprecated.spine::SkeletonRenderer");
@@ -102,4 +103,5 @@ mt["GetState"]=static_cast<spine::AnimationState*(spine::SkeletonAnimation::*)()
 mt["get"]["State"]=mt["GetState"];
 mt["SetUpdateOnlyIfVisible"]=static_cast<void(spine::SkeletonAnimation::*)(bool)>(&spine::SkeletonAnimation::setUpdateOnlyIfVisible);
 mt["set"]["UpdateOnlyIfVisible"]=mt["SetUpdateOnlyIfVisible"];
+}
 }

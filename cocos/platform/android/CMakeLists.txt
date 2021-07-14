@@ -21,4 +21,5 @@ add_library(${target_name} STATIC
 target_include_directories(${target_name}
   PRIVATE ..
   PRIVATE ../..
+  PRIVATE ../../../extensions
 )

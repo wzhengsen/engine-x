@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaNavMeshAuto.hpp"
 #include "navmesh/CCNavMesh.h"
 #if CC_USE_NAVMESH
+namespace cocos2d{
 void RegisterLuaNavMeshNavMeshAgentNavMeshAgentSyncFlagAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,4);
 enumTable["NONE"]=cocos2d::NavMeshAgent::NavMeshAgentSyncFlag::NONE;
@@ -123,6 +124,6 @@ mt["AddNavMeshAgent"]=static_cast<void(cocos2d::NavMesh::*)(cocos2d::NavMeshAgen
 mt["RemoveNavMeshAgent"]=static_cast<void(cocos2d::NavMesh::*)(cocos2d::NavMeshAgent*)>(&cocos2d::NavMesh::removeNavMeshAgent);
 mt["AddNavMeshObstacle"]=static_cast<void(cocos2d::NavMesh::*)(cocos2d::NavMeshObstacle*)>(&cocos2d::NavMesh::addNavMeshObstacle);
 mt["RemoveNavMeshObstacle"]=static_cast<void(cocos2d::NavMesh::*)(cocos2d::NavMeshObstacle*)>(&cocos2d::NavMesh::removeNavMeshObstacle);
-mt["FindPath"]=static_cast<void(cocos2d::NavMesh::*)(const cocos2d::Vec3&,const cocos2d::Vec3&,std::vector<cocos2d::Vec3, std::allocator<cocos2d::Vec3> >&)>(&cocos2d::NavMesh::findPath);
+}
 }
 #endif

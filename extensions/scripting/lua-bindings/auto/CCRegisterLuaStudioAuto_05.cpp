@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaStudioAuto.hpp"
 #include "cocostudio/CocoStudio.h"
 #include "cocostudio/CCComExtensionData.h"
+namespace cocos2d{
 void RegisterLuaStudioEventFrameAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::timeline::EventFrame).name()] = sol::usertype_traits<cocostudio::timeline::EventFrame*>::metatable();
 auto dep=lua.new_usertype<cocostudio::timeline::EventFrame>("deprecated.cocostudio::timeline::EventFrame");
@@ -211,4 +212,5 @@ mt["__new__"]=static_cast<cocostudio::timeline::SkeletonNode*(*)()>(&cocostudio:
 mt["GetBoneNode"]=static_cast<cocostudio::timeline::BoneNode*(cocostudio::timeline::SkeletonNode::*)(const std::string&)>(&cocostudio::timeline::SkeletonNode::getBoneNode);
 mt["ChangeSkins"]=sol::overload(static_cast<void(cocostudio::timeline::SkeletonNode::*)(const std::string&)>(&cocostudio::timeline::SkeletonNode::changeSkins),static_cast<void(cocostudio::timeline::SkeletonNode::*)(const std::map<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >&)>(&cocostudio::timeline::SkeletonNode::changeSkins));
 mt["AddSkinGroup"]=static_cast<void(cocostudio::timeline::SkeletonNode::*)(std::string,std::map<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >)>(&cocostudio::timeline::SkeletonNode::addSkinGroup);
+}
 }

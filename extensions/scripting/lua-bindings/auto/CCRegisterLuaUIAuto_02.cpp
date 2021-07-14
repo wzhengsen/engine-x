@@ -1,5 +1,6 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaUIAuto.hpp"
 #include "ui/CocosGUI.h"
+namespace cocos2d{
 void RegisterLuaUIHelperAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ui::Helper).name()] = sol::usertype_traits<cocos2d::ui::Helper*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ui::Helper>("deprecated.cocos2d::ui::Helper");
@@ -261,4 +262,5 @@ dep[sol::base_classes]=sol::bases<cocos2d::ui::Layout,cocos2d::ui::Widget,cocos2
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ui::RelativeBox*>::metatable(),sol::usertype_traits<cocos2d::ui::Layout*>::metatable());
 lua["ccui"]["RelativeBox"]=mt;
 mt["__new__"]=sol::overload(static_cast<cocos2d::ui::RelativeBox*(*)(const cocos2d::Size&)>(&cocos2d::ui::RelativeBox::create),static_cast<cocos2d::ui::RelativeBox*(*)()>(&cocos2d::ui::RelativeBox::create));
+}
 }

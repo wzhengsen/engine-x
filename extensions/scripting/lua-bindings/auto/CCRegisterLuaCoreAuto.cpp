@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 extern void RegisterLuaCoreClonableAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreRefAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaCoreTextVAlignmentAuto(cocos2d::extension::Lua&);
@@ -584,4 +585,5 @@ RegisterLuaCoreServerAuto(lua);
 RegisterLuaCoreClientAuto(lua);
 RegisterLuaCoreDownloadTaskAuto(lua);
 RegisterLuaCoreDownloaderAuto(lua);
+}
 }

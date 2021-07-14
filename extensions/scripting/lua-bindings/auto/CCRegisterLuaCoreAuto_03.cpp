@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreAutoPolygonAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::AutoPolygon).name()] = sol::usertype_traits<cocos2d::AutoPolygon*>::metatable();
 auto dep=lua.new_usertype<cocos2d::AutoPolygon>("deprecated.cocos2d::AutoPolygon");
@@ -194,4 +195,5 @@ dep[sol::base_classes]=sol::bases<cocos2d::ActionInterval,cocos2d::FiniteTimeAct
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::RotateTo*>::metatable(),sol::usertype_traits<cocos2d::ActionInterval*>::metatable());
 lua["cc"]["RotateTo"]=mt;
 mt["__new__"]=sol::overload(static_cast<cocos2d::RotateTo*(*)(float,float,float)>(&cocos2d::RotateTo::create),static_cast<cocos2d::RotateTo*(*)(float,const cocos2d::Vec3&)>(&cocos2d::RotateTo::create),static_cast<cocos2d::RotateTo*(*)(float,float)>(&cocos2d::RotateTo::create));
+}
 }

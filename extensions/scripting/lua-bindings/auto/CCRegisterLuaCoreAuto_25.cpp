@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreLightTypeAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,4);
 enumTable["DIRECTIONAL"]=cocos2d::LightType::DIRECTIONAL;
@@ -190,4 +191,5 @@ mt["SetStateBlock"]=static_cast<void(cocos2d::Material::*)(const cocos2d::Render
 mt["set"]["StateBlock"]=mt["SetStateBlock"];
 mt["GetRenderState"]=static_cast<cocos2d::RenderState*(cocos2d::Material::*)()>(&cocos2d::Material::getRenderState);
 mt["get"]["RenderState"]=mt["GetRenderState"];
+}
 }

@@ -301,18 +301,23 @@ class NativeGlobalFunction(NativeWrapper, NativeFunction):
                 if generator.ShouldSkip(pClass):
                     self._generatable = False
                     break
+        self._originFuncName = self._funcName
         self._funcName = generator.RenameClass(self._funcName)
 
     @property
     def Overload(self):
         return len(self._implements) > 1
 
+    @property
+    def OriginFuncName(self):
+        return self._originFuncName
+
     def __str__(self):
         if not self._cxxStr:
             upper = self._generator.UpperCamelCase
             name = self._funcName if not upper else CursorHelper.UpperCamelCase(self._funcName)
             strList = ["void RegisterLua{}{}Auto(cocos2d::extension::Lua& lua) {{\n".format(
-                self._generator.Tag, self._funcName)]
+                self._generator.Tag, self._originFuncName)]
             strList.append('sol::table pTable = lua["{}"];\n'.format(self._simpleNS))
             strList.append('pTable["{}"] = {};\n}}\n'.format(
                 name, ("sol::overload(" if self.Overload else "") + self.GetImplStr() + (")" if self.Overload else "")

@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaPhysicsAuto.hpp"
 #include "cocos2d.h"
 #if CC_USE_PHYSICS
+namespace cocos2d{
 void RegisterLuaPhysicsPhysicsContactPreSolveAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::PhysicsContactPreSolve).name()] = sol::usertype_traits<cocos2d::PhysicsContactPreSolve*>::metatable();
 auto dep=lua.new_usertype<cocos2d::PhysicsContactPreSolve>("deprecated.cocos2d::PhysicsContactPreSolve");
@@ -152,5 +153,6 @@ lua["cc"]["PhysicsJointPin"]=mt;
 mt["__new__"] = [](){return nullptr;};
 mt["static"]["Construct"]=sol::overload(static_cast<cocos2d::PhysicsJointPin*(*)(cocos2d::PhysicsBody*,cocos2d::PhysicsBody*,const cocos2d::Vec2&,const cocos2d::Vec2&)>(&cocos2d::PhysicsJointPin::construct),static_cast<cocos2d::PhysicsJointPin*(*)(cocos2d::PhysicsBody*,cocos2d::PhysicsBody*,const cocos2d::Vec2&)>(&cocos2d::PhysicsJointPin::construct));
 mt["CreateConstraints"]=static_cast<bool(cocos2d::PhysicsJointPin::*)()>(&cocos2d::PhysicsJointPin::createConstraints);
+}
 }
 #endif

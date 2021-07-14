@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreEventCustomAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventCustom).name()] = sol::usertype_traits<cocos2d::EventCustom*>::metatable();
 auto dep=lua.new_usertype<cocos2d::EventCustom>("deprecated.cocos2d::EventCustom");
@@ -207,4 +208,5 @@ mt["set"]["OnTouchEnded"]=[](cocos2d::EventListenerTouchOneByOne* obj,const coco
 mt["get"]["OnTouchEnded"]=[](cocos2d::EventListenerTouchOneByOne* obj)->const cocos2d::EventListenerTouchOneByOne::ccTouchCallback&{return obj->onTouchEnded;};
 mt["set"]["OnTouchCancelled"]=[](cocos2d::EventListenerTouchOneByOne* obj,const cocos2d::EventListenerTouchOneByOne::ccTouchCallback& value){obj->onTouchCancelled = value;};
 mt["get"]["OnTouchCancelled"]=[](cocos2d::EventListenerTouchOneByOne* obj)->const cocos2d::EventListenerTouchOneByOne::ccTouchCallback&{return obj->onTouchCancelled;};
+}
 }

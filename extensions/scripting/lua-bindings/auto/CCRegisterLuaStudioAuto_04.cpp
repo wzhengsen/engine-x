@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaStudioAuto.hpp"
 #include "cocostudio/CocoStudio.h"
 #include "cocostudio/CCComExtensionData.h"
+namespace cocos2d{
 void RegisterLuaStudioRotationFrameAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::timeline::RotationFrame).name()] = sol::usertype_traits<cocostudio::timeline::RotationFrame*>::metatable();
 auto dep=lua.new_usertype<cocostudio::timeline::RotationFrame>("deprecated.cocostudio::timeline::RotationFrame");
@@ -146,4 +147,5 @@ mt["SetAlpha"]=static_cast<void(cocostudio::timeline::AlphaFrame::*)(uint8_t)>(&
 mt["set"]["Alpha"]=mt["SetAlpha"];
 mt["GetAlpha"]=static_cast<uint8_t(cocostudio::timeline::AlphaFrame::*)()const>(&cocostudio::timeline::AlphaFrame::getAlpha);
 mt["get"]["Alpha"]=mt["GetAlpha"];
+}
 }

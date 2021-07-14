@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaStudioAuto.hpp"
 #include "cocostudio/CocoStudio.h"
 #include "cocostudio/CCComExtensionData.h"
+namespace cocos2d{
 extern void RegisterLuaStudioActionFrameAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaStudioActionMoveFrameAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaStudioActionScaleFrameAuto(cocos2d::extension::Lua&);
@@ -125,4 +126,5 @@ RegisterLuaStudioActionTimelineNodeAuto(lua);
 RegisterLuaStudioBoneNodeAuto(lua);
 RegisterLuaStudioSkeletonNodeAuto(lua);
 RegisterLuaStudioComExtensionDataAuto(lua);
+}
 }

@@ -82,7 +82,7 @@ public:
      * @param dictionary Particle dictionary.
      * @return An autoreleased ParticleSystemQuad object.
      */
-    static ParticleSystemQuad * create(ValueMap &dictionary);
+    static ParticleSystemQuad * create(const ValueMap &dictionary);
 
     /** Sets a new SpriteFrame as particle.
     WARNING: this method is experimental. Use setTextureWithRect instead.

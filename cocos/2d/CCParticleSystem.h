@@ -793,12 +793,12 @@ CC_CONSTRUCTOR_ACCESS:
     /** initializes a QuadParticleSystem from a Dictionary.
      @since v0.99.3
      */
-    bool initWithDictionary(ValueMap& dictionary);
+    bool initWithDictionary(const ValueMap& dictionary);
     
     /** initializes a particle system from a NSDictionary and the path from where to load the png
      @since v2.1
      */
-    bool initWithDictionary(ValueMap& dictionary, const std::string& dirname);
+    bool initWithDictionary(const ValueMap& dictionary, const std::string& dirname);
     
     //! Initializes a system with a fixed number of particles
     virtual bool initWithTotalParticles(int numberOfParticles);

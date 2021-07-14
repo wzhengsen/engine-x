@@ -8,6 +8,7 @@
 #include "renderer/backend/CommandBuffer.h"
 #include "renderer/backend/Buffer.h"
 #include "renderer/backend/RenderPipeline.h"
+namespace cocos2d{
 extern void RegisterLuaBackendBufferUsageAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaBackendBufferTypeAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaBackendShaderStageAuto(cocos2d::extension::Lua&);
@@ -66,4 +67,5 @@ RegisterLuaBackendTextureBackendAuto(lua);
 RegisterLuaBackendTexture2DBackendAuto(lua);
 RegisterLuaBackendTextureCubemapBackendAuto(lua);
 RegisterLuaBackendDeviceAuto(lua);
+}
 }

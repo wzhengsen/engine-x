@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreEaseRateActionAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseRateAction).name()] = sol::usertype_traits<cocos2d::EaseRateAction*>::metatable();
 auto dep=lua.new_usertype<cocos2d::EaseRateAction>("deprecated.cocos2d::EaseRateAction");
@@ -91,4 +92,5 @@ dep[sol::base_classes]=sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,co
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EaseBounceOut*>::metatable(),sol::usertype_traits<cocos2d::ActionEase*>::metatable());
 lua["cc"]["EaseBounceOut"]=mt;
 mt["__new__"]=static_cast<cocos2d::EaseBounceOut*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseBounceOut::create);
+}
 }

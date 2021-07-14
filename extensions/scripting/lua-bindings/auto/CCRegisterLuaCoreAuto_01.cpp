@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreComponentAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Component).name()] = sol::usertype_traits<cocos2d::Component*>::metatable();
 auto dep=lua.new_usertype<cocos2d::Component>("deprecated.cocos2d::Component");
@@ -518,4 +519,5 @@ enumTable["MATRIX_STACK_MODELVIEW"]=cocos2d::MATRIX_STACK_TYPE::MATRIX_STACK_MOD
 enumTable["MATRIX_STACK_PROJECTION"]=cocos2d::MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION;
 enumTable["MATRIX_STACK_TEXTURE"]=cocos2d::MATRIX_STACK_TYPE::MATRIX_STACK_TEXTURE;
 lua["cc"]["MATRIX_STACK_TYPE"]=lua.NewEnum(enumTable);
+}
 }

@@ -1,5 +1,6 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaUIAuto.hpp"
 #include "ui/CocosGUI.h"
+namespace cocos2d{
 void RegisterLuaUILayoutParameterTypeAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,3);
 enumTable["NONE"]=cocos2d::ui::LayoutParameter::Type::NONE;
@@ -555,4 +556,5 @@ mt["set"]["AllowedNoSelection"]=mt["SetAllowedNoSelection"];
 mt["IsAllowedNoSelection"]=static_cast<bool(cocos2d::ui::RadioButtonGroup::*)()const>(&cocos2d::ui::RadioButtonGroup::isAllowedNoSelection);
 mt["get"]["AllowedNoSelection"]=mt["IsAllowedNoSelection"];
 RegisterLuaUIRadioButtonGroupEventTypeAuto(lua);
+}
 }

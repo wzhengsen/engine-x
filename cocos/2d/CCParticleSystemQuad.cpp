@@ -112,7 +112,7 @@ ParticleSystemQuad * ParticleSystemQuad::createWithTotalParticles(int numberOfPa
     return ret;
 }
 
-ParticleSystemQuad * ParticleSystemQuad::create(ValueMap &dictionary)
+ParticleSystemQuad * ParticleSystemQuad::create(const ValueMap &dictionary)
 {
     ParticleSystemQuad *ret = new (std::nothrow) ParticleSystemQuad();
     if (ret && ret->initWithDictionary(dictionary))

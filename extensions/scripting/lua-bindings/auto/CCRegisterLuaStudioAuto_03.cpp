@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaStudioAuto.hpp"
 #include "cocostudio/CocoStudio.h"
 #include "cocostudio/CCComExtensionData.h"
+namespace cocos2d{
 void RegisterLuaStudioComAttributeAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::ComAttribute).name()] = sol::usertype_traits<cocostudio::ComAttribute*>::metatable();
 auto dep=lua.new_usertype<cocostudio::ComAttribute>("deprecated.cocostudio::ComAttribute");
@@ -111,7 +112,6 @@ mt["SetFilePath"]=static_cast<void(cocostudio::GUIReader::*)(const std::string&)
 mt["set"]["FilePath"]=mt["SetFilePath"];
 mt["GetFilePath"]=static_cast<const std::string&(cocostudio::GUIReader::*)()const>(&cocostudio::GUIReader::getFilePath);
 mt["get"]["FilePath"]=mt["GetFilePath"];
-mt["RegisterTypeAndCallBack"]=sol::overload(static_cast<void(cocostudio::GUIReader::*)(const std::string&,cocos2d::ObjectFactory::InstanceFunc,cocos2d::Ref*,cocostudio::SEL_ParseEvent)>(&cocostudio::GUIReader::registerTypeAndCallBack),static_cast<void(cocostudio::GUIReader::*)(const std::string&,cocos2d::ObjectFactory::Instance,cocos2d::Ref*,cocostudio::SEL_ParseEvent)>(&cocostudio::GUIReader::registerTypeAndCallBack));
 mt["static"]["get"]["Instance"]=&cocostudio::GUIReader::getInstance;
 mt["static"]["set"]["Instance"]=[](std::nullptr_t){cocostudio::GUIReader::destroyInstance();};
 }
@@ -216,4 +216,5 @@ mt["SetTextureName"]=static_cast<void(cocostudio::timeline::TextureFrame::*)(std
 mt["set"]["TextureName"]=mt["SetTextureName"];
 mt["GetTextureName"]=static_cast<std::string(cocostudio::timeline::TextureFrame::*)()const>(&cocostudio::timeline::TextureFrame::getTextureName);
 mt["get"]["TextureName"]=mt["GetTextureName"];
+}
 }

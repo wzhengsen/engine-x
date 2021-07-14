@@ -2,6 +2,7 @@
 #include "cocos2d.h"
 #include "3d/CCBundle3D.h"
 #include "renderer/backend/Buffer.h"
+namespace cocos2d{
 extern void RegisterLua3DAnimation3DAuto(cocos2d::extension::Lua&);
 extern void RegisterLua3DAnimate3DAuto(cocos2d::extension::Lua&);
 extern void RegisterLua3DTextureCubeAuto(cocos2d::extension::Lua&);
@@ -30,4 +31,5 @@ RegisterLua3DSprite3DCacheAuto(lua);
 RegisterLua3DSprite3DMaterialAuto(lua);
 RegisterLua3DTerrainAuto(lua);
 RegisterLua3DBundle3DAuto(lua);
+}
 }

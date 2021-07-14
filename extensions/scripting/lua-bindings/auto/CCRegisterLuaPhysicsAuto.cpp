@@ -1,5 +1,6 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaPhysicsAuto.hpp"
 #include "cocos2d.h"
+namespace cocos2d{
 extern void RegisterLuaPhysicsPhysicsShapeAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaPhysicsPhysicsShapeCircleAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaPhysicsPhysicsShapePolygonAuto(cocos2d::extension::Lua&);
@@ -62,4 +63,5 @@ RegisterLuaPhysicsPhysicsJointGearAuto(lua);
 RegisterLuaPhysicsPhysicsJointMotorAuto(lua);
 RegisterLuaPhysicsPhysicsWorldAuto(lua);
 #endif
+}
 }

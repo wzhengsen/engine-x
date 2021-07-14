@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreParticleRainAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleRain).name()] = sol::usertype_traits<cocos2d::ParticleRain*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ParticleRain>("deprecated.cocos2d::ParticleRain");
@@ -260,4 +261,5 @@ dep[sol::base_classes]=sol::bases<cocos2d::TransitionScene,cocos2d::Scene,cocos2
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionJumpZoom*>::metatable(),sol::usertype_traits<cocos2d::TransitionScene*>::metatable());
 lua["cc"]["TransitionJumpZoom"]=mt;
 mt["__new__"]=static_cast<cocos2d::TransitionJumpZoom*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionJumpZoom::create);
+}
 }

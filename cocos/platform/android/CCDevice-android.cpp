@@ -173,9 +173,9 @@ void Device::setKeepScreenOn(bool value)
     JniHelper::callStaticVoidMethod(helperClassName, "setKeepScreenOn", value);
 }
 
-void Device::vibrate(float duration)
+void Device::vibrate(uint32_t duration)
 {
-    JniHelper::callStaticVoidMethod(helperClassName, "vibrate", duration);
+    JniHelper::callStaticVoidMethod(helperClassName, "vibrate", static_cast<int>(duration));
 }
 
 NS_CC_END

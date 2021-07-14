@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaUtilsAuto.hpp"
 #include "base/ccUtils.h"
-void RegisterLuaUtilsGetTimeAuto(cocos2d::extension::Lua& lua) {
+namespace cocos2d{
+void RegisterLuaUtilsgettimeAuto(cocos2d::extension::Lua& lua) {
 sol::table pTable = lua["ccu"];
 pTable["GetTime"] = static_cast<double(*)()>(&cocos2d::utils::gettime);
 }
@@ -50,3 +51,4 @@ sol::table pTable = lua["ccu"];
 pTable["ToGLBlendFactor"] = static_cast<int(*)(cocos2d::backend::BlendFactor)>(&cocos2d::utils::toGLBlendFactor);
 }
 
+}

@@ -1,5 +1,6 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaUIAuto.hpp"
 #include "ui/CocosGUI.h"
+namespace cocos2d{
 void RegisterLuaUIImageViewAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ui::ImageView).name()] = sol::usertype_traits<cocos2d::ui::ImageView*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ui::ImageView>("deprecated.cocos2d::ui::ImageView");
@@ -648,4 +649,5 @@ mt["SetAutoScrollStopEpsilon"]=static_cast<void(cocos2d::ui::PageView::*)(float)
 mt["set"]["AutoScrollStopEpsilon"]=mt["SetAutoScrollStopEpsilon"];
 RegisterLuaUIPageViewEventTypeAuto(lua);
 RegisterLuaUIPageViewTouchDirectionAuto(lua);
+}
 }

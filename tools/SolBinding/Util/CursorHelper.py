@@ -150,7 +150,7 @@ class CursorHelper:
                     return ntype.spelling.replace("__ndk1::", "").replace("const ", "")
                 return ntype.spelling.replace("__ndk1::", "")
             name = CursorHelper.GetWholeName(decl)
-            return (("const " if const and useConst else "") + name).replace("__ndk1::", "")
+            return (("const " if const and useConst else "") + name).replace("__ndk1::", "").replace("unsigned long long", "uint64_t").replace("long long", "int64_t")
 
     @staticmethod
     def UpperCamelCase(name: str) -> str:

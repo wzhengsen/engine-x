@@ -1,5 +1,6 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaUIAuto.hpp"
 #include "ui/CocosGUI.h"
+namespace cocos2d{
 extern void RegisterLuaUILayoutParameterAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaUILinearLayoutParameterAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaUIRelativeLayoutParameterAuto(cocos2d::extension::Lua&);
@@ -78,4 +79,5 @@ RegisterLuaUILayoutComponentAuto(lua);
 RegisterLuaUITabHeaderAuto(lua);
 RegisterLuaUITabControlAuto(lua);
 RegisterLuaUIQrCodeAuto(lua);
+}
 }

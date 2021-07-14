@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaStudioAuto.hpp"
 #include "cocostudio/CocoStudio.h"
 #include "cocostudio/CCComExtensionData.h"
+namespace cocos2d{
 void RegisterLuaStudioComExtensionDataAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::ComExtensionData).name()] = sol::usertype_traits<cocostudio::ComExtensionData*>::metatable();
 auto dep=lua.new_usertype<cocostudio::ComExtensionData>("deprecated.cocostudio::ComExtensionData");
@@ -19,4 +20,5 @@ mt["get"]["ActionTag"]=mt["GetActionTag"];
 mt["static"]["set"]["Type"]=[](const sol::object&,const cocos2d::ObjectFactory::TInfo& value){cocostudio::ComExtensionData::Type = value;};
 mt["static"]["get"]["Type"]=[]()->const cocos2d::ObjectFactory::TInfo&{return cocostudio::ComExtensionData::Type;};
 mt["static"]["get"]["COMPONENT_NAME"]=[]()->const std::string&{return cocostudio::ComExtensionData::COMPONENT_NAME;};
+}
 }

@@ -8,6 +8,7 @@
 #include "renderer/backend/CommandBuffer.h"
 #include "renderer/backend/Buffer.h"
 #include "renderer/backend/RenderPipeline.h"
+namespace cocos2d{
 void RegisterLuaBackendShaderCacheAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::backend::ShaderCache).name()] = sol::usertype_traits<cocos2d::backend::ShaderCache*>::metatable();
 auto dep=lua.new_usertype<cocos2d::backend::ShaderCache>("deprecated.cocos2d::backend::ShaderCache");
@@ -168,4 +169,5 @@ mt["NewProgram"]=static_cast<cocos2d::backend::Program*(cocos2d::backend::Device
 mt["GetDeviceInfo"]=static_cast<cocos2d::backend::DeviceInfo*(cocos2d::backend::Device::*)()const>(&cocos2d::backend::Device::getDeviceInfo);
 mt["get"]["DeviceInfo"]=mt["GetDeviceInfo"];
 mt["static"]["get"]["Instance"]=&cocos2d::backend::Device::getInstance;
+}
 }

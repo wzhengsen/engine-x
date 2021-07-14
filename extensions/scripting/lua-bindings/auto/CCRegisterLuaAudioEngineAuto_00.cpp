@@ -1,5 +1,6 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaAudioEngineAuto.hpp"
 #include "audio/include/AudioEngine.h"
+namespace cocos2d{
 void RegisterLuaAudioEngineAudioProfileAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::AudioProfile).name()] = sol::usertype_traits<cocos2d::AudioProfile*>::metatable();
 auto dep=lua.new_usertype<cocos2d::AudioProfile>("deprecated.cocos2d::AudioProfile");
@@ -58,4 +59,5 @@ mt["static"]["IsEnabled"]=static_cast<bool(*)()>(&cocos2d::AudioEngine::isEnable
 mt["static"]["get"]["Enabled"]=mt["IsEnabled"];
 mt["static"]["get"]["INVALID_AUDIO_ID"]=[]()->const int&{return cocos2d::AudioEngine::INVALID_AUDIO_ID;};
 mt["static"]["get"]["TIME_UNKNOWN"]=[]()->const float&{return cocos2d::AudioEngine::TIME_UNKNOWN;};
+}
 }

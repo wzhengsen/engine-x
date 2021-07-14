@@ -361,7 +361,7 @@ void DisplayManager::initDisplayList(BoneData *boneData)
 }
 
 
-bool DisplayManager::containPoint(Vec2 &point)
+bool DisplayManager::containPoint(const Vec2 &point)
 {
     if(!_visible || _displayIndex < 0)
     {

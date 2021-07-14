@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaStudioAuto.hpp"
 #include "cocostudio/CocoStudio.h"
 #include "cocostudio/CCComExtensionData.h"
+namespace cocos2d{
 void RegisterLuaStudioActionFrameAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::ActionFrame).name()] = sol::usertype_traits<cocostudio::ActionFrame*>::metatable();
 auto dep=lua.new_usertype<cocostudio::ActionFrame>("deprecated.cocostudio::ActionFrame");
@@ -204,4 +205,5 @@ mt["set"]["DisplayType"]=[](cocostudio::DisplayData* obj,const cocostudio::Displ
 mt["get"]["DisplayType"]=[](cocostudio::DisplayData* obj)->const cocostudio::DisplayType&{return obj->displayType;};
 mt["set"]["DisplayName"]=[](cocostudio::DisplayData* obj,const std::string& value){obj->displayName = value;};
 mt["get"]["DisplayName"]=[](cocostudio::DisplayData* obj)->const std::string&{return obj->displayName;};
+}
 }

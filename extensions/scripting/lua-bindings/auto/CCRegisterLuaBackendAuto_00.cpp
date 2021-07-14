@@ -8,6 +8,7 @@
 #include "renderer/backend/CommandBuffer.h"
 #include "renderer/backend/Buffer.h"
 #include "renderer/backend/RenderPipeline.h"
+namespace cocos2d{
 void RegisterLuaBackendBufferUsageAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,2);
 enumTable["STATIC"]=cocos2d::backend::BufferUsage::STATIC;
@@ -111,4 +112,5 @@ sol::table enumTable = lua.create_table_with(0,2);
 enumTable["TEXTURE_2D"]=cocos2d::backend::TextureType::TEXTURE_2D;
 enumTable["TEXTURE_CUBE"]=cocos2d::backend::TextureType::TEXTURE_CUBE;
 lua["ccb"]["TextureType"]=lua.NewEnum(enumTable);
+}
 }

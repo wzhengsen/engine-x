@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaStudioAuto.hpp"
 #include "cocostudio/CocoStudio.h"
 #include "cocostudio/CCComExtensionData.h"
+namespace cocos2d{
 void RegisterLuaStudioTextureDataAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::TextureData).name()] = sol::usertype_traits<cocostudio::TextureData*>::metatable();
 auto dep=lua.new_usertype<cocostudio::TextureData>("deprecated.cocostudio::TextureData");
@@ -80,7 +81,7 @@ mt["GetAnchorPoint"]=static_cast<cocos2d::Vec2(cocostudio::DisplayManager::*)()c
 mt["get"]["AnchorPoint"]=mt["GetAnchorPoint"];
 mt["GetAnchorPointInPoints"]=static_cast<cocos2d::Vec2(cocostudio::DisplayManager::*)()const>(&cocostudio::DisplayManager::getAnchorPointInPoints);
 mt["get"]["AnchorPointInPoints"]=mt["GetAnchorPointInPoints"];
-mt["ContainPoint"]=sol::overload(static_cast<bool(cocostudio::DisplayManager::*)(float,float)>(&cocostudio::DisplayManager::containPoint),static_cast<bool(cocostudio::DisplayManager::*)(cocos2d::Vec2&)>(&cocostudio::DisplayManager::containPoint));
+mt["ContainPoint"]=sol::overload(static_cast<bool(cocostudio::DisplayManager::*)(float,float)>(&cocostudio::DisplayManager::containPoint),static_cast<bool(cocostudio::DisplayManager::*)(const cocos2d::Vec2&)>(&cocostudio::DisplayManager::containPoint));
 mt["SetForceChangeDisplay"]=static_cast<void(cocostudio::DisplayManager::*)(bool)>(&cocostudio::DisplayManager::setForceChangeDisplay);
 mt["set"]["ForceChangeDisplay"]=mt["SetForceChangeDisplay"];
 mt["IsForceChangeDisplay"]=static_cast<bool(cocostudio::DisplayManager::*)()const>(&cocostudio::DisplayManager::isForceChangeDisplay);
@@ -305,4 +306,5 @@ mt["GetBone"]=static_cast<cocostudio::Bone*(cocostudio::Skin::*)()const>(&cocost
 mt["get"]["Bone"]=mt["GetBone"];
 mt["GetDisplayName"]=static_cast<const std::string&(cocostudio::Skin::*)()const>(&cocostudio::Skin::getDisplayName);
 mt["get"]["DisplayName"]=mt["GetDisplayName"];
+}
 }

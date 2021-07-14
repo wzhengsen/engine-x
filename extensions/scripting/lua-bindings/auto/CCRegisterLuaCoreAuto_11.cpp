@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreEaseQuinticActionInAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseQuinticActionIn).name()] = sol::usertype_traits<cocos2d::EaseQuinticActionIn*>::metatable();
 auto dep=lua.new_usertype<cocos2d::EaseQuinticActionIn>("deprecated.cocos2d::EaseQuinticActionIn");
@@ -87,4 +88,5 @@ dep[sol::base_classes]=sol::bases<cocos2d::EaseRateAction,cocos2d::ActionEase,co
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EaseIn*>::metatable(),sol::usertype_traits<cocos2d::EaseRateAction*>::metatable());
 lua["cc"]["EaseIn"]=mt;
 mt["__new__"]=static_cast<cocos2d::EaseIn*(*)(cocos2d::ActionInterval*,float)>(&cocos2d::EaseIn::create);
+}
 }

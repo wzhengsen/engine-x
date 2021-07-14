@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaPhysicsAuto.hpp"
 #include "cocos2d.h"
 #if CC_USE_PHYSICS
+namespace cocos2d{
 void RegisterLuaPhysicsPhysicsJointDistanceAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::PhysicsJointDistance).name()] = sol::usertype_traits<cocos2d::PhysicsJointDistance*>::metatable();
 auto dep=lua.new_usertype<cocos2d::PhysicsJointDistance>("deprecated.cocos2d::PhysicsJointDistance");
@@ -220,5 +221,6 @@ mt["static"]["get"]["DEBUGDRAW_SHAPE"]=[]()->const int&{return cocos2d::PhysicsW
 mt["static"]["get"]["DEBUGDRAW_JOINT"]=[]()->const int&{return cocos2d::PhysicsWorld::DEBUGDRAW_JOINT;};
 mt["static"]["get"]["DEBUGDRAW_CONTACT"]=[]()->const int&{return cocos2d::PhysicsWorld::DEBUGDRAW_CONTACT;};
 mt["static"]["get"]["DEBUGDRAW_ALL"]=[]()->const int&{return cocos2d::PhysicsWorld::DEBUGDRAW_ALL;};
+}
 }
 #endif

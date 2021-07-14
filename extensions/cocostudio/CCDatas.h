@@ -501,7 +501,7 @@ public:
     ~ContourData(void);
 
     virtual bool init();
-    virtual void addVertex(cocos2d::Vec2 &vertex);
+    virtual void addVertex(const cocos2d::Vec2 &vertex);
 public:
     std::vector<cocos2d::Vec2> vertexList;    //! Save contour vertex info, vertex saved in a Vec2
 };

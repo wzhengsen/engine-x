@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreDirectorAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Director).name()] = sol::usertype_traits<cocos2d::Director*>::metatable();
 auto dep=lua.new_usertype<cocos2d::Director>("deprecated.cocos2d::Director");
@@ -351,4 +352,5 @@ mt["SetFilename"]=static_cast<void(cocos2d::PolygonInfo::*)(const std::string&)>
 mt["set"]["Filename"]=mt["SetFilename"];
 mt["set"]["Triangles"]=[](cocos2d::PolygonInfo* obj,const cocos2d::TrianglesCommand::Triangles& value){obj->triangles = value;};
 mt["get"]["Triangles"]=[](cocos2d::PolygonInfo* obj)->const cocos2d::TrianglesCommand::Triangles&{return obj->triangles;};
+}
 }

@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaControllerAuto.hpp"
 #include "base/CCGameController.h"
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+namespace cocos2d{
 void RegisterLuaControllerControllerAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Controller).name()] = sol::usertype_traits<cocos2d::Controller*>::metatable();
 auto dep=lua.new_usertype<cocos2d::Controller>("deprecated.cocos2d::Controller");
@@ -67,5 +68,6 @@ mt["set"]["OnKeyRepeat"]=[](cocos2d::EventListenerController* obj,const std::fun
 mt["get"]["OnKeyRepeat"]=[](cocos2d::EventListenerController* obj)->const std::function<void (cocos2d::Controller *, int, cocos2d::Event *)>&{return obj->onKeyRepeat;};
 mt["set"]["OnAxisEvent"]=[](cocos2d::EventListenerController* obj,const std::function<void (cocos2d::Controller *, int, cocos2d::Event *)>& value){obj->onAxisEvent = value;};
 mt["get"]["OnAxisEvent"]=[](cocos2d::EventListenerController* obj)->const std::function<void (cocos2d::Controller *, int, cocos2d::Event *)>&{return obj->onAxisEvent;};
+}
 }
 #endif

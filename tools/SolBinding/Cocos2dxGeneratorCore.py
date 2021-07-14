@@ -74,7 +74,8 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "Node": ["onEnter.*", "onExit.*", "_setLocalZOrder"],
             "Component": ["onEnter", "onExit", "onAdd", "onRemove"],
             "Director": ["EVENT_.*"],
-            "Downloader": ["setOn.*Task.*"]
+            "Downloader": ["setOn.*Task.*"],
+            "UserDefault":["setEncryptEnabled","encrypt"]
         }
         self.RenameMembers |= {
             "SpriteFrameCache": {"addSpriteFramesWithFile": "addSpriteFrames", "getSpriteFrameByName": "getSpriteFrame"},

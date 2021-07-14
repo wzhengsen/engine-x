@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreClonableAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Clonable).name()] = sol::usertype_traits<cocos2d::Clonable*>::metatable();
 auto dep=lua.new_usertype<cocos2d::Clonable>("deprecated.cocos2d::Clonable");
@@ -174,4 +175,5 @@ mt["SetString"]=static_cast<void(cocos2d::LabelProtocol::*)(const std::string&)>
 mt["set"]["String"]=mt["SetString"];
 mt["GetString"]=static_cast<const std::string&(cocos2d::LabelProtocol::*)()const>(&cocos2d::LabelProtocol::getString);
 mt["get"]["String"]=mt["GetString"];
+}
 }

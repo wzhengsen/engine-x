@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreToggleVisibilityAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ToggleVisibility).name()] = sol::usertype_traits<cocos2d::ToggleVisibility*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ToggleVisibility>("deprecated.cocos2d::ToggleVisibility");
@@ -98,4 +99,5 @@ dep[sol::base_classes]=sol::bases<cocos2d::ActionInstant,cocos2d::FiniteTimeActi
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::StopGrid*>::metatable(),sol::usertype_traits<cocos2d::ActionInstant*>::metatable());
 lua["cc"]["StopGrid"]=mt;
 mt["__new__"]=static_cast<cocos2d::StopGrid*(*)()>(&cocos2d::StopGrid::create);
+}
 }

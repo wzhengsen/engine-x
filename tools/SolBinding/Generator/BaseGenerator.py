@@ -105,12 +105,17 @@ class BaseGenerator(BaseConfig):
         """生成c++头文件。
         """
         with open(os.path.join(self._outputPath, self._outputFile + ".hpp"), "w") as hFile:
-            hFile.write((
-                '#pragma once\n'
-                '#include "base/ccConfig.h"\n'
+            headerStr = [
+                '#pragma once\n',
+                '#include "base/ccConfig.h"\n',
                 '#include "scripting/lua-bindings/manual/CCLuaConvertSol.hpp"\n'
-                'void RegisterLua{}Auto(cocos2d::extension::Lua&);'
-            ).format(self.Tag))
+            ]
+            if self.ToNameSpace:
+                headerStr.append("namespace " + self.ToNameSpace + "{\n")
+            headerStr.append(('void RegisterLua{}Auto(cocos2d::extension::Lua&);\n').format(self.Tag))
+            if self.ToNameSpace:
+                headerStr.append("}")
+            hFile.write(''.join(headerStr))
 
     def _GenerateImplCode(self):
         """生成c++实现文件。
@@ -129,11 +134,13 @@ class BaseGenerator(BaseConfig):
                 else:
                     strList.append('#include "{}"\n'.format(os.path.basename(header)))
 
+            if self.ToNameSpace:
+                strList.append("namespace " + self.ToNameSpace + "{\n")
             for c in self._nativeObjects.values():
                 if self._enumForLua and isinstance(c, NativeEnum):
                     continue
                 strList.append("extern void RegisterLua{}{}Auto(cocos2d::extension::Lua&);\n".format(
-                    self.Tag, c.FuncName if isinstance(c, NativeGlobalFunction) else "".join(c.NameList[1:])))
+                    self.Tag, c.OriginFuncName if isinstance(c, NativeGlobalFunction) else "".join(c.NameList[1:])))
 
             strList.append("void RegisterLua{}Auto(cocos2d::extension::Lua& lua){{\n".format(self.Tag))
             if self.MacroJudgement:
@@ -145,12 +152,14 @@ class BaseGenerator(BaseConfig):
                 strList.append(
                     "RegisterLua{}{}Auto(lua);\n".format(
                         self.Tag,
-                        c.FuncName if isinstance(c, NativeGlobalFunction) else "".join(c.NameList[1:])
+                        c.OriginFuncName if isinstance(c, NativeGlobalFunction) else "".join(c.NameList[1:])
                     )
                 )
             if self.MacroJudgement:
                 strList.append("#endif\n")
-            strList.append("}")
+            strList.append("}\n")
+            if self.ToNameSpace:
+                strList.append("}")
             iFile.write(''.join(strList))
 
     def _GenerateObjectCode(self):
@@ -166,6 +175,8 @@ class BaseGenerator(BaseConfig):
         def DoEnd(self: BaseGenerator):
             if not strList:
                 return
+            if self.ToNameSpace:
+                strList.append("}\n")
             if self.MacroJudgement:
                 strList.append("#endif\n")
             with open(os.path.join(self._outputPath, self._outputFile + ("_%02d.cpp" % (idx // groupIndex))), "w") as implFile:
@@ -191,6 +202,8 @@ class BaseGenerator(BaseConfig):
                 if self.MacroJudgement:
                     strList.append(self.MacroJudgement + "\n")
 
+                if self.ToNameSpace:
+                    strList.append("namespace " + self.ToNameSpace + "{\n")
             strList.append(str(obj))
             strList.append("\n")
 

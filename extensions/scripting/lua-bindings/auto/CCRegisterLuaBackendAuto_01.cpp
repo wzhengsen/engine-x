@@ -8,6 +8,7 @@
 #include "renderer/backend/CommandBuffer.h"
 #include "renderer/backend/Buffer.h"
 #include "renderer/backend/RenderPipeline.h"
+namespace cocos2d{
 void RegisterLuaBackendSamplerAddressModeAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,4);
 enumTable["REPEAT"]=cocos2d::backend::SamplerAddressMode::REPEAT;
@@ -110,4 +111,5 @@ enumTable["NEGATIVE_Y"]=cocos2d::backend::TextureCubeFace::NEGATIVE_Y;
 enumTable["POSITIVE_Z"]=cocos2d::backend::TextureCubeFace::POSITIVE_Z;
 enumTable["NEGATIVE_Z"]=cocos2d::backend::TextureCubeFace::NEGATIVE_Z;
 lua["ccb"]["TextureCubeFace"]=lua.NewEnum(enumTable);
+}
 }

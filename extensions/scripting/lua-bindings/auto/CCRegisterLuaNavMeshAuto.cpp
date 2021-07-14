@@ -1,5 +1,6 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaNavMeshAuto.hpp"
 #include "navmesh/CCNavMesh.h"
+namespace cocos2d{
 extern void RegisterLuaNavMeshNavMeshAgentAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaNavMeshNavMeshObstacleAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaNavMeshNavMeshAuto(cocos2d::extension::Lua&);
@@ -10,4 +11,5 @@ RegisterLuaNavMeshNavMeshAgentAuto(lua);
 RegisterLuaNavMeshNavMeshObstacleAuto(lua);
 RegisterLuaNavMeshNavMeshAuto(lua);
 #endif
+}
 }

@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCorePassAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Pass).name()] = sol::usertype_traits<cocos2d::Pass*>::metatable();
 auto dep=lua.new_usertype<cocos2d::Pass>("deprecated.cocos2d::Pass");
@@ -368,4 +369,5 @@ mt["GetSpriteFrame"]=static_cast<cocos2d::SpriteFrame*(cocos2d::SpriteFrameCache
 mt["ReloadTexture"]=static_cast<bool(cocos2d::SpriteFrameCache::*)(const std::string&)>(&cocos2d::SpriteFrameCache::reloadTexture);
 mt["static"]["get"]["Instance"]=&cocos2d::SpriteFrameCache::getInstance;
 mt["static"]["set"]["Instance"]=[](std::nullptr_t){cocos2d::SpriteFrameCache::destroyInstance();};
+}
 }

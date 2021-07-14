@@ -40,3 +40,6 @@ class Cocos2dxGeneratorCSLoader(Cocos2dxGenerator):
         self.Classes += [
             "CSLoader"
         ]
+        self.Skip |= {
+            "CSLoader": ["registReaderObject"]
+        }

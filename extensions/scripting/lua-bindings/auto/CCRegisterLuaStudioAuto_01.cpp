@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaStudioAuto.hpp"
 #include "cocostudio/CocoStudio.h"
 #include "cocostudio/CCComExtensionData.h"
+namespace cocos2d{
 void RegisterLuaStudioSpriteDisplayDataAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocostudio::SpriteDisplayData).name()] = sol::usertype_traits<cocostudio::SpriteDisplayData*>::metatable();
 auto dep=lua.new_usertype<cocostudio::SpriteDisplayData>("deprecated.cocostudio::SpriteDisplayData");
@@ -158,7 +159,8 @@ sol::table mt=lua.NewClass(sol::usertype_traits<cocostudio::ContourData*>::metat
 lua["ccs"]["ContourData"]=mt;
 mt["__new__"]=static_cast<cocostudio::ContourData*(*)()>(&cocostudio::ContourData::create);
 mt["Init"]=static_cast<bool(cocostudio::ContourData::*)()>(&cocostudio::ContourData::init);
-mt["AddVertex"]=static_cast<void(cocostudio::ContourData::*)(cocos2d::Vec2&)>(&cocostudio::ContourData::addVertex);
+mt["AddVertex"]=static_cast<void(cocostudio::ContourData::*)(const cocos2d::Vec2&)>(&cocostudio::ContourData::addVertex);
 mt["set"]["VertexList"]=[](cocostudio::ContourData* obj,const std::vector<cocos2d::Vec2, std::allocator<cocos2d::Vec2> >& value){obj->vertexList = value;};
 mt["get"]["VertexList"]=[](cocostudio::ContourData* obj)->const std::vector<cocos2d::Vec2, std::allocator<cocos2d::Vec2> >&{return obj->vertexList;};
+}
 }

@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreRotateByAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::RotateBy).name()] = sol::usertype_traits<cocos2d::RotateBy*>::metatable();
 auto dep=lua.new_usertype<cocos2d::RotateBy>("deprecated.cocos2d::RotateBy");
@@ -87,4 +88,5 @@ dep[sol::base_classes]=sol::bases<cocos2d::ActionInterval,cocos2d::FiniteTimeAct
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ScaleTo*>::metatable(),sol::usertype_traits<cocos2d::ActionInterval*>::metatable());
 lua["cc"]["ScaleTo"]=mt;
 mt["__new__"]=sol::overload(static_cast<cocos2d::ScaleTo*(*)(float,float,float,float)>(&cocos2d::ScaleTo::create),static_cast<cocos2d::ScaleTo*(*)(float,float,float)>(&cocos2d::ScaleTo::create),static_cast<cocos2d::ScaleTo*(*)(float,float)>(&cocos2d::ScaleTo::create));
+}
 }

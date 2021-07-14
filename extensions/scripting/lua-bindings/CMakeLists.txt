@@ -1,7 +1,6 @@
 set(cocos_root ${ADXE_ROOT_PATH})
 
 set(lua_bindings_manual_headers
-    manual/CCLuaBridge.h
     manual/CCRegisterLuaManual.h
     manual/CCLuaConvertSol.hpp
     manual/network/CCLuaWebSocket.h

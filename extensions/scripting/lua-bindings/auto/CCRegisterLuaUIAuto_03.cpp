@@ -1,5 +1,6 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaUIAuto.hpp"
 #include "ui/CocosGUI.h"
+namespace cocos2d{
 void RegisterLuaUIVideoPlayerEventTypeAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,5);
 enumTable["PLAYING"]=cocos2d::ui::VideoPlayer::EventType::PLAYING;
@@ -533,4 +534,5 @@ lua["ccui"]["QrCode"]=mt;
 mt["__new__"]=sol::overload(static_cast<cocos2d::ui::QrCode*(*)(const std::string&)>(&cocos2d::ui::QrCode::create),static_cast<cocos2d::ui::QrCode*(*)()>(&cocos2d::ui::QrCode::create));
 mt["LoadCodeByString"]=static_cast<bool(cocos2d::ui::QrCode::*)(const std::string&)>(&cocos2d::ui::QrCode::LoadCodeByString);
 mt["SetOriginSize"]=static_cast<void(cocos2d::ui::QrCode::*)()>(&cocos2d::ui::QrCode::SetOriginSize);
+}
 }

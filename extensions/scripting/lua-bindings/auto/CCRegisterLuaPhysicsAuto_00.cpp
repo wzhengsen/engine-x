@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaPhysicsAuto.hpp"
 #include "cocos2d.h"
 #if CC_USE_PHYSICS
+namespace cocos2d{
 void RegisterLuaPhysicsPhysicsShapeTypeAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,10);
 enumTable["UNKNOWN"]=cocos2d::PhysicsShape::Type::UNKNOWN;
@@ -316,5 +317,6 @@ mt["set"]["Data"]=mt["SetData"];
 mt["GetEventCode"]=static_cast<cocos2d::PhysicsContact::EventCode(cocos2d::PhysicsContact::*)()const>(&cocos2d::PhysicsContact::getEventCode);
 mt["get"]["EventCode"]=mt["GetEventCode"];
 RegisterLuaPhysicsPhysicsContactEventCodeAuto(lua);
+}
 }
 #endif

@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreParallaxNodeAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParallaxNode).name()] = sol::usertype_traits<cocos2d::ParallaxNode*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ParallaxNode>("deprecated.cocos2d::ParallaxNode");
@@ -281,4 +282,5 @@ mt["StartAll"]=static_cast<void(cocos2d::TMXTileAnimManager::*)()>(&cocos2d::TMX
 mt["StopAll"]=static_cast<void(cocos2d::TMXTileAnimManager::*)()>(&cocos2d::TMXTileAnimManager::stopAll);
 mt["GetTasks"]=static_cast<const cocos2d::Vector<cocos2d::TMXTileAnimTask *>&(cocos2d::TMXTileAnimManager::*)()const>(&cocos2d::TMXTileAnimManager::getTasks);
 mt["get"]["Tasks"]=mt["GetTasks"];
+}
 }

@@ -2,6 +2,7 @@
 #include "cocos2d.h"
 #include "3d/CCBundle3D.h"
 #include "renderer/backend/Buffer.h"
+namespace cocos2d{
 void RegisterLua3DSprite3DMaterialAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Sprite3DMaterial).name()] = sol::usertype_traits<cocos2d::Sprite3DMaterial*>::metatable();
 auto dep=lua.new_usertype<cocos2d::Sprite3DMaterial>("deprecated.cocos2d::Sprite3DMaterial");
@@ -43,7 +44,6 @@ mt["set"]["IsEnableFrustumCull"]=mt["SetIsEnableFrustumCull"];
 mt["SetAlphaMap"]=static_cast<void(cocos2d::Terrain::*)(cocos2d::Texture2D*)>(&cocos2d::Terrain::setAlphaMap);
 mt["set"]["AlphaMap"]=mt["SetAlphaMap"];
 mt["SetDetailMap"]=static_cast<void(cocos2d::Terrain::*)(unsigned int,cocos2d::Terrain::DetailMap)>(&cocos2d::Terrain::setDetailMap);
-mt["GetIntersectionPoint"]=sol::overload(static_cast<bool(cocos2d::Terrain::*)(const cocos2d::Ray&,cocos2d::Vec3&)const>(&cocos2d::Terrain::getIntersectionPoint),static_cast<cocos2d::Vec3(cocos2d::Terrain::*)(const cocos2d::Ray&)const>(&cocos2d::Terrain::getIntersectionPoint));
 mt["SetMaxDetailMapAmount"]=static_cast<void(cocos2d::Terrain::*)(int)>(&cocos2d::Terrain::setMaxDetailMapAmount);
 mt["set"]["MaxDetailMapAmount"]=mt["SetMaxDetailMapAmount"];
 mt["ConvertToTerrainSpace"]=static_cast<cocos2d::Vec2(cocos2d::Terrain::*)(const cocos2d::Vec2&)const>(&cocos2d::Terrain::convertToTerrainSpace);
@@ -82,4 +82,5 @@ mt["LoadMaterials"]=static_cast<bool(cocos2d::Bundle3D::*)(cocos2d::MaterialData
 mt["static"]["GetTrianglesList"]=static_cast<std::vector<cocos2d::Vec3, std::allocator<cocos2d::Vec3> >(*)(const std::string&)>(&cocos2d::Bundle3D::getTrianglesList);
 mt["static"]["LoadObj"]=sol::overload([](cocos2d::MeshDatas& arg0,cocos2d::MaterialDatas& arg1,cocos2d::NodeDatas& arg2,const std::string& arg3,const char* arg4){return cocos2d::Bundle3D::loadObj(arg0,arg1,arg2,arg3,arg4);},[](cocos2d::MeshDatas& arg0,cocos2d::MaterialDatas& arg1,cocos2d::NodeDatas& arg2,const std::string& arg3){return cocos2d::Bundle3D::loadObj(arg0,arg1,arg2,arg3);});
 mt["static"]["CalculateAABB"]=static_cast<cocos2d::AABB(*)(const std::vector<float, std::allocator<float> >&,int,const std::vector<unsigned short, std::allocator<unsigned short> >&)>(&cocos2d::Bundle3D::calculateAABB);
+}
 }

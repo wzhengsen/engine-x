@@ -307,111 +307,115 @@ bool ParticleSystem::initWithFile(const std::string& plistFile)
     return ret;
 }
 
-bool ParticleSystem::initWithDictionary(ValueMap& dictionary)
+bool ParticleSystem::initWithDictionary(const ValueMap& dictionary)
 {
     return initWithDictionary(dictionary, "");
 }
 
-bool ParticleSystem::initWithDictionary(ValueMap& dictionary, const std::string& dirname)
+inline static cocos2d::Value checkAndGet(const ValueMap& dictionary,const std::string& key) {
+    return dictionary.find(key) != dictionary.cend() ? dictionary.at(key) : cocos2d::Value();
+}
+
+bool ParticleSystem::initWithDictionary(const ValueMap& dictionary, const std::string& dirname)
 {
     bool ret = false;
     unsigned char *buffer = nullptr;
     Image *image = nullptr;
     do 
     {
-        int maxParticles = dictionary["maxParticles"].asInt();
+        int maxParticles = checkAndGet(dictionary, "maxParticles").asInt();
         // self, not super
         if(this->initWithTotalParticles(maxParticles))
         {
             // Emitter name in particle designer 2.0
-            _configName = dictionary["configName"].asString();
+            _configName = checkAndGet(dictionary, "configName").asString();
 
             // angle
-            _angle = dictionary["angle"].asFloat();
-            _angleVar = dictionary["angleVariance"].asFloat();
+            _angle = checkAndGet(dictionary, "angle").asFloat();
+            _angleVar = checkAndGet(dictionary, "angleVariance").asFloat();
 
             // duration
-            _duration = dictionary["duration"].asFloat();
+            _duration = checkAndGet(dictionary, "duration").asFloat();
 
             // blend function 
             if (!_configName.empty())
             {
-                _blendFunc.src = utils::toBackendBlendFactor((int)dictionary["blendFuncSource"].asFloat());
+                _blendFunc.src = utils::toBackendBlendFactor((int)checkAndGet(dictionary, "blendFuncSource").asFloat());
             }
             else
             {
-                _blendFunc.src = utils::toBackendBlendFactor(dictionary["blendFuncSource"].asInt());
+                _blendFunc.src = utils::toBackendBlendFactor(checkAndGet(dictionary, "blendFuncSource").asInt());
             }
-            _blendFunc.dst = utils::toBackendBlendFactor(dictionary["blendFuncDestination"].asInt());
+            _blendFunc.dst = utils::toBackendBlendFactor(checkAndGet(dictionary, "blendFuncDestination").asInt());
 
             // color
-            _startColor.r = dictionary["startColorRed"].asFloat();
-            _startColor.g = dictionary["startColorGreen"].asFloat();
-            _startColor.b = dictionary["startColorBlue"].asFloat();
-            _startColor.a = dictionary["startColorAlpha"].asFloat();
+            _startColor.r = checkAndGet(dictionary, "startColorRed").asFloat();
+            _startColor.g = checkAndGet(dictionary, "startColorGreen").asFloat();
+            _startColor.b = checkAndGet(dictionary, "startColorBlue").asFloat();
+            _startColor.a = checkAndGet(dictionary, "startColorAlpha").asFloat();
 
-            _startColorVar.r = dictionary["startColorVarianceRed"].asFloat();
-            _startColorVar.g = dictionary["startColorVarianceGreen"].asFloat();
-            _startColorVar.b = dictionary["startColorVarianceBlue"].asFloat();
-            _startColorVar.a = dictionary["startColorVarianceAlpha"].asFloat();
+            _startColorVar.r = checkAndGet(dictionary, "startColorVarianceRed").asFloat();
+            _startColorVar.g = checkAndGet(dictionary, "startColorVarianceGreen").asFloat();
+            _startColorVar.b = checkAndGet(dictionary, "startColorVarianceBlue").asFloat();
+            _startColorVar.a = checkAndGet(dictionary, "startColorVarianceAlpha").asFloat();
 
-            _endColor.r = dictionary["finishColorRed"].asFloat();
-            _endColor.g = dictionary["finishColorGreen"].asFloat();
-            _endColor.b = dictionary["finishColorBlue"].asFloat();
-            _endColor.a = dictionary["finishColorAlpha"].asFloat();
+            _endColor.r = checkAndGet(dictionary, "finishColorRed").asFloat();
+            _endColor.g = checkAndGet(dictionary, "finishColorGreen").asFloat();
+            _endColor.b = checkAndGet(dictionary, "finishColorBlue").asFloat();
+            _endColor.a = checkAndGet(dictionary, "finishColorAlpha").asFloat();
 
-            _endColorVar.r = dictionary["finishColorVarianceRed"].asFloat();
-            _endColorVar.g = dictionary["finishColorVarianceGreen"].asFloat();
-            _endColorVar.b = dictionary["finishColorVarianceBlue"].asFloat();
-            _endColorVar.a = dictionary["finishColorVarianceAlpha"].asFloat();
+            _endColorVar.r = checkAndGet(dictionary, "finishColorVarianceRed").asFloat();
+            _endColorVar.g = checkAndGet(dictionary, "finishColorVarianceGreen").asFloat();
+            _endColorVar.b = checkAndGet(dictionary, "finishColorVarianceBlue").asFloat();
+            _endColorVar.a = checkAndGet(dictionary, "finishColorVarianceAlpha").asFloat();
 
             // particle size
-            _startSize = dictionary["startParticleSize"].asFloat();
-            _startSizeVar = dictionary["startParticleSizeVariance"].asFloat();
-            _endSize = dictionary["finishParticleSize"].asFloat();
-            _endSizeVar = dictionary["finishParticleSizeVariance"].asFloat();
+            _startSize = checkAndGet(dictionary, "startParticleSize").asFloat();
+            _startSizeVar = checkAndGet(dictionary, "startParticleSizeVariance").asFloat();
+            _endSize = checkAndGet(dictionary, "finishParticleSize").asFloat();
+            _endSizeVar = checkAndGet(dictionary, "finishParticleSizeVariance").asFloat();
 
             // position
-            float x = dictionary["sourcePositionx"].asFloat();
-            float y = dictionary["sourcePositiony"].asFloat();
+            float x = checkAndGet(dictionary, "sourcePositionx").asFloat();
+            float y = checkAndGet(dictionary, "sourcePositiony").asFloat();
 	    if(!_sourcePositionCompatible) {
                 this->setSourcePosition(Vec2(x, y));
 	    }
             else {
 		this->setPosition(Vec2(x, y));
 	    }
-            _posVar.x = dictionary["sourcePositionVariancex"].asFloat();
-            _posVar.y = dictionary["sourcePositionVariancey"].asFloat();
+            _posVar.x = checkAndGet(dictionary, "sourcePositionVariancex").asFloat();
+            _posVar.y = checkAndGet(dictionary, "sourcePositionVariancey").asFloat();
 
             // Spinning
-            _startSpin = dictionary["rotationStart"].asFloat();
-            _startSpinVar = dictionary["rotationStartVariance"].asFloat();
-            _endSpin= dictionary["rotationEnd"].asFloat();
-            _endSpinVar= dictionary["rotationEndVariance"].asFloat();
+            _startSpin = checkAndGet(dictionary, "rotationStart").asFloat();
+            _startSpinVar = checkAndGet(dictionary, "rotationStartVariance").asFloat();
+            _endSpin= checkAndGet(dictionary, "rotationEnd").asFloat();
+            _endSpinVar= checkAndGet(dictionary, "rotationEndVariance").asFloat();
 
-            _emitterMode = (Mode) dictionary["emitterType"].asInt();
+            _emitterMode = (Mode) checkAndGet(dictionary, "emitterType").asInt();
 
             // Mode A: Gravity + tangential accel + radial accel
             if (_emitterMode == Mode::GRAVITY)
             {
                 // gravity
-                modeA.gravity.x = dictionary["gravityx"].asFloat();
-                modeA.gravity.y = dictionary["gravityy"].asFloat();
+                modeA.gravity.x = checkAndGet(dictionary, "gravityx").asFloat();
+                modeA.gravity.y = checkAndGet(dictionary, "gravityy").asFloat();
 
                 // speed
-                modeA.speed = dictionary["speed"].asFloat();
-                modeA.speedVar = dictionary["speedVariance"].asFloat();
+                modeA.speed = checkAndGet(dictionary, "speed").asFloat();
+                modeA.speedVar = checkAndGet(dictionary, "speedVariance").asFloat();
 
                 // radial acceleration
-                modeA.radialAccel = dictionary["radialAcceleration"].asFloat();
-                modeA.radialAccelVar = dictionary["radialAccelVariance"].asFloat();
+                modeA.radialAccel = checkAndGet(dictionary, "radialAcceleration").asFloat();
+                modeA.radialAccelVar = checkAndGet(dictionary, "radialAccelVariance").asFloat();
 
                 // tangential acceleration
-                modeA.tangentialAccel = dictionary["tangentialAcceleration"].asFloat();
-                modeA.tangentialAccelVar = dictionary["tangentialAccelVariance"].asFloat();
+                modeA.tangentialAccel = checkAndGet(dictionary, "tangentialAcceleration").asFloat();
+                modeA.tangentialAccelVar = checkAndGet(dictionary, "tangentialAccelVariance").asFloat();
                 
                 // rotation is dir
-                modeA.rotationIsDir = dictionary["rotationIsDir"].asBool();
+                modeA.rotationIsDir = checkAndGet(dictionary, "rotationIsDir").asBool();
             }
 
             // or Mode B: radius movement
@@ -419,25 +423,25 @@ bool ParticleSystem::initWithDictionary(ValueMap& dictionary, const std::string&
             {
                 if (!_configName.empty())
                 {
-                    modeB.startRadius = dictionary["maxRadius"].asInt();
+                    modeB.startRadius = checkAndGet(dictionary, "maxRadius").asInt();
                 }
                 else
                 {
-                    modeB.startRadius = dictionary["maxRadius"].asFloat();
+                    modeB.startRadius = checkAndGet(dictionary, "maxRadius").asFloat();
                 }
-                modeB.startRadiusVar = dictionary["maxRadiusVariance"].asFloat();
+                modeB.startRadiusVar = checkAndGet(dictionary, "maxRadiusVariance").asFloat();
                 if (!_configName.empty())
                 {
-                    modeB.endRadius = dictionary["minRadius"].asInt();
+                    modeB.endRadius = checkAndGet(dictionary, "minRadius").asInt();
                 }
                 else
                 {
-                    modeB.endRadius = dictionary["minRadius"].asFloat();
+                    modeB.endRadius = checkAndGet(dictionary, "minRadius").asFloat();
                 }
                 
                 if (dictionary.find("minRadiusVariance") != dictionary.end())
                 {
-                    modeB.endRadiusVar = dictionary["minRadiusVariance"].asFloat();
+                    modeB.endRadiusVar = checkAndGet(dictionary, "minRadiusVariance").asFloat();
                 }
                 else
                 {
@@ -446,13 +450,13 @@ bool ParticleSystem::initWithDictionary(ValueMap& dictionary, const std::string&
                 
                 if (!_configName.empty())
                 {
-                    modeB.rotatePerSecond = dictionary["rotatePerSecond"].asInt();
+                    modeB.rotatePerSecond = checkAndGet(dictionary, "rotatePerSecond").asInt();
                 }
                 else
                 {
-                    modeB.rotatePerSecond = dictionary["rotatePerSecond"].asFloat();
+                    modeB.rotatePerSecond = checkAndGet(dictionary, "rotatePerSecond").asFloat();
                 }
-                modeB.rotatePerSecondVar = dictionary["rotatePerSecondVariance"].asFloat();
+                modeB.rotatePerSecondVar = checkAndGet(dictionary, "rotatePerSecondVariance").asFloat();
 
             } else {
                 CCASSERT( false, "Invalid emitterType in config file");
@@ -460,8 +464,8 @@ bool ParticleSystem::initWithDictionary(ValueMap& dictionary, const std::string&
             }
 
             // life span
-            _life = dictionary["particleLifespan"].asFloat();
-            _lifeVar = dictionary["particleLifespanVariance"].asFloat();
+            _life = checkAndGet(dictionary, "particleLifespan").asFloat();
+            _lifeVar = checkAndGet(dictionary, "particleLifespanVariance").asFloat();
 
             // emission Rate
             _emissionRate = _totalParticles / _life;
@@ -474,7 +478,7 @@ bool ParticleSystem::initWithDictionary(ValueMap& dictionary, const std::string&
 
                 // texture        
                 // Try to get the texture from the cache
-                std::string textureName = dictionary["textureFileName"].asString();
+                std::string textureName = checkAndGet(dictionary, "textureFileName").asString();
                 
                 size_t rPos = textureName.rfind('/');
                

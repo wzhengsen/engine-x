@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreEventListenerTouchAllAtOnceAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventListenerTouchAllAtOnce).name()] = sol::usertype_traits<cocos2d::EventListenerTouchAllAtOnce*>::metatable();
 auto dep=lua.new_usertype<cocos2d::EventListenerTouchAllAtOnce>("deprecated.cocos2d::EventListenerTouchAllAtOnce");
@@ -152,4 +153,5 @@ lua["cc"]["ActionEase"]=mt;
 mt["__new__"] = [](){return nullptr;};
 mt["GetInnerAction"]=static_cast<cocos2d::ActionInterval*(cocos2d::ActionEase::*)()>(&cocos2d::ActionEase::getInnerAction);
 mt["get"]["InnerAction"]=mt["GetInnerAction"];
+}
 }

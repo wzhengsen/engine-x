@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreScaleByAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ScaleBy).name()] = sol::usertype_traits<cocos2d::ScaleBy*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ScaleBy>("deprecated.cocos2d::ScaleBy");
@@ -101,4 +102,5 @@ mt["SetForcedTarget"]=static_cast<void(cocos2d::TargetedAction::*)(cocos2d::Node
 mt["set"]["ForcedTarget"]=mt["SetForcedTarget"];
 mt["GetForcedTarget"]=static_cast<cocos2d::Node*(cocos2d::TargetedAction::*)()>(&cocos2d::TargetedAction::getForcedTarget);
 mt["get"]["ForcedTarget"]=mt["GetForcedTarget"];
+}
 }

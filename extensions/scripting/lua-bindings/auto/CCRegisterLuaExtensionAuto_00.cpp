@@ -4,6 +4,7 @@
 #include "Particle3D/PU/CCPUAffector.h"
 #include "Particle3D/PU/CCPUObserver.h"
 #include "Particle3D/CCParticle3DAffector.h"
+namespace cocos2d{
 void RegisterLuaExtensionLuaObjectAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::extension::LuaObject).name()] = sol::usertype_traits<cocos2d::extension::LuaObject*>::metatable();
 auto dep=lua.new_usertype<cocos2d::extension::LuaObject>("deprecated.cocos2d::extension::LuaObject");
@@ -114,4 +115,5 @@ dep[sol::base_classes]=sol::bases<cocos2d::EventListenerCustom,cocos2d::EventLis
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::extension::EventListenerAssetsManagerEx*>::metatable(),sol::usertype_traits<cocos2d::EventListenerCustom*>::metatable());
 lua["cc"]["EventListenerAssetsManagerEx"]=mt;
 mt["__new__"]=static_cast<cocos2d::extension::EventListenerAssetsManagerEx*(*)(cocos2d::extension::AssetsManagerEx*,const std::function<void (cocos2d::extension::EventAssetsManagerEx *)>&)>(&cocos2d::extension::EventListenerAssetsManagerEx::create);
+}
 }

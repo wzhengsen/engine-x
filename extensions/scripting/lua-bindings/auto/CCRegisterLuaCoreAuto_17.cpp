@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreLabelAtlasAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::LabelAtlas).name()] = sol::usertype_traits<cocos2d::LabelAtlas*>::metatable();
 auto dep=lua.new_usertype<cocos2d::LabelAtlas>("deprecated.cocos2d::LabelAtlas");
@@ -219,4 +220,5 @@ dep[sol::base_classes]=sol::bases<cocos2d::MenuItemLabel,cocos2d::MenuItem,cocos
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::MenuItemAtlasFont*>::metatable(),sol::usertype_traits<cocos2d::MenuItemLabel*>::metatable());
 lua["cc"]["MenuItemAtlasFont"]=mt;
 mt["__new__"]=sol::overload(static_cast<cocos2d::MenuItemAtlasFont*(*)(const std::string&,const std::string&,int,int,char,const cocos2d::MenuItem::MenuItemHandlerType&)>(&cocos2d::MenuItemAtlasFont::create),static_cast<cocos2d::MenuItemAtlasFont*(*)(const std::string&,const std::string&,int,int,char)>(&cocos2d::MenuItemAtlasFont::create));
+}
 }

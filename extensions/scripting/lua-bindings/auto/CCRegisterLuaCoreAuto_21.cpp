@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreTransitionMoveInLAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionMoveInL).name()] = sol::usertype_traits<cocos2d::TransitionMoveInL*>::metatable();
 auto dep=lua.new_usertype<cocos2d::TransitionMoveInL>("deprecated.cocos2d::TransitionMoveInL");
@@ -89,4 +90,5 @@ dep[sol::base_classes]=sol::bases<cocos2d::TransitionSceneOriented,cocos2d::Tran
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionFlipX*>::metatable(),sol::usertype_traits<cocos2d::TransitionSceneOriented*>::metatable());
 lua["cc"]["TransitionFlipX"]=mt;
 mt["__new__"]=sol::overload(static_cast<cocos2d::TransitionFlipX*(*)(float,cocos2d::Scene*,cocos2d::TransitionScene::Orientation)>(&cocos2d::TransitionFlipX::create),static_cast<cocos2d::TransitionFlipX*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionFlipX::create));
+}
 }

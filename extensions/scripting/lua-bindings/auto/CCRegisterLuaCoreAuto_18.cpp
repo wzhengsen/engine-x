@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreMenuItemFontAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::MenuItemFont).name()] = sol::usertype_traits<cocos2d::MenuItemFont*>::metatable();
 auto dep=lua.new_usertype<cocos2d::MenuItemFont>("deprecated.cocos2d::MenuItemFont");
@@ -394,10 +395,11 @@ auto dep=lua.new_usertype<cocos2d::ParticleSystemQuad>("deprecated.cocos2d::Part
 dep[sol::base_classes]=sol::bases<cocos2d::ParticleSystem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TextureProtocol,cocos2d::BlendProtocol,cocos2d::PlayableProtocol>();
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ParticleSystemQuad*>::metatable(),sol::usertype_traits<cocos2d::ParticleSystem*>::metatable());
 lua["cc"]["ParticleSystemQuad"]=mt;
-mt["__new__"]=sol::overload(static_cast<cocos2d::ParticleSystemQuad*(*)(cocos2d::ValueMap&)>(&cocos2d::ParticleSystemQuad::create),static_cast<cocos2d::ParticleSystemQuad*(*)(const std::string&)>(&cocos2d::ParticleSystemQuad::create),static_cast<cocos2d::ParticleSystemQuad*(*)()>(&cocos2d::ParticleSystemQuad::create));
+mt["__new__"]=sol::overload(static_cast<cocos2d::ParticleSystemQuad*(*)(const cocos2d::ValueMap&)>(&cocos2d::ParticleSystemQuad::create),static_cast<cocos2d::ParticleSystemQuad*(*)(const std::string&)>(&cocos2d::ParticleSystemQuad::create),static_cast<cocos2d::ParticleSystemQuad*(*)()>(&cocos2d::ParticleSystemQuad::create));
 mt["static"]["CreateWithTotalParticles"]=static_cast<cocos2d::ParticleSystemQuad*(*)(int)>(&cocos2d::ParticleSystemQuad::createWithTotalParticles);
 mt["SetDisplayFrame"]=static_cast<void(cocos2d::ParticleSystemQuad::*)(cocos2d::SpriteFrame*)>(&cocos2d::ParticleSystemQuad::setDisplayFrame);
 mt["set"]["DisplayFrame"]=mt["SetDisplayFrame"];
 mt["SetTextureWithRect"]=static_cast<void(cocos2d::ParticleSystemQuad::*)(cocos2d::Texture2D*,const cocos2d::Rect&)>(&cocos2d::ParticleSystemQuad::setTextureWithRect);
 mt["ListenRendererRecreated"]=static_cast<void(cocos2d::ParticleSystemQuad::*)(cocos2d::EventCustom*)>(&cocos2d::ParticleSystemQuad::listenRendererRecreated);
+}
 }

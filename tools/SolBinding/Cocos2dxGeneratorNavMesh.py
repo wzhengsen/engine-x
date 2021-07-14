@@ -46,3 +46,6 @@ class Cocos2dxGeneratorNavMesh(Cocos2dxGenerator):
         self.Classes += [
             "NavMesh", "NavMeshAgent.*", "NavMeshObstacle.*"
         ]
+        self.Skip |= {
+            "NavMesh": ["findPath"]
+        }

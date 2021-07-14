@@ -1,6 +1,7 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaCSLoaderAuto.hpp"
 #include "cocostudio/ActionTimeline/CSLoader.h"
 #include "cocostudio/ActionTimeline/CCActionTimeline.h"
+namespace cocos2d{
 void RegisterLuaCSLoaderCSLoaderAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::CSLoader).name()] = sol::usertype_traits<cocos2d::CSLoader*>::metatable();
 auto dep=lua.new_usertype<cocos2d::CSLoader>("deprecated.cocos2d::CSLoader");
@@ -27,9 +28,9 @@ mt["CreateNodeWithFlatBuffersFile"]=static_cast<cocos2d::Node*(cocos2d::CSLoader
 mt["NodeWithFlatBuffersFile"]=static_cast<cocos2d::Node*(cocos2d::CSLoader::*)(const std::string&)>(&cocos2d::CSLoader::nodeWithFlatBuffersFile);
 mt["NodeWithFlatBuffers"]=static_cast<cocos2d::Node*(cocos2d::CSLoader::*)(const flatbuffers::NodeTree*)>(&cocos2d::CSLoader::nodeWithFlatBuffers);
 mt["BindCallback"]=static_cast<bool(cocos2d::CSLoader::*)(const std::string&,const std::string&,cocos2d::ui::Widget*,cocos2d::Node*)>(&cocos2d::CSLoader::bindCallback);
-mt["RegistReaderObject"]=static_cast<void(cocos2d::CSLoader::*)(const std::string&,cocos2d::ObjectFactory::Instance)>(&cocos2d::CSLoader::registReaderObject);
 mt["CreateNodeWithFlatBuffersForSimulator"]=static_cast<cocos2d::Node*(cocos2d::CSLoader::*)(const std::string&)>(&cocos2d::CSLoader::createNodeWithFlatBuffersForSimulator);
 mt["NodeWithFlatBuffersForSimulator"]=static_cast<cocos2d::Node*(cocos2d::CSLoader::*)(const flatbuffers::NodeTree*)>(&cocos2d::CSLoader::nodeWithFlatBuffersForSimulator);
 mt["static"]["get"]["Instance"]=&cocos2d::CSLoader::getInstance;
 mt["static"]["set"]["Instance"]=[](std::nullptr_t){cocos2d::CSLoader::destroyInstance();};
+}
 }

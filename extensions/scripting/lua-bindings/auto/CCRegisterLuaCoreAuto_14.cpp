@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreReuseGridAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ReuseGrid).name()] = sol::usertype_traits<cocos2d::ReuseGrid*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ReuseGrid>("deprecated.cocos2d::ReuseGrid");
@@ -145,4 +146,5 @@ mt["GetAmplitudeRate"]=static_cast<float(cocos2d::Twirl::*)()const>(&cocos2d::Tw
 mt["get"]["AmplitudeRate"]=mt["GetAmplitudeRate"];
 mt["SetAmplitudeRate"]=static_cast<void(cocos2d::Twirl::*)(float)>(&cocos2d::Twirl::setAmplitudeRate);
 mt["set"]["AmplitudeRate"]=mt["SetAmplitudeRate"];
+}
 }

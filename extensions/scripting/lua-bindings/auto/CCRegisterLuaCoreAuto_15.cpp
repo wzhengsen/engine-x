@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreActionManagerAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ActionManager).name()] = sol::usertype_traits<cocos2d::ActionManager*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ActionManager>("deprecated.cocos2d::ActionManager");
@@ -122,4 +123,5 @@ mt["GetAmplitudeRate"]=static_cast<float(cocos2d::WavesTiles3D::*)()const>(&coco
 mt["get"]["AmplitudeRate"]=mt["GetAmplitudeRate"];
 mt["SetAmplitudeRate"]=static_cast<void(cocos2d::WavesTiles3D::*)(float)>(&cocos2d::WavesTiles3D::setAmplitudeRate);
 mt["set"]["AmplitudeRate"]=mt["SetAmplitudeRate"];
+}
 }

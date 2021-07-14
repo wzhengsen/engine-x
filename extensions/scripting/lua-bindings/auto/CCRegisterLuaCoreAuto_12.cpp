@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreEaseOutAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseOut).name()] = sol::usertype_traits<cocos2d::EaseOut*>::metatable();
 auto dep=lua.new_usertype<cocos2d::EaseOut>("deprecated.cocos2d::EaseOut");
@@ -92,4 +93,5 @@ dep[sol::base_classes]=sol::bases<cocos2d::ActionInstant,cocos2d::FiniteTimeActi
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::Hide*>::metatable(),sol::usertype_traits<cocos2d::ActionInstant*>::metatable());
 lua["cc"]["Hide"]=mt;
 mt["__new__"]=static_cast<cocos2d::Hide*(*)()>(&cocos2d::Hide::create);
+}
 }

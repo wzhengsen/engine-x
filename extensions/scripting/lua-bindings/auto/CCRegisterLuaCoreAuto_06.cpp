@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreActionFloatAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ActionFloat).name()] = sol::usertype_traits<cocos2d::ActionFloat*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ActionFloat>("deprecated.cocos2d::ActionFloat");
@@ -269,8 +270,6 @@ mt["static"]["GetInstance"]=static_cast<cocos2d::UserDefault*(*)()>(&cocos2d::Us
 mt["static"]["DestroyInstance"]=static_cast<void(*)()>(&cocos2d::UserDefault::destroyInstance);
 mt["static"]["SetDelegate"]=static_cast<void(*)(cocos2d::UserDefault*)>(&cocos2d::UserDefault::setDelegate);
 mt["static"]["set"]["Delegate"]=mt["SetDelegate"];
-mt["SetEncryptEnabled"]=static_cast<void(cocos2d::UserDefault::*)(bool,cxx17::string_view,cxx17::string_view)>(&cocos2d::UserDefault::setEncryptEnabled);
-mt["Encrypt"]=sol::overload(static_cast<void(cocos2d::UserDefault::*)(char*,size_t,int)>(&cocos2d::UserDefault::encrypt),static_cast<void(cocos2d::UserDefault::*)(std::string&,int)>(&cocos2d::UserDefault::encrypt));
 mt["static"]["get"]["Instance"]=&cocos2d::UserDefault::getInstance;
 mt["static"]["set"]["Instance"]=[](std::nullptr_t){cocos2d::UserDefault::destroyInstance();};
 }
@@ -336,7 +335,7 @@ mt["CreateDirectory"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(cons
 mt["RemoveDirectory"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::removeDirectory),static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::removeDirectory));
 mt["RemoveFile"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::removeFile),static_cast<bool(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::removeFile));
 mt["RenameFile"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,const std::string&,const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::renameFile),static_cast<void(cocos2d::FileUtils::*)(const std::string&,const std::string&,std::function<void (bool)>)const>(&cocos2d::FileUtils::renameFile),static_cast<bool(cocos2d::FileUtils::*)(const std::string&,const std::string&,const std::string&)const>(&cocos2d::FileUtils::renameFile),static_cast<bool(cocos2d::FileUtils::*)(const std::string&,const std::string&)const>(&cocos2d::FileUtils::renameFile));
-mt["GetFileSize"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (long long)>)const>(&cocos2d::FileUtils::getFileSize),static_cast<int64_t(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getFileSize));
+mt["GetFileSize"]=sol::overload(static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (int64_t)>)const>(&cocos2d::FileUtils::getFileSize),static_cast<int64_t(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::getFileSize));
 mt["ListFiles"]=static_cast<std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >(cocos2d::FileUtils::*)(const std::string&)const>(&cocos2d::FileUtils::listFiles);
 mt["ListFilesAsync"]=static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::function<void (std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >)>)const>(&cocos2d::FileUtils::listFilesAsync);
 mt["ListFilesRecursively"]=static_cast<void(cocos2d::FileUtils::*)(const std::string&,std::vector<std::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::basic_string<char, std::char_traits<char>, std::allocator<char> > > >*)const>(&cocos2d::FileUtils::listFilesRecursively);
@@ -431,4 +430,5 @@ dep[sol::base_classes]=sol::bases<cocos2d::Event,cocos2d::Ref,cocos2d::extension
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EventAcceleration*>::metatable(),sol::usertype_traits<cocos2d::Event*>::metatable());
 lua["cc"]["EventAcceleration"]=mt;
 mt["__new__"]=[](const cocos2d::Acceleration& arg0){return new cocos2d::EventAcceleration(arg0);};
+}
 }

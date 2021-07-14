@@ -1,5 +1,6 @@
 #include "scripting/lua-bindings/auto/CCRegisterLuaControllerAuto.hpp"
 #include "base/CCGameController.h"
+namespace cocos2d{
 extern void RegisterLuaControllerControllerAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaControllerEventControllerAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaControllerEventListenerControllerAuto(cocos2d::extension::Lua&);
@@ -10,4 +11,5 @@ RegisterLuaControllerControllerAuto(lua);
 RegisterLuaControllerEventControllerAuto(lua);
 RegisterLuaControllerEventListenerControllerAuto(lua);
 #endif
+}
 }

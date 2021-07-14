@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreTransitionFlipYAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionFlipY).name()] = sol::usertype_traits<cocos2d::TransitionFlipY*>::metatable();
 auto dep=lua.new_usertype<cocos2d::TransitionFlipY>("deprecated.cocos2d::TransitionFlipY");
@@ -88,4 +89,5 @@ dep[sol::base_classes]=sol::bases<cocos2d::TransitionSplitCols,cocos2d::Transiti
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionSplitRows*>::metatable(),sol::usertype_traits<cocos2d::TransitionSplitCols*>::metatable());
 lua["cc"]["TransitionSplitRows"]=mt;
 mt["__new__"]=static_cast<cocos2d::TransitionSplitRows*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionSplitRows::create);
+}
 }

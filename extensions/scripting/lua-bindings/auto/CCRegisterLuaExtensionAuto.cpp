@@ -4,6 +4,7 @@
 #include "Particle3D/PU/CCPUAffector.h"
 #include "Particle3D/PU/CCPUObserver.h"
 #include "Particle3D/CCParticle3DAffector.h"
+namespace cocos2d{
 extern void RegisterLuaExtensionLuaObjectAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaExtensionEventAssetsManagerExAuto(cocos2d::extension::Lua&);
 extern void RegisterLuaExtensionManifestAuto(cocos2d::extension::Lua&);
@@ -16,4 +17,5 @@ RegisterLuaExtensionEventAssetsManagerExAuto(lua);
 RegisterLuaExtensionManifestAuto(lua);
 RegisterLuaExtensionAssetsManagerExAuto(lua);
 RegisterLuaExtensionEventListenerAssetsManagerExAuto(lua);
+}
 }

@@ -126,7 +126,7 @@ public:
     /**
      * Check if the position is inside the bone.
      */
-    virtual bool containPoint(cocos2d::Vec2 &_point);
+    virtual bool containPoint(const cocos2d::Vec2 &_point);
 
     /**
      * Check if the position is inside the bone.

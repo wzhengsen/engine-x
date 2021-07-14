@@ -8,6 +8,7 @@
 #include "navmesh/CCNavMesh.h"
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
+namespace cocos2d{
 void RegisterLuaCoreEaseBounceInOutAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EaseBounceInOut).name()] = sol::usertype_traits<cocos2d::EaseBounceInOut*>::metatable();
 auto dep=lua.new_usertype<cocos2d::EaseBounceInOut>("deprecated.cocos2d::EaseBounceInOut");
@@ -87,4 +88,5 @@ dep[sol::base_classes]=sol::bases<cocos2d::ActionEase,cocos2d::ActionInterval,co
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::EaseQuarticActionInOut*>::metatable(),sol::usertype_traits<cocos2d::ActionEase*>::metatable());
 lua["cc"]["EaseQuarticActionInOut"]=mt;
 mt["__new__"]=static_cast<cocos2d::EaseQuarticActionInOut*(*)(cocos2d::ActionInterval*)>(&cocos2d::EaseQuarticActionInOut::create);
+}
 }

@@ -41,6 +41,7 @@ class Cocos2dxGenerator(BaseGenerator):
             ]
         super().__init__(outputPath, fileName, enumForLua, clearOldFile)
 
+        self.ToNameSpace = "cocos2d"
         self.Tag = suffix
         self.SearchPaths += [
             os.path.join(self.CocosRoot, "cocos"),

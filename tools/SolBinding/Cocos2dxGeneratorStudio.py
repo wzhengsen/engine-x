@@ -45,7 +45,7 @@ class Cocos2dxGeneratorStudio(Cocos2dxGenerator):
             "MovementEventType", "InnerActionType"
         ]
         self.Skip |= {
-            "GUIReader": ["getParseCallBackMap", "getParseObjectMap"],
+            "GUIReader": ["getParseCallBackMap", "getParseObjectMap", "registerTypeAndCallBack"],
             "BoneData": ["displayDataList"],
             "ArmatureData": ["boneDataDic"],
             "MovementBoneData": ["frameList"],
