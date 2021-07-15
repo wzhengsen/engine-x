@@ -48,7 +48,7 @@ class CC_DLL Action : public Ref, public Clonable
 {
 public:
     /** Default tag used for all the actions. */
-    static const int INVALID_TAG = -1;
+    inline static constexpr int INVALID_TAG = -1;
     /**
      * @js NA
      * @lua NA

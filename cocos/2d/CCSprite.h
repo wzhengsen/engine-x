@@ -101,7 +101,7 @@ public:
         QUAD_BATCHNODE
     };
      /** Sprite invalid index on the SpriteBatchNode. */
-    static const int INDEX_NOT_INITIALIZED = -1;
+    inline static constexpr int INDEX_NOT_INITIALIZED = -1;
 
     /// @name Creators
     /// @{

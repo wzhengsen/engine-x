@@ -178,6 +178,44 @@ void Device::vibrate(uint32_t duration)
     JniHelper::callStaticVoidMethod(helperClassName, "vibrate", static_cast<int>(duration));
 }
 
+double Device::GetBatteryPercent() noexcept {
+    return cocos2d::JniHelper::callStaticDoubleMethod(helperClassName, "GetBatteryPercent");
+}
+
+bool Device::IsBatteryCharge() noexcept {
+    return cocos2d::JniHelper::callStaticBooleanMethod(helperClassName, "IsBatteryCharge");
+}
+
+uint8_t Device::GetWifiLevel() noexcept {
+    return static_cast<uint8_t>(cocos2d::JniHelper::callStaticIntMethod(helperClassName, "GetWifiLevel"));
+}
+
+Device::NetworkType Device::GetNetwork() noexcept {
+    int ret = cocos2d::JniHelper::callStaticIntMethod(helperClassName, "GetNetworkType");
+    return static_cast<NetworkType>(ret);
+}
+
+Device::OrientationType Device::GetOrientation() {
+    int ret = cocos2d::JniHelper::callStaticIntMethod(helperClassName, "GetOrientation");
+    return static_cast<OrientationType>(ret);
+}
+
+void Device::SetOrientation(Device::OrientationType ot) {
+    cocos2d::JniHelper::callStaticVoidMethod(helperClassName, "SetOrientation", static_cast<int>(ot));
+}
+
+bool Device::IsAutoOrientation() noexcept {
+    return cocos2d::JniHelper::callStaticBooleanMethod(helperClassName, "IsAutoOrientation");
+}
+
+std::string Device::GetIp() {
+    return cocos2d::JniHelper::callStaticStringMethod(helperClassName, "GetIp");
+}
+
+std::string Device::GetId() {
+    return cocos2d::JniHelper::callStaticStringMethod(helperClassName, "GetId");
+}
+
 NS_CC_END
 
 // this method is called by Cocos2dxBitmap

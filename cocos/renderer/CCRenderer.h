@@ -132,13 +132,13 @@ class CC_DLL Renderer
 public:
     
     /**The max number of vertices in a vertex buffer object.*/
-    static const int VBO_SIZE = 65536;
+    inline static constexpr int VBO_SIZE = 65536;
     /**The max number of indices in a index buffer.*/
-    static const int INDEX_VBO_SIZE = VBO_SIZE * 6 / 4;
+    inline static constexpr int INDEX_VBO_SIZE = VBO_SIZE * 6 / 4;
     /**The rendercommands which can be batched will be saved into a list, this is the reserved size of this list.*/
-    static const int BATCH_TRIAGCOMMAND_RESERVED_SIZE = 64;
+    inline static constexpr int BATCH_TRIAGCOMMAND_RESERVED_SIZE = 64;
     /**Reserved for material id, which means that the command could not be batched.*/
-    static const int MATERIAL_ID_DO_NOT_BATCH = 0;
+    inline static constexpr int MATERIAL_ID_DO_NOT_BATCH = 0;
     /**Constructor.*/
     Renderer();
     /**Destructor.*/

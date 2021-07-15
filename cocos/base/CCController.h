@@ -111,7 +111,7 @@ public:
         bool isAnalog;
     }KeyStatus;
 
-    static const int TAG_UNSET = -1;
+    inline static constexpr int TAG_UNSET = -1;
 
     /**
      * Gets all Controller objects.

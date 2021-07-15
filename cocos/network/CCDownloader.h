@@ -50,16 +50,16 @@ class CC_DLL DownloadTask final : public cocos2d::extension::LuaObject {
 class CC_DLL DownloadTask final {
 #endif
 public:
-    const static int ERROR_NO_ERROR            = 0;
-    const static int ERROR_INVALID_PARAMS      = -1;
-    const static int ERROR_OPEN_FILE_FAILED    = -2;
-    const static int ERROR_IMPL_INTERNAL       = -3;
-    const static int ERROR_TASK_DUPLICATED     = -4;
-    const static int ERROR_CREATE_DIR_FAILED   = -5;
-    const static int ERROR_REMOVE_FILE_FAILED  = -6;
-    const static int ERROR_RENAME_FILE_FAILED  = -7;
-    const static int ERROR_CHECK_SUM_FAILED    = -8;
-    const static int ERROR_ORIGIN_FILE_MISSING = -9;
+    inline static constexpr int ERROR_NO_ERROR            = 0;
+    inline static constexpr int ERROR_INVALID_PARAMS      = -1;
+    inline static constexpr int ERROR_OPEN_FILE_FAILED    = -2;
+    inline static constexpr int ERROR_IMPL_INTERNAL       = -3;
+    inline static constexpr int ERROR_TASK_DUPLICATED     = -4;
+    inline static constexpr int ERROR_CREATE_DIR_FAILED   = -5;
+    inline static constexpr int ERROR_REMOVE_FILE_FAILED  = -6;
+    inline static constexpr int ERROR_RENAME_FILE_FAILED  = -7;
+    inline static constexpr int ERROR_CHECK_SUM_FAILED    = -8;
+    inline static constexpr int ERROR_ORIGIN_FILE_MISSING = -9;
 
     std::string identifier;
     std::string requestURL;
