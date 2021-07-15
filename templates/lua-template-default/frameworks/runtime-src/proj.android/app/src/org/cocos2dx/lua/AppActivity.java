@@ -48,11 +48,4 @@ public class AppActivity extends Cocos2dxActivity{
         // DO OTHER INITIALIZATION BELOW
         
     }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        Cocos2dxHelper.OnOrientationChanged(newConfig.orientation);
-    }
 }

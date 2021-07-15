@@ -1,6 +1,5 @@
-import org.gradle.internal.os.OperatingSystem;
+import org.gradle.internal.os.OperatingSystem
 import java.nio.file.Paths
-import java.nio.file.Files
 
 apply plugin: 'com.android.application'
 apply from: project(':libcocos2dx').projectDir.toString() + "/adxetools.gradle"
@@ -45,7 +44,7 @@ android {
 
     externalNativeBuild {
         cmake {
-            version "3.10.2"
+            version "3.18.1"
             path "../../../../CMakeLists.txt"
         }
     }
@@ -95,7 +94,7 @@ android {
 
 // a method used to invoke the python deal
 def PythonDeal(srcDir, dstDir, releaseTask) {
-    def compileArgs = ["${projectDir}/../../../../tool/python/RunMe.py", '-s', srcDir, '-d', dstDir]
+    def compileArgs = [Paths.get("${System.env.ADXE_ROOT}/tools/Project/main.py"), '-s', srcDir, '-d', dstDir]
     if (releaseTask) {
         compileArgs << '--release'
     }
@@ -103,9 +102,17 @@ def PythonDeal(srcDir, dstDir, releaseTask) {
         compileArgs << '--debug'
     }
 
-    exec {
-        executable "python3"
-        args compileArgs
+    if (OperatingSystem.current().isWindows()){
+        exec {
+            executable "py"
+            args compileArgs
+        }
+    }
+    else {
+        exec {
+            executable "python3"
+            args compileArgs
+        }
     }
 }
 
@@ -123,7 +130,7 @@ android.applicationVariants.all { variant ->
             if (releaseTask) {
                 delete dest_assets_folder
             }
-            PythonDeal(project_root_folder + "/Resources", dest_assets_folder, releaseTask)
+            PythonDeal(project_root_folder, dest_assets_folder, releaseTask)
         }
     }
     tasks.getByName("pre${targetName}Build").dependsOn copyTaskName
