@@ -26,6 +26,7 @@ package org.cocos2dx.lib;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.opengl.GLSurfaceView;
 import android.os.Handler;
 import android.os.Message;
@@ -61,6 +62,8 @@ public class Cocos2dxGLSurfaceView extends GLSurfaceView {
 
     private boolean mSoftKeyboardShown = false;
     private boolean mMultipleTouchEnabled = true;
+
+    private int mOrientation = Configuration.ORIENTATION_UNDEFINED;
 
     public boolean isSoftKeyboardShown() {
         return mSoftKeyboardShown;
@@ -200,6 +203,31 @@ public class Cocos2dxGLSurfaceView extends GLSurfaceView {
         });
         this.setRenderMode(RENDERMODE_WHEN_DIRTY);
         super.onPause();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig){
+        super.onConfigurationChanged(newConfig);
+        int orientation = newConfig.orientation;
+        if (orientation != mOrientation){
+            mOrientation = orientation;
+            if (mOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+                this.queueEvent(new Runnable() {
+                    @Override
+                    public void run() {
+                        Cocos2dxGLSurfaceView.this.mCocos2dxRenderer.handleOnEnterLandscape();
+                    }
+                });
+            }
+            else if (mOrientation == Configuration.ORIENTATION_PORTRAIT){
+                this.queueEvent(new Runnable() {
+                    @Override
+                    public void run() {
+                        Cocos2dxGLSurfaceView.this.mCocos2dxRenderer.handleOnEnterPortrait();
+                    }
+                });
+            }
+        }
     }
 
     @Override

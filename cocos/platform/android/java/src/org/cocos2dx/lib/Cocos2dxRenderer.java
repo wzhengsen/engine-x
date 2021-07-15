@@ -122,6 +122,8 @@ public class Cocos2dxRenderer implements GLSurfaceView.Renderer {
     private static native void nativeOnSurfaceChanged(final int width, final int height);
     private static native void nativeOnPause();
     private static native void nativeOnResume();
+    private static native void nativeOnEnterLandscape();
+    private static native void nativeOnEnterPortrait();
 
     public void handleActionDown(final int id, final float x, final float y) {
         Cocos2dxRenderer.nativeTouchesBegin(id, x, y);
@@ -162,6 +164,14 @@ public class Cocos2dxRenderer implements GLSurfaceView.Renderer {
 
     public void handleOnResume() {
         Cocos2dxRenderer.nativeOnResume();
+    }
+
+    public void handleOnEnterLandscape() {
+        Cocos2dxRenderer.nativeOnEnterLandscape();
+    }
+
+    public void handleOnEnterPortrait() {
+        Cocos2dxRenderer.nativeOnEnterPortrait();
     }
 
     private static native void nativeInsertText(final String text);

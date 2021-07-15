@@ -94,6 +94,17 @@ public:
     virtual void applicationWillEnterForeground() = 0;
 
     /**
+    * @brief  This function will be called when the application enters portrait.
+    */
+    virtual void ApplicationDidEnterPortrait() = 0;
+
+    /**
+    * @brief  This function will be called when the application enters landscape.
+
+    */
+    virtual void ApplicationDidEnterLandscape() = 0;
+
+    /**
     * @brief    Callback by Director for limit FPS.
     * @param interval The time, expressed in seconds, between current frame and next.
     * @js NA

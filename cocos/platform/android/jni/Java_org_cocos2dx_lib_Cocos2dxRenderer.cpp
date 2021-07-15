@@ -65,6 +65,18 @@ extern "C" {
         }
     }
 
+    JNIEXPORT void JNICALL Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeOnEnterLandscape(JNIEnv*, jclass) {
+        if (Director::getInstance()->getOpenGLView()) {
+            Application::getInstance()->ApplicationDidEnterLandscape();
+        }
+    }
+
+    JNIEXPORT void JNICALL Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeOnEnterPortrait(JNIEnv*, jclass) {
+        if (Director::getInstance()->getOpenGLView()) {
+            Application::getInstance()->ApplicationDidEnterPortrait();
+        }
+    }
+
     JNIEXPORT void JNICALL Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeInsertText(JNIEnv* env, jclass, jstring text) {
         std::string  strValue = cocos2d::StringUtils::getStringUTFCharsJNI(env, text);
         const char* pszText = strValue.c_str();

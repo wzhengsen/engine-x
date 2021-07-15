@@ -47,6 +47,11 @@ LUALIB_API int luaopen_pb_unsafe(lua_State* L);
 #include "base/CCZip.h"
 #include "base/ccUtils.h"
 
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+#include "scripting/lua-bindings/manual/platform/android/CCLuaJavaBridge.h"
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+#endif
+
 using namespace cocos2d;
 
 static void RegisterLuaCoreZipManual(extension::Lua& lua) {
@@ -374,6 +379,15 @@ static void RegisterLuaCoreUtilsManual(extension::Lua& lua) {
     };
 }
 
+static void RegisterLuaBridgeManual(extension::Lua& lua) {
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+    LuaJavaBridge::luaopen_luaj(lua.lua_state());
+#elif (CC_TARGET_PLATFORM == CC_PLATFORM_MAC) || (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
+    LuaObjcBridge::luaopen_luaoc(lua.lua_state());
+#endif
+}
+
+
 void RegisterLuaManual(extension::Lua& lua) {
     RegisterCJsonManual(lua);
     RegisterLua_ProtobufManual(lua);
@@ -396,4 +410,5 @@ void RegisterLuaManual(extension::Lua& lua) {
     extension::LuaHttpRequest::RegisterLuaHttpRequestManual(lua);
     RegisterLuaCoreZipManual(lua);
     RegisterLuaCoreUtilsManual(lua);
+    RegisterLuaBridgeManual(lua);
 }

@@ -61,7 +61,7 @@ enum LuaBridgeError {
  * @lua NA
  * @js NA
  */
-class LuaBridge
+class LuaBridge : public cocos2d::extension::Lua
 {
 public:
     static void releaseLuaFunction(int functionId);

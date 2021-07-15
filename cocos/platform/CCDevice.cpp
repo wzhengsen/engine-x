@@ -64,15 +64,13 @@ void Device::SetOrientation(OrientationType ot) {
         isAutoOri = false;
         curOriType = ot;
 
-#if CC_ENABLE_LUA_BINDING
         auto e = Director::getInstance()->getEventDispatcher();
         if (ot == OrientationType::Landscape) {
-            e->dispatchCustomEvent("DeviceToLandscape");
+            Application::getInstance()->ApplicationDidEnterLandscape();
         }
         else if (ot == OrientationType::Portrait) {
-            e->dispatchCustomEvent("DeviceToPortrait");
+            Application::getInstance()->ApplicationDidEnterPortrait();
         }
-#endif
     }
     else {
         isAutoOri = true;

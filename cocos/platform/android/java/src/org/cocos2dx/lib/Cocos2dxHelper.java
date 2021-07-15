@@ -397,7 +397,7 @@ public class Cocos2dxHelper {
                 return text.toString();
             }
         } catch (Exception e) {
-            Log.e(TAG, "GetClipboard error");
+           return "";
         }
         return "";
     }
@@ -592,31 +592,6 @@ public class Cocos2dxHelper {
         }
     }
 
-    static private int OnLuaOrientationChanged = 0;
-    public static void OnOrientationChanged(final int ori) {
-        if (OnLuaOrientationChanged != 0) {
-            sActivity.runOnGLThread(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            if (ori == Configuration.ORIENTATION_PORTRAIT) {
-                                LuaJavaBridge.callLuaFunctionWithLong(OnLuaOrientationChanged, 1);
-                            } else if (ori == Configuration.ORIENTATION_LANDSCAPE) {
-                                LuaJavaBridge.callLuaFunctionWithLong(OnLuaOrientationChanged, 0);
-                            }
-                        }
-                    }
-            );
-        }
-    }
-
-    public static void SetOnLuaOrientationChanged(int luaCallback) {
-        if (OnLuaOrientationChanged != 0) {
-            LuaJavaBridge.releaseLuaFunction(OnLuaOrientationChanged);
-        }
-        OnLuaOrientationChanged = luaCallback;
-    }
-
     public static boolean IsAutoOrientation() {
         return sActivity.getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_SENSOR;
     }
@@ -670,6 +645,7 @@ public class Cocos2dxHelper {
                 }
             }
         } catch (Exception ignored) {
+            return 0;
         }
         return 0;
     }
@@ -700,7 +676,7 @@ public class Cocos2dxHelper {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                return "";
             }
         }
         return "";
@@ -727,10 +703,10 @@ public class Cocos2dxHelper {
                 return buf.toString();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            return "";
         }
 
-        return null;
+        return "";
     }
 
     /*
@@ -783,7 +759,7 @@ public class Cocos2dxHelper {
 
             CacheId = deviceId.toString();
         } catch (Exception e) {
-            e.printStackTrace();
+            return "";
         }
 
         return CacheId;
