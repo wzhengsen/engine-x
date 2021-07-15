@@ -9,38 +9,6 @@
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
 namespace cocos2d{
-void RegisterLuaCoreReuseGridAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ReuseGrid).name()] = sol::usertype_traits<cocos2d::ReuseGrid*>::metatable();
-auto dep=lua.new_usertype<cocos2d::ReuseGrid>("deprecated.cocos2d::ReuseGrid");
-dep[sol::base_classes]=sol::bases<cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ReuseGrid*>::metatable(),sol::usertype_traits<cocos2d::ActionInstant*>::metatable());
-lua["cc"]["ReuseGrid"]=mt;
-mt["__new__"]=static_cast<cocos2d::ReuseGrid*(*)(int)>(&cocos2d::ReuseGrid::create);
-}
-void RegisterLuaCoreWaves3DAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Waves3D).name()] = sol::usertype_traits<cocos2d::Waves3D*>::metatable();
-auto dep=lua.new_usertype<cocos2d::Waves3D>("deprecated.cocos2d::Waves3D");
-dep[sol::base_classes]=sol::bases<cocos2d::Grid3DAction,cocos2d::GridAction,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::Waves3D*>::metatable(),sol::usertype_traits<cocos2d::Grid3DAction*>::metatable());
-lua["cc"]["Waves3D"]=mt;
-mt["__new__"]=static_cast<cocos2d::Waves3D*(*)(float,const cocos2d::Size&,unsigned int,float)>(&cocos2d::Waves3D::create);
-mt["GetAmplitude"]=static_cast<float(cocos2d::Waves3D::*)()const>(&cocos2d::Waves3D::getAmplitude);
-mt["get"]["Amplitude"]=mt["GetAmplitude"];
-mt["SetAmplitude"]=static_cast<void(cocos2d::Waves3D::*)(float)>(&cocos2d::Waves3D::setAmplitude);
-mt["set"]["Amplitude"]=mt["SetAmplitude"];
-mt["GetAmplitudeRate"]=static_cast<float(cocos2d::Waves3D::*)()const>(&cocos2d::Waves3D::getAmplitudeRate);
-mt["get"]["AmplitudeRate"]=mt["GetAmplitudeRate"];
-mt["SetAmplitudeRate"]=static_cast<void(cocos2d::Waves3D::*)(float)>(&cocos2d::Waves3D::setAmplitudeRate);
-mt["set"]["AmplitudeRate"]=mt["SetAmplitudeRate"];
-}
-void RegisterLuaCoreFlipX3DAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::FlipX3D).name()] = sol::usertype_traits<cocos2d::FlipX3D*>::metatable();
-auto dep=lua.new_usertype<cocos2d::FlipX3D>("deprecated.cocos2d::FlipX3D");
-dep[sol::base_classes]=sol::bases<cocos2d::Grid3DAction,cocos2d::GridAction,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::FlipX3D*>::metatable(),sol::usertype_traits<cocos2d::Grid3DAction*>::metatable());
-lua["cc"]["FlipX3D"]=mt;
-mt["__new__"]=static_cast<cocos2d::FlipX3D*(*)(float)>(&cocos2d::FlipX3D::create);
-}
 void RegisterLuaCoreFlipY3DAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::FlipY3D).name()] = sol::usertype_traits<cocos2d::FlipY3D*>::metatable();
 auto dep=lua.new_usertype<cocos2d::FlipY3D>("deprecated.cocos2d::FlipY3D");
@@ -146,5 +114,46 @@ mt["GetAmplitudeRate"]=static_cast<float(cocos2d::Twirl::*)()const>(&cocos2d::Tw
 mt["get"]["AmplitudeRate"]=mt["GetAmplitudeRate"];
 mt["SetAmplitudeRate"]=static_cast<void(cocos2d::Twirl::*)(float)>(&cocos2d::Twirl::setAmplitudeRate);
 mt["set"]["AmplitudeRate"]=mt["SetAmplitudeRate"];
+}
+void RegisterLuaCoreActionManagerAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ActionManager).name()] = sol::usertype_traits<cocos2d::ActionManager*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ActionManager>("deprecated.cocos2d::ActionManager");
+dep[sol::base_classes]=sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ActionManager*>::metatable(),sol::usertype_traits<cocos2d::Ref*>::metatable());
+lua["cc"]["ActionManager"]=mt;
+mt["__new__"]=[](){return new cocos2d::ActionManager();};
+mt["AddAction"]=static_cast<void(cocos2d::ActionManager::*)(cocos2d::Action*,cocos2d::Node*,bool)>(&cocos2d::ActionManager::addAction);
+mt["RemoveAllActions"]=static_cast<void(cocos2d::ActionManager::*)()>(&cocos2d::ActionManager::removeAllActions);
+mt["RemoveAllActionsFromTarget"]=static_cast<void(cocos2d::ActionManager::*)(cocos2d::Node*)>(&cocos2d::ActionManager::removeAllActionsFromTarget);
+mt["RemoveAction"]=static_cast<void(cocos2d::ActionManager::*)(cocos2d::Action*)>(&cocos2d::ActionManager::removeAction);
+mt["RemoveActionByTag"]=static_cast<void(cocos2d::ActionManager::*)(int,cocos2d::Node*)>(&cocos2d::ActionManager::removeActionByTag);
+mt["RemoveAllActionsByTag"]=static_cast<void(cocos2d::ActionManager::*)(int,cocos2d::Node*)>(&cocos2d::ActionManager::removeAllActionsByTag);
+mt["RemoveActionsByFlags"]=static_cast<void(cocos2d::ActionManager::*)(unsigned int,cocos2d::Node*)>(&cocos2d::ActionManager::removeActionsByFlags);
+mt["GetActionByTag"]=static_cast<cocos2d::Action*(cocos2d::ActionManager::*)(int,const cocos2d::Node*)const>(&cocos2d::ActionManager::getActionByTag);
+mt["GetNumberOfRunningActionsInTarget"]=static_cast<ssize_t(cocos2d::ActionManager::*)(const cocos2d::Node*)const>(&cocos2d::ActionManager::getNumberOfRunningActionsInTarget);
+mt["GetNumberOfRunningActions"]=static_cast<ssize_t(cocos2d::ActionManager::*)()const>(&cocos2d::ActionManager::getNumberOfRunningActions);
+mt["get"]["NumberOfRunningActions"]=mt["GetNumberOfRunningActions"];
+mt["GetNumberOfRunningActionsInTargetByTag"]=static_cast<size_t(cocos2d::ActionManager::*)(const cocos2d::Node*,int)>(&cocos2d::ActionManager::getNumberOfRunningActionsInTargetByTag);
+mt["PauseTarget"]=static_cast<void(cocos2d::ActionManager::*)(cocos2d::Node*)>(&cocos2d::ActionManager::pauseTarget);
+mt["ResumeTarget"]=static_cast<void(cocos2d::ActionManager::*)(cocos2d::Node*)>(&cocos2d::ActionManager::resumeTarget);
+mt["PauseAllRunningActions"]=static_cast<cocos2d::Vector<cocos2d::Node *>(cocos2d::ActionManager::*)()>(&cocos2d::ActionManager::pauseAllRunningActions);
+mt["ResumeTargets"]=static_cast<void(cocos2d::ActionManager::*)(const cocos2d::Vector<cocos2d::Node *>&)>(&cocos2d::ActionManager::resumeTargets);
+mt["Update"]=static_cast<void(cocos2d::ActionManager::*)(float)>(&cocos2d::ActionManager::update);
+}
+void RegisterLuaCoreProgressToAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ProgressTo).name()] = sol::usertype_traits<cocos2d::ProgressTo*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ProgressTo>("deprecated.cocos2d::ProgressTo");
+dep[sol::base_classes]=sol::bases<cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ProgressTo*>::metatable(),sol::usertype_traits<cocos2d::ActionInterval*>::metatable());
+lua["cc"]["ProgressTo"]=mt;
+mt["__new__"]=static_cast<cocos2d::ProgressTo*(*)(float,float)>(&cocos2d::ProgressTo::create);
+}
+void RegisterLuaCoreProgressFromToAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ProgressFromTo).name()] = sol::usertype_traits<cocos2d::ProgressFromTo*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ProgressFromTo>("deprecated.cocos2d::ProgressFromTo");
+dep[sol::base_classes]=sol::bases<cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ProgressFromTo*>::metatable(),sol::usertype_traits<cocos2d::ActionInterval*>::metatable());
+lua["cc"]["ProgressFromTo"]=mt;
+mt["__new__"]=static_cast<cocos2d::ProgressFromTo*(*)(float,float,float)>(&cocos2d::ProgressFromTo::create);
 }
 }

@@ -9,38 +9,6 @@
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
 namespace cocos2d{
-void RegisterLuaCoreJumpTiles3DAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::JumpTiles3D).name()] = sol::usertype_traits<cocos2d::JumpTiles3D*>::metatable();
-auto dep=lua.new_usertype<cocos2d::JumpTiles3D>("deprecated.cocos2d::JumpTiles3D");
-dep[sol::base_classes]=sol::bases<cocos2d::TiledGrid3DAction,cocos2d::GridAction,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::JumpTiles3D*>::metatable(),sol::usertype_traits<cocos2d::TiledGrid3DAction*>::metatable());
-lua["cc"]["JumpTiles3D"]=mt;
-mt["__new__"]=static_cast<cocos2d::JumpTiles3D*(*)(float,const cocos2d::Size&,unsigned int,float)>(&cocos2d::JumpTiles3D::create);
-mt["GetAmplitude"]=static_cast<float(cocos2d::JumpTiles3D::*)()const>(&cocos2d::JumpTiles3D::getAmplitude);
-mt["get"]["Amplitude"]=mt["GetAmplitude"];
-mt["SetAmplitude"]=static_cast<void(cocos2d::JumpTiles3D::*)(float)>(&cocos2d::JumpTiles3D::setAmplitude);
-mt["set"]["Amplitude"]=mt["SetAmplitude"];
-mt["GetAmplitudeRate"]=static_cast<float(cocos2d::JumpTiles3D::*)()const>(&cocos2d::JumpTiles3D::getAmplitudeRate);
-mt["get"]["AmplitudeRate"]=mt["GetAmplitudeRate"];
-mt["SetAmplitudeRate"]=static_cast<void(cocos2d::JumpTiles3D::*)(float)>(&cocos2d::JumpTiles3D::setAmplitudeRate);
-mt["set"]["AmplitudeRate"]=mt["SetAmplitudeRate"];
-}
-void RegisterLuaCoreSplitRowsAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::SplitRows).name()] = sol::usertype_traits<cocos2d::SplitRows*>::metatable();
-auto dep=lua.new_usertype<cocos2d::SplitRows>("deprecated.cocos2d::SplitRows");
-dep[sol::base_classes]=sol::bases<cocos2d::TiledGrid3DAction,cocos2d::GridAction,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::SplitRows*>::metatable(),sol::usertype_traits<cocos2d::TiledGrid3DAction*>::metatable());
-lua["cc"]["SplitRows"]=mt;
-mt["__new__"]=static_cast<cocos2d::SplitRows*(*)(float,unsigned int)>(&cocos2d::SplitRows::create);
-}
-void RegisterLuaCoreSplitColsAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::SplitCols).name()] = sol::usertype_traits<cocos2d::SplitCols*>::metatable();
-auto dep=lua.new_usertype<cocos2d::SplitCols>("deprecated.cocos2d::SplitCols");
-dep[sol::base_classes]=sol::bases<cocos2d::TiledGrid3DAction,cocos2d::GridAction,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::SplitCols*>::metatable(),sol::usertype_traits<cocos2d::TiledGrid3DAction*>::metatable());
-lua["cc"]["SplitCols"]=mt;
-mt["__new__"]=static_cast<cocos2d::SplitCols*(*)(float,unsigned int)>(&cocos2d::SplitCols::create);
-}
 void RegisterLuaCoreActionTweenDelegateAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ActionTweenDelegate).name()] = sol::usertype_traits<cocos2d::ActionTweenDelegate*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ActionTweenDelegate>("deprecated.cocos2d::ActionTweenDelegate");
@@ -291,5 +259,69 @@ mt["GetFontAtlas"]=static_cast<cocos2d::FontAtlas*(cocos2d::Label::*)()>(&cocos2
 mt["get"]["FontAtlas"]=mt["GetFontAtlas"];
 RegisterLuaCoreLabelOverflowAuto(lua);
 RegisterLuaCoreLabelLabelTypeAuto(lua);
+}
+void RegisterLuaCoreLabelAtlasAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::LabelAtlas).name()] = sol::usertype_traits<cocos2d::LabelAtlas*>::metatable();
+auto dep=lua.new_usertype<cocos2d::LabelAtlas>("deprecated.cocos2d::LabelAtlas");
+dep[sol::base_classes]=sol::bases<cocos2d::AtlasNode,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TextureProtocol,cocos2d::BlendProtocol,cocos2d::LabelProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::LabelAtlas*>::metatable(),sol::usertype_traits<cocos2d::AtlasNode*>::metatable(),sol::usertype_traits<cocos2d::LabelProtocol*>::metatable());
+lua["cc"]["LabelAtlas"]=mt;
+mt["__new__"]=sol::overload(static_cast<cocos2d::LabelAtlas*(*)(const std::string&,cocos2d::Texture2D*,int,int,int)>(&cocos2d::LabelAtlas::create),static_cast<cocos2d::LabelAtlas*(*)(const std::string&,const std::string&,int,int,int)>(&cocos2d::LabelAtlas::create),static_cast<cocos2d::LabelAtlas*(*)(const std::string&,const std::string&)>(&cocos2d::LabelAtlas::create));
+mt["InitWithString"]=sol::overload(static_cast<bool(cocos2d::LabelAtlas::*)(const std::string&,cocos2d::Texture2D*,int,int,int)>(&cocos2d::LabelAtlas::initWithString),static_cast<bool(cocos2d::LabelAtlas::*)(const std::string&,const std::string&,int,int,int)>(&cocos2d::LabelAtlas::initWithString),static_cast<bool(cocos2d::LabelAtlas::*)(const std::string&,const std::string&)>(&cocos2d::LabelAtlas::initWithString));
+}
+void RegisterLuaCoreTouchDispatchModeAuto(cocos2d::extension::Lua& lua) {
+sol::table enumTable = lua.create_table_with(0,2);
+enumTable["ALL_AT_ONCE"]=cocos2d::Touch::DispatchMode::ALL_AT_ONCE;
+enumTable["ONE_BY_ONE"]=cocos2d::Touch::DispatchMode::ONE_BY_ONE;
+lua["cc"]["Touch"]["static"]["DispatchMode"]=lua.NewEnum(enumTable);
+}
+void RegisterLuaCoreTouchAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Touch).name()] = sol::usertype_traits<cocos2d::Touch*>::metatable();
+auto dep=lua.new_usertype<cocos2d::Touch>("deprecated.cocos2d::Touch");
+dep[sol::base_classes]=sol::bases<cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::Touch*>::metatable(),sol::usertype_traits<cocos2d::Ref*>::metatable());
+lua["cc"]["Touch"]=mt;
+mt["__new__"]=[](){return new cocos2d::Touch();};
+mt["GetLocation"]=static_cast<cocos2d::Vec2(cocos2d::Touch::*)()const>(&cocos2d::Touch::getLocation);
+mt["get"]["Location"]=mt["GetLocation"];
+mt["GetPreviousLocation"]=static_cast<cocos2d::Vec2(cocos2d::Touch::*)()const>(&cocos2d::Touch::getPreviousLocation);
+mt["get"]["PreviousLocation"]=mt["GetPreviousLocation"];
+mt["GetStartLocation"]=static_cast<cocos2d::Vec2(cocos2d::Touch::*)()const>(&cocos2d::Touch::getStartLocation);
+mt["get"]["StartLocation"]=mt["GetStartLocation"];
+mt["GetDelta"]=static_cast<cocos2d::Vec2(cocos2d::Touch::*)()const>(&cocos2d::Touch::getDelta);
+mt["get"]["Delta"]=mt["GetDelta"];
+mt["GetLocationInView"]=static_cast<cocos2d::Vec2(cocos2d::Touch::*)()const>(&cocos2d::Touch::getLocationInView);
+mt["get"]["LocationInView"]=mt["GetLocationInView"];
+mt["GetPreviousLocationInView"]=static_cast<cocos2d::Vec2(cocos2d::Touch::*)()const>(&cocos2d::Touch::getPreviousLocationInView);
+mt["get"]["PreviousLocationInView"]=mt["GetPreviousLocationInView"];
+mt["GetStartLocationInView"]=static_cast<cocos2d::Vec2(cocos2d::Touch::*)()const>(&cocos2d::Touch::getStartLocationInView);
+mt["get"]["StartLocationInView"]=mt["GetStartLocationInView"];
+mt["SetTouchInfo"]=sol::overload(static_cast<void(cocos2d::Touch::*)(int,float,float,float,float)>(&cocos2d::Touch::setTouchInfo),static_cast<void(cocos2d::Touch::*)(int,float,float)>(&cocos2d::Touch::setTouchInfo));
+mt["GetId"]=static_cast<int(cocos2d::Touch::*)()const>(&cocos2d::Touch::getID);
+mt["get"]["ID"]=mt["GetId"];
+mt["GetCurrentForce"]=static_cast<float(cocos2d::Touch::*)()const>(&cocos2d::Touch::getCurrentForce);
+mt["get"]["CurrentForce"]=mt["GetCurrentForce"];
+mt["GetMaxForce"]=static_cast<float(cocos2d::Touch::*)()const>(&cocos2d::Touch::getMaxForce);
+mt["get"]["MaxForce"]=mt["GetMaxForce"];
+RegisterLuaCoreTouchDispatchModeAuto(lua);
+}
+void RegisterLuaCoreLayerAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Layer).name()] = sol::usertype_traits<cocos2d::Layer*>::metatable();
+auto dep=lua.new_usertype<cocos2d::Layer>("deprecated.cocos2d::Layer");
+dep[sol::base_classes]=sol::bases<cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::Layer*>::metatable(),sol::usertype_traits<cocos2d::Node*>::metatable());
+lua["cc"]["Layer"]=mt;
+mt["__new__"]=static_cast<cocos2d::Layer*(*)()>(&cocos2d::Layer::create);
+mt["OnTouchBegan"]=static_cast<bool(cocos2d::Layer::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::Layer::onTouchBegan);
+mt["OnTouchMoved"]=static_cast<void(cocos2d::Layer::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::Layer::onTouchMoved);
+mt["OnTouchEnded"]=static_cast<void(cocos2d::Layer::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::Layer::onTouchEnded);
+mt["OnTouchCancelled"]=static_cast<void(cocos2d::Layer::*)(cocos2d::Touch*,cocos2d::Event*)>(&cocos2d::Layer::onTouchCancelled);
+mt["OnTouchesBegan"]=static_cast<void(cocos2d::Layer::*)(const std::vector<cocos2d::Touch *, std::allocator<cocos2d::Touch *> >&,cocos2d::Event*)>(&cocos2d::Layer::onTouchesBegan);
+mt["OnTouchesMoved"]=static_cast<void(cocos2d::Layer::*)(const std::vector<cocos2d::Touch *, std::allocator<cocos2d::Touch *> >&,cocos2d::Event*)>(&cocos2d::Layer::onTouchesMoved);
+mt["OnTouchesEnded"]=static_cast<void(cocos2d::Layer::*)(const std::vector<cocos2d::Touch *, std::allocator<cocos2d::Touch *> >&,cocos2d::Event*)>(&cocos2d::Layer::onTouchesEnded);
+mt["OnTouchesCancelled"]=static_cast<void(cocos2d::Layer::*)(const std::vector<cocos2d::Touch *, std::allocator<cocos2d::Touch *> >&,cocos2d::Event*)>(&cocos2d::Layer::onTouchesCancelled);
+mt["OnAcceleration"]=static_cast<void(cocos2d::Layer::*)(cocos2d::Acceleration*,cocos2d::Event*)>(&cocos2d::Layer::onAcceleration);
+mt["OnKeyPressed"]=static_cast<void(cocos2d::Layer::*)(cocos2d::EventKeyboard::KeyCode,cocos2d::Event*)>(&cocos2d::Layer::onKeyPressed);
+mt["OnKeyReleased"]=static_cast<void(cocos2d::Layer::*)(cocos2d::EventKeyboard::KeyCode,cocos2d::Event*)>(&cocos2d::Layer::onKeyReleased);
 }
 }

@@ -9,64 +9,6 @@
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
 namespace cocos2d{
-void RegisterLuaCoreMenuItemFontAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::MenuItemFont).name()] = sol::usertype_traits<cocos2d::MenuItemFont*>::metatable();
-auto dep=lua.new_usertype<cocos2d::MenuItemFont>("deprecated.cocos2d::MenuItemFont");
-dep[sol::base_classes]=sol::bases<cocos2d::MenuItemLabel,cocos2d::MenuItem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::MenuItemFont*>::metatable(),sol::usertype_traits<cocos2d::MenuItemLabel*>::metatable());
-lua["cc"]["MenuItemFont"]=mt;
-mt["__new__"]=sol::overload(static_cast<cocos2d::MenuItemFont*(*)(const std::string&,const cocos2d::MenuItem::MenuItemHandlerType&)>(&cocos2d::MenuItemFont::create),[](const std::string& arg0){return cocos2d::MenuItemFont::create(arg0);},[](){return cocos2d::MenuItemFont::create();});
-mt["static"]["SetFontSize"]=static_cast<void(*)(int)>(&cocos2d::MenuItemFont::setFontSize);
-mt["static"]["set"]["FontSize"]=mt["SetFontSize"];
-mt["static"]["GetFontSize"]=static_cast<int(*)()>(&cocos2d::MenuItemFont::getFontSize);
-mt["static"]["get"]["FontSize"]=mt["GetFontSize"];
-mt["static"]["SetFontName"]=static_cast<void(*)(const std::string&)>(&cocos2d::MenuItemFont::setFontName);
-mt["static"]["set"]["FontName"]=mt["SetFontName"];
-mt["static"]["GetFontName"]=static_cast<const std::string&(*)()>(&cocos2d::MenuItemFont::getFontName);
-mt["static"]["get"]["FontName"]=mt["GetFontName"];
-mt["SetFontSizeObj"]=static_cast<void(cocos2d::MenuItemFont::*)(int)>(&cocos2d::MenuItemFont::setFontSizeObj);
-mt["set"]["FontSizeObj"]=mt["SetFontSizeObj"];
-mt["GetFontSizeObj"]=static_cast<int(cocos2d::MenuItemFont::*)()const>(&cocos2d::MenuItemFont::getFontSizeObj);
-mt["get"]["FontSizeObj"]=mt["GetFontSizeObj"];
-mt["SetFontNameObj"]=static_cast<void(cocos2d::MenuItemFont::*)(const std::string&)>(&cocos2d::MenuItemFont::setFontNameObj);
-mt["set"]["FontNameObj"]=mt["SetFontNameObj"];
-mt["GetFontNameObj"]=static_cast<const std::string&(cocos2d::MenuItemFont::*)()const>(&cocos2d::MenuItemFont::getFontNameObj);
-mt["get"]["FontNameObj"]=mt["GetFontNameObj"];
-}
-void RegisterLuaCoreMenuItemSpriteAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::MenuItemSprite).name()] = sol::usertype_traits<cocos2d::MenuItemSprite*>::metatable();
-auto dep=lua.new_usertype<cocos2d::MenuItemSprite>("deprecated.cocos2d::MenuItemSprite");
-dep[sol::base_classes]=sol::bases<cocos2d::MenuItem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::MenuItemSprite*>::metatable(),sol::usertype_traits<cocos2d::MenuItem*>::metatable());
-lua["cc"]["MenuItemSprite"]=mt;
-mt["__new__"]=sol::overload(static_cast<cocos2d::MenuItemSprite*(*)(cocos2d::Node*,cocos2d::Node*,cocos2d::Node*,const cocos2d::MenuItem::MenuItemHandlerType&)>(&cocos2d::MenuItemSprite::create),static_cast<cocos2d::MenuItemSprite*(*)(cocos2d::Node*,cocos2d::Node*,const cocos2d::MenuItem::MenuItemHandlerType&)>(&cocos2d::MenuItemSprite::create),[](cocos2d::Node* arg0,cocos2d::Node* arg1,cocos2d::Node* arg2){return cocos2d::MenuItemSprite::create(arg0,arg1,arg2);},[](cocos2d::Node* arg0,cocos2d::Node* arg1){return cocos2d::MenuItemSprite::create(arg0,arg1);});
-mt["GetNormalImage"]=static_cast<cocos2d::Node*(cocos2d::MenuItemSprite::*)()const>(&cocos2d::MenuItemSprite::getNormalImage);
-mt["get"]["NormalImage"]=mt["GetNormalImage"];
-mt["SetNormalImage"]=static_cast<void(cocos2d::MenuItemSprite::*)(cocos2d::Node*)>(&cocos2d::MenuItemSprite::setNormalImage);
-mt["set"]["NormalImage"]=mt["SetNormalImage"];
-mt["GetSelectedImage"]=static_cast<cocos2d::Node*(cocos2d::MenuItemSprite::*)()const>(&cocos2d::MenuItemSprite::getSelectedImage);
-mt["get"]["SelectedImage"]=mt["GetSelectedImage"];
-mt["SetSelectedImage"]=static_cast<void(cocos2d::MenuItemSprite::*)(cocos2d::Node*)>(&cocos2d::MenuItemSprite::setSelectedImage);
-mt["set"]["SelectedImage"]=mt["SetSelectedImage"];
-mt["GetDisabledImage"]=static_cast<cocos2d::Node*(cocos2d::MenuItemSprite::*)()const>(&cocos2d::MenuItemSprite::getDisabledImage);
-mt["get"]["DisabledImage"]=mt["GetDisabledImage"];
-mt["SetDisabledImage"]=static_cast<void(cocos2d::MenuItemSprite::*)(cocos2d::Node*)>(&cocos2d::MenuItemSprite::setDisabledImage);
-mt["set"]["DisabledImage"]=mt["SetDisabledImage"];
-}
-void RegisterLuaCoreMenuItemImageAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::MenuItemImage).name()] = sol::usertype_traits<cocos2d::MenuItemImage*>::metatable();
-auto dep=lua.new_usertype<cocos2d::MenuItemImage>("deprecated.cocos2d::MenuItemImage");
-dep[sol::base_classes]=sol::bases<cocos2d::MenuItemSprite,cocos2d::MenuItem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::MenuItemImage*>::metatable(),sol::usertype_traits<cocos2d::MenuItemSprite*>::metatable());
-lua["cc"]["MenuItemImage"]=mt;
-mt["__new__"]=sol::overload(static_cast<cocos2d::MenuItemImage*(*)(const std::string&,const std::string&,const std::string&,const cocos2d::MenuItem::MenuItemHandlerType&)>(&cocos2d::MenuItemImage::create),static_cast<cocos2d::MenuItemImage*(*)(const std::string&,const std::string&,const cocos2d::MenuItem::MenuItemHandlerType&)>(&cocos2d::MenuItemImage::create),static_cast<cocos2d::MenuItemImage*(*)(const std::string&,const std::string&,const std::string&)>(&cocos2d::MenuItemImage::create),static_cast<cocos2d::MenuItemImage*(*)(const std::string&,const std::string&)>(&cocos2d::MenuItemImage::create),static_cast<cocos2d::MenuItemImage*(*)()>(&cocos2d::MenuItemImage::create));
-mt["SetNormalSpriteFrame"]=static_cast<void(cocos2d::MenuItemImage::*)(cocos2d::SpriteFrame*)>(&cocos2d::MenuItemImage::setNormalSpriteFrame);
-mt["set"]["NormalSpriteFrame"]=mt["SetNormalSpriteFrame"];
-mt["SetSelectedSpriteFrame"]=static_cast<void(cocos2d::MenuItemImage::*)(cocos2d::SpriteFrame*)>(&cocos2d::MenuItemImage::setSelectedSpriteFrame);
-mt["set"]["SelectedSpriteFrame"]=mt["SetSelectedSpriteFrame"];
-mt["SetDisabledSpriteFrame"]=static_cast<void(cocos2d::MenuItemImage::*)(cocos2d::SpriteFrame*)>(&cocos2d::MenuItemImage::setDisabledSpriteFrame);
-mt["set"]["DisabledSpriteFrame"]=mt["SetDisabledSpriteFrame"];
-}
 void RegisterLuaCoreMenuItemToggleAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::MenuItemToggle).name()] = sol::usertype_traits<cocos2d::MenuItemToggle*>::metatable();
 auto dep=lua.new_usertype<cocos2d::MenuItemToggle>("deprecated.cocos2d::MenuItemToggle");
@@ -401,5 +343,32 @@ mt["SetDisplayFrame"]=static_cast<void(cocos2d::ParticleSystemQuad::*)(cocos2d::
 mt["set"]["DisplayFrame"]=mt["SetDisplayFrame"];
 mt["SetTextureWithRect"]=static_cast<void(cocos2d::ParticleSystemQuad::*)(cocos2d::Texture2D*,const cocos2d::Rect&)>(&cocos2d::ParticleSystemQuad::setTextureWithRect);
 mt["ListenRendererRecreated"]=static_cast<void(cocos2d::ParticleSystemQuad::*)(cocos2d::EventCustom*)>(&cocos2d::ParticleSystemQuad::listenRendererRecreated);
+}
+void RegisterLuaCoreParticleFireAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleFire).name()] = sol::usertype_traits<cocos2d::ParticleFire*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ParticleFire>("deprecated.cocos2d::ParticleFire");
+dep[sol::base_classes]=sol::bases<cocos2d::ParticleSystemQuad,cocos2d::ParticleSystem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TextureProtocol,cocos2d::BlendProtocol,cocos2d::PlayableProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ParticleFire*>::metatable(),sol::usertype_traits<cocos2d::ParticleSystemQuad*>::metatable());
+lua["cc"]["ParticleFire"]=mt;
+mt["__new__"]=static_cast<cocos2d::ParticleFire*(*)()>(&cocos2d::ParticleFire::create);
+mt["static"]["CreateWithTotalParticles"]=static_cast<cocos2d::ParticleFire*(*)(int)>(&cocos2d::ParticleFire::createWithTotalParticles);
+}
+void RegisterLuaCoreParticleFireworksAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleFireworks).name()] = sol::usertype_traits<cocos2d::ParticleFireworks*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ParticleFireworks>("deprecated.cocos2d::ParticleFireworks");
+dep[sol::base_classes]=sol::bases<cocos2d::ParticleSystemQuad,cocos2d::ParticleSystem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TextureProtocol,cocos2d::BlendProtocol,cocos2d::PlayableProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ParticleFireworks*>::metatable(),sol::usertype_traits<cocos2d::ParticleSystemQuad*>::metatable());
+lua["cc"]["ParticleFireworks"]=mt;
+mt["__new__"]=static_cast<cocos2d::ParticleFireworks*(*)()>(&cocos2d::ParticleFireworks::create);
+mt["static"]["CreateWithTotalParticles"]=static_cast<cocos2d::ParticleFireworks*(*)(int)>(&cocos2d::ParticleFireworks::createWithTotalParticles);
+}
+void RegisterLuaCoreParticleSunAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleSun).name()] = sol::usertype_traits<cocos2d::ParticleSun*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ParticleSun>("deprecated.cocos2d::ParticleSun");
+dep[sol::base_classes]=sol::bases<cocos2d::ParticleSystemQuad,cocos2d::ParticleSystem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TextureProtocol,cocos2d::BlendProtocol,cocos2d::PlayableProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ParticleSun*>::metatable(),sol::usertype_traits<cocos2d::ParticleSystemQuad*>::metatable());
+lua["cc"]["ParticleSun"]=mt;
+mt["__new__"]=static_cast<cocos2d::ParticleSun*(*)()>(&cocos2d::ParticleSun::create);
+mt["static"]["CreateWithTotalParticles"]=static_cast<cocos2d::ParticleSun*(*)(int)>(&cocos2d::ParticleSun::createWithTotalParticles);
 }
 }

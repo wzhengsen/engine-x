@@ -28,6 +28,13 @@ mt["GetTag"]=static_cast<int(cocos2d::Controller::*)()const>(&cocos2d::Controlle
 mt["get"]["Tag"]=mt["GetTag"];
 mt["static"]["get"]["TAG_UNSET"]=[]()->const int&{return cocos2d::Controller::TAG_UNSET;};
 }
+void RegisterLuaControllerEventControllerControllerEventTypeAuto(cocos2d::extension::Lua& lua) {
+sol::table enumTable = lua.create_table_with(0,3);
+enumTable["CONNECTION"]=cocos2d::EventController::ControllerEventType::CONNECTION;
+enumTable["BUTTON_STATUS_CHANGED"]=cocos2d::EventController::ControllerEventType::BUTTON_STATUS_CHANGED;
+enumTable["AXIS_STATUS_CHANGED"]=cocos2d::EventController::ControllerEventType::AXIS_STATUS_CHANGED;
+lua["cc"]["EventController"]["static"]["ControllerEventType"]=lua.NewEnum(enumTable);
+}
 void RegisterLuaControllerEventControllerAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventController).name()] = sol::usertype_traits<cocos2d::EventController*>::metatable();
 auto dep=lua.new_usertype<cocos2d::EventController>("deprecated.cocos2d::EventController");
@@ -47,6 +54,7 @@ mt["SetConnectStatus"]=static_cast<void(cocos2d::EventController::*)(bool)>(&coc
 mt["set"]["ConnectStatus"]=mt["SetConnectStatus"];
 mt["IsConnected"]=static_cast<bool(cocos2d::EventController::*)()const>(&cocos2d::EventController::isConnected);
 mt["get"]["Connected"]=mt["IsConnected"];
+RegisterLuaControllerEventControllerControllerEventTypeAuto(lua);
 }
 void RegisterLuaControllerEventListenerControllerAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::EventListenerController).name()] = sol::usertype_traits<cocos2d::EventListenerController*>::metatable();

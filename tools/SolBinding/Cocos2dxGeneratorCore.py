@@ -52,13 +52,18 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "TileMap.*", ".*TMX.*", "CallFunc", "RenderTexture", "GridAction", "Grid3DAction", "GridBase$", ".+Grid", "Shaky3D", "Waves3D",
             "FlipX3D", "FlipY3D", "Speed", "ActionManager", "Set", "Scheduler", "Timer", "Orbit.*", "Follow.*", "Bezier.*",
             "CardinalSpline.*", "Camera.*", "DrawNode", "Liquid$", "Waves$", "ShuffleTiles$", "TurnOffTiles$", "Split.*", "Twirl$", "FileUtils$",
-            "GLProgram", "Application.*", "ClippingNode", "MotionStreak", "^Ref$", "UserDefault", "GLViewImpl", "GLView", "Image", "Event(?!.*(Physics).*).*",
+            "GLProgram", "Application.*", "ClippingNode", "MotionStreak", "^Ref$", "UserDefault", "GLViewImpl", "GLView", "Image", "Device::.*",
             "Component", "ProtectedNode", "GLProgramCache", "GLProgramState", "Device", "ClippingRectangleNode", ".*Light$", "AsyncTaskPool.*", "RenderState",
             "Material", "Properties", "Technique", "Pass", "PolygonInfo", "AutoPolygon", "BoneNode", "SkeletonNode", "ComponentLua", "PipelineDescriptor",
             "Renderer", "FastTMXLayer", "FastTMXTiledMap", "LanguageType", "PHYSICS.*_MATERIAL_DEFAULT", "GlyphCollection", "MATRIX_STACK_TYPE", "LightType", "LightFlag", "Image::Format",
             "Text(H|V)Alignment", "ResolutionPolicy", "Lens3D", "Ripple3D", "WavesTiles3D", "JumpTiles3D", "Grid3D", "(W|R)Zip", "RZip::ZipItem", "Zip",
             "Touch::DispatchMode", "RZip::Encoding", "Clonable", "Connection", "Server", "Client", "Connection::Kind", "Crypto", "Crypto::.*", "Downloader",
-            "DownloadTask", "Device::.*"
+            "DownloadTask",
+
+            # Events
+            "EventListener", "EventListener::.*", "EventListenerCustom", "EventListenerCustom::.*", "Event", "Event::.*", "EventTouch", "EventTouch::.*", "EventKeyboard", "EventKeyboard::.*",
+            "EventAcceleration", "EventAcceleration::.*", "EventCustom", "EventCustom::.*", "EventDispatcher", "EventDispatcher::.*", "EventFocus", "EventFocus::.*", "EventListenerAcceleration", "EventListenerAcceleration::.*",
+            "EventListenerFocus", "EventListenerFocus::.*", "EventListenerKeyboard", "EventListenerKeyboard::.*", "EventMouse", "EventMouse::.*", "EventListenerTouchOneByOne", "EventListenerTouchOneByOne::.*", "EventListenerTouchAllAtOnce", "EventListenerTouchAllAtOnce::.*"
         ]
         self.Skip |= {
             "TMXMapInfo": ["startElement", "endElement"],
@@ -75,7 +80,7 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "Component": ["onEnter", "onExit", "onAdd", "onRemove"],
             "Director": ["EVENT_.*"],
             "Downloader": ["setOn.*Task.*"],
-            "UserDefault":["setEncryptEnabled","encrypt"]
+            "UserDefault": ["setEncryptEnabled", "encrypt"]
         }
         self.RenameMembers |= {
             "SpriteFrameCache": {"addSpriteFramesWithFile": "addSpriteFrames", "getSpriteFrameByName": "getSpriteFrame"},

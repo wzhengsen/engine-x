@@ -9,31 +9,6 @@
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
 namespace cocos2d{
-void RegisterLuaCoreTransitionFadeTRAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionFadeTR).name()] = sol::usertype_traits<cocos2d::TransitionFadeTR*>::metatable();
-auto dep=lua.new_usertype<cocos2d::TransitionFadeTR>("deprecated.cocos2d::TransitionFadeTR");
-dep[sol::base_classes]=sol::bases<cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionFadeTR*>::metatable(),sol::usertype_traits<cocos2d::TransitionScene*>::metatable(),sol::usertype_traits<cocos2d::TransitionEaseScene*>::metatable());
-lua["cc"]["TransitionFadeTR"]=mt;
-mt["__new__"]=static_cast<cocos2d::TransitionFadeTR*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionFadeTR::create);
-mt["ActionWithSize"]=static_cast<cocos2d::ActionInterval*(cocos2d::TransitionFadeTR::*)(const cocos2d::Size&)>(&cocos2d::TransitionFadeTR::actionWithSize);
-}
-void RegisterLuaCoreTransitionFadeBLAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionFadeBL).name()] = sol::usertype_traits<cocos2d::TransitionFadeBL*>::metatable();
-auto dep=lua.new_usertype<cocos2d::TransitionFadeBL>("deprecated.cocos2d::TransitionFadeBL");
-dep[sol::base_classes]=sol::bases<cocos2d::TransitionFadeTR,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionFadeBL*>::metatable(),sol::usertype_traits<cocos2d::TransitionFadeTR*>::metatable());
-lua["cc"]["TransitionFadeBL"]=mt;
-mt["__new__"]=static_cast<cocos2d::TransitionFadeBL*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionFadeBL::create);
-}
-void RegisterLuaCoreTransitionFadeUpAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionFadeUp).name()] = sol::usertype_traits<cocos2d::TransitionFadeUp*>::metatable();
-auto dep=lua.new_usertype<cocos2d::TransitionFadeUp>("deprecated.cocos2d::TransitionFadeUp");
-dep[sol::base_classes]=sol::bases<cocos2d::TransitionFadeTR,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TransitionEaseScene>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionFadeUp*>::metatable(),sol::usertype_traits<cocos2d::TransitionFadeTR*>::metatable());
-lua["cc"]["TransitionFadeUp"]=mt;
-mt["__new__"]=static_cast<cocos2d::TransitionFadeUp*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionFadeUp::create);
-}
 void RegisterLuaCoreTransitionFadeDownAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionFadeDown).name()] = sol::usertype_traits<cocos2d::TransitionFadeDown*>::metatable();
 auto dep=lua.new_usertype<cocos2d::TransitionFadeDown>("deprecated.cocos2d::TransitionFadeDown");
@@ -91,5 +66,34 @@ dep[sol::base_classes]=sol::bases<cocos2d::TransitionProgress,cocos2d::Transitio
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionProgressVertical*>::metatable(),sol::usertype_traits<cocos2d::TransitionProgress*>::metatable());
 lua["cc"]["TransitionProgressVertical"]=mt;
 mt["__new__"]=static_cast<cocos2d::TransitionProgressVertical*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionProgressVertical::create);
+}
+void RegisterLuaCoreTransitionProgressInOutAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionProgressInOut).name()] = sol::usertype_traits<cocos2d::TransitionProgressInOut*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TransitionProgressInOut>("deprecated.cocos2d::TransitionProgressInOut");
+dep[sol::base_classes]=sol::bases<cocos2d::TransitionProgress,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionProgressInOut*>::metatable(),sol::usertype_traits<cocos2d::TransitionProgress*>::metatable());
+lua["cc"]["TransitionProgressInOut"]=mt;
+mt["__new__"]=static_cast<cocos2d::TransitionProgressInOut*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionProgressInOut::create);
+}
+void RegisterLuaCoreTransitionProgressOutInAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionProgressOutIn).name()] = sol::usertype_traits<cocos2d::TransitionProgressOutIn*>::metatable();
+auto dep=lua.new_usertype<cocos2d::TransitionProgressOutIn>("deprecated.cocos2d::TransitionProgressOutIn");
+dep[sol::base_classes]=sol::bases<cocos2d::TransitionProgress,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionProgressOutIn*>::metatable(),sol::usertype_traits<cocos2d::TransitionProgress*>::metatable());
+lua["cc"]["TransitionProgressOutIn"]=mt;
+mt["__new__"]=static_cast<cocos2d::TransitionProgressOutIn*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionProgressOutIn::create);
+}
+void RegisterLuaCoreCameraFlagAuto(cocos2d::extension::Lua& lua) {
+sol::table enumTable = lua.create_table_with(0,9);
+enumTable["DEFAULT"]=cocos2d::CameraFlag::DEFAULT;
+enumTable["USER1"]=cocos2d::CameraFlag::USER1;
+enumTable["USER2"]=cocos2d::CameraFlag::USER2;
+enumTable["USER3"]=cocos2d::CameraFlag::USER3;
+enumTable["USER4"]=cocos2d::CameraFlag::USER4;
+enumTable["USER5"]=cocos2d::CameraFlag::USER5;
+enumTable["USER6"]=cocos2d::CameraFlag::USER6;
+enumTable["USER7"]=cocos2d::CameraFlag::USER7;
+enumTable["USER8"]=cocos2d::CameraFlag::USER8;
+lua["cc"]["CameraFlag"]=lua.NewEnum(enumTable);
 }
 }

@@ -9,35 +9,6 @@
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
 namespace cocos2d{
-void RegisterLuaCoreTransitionProgressInOutAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionProgressInOut).name()] = sol::usertype_traits<cocos2d::TransitionProgressInOut*>::metatable();
-auto dep=lua.new_usertype<cocos2d::TransitionProgressInOut>("deprecated.cocos2d::TransitionProgressInOut");
-dep[sol::base_classes]=sol::bases<cocos2d::TransitionProgress,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionProgressInOut*>::metatable(),sol::usertype_traits<cocos2d::TransitionProgress*>::metatable());
-lua["cc"]["TransitionProgressInOut"]=mt;
-mt["__new__"]=static_cast<cocos2d::TransitionProgressInOut*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionProgressInOut::create);
-}
-void RegisterLuaCoreTransitionProgressOutInAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::TransitionProgressOutIn).name()] = sol::usertype_traits<cocos2d::TransitionProgressOutIn*>::metatable();
-auto dep=lua.new_usertype<cocos2d::TransitionProgressOutIn>("deprecated.cocos2d::TransitionProgressOutIn");
-dep[sol::base_classes]=sol::bases<cocos2d::TransitionProgress,cocos2d::TransitionScene,cocos2d::Scene,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::TransitionProgressOutIn*>::metatable(),sol::usertype_traits<cocos2d::TransitionProgress*>::metatable());
-lua["cc"]["TransitionProgressOutIn"]=mt;
-mt["__new__"]=static_cast<cocos2d::TransitionProgressOutIn*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionProgressOutIn::create);
-}
-void RegisterLuaCoreCameraFlagAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,9);
-enumTable["DEFAULT"]=cocos2d::CameraFlag::DEFAULT;
-enumTable["USER1"]=cocos2d::CameraFlag::USER1;
-enumTable["USER2"]=cocos2d::CameraFlag::USER2;
-enumTable["USER3"]=cocos2d::CameraFlag::USER3;
-enumTable["USER4"]=cocos2d::CameraFlag::USER4;
-enumTable["USER5"]=cocos2d::CameraFlag::USER5;
-enumTable["USER6"]=cocos2d::CameraFlag::USER6;
-enumTable["USER7"]=cocos2d::CameraFlag::USER7;
-enumTable["USER8"]=cocos2d::CameraFlag::USER8;
-lua["cc"]["CameraFlag"]=lua.NewEnum(enumTable);
-}
 void RegisterLuaCoreCameraTypeAuto(cocos2d::extension::Lua& lua) {
 sol::table enumTable = lua.create_table_with(0,2);
 enumTable["PERSPECTIVE"]=cocos2d::Camera::Type::PERSPECTIVE;
@@ -221,5 +192,55 @@ mt["SetNeedDepthTestForBlit"]=static_cast<void(cocos2d::Grid3D::*)(bool)>(&cocos
 mt["set"]["NeedDepthTestForBlit"]=mt["SetNeedDepthTestForBlit"];
 mt["GetNeedDepthTestForBlit"]=static_cast<bool(cocos2d::Grid3D::*)()const>(&cocos2d::Grid3D::getNeedDepthTestForBlit);
 mt["get"]["NeedDepthTestForBlit"]=mt["GetNeedDepthTestForBlit"];
+}
+void RegisterLuaCoreLightTypeAuto(cocos2d::extension::Lua& lua) {
+sol::table enumTable = lua.create_table_with(0,4);
+enumTable["DIRECTIONAL"]=cocos2d::LightType::DIRECTIONAL;
+enumTable["POINT"]=cocos2d::LightType::POINT;
+enumTable["SPOT"]=cocos2d::LightType::SPOT;
+enumTable["AMBIENT"]=cocos2d::LightType::AMBIENT;
+lua["cc"]["LightType"]=lua.NewEnum(enumTable);
+}
+void RegisterLuaCoreLightFlagAuto(cocos2d::extension::Lua& lua) {
+sol::table enumTable = lua.create_table_with(0,16);
+enumTable["LIGHT0"]=cocos2d::LightFlag::LIGHT0;
+enumTable["LIGHT1"]=cocos2d::LightFlag::LIGHT1;
+enumTable["LIGHT2"]=cocos2d::LightFlag::LIGHT2;
+enumTable["LIGHT3"]=cocos2d::LightFlag::LIGHT3;
+enumTable["LIGHT4"]=cocos2d::LightFlag::LIGHT4;
+enumTable["LIGHT5"]=cocos2d::LightFlag::LIGHT5;
+enumTable["LIGHT6"]=cocos2d::LightFlag::LIGHT6;
+enumTable["LIGHT7"]=cocos2d::LightFlag::LIGHT7;
+enumTable["LIGHT8"]=cocos2d::LightFlag::LIGHT8;
+enumTable["LIGHT9"]=cocos2d::LightFlag::LIGHT9;
+enumTable["LIGHT10"]=cocos2d::LightFlag::LIGHT10;
+enumTable["LIGHT11"]=cocos2d::LightFlag::LIGHT11;
+enumTable["LIGHT12"]=cocos2d::LightFlag::LIGHT12;
+enumTable["LIGHT13"]=cocos2d::LightFlag::LIGHT13;
+enumTable["LIGHT14"]=cocos2d::LightFlag::LIGHT14;
+enumTable["LIGHT15"]=cocos2d::LightFlag::LIGHT15;
+lua["cc"]["LightFlag"]=lua.NewEnum(enumTable);
+}
+void RegisterLuaCoreBaseLightAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::BaseLight).name()] = sol::usertype_traits<cocos2d::BaseLight*>::metatable();
+auto dep=lua.new_usertype<cocos2d::BaseLight>("deprecated.cocos2d::BaseLight");
+dep[sol::base_classes]=sol::bases<cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::BaseLight*>::metatable(),sol::usertype_traits<cocos2d::Node*>::metatable());
+lua["cc"]["BaseLight"]=mt;
+mt["__new__"] = [](){return nullptr;};
+mt["GetLightType"]=static_cast<cocos2d::LightType(cocos2d::BaseLight::*)()const>(&cocos2d::BaseLight::getLightType);
+mt["get"]["LightType"]=mt["GetLightType"];
+mt["GetIntensity"]=static_cast<float(cocos2d::BaseLight::*)()const>(&cocos2d::BaseLight::getIntensity);
+mt["get"]["Intensity"]=mt["GetIntensity"];
+mt["SetIntensity"]=static_cast<void(cocos2d::BaseLight::*)(float)>(&cocos2d::BaseLight::setIntensity);
+mt["set"]["Intensity"]=mt["SetIntensity"];
+mt["GetLightFlag"]=static_cast<cocos2d::LightFlag(cocos2d::BaseLight::*)()const>(&cocos2d::BaseLight::getLightFlag);
+mt["get"]["LightFlag"]=mt["GetLightFlag"];
+mt["SetLightFlag"]=static_cast<void(cocos2d::BaseLight::*)(cocos2d::LightFlag)>(&cocos2d::BaseLight::setLightFlag);
+mt["set"]["LightFlag"]=mt["SetLightFlag"];
+mt["SetEnabled"]=static_cast<void(cocos2d::BaseLight::*)(bool)>(&cocos2d::BaseLight::setEnabled);
+mt["set"]["Enabled"]=mt["SetEnabled"];
+mt["IsEnabled"]=static_cast<bool(cocos2d::BaseLight::*)()const>(&cocos2d::BaseLight::isEnabled);
+mt["get"]["Enabled"]=mt["IsEnabled"];
 }
 }

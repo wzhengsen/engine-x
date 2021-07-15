@@ -9,30 +9,6 @@
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
 namespace cocos2d{
-void RegisterLuaCoreToggleVisibilityAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ToggleVisibility).name()] = sol::usertype_traits<cocos2d::ToggleVisibility*>::metatable();
-auto dep=lua.new_usertype<cocos2d::ToggleVisibility>("deprecated.cocos2d::ToggleVisibility");
-dep[sol::base_classes]=sol::bases<cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ToggleVisibility*>::metatable(),sol::usertype_traits<cocos2d::ActionInstant*>::metatable());
-lua["cc"]["ToggleVisibility"]=mt;
-mt["__new__"]=static_cast<cocos2d::ToggleVisibility*(*)()>(&cocos2d::ToggleVisibility::create);
-}
-void RegisterLuaCoreRemoveSelfAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::RemoveSelf).name()] = sol::usertype_traits<cocos2d::RemoveSelf*>::metatable();
-auto dep=lua.new_usertype<cocos2d::RemoveSelf>("deprecated.cocos2d::RemoveSelf");
-dep[sol::base_classes]=sol::bases<cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::RemoveSelf*>::metatable(),sol::usertype_traits<cocos2d::ActionInstant*>::metatable());
-lua["cc"]["RemoveSelf"]=mt;
-mt["__new__"]=sol::overload([](bool arg0){return cocos2d::RemoveSelf::create(arg0);},[](){return cocos2d::RemoveSelf::create();});
-}
-void RegisterLuaCoreFlipXAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::FlipX).name()] = sol::usertype_traits<cocos2d::FlipX*>::metatable();
-auto dep=lua.new_usertype<cocos2d::FlipX>("deprecated.cocos2d::FlipX");
-dep[sol::base_classes]=sol::bases<cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::FlipX*>::metatable(),sol::usertype_traits<cocos2d::ActionInstant*>::metatable());
-lua["cc"]["FlipX"]=mt;
-mt["__new__"]=static_cast<cocos2d::FlipX*(*)(bool)>(&cocos2d::FlipX::create);
-}
 void RegisterLuaCoreFlipYAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::FlipY).name()] = sol::usertype_traits<cocos2d::FlipY*>::metatable();
 auto dep=lua.new_usertype<cocos2d::FlipY>("deprecated.cocos2d::FlipY");
@@ -99,5 +75,37 @@ dep[sol::base_classes]=sol::bases<cocos2d::ActionInstant,cocos2d::FiniteTimeActi
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::StopGrid*>::metatable(),sol::usertype_traits<cocos2d::ActionInstant*>::metatable());
 lua["cc"]["StopGrid"]=mt;
 mt["__new__"]=static_cast<cocos2d::StopGrid*(*)()>(&cocos2d::StopGrid::create);
+}
+void RegisterLuaCoreReuseGridAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ReuseGrid).name()] = sol::usertype_traits<cocos2d::ReuseGrid*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ReuseGrid>("deprecated.cocos2d::ReuseGrid");
+dep[sol::base_classes]=sol::bases<cocos2d::ActionInstant,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ReuseGrid*>::metatable(),sol::usertype_traits<cocos2d::ActionInstant*>::metatable());
+lua["cc"]["ReuseGrid"]=mt;
+mt["__new__"]=static_cast<cocos2d::ReuseGrid*(*)(int)>(&cocos2d::ReuseGrid::create);
+}
+void RegisterLuaCoreWaves3DAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Waves3D).name()] = sol::usertype_traits<cocos2d::Waves3D*>::metatable();
+auto dep=lua.new_usertype<cocos2d::Waves3D>("deprecated.cocos2d::Waves3D");
+dep[sol::base_classes]=sol::bases<cocos2d::Grid3DAction,cocos2d::GridAction,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::Waves3D*>::metatable(),sol::usertype_traits<cocos2d::Grid3DAction*>::metatable());
+lua["cc"]["Waves3D"]=mt;
+mt["__new__"]=static_cast<cocos2d::Waves3D*(*)(float,const cocos2d::Size&,unsigned int,float)>(&cocos2d::Waves3D::create);
+mt["GetAmplitude"]=static_cast<float(cocos2d::Waves3D::*)()const>(&cocos2d::Waves3D::getAmplitude);
+mt["get"]["Amplitude"]=mt["GetAmplitude"];
+mt["SetAmplitude"]=static_cast<void(cocos2d::Waves3D::*)(float)>(&cocos2d::Waves3D::setAmplitude);
+mt["set"]["Amplitude"]=mt["SetAmplitude"];
+mt["GetAmplitudeRate"]=static_cast<float(cocos2d::Waves3D::*)()const>(&cocos2d::Waves3D::getAmplitudeRate);
+mt["get"]["AmplitudeRate"]=mt["GetAmplitudeRate"];
+mt["SetAmplitudeRate"]=static_cast<void(cocos2d::Waves3D::*)(float)>(&cocos2d::Waves3D::setAmplitudeRate);
+mt["set"]["AmplitudeRate"]=mt["SetAmplitudeRate"];
+}
+void RegisterLuaCoreFlipX3DAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::FlipX3D).name()] = sol::usertype_traits<cocos2d::FlipX3D*>::metatable();
+auto dep=lua.new_usertype<cocos2d::FlipX3D>("deprecated.cocos2d::FlipX3D");
+dep[sol::base_classes]=sol::bases<cocos2d::Grid3DAction,cocos2d::GridAction,cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::FlipX3D*>::metatable(),sol::usertype_traits<cocos2d::Grid3DAction*>::metatable());
+lua["cc"]["FlipX3D"]=mt;
+mt["__new__"]=static_cast<cocos2d::FlipX3D*(*)(float)>(&cocos2d::FlipX3D::create);
 }
 }

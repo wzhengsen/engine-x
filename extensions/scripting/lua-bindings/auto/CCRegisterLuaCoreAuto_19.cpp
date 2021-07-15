@@ -9,33 +9,6 @@
 #include "ui/UIWidget.h"
 #include "base/TGAlib.h"
 namespace cocos2d{
-void RegisterLuaCoreParticleFireAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleFire).name()] = sol::usertype_traits<cocos2d::ParticleFire*>::metatable();
-auto dep=lua.new_usertype<cocos2d::ParticleFire>("deprecated.cocos2d::ParticleFire");
-dep[sol::base_classes]=sol::bases<cocos2d::ParticleSystemQuad,cocos2d::ParticleSystem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TextureProtocol,cocos2d::BlendProtocol,cocos2d::PlayableProtocol>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ParticleFire*>::metatable(),sol::usertype_traits<cocos2d::ParticleSystemQuad*>::metatable());
-lua["cc"]["ParticleFire"]=mt;
-mt["__new__"]=static_cast<cocos2d::ParticleFire*(*)()>(&cocos2d::ParticleFire::create);
-mt["static"]["CreateWithTotalParticles"]=static_cast<cocos2d::ParticleFire*(*)(int)>(&cocos2d::ParticleFire::createWithTotalParticles);
-}
-void RegisterLuaCoreParticleFireworksAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleFireworks).name()] = sol::usertype_traits<cocos2d::ParticleFireworks*>::metatable();
-auto dep=lua.new_usertype<cocos2d::ParticleFireworks>("deprecated.cocos2d::ParticleFireworks");
-dep[sol::base_classes]=sol::bases<cocos2d::ParticleSystemQuad,cocos2d::ParticleSystem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TextureProtocol,cocos2d::BlendProtocol,cocos2d::PlayableProtocol>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ParticleFireworks*>::metatable(),sol::usertype_traits<cocos2d::ParticleSystemQuad*>::metatable());
-lua["cc"]["ParticleFireworks"]=mt;
-mt["__new__"]=static_cast<cocos2d::ParticleFireworks*(*)()>(&cocos2d::ParticleFireworks::create);
-mt["static"]["CreateWithTotalParticles"]=static_cast<cocos2d::ParticleFireworks*(*)(int)>(&cocos2d::ParticleFireworks::createWithTotalParticles);
-}
-void RegisterLuaCoreParticleSunAuto(cocos2d::extension::Lua& lua){
-cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleSun).name()] = sol::usertype_traits<cocos2d::ParticleSun*>::metatable();
-auto dep=lua.new_usertype<cocos2d::ParticleSun>("deprecated.cocos2d::ParticleSun");
-dep[sol::base_classes]=sol::bases<cocos2d::ParticleSystemQuad,cocos2d::ParticleSystem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TextureProtocol,cocos2d::BlendProtocol,cocos2d::PlayableProtocol>();
-sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ParticleSun*>::metatable(),sol::usertype_traits<cocos2d::ParticleSystemQuad*>::metatable());
-lua["cc"]["ParticleSun"]=mt;
-mt["__new__"]=static_cast<cocos2d::ParticleSun*(*)()>(&cocos2d::ParticleSun::create);
-mt["static"]["CreateWithTotalParticles"]=static_cast<cocos2d::ParticleSun*(*)(int)>(&cocos2d::ParticleSun::createWithTotalParticles);
-}
 void RegisterLuaCoreParticleGalaxyAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleGalaxy).name()] = sol::usertype_traits<cocos2d::ParticleGalaxy*>::metatable();
 auto dep=lua.new_usertype<cocos2d::ParticleGalaxy>("deprecated.cocos2d::ParticleGalaxy");
@@ -98,5 +71,71 @@ sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ParticleSnow*>::metatab
 lua["cc"]["ParticleSnow"]=mt;
 mt["__new__"]=static_cast<cocos2d::ParticleSnow*(*)()>(&cocos2d::ParticleSnow::create);
 mt["static"]["CreateWithTotalParticles"]=static_cast<cocos2d::ParticleSnow*(*)(int)>(&cocos2d::ParticleSnow::createWithTotalParticles);
+}
+void RegisterLuaCoreParticleRainAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ParticleRain).name()] = sol::usertype_traits<cocos2d::ParticleRain*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ParticleRain>("deprecated.cocos2d::ParticleRain");
+dep[sol::base_classes]=sol::bases<cocos2d::ParticleSystemQuad,cocos2d::ParticleSystem,cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::TextureProtocol,cocos2d::BlendProtocol,cocos2d::PlayableProtocol>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ParticleRain*>::metatable(),sol::usertype_traits<cocos2d::ParticleSystemQuad*>::metatable());
+lua["cc"]["ParticleRain"]=mt;
+mt["__new__"]=static_cast<cocos2d::ParticleRain*(*)()>(&cocos2d::ParticleRain::create);
+mt["static"]["CreateWithTotalParticles"]=static_cast<cocos2d::ParticleRain*(*)(int)>(&cocos2d::ParticleRain::createWithTotalParticles);
+}
+void RegisterLuaCoreProgressTimerTypeAuto(cocos2d::extension::Lua& lua) {
+sol::table enumTable = lua.create_table_with(0,2);
+enumTable["RADIAL"]=cocos2d::ProgressTimer::Type::RADIAL;
+enumTable["BAR"]=cocos2d::ProgressTimer::Type::BAR;
+lua["cc"]["ProgressTimer"]["static"]["Type"]=lua.NewEnum(enumTable);
+}
+void RegisterLuaCoreProgressTimerAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ProgressTimer).name()] = sol::usertype_traits<cocos2d::ProgressTimer*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ProgressTimer>("deprecated.cocos2d::ProgressTimer");
+dep[sol::base_classes]=sol::bases<cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ProgressTimer*>::metatable(),sol::usertype_traits<cocos2d::Node*>::metatable());
+lua["cc"]["ProgressTimer"]=mt;
+mt["__new__"]=static_cast<cocos2d::ProgressTimer*(*)(cocos2d::Sprite*)>(&cocos2d::ProgressTimer::create);
+mt["GetType"]=static_cast<cocos2d::ProgressTimer::Type(cocos2d::ProgressTimer::*)()const>(&cocos2d::ProgressTimer::getType);
+mt["get"]["Type"]=mt["GetType"];
+mt["GetPercentage"]=static_cast<float(cocos2d::ProgressTimer::*)()const>(&cocos2d::ProgressTimer::getPercentage);
+mt["get"]["Percentage"]=mt["GetPercentage"];
+mt["GetSprite"]=static_cast<cocos2d::Sprite*(cocos2d::ProgressTimer::*)()const>(&cocos2d::ProgressTimer::getSprite);
+mt["get"]["Sprite"]=mt["GetSprite"];
+mt["SetPercentage"]=static_cast<void(cocos2d::ProgressTimer::*)(float)>(&cocos2d::ProgressTimer::setPercentage);
+mt["set"]["Percentage"]=mt["SetPercentage"];
+mt["SetSprite"]=static_cast<void(cocos2d::ProgressTimer::*)(cocos2d::Sprite*)>(&cocos2d::ProgressTimer::setSprite);
+mt["set"]["Sprite"]=mt["SetSprite"];
+mt["SetType"]=static_cast<void(cocos2d::ProgressTimer::*)(cocos2d::ProgressTimer::Type)>(&cocos2d::ProgressTimer::setType);
+mt["set"]["Type"]=mt["SetType"];
+mt["IsReverseDirection"]=static_cast<bool(cocos2d::ProgressTimer::*)()>(&cocos2d::ProgressTimer::isReverseDirection);
+mt["get"]["ReverseDirection"]=mt["IsReverseDirection"];
+mt["SetReverseDirection"]=static_cast<void(cocos2d::ProgressTimer::*)(bool)>(&cocos2d::ProgressTimer::setReverseDirection);
+mt["set"]["ReverseDirection"]=mt["SetReverseDirection"];
+mt["SetMidpoint"]=static_cast<void(cocos2d::ProgressTimer::*)(const cocos2d::Vec2&)>(&cocos2d::ProgressTimer::setMidpoint);
+mt["set"]["Midpoint"]=mt["SetMidpoint"];
+mt["GetMidpoint"]=static_cast<cocos2d::Vec2(cocos2d::ProgressTimer::*)()const>(&cocos2d::ProgressTimer::getMidpoint);
+mt["get"]["Midpoint"]=mt["GetMidpoint"];
+mt["SetBarChangeRate"]=static_cast<void(cocos2d::ProgressTimer::*)(const cocos2d::Vec2&)>(&cocos2d::ProgressTimer::setBarChangeRate);
+mt["set"]["BarChangeRate"]=mt["SetBarChangeRate"];
+mt["GetBarChangeRate"]=static_cast<cocos2d::Vec2(cocos2d::ProgressTimer::*)()const>(&cocos2d::ProgressTimer::getBarChangeRate);
+mt["get"]["BarChangeRate"]=mt["GetBarChangeRate"];
+RegisterLuaCoreProgressTimerTypeAuto(lua);
+}
+void RegisterLuaCoreProtectedNodeAuto(cocos2d::extension::Lua& lua){
+cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::ProtectedNode).name()] = sol::usertype_traits<cocos2d::ProtectedNode*>::metatable();
+auto dep=lua.new_usertype<cocos2d::ProtectedNode>("deprecated.cocos2d::ProtectedNode");
+dep[sol::base_classes]=sol::bases<cocos2d::Node,cocos2d::Ref,cocos2d::extension::LuaObject>();
+sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::ProtectedNode*>::metatable(),sol::usertype_traits<cocos2d::Node*>::metatable());
+lua["cc"]["ProtectedNode"]=mt;
+mt["__new__"]=static_cast<cocos2d::ProtectedNode*(*)()>(&cocos2d::ProtectedNode::create);
+mt["AddProtectedChild"]=sol::overload(static_cast<void(cocos2d::ProtectedNode::*)(cocos2d::Node*,int,int)>(&cocos2d::ProtectedNode::addProtectedChild),static_cast<void(cocos2d::ProtectedNode::*)(cocos2d::Node*,int)>(&cocos2d::ProtectedNode::addProtectedChild),static_cast<void(cocos2d::ProtectedNode::*)(cocos2d::Node*)>(&cocos2d::ProtectedNode::addProtectedChild));
+mt["GetProtectedChildByTag"]=static_cast<cocos2d::Node*(cocos2d::ProtectedNode::*)(int)>(&cocos2d::ProtectedNode::getProtectedChildByTag);
+mt["RemoveProtectedChild"]=sol::overload([](cocos2d::ProtectedNode* obj,cocos2d::Node* arg0,bool arg1){return obj->removeProtectedChild(arg0,arg1);},[](cocos2d::ProtectedNode* obj,cocos2d::Node* arg0){return obj->removeProtectedChild(arg0);});
+mt["RemoveProtectedChildByTag"]=sol::overload([](cocos2d::ProtectedNode* obj,int arg0,bool arg1){return obj->removeProtectedChildByTag(arg0,arg1);},[](cocos2d::ProtectedNode* obj,int arg0){return obj->removeProtectedChildByTag(arg0);});
+mt["RemoveAllProtectedChildren"]=static_cast<void(cocos2d::ProtectedNode::*)()>(&cocos2d::ProtectedNode::removeAllProtectedChildren);
+mt["RemoveAllProtectedChildrenWithCleanup"]=static_cast<void(cocos2d::ProtectedNode::*)(bool)>(&cocos2d::ProtectedNode::removeAllProtectedChildrenWithCleanup);
+mt["ReorderProtectedChild"]=static_cast<void(cocos2d::ProtectedNode::*)(cocos2d::Node*,int)>(&cocos2d::ProtectedNode::reorderProtectedChild);
+mt["SortAllProtectedChildren"]=static_cast<void(cocos2d::ProtectedNode::*)()>(&cocos2d::ProtectedNode::sortAllProtectedChildren);
+mt["DisableCascadeColor"]=static_cast<void(cocos2d::ProtectedNode::*)()>(&cocos2d::ProtectedNode::disableCascadeColor);
+mt["DisableCascadeOpacity"]=static_cast<void(cocos2d::ProtectedNode::*)()>(&cocos2d::ProtectedNode::disableCascadeOpacity);
 }
 }

@@ -38,5 +38,5 @@ class Cocos2dxGeneratorController(Cocos2dxGenerator):
             "-I{}/cocos/base".format(self.CocosRoot)
         ]
         self.Classes += [
-            "Controller", "EventController", "EventListenerController"
+            "Controller", "EventController", "EventController::.*", "EventListenerController"
         ]
