@@ -24,7 +24,7 @@ local i18n = require("OOP.i18n");
 local modf = math.modf;
 local assert = assert;
 local floor = math.floor;
-local bits = Config.Version == 5.2 and bit32 or {
+local bits = Config.LuaVersion == 5.2 and bit32 or {
     band = function (a,b)
         local _,floatA = modf(a);
         local _,floatB = modf(b);

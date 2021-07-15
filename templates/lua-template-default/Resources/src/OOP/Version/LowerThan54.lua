@@ -20,8 +20,8 @@
 -- THE SOFTWARE.
 
 local Config = require("OOP.Config");
-local Version = Config.Version;
-local unpack = Version < 5.2 and unpack or table.unpack;
+local LuaVersion = Config.LuaVersion;
+local unpack = LuaVersion < 5.2 and unpack or table.unpack;
 local setmetatable = setmetatable;
 local insert = table.insert;
 local remove = table.remove;

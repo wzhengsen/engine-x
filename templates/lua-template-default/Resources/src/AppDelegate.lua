@@ -39,28 +39,17 @@ end
 
 function AppDelegate:ctor()
     local eventDispatcher = D.EventDispatcher;
-    -- 监听进入前台后台。
+    -- 监听进入前台后台事件。
     eventDispatcher:AddCustomEventListener("applicationWillEnterForeground",event.AppEnterForeground);
     eventDispatcher:AddCustomEventListener("applicationDidEnterBackground",event.AppEnterBackground);
 
-    -- 不同设备，不同的监听转屏方法。
-    if os.android then
-        LuaBridge.SetOnLuaOrientationChanged(function(ori)
-            if ori == 1 then
-                self:OnDeviceToPortrait();
-            elseif ori == 0 then
-                self:OnDeviceToLandscape();
-            end
-        end);
-    else
-        -- 监听屏幕旋转事件。
-        eventDispatcher:AddCustomEventListener("DeviceToLandscape",function ()
-            self:OnDeviceToLandscape();
-        end);
-        eventDispatcher:AddCustomEventListener("DeviceToPortrait",function ()
-            self:OnDeviceToPortrait();
-        end);
-    end
+    -- 监听屏幕旋转事件。
+    eventDispatcher:AddCustomEventListener("ApplicationDidEnterLandscape",class.Break(function ()
+        self:OnAppEnterLandscape();
+    end));
+    eventDispatcher:AddCustomEventListener("ApplicationDidEnterPortrait",class.Break(function ()
+        self:OnAppEnterPortrait();
+    end));
 end
 
 function AppDelegate.set:ListenKeyboardEnabled(val)
@@ -106,7 +95,7 @@ function AppDelegate:SetDesignResolutionSize(width,height)
     event.AppDesignResolutionChanged(width,height);
 end
 
-function AppDelegate.protected:OnDeviceToLandscape()
+function AppDelegate.protected:OnAppEnterLandscape()
     local glView = D.OpenGLView;
     local size = glView.FrameSize;
     glView.FrameSize = {
@@ -117,10 +106,10 @@ function AppDelegate.protected:OnDeviceToLandscape()
         config.DesignResolution.Landscape.width,
         config.DesignResolution.Landscape.height
     );
-    event.DeviceToLandscape();
+    event.AppEnterLandscape();
 end
 
-function AppDelegate.protected:OnDeviceToPortrait()
+function AppDelegate.protected:OnAppEnterPortrait()
     local glView = D.OpenGLView;
     local size = glView.FrameSize;
     glView.FrameSize = {
@@ -131,7 +120,7 @@ function AppDelegate.protected:OnDeviceToPortrait()
         config.DesignResolution.Portrait.width,
         config.DesignResolution.Portrait.height
     );
-    event.DeviceToPortrait();
+    event.AppEnterPortrait();
 end
 
 function AppDelegate.private:InitGLView()
@@ -156,8 +145,8 @@ function AppDelegate.private:InitGLView()
         );
     end
 
-    if jConfig.linuxIcon then
-        D.OpenGLView.Icon = {F.WritablePath .. jConfig.linuxIcon};
+    if os.linux and jConfig.linuxIcon then
+        D.OpenGLView.Icon = F.WritablePath .. jConfig.linuxIcon;
     end
 
     if jConfig.isLandscape then

@@ -87,19 +87,14 @@ end
 
 function HttpInvoker.protected:_OnResponse(_,url,code,rHeaders,response,sendTime)
     local suc = code == 200;
-    local headers = {};
     local ret = {
         code = code,
-        headers = headers,
+        headers = rHeaders,
         url = url,
         delay = floor(clock() * 1000 - sendTime)
     };
 
-    for k,v in pairs(rHeaders) do
-        headers[k] = v;
-    end
-
-    local ct = headers["Content-Type"] or headers["CONTENT-TYPE"] or headers["content-type"];
+    local ct = rHeaders["Content-Type"] or rHeaders["CONTENT-TYPE"] or rHeaders["content-type"];
     if ct and ct:lower():find("application/json") then
         -- json响应类型，要求返回json能解析为一个表。
         local tab = decode(response);

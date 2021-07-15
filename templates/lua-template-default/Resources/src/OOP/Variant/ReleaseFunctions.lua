@@ -695,11 +695,11 @@ local function ClassInherite(cls,args,bases,handlers,members,metas,name)
                 -- When the class which named 'base' is created,push 'base' into cls bases table.
                 ClassesChildrenByName[baseName] = ClassesChildrenByName[baseName] or {};
                 insert(ClassesChildrenByName[baseName],cls);
-                goto continue;
             end
         end
-        Functions.PushBase(cls,bases,base,handlers,members,metas);
-        ::continue::
+        if nil ~= base then
+            Functions.PushBase(cls,bases,base,handlers,members,metas);
+        end
     end
 end
 

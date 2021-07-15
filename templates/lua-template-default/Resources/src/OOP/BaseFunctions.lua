@@ -20,9 +20,9 @@
 -- THE SOFTWARE.
 
 local Config = require("OOP.Config");
-local Version = Config.Version;
-local Compat1 = Version < 5.3 and require("OOP.Version.LowerThan53") or require("OOP.Version.HigherThan52");
-local Compat2 = Version < 5.4 and require("OOP.Version.LowerThan54") or require("OOP.Version.HigherThan53");
+local LuaVersion = Config.LuaVersion;
+local Compat1 = LuaVersion < 5.3 and require("OOP.Version.LowerThan53") or require("OOP.Version.HigherThan52");
+local Compat2 = LuaVersion < 5.4 and require("OOP.Version.LowerThan54") or require("OOP.Version.HigherThan53");
 local Internal = require("OOP.Variant.Internal");
 local ClassesChildren = Internal.ClassesChildren;
 

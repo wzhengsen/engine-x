@@ -25,20 +25,19 @@ package.path = path;
 local cpath = package.cpath;
 package.cpath = cpath;
 
+require("Frame.Extend.Lua.OsEx");
+require("Frame.Extend.Lua.MathEx");
+require("Frame.Extend.Lua.StringEx");
+require("Frame.Extend.Lua.TableEx");
+require("Frame.Extend.Lua.IoEx");
+require("Frame.Extend.Lua.LuaEx");
+
 require("AppDelegate");
 
 _G.cjson = require("cjson");
 _G.D = cc.Director.Instance;
 _G.A = cc.AppDelegate.Instance;
 _G.F = cc.FileUtils.Instance;
-
-
-require("Frame.Extend.Lua.MathEx");
-require("Frame.Extend.Lua.StringEx");
-require("Frame.Extend.Lua.TableEx");
-require("Frame.Extend.Lua.OsEx");
-require("Frame.Extend.Lua.IoEx");
-require("Frame.Extend.Lua.LuaEx");
 
 require("Frame.Core.LuaBridge");
 
@@ -53,7 +52,7 @@ require("Frame.Extend.Cocos2dx.NodeEx");
 require("Frame.Extend.Cocos2dx.VideoPlayerEx");
 require("Frame.Extend.Cocos2dx.ClientEx");
 require("Frame.Extend.Cocos2dx.ServerEx");
-require("Frame.Extend.Cocos2dx.ZipFileEx");
+require("Frame.Extend.Cocos2dx.ZipEx");
 require("Frame.Extend.Cocos2dx.DownloaderEx");
 require("Frame.Extend.Cocos2dx.WebSocketEx");
 
@@ -149,10 +148,10 @@ if config.RequireZipEnabled then
         local zipFileName = zFile:sub(#zipPrefix + 1,where - 1);
         local zipFile = nil;
         if zipFileName:sub(-4) == ".zip" then
-            zipFile = cc.RZipFile.new(zipFileName);
+            zipFile = cc.RZip.new(zipFileName);
         else
             for _,fileExt in ipairs({".zip",""}) do
-                zipFile = cc.RZipFile.new(zipFileName..fileExt);
+                zipFile = cc.RZip.new(zipFileName..fileExt);
                 if zipFile then
                     break;
                 end

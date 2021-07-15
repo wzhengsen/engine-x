@@ -20,24 +20,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ]]
 
-local ZipFile = cc.ZipFile;
+local Zip = cc.Zip;
 
-function ZipFile:OnProcess(_,_,_)end
-function ZipFile:OnError(_,_)end
+function Zip:OnProcess(_,_,_)end
+function Zip:OnError(_,_)end
 
-function ZipFile:ctor()
-    self.ProcessHandler = ZipFile.OnProcessHandler;
-    self.ErrorHandler = ZipFile.OnErrorHandler;
+function Zip:ctor()
+    self.ProcessHandler = Zip.OnProcessHandler;
+    self.ErrorHandler = Zip.OnErrorHandler;
 end
 
-function ZipFile.private:OnProcessHandler(path,idx,count)
+function Zip.private:OnProcessHandler(path,idx,count)
     if not self:OnProcess(path,idx,count) then
-        event.ZipFileProcess(self,path,idx,count);
+        event.ZipProcess(self,path,idx,count);
     end
 end
 
-function ZipFile.private:OnErrorHandler(code,reason)
+function Zip.private:OnErrorHandler(code,reason)
     if not self:OnError(code,reason) then
-        event.ZipFileError(self,code,reason);
+        event.ZipError(self,code,reason);
     end
 end

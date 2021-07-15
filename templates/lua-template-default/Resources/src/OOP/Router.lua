@@ -23,7 +23,7 @@ local rawset = rawset;
 local error = error;
 local type = type;
 local Config = require("OOP.Config");
-local Version = Config.Version;
+local LuaVersion = Config.LuaVersion;
 local i18n = require("OOP.i18n");
 local Internal = require("OOP.Variant.Internal");
 local ClassesMembers = Internal.ClassesMembers;
@@ -68,7 +68,7 @@ local BitsMap = {
     [set] = 2 ^ 7,
     [virtual] = 2 ^ 8
 };
-if Version > 5.2 then
+if LuaVersion > 5.2 then
     BitsMap[public] = math.tointeger(BitsMap[public]);
     BitsMap[private] = math.tointeger(BitsMap[private]);
     BitsMap[protected] = math.tointeger(BitsMap[protected]);

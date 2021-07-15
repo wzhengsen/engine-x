@@ -50,14 +50,22 @@ function BaseScene:dtor()
     end
 end
 
-function BaseScene.handlers:OnDeviceToPortrait()
-    self.Size = D.OpenGLView.FrameSize;
-    self:Layout();
+function BaseScene.handlers:AppEnterPortrait()
+    local size = self.Size;
+    self.Size = {
+        height = size.width,
+        width = size.height
+    };
+    self.Layout = true;
 end
 
-function BaseScene.handlers:OnDeviceToLandscape()
-    self.Size = D.OpenGLView.FrameSize;
-    self:Layout();
+function BaseScene.handlers:AppEnterLandScape()
+    local size = self.Size;
+    self.Size = {
+        height = size.width,
+        width = size.height
+    };
+    self.Layout = true;
 end
 cc.BaseScene = BaseScene;
 return BaseScene;

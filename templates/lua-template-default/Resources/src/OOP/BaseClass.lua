@@ -63,5 +63,6 @@ end
 
 class[ClassDefault] = function ()end;
 class[ClassDelete] = function () error(i18n"This is the function that has been deleted.");end;
+class.Version = Config.Version;
 
 return class;

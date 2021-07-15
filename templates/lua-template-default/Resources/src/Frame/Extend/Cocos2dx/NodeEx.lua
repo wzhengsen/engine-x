@@ -120,7 +120,7 @@ end
 local LayoutComponent = ccui.LayoutComponent;
 local HorizontalEdge = LayoutComponent.HorizontalEdge;
 local VerticalEdge = LayoutComponent.VerticalEdge;
-function Node:Layout(layoutParam)
+function Node.set:Layout(layoutParam)
     local pType = type(layoutParam);
     if "table" == pType then
         local layout = LayoutComponent.BindLayoutComponent(self);
