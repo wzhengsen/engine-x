@@ -72,7 +72,7 @@ Application::~Application()
 int Application::run()
 {
     gtk_init(nullptr,nullptr);
-    notify_init("StarryX");
+    notify_init("adxe");
 
     initGLContextAttrs();
     // Initialize instance and cocos2d.

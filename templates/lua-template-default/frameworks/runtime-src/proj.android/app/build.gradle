@@ -16,7 +16,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "org.cocos2dx.StarryX"
+        applicationId "org.cocos2dx.hellolua"
         minSdkVersion PROP_MIN_SDK_VERSION.toInteger()
         targetSdkVersion PROP_TARGET_SDK_VERSION.toInteger()
         versionCode 1

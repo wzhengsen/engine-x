@@ -41,13 +41,13 @@ BEGIN
     BEGIN
         BLOCK "080404b0"
         BEGIN
-            VALUE "CompanyName", "StarryX.exe"
-            VALUE "FileDescription", "By Engine-X£¨Cocos2dx-Lua£©"
+            VALUE "CompanyName", "HelloLua.exe"
+            VALUE "FileDescription", "By ADXE£¨Cocos2dx-Lua£©"
             VALUE "FileVersion", "1.0.0.0"
-            VALUE "InternalName", "StarryX.exe"
-            VALUE "LegalCopyright", "Copyright (C) 2020 StarryX"
-            VALUE "OriginalFilename", "StarryX.exe"
-            VALUE "ProductName", "StarryX"
+            VALUE "InternalName", "HelloLua.exe"
+            VALUE "LegalCopyright", "Copyright (C) 2020 HelloLua"
+            VALUE "OriginalFilename", "HelloLua.exe"
+            VALUE "ProductName", "HelloLua"
             VALUE "ProductVersion", "0.0.0.1"
         END
     END

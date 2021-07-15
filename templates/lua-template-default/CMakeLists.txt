@@ -23,7 +23,7 @@
 # ****************************************************************************/
 cmake_minimum_required(VERSION 3.10)
 
-set(APP_NAME StarryX)
+set(APP_NAME HelloLua)
 
 project(${APP_NAME})
 
