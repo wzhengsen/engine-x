@@ -83,10 +83,6 @@ import android.view.WindowManager;
 import com.android.vending.expansion.zipfile.APKExpansionSupport;
 import com.android.vending.expansion.zipfile.ZipResourceFile;
 
-import com.baidu.location.BDAbstractLocationListener;
-import com.baidu.location.BDLocation;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
 import com.enhance.gameservice.IGameTuningService;
 
 import java.io.IOException;
@@ -791,86 +787,6 @@ public class Cocos2dxHelper {
         }
 
         return CacheId;
-    }
-
-    static private class BaiduLocationListener extends BDAbstractLocationListener {
-        private LocationClient lc = null;
-        private int luaCallback = 0;
-
-        BaiduLocationListener(LocationClient lc, int cb) {
-            this.lc = lc;
-            luaCallback = cb;
-        }
-        @Override
-        public void onReceiveLocation(BDLocation location){
-            if (lc != null) {
-                lc.stop();
-            }
-
-            if (luaCallback != 0) {
-                final HashMap<String,String> hashMap = new HashMap<>();
-                hashMap.put("code",String.valueOf(location.getLocType()));
-                hashMap.put("x",String.valueOf(location.getLongitude()));
-                hashMap.put("y",String.valueOf(location.getLatitude()));
-                hashMap.put("province",location.getProvince());//获取省份
-                hashMap.put("city",location.getCity());//获取城市
-                hashMap.put("district",location.getDistrict());//获取区县
-                hashMap.put("street",location.getStreet());//获取街道信息
-                hashMap.put("num",location.getStreetNumber());
-
-                sActivity.runOnGLThread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                LuaJavaBridge.callLuaFunctionWithMap(luaCallback, hashMap);
-                                LuaJavaBridge.releaseLuaFunction(luaCallback);
-                            }
-                        }
-                );
-            }
-        }
-    }
-
-    public static boolean RequestLocation(int luaCallback) {
-        try {
-            if (sActivity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                sActivity.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},0);
-                LuaJavaBridge.releaseLuaFunction(luaCallback);
-                return false;
-            }
-            LocationClient lc = new LocationClient(sActivity);
-            // 声明LocationClient类
-            // 注册监听函数
-            lc.registerLocationListener(new BaiduLocationListener(lc,luaCallback));
-
-            LocationClientOption option = new LocationClientOption();
-
-            // 可选，设置发起定位请求的间隔，int类型，单位ms
-            // 如果设置为0，则代表单次定位，即仅定位一次，默认为0
-            // 如果设置非0，需设置1000ms以上才有效
-            option.setScanSpan(0);
-            option.setOnceLocation(true);
-
-            option.setIsNeedAddress(true);
-
-            // 可选，设置是否使用gps，默认false
-            // 使用高精度和仅用设备两种定位模式的，参数必须设置为true
-            option.setOpenGps(true);
-
-            option.SetIgnoreCacheException(true);
-
-            //可选，V7.2版本新增能力
-            //如果设置了该接口，首次启动定位时，会先判断当前Wi-Fi是否超出有效期，若超出有效期，会先重新扫描Wi-Fi，然后定位
-            option.setWifiCacheTimeOut(5 * 60 * 1000);
-
-            lc.setLocOption(option);
-            lc.start();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-        return true;
     }
 
     public static boolean CheckPermission(String pmStr) {

@@ -21,12 +21,6 @@
 		<meta-data android:name="android.app.lib_name"
 				   android:value="enginex" />
 
-        <meta-data
-            android:name="com.baidu.lbsapi.AK"
-            android:value="${BaiduAK}" />
-
-        <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote" />
-		
         <activity
             android:name="org.cocos2dx.lua.AppActivity"
             android:screenOrientation="sensorLandscape"
