@@ -150,6 +150,7 @@ mt["SetContentWidth"]=static_cast<void(cocos2d::Node::*)(float)>(&cocos2d::Node:
 mt["set"]["ContentWidth"]=mt["SetContentWidth"];
 mt["SetContentHeight"]=static_cast<void(cocos2d::Node::*)(float)>(&cocos2d::Node::setContentHeight);
 mt["set"]["ContentHeight"]=mt["SetContentHeight"];
+mt["HitTest"]=static_cast<bool(cocos2d::Node::*)(const cocos2d::Vec2&)const>(&cocos2d::Node::hitTest);
 mt["SetVisible"]=static_cast<void(cocos2d::Node::*)(bool)>(&cocos2d::Node::setVisible);
 mt["set"]["Visible"]=mt["SetVisible"];
 mt["IsVisible"]=static_cast<bool(cocos2d::Node::*)()const>(&cocos2d::Node::isVisible);
