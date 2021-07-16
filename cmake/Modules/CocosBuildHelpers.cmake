@@ -218,6 +218,14 @@ function(cocos_copy_target_dll cocos_target)
     endforeach()
 
     if(WINDOWS)
+        # copy thirdparty dlls to target bin dir
+        # copy_thirdparty_dlls(${cocos_target} $<TARGET_FILE_DIR:${cocos_target}>)
+        add_custom_command(TARGET ${cocos_target} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+        "${CMAKE_BINARY_DIR}/bin/\$\(Configuration\)/libcurl.dll"
+        "${CMAKE_BINARY_DIR}/bin/\$\(Configuration\)/OpenAL32.dll"
+         $<TARGET_FILE_DIR:${cocos_target}>)
+
         # Copy windows cef binaries
         add_custom_command(TARGET ${cocos_target}
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
