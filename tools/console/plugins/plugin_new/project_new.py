@@ -281,18 +281,21 @@ def replace_string(filepath, src_string, dst_string):
 
     content = ""
     f1 = open(filepath, "rb")
+    gbk = False
     for line in f1:
         try:
             strline = line.decode('utf8')
+            gbk = False
         except:
             strline = line.decode('gbk')
+            gbk = True
         if src_string in strline:
             content += strline.replace(src_string, dst_string)
         else:
             content += strline
     f1.close()
     f2 = open(filepath, "wb")
-    f2.write(content.encode('utf8'))
+    f2.write(content.encode('gbk' if gbk else 'utf8'))
     f2.close()
 # end of replace_string
 
