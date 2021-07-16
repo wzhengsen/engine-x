@@ -6,14 +6,13 @@
  * -1.7976931348623e+308 */
 # define FPCONV_G_FMT_BUFSIZE   32
 
-#ifdef _MSC_VER
-#define snprintf _snprintf
-#undef inline
-#define inline __inline
+#ifdef __cplusplus
+extern "C" {
 #endif
 
+
 #ifdef USE_INTERNAL_FPCONV
-static void fpconv_init()
+static inline void fpconv_init()
 {
     /* Do nothing - not required */
 }
@@ -23,7 +22,10 @@ extern void fpconv_init();
 
 extern int fpconv_g_fmt(char*, double, int);
 extern double fpconv_strtod(const char*, char**);
-extern long long fpconv_strtoll(const char*, char**, int*);
+
+#ifdef __cplusplus
+}
+#endif
 
 /* vi:ai et sw=4 ts=4:
  */

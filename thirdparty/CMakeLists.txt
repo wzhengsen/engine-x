@@ -202,17 +202,17 @@ endif(BUILD_DEP_WEBSOCKETS)
 if(BUILD_LUA_LIBS)
     add_subdirectory(lua/${LUA_ENGINE})
     add_subdirectory(lua/luasocket)
-    add_subdirectory(lua/cjson)
+    add_subdirectory(lua/lua-cjson)
     add_subdirectory(lua/lua-protobuf)
     configure_target_outdir(${LUA_ENGINE})
     configure_target_outdir(luasocket)
-    configure_target_outdir(cjson)
+    configure_target_outdir(lua-cjson)
     configure_target_outdir(lua-protobuf)
     # add_subdirectory(lua/tolua)
     set_property(TARGET thirdparty APPEND PROPERTY 
-        CC_LUA_DEPEND ${LUA_ENGINE} #tolua
+        CC_LUA_DEPEND ${LUA_ENGINE}
     )
-    target_link_libraries(thirdparty ${LUA_ENGINE} luasocket cjson lua-protobuf)
+    target_link_libraries(thirdparty ${LUA_ENGINE} luasocket lua-cjson lua-protobuf)
 endif()
 
 if(NOT LINUX)

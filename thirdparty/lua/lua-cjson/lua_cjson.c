@@ -1,5 +1,6 @@
 /* Lua CJSON - JSON support for Lua
  *
+ * Copyright (c) 2019-2020 HALX99
  * Copyright (c) 2010-2012  Mark Pulford <mark@kyne.com.au>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -35,31 +36,37 @@
  *       time (30%) managing tables when parsing JSON since it is
  *       difficult to know object/array sizes ahead of time.
  */
-
+#if !defined(LUA_LIB)
+#define LUA_LIB
+#endif
 #include <assert.h>
 #include <string.h>
 #include <math.h>
 #include <limits.h>
+#include <lua.h>
+#include <lauxlib.h>
+#if defined(USING_LUAJIT)
+#include <luajit.h>
+#endif
 
-#include "lua.h"
-#include "lauxlib.h"
 #include "strbuf.h"
 #include "fpconv.h"
+
+#if defined(_WIN32) || defined(_WIN64)
+#define strncasecmp _strnicmp
+#endif
 
 #ifndef CJSON_MODNAME
 #define CJSON_MODNAME   "cjson"
 #endif
 
 #ifndef CJSON_VERSION
-#define CJSON_VERSION   "2.1devel"
+#define CJSON_VERSION   "2.1.1"
 #endif
 
-#ifdef _WIN32
-#define __strncasecmp strnicmp
-#define isnan(x) ((x) != (x))
-#define isinf(x) (!isnan(x) && isnan(x - x))
-#else
-#define __strncasecmp strncasecmp
+/* Workaround for Solaris platforms missing isinf() */
+#if !defined(isinf) && (defined(USE_INTERNAL_ISINF) || defined(MISSING_ISINF))
+#define isinf(x) (!isnan(x) && isnan((x) - (x)))
 #endif
 
 #define DEFAULT_SPARSE_CONVERT 0
@@ -70,8 +77,7 @@
 #define DEFAULT_ENCODE_INVALID_NUMBERS 0
 #define DEFAULT_DECODE_INVALID_NUMBERS 1
 #define DEFAULT_ENCODE_KEEP_BUFFER 1
-#define DEFAULT_ENCODE_NUMBER_PRECISION 14
-#define DEFAULT_DECODE_LUA_NIL 1
+#define DEFAULT_ENCODE_NUMBER_PRECISION 17
 
 #ifdef DISABLE_INVALID_NUMBERS
 #undef DEFAULT_DECODE_INVALID_NUMBERS
@@ -85,7 +91,7 @@ typedef enum {
     T_ARR_END,
     T_STRING,
     T_NUMBER,
-	T_INTEGER,
+    T_INTEGER,
     T_BOOLEAN,
     T_NULL,
     T_COLON,
@@ -103,7 +109,7 @@ static const char *json_token_type_name[] = {
     "T_ARR_END",
     "T_STRING",
     "T_NUMBER",
-	"T_INTEGER",
+    "T_INTEGER",
     "T_BOOLEAN",
     "T_NULL",
     "T_COLON",
@@ -133,7 +139,6 @@ typedef struct {
 
     int decode_invalid_numbers;
     int decode_max_depth;
-    int decode_lua_nil;             /* 1 => use Lua nil for NULL */
 } json_config_t;
 
 typedef struct {
@@ -149,8 +154,8 @@ typedef struct {
     int index;
     union {
         const char *string;
-		long long i;
         double number;
+        lua_Integer integer;
         int boolean;
     } value;
     int string_len;
@@ -201,7 +206,7 @@ static json_config_t *json_fetch_config(lua_State *l)
 {
     json_config_t *cfg;
 
-    cfg = lua_touserdata(l, lua_upvalueindex(1));
+    cfg = (json_config_t *)lua_touserdata(l, lua_upvalueindex(1));
     if (!cfg)
         luaL_error(l, "BUG: Unable to fetch CJSON configuration");
 
@@ -230,7 +235,7 @@ static int json_integer_option(lua_State *l, int optindex, int *setting,
     int value;
 
     if (!lua_isnil(l, optindex)) {
-        value = (int)luaL_checkinteger(l, optindex);
+        value = luaL_checkinteger(l, optindex);
         snprintf(errmsg, sizeof(errmsg), "expected integer between %d and %d", min, max);
         luaL_argcheck(l, min <= value && value <= max, 1, errmsg);
         *setting = value;
@@ -305,7 +310,7 @@ static int json_cfg_encode_number_precision(lua_State *l)
 {
     json_config_t *cfg = json_arg_init(l, 1);
 
-    return json_integer_option(l, 1, &cfg->encode_number_precision, 1, 14);
+    return json_integer_option(l, 1, &cfg->encode_number_precision, 1, 18);
 }
 
 /* Configures JSON encoding buffer persistence */
@@ -364,20 +369,11 @@ static int json_cfg_decode_invalid_numbers(lua_State *l)
     return 1;
 }
 
-static int json_cfg_decode_lua_nil(lua_State *l)
-{
-    json_config_t *cfg = json_arg_init(l, 1);
-
-    json_enum_option(l, 1, &cfg->decode_lua_nil, NULL, 1);
-
-    return 1;
-}
-
 static int json_destroy_config(lua_State *l)
 {
     json_config_t *cfg;
 
-    cfg = lua_touserdata(l, 1);
+    cfg = (json_config_t *)lua_touserdata(l, 1);
     if (cfg)
         strbuf_free(&cfg->encode_buf);
     cfg = NULL;
@@ -390,7 +386,7 @@ static void json_create_config(lua_State *l)
     json_config_t *cfg;
     int i;
 
-    cfg = lua_newuserdata(l, sizeof(*cfg));
+    cfg = (json_config_t *)lua_newuserdata(l, sizeof(*cfg));
 
     /* Create GC method to clean up strbuf */
     lua_newtable(l);
@@ -407,7 +403,6 @@ static void json_create_config(lua_State *l)
     cfg->decode_invalid_numbers = DEFAULT_DECODE_INVALID_NUMBERS;
     cfg->encode_keep_buffer = DEFAULT_ENCODE_KEEP_BUFFER;
     cfg->encode_number_precision = DEFAULT_ENCODE_NUMBER_PRECISION;
-    cfg->decode_lua_nil = DEFAULT_DECODE_LUA_NIL;
 
 #if DEFAULT_ENCODE_KEEP_BUFFER > 0
     strbuf_init(&cfg->encode_buf, 0);
@@ -479,9 +474,9 @@ static void json_encode_exception(lua_State *l, json_config_t *cfg, strbuf_t *js
 static void json_append_string(lua_State *l, strbuf_t *json, int lindex)
 {
     const char *escstr;
-    int i;
     const char *str;
     size_t len;
+    size_t i;
 
     str = lua_tolstring(l, lindex, &len);
 
@@ -489,7 +484,7 @@ static void json_append_string(lua_State *l, strbuf_t *json, int lindex)
      * This buffer is reused constantly for small strings
      * If there are any excess pages, they won't be hit anyway.
      * This gains ~5% speedup. */
-    strbuf_ensure_empty_length(json, (int)len * 6 + 2);
+    strbuf_ensure_empty_length(json, len * 6 + 2);
 
     strbuf_append_char_unsafe(json, '\"');
     for (i = 0; i < len; i++) {
@@ -604,8 +599,17 @@ static void json_append_array(lua_State *l, json_config_t *cfg, int current_dept
 static void json_append_number(lua_State *l, json_config_t *cfg,
                                strbuf_t *json, int lindex)
 {
-    double num = lua_tonumber(l, lindex);
     int len;
+#if LUA_VERSION_NUM >= 503
+    if (lua_isinteger(l, lindex)) {
+        lua_Integer num = lua_tointeger(l, lindex);
+        strbuf_ensure_empty_length(json, FPCONV_G_FMT_BUFSIZE); /* max length of int64 is 19 */
+        len = sprintf(strbuf_empty_ptr(json), LUA_INTEGER_FMT, num);
+        strbuf_extend_length(json, len);
+        return;
+    }
+#endif
+    double num = lua_tonumber(l, lindex);
 
     if (cfg->encode_invalid_numbers == 0) {
         /* Prevent encoding invalid numbers */
@@ -902,7 +906,7 @@ static void json_set_token_error(json_token_t *token, json_parse_t *json,
                                  const char *errtype)
 {
     token->type = T_ERROR;
-    token->index = (int)(json->ptr - json->data);
+    token->index = json->ptr - json->data;
     token->value.string = errtype;
 }
 
@@ -1007,9 +1011,9 @@ static int json_is_invalid_number(json_parse_t *json)
     }
 
     /* Reject inf/nan */
-    if (!__strncasecmp(p, "inf", 3))
+    if (!strncasecmp(p, "inf", 3))
         return 1;
-    if (!__strncasecmp(p, "nan", 3))
+    if (!strncasecmp(p, "nan", 3))
         return 1;
 
     /* Pass all other numbers which may still be invalid, but
@@ -1020,20 +1024,18 @@ static int json_is_invalid_number(json_parse_t *json)
 static void json_next_number_token(json_parse_t *json, json_token_t *token)
 {
     char *endptr;
-
-	int maybedouble = 0;
-
-	token->type = T_INTEGER;
-	token->value.i = fpconv_strtoll(json->ptr, &endptr, &maybedouble);
-
-	if (maybedouble) {
-		token->type = T_NUMBER;
-		token->value.number = fpconv_strtod(json->ptr, &endptr);
-	}
-    if (json->ptr == endptr)
+    token->value.integer = strtoll(json->ptr, &endptr, 0);
+    if (json->ptr == endptr) {
         json_set_token_error(token, json, "invalid number");
-    else
-        json->ptr = endptr;     /* Skip the processed number */
+        return;
+    }
+    if (*endptr == '.' || *endptr == 'e' || *endptr == 'E') {
+        token->type = T_NUMBER;
+        token->value.number = fpconv_strtod(json->ptr, &endptr);
+    } else {
+        token->type = T_INTEGER;
+    }
+    json->ptr = endptr;     /* Skip the processed number */
 
     return;
 }
@@ -1058,7 +1060,7 @@ static void json_next_token(json_parse_t *json, json_token_t *token)
 
     /* Store location of new token. Required when throwing errors
      * for unexpected tokens (syntax errors). */
-    token->index = (int)(json->ptr - json->data);
+    token->index = json->ptr - json->data;
 
     /* Don't advance the pointer for an error or the end */
     if (token->type == T_ERROR) {
@@ -1262,9 +1264,9 @@ static void json_process_value(lua_State *l, json_parse_t *json,
     case T_NUMBER:
         lua_pushnumber(l, token->value.number);
         break;;
-	case T_INTEGER:
-		lua_pushinteger(l, token->value.i);
-		break;;
+    case T_INTEGER:
+        lua_pushinteger(l, token->value.integer);
+        break;;
     case T_BOOLEAN:
         lua_pushboolean(l, token->value.boolean);
         break;;
@@ -1275,16 +1277,9 @@ static void json_process_value(lua_State *l, json_parse_t *json,
         json_parse_array_context(l, json);
         break;;
     case T_NULL:
-        if (json->cfg->decode_lua_nil)
-        {
-            lua_pushnil(l);
-        }
-        else
-        {
-            /* In Lua, setting "t[k] = nil" will delete k from the table.
-             * Hence a NULL pointer lightuserdata object is used instead */
-            lua_pushlightuserdata(l, NULL);
-        }
+        /* In Lua, setting "t[k] = nil" will delete k from the table.
+         * Hence a NULL pointer lightuserdata object is used instead */
+        lua_pushlightuserdata(l, NULL);
         break;;
     default:
         json_throw_parse_error(l, json, "value", token);
@@ -1315,7 +1310,7 @@ static int json_decode(lua_State *l)
     /* Ensure the temporary buffer can hold the entire string.
      * This means we no longer need to do length checks since the decoded
      * string must be smaller than the entire json string */
-    json.tmp = strbuf_new((int)json_len);
+    json.tmp = strbuf_new(json_len);
 
     json_next_token(&json, &token);
     json_process_value(l, &json, &token);
@@ -1333,7 +1328,7 @@ static int json_decode(lua_State *l)
 
 /* ===== INITIALISATION ===== */
 
-#if !defined(LUA_VERSION_NUM) || LUA_VERSION_NUM < 502
+#if LUA_VERSION_NUM < 502 && (!defined(LUAJIT_VERSION_NUM) || LUAJIT_VERSION_NUM < 20100)
 /* Compatibility for Lua 5.1.
  *
  * luaL_setfuncs() is used to create a module table where the functions have
@@ -1384,7 +1379,7 @@ static int json_protect_conversion(lua_State *l)
 /* Return cjson module table */
 static int lua_cjson_new(lua_State *l)
 {
-    static luaL_Reg reg[] = {
+    luaL_Reg reg[] = {
         { "encode", json_encode },
         { "decode", json_decode },
         { "encode_sparse_array", json_cfg_encode_sparse_array },
@@ -1394,7 +1389,6 @@ static int lua_cjson_new(lua_State *l)
         { "encode_keep_buffer", json_cfg_encode_keep_buffer },
         { "encode_invalid_numbers", json_cfg_encode_invalid_numbers },
         { "decode_invalid_numbers", json_cfg_decode_invalid_numbers },
-        { "decode_lua_nil", json_cfg_decode_lua_nil },
         { "new", lua_cjson_new },
         { NULL, NULL }
     };

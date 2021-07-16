@@ -53,13 +53,12 @@ static void fpconv_update_locale()
 {
     char buf[8];
 
-    snprintf(buf, sizeof(buf), "%g", 0.5);
+    snprintf(buf, sizeof(buf), "%.5g", 0.5);
 
     /* Failing this test might imply the platform has a buggy dtoa
      * implementation or wide characters */
     if (buf[0] != '0' || buf[2] != '5' || buf[3] != 0) {
-        fprintf(stderr, "Error: wide characters found or printf() bug.");
-        abort();
+        fprintf(stderr, "Warning: wide characters found or printf() bug.");
     }
 
     locale_decimal_point = buf[1];
@@ -98,7 +97,7 @@ static int strtod_buffer_size(const char *s)
     while (valid_number_character(*p))
         p++;
 
-    return (int)(p - s);
+    return p - s;
 }
 
 /* Similar to strtod(), but must be passed the current locale's decimal point
@@ -127,7 +126,7 @@ double fpconv_strtod(const char *nptr, char **endptr)
         buf = malloc(buflen + 1);
         if (!buf) {
             fprintf(stderr, "Out of memory");
-            abort();
+            return 0;
         }
     } else {
         /* This is the common case.. */
@@ -147,14 +146,6 @@ double fpconv_strtod(const char *nptr, char **endptr)
         free(buf);
 
     return value;
-}
-
-long long fpconv_strtoll(const char* nptr, char** endptr, int* maybedouble) {
-	long long ll = strtoll(nptr, endptr, 10);
-	if (**endptr == locale_decimal_point && maybedouble) {
-		*maybedouble = 1;
-	}
-	return ll;
 }
 
 /* "fmt" must point to a buffer of at least 6 characters */
