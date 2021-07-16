@@ -285,7 +285,6 @@ def replace_string(filepath, src_string, dst_string):
     for line in f1:
         try:
             strline = line.decode('utf8')
-            gbk = False
         except:
             strline = line.decode('gbk')
             gbk = True
