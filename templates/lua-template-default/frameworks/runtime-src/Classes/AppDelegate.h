@@ -59,6 +59,9 @@ public:
     */
     virtual void applicationWillEnterForeground();
 
+    void ApplicationDidEnterLandscape() override;
+    void ApplicationDidEnterPortrait() override;
+
 	/**
 	 @brief Restart Lua engine.
 	 */

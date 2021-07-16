@@ -24,14 +24,6 @@
 
 #include "AppDelegate.h"
 
-#include "cjson/LuaRegister_cjson.h"
-#include "crypto/LuaRegister_crypto.h"
-#include "Network/LuaRegisterConnection.h"
-#include "lua-protobuf/LuaRegister_lua-protobuf.h"
-#include "Cocos2dx/LuaRegisterCocos2dx.h"
-#include "Device/LuaRegisterDevice.h"
-#include "ExtLib/LuaRegisterExtLib.h"
-
 #include "audio/include/AudioEngine.h"
 #include "scripting/lua-bindings/CCLua.h"
 
@@ -45,13 +37,6 @@ static int register_all_packages() {
     return 0; //flag for packages manager
 }
 static int register_custom_function(lua_State* L) noexcept {
-    LuaRegister_cjson(L);
-    LuaRegister_crypto(L);
-    LuaRegisterConnection(L);
-    LuaRegisterDownloader(L);
-    LuaRegister_luaprotobuf(L);
-    LuaRegisterDevice(L);
-    LuaRegisterExtLib(L);
     return 0;
 }
 
@@ -99,6 +84,17 @@ void AppDelegate::applicationWillEnterForeground() {
     AudioEngine::UnblockAll();
     dr->getEventDispatcher()->dispatchCustomEvent("applicationWillEnterForeground");
 }
+
+void AppDelegate::ApplicationDidEnterLandscape() {
+    Director::getInstance()->getEventDispatcher()->dispatchCustomEvent("ApplicationDidEnterLandscape");
+}
+
+// This function will be called when the app is inactive. Note, when receiving a phone call it is invoked.
+void AppDelegate::ApplicationDidEnterPortrait() {
+    Director::getInstance()->getEventDispatcher()->dispatchCustomEvent("ApplicationDidEnterPortrait");
+}
+
+
 
 // Restart Lua engine and run with main.lua
 bool AppDelegate::RestartLuaEngine() {
