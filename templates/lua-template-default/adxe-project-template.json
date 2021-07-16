@@ -32,12 +32,6 @@
                 "proj.win32/HelloLua.sdf"
             ]
         },
-        "append_dir": [
-            {
-                "from": "extensions/scripting/lua-bindings/manual/lua_module_register.h",
-                "to": "frameworks/runtime-src/Classes/"
-            }
-        ],
         "replace_workspace": {
             "src_project_name": "HelloLua",
             "files": [
@@ -63,7 +57,7 @@
             ]
         },
         "project_replace_package_name": {
-            "src_package_name": "org.cocos2dx.starryx",
+            "src_package_name": "org.cocos2dx.hellolua",
             "files": [
                 "frameworks/runtime-src/proj.android/app/build.gradle",
                 "frameworks/runtime-src/proj.android/app/AndroidManifest.xml"
@@ -76,13 +70,13 @@
             ]
         },
         "project_replace_mac_bundleid": {
-            "src_bundle_id": "org.cocos2dx.starryx",
+            "src_bundle_id": "org.cocos2dx.hellolua",
             "files": [
                 "frameworks/runtime-src/proj.ios_mac/mac/Info.plist"
             ]
         },
         "project_replace_ios_bundleid": {
-            "src_bundle_id": "org.cocos2dx.starryx",
+            "src_bundle_id": "org.cocos2dx.hellolua",
             "files": [
                 "frameworks/runtime-src/proj.ios_mac/ios/Info.plist"
             ]

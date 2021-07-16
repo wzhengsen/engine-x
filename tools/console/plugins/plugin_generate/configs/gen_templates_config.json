@@ -51,13 +51,6 @@
             ]
         },
         {
-            "from": "extensions/scripting/lua-bindings/manual",
-            "to": "lua-template-binary/frameworks/runtime-src/Classes",
-            "include": [
-                "lua_module_register.h"
-            ]
-        },
-        {
             "from": "tools/simulator/frameworks/runtime-src/proj.ios_mac/ios",
             "to": "lua-template-binary/frameworks/runtime-src/proj.ios_mac/ios",
             "exclude": [

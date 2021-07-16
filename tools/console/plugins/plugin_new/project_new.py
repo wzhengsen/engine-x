@@ -282,7 +282,10 @@ def replace_string(filepath, src_string, dst_string):
     content = ""
     f1 = open(filepath, "rb")
     for line in f1:
-        strline = line.decode('utf8')
+        try:
+            strline = line.decode('utf8')
+        except:
+            strline = line.decode('gbk')
         if src_string in strline:
             content += strline.replace(src_string, dst_string)
         else:
