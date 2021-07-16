@@ -37,7 +37,11 @@
         "LuaObjcBridge",
         "LuaJavaBridge",
         "ccs",
-        "sol"
+        "sol",
+        "class",
+        "event",
+        "enum",
+        "ccu"
     ],
     "Lua.runtime.version": "Lua 5.4",
     "Lua.workspace.ignoreDir": [
