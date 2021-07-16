@@ -208,24 +208,14 @@ public class Cocos2dxGLSurfaceView extends GLSurfaceView {
     @Override
     public void onConfigurationChanged(Configuration newConfig){
         super.onConfigurationChanged(newConfig);
-        int orientation = newConfig.orientation;
+        final int orientation = newConfig.orientation;
         if (orientation != mOrientation){
             mOrientation = orientation;
             if (mOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-                this.queueEvent(new Runnable() {
-                    @Override
-                    public void run() {
-                        Cocos2dxGLSurfaceView.this.mCocos2dxRenderer.handleOnEnterLandscape();
-                    }
-                });
+                this.queueEvent(() -> Cocos2dxGLSurfaceView.this.mCocos2dxRenderer.handleOnEnterLandscape());
             }
             else if (mOrientation == Configuration.ORIENTATION_PORTRAIT){
-                this.queueEvent(new Runnable() {
-                    @Override
-                    public void run() {
-                        Cocos2dxGLSurfaceView.this.mCocos2dxRenderer.handleOnEnterPortrait();
-                    }
-                });
+                this.queueEvent(() -> Cocos2dxGLSurfaceView.this.mCocos2dxRenderer.handleOnEnterPortrait());
             }
         }
     }
