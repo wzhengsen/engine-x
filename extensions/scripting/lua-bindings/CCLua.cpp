@@ -54,6 +54,11 @@ namespace cocos2d::extension {
 
     void Lua::Init() {
         open_libraries();
+        (*this)["msgh"] = [](const std::string& msg) {
+            std::cerr << "[Lua Error]: " << msg << std::endl;
+        };
+        sol::protected_function::set_default_handler((*this)["msgh"]);
+        (*this)["msgh"] = sol::nil;
         add_package_loader([this](const std::string& fileName) {
             static const std::string ExtLuaC = ".luac";
             static const std::string ExtLua = ".lua";

@@ -23,6 +23,8 @@
 #include <vector>
 #include <map>
 #define SOL_PRINT_ERRORS 1
+#define SOL_SAFE_FUNCTIONS 1
+#define SOL_NO_EXCEPTIONS 1
 #include "sol/sol.hpp"
 #include "CCLuaObject.h"
 #include "platform/CCPlatformMacros.h"
