@@ -108,5 +108,5 @@ bool AppDelegate::RestartLuaEngine() {
     register_all_packages();
     // Register custom module
     register_custom_function(lua->lua_state());
-    return lua->script("require('src.main');").valid();
+    return lua->safe_script("require('src.main');", sol::script_pass_on_error).valid();
 }
