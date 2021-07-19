@@ -18,6 +18,14 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
+local tonumber = tonumber;
+local tostring = tostring;
+local concat = table.concat;
+local abs = math.abs;
+local modf = math.modf;
+local tointeger = math.tointeger;
+local floor = math.floor;
+
 -- 一些和转换相关的封装。
 -- 如阿拉伯数字转中文数，数字的千分位截断，一些类型强制转换等。
 
@@ -38,6 +46,17 @@ function cc.ToKilodigit(num)
         end
     end
     return formatted;
+end
+
+---转换任意值为整型，无论该值能不能被转换，一定会返回整型，且不会抛出错误。
+---@param num any
+---@return number
+local function ToInteger(num)
+    num = tonumber(num);
+    if nil == num then
+        return 0;
+    end
+    return tointeger(floor(num));
 end
 
 local ChineseNumberUpper = {
@@ -91,7 +110,7 @@ local function TransfromFloat2Chinese(numStr,b)
         ret[i] = cTab[tonumber(char) or char] or "";
     end
 
-    return table.concat(ret);
+    return concat(ret);
 end
 
 ---整数部分转换
@@ -156,17 +175,17 @@ function cc.ToChinese(num,b)
         return "负无穷";
     end
     local isNegative = num < 0;
-    num = math.abs(num);
+    num = abs(num);
     b = nil == b or b;
 
     -- 分割为整数和小数
-    local iNum,fNum = math.modf(num);
+    local iNum,fNum = modf(num);
     local fNumStr = "";
     if fNum ~= 0.0 then
         fNumStr = tostring(fNum);
         local eIdx = fNumStr:find("e");
         if eIdx then
-            local e = cc.ToInteger(fNumStr:sub(eIdx + 2));
+            local e = ToInteger(fNumStr:sub(eIdx + 2));
             local pre = fNumStr:sub(1,eIdx - 1):gsub("%.","");
             fNumStr = "." .. ("0"):rep(e - 1) .. pre;
         else
@@ -216,16 +235,7 @@ function cc.ToDouble(num)
     return (tonumber(num) or 0) + 0.0;
 end
 
----转换任意值为整型，无论该值能不能被转换，一定会返回整型，且不会抛出错误。
----@param num any
----@return number
-function cc.ToInteger(num)
-    num = tonumber(num);
-    if nil == num then
-        return 0;
-    end
-    return math.tointeger(math.floor(num));
-end
+cc.ToInteger = ToInteger;
 
 ---转换任意值为字符串，无论该值能不能被转换，一定会返回字符串，且不会抛出错误。
 ---特别的，nil将被转换为""，而不是"nil"，这和lua的默认行为不同。

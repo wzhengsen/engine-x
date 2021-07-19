@@ -18,17 +18,33 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
--- 为table新增了一些方法,如Union,Copy,Filter
+local type = type;
+local pairs = pairs;
+local ipairs = ipairs;
+local setmetatable = setmetatable;
+local getmetatable = getmetatable;
+local random = math.random;
+
+-- 为table新增了一些方法,如union,copy,filter
 
 ---筛选符合要求的键值对。
 ---@param t table
----@param f function | "function(key,value)\n    return true;\nend"
+---@param fv any | "function(key,value)\n    return true;\nend"
 ---@return table
-function table.filter(t,f)
+function table.filter(t,fv)
+    local isFunction = type(fv) == "function";
     local ret = {};
-    for k,v in pairs(t) do
-        if f(k,v) then
-            ret[k] = v;
+    if isFunction then
+        for k,v in pairs(t) do
+            if fv(k,v) then
+                ret[k] = v;
+            end
+        end
+    else
+        for k,v in pairs(t) do
+            if fv == v then
+                ret[k] = v;
+            end
         end
     end
     return ret;
@@ -57,11 +73,11 @@ end
 ---拷贝一个表，使用深拷贝。
 ---userdata/thread等无法拷贝
 ---@param tab table
----@param b? boolean {false}是否拷贝元表。
+---@param copyMeta? boolean {false}是否拷贝元表。
 ---@return table
-function table.copy(tab,b)
+function table.copy(tab,copyMeta)
     local retTab = copy(tab,{});
-    if b then
+    if copyMeta then
         setmetatable(retTab,getmetatable(tab));
     end
     return retTab;
@@ -92,28 +108,37 @@ end
 ---@return table
 function table.union(...)
     local union = {};
-    for _,v in pairs({...}) do
-        for k,v_v in pairs(v) do
-            union[k] = v_v;
+    for _,tab in pairs({...}) do
+        for k,v in pairs(tab) do
+            union[k] = v;
         end
     end
     return union;
 end
 
----求表中元素总数。
+---求表中元素总数或某种元素总数。
 ---@param tab table
----@param f? function | "function(key,value)\n    return true;\nend"
+---@param fv? any | "function(key,value)\n    return true;\nend"
 ---@return integer
-function table.count(tab,f)
+function table.count(tab,fv)
+    local isFunction = type(fv) == "function";
     local size = 0;
-    if not f then
+    if fv == nil then
         for _,_ in pairs(tab) do
             size = size + 1;
         end
     else
-        for k,v in pairs(tab) do
-            if f(k,v) == true then
-                size = size + 1;
+        if isFunction then
+            for k,v in pairs(tab) do
+                if fv(k,v) then
+                    size = size + 1;
+                end
+            end
+        else
+            for _,v in pairs(tab) do
+                if fv == v then
+                    size = size + 1;
+                end
             end
         end
     end
@@ -124,19 +149,19 @@ end
 ---在表中查找指定元素，并返回对应的键。
 ---只返回第一个匹配的元素。
 ---@param tab table
----@param value any
----@param f? function | "function(v,value)\n    return true;\nend"
+---@param fv any | "function(v,value)\n    return true;\nend"
 ---@return any
-function table.find(tab,value,f)
-    if not f then
+function table.find(tab,fv)
+    local isFunction = type(fv) == "function";
+    if not isFunction then
         for k,v in pairs(tab) do
-            if v == value then
+            if v == fv then
                 return k;
             end
         end
     else
         for k,v in pairs(tab) do
-            if f(v,value) == true then
+            if fv(v) then
                 return k;
             end
         end
@@ -149,7 +174,7 @@ end
 function table.mess(tab)
     local len = #tab;
     for i = 1,len do
-        local index = math.random(1,len);
+        local index = random(1,len);
         tab[i],tab[index] = tab[index],tab[i];
     end
 end
@@ -189,37 +214,46 @@ function table.unique(t,bArray)
     return n;
 end
 
----令表只读/或取消只读属性。
----该操作会改变表的元表。
+local empty = function()end
+---创建一个表的只读代理。
 ---@param tab table
----@param b? boolean {true}可以省略，默认只读。
-function table.readonly(tab,b)
-    b = nil == b or b;
+---@return table
+function table.readonly(tab)
+    return setmetatable({},{
+        __index = tab,
+        __newindex = empty
+    });
+end
 
-    local mt = getmetatable(tab);
-    if b then
-        if mt and mt["__@readonly__"] then
-            return;
+---创建表的子表。
+---@param tab table
+---@param idx1 integer      为负数时，从尾部计算索引。
+---@param idx2? integer     为负数时，从尾部计算索引。
+---@return table
+function table.sub(tab,idx1,idx2)
+    local len = #tab;
+    idx1 = idx1 < 0 and (len + idx1 + 1) or idx1;
+    idx2 = nil == idx2 and len or (idx2 < 0 and (len + idx2 + 1) or idx2);
+    local ret = {};
+    local idx = 1;
+    for i = idx1,idx2 do
+        local v = tab[i];
+        if nil == v then
+            break;
         end
-        mt = {
-            ["__@readonly__"] = true,
-            __index = {},
-            __newindex = function()end
-        }
-        local saveTab = mt.__index;
-        for k,v in pairs(tab) do
-            saveTab[k] = v;
-            tab[k] = nil;
-        end
-        setmetatable(tab,mt);
-    else
-        if not mt or not mt["__@readonly__"] then
-            return;
-        end
-        setmetatable(tab,nil);
-        local saveTab = mt.__index
-        for k,v in pairs(saveTab) do
-            tab[k] = v;
-        end
+        ret[idx] = v;
+        idx = idx + 1;
+    end
+
+    return ret;
+end
+
+---给定一个顺序表，将其逆序。
+---@param tab table
+function table.reverse(tab)
+    local len = #tab;
+    for i = 1,len // 2 do
+        local tail = len - i + 1;
+        tab[i],tab[tail] = tab[tail],tab[i];
     end
 end

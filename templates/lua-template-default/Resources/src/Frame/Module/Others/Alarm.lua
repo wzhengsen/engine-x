@@ -23,7 +23,7 @@ THE SOFTWARE.
 ---一个并不是那么精确的计时器的封装。
 local Alarm = class();
 
-Alarm.static.Forever = 0;
+Alarm.static.const.Forever = 0;
 Alarm.protected.curRound = 0;
 Alarm.protected.time = nil;
 Alarm.private.uniStr = nil;

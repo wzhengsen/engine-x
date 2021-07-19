@@ -40,14 +40,10 @@ local function SeekNodeByTag(self,nTag)
     end
 end
 
+local empty = function ()return true;end
 function Node:__idiv__(sn)
     if type(sn) == "string" then
-        local node = nil;
-        self:EnumerateChildren("//"..sn,function(sNode)
-            node = sNode;
-            return true;
-        end);
-        return node;
+        return self:EnumerateChildren("//"..sn,empty);
     elseif type(sn) == "number" then
         return SeekNodeByTag(self,sn);
     end

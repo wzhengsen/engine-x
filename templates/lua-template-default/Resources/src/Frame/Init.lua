@@ -26,11 +26,12 @@ local cpath = package.cpath;
 package.cpath = cpath;
 
 require("Frame.Extend.Lua.OsEx");
+require("Frame.Extend.Lua.LuaEx");
 require("Frame.Extend.Lua.MathEx");
 require("Frame.Extend.Lua.StringEx");
 require("Frame.Extend.Lua.TableEx");
 require("Frame.Extend.Lua.IoEx");
-require("Frame.Extend.Lua.LuaEx");
+require("Frame.Extend.Lua.Utf8Ex");
 
 require("AppDelegate");
 

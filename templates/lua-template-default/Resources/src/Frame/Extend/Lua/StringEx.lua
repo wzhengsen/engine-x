@@ -24,6 +24,10 @@ local clock = os.clock;
 local time = os.time;
 local random = math.random;
 local concat = table.concat;
+local tostring = tostring;
+local type = type;
+local mtype = math.type;
+local sub = string.sub;
 
 ---按分隔符截取字符串。
 ---@param sep string (截取符集合)
@@ -97,9 +101,10 @@ string.decrypt = crypto.Decrypt;
 string.convert = ccu.Convert;
 
 ---获取一个尽量不重复的字符串。
+---@param short? boolean    是否返回一个较短的串（碰撞的概率也更大）。
 ---@return string
-function string.unique()
-    return (tostring({}) .. time() .. clock() .. random(1, 1000000)):hash("sha1");
+function string.unique(short)
+    return (tostring({}) .. time() .. clock() .. random(1, 1000000)):hash(short and "md5" or "sha512");
 end
 
 ---字符串连接，类似python str.join。
@@ -107,4 +112,35 @@ end
 ---@return string
 function string:join(t)
     return concat(t, self);
+end
+
+---字符串迭代。
+---@return function
+function string:ipairs()
+    local idx,len = 0,#self;
+    return function ()
+        idx = idx + 1
+        if idx > len then
+            return nil,nil;
+        end
+        return idx,sub(self,idx,idx);
+    end
+end
+
+-- 字符串下标取值。
+-- 与string.sub不同的是，使用下标取值时，当下标越界时，返回nil而不是返回空串。
+-- 相应的，负值下标表示从后往前。
+local smt = getmetatable("");
+local __index = smt.__index;
+smt.__index = function (self,key)
+    if type(key) == "number" and mtype(key) == "integer" then
+        local len = #self;
+        key = key < 0 and len + key + 1 or key;
+        if key <= 0 or key > len then
+            return nil;
+        end
+        return sub(self,key,key);
+    else
+        return __index[key];
+    end
 end

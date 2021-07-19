@@ -41,8 +41,8 @@ function RatePool:Push(e,rate)
     rate = floor(rate);
     if 0 == rate then return;end
 
-    local idx = find(self.ratePool,e,function(value,v)
-        return value.e == v;
+    local idx = find(self.ratePool,function(value)
+        return value.e == e;
     end);
     if not idx then
         -- 推入新数据。
@@ -138,8 +138,8 @@ end
 ---@param e any
 function RatePool:Remove(e)
     local rp = self.ratePool;
-    local idx = find(rp,e,function(value,v)
-        return value.e == v;
+    local idx = find(rp,function(value)
+        return value.e == e;
     end);
     if nil == idx then
         return;

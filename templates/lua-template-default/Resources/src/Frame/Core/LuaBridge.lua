@@ -39,13 +39,13 @@
     用例：
         调用空返回值方法：
         前提：
-            LuaBridge._className中存在ATestVoidRetMethod静态方法。
+            ClassName中存在ATestVoidRetMethod静态方法。
         使用：
             LuaBridge.ATestVoidRetMethod();
 
         调用布尔返回值方法，且接受2个参数：
         前提：
-            LuaBridge._className中存在ATestBoolRetMethod(long,double)静态方法。
+            ClassName中存在ATestBoolRetMethod(long,double)静态方法。
             或存在+(BOOL)ATestBoolRetMethod:(long)l :(double)d
         使用：
             local i = 10;
@@ -93,7 +93,7 @@
 
 ]]
 local LuaBridge = {
-    Error = {
+    Error = enum {
         OK = 0,
         InvalidParameters = -1,
         ClassNotFound = -2,
@@ -102,23 +102,27 @@ local LuaBridge = {
         InvalidSignature = -5
     }
 };
-LuaBridge.LastError = LuaBridge.Error.OK;
 
 rawset(_G,"LuaBridge",LuaBridge);
 
 if not os.android and not os.apple then
     return LuaBridge;
 end
+
+
 local type = type;
 local math = math;
 local table = table;
 local ipairs = ipairs;
 local print = print;
+local setmetatable = setmetatable;
+
+local ClassName = os.android and "org.cocos2dx.lib.Cocos2dxHelper" or "Cocos2dxHelper";
+local CallStaticMethod = (os.android and LuaJavaBridge or LuaObjcBridge).callStaticMethod;
+local CheckMethodSign = nil;
 
 if os.android then
-    LuaBridge._className = "org.cocos2dx.lib.Cocos2dxHelper";
-    LuaBridge._callStaticMethod = LuaJavaBridge.callStaticMethod;
-    LuaBridge._javaReturnSignMap = {
+    local JavaReturnSignMap = {
         double = "D",
         long = "J",
         boolean = "Z",
@@ -129,7 +133,7 @@ if os.android then
         float = "F",
         ["java.lang.String"] = "Ljava/lang/String;"
     };
-    LuaBridge._javaParamSignMap = {
+    local JavaParamSignMap = {
         double = "D",
         float = "F",
         long = "J",
@@ -137,8 +141,11 @@ if os.android then
         int = "I",
         ["java.lang.String"] = "Ljava/lang/String;"
     };
-    LuaBridge._checkMethodSign = function (methodName, ...)
-        local method = LuaBridge._javaMethods[methodName];
+    local JavaMethods = {};
+
+
+    CheckMethodSign = function (methodName, ...)
+        local method = JavaMethods[methodName];
         if not method then
             return LuaBridge.Error.MethodNotFound,nil;
         end
@@ -192,9 +199,8 @@ if os.android then
         return LuaBridge.Error.InvalidSignature,nil;
     end;
 
-    LuaBridge._javaMethods = {};
 
-    local ok,ret = LuaBridge._callStaticMethod(LuaBridge._className,"GetStaticMethodsSignature","()Ljava/lang/String;");
+    local ok,ret = CallStaticMethod(ClassName,"GetStaticMethodsSignature","()Ljava/lang/String;");
     if not ok then
         error("GetStaticMethodsSignature failed!");
     end
@@ -208,7 +214,7 @@ if os.android then
 
         -- 签名类型检查，不合法签名的方法都不记录。
         for _,pt in ipairs(paramTypes) do
-            local ps = LuaBridge._javaParamSignMap[pt];
+            local ps = JavaParamSignMap[pt];
             if not ps then
                 goto continue;
             end
@@ -217,7 +223,7 @@ if os.android then
         end
         table.insert(sign,")");
 
-        local rs = LuaBridge._javaReturnSignMap[returnType];
+        local rs = JavaReturnSignMap[returnType];
         if not rs then
             goto continue;
         end
@@ -225,14 +231,11 @@ if os.android then
         table.insert(signTable,rs);
         signTable.sign = table.concat(sign);
 
-        local methodTable = LuaBridge._javaMethods[methodName] or {};
-        LuaBridge._javaMethods[methodName] = methodTable;
+        local methodTable = JavaMethods[methodName] or {};
+        JavaMethods[methodName] = methodTable;
         table.insert(methodTable,signTable);
         ::continue::;
     end
-elseif os.apple then
-    LuaBridge._className = "Cocos2dxHelper";
-    LuaBridge._callStaticMethod = LuaObjcBridge.callStaticMethod;
 end
 
 local methodMeta = {};
@@ -241,21 +244,20 @@ methodMeta.__call = function(t,...)
     local methodName = t._methodName;
     local ok,ret,sign = nil,nil,nil;
     if os.android then
-        ret,sign = LuaBridge._checkMethodSign(methodName,...);
+        ret,sign = CheckMethodSign(methodName,...);
         if not ret then
-            ok,ret = LuaBridge._callStaticMethod(LuaBridge._className,methodName,sign,...);
+            ok,ret = CallStaticMethod(ClassName,methodName,sign,...);
         end
     else
-        ok,ret = LuaBridge._callStaticMethod(LuaBridge._className,methodName,...);
+        ok,ret = CallStaticMethod(ClassName,methodName,...);
     end
-    LuaBridge.LastError = LuaBridge.Error.OK;
     if not ok then
-        print(("LuaBridge._callStaticMethod(\"%s\", \"%s\") - error: [%d]"):format(
-            LuaBridge._className,methodName,ret
+        print(("CallStaticMethod(\"%s\", \"%s\") - error: [%d]"):format(
+            ClassName,methodName,ret
         ));
-        LuaBridge.LastError,ret = ret,nil;
     end
-    return ret;
+    -- 交换返回顺序。
+    return ret,ok;
 end;
 
 setmetatable(LuaBridge,{

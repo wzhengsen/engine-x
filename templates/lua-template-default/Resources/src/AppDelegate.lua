@@ -23,6 +23,7 @@ local Entrance = require("Game.Entrance");
 local AppDelegate = class(cc.Application);
 
 AppDelegate.private.keyboardListener = nil;
+AppDelegate.private.originalOrientatioin = nil;
 
 function AppDelegate.__new__()
     return cc.Application.Instance;
@@ -162,6 +163,7 @@ function AppDelegate.private:InitGLView()
             config.DesignResolution.Portrait.height
         );
     end
+    self.originalOrientatioin = cc.Device.Orientation;
 
     -- 按配置项，向横屏或竖屏转动。
     cc.Device.Orientation = jConfig.isLandscape
@@ -173,10 +175,11 @@ function AppDelegate.protected:OnFinishLaunch()
 
 end
 
---[[
-    Func:   重启
-]]
+---重启。
+---并非立刻重启，而是在下一帧重启。
 function AppDelegate:Restart()
+    -- 重启前还原设备方向。
+    cc.Device.Orientation = self.originalOrientatioin;
     cc.Downloader.CloseMGR();
     cc.Sound.UncacheAll();
     D:Restart();

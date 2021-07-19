@@ -45,7 +45,7 @@ function _G.apairs(t)
         if nil == key then
             if #tabList > 0 then
                 curTable = remove(tabList);
-                goto begin
+                goto begin;
             else
                 curTable = nil;
             end

@@ -18,7 +18,6 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
--- 令os继承自己，并使其不能实例化，主要是为了使用__properties__方法。
 ---@class osex
 ---@field platform integer
 ---@field language integer

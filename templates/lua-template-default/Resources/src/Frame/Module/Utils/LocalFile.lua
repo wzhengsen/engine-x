@@ -21,13 +21,16 @@
 ---用于存储数据到指定文件，可以指定密码，默认使用AES加密。
 local LocalFile = class();
 
+LocalFile.private.key = nil;
+LocalFile.private.path = nil;
+LocalFile.private.FILE = nil;
+LocalFile.private.fileData = {};
+
 ---@param path string 存储文件的路径。
 ---@param key? string 如果必要，该文件的密码。
 function LocalFile:ctor(path,key)
-    self.__key = key;
-    self.__path = path;
-    self.__FILE = nil;
-    self.__fileData = {};
+    self.key = key;
+    self.path = path;
 
     -- 避免同时操作文件，此处保持文件独占打开，需要Close
     self:Open();
@@ -38,20 +41,20 @@ end
 ---文件关闭后，对文件的操作都不会保存，重新打开后，在文件关闭期间的修改都会丢失。
 ---@return boolean
 function LocalFile:Open()
-    if self.__FILE then
+    if self.FILE then
         return false;
     end
-    local path = self.__path;
+    local path = self.path;
     local file = io.open(path, "rb") or io.open(path, "w+b");
     if not file then
         return false;
     end
-    self.__FILE = file;
+    self.FILE = file;
 
     local fileContent = file:read("a");
-    if self.__key then
+    if self.key then
         -- 存在密码先解密。
-        fileContent = fileContent:decrypt(self.__key);
+        fileContent = fileContent:decrypt(self.key);
     end
     -- 尝试json解码。
     fileContent = cjson.decode(fileContent);
@@ -66,18 +69,18 @@ function LocalFile:Open()
             end
         end
     end
-    self.__fileData = fileContent or {};
+    self.fileData = fileContent or {};
     return true;
 end
 
 ---将数据Flush到文件。
 ---
 function LocalFile:Flush()
-    local file = self.__FILE;
+    local file = self.FILE;
     if not file then
         return;
     end
-    local fileData = self.__fileData;
+    local fileData = self.fileData;
     for tab,key,val in apairs(fileData) do
         -- 对函数序列化，并加入前缀。
         if "function" == type(val) then
@@ -86,53 +89,53 @@ function LocalFile:Flush()
     end
     local tabStr = cjson.encode(fileData);
     if tabStr then
-        if self.__key then
-            tabStr = tabStr:encrypt(self.__key);
+        if self.key then
+            tabStr = tabStr:encrypt(self.key);
         end
         -- 关闭原句柄。
         file:close();
 
         -- 清空文件。
-        file = io.open(self.__path, "w+b")
+        file = io.open(self.path, "w+b")
         -- 写入数据。
         file:write(tabStr)
         file:flush();
-        self.__FILE = file;
+        self.FILE = file;
     end
 end
 
 ---关闭文件。
 ---@param b? boolean {true}指示调用Flush。
 function LocalFile:Close(b)
-    local file = self.__FILE;
+    local file = self.FILE;
     if not file then
         return;
     end
     if b == nil or b then
         self:Flush();
     end
-    self.__FILE:close();
-    self.__FILE = nil;
+    self.FILE:close();
+    self.FILE = nil;
 end
 
 ---清除文件内容。
 ---
 function LocalFile:Clear()
-    local file = self.__FILE;
+    local file = self.FILE;
     if file then
         file:close();
-        file = io.open(self.__path, "w+b");
-        self.__FILE = file;
-        self.__fileData = {};
+        file = io.open(self.path, "w+b");
+        self.FILE = file;
+        self.fileData = {};
     end
 end
 
 function LocalFile.get:Data()
-    return self.__FILE and self.__fileData or {};
+    return self.FILE and self.fileData or {};
 end
 
 function LocalFile.get:Valid()
-    return nil ~= self.__FILE;
+    return nil ~= self.FILE;
 end
 
 ---析构时自动关闭。

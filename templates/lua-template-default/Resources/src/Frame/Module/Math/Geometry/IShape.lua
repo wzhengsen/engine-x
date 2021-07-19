@@ -29,7 +29,7 @@ IShape.protected.shapeLocsX = {};
 IShape.protected.shapeLocsY = {};
 
 ---判断是否包含一个点，纯虚函数。
-IShape.IsPointIn = 0;
+IShape.virtual.IsPointIn = 0;
 
 ---相对移动。
 ---@param x number
