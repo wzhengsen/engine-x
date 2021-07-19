@@ -782,7 +782,7 @@ Node* Node::getChildByName(const std::string& name) const
     return nullptr;
 }
 
-void Node::enumerateChildren(const std::string &name, std::function<bool (Node *)> callback) const
+Node* Node::enumerateChildren(const std::string &name, const std::function<bool (Node *)>& callback) const
 {
     CCASSERT(!name.empty(), "Invalid name");
     CCASSERT(callback != nullptr, "Invalid callback function");
@@ -821,40 +821,42 @@ void Node::enumerateChildren(const std::string &name, std::function<bool (Node *
     {
         if (nullptr == _parent)
         {
-            return;
+            return nullptr;
         }
         target = _parent;
     }
 
+    Node* ret = nullptr;
     if (searchRecursively)
     {
         // name is '//xxx'
-        target->doEnumerateRecursive(target, newName, callback);
+        ret = target->doEnumerateRecursive(target, newName, callback);
     }
     else
     {
         // name is xxx
-        target->doEnumerate(newName, callback);
+        ret = target->doEnumerate(newName, callback);
     }
+    return ret;
 }
 
-bool Node::doEnumerateRecursive(const Node* node, const std::string &name, std::function<bool (Node *)> callback) const
+Node* Node::doEnumerateRecursive(const Node* node, const std::string &name, const std::function<bool (Node *)>& callback) const
 {
-    bool ret =false;
+    Node* ret = node->doEnumerate(name, callback);
 
-    if (node->doEnumerate(name, callback))
+    if (ret)
     {
         // search itself
-        ret = true;
+        return ret;
     }
     else
     {
         // search its children
         for (const auto& child : node->getChildren())
         {
-            if (doEnumerateRecursive(child, name, callback))
+            ret = doEnumerateRecursive(child, name, callback);
+            if (ret)
             {
-                ret = true;
                 break;
             }
         }
@@ -863,7 +865,7 @@ bool Node::doEnumerateRecursive(const Node* node, const std::string &name, std::
     return ret;
 }
 
-bool Node::doEnumerate(std::string name, std::function<bool (Node *)> callback) const
+Node* Node::doEnumerate(std::string name, const std::function<bool (Node *)>& callback) const
 {
     // name may be xxx/yyy, should find its parent
     size_t pos = name.find('/');
@@ -876,7 +878,7 @@ bool Node::doEnumerate(std::string name, std::function<bool (Node *)> callback) 
         needRecursive = true;
     }
 
-    bool ret = false;
+    Node* ret = nullptr;
     for (const auto& child : getChildren())
     {
         if (std::regex_match(child->_name, std::regex(searchName)))
@@ -886,7 +888,7 @@ bool Node::doEnumerate(std::string name, std::function<bool (Node *)> callback) 
                 // terminate enumeration if callback return true
                 if (callback(child))
                 {
-                    ret = true;
+                    ret = child;
                     break;
                 }
             }
