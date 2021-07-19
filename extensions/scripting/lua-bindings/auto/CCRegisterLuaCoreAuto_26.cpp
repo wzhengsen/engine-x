@@ -10,7 +10,7 @@
 #include "base/TGAlib.h"
 namespace cocos2d{
 void RegisterLuaCoreDeviceTextAlignAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,9);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,9);
 enumTable["CENTER"]=cocos2d::Device::TextAlign::CENTER;
 enumTable["TOP"]=cocos2d::Device::TextAlign::TOP;
 enumTable["TOP_RIGHT"]=cocos2d::Device::TextAlign::TOP_RIGHT;
@@ -23,7 +23,7 @@ enumTable["TOP_LEFT"]=cocos2d::Device::TextAlign::TOP_LEFT;
 lua["cc"]["Device"]["static"]["TextAlign"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaCoreDeviceNetworkTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["None"]=cocos2d::Device::NetworkType::None;
 enumTable["Wifi"]=cocos2d::Device::NetworkType::Wifi;
 enumTable["Mobile"]=cocos2d::Device::NetworkType::Mobile;
@@ -31,7 +31,7 @@ enumTable["Other"]=cocos2d::Device::NetworkType::Other;
 lua["cc"]["Device"]["static"]["NetworkType"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaCoreDeviceOrientationTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["Landscape"]=cocos2d::Device::OrientationType::Landscape;
 enumTable["Portrait"]=cocos2d::Device::OrientationType::Portrait;
 enumTable["Auto"]=cocos2d::Device::OrientationType::Auto;
@@ -75,7 +75,7 @@ RegisterLuaCoreDeviceNetworkTypeAuto(lua);
 RegisterLuaCoreDeviceOrientationTypeAuto(lua);
 }
 void RegisterLuaCoreApplicationProtocolPlatformAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,6);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,6);
 enumTable["OS_WINDOWS"]=cocos2d::ApplicationProtocol::Platform::OS_WINDOWS;
 enumTable["OS_LINUX"]=cocos2d::ApplicationProtocol::Platform::OS_LINUX;
 enumTable["OS_MAC"]=cocos2d::ApplicationProtocol::Platform::OS_MAC;
@@ -236,7 +236,7 @@ mt["SetObjects"]=static_cast<void(cocos2d::TMXObjectGroup::*)(const cocos2d::Val
 mt["set"]["Objects"]=mt["SetObjects"];
 }
 void RegisterLuaCoreTMXTileFlags_Auto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,5);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,5);
 enumTable["KTMXTileHorizontalFlag"]=cocos2d::TMXTileFlags_::kTMXTileHorizontalFlag;
 enumTable["KTMXTileVerticalFlag"]=cocos2d::TMXTileFlags_::kTMXTileVerticalFlag;
 enumTable["KTMXTileDiagonalFlag"]=cocos2d::TMXTileFlags_::kTMXTileDiagonalFlag;

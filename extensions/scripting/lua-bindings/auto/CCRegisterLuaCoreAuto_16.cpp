@@ -118,7 +118,7 @@ mt["IsIsolated"]=static_cast<bool(cocos2d::DrawNode::*)()const>(&cocos2d::DrawNo
 mt["get"]["Isolated"]=mt["IsIsolated"];
 }
 void RegisterLuaCoreLabelOverflowAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["NONE"]=cocos2d::Label::Overflow::NONE;
 enumTable["CLAMP"]=cocos2d::Label::Overflow::CLAMP;
 enumTable["SHRINK"]=cocos2d::Label::Overflow::SHRINK;
@@ -126,7 +126,7 @@ enumTable["RESIZE_HEIGHT"]=cocos2d::Label::Overflow::RESIZE_HEIGHT;
 lua["cc"]["Label"]["static"]["Overflow"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaCoreLabelLabelTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["TTF"]=cocos2d::Label::LabelType::TTF;
 enumTable["BMFONT"]=cocos2d::Label::LabelType::BMFONT;
 enumTable["CHARMAP"]=cocos2d::Label::LabelType::CHARMAP;
@@ -270,7 +270,7 @@ mt["__new__"]=sol::overload(static_cast<cocos2d::LabelAtlas*(*)(const std::strin
 mt["InitWithString"]=sol::overload(static_cast<bool(cocos2d::LabelAtlas::*)(const std::string&,cocos2d::Texture2D*,int,int,int)>(&cocos2d::LabelAtlas::initWithString),static_cast<bool(cocos2d::LabelAtlas::*)(const std::string&,const std::string&,int,int,int)>(&cocos2d::LabelAtlas::initWithString),static_cast<bool(cocos2d::LabelAtlas::*)(const std::string&,const std::string&)>(&cocos2d::LabelAtlas::initWithString));
 }
 void RegisterLuaCoreTouchDispatchModeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["ALL_AT_ONCE"]=cocos2d::Touch::DispatchMode::ALL_AT_ONCE;
 enumTable["ONE_BY_ONE"]=cocos2d::Touch::DispatchMode::ONE_BY_ONE;
 lua["cc"]["Touch"]["static"]["DispatchMode"]=lua.NewEnum(enumTable);

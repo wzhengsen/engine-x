@@ -25,7 +25,7 @@ mt["GetRenderFile"]=static_cast<cocos2d::ResourceData(cocos2d::ui::ImageView::*)
 mt["get"]["RenderFile"]=mt["GetRenderFile"];
 }
 void RegisterLuaUITextTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["SYSTEM"]=cocos2d::ui::Text::Type::SYSTEM;
 enumTable["TTF"]=cocos2d::ui::Text::Type::TTF;
 lua["ccui"]["Text"]["static"]["Type"]=lua.NewEnum(enumTable);
@@ -115,7 +115,7 @@ mt["GetRenderFile"]=static_cast<cocos2d::ResourceData(cocos2d::ui::TextAtlas::*)
 mt["get"]["RenderFile"]=mt["GetRenderFile"];
 }
 void RegisterLuaUILoadingBarDirectionAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["LEFT"]=cocos2d::ui::LoadingBar::Direction::LEFT;
 enumTable["RIGHT"]=cocos2d::ui::LoadingBar::Direction::RIGHT;
 lua["ccui"]["LoadingBar"]["static"]["Direction"]=lua.NewEnum(enumTable);
@@ -149,7 +149,7 @@ mt["get"]["RenderFile"]=mt["GetRenderFile"];
 RegisterLuaUILoadingBarDirectionAuto(lua);
 }
 void RegisterLuaUIScrollViewDirectionAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["NONE"]=cocos2d::ui::ScrollView::Direction::NONE;
 enumTable["VERTICAL"]=cocos2d::ui::ScrollView::Direction::VERTICAL;
 enumTable["HORIZONTAL"]=cocos2d::ui::ScrollView::Direction::HORIZONTAL;
@@ -157,7 +157,7 @@ enumTable["BOTH"]=cocos2d::ui::ScrollView::Direction::BOTH;
 lua["ccui"]["ScrollView"]["static"]["Direction"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUIScrollViewEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,13);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,13);
 enumTable["SCROLL_TO_TOP"]=cocos2d::ui::ScrollView::EventType::SCROLL_TO_TOP;
 enumTable["SCROLL_TO_BOTTOM"]=cocos2d::ui::ScrollView::EventType::SCROLL_TO_BOTTOM;
 enumTable["SCROLL_TO_LEFT"]=cocos2d::ui::ScrollView::EventType::SCROLL_TO_LEFT;
@@ -280,7 +280,7 @@ RegisterLuaUIScrollViewDirectionAuto(lua);
 RegisterLuaUIScrollViewEventTypeAuto(lua);
 }
 void RegisterLuaUIListViewGravityAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,6);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,6);
 enumTable["LEFT"]=cocos2d::ui::ListView::Gravity::LEFT;
 enumTable["RIGHT"]=cocos2d::ui::ListView::Gravity::RIGHT;
 enumTable["CENTER_HORIZONTAL"]=cocos2d::ui::ListView::Gravity::CENTER_HORIZONTAL;
@@ -290,13 +290,13 @@ enumTable["CENTER_VERTICAL"]=cocos2d::ui::ListView::Gravity::CENTER_VERTICAL;
 lua["ccui"]["ListView"]["static"]["Gravity"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUIListViewEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["ON_SELECTED_ITEM_START"]=cocos2d::ui::ListView::EventType::ON_SELECTED_ITEM_START;
 enumTable["ON_SELECTED_ITEM_END"]=cocos2d::ui::ListView::EventType::ON_SELECTED_ITEM_END;
 lua["ccui"]["ListView"]["static"]["EventType"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUIListViewMagneticTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,7);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,7);
 enumTable["NONE"]=cocos2d::ui::ListView::MagneticType::NONE;
 enumTable["CENTER"]=cocos2d::ui::ListView::MagneticType::CENTER;
 enumTable["BOTH_END"]=cocos2d::ui::ListView::MagneticType::BOTH_END;
@@ -385,7 +385,7 @@ RegisterLuaUIListViewEventTypeAuto(lua);
 RegisterLuaUIListViewMagneticTypeAuto(lua);
 }
 void RegisterLuaUISliderEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["ON_PERCENTAGE_CHANGED"]=cocos2d::ui::Slider::EventType::ON_PERCENTAGE_CHANGED;
 enumTable["ON_SLIDEBALL_DOWN"]=cocos2d::ui::Slider::EventType::ON_SLIDEBALL_DOWN;
 enumTable["ON_SLIDEBALL_UP"]=cocos2d::ui::Slider::EventType::ON_SLIDEBALL_UP;
@@ -454,7 +454,7 @@ mt["get"]["BallDisabledFile"]=mt["GetBallDisabledFile"];
 RegisterLuaUISliderEventTypeAuto(lua);
 }
 void RegisterLuaUITextFieldEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["ATTACH_WITH_IME"]=cocos2d::ui::TextField::EventType::ATTACH_WITH_IME;
 enumTable["DETACH_WITH_IME"]=cocos2d::ui::TextField::EventType::DETACH_WITH_IME;
 enumTable["INSERT_TEXT"]=cocos2d::ui::TextField::EventType::INSERT_TEXT;
@@ -576,12 +576,12 @@ mt["get"]["RenderFile"]=mt["GetRenderFile"];
 mt["ResetRender"]=static_cast<void(cocos2d::ui::TextBMFont::*)()>(&cocos2d::ui::TextBMFont::resetRender);
 }
 void RegisterLuaUIPageViewEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,1);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,1);
 enumTable["TURNING"]=cocos2d::ui::PageView::EventType::TURNING;
 lua["ccui"]["PageView"]["static"]["EventType"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUIPageViewTouchDirectionAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["LEFT"]=cocos2d::ui::PageView::TouchDirection::LEFT;
 enumTable["RIGHT"]=cocos2d::ui::PageView::TouchDirection::RIGHT;
 enumTable["UP"]=cocos2d::ui::PageView::TouchDirection::UP;

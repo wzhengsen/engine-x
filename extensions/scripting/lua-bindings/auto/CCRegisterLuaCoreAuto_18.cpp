@@ -30,7 +30,7 @@ mt["SetSubItems"]=static_cast<void(cocos2d::MenuItemToggle::*)(const cocos2d::Ve
 mt["set"]["SubItems"]=mt["SetSubItems"];
 }
 void RegisterLuaCoreMenuStateAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["WAITING"]=cocos2d::Menu::State::WAITING;
 enumTable["TRACKING_TOUCH"]=cocos2d::Menu::State::TRACKING_TOUCH;
 lua["cc"]["Menu"]["static"]["State"]=lua.NewEnum(enumTable);
@@ -116,13 +116,13 @@ mt["SetTextureAtlas"]=static_cast<void(cocos2d::ParticleBatchNode::*)(cocos2d::T
 mt["set"]["TextureAtlas"]=mt["SetTextureAtlas"];
 }
 void RegisterLuaCoreParticleSystemModeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["GRAVITY"]=cocos2d::ParticleSystem::Mode::GRAVITY;
 enumTable["RADIUS"]=cocos2d::ParticleSystem::Mode::RADIUS;
 lua["cc"]["ParticleSystem"]["static"]["Mode"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaCoreParticleSystemPositionTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["FREE"]=cocos2d::ParticleSystem::PositionType::FREE;
 enumTable["RELATIVE"]=cocos2d::ParticleSystem::PositionType::RELATIVE;
 enumTable["GROUPED"]=cocos2d::ParticleSystem::PositionType::GROUPED;

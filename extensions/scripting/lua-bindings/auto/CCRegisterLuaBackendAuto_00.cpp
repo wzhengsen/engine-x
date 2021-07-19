@@ -10,26 +10,26 @@
 #include "renderer/backend/RenderPipeline.h"
 namespace cocos2d{
 void RegisterLuaBackendBufferUsageAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["STATIC"]=cocos2d::backend::BufferUsage::STATIC;
 enumTable["DYNAMIC"]=cocos2d::backend::BufferUsage::DYNAMIC;
 lua["ccb"]["BufferUsage"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendBufferTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["VERTEX"]=cocos2d::backend::BufferType::VERTEX;
 enumTable["INDEX"]=cocos2d::backend::BufferType::INDEX;
 lua["ccb"]["BufferType"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendShaderStageAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["VERTEX"]=cocos2d::backend::ShaderStage::VERTEX;
 enumTable["FRAGMENT"]=cocos2d::backend::ShaderStage::FRAGMENT;
 enumTable["VERTEX_AND_FRAGMENT"]=cocos2d::backend::ShaderStage::VERTEX_AND_FRAGMENT;
 lua["ccb"]["ShaderStage"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendVertexFormatAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,11);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,11);
 enumTable["FLOAT4"]=cocos2d::backend::VertexFormat::FLOAT4;
 enumTable["FLOAT3"]=cocos2d::backend::VertexFormat::FLOAT3;
 enumTable["FLOAT2"]=cocos2d::backend::VertexFormat::FLOAT2;
@@ -44,7 +44,7 @@ enumTable["UBYTE4"]=cocos2d::backend::VertexFormat::UBYTE4;
 lua["ccb"]["VertexFormat"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendPixelFormatAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,32);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,32);
 enumTable["PVRTC4"]=cocos2d::backend::PixelFormat::PVRTC4;
 enumTable["PVRTC4A"]=cocos2d::backend::PixelFormat::PVRTC4A;
 enumTable["PVRTC2"]=cocos2d::backend::PixelFormat::PVRTC2;
@@ -80,26 +80,26 @@ enumTable["NONE"]=cocos2d::backend::PixelFormat::NONE;
 lua["ccb"]["PixelFormat"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendTextureUsageAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["READ"]=cocos2d::backend::TextureUsage::READ;
 enumTable["WRITE"]=cocos2d::backend::TextureUsage::WRITE;
 enumTable["RENDER_TARGET"]=cocos2d::backend::TextureUsage::RENDER_TARGET;
 lua["ccb"]["TextureUsage"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendIndexFormatAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["U_SHORT"]=cocos2d::backend::IndexFormat::U_SHORT;
 enumTable["U_INT"]=cocos2d::backend::IndexFormat::U_INT;
 lua["ccb"]["IndexFormat"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendVertexStepModeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["VERTEX"]=cocos2d::backend::VertexStepMode::VERTEX;
 enumTable["INSTANCE"]=cocos2d::backend::VertexStepMode::INSTANCE;
 lua["ccb"]["VertexStepMode"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendPrimitiveTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,5);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,5);
 enumTable["POINT"]=cocos2d::backend::PrimitiveType::POINT;
 enumTable["LINE"]=cocos2d::backend::PrimitiveType::LINE;
 enumTable["LINE_STRIP"]=cocos2d::backend::PrimitiveType::LINE_STRIP;
@@ -108,7 +108,7 @@ enumTable["TRIANGLE_STRIP"]=cocos2d::backend::PrimitiveType::TRIANGLE_STRIP;
 lua["ccb"]["PrimitiveType"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendTextureTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["TEXTURE_2D"]=cocos2d::backend::TextureType::TEXTURE_2D;
 enumTable["TEXTURE_CUBE"]=cocos2d::backend::TextureType::TEXTURE_CUBE;
 lua["ccb"]["TextureType"]=lua.NewEnum(enumTable);

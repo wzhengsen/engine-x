@@ -84,7 +84,7 @@ lua["cc"]["TransitionProgressOutIn"]=mt;
 mt["__new__"]=static_cast<cocos2d::TransitionProgressOutIn*(*)(float,cocos2d::Scene*)>(&cocos2d::TransitionProgressOutIn::create);
 }
 void RegisterLuaCoreCameraFlagAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,9);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,9);
 enumTable["DEFAULT"]=cocos2d::CameraFlag::DEFAULT;
 enumTable["USER1"]=cocos2d::CameraFlag::USER1;
 enumTable["USER2"]=cocos2d::CameraFlag::USER2;

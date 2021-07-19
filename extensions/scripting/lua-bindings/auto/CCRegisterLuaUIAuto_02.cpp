@@ -16,7 +16,7 @@ mt["static"]["RestrictCapInsetRect"]=static_cast<cocos2d::Rect(*)(const cocos2d:
 mt["static"]["ConvertBoundingBoxToScreen"]=static_cast<cocos2d::Rect(*)(cocos2d::Node*)>(&cocos2d::ui::Helper::convertBoundingBoxToScreen);
 }
 void RegisterLuaUIRichElementTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["TEXT"]=cocos2d::ui::RichElement::Type::TEXT;
 enumTable["IMAGE"]=cocos2d::ui::RichElement::Type::IMAGE;
 enumTable["CUSTOM"]=cocos2d::ui::RichElement::Type::CUSTOM;
@@ -91,13 +91,13 @@ lua["ccui"]["RichElementNewLine"]=mt;
 mt["__new__"]=static_cast<cocos2d::ui::RichElementNewLine*(*)(int,const cocos2d::Color3B&,uint8_t)>(&cocos2d::ui::RichElementNewLine::create);
 }
 void RegisterLuaUIRichTextWrapModeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["WRAP_PER_WORD"]=cocos2d::ui::RichText::WrapMode::WRAP_PER_WORD;
 enumTable["WRAP_PER_CHAR"]=cocos2d::ui::RichText::WrapMode::WRAP_PER_CHAR;
 lua["ccui"]["RichText"]["static"]["WrapMode"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUIRichTextHorizontalAlignmentAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["LEFT"]=cocos2d::ui::RichText::HorizontalAlignment::LEFT;
 enumTable["CENTER"]=cocos2d::ui::RichText::HorizontalAlignment::CENTER;
 enumTable["RIGHT"]=cocos2d::ui::RichText::HorizontalAlignment::RIGHT;

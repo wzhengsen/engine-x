@@ -89,7 +89,7 @@ mt["GetAnchorPoint"]=static_cast<cocos2d::Point(cocostudio::timeline::AnchorPoin
 mt["get"]["AnchorPoint"]=mt["GetAnchorPoint"];
 }
 void RegisterLuaStudioInnerActionTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["LoopAction"]=cocostudio::timeline::InnerActionType::LoopAction;
 enumTable["NoLoopAction"]=cocostudio::timeline::InnerActionType::NoLoopAction;
 enumTable["SingleFrame"]=cocostudio::timeline::InnerActionType::SingleFrame;

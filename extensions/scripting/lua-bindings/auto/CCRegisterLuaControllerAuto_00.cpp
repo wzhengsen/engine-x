@@ -29,7 +29,7 @@ mt["get"]["Tag"]=mt["GetTag"];
 mt["static"]["get"]["TAG_UNSET"]=[]()->const int&{return cocos2d::Controller::TAG_UNSET;};
 }
 void RegisterLuaControllerEventControllerControllerEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["CONNECTION"]=cocos2d::EventController::ControllerEventType::CONNECTION;
 enumTable["BUTTON_STATUS_CHANGED"]=cocos2d::EventController::ControllerEventType::BUTTON_STATUS_CHANGED;
 enumTable["AXIS_STATUS_CHANGED"]=cocos2d::EventController::ControllerEventType::AXIS_STATUS_CHANGED;

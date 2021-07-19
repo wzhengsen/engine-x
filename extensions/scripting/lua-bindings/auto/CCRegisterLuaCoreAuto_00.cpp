@@ -31,21 +31,21 @@ mt["GetReferenceCount"]=static_cast<unsigned int(cocos2d::Ref::*)()const>(&cocos
 mt["get"]["ReferenceCount"]=mt["GetReferenceCount"];
 }
 void RegisterLuaCoreTextVAlignmentAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["TOP"]=cocos2d::TextVAlignment::TOP;
 enumTable["CENTER"]=cocos2d::TextVAlignment::CENTER;
 enumTable["BOTTOM"]=cocos2d::TextVAlignment::BOTTOM;
 lua["cc"]["TextVAlignment"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaCoreTextHAlignmentAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["LEFT"]=cocos2d::TextHAlignment::LEFT;
 enumTable["CENTER"]=cocos2d::TextHAlignment::CENTER;
 enumTable["RIGHT"]=cocos2d::TextHAlignment::RIGHT;
 lua["cc"]["TextHAlignment"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaCoreGlyphCollectionAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["DYNAMIC"]=cocos2d::GlyphCollection::DYNAMIC;
 enumTable["NEHE"]=cocos2d::GlyphCollection::NEHE;
 enumTable["ASCII"]=cocos2d::GlyphCollection::ASCII;
@@ -53,7 +53,7 @@ enumTable["CUSTOM"]=cocos2d::GlyphCollection::CUSTOM;
 lua["cc"]["GlyphCollection"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaCoreLabelEffectAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,9);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,9);
 enumTable["NORMAL"]=cocos2d::LabelEffect::NORMAL;
 enumTable["OUTLINE"]=cocos2d::LabelEffect::OUTLINE;
 enumTable["SHADOW"]=cocos2d::LabelEffect::SHADOW;
@@ -66,7 +66,7 @@ enumTable["ALL"]=cocos2d::LabelEffect::ALL;
 lua["cc"]["LabelEffect"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaCoreEventListenerTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,9);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,9);
 enumTable["UNKNOWN"]=cocos2d::EventListener::Type::UNKNOWN;
 enumTable["TOUCH_ONE_BY_ONE"]=cocos2d::EventListener::Type::TOUCH_ONE_BY_ONE;
 enumTable["TOUCH_ALL_AT_ONCE"]=cocos2d::EventListener::Type::TOUCH_ALL_AT_ONCE;

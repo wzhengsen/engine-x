@@ -2,7 +2,7 @@
 #include "ui/CocosGUI.h"
 namespace cocos2d{
 void RegisterLuaUIVideoPlayerEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,5);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,5);
 enumTable["PLAYING"]=cocos2d::ui::VideoPlayer::EventType::PLAYING;
 enumTable["PAUSED"]=cocos2d::ui::VideoPlayer::EventType::PAUSED;
 enumTable["STOPPED"]=cocos2d::ui::VideoPlayer::EventType::STOPPED;
@@ -11,7 +11,7 @@ enumTable["V_ERROR"]=cocos2d::ui::VideoPlayer::EventType::V_ERROR;
 lua["ccui"]["VideoPlayer"]["static"]["EventType"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUIVideoPlayerStyleTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["DEFAULT"]=cocos2d::ui::VideoPlayer::StyleType::DEFAULT;
 enumTable["NONE"]=cocos2d::ui::VideoPlayer::StyleType::NONE;
 lua["ccui"]["VideoPlayer"]["static"]["StyleType"]=lua.NewEnum(enumTable);
@@ -108,13 +108,13 @@ mt["get"]["OpacityWebView"]=mt["GetOpacityWebView"];
 mt["SetBackgroundTransparent"]=static_cast<void(cocos2d::ui::WebView::*)()>(&cocos2d::ui::WebView::setBackgroundTransparent);
 }
 void RegisterLuaUIScale9SpriteStateAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["NORMAL"]=cocos2d::ui::Scale9Sprite::State::NORMAL;
 enumTable["GRAY"]=cocos2d::ui::Scale9Sprite::State::GRAY;
 lua["ccui"]["Scale9Sprite"]["static"]["State"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUIScale9SpriteRenderingTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["SIMPLE"]=cocos2d::ui::Scale9Sprite::RenderingType::SIMPLE;
 enumTable["SLICE"]=cocos2d::ui::Scale9Sprite::RenderingType::SLICE;
 lua["ccui"]["Scale9Sprite"]["static"]["RenderingType"]=lua.NewEnum(enumTable);
@@ -181,7 +181,7 @@ RegisterLuaUIScale9SpriteStateAuto(lua);
 RegisterLuaUIScale9SpriteRenderingTypeAuto(lua);
 }
 void RegisterLuaUIEditBoxEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["Began"]=cocos2d::ui::EditBox::EventType::Began;
 enumTable["Ended"]=cocos2d::ui::EditBox::EventType::Ended;
 enumTable["Changed"]=cocos2d::ui::EditBox::EventType::Changed;
@@ -189,7 +189,7 @@ enumTable["Return"]=cocos2d::ui::EditBox::EventType::Return;
 lua["ccui"]["EditBox"]["static"]["EventType"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUIEditBoxKeyboardReturnTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,6);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,6);
 enumTable["DEFAULT"]=cocos2d::ui::EditBox::KeyboardReturnType::DEFAULT;
 enumTable["DONE"]=cocos2d::ui::EditBox::KeyboardReturnType::DONE;
 enumTable["SEND"]=cocos2d::ui::EditBox::KeyboardReturnType::SEND;
@@ -199,7 +199,7 @@ enumTable["NEXT"]=cocos2d::ui::EditBox::KeyboardReturnType::NEXT;
 lua["ccui"]["EditBox"]["static"]["KeyboardReturnType"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUIEditBoxInputModeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,7);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,7);
 enumTable["ANY"]=cocos2d::ui::EditBox::InputMode::ANY;
 enumTable["EMAIL_ADDRESS"]=cocos2d::ui::EditBox::InputMode::EMAIL_ADDRESS;
 enumTable["NUMERIC"]=cocos2d::ui::EditBox::InputMode::NUMERIC;
@@ -210,7 +210,7 @@ enumTable["SINGLE_LINE"]=cocos2d::ui::EditBox::InputMode::SINGLE_LINE;
 lua["ccui"]["EditBox"]["static"]["InputMode"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUIEditBoxInputFlagAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,6);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,6);
 enumTable["PASSWORD"]=cocos2d::ui::EditBox::InputFlag::PASSWORD;
 enumTable["SENSITIVE"]=cocos2d::ui::EditBox::InputFlag::SENSITIVE;
 enumTable["INITIAL_CAPS_WORD"]=cocos2d::ui::EditBox::InputFlag::INITIAL_CAPS_WORD;
@@ -319,7 +319,7 @@ RegisterLuaUIEditBoxInputModeAuto(lua);
 RegisterLuaUIEditBoxInputFlagAuto(lua);
 }
 void RegisterLuaUILayoutComponentHorizontalEdgeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["None"]=cocos2d::ui::LayoutComponent::HorizontalEdge::None;
 enumTable["Left"]=cocos2d::ui::LayoutComponent::HorizontalEdge::Left;
 enumTable["Right"]=cocos2d::ui::LayoutComponent::HorizontalEdge::Right;
@@ -327,7 +327,7 @@ enumTable["Center"]=cocos2d::ui::LayoutComponent::HorizontalEdge::Center;
 lua["ccui"]["LayoutComponent"]["static"]["HorizontalEdge"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUILayoutComponentVerticalEdgeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["None"]=cocos2d::ui::LayoutComponent::VerticalEdge::None;
 enumTable["Bottom"]=cocos2d::ui::LayoutComponent::VerticalEdge::Bottom;
 enumTable["Top"]=cocos2d::ui::LayoutComponent::VerticalEdge::Top;
@@ -471,7 +471,7 @@ mt["GetIndexInTabControl"]=static_cast<int(cocos2d::ui::TabHeader::*)()const>(&c
 mt["get"]["IndexInTabControl"]=mt["GetIndexInTabControl"];
 }
 void RegisterLuaUITabControlDockAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["TOP"]=cocos2d::ui::TabControl::Dock::TOP;
 enumTable["LEFT"]=cocos2d::ui::TabControl::Dock::LEFT;
 enumTable["BOTTOM"]=cocos2d::ui::TabControl::Dock::BOTTOM;
@@ -479,7 +479,7 @@ enumTable["RIGHT"]=cocos2d::ui::TabControl::Dock::RIGHT;
 lua["ccui"]["TabControl"]["static"]["Dock"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUITabControlEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,1);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,1);
 enumTable["SELECT_CHANGED"]=cocos2d::ui::TabControl::EventType::SELECT_CHANGED;
 lua["ccui"]["TabControl"]["static"]["EventType"]=lua.NewEnum(enumTable);
 }

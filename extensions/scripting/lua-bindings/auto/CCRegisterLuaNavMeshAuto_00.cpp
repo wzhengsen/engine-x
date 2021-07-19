@@ -3,7 +3,7 @@
 #if CC_USE_NAVMESH
 namespace cocos2d{
 void RegisterLuaNavMeshNavMeshAgentNavMeshAgentSyncFlagAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["NONE"]=cocos2d::NavMeshAgent::NavMeshAgentSyncFlag::NONE;
 enumTable["NODE_TO_AGENT"]=cocos2d::NavMeshAgent::NavMeshAgentSyncFlag::NODE_TO_AGENT;
 enumTable["AGENT_TO_NODE"]=cocos2d::NavMeshAgent::NavMeshAgentSyncFlag::AGENT_TO_NODE;
@@ -75,7 +75,7 @@ mt["get"]["Velocity"]=mt["GetVelocity"];
 RegisterLuaNavMeshNavMeshAgentNavMeshAgentSyncFlagAuto(lua);
 }
 void RegisterLuaNavMeshNavMeshObstacleNavMeshObstacleSyncFlagAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["NONE"]=cocos2d::NavMeshObstacle::NavMeshObstacleSyncFlag::NONE;
 enumTable["NODE_TO_OBSTACLE"]=cocos2d::NavMeshObstacle::NavMeshObstacleSyncFlag::NODE_TO_OBSTACLE;
 enumTable["OBSTACLE_TO_NODE"]=cocos2d::NavMeshObstacle::NavMeshObstacleSyncFlag::OBSTACLE_TO_NODE;

@@ -16,7 +16,7 @@ mt["set"]["DeleteHandler"]=mt["SetDeleteHandler"];
 mt["__delete__"]=static_cast<void(cocos2d::extension::LuaObject::*)()>(&cocos2d::extension::LuaObject::__delete__);
 }
 void RegisterLuaExtensionEventAssetsManagerExEventCodeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,11);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,11);
 enumTable["ERROR_NO_LOCAL_MANIFEST"]=cocos2d::extension::EventAssetsManagerEx::EventCode::ERROR_NO_LOCAL_MANIFEST;
 enumTable["ERROR_DOWNLOAD_MANIFEST"]=cocos2d::extension::EventAssetsManagerEx::EventCode::ERROR_DOWNLOAD_MANIFEST;
 enumTable["ERROR_PARSE_MANIFEST"]=cocos2d::extension::EventAssetsManagerEx::EventCode::ERROR_PARSE_MANIFEST;

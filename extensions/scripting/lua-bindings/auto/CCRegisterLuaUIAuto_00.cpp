@@ -2,7 +2,7 @@
 #include "ui/CocosGUI.h"
 namespace cocos2d{
 void RegisterLuaUILayoutParameterTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["NONE"]=cocos2d::ui::LayoutParameter::Type::NONE;
 enumTable["LINEAR"]=cocos2d::ui::LayoutParameter::Type::LINEAR;
 enumTable["RELATIVE"]=cocos2d::ui::LayoutParameter::Type::RELATIVE;
@@ -25,7 +25,7 @@ mt["Clone"]=static_cast<cocos2d::ui::LayoutParameter*(cocos2d::ui::LayoutParamet
 RegisterLuaUILayoutParameterTypeAuto(lua);
 }
 void RegisterLuaUILinearLayoutParameterLinearGravityAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,7);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,7);
 enumTable["NONE"]=cocos2d::ui::LinearLayoutParameter::LinearGravity::NONE;
 enumTable["LEFT"]=cocos2d::ui::LinearLayoutParameter::LinearGravity::LEFT;
 enumTable["TOP"]=cocos2d::ui::LinearLayoutParameter::LinearGravity::TOP;
@@ -49,7 +49,7 @@ mt["get"]["Gravity"]=mt["GetGravity"];
 RegisterLuaUILinearLayoutParameterLinearGravityAuto(lua);
 }
 void RegisterLuaUIRelativeLayoutParameterRelativeAlignAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,22);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,22);
 enumTable["NONE"]=cocos2d::ui::RelativeLayoutParameter::RelativeAlign::NONE;
 enumTable["PARENT_TOP_LEFT"]=cocos2d::ui::RelativeLayoutParameter::RelativeAlign::PARENT_TOP_LEFT;
 enumTable["PARENT_TOP_CENTER_HORIZONTAL"]=cocos2d::ui::RelativeLayoutParameter::RelativeAlign::PARENT_TOP_CENTER_HORIZONTAL;
@@ -96,7 +96,7 @@ mt["get"]["RelativeName"]=mt["GetRelativeName"];
 RegisterLuaUIRelativeLayoutParameterRelativeAlignAuto(lua);
 }
 void RegisterLuaUIWidgetFocusDirectionAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["LEFT"]=cocos2d::ui::Widget::FocusDirection::LEFT;
 enumTable["RIGHT"]=cocos2d::ui::Widget::FocusDirection::RIGHT;
 enumTable["UP"]=cocos2d::ui::Widget::FocusDirection::UP;
@@ -104,19 +104,19 @@ enumTable["DOWN"]=cocos2d::ui::Widget::FocusDirection::DOWN;
 lua["ccui"]["Widget"]["static"]["FocusDirection"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUIWidgetPositionTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["ABSOLUTE"]=cocos2d::ui::Widget::PositionType::ABSOLUTE;
 enumTable["PERCENT"]=cocos2d::ui::Widget::PositionType::PERCENT;
 lua["ccui"]["Widget"]["static"]["PositionType"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUIWidgetSizeTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["ABSOLUTE"]=cocos2d::ui::Widget::SizeType::ABSOLUTE;
 enumTable["PERCENT"]=cocos2d::ui::Widget::SizeType::PERCENT;
 lua["ccui"]["Widget"]["static"]["SizeType"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUIWidgetTouchEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["BEGAN"]=cocos2d::ui::Widget::TouchEventType::BEGAN;
 enumTable["MOVED"]=cocos2d::ui::Widget::TouchEventType::MOVED;
 enumTable["ENDED"]=cocos2d::ui::Widget::TouchEventType::ENDED;
@@ -124,13 +124,13 @@ enumTable["CANCELED"]=cocos2d::ui::Widget::TouchEventType::CANCELED;
 lua["ccui"]["Widget"]["static"]["TouchEventType"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUIWidgetTextureResTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["LOCAL"]=cocos2d::ui::Widget::TextureResType::LOCAL;
 enumTable["PLIST"]=cocos2d::ui::Widget::TextureResType::PLIST;
 lua["ccui"]["Widget"]["static"]["TextureResType"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUIWidgetBrightStyleAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["NONE"]=cocos2d::ui::Widget::BrightStyle::NONE;
 enumTable["NORMAL"]=cocos2d::ui::Widget::BrightStyle::NORMAL;
 enumTable["HIGHLIGHT"]=cocos2d::ui::Widget::BrightStyle::HIGHLIGHT;
@@ -278,7 +278,7 @@ RegisterLuaUIWidgetTextureResTypeAuto(lua);
 RegisterLuaUIWidgetBrightStyleAuto(lua);
 }
 void RegisterLuaUILayoutTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,5);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,5);
 enumTable["ABSOLUTE"]=cocos2d::ui::Layout::Type::ABSOLUTE;
 enumTable["VERTICAL"]=cocos2d::ui::Layout::Type::VERTICAL;
 enumTable["CENTER_VERTICAL"]=cocos2d::ui::Layout::Type::CENTER_VERTICAL;
@@ -287,13 +287,13 @@ enumTable["RELATIVE"]=cocos2d::ui::Layout::Type::RELATIVE;
 lua["ccui"]["Layout"]["static"]["Type"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUILayoutClippingTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["STENCIL"]=cocos2d::ui::Layout::ClippingType::STENCIL;
 enumTable["SCISSOR"]=cocos2d::ui::Layout::ClippingType::SCISSOR;
 lua["ccui"]["Layout"]["static"]["ClippingType"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaUILayoutBackGroundColorTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["NONE"]=cocos2d::ui::Layout::BackGroundColorType::NONE;
 enumTable["SOLID"]=cocos2d::ui::Layout::BackGroundColorType::SOLID;
 enumTable["GRADIENT"]=cocos2d::ui::Layout::BackGroundColorType::GRADIENT;
@@ -495,7 +495,7 @@ mt["GetCrossDisabledFile"]=static_cast<cocos2d::ResourceData(cocos2d::ui::Abstra
 mt["get"]["CrossDisabledFile"]=mt["GetCrossDisabledFile"];
 }
 void RegisterLuaUICheckBoxEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["SELECTED"]=cocos2d::ui::CheckBox::EventType::SELECTED;
 enumTable["UNSELECTED"]=cocos2d::ui::CheckBox::EventType::UNSELECTED;
 lua["ccui"]["CheckBox"]["static"]["EventType"]=lua.NewEnum(enumTable);
@@ -511,7 +511,7 @@ mt["AddEventListener"]=static_cast<void(cocos2d::ui::CheckBox::*)(const cocos2d:
 RegisterLuaUICheckBoxEventTypeAuto(lua);
 }
 void RegisterLuaUIRadioButtonEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["SELECTED"]=cocos2d::ui::RadioButton::EventType::SELECTED;
 enumTable["UNSELECTED"]=cocos2d::ui::RadioButton::EventType::UNSELECTED;
 lua["ccui"]["RadioButton"]["static"]["EventType"]=lua.NewEnum(enumTable);
@@ -527,7 +527,7 @@ mt["AddEventListener"]=static_cast<void(cocos2d::ui::RadioButton::*)(const cocos
 RegisterLuaUIRadioButtonEventTypeAuto(lua);
 }
 void RegisterLuaUIRadioButtonGroupEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,1);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,1);
 enumTable["SELECT_CHANGED"]=cocos2d::ui::RadioButtonGroup::EventType::SELECT_CHANGED;
 lua["ccui"]["RadioButtonGroup"]["static"]["EventType"]=lua.NewEnum(enumTable);
 }

@@ -10,7 +10,7 @@
 #include "renderer/backend/RenderPipeline.h"
 namespace cocos2d{
 void RegisterLuaBackendSamplerAddressModeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["REPEAT"]=cocos2d::backend::SamplerAddressMode::REPEAT;
 enumTable["MIRROR_REPEAT"]=cocos2d::backend::SamplerAddressMode::MIRROR_REPEAT;
 enumTable["CLAMP_TO_EDGE"]=cocos2d::backend::SamplerAddressMode::CLAMP_TO_EDGE;
@@ -18,7 +18,7 @@ enumTable["DONT_CARE"]=cocos2d::backend::SamplerAddressMode::DONT_CARE;
 lua["ccb"]["SamplerAddressMode"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendSamplerFilterAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,7);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,7);
 enumTable["NEAREST"]=cocos2d::backend::SamplerFilter::NEAREST;
 enumTable["NEAREST_MIPMAP_NEAREST"]=cocos2d::backend::SamplerFilter::NEAREST_MIPMAP_NEAREST;
 enumTable["NEAREST_MIPMAP_LINEAR"]=cocos2d::backend::SamplerFilter::NEAREST_MIPMAP_LINEAR;
@@ -29,7 +29,7 @@ enumTable["DONT_CARE"]=cocos2d::backend::SamplerFilter::DONT_CARE;
 lua["ccb"]["SamplerFilter"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendStencilOperationAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,6);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,6);
 enumTable["KEEP"]=cocos2d::backend::StencilOperation::KEEP;
 enumTable["ZERO"]=cocos2d::backend::StencilOperation::ZERO;
 enumTable["REPLACE"]=cocos2d::backend::StencilOperation::REPLACE;
@@ -39,7 +39,7 @@ enumTable["DECREMENT_WRAP"]=cocos2d::backend::StencilOperation::DECREMENT_WRAP;
 lua["ccb"]["StencilOperation"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendCompareFunctionAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,8);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,8);
 enumTable["NEVER"]=cocos2d::backend::CompareFunction::NEVER;
 enumTable["LESS"]=cocos2d::backend::CompareFunction::LESS;
 enumTable["LESS_EQUAL"]=cocos2d::backend::CompareFunction::LESS_EQUAL;
@@ -51,14 +51,14 @@ enumTable["ALWAYS"]=cocos2d::backend::CompareFunction::ALWAYS;
 lua["ccb"]["CompareFunction"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendBlendOperationAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["ADD"]=cocos2d::backend::BlendOperation::ADD;
 enumTable["SUBTRACT"]=cocos2d::backend::BlendOperation::SUBTRACT;
 enumTable["RESERVE_SUBTRACT"]=cocos2d::backend::BlendOperation::RESERVE_SUBTRACT;
 lua["ccb"]["BlendOperation"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendBlendFactorAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,14);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,14);
 enumTable["ZERO"]=cocos2d::backend::BlendFactor::ZERO;
 enumTable["ONE"]=cocos2d::backend::BlendFactor::ONE;
 enumTable["SRC_COLOR"]=cocos2d::backend::BlendFactor::SRC_COLOR;
@@ -76,7 +76,7 @@ enumTable["BLEND_CLOLOR"]=cocos2d::backend::BlendFactor::BLEND_CLOLOR;
 lua["ccb"]["BlendFactor"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendColorWriteMaskAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,10);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,10);
 enumTable["RED_BIT"]=cocos2d::backend::ColorWriteMask::RED_BIT;
 enumTable["GREEN_BIT"]=cocos2d::backend::ColorWriteMask::GREEN_BIT;
 enumTable["BLUE_BIT"]=cocos2d::backend::ColorWriteMask::BLUE_BIT;
@@ -90,20 +90,20 @@ enumTable["ALL"]=cocos2d::backend::ColorWriteMask::ALL;
 lua["ccb"]["ColorWriteMask"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendCullModeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["NONE"]=cocos2d::backend::CullMode::NONE;
 enumTable["BACK"]=cocos2d::backend::CullMode::BACK;
 enumTable["FRONT"]=cocos2d::backend::CullMode::FRONT;
 lua["ccb"]["CullMode"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendWindingAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["CLOCK_WISE"]=cocos2d::backend::Winding::CLOCK_WISE;
 enumTable["COUNTER_CLOCK_WISE"]=cocos2d::backend::Winding::COUNTER_CLOCK_WISE;
 lua["ccb"]["Winding"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaBackendTextureCubeFaceAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,6);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,6);
 enumTable["POSITIVE_X"]=cocos2d::backend::TextureCubeFace::POSITIVE_X;
 enumTable["NEGATIVE_X"]=cocos2d::backend::TextureCubeFace::NEGATIVE_X;
 enumTable["POSITIVE_Y"]=cocos2d::backend::TextureCubeFace::POSITIVE_Y;

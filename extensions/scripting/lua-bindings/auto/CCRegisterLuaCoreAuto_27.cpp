@@ -279,14 +279,14 @@ mt["GetResourceFile"]=static_cast<const std::string&(cocos2d::FastTMXTiledMap::*
 mt["get"]["ResourceFile"]=mt["GetResourceFile"];
 }
 void RegisterLuaCoreCryptoEncodeModeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["BASE64"]=cocos2d::Crypto::EncodeMode::BASE64;
 enumTable["HEX"]=cocos2d::Crypto::EncodeMode::HEX;
 enumTable["URL"]=cocos2d::Crypto::EncodeMode::URL;
 lua["cc"]["Crypto"]["static"]["EncodeMode"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaCoreCryptoHashModeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,6);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,6);
 enumTable["SHA1"]=cocos2d::Crypto::HashMode::SHA1;
 enumTable["SHA224"]=cocos2d::Crypto::HashMode::SHA224;
 enumTable["SHA256"]=cocos2d::Crypto::HashMode::SHA256;
@@ -317,7 +317,7 @@ RegisterLuaCoreCryptoEncodeModeAuto(lua);
 RegisterLuaCoreCryptoHashModeAuto(lua);
 }
 void RegisterLuaCoreConnectionKindAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["TCP"]=cocos2d::network::Connection::Kind::TCP;
 enumTable["UDP"]=cocos2d::network::Connection::Kind::UDP;
 enumTable["KCP"]=cocos2d::network::Connection::Kind::KCP;

@@ -18,7 +18,7 @@ lua["cc"]["ActionFloat"]=mt;
 mt["__new__"]=static_cast<cocos2d::ActionFloat*(*)(float,float,float,cocos2d::ActionFloat::ActionFloatCallback)>(&cocos2d::ActionFloat::create);
 }
 void RegisterLuaCoreEventKeyboardKeyCodeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,170);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,170);
 enumTable["KEY_NONE"]=cocos2d::EventKeyboard::KeyCode::KEY_NONE;
 enumTable["KEY_PAUSE"]=cocos2d::EventKeyboard::KeyCode::KEY_PAUSE;
 enumTable["KEY_SCROLL_LOCK"]=cocos2d::EventKeyboard::KeyCode::KEY_SCROLL_LOCK;
@@ -349,7 +349,7 @@ mt["OpenFileStream"]=static_cast<std::unique_ptr<cocos2d::FileStream, std::defau
 mt["static"]["get"]["Instance"]=&cocos2d::FileUtils::getInstance;
 }
 void RegisterLuaCoreLanguageTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,20);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,20);
 enumTable["ENGLISH"]=cocos2d::LanguageType::ENGLISH;
 enumTable["CHINESE"]=cocos2d::LanguageType::CHINESE;
 enumTable["FRENCH"]=cocos2d::LanguageType::FRENCH;
@@ -397,7 +397,7 @@ mt["GetInfo"]=static_cast<const cocos2d::RZip::ZipInfo&(cocos2d::RZip::ZipItem::
 mt["get"]["Info"]=mt["GetInfo"];
 }
 void RegisterLuaCoreRZipEncodingAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["Auto"]=cocos2d::RZip::Encoding::Auto;
 enumTable["Utf8"]=cocos2d::RZip::Encoding::Utf8;
 enumTable["Gbk"]=cocos2d::RZip::Encoding::Gbk;

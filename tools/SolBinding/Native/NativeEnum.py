@@ -56,7 +56,7 @@ class NativeEnum(NativeWrapper):
                 strList = ["void RegisterLua{}{}Auto(cocos2d::extension::Lua& lua) {{\n".format(
                     self._generator.Tag, "".join(self._nameList[1:]))]
 
-                strList.append('sol::table enumTable = lua.create_table_with(0,{});\n'.format(len(kvMap)))
+                strList.append('sol::table enumTable = lua.create_table(lua.lua_state(),0,{});\n'.format(len(kvMap)))
                 for key, value in kvMap.items():
                     strList.append(
                         'enumTable["{}"]={};\n'.format(

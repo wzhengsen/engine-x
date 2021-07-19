@@ -10,7 +10,7 @@
 #include "base/TGAlib.h"
 namespace cocos2d{
 void RegisterLuaCoreCameraTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["PERSPECTIVE"]=cocos2d::Camera::Type::PERSPECTIVE;
 enumTable["ORTHOGRAPHIC"]=cocos2d::Camera::Type::ORTHOGRAPHIC;
 lua["cc"]["Camera"]["static"]["Type"]=lua.NewEnum(enumTable);
@@ -74,7 +74,7 @@ mt["get"]["BrushValid"]=mt["IsBrushValid"];
 RegisterLuaCoreCameraTypeAuto(lua);
 }
 void RegisterLuaCoreCameraBackgroundBrushBrushTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["NONE"]=cocos2d::CameraBackgroundBrush::BrushType::NONE;
 enumTable["DEPTH"]=cocos2d::CameraBackgroundBrush::BrushType::DEPTH;
 enumTable["COLOR"]=cocos2d::CameraBackgroundBrush::BrushType::COLOR;
@@ -194,7 +194,7 @@ mt["GetNeedDepthTestForBlit"]=static_cast<bool(cocos2d::Grid3D::*)()const>(&coco
 mt["get"]["NeedDepthTestForBlit"]=mt["GetNeedDepthTestForBlit"];
 }
 void RegisterLuaCoreLightTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["DIRECTIONAL"]=cocos2d::LightType::DIRECTIONAL;
 enumTable["POINT"]=cocos2d::LightType::POINT;
 enumTable["SPOT"]=cocos2d::LightType::SPOT;
@@ -202,7 +202,7 @@ enumTable["AMBIENT"]=cocos2d::LightType::AMBIENT;
 lua["cc"]["LightType"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaCoreLightFlagAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,16);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,16);
 enumTable["LIGHT0"]=cocos2d::LightFlag::LIGHT0;
 enumTable["LIGHT1"]=cocos2d::LightFlag::LIGHT1;
 enumTable["LIGHT2"]=cocos2d::LightFlag::LIGHT2;

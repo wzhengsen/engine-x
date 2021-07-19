@@ -171,7 +171,7 @@ mt["static"]["get"]["PRIORITY_SYSTEM"]=[]()->const int&{return cocos2d::Schedule
 mt["static"]["get"]["PRIORITY_NON_SYSTEM_MIN"]=[]()->const int&{return cocos2d::Scheduler::PRIORITY_NON_SYSTEM_MIN;};
 }
 void RegisterLuaCoreAsyncTaskPoolTaskTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["TASK_IO"]=cocos2d::AsyncTaskPool::TaskType::TASK_IO;
 enumTable["TASK_NETWORK"]=cocos2d::AsyncTaskPool::TaskType::TASK_NETWORK;
 enumTable["TASK_OTHER"]=cocos2d::AsyncTaskPool::TaskType::TASK_OTHER;
@@ -266,7 +266,7 @@ mt["SetBoundarySet"]=static_cast<void(cocos2d::Follow::*)(bool)>(&cocos2d::Follo
 mt["set"]["BoundarySet"]=mt["SetBoundarySet"];
 }
 void RegisterLuaCoreImageFormatAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,13);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,13);
 enumTable["JPG"]=cocos2d::Image::Format::JPG;
 enumTable["PNG"]=cocos2d::Image::Format::PNG;
 enumTable["BMP"]=cocos2d::Image::Format::BMP;

@@ -3,7 +3,7 @@
 #if CC_USE_PHYSICS
 namespace cocos2d{
 void RegisterLuaPhysicsPhysicsShapeTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,10);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,10);
 enumTable["UNKNOWN"]=cocos2d::PhysicsShape::Type::UNKNOWN;
 enumTable["CIRCLE"]=cocos2d::PhysicsShape::Type::CIRCLE;
 enumTable["BOX"]=cocos2d::PhysicsShape::Type::BOX;
@@ -287,7 +287,7 @@ mt["Local2World"]=static_cast<cocos2d::Vec2(cocos2d::PhysicsBody::*)(const cocos
 mt["static"]["get"]["COMPONENT_NAME"]=[]()->const std::string&{return cocos2d::PhysicsBody::COMPONENT_NAME;};
 }
 void RegisterLuaPhysicsPhysicsContactEventCodeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,5);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,5);
 enumTable["NONE"]=cocos2d::PhysicsContact::EventCode::NONE;
 enumTable["BEGIN"]=cocos2d::PhysicsContact::EventCode::BEGIN;
 enumTable["PRESOLVE"]=cocos2d::PhysicsContact::EventCode::PRESOLVE;

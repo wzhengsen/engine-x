@@ -182,7 +182,7 @@ mt["get"]["IgnoreAnchorPointForPosition"]=mt["IsIgnoreAnchorPointForPosition"];
 mt["AddChild"]=sol::overload(static_cast<void(cocos2d::Node::*)(cocos2d::Node*,int,const std::string&)>(&cocos2d::Node::addChild),static_cast<void(cocos2d::Node::*)(cocos2d::Node*,int,int)>(&cocos2d::Node::addChild),static_cast<void(cocos2d::Node::*)(cocos2d::Node*,int)>(&cocos2d::Node::addChild),static_cast<void(cocos2d::Node::*)(cocos2d::Node*)>(&cocos2d::Node::addChild));
 mt["GetChildByTag"]=static_cast<cocos2d::Node*(cocos2d::Node::*)(int)const>(&cocos2d::Node::getChildByTag);
 mt["GetChildByName"]=static_cast<cocos2d::Node*(cocos2d::Node::*)(const std::string&)const>(&cocos2d::Node::getChildByName);
-mt["EnumerateChildren"]=static_cast<void(cocos2d::Node::*)(const std::string&,std::function<bool (cocos2d::Node *)>)const>(&cocos2d::Node::enumerateChildren);
+mt["EnumerateChildren"]=static_cast<cocos2d::Node*(cocos2d::Node::*)(const std::string&,const std::function<bool (cocos2d::Node *)>&)const>(&cocos2d::Node::enumerateChildren);
 mt["GetChildren"]=static_cast<cocos2d::Vector<cocos2d::Node *>&(cocos2d::Node::*)()>(&cocos2d::Node::getChildren);
 mt["get"]["Children"]=mt["GetChildren"];
 mt["GetChildrenCount"]=static_cast<ssize_t(cocos2d::Node::*)()const>(&cocos2d::Node::getChildrenCount);
@@ -373,7 +373,7 @@ mt["set"]["NavMeshDebugCamera"]=mt["SetNavMeshDebugCamera"];
 mt["StepPhysicsAndNavigation"]=static_cast<void(cocos2d::Scene::*)(float)>(&cocos2d::Scene::stepPhysicsAndNavigation);
 }
 void RegisterLuaCoreEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,7);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,7);
 enumTable["TOUCH"]=cocos2d::Event::Type::TOUCH;
 enumTable["KEYBOARD"]=cocos2d::Event::Type::KEYBOARD;
 enumTable["ACCELERATION"]=cocos2d::Event::Type::ACCELERATION;
@@ -400,7 +400,7 @@ mt["get"]["CurrentTarget"]=mt["GetCurrentTarget"];
 RegisterLuaCoreEventTypeAuto(lua);
 }
 void RegisterLuaCoreEventTouchEventCodeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["BEGAN"]=cocos2d::EventTouch::EventCode::BEGAN;
 enumTable["MOVED"]=cocos2d::EventTouch::EventCode::MOVED;
 enumTable["ENDED"]=cocos2d::EventTouch::EventCode::ENDED;
@@ -426,7 +426,7 @@ mt["static"]["get"]["MAX_TOUCHES"]=[]()->const int&{return cocos2d::EventTouch::
 RegisterLuaCoreEventTouchEventCodeAuto(lua);
 }
 void RegisterLuaCoreResolutionPolicyAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,6);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,6);
 enumTable["EXACT_FIT"]=cocos2d::ResolutionPolicy::EXACT_FIT;
 enumTable["NO_BORDER"]=cocos2d::ResolutionPolicy::NO_BORDER;
 enumTable["SHOW_ALL"]=cocos2d::ResolutionPolicy::SHOW_ALL;
@@ -515,7 +515,7 @@ mt["static"]["set"]["GlContextAttrs"]=[](const sol::object&,const GLContextAttrs
 mt["static"]["get"]["GlContextAttrs"]=[]()->const GLContextAttrs&{return cocos2d::GLView::_glContextAttrs;};
 }
 void RegisterLuaCoreMATRIX_STACK_TYPEAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["MATRIX_STACK_MODELVIEW"]=cocos2d::MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW;
 enumTable["MATRIX_STACK_PROJECTION"]=cocos2d::MATRIX_STACK_TYPE::MATRIX_STACK_PROJECTION;
 enumTable["MATRIX_STACK_TEXTURE"]=cocos2d::MATRIX_STACK_TYPE::MATRIX_STACK_TEXTURE;

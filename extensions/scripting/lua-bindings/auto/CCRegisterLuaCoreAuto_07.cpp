@@ -91,7 +91,7 @@ mt["set"]["OnKeyReleased"]=[](cocos2d::EventListenerKeyboard* obj,const std::fun
 mt["get"]["OnKeyReleased"]=[](cocos2d::EventListenerKeyboard* obj)->const std::function<void (cocos2d::EventKeyboard::KeyCode, cocos2d::Event *)>&{return obj->onKeyReleased;};
 }
 void RegisterLuaCoreEventMouseMouseEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,5);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,5);
 enumTable["MOUSE_NONE"]=cocos2d::EventMouse::MouseEventType::MOUSE_NONE;
 enumTable["MOUSE_DOWN"]=cocos2d::EventMouse::MouseEventType::MOUSE_DOWN;
 enumTable["MOUSE_UP"]=cocos2d::EventMouse::MouseEventType::MOUSE_UP;
@@ -100,7 +100,7 @@ enumTable["MOUSE_SCROLL"]=cocos2d::EventMouse::MouseEventType::MOUSE_SCROLL;
 lua["cc"]["EventMouse"]["static"]["MouseEventType"]=lua.NewEnum(enumTable);
 }
 void RegisterLuaCoreEventMouseMouseButtonAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,9);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,9);
 enumTable["BUTTON_UNSET"]=cocos2d::EventMouse::MouseButton::BUTTON_UNSET;
 enumTable["BUTTON_LEFT"]=cocos2d::EventMouse::MouseButton::BUTTON_LEFT;
 enumTable["BUTTON_RIGHT"]=cocos2d::EventMouse::MouseButton::BUTTON_RIGHT;

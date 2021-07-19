@@ -10,7 +10,7 @@
 #include "base/TGAlib.h"
 namespace cocos2d{
 void RegisterLuaCoreSpriteRenderModeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["QUAD"]=cocos2d::Sprite::RenderMode::QUAD;
 enumTable["POLYGON"]=cocos2d::Sprite::RenderMode::POLYGON;
 enumTable["SLICE9"]=cocos2d::Sprite::RenderMode::SLICE9;
@@ -150,7 +150,7 @@ mt["__new__"] = [](){return nullptr;};
 mt["EaseActionWithAction"]=static_cast<cocos2d::ActionInterval*(cocos2d::TransitionEaseScene::*)(cocos2d::ActionInterval*)>(&cocos2d::TransitionEaseScene::easeActionWithAction);
 }
 void RegisterLuaCoreTransitionSceneOrientationAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,4);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,4);
 enumTable["LEFT_OVER"]=cocos2d::TransitionScene::Orientation::LEFT_OVER;
 enumTable["RIGHT_OVER"]=cocos2d::TransitionScene::Orientation::RIGHT_OVER;
 enumTable["UP_OVER"]=cocos2d::TransitionScene::Orientation::UP_OVER;

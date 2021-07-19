@@ -82,7 +82,7 @@ mt["__new__"]=static_cast<cocos2d::ParticleRain*(*)()>(&cocos2d::ParticleRain::c
 mt["static"]["CreateWithTotalParticles"]=static_cast<cocos2d::ParticleRain*(*)(int)>(&cocos2d::ParticleRain::createWithTotalParticles);
 }
 void RegisterLuaCoreProgressTimerTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,2);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,2);
 enumTable["RADIAL"]=cocos2d::ProgressTimer::Type::RADIAL;
 enumTable["BAR"]=cocos2d::ProgressTimer::Type::BAR;
 lua["cc"]["ProgressTimer"]["static"]["Type"]=lua.NewEnum(enumTable);

@@ -165,7 +165,7 @@ mt["__new__"]=static_cast<cocostudio::BatchNode*(*)()>(&cocostudio::BatchNode::c
 mt["Init"]=static_cast<bool(cocostudio::BatchNode::*)()>(&cocostudio::BatchNode::init);
 }
 void RegisterLuaStudioMovementEventTypeAuto(cocos2d::extension::Lua& lua) {
-sol::table enumTable = lua.create_table_with(0,3);
+sol::table enumTable = lua.create_table(lua.lua_state(),0,3);
 enumTable["START"]=cocostudio::MovementEventType::START;
 enumTable["COMPLETE"]=cocostudio::MovementEventType::COMPLETE;
 enumTable["LOOP_COMPLETE"]=cocostudio::MovementEventType::LOOP_COMPLETE;
