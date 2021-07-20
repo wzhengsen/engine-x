@@ -66,12 +66,12 @@ function Node:SetTop()
     local cC = p.Children;
     local maxZOrder = nil;
     for _,v in ipairs(cC) do
-        local zOrder = v.LocalZ;
+        local zOrder = v.LocalZOrder;
         if not maxZOrder or zOrder > maxZOrder then
             maxZOrder = zOrder;
         end
     end
-    self.LocalZ = maxZOrder + 1;
+    self.LocalZOrder = maxZOrder + 1;
 end
 
 --[[
@@ -218,13 +218,13 @@ end
 
 function Node.set:EnableUpdateEvent(val)
     -- 考虑到效率问题，OnUpdate应当独立开启，且不建议大量使用。
-    self.OnUpdateHandler = val and self.OnUpdate or nil;
+    self.UpdateHandler = val and self.OnUpdate or nil;
 end
 
 function Node.set:EnableEvents(val)
-    self.OnEnterHandler = val and self.OnEnter or nil;
-    self.OnExitHandler = val and self.OnExit or nil;
-    self.OnEnterTransitionDidFinishHandler = val and self.OnEnterTransitionDidFinish or nil;
-    self.OnExitTransitionDidStartHandler = val and self.OnExitTransitionDidStart or nil;
-    self.OnCleanUpHandler = val and self.OnCleanUp or nil;
+    self.EnterHandler = val and self.OnEnter or nil;
+    self.ExitHandler = val and self.OnExit or nil;
+    self.EnterTransitionDidFinishHandler = val and self.OnEnterTransitionDidFinish or nil;
+    self.ExitTransitionDidStartHandler = val and self.OnExitTransitionDidStart or nil;
+    self.CleanUpHandler = val and self.OnCleanUp or nil;
 end

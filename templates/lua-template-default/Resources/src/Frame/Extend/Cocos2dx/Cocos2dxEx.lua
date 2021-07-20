@@ -43,12 +43,17 @@ Node.set.Y = Node.SetPositionY;
 Node.set.Z = Node.SetPositionZ;
 Node.set.XY = Node.SetPosition;
 Node.set.Size = Node.SetContentSize;
+Node.set.Height = Node.set.ContentHeight;
+Node.set.Width = Node.set.ContentWidth;
 
 Node.get.X = Node.GetPositionX;
 Node.get.Y = Node.GetPositionY;
 Node.get.Z = Node.GetPositionZ;
 Node.get.XY = Node.GetPositionXY;
 Node.get.Size = Node.GetContentSize;
+Node.get.Height = Node.get.ContentHeight;
+Node.get.Width = Node.get.ContentWidth;
+
 
 local Label = cc.Label;
 function Label.set:Italics(b)

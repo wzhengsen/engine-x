@@ -22,14 +22,14 @@ THE SOFTWARE.
 
 local Sound = require("Audio.Sound");
 ---场景基类。
-local BaseScene = class(cc.Scene)
+local BaseScene = class(cc.Scene);
 
-BaseScene.PreloadRes = {
+BaseScene.static.const.PreloadRes = table.readonly({
     Sound = {},
     Animation = {},
     SpriteFrame = {},
-    Texture = {},
-};
+    Texture = {}
+});
 
 function BaseScene:ctor()
     self.EnableEvents = true;
@@ -45,7 +45,7 @@ function BaseScene:Run()
 end
 
 function BaseScene:dtor()
-    for _,v in pairs(self.PreloadRes.Sound or {}) do
+    for _,v in pairs(self.is().PreloadRes.Sound or {}) do
         Sound.Uncache(v)
     end
 end

@@ -290,9 +290,12 @@ local function CreateClassObject(cls,...)
     local all = nil;
     if "table" == oType then
         all = obj;
-    elseif nil ~= obj and nil == ObjectsAll[obj] then
-        all = {};
-        ObjectsAll[obj] = all;
+    elseif nil ~= obj then
+        all = ObjectsAll[obj];
+        if nil == all then
+            all = {};
+            ObjectsAll[obj] = all;
+        end
     end
     return obj,all;
 end

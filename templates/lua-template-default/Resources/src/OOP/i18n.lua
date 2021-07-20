@@ -159,6 +159,9 @@ local LanguageMap = {
     },
     ["This is the function that has been deleted."] = {
         zh = "这是已删除的函数。"
+    },
+    ["You cannot inherit a nil value."] = {
+        zh = "你不能继承一个nil值。"
     }
 };
 

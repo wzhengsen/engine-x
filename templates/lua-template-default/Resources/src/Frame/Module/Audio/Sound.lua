@@ -73,7 +73,7 @@ function Sound:Play(force)
         end
     end
 
-    self.sInst = AudioEngine.Play2d(self.sFilePath,self.sLoop,self.sVol);
+    self.sInst = AudioEngine.Play2D(self.sFilePath,self.sLoop,self.sVol);
     if self.sInst == AudioEngine.INVALID_AUDIO_ID then
         return false;
     end

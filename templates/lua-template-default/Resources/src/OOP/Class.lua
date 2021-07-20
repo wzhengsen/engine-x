@@ -24,6 +24,7 @@ local type = type;
 local pcall = pcall;
 local error = error;
 local next = next;
+local select = select;
 
 local Config = require("OOP.Config");
 local Debug = Config.Debug;
@@ -110,6 +111,13 @@ end
 ---@return table class
 function class.New(...)
     local args = {...};
+    if Debug then
+        local len = 0;
+        while nil ~= args[len + 1] do
+            len = len + 1;
+        end
+        assert(select("#",...) == len,i18n"You cannot inherit a nil value.");
+    end
     local cls,metas,name = CheckClass(args);
     local all,bases,handlers,members = CreateClassTables(cls);
 
