@@ -80,7 +80,12 @@ class Cocos2dxGeneratorCore(Cocos2dxGenerator):
             "Component": ["onEnter", "onExit", "onAdd", "onRemove"],
             "Director": ["EVENT_.*"],
             "Downloader": ["setOn.*Task.*"],
-            "UserDefault": ["setEncryptEnabled", "encrypt"]
+            "UserDefault": ["setEncryptEnabled", "encrypt"],
+            "Spawn": ["createWithVariableList", "createWithTwoActions", "create"],
+            "Sequence": ["createWithVariableList", "createWithTwoActions", "create"],
+            "LayerMultiplex": ["create.*"],
+            "MenuItemToggle": ["create.*"],
+            "Menu": ["create.*","alignItemsInRows", "alignItemsInColumns"]
         }
         self.RenameMembers |= {
             "SpriteFrameCache": {"addSpriteFramesWithFile": "addSpriteFrames", "getSpriteFrameByName": "getSpriteFrame"},

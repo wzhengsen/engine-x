@@ -595,8 +595,7 @@ class NativeObject(NativeWrapper):
                     gField = NativeStaticField(cursor, self._generator)
                 if gField.Generatable:
                     self._fileds.append(gField)
-        if (cursor.kind == cindex.CursorKind.CXX_METHOD and
-            not cursor.type.is_function_variadic()) or \
+        if cursor.kind == cindex.CursorKind.CXX_METHOD or \
                 cursor.kind == cindex.CursorKind.USING_DECLARATION:
             static = False
             if cursor.kind == cindex.CursorKind.USING_DECLARATION:

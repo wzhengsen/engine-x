@@ -98,7 +98,7 @@ namespace cocos2d {
 
     template <typename Handler>
     inline static bool CheckSimpleTable(lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
-        const auto success = sol::stack::check<sol::table>(L, index, std::forward<Handler>(handler));
+        const auto success = sol::stack::check<sol::lua_table>(L, index, std::forward<Handler>(handler));
         tracking.use(1);
         return success;
     }
@@ -106,7 +106,17 @@ namespace cocos2d {
     // Convert cocos2d::Vec2
     template <typename Handler>
     bool sol_lua_check(sol::types<cocos2d::Vec2>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
-        return CheckSimpleTable(L, index, std::forward<Handler>(handler), tracking);
+        auto success = sol::stack::check<sol::lua_table>(L, index, std::forward<Handler>(handler));
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "x");
+            lua_pop(L, 1);
+        }
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "y");
+            lua_pop(L, 1);
+        }
+        tracking.use(1);
+        return success;
     }
     int sol_lua_push(sol::types<cocos2d::Vec2>, lua_State* L, const cocos2d::Vec2& val);
     cocos2d::Vec2 sol_lua_get(sol::types<cocos2d::Vec2>, lua_State* L, int idx, sol::stack::record& tracking);
@@ -114,7 +124,21 @@ namespace cocos2d {
     // Convert cocos2d::Vec3
     template <typename Handler>
     bool sol_lua_check(sol::types<cocos2d::Vec3>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
-        return CheckSimpleTable(L, index, std::forward<Handler>(handler), tracking);
+        auto success = sol::stack::check<sol::lua_table>(L, index, std::forward<Handler>(handler));
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "x");
+            lua_pop(L, 1);
+        }
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "y");
+            lua_pop(L, 1);
+        }
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "z");
+            lua_pop(L, 1);
+        }
+        tracking.use(1);
+        return success;
     }
     int sol_lua_push(sol::types<cocos2d::Vec3>, lua_State* L, const cocos2d::Vec3& val);
     cocos2d::Vec3 sol_lua_get(sol::types<cocos2d::Vec3>, lua_State* L, int idx, sol::stack::record& tracking);
@@ -122,7 +146,25 @@ namespace cocos2d {
     // Convert cocos2d::Vec4
     template <typename Handler>
     bool sol_lua_check(sol::types<cocos2d::Vec4>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
-        return CheckSimpleTable(L, index, std::forward<Handler>(handler), tracking);
+        auto success = sol::stack::check<sol::lua_table>(L, index, std::forward<Handler>(handler));
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "x");
+            lua_pop(L, 1);
+        }
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "y");
+            lua_pop(L, 1);
+        }
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "z");
+            lua_pop(L, 1);
+        }
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "w");
+            lua_pop(L, 1);
+        }
+        tracking.use(1);
+        return success;
     }
     int sol_lua_push(sol::types<cocos2d::Vec4>, lua_State* L, const cocos2d::Vec4& val);
     cocos2d::Vec4 sol_lua_get(sol::types<cocos2d::Vec4>, lua_State* L, int idx, sol::stack::record& tracking);
@@ -183,7 +225,25 @@ namespace cocos2d {
     // Convert cocos2d::Color4B
     template <typename Handler>
     bool sol_lua_check(sol::types<cocos2d::Color4B>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
-        return CheckSimpleTable(L, index, std::forward<Handler>(handler), tracking);
+        auto success = sol::stack::check<sol::lua_table>(L, index, std::forward<Handler>(handler));
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "r");
+            lua_pop(L, 1);
+        }
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "g");
+            lua_pop(L, 1);
+        }
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "b");
+            lua_pop(L, 1);
+        }
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "a");
+            lua_pop(L, 1);
+        }
+        tracking.use(1);
+        return success;
     }
     int sol_lua_push(sol::types<cocos2d::Color4B>, lua_State* L, const cocos2d::Color4B& val);
     cocos2d::Color4B sol_lua_get(sol::types<cocos2d::Color4B>, lua_State* L, int idx, sol::stack::record& tracking);
@@ -191,7 +251,7 @@ namespace cocos2d {
     // Convert cocos2d::Color4F
     template <typename Handler>
     bool sol_lua_check(sol::types<cocos2d::Color4F>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
-        return CheckSimpleTable(L, index, std::forward<Handler>(handler), tracking);
+        return sol_lua_check(sol::types<cocos2d::Color4B>(), L, index, std::forward<Handler>(handler), tracking);
     }
     int sol_lua_push(sol::types<cocos2d::Color4F>, lua_State* L, const cocos2d::Color4F& val);
     cocos2d::Color4F sol_lua_get(sol::types<cocos2d::Color4F>, lua_State* L, int idx, sol::stack::record& tracking);
@@ -199,7 +259,21 @@ namespace cocos2d {
     // Convert cocos2d::Color3B
     template <typename Handler>
     bool sol_lua_check(sol::types<cocos2d::Color3B>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
-        return CheckSimpleTable(L, index, std::forward<Handler>(handler), tracking);
+        auto success = sol::stack::check<sol::lua_table>(L, index, std::forward<Handler>(handler));
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "r");
+            lua_pop(L, 1);
+        }
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "g");
+            lua_pop(L, 1);
+        }
+        if (success) {
+            success = LUA_TNUMBER == lua_getfield(L, index, "b");
+            lua_pop(L, 1);
+        }
+        tracking.use(1);
+        return success;
     }
     int sol_lua_push(sol::types<cocos2d::Color3B>, lua_State* L, const cocos2d::Color3B& val);
     cocos2d::Color3B sol_lua_get(sol::types<cocos2d::Color3B>, lua_State* L, int idx, sol::stack::record& tracking);
@@ -357,6 +431,46 @@ namespace cocos2d {
             return 1;
         }
         return sol_lua_push(sol::types<std::vector<T>>(), L, *val);
+    }
+
+    // Convert cocos2d::Vector<T>
+    template <typename Handler, typename T>
+    bool sol_lua_check(sol::types<cocos2d::Vector<T>>, lua_State* L, int index, Handler&& handler, sol::stack::record& tracking) {
+        return CheckSimpleTable(L, index, std::forward<Handler>(handler), tracking);
+    }
+    template <typename T>
+    cocos2d::Vector<T> sol_lua_get(sol::types<cocos2d::Vector<T>>, lua_State* L, int idx, sol::stack::record& tracking) {
+        cocos2d::Vector<T> vec = {};
+        sol::table t = sol::table(L, idx);
+        t.for_each([&vec](const sol::object& k, const sol::object& v) {
+            vec.pushBack(v.as<T>());
+            });
+        tracking.use(1);
+        return vec;
+    }
+    template <typename T>
+    int sol_lua_push(sol::types<cocos2d::Vector<T>>, lua_State* L, const cocos2d::Vector<T>& val) {
+        lua_createtable(L, static_cast<int>(val.size()), 0);
+        size_t i = 1;
+        for (const auto& v : val) {
+            sol::stack::raw_set_field(L, i, v);
+            i++;
+        }
+        return 1;
+    }
+
+    template <typename T>
+    int sol_lua_push(sol::types<const cocos2d::Vector<T>*>, lua_State* L, const cocos2d::Vector<T>* val) {
+        if (!val) {
+            lua_pushnil(L);
+            return 1;
+        }
+        return sol_lua_push(sol::types<cocos2d::Vector<T>>(), L, *val);
+    }
+
+    template <typename T>
+    int sol_lua_push(sol::types<cocos2d::Vector<T>*>, lua_State* L, const cocos2d::Vector<T>* val) {
+        return sol_lua_push(sol::types<const cocos2d::Vector<T>*>(), L, val);
     }
 
     // Convert cocos2d::Data

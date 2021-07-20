@@ -150,9 +150,7 @@ auto dep=lua.new_usertype<cocos2d::Sequence>("deprecated.cocos2d::Sequence");
 dep[sol::base_classes]=sol::bases<cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::Sequence*>::metatable(),sol::usertype_traits<cocos2d::ActionInterval*>::metatable());
 lua["cc"]["Sequence"]=mt;
-mt["__new__"]=static_cast<cocos2d::Sequence*(*)(const cocos2d::Vector<cocos2d::FiniteTimeAction *>&)>(&cocos2d::Sequence::create);
-mt["static"]["CreateWithVariableList"]=static_cast<cocos2d::Sequence*(*)(cocos2d::FiniteTimeAction*,va_list)>(&cocos2d::Sequence::createWithVariableList);
-mt["static"]["CreateWithTwoActions"]=static_cast<cocos2d::Sequence*(*)(cocos2d::FiniteTimeAction*,cocos2d::FiniteTimeAction*)>(&cocos2d::Sequence::createWithTwoActions);
+mt["__new__"] = [](){return nullptr;};
 }
 void RegisterLuaCoreRepeatAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::Repeat).name()] = sol::usertype_traits<cocos2d::Repeat*>::metatable();
@@ -184,9 +182,7 @@ auto dep=lua.new_usertype<cocos2d::Spawn>("deprecated.cocos2d::Spawn");
 dep[sol::base_classes]=sol::bases<cocos2d::ActionInterval,cocos2d::FiniteTimeAction,cocos2d::Action,cocos2d::Ref,cocos2d::extension::LuaObject,cocos2d::Clonable>();
 sol::table mt=lua.NewClass(sol::usertype_traits<cocos2d::Spawn*>::metatable(),sol::usertype_traits<cocos2d::ActionInterval*>::metatable());
 lua["cc"]["Spawn"]=mt;
-mt["static"]["CreateWithVariableList"]=static_cast<cocos2d::Spawn*(*)(cocos2d::FiniteTimeAction*,va_list)>(&cocos2d::Spawn::createWithVariableList);
-mt["__new__"]=static_cast<cocos2d::Spawn*(*)(const cocos2d::Vector<cocos2d::FiniteTimeAction *>&)>(&cocos2d::Spawn::create);
-mt["static"]["CreateWithTwoActions"]=static_cast<cocos2d::Spawn*(*)(cocos2d::FiniteTimeAction*,cocos2d::FiniteTimeAction*)>(&cocos2d::Spawn::createWithTwoActions);
+mt["__new__"] = [](){return nullptr;};
 }
 void RegisterLuaCoreRotateToAuto(cocos2d::extension::Lua& lua){
 cocos2d::extension::Lua::Id2Meta[typeid(cocos2d::RotateTo).name()] = sol::usertype_traits<cocos2d::RotateTo*>::metatable();

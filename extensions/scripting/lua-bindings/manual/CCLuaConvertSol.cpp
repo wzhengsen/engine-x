@@ -228,7 +228,7 @@ namespace cocos2d {
     }
     cocos2d::Color4B sol_lua_get(sol::types<cocos2d::Color4B>, lua_State* L, int idx, sol::stack::record& tracking) {
         sol::table t = sol::table(L, idx);
-        uint8_t r = t["r"]; uint8_t g = t["g"]; uint8_t b = t["b"]; uint8_t a = t["a"];
+        uint8_t r = t["r"]; uint8_t g = t["g"]; uint8_t b = t["b"]; uint8_t a = t.get_or("a",static_cast<uint8_t>(255));
         tracking.use(1);
         return { r,g,b,a };
     }

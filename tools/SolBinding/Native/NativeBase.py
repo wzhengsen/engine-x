@@ -107,6 +107,10 @@ class NativeImplement(object):
                 return []
             args.append(CursorHelper.GetArgName(arg))
 
+        # 不定参。
+        if cursor.type.is_function_variadic():
+            args.append("...")
+
         # 最小参数数量。
         minArgs = len(args)
         idx = 0

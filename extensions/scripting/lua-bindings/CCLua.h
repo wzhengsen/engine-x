@@ -22,6 +22,7 @@
 #pragma once
 #include <vector>
 #include <map>
+#define SOL_NO_CHECK_NUMBER_PRECISION 1
 #define SOL_PRINT_ERRORS 1
 #define SOL_SAFE_FUNCTIONS 1
 #define SOL_NO_EXCEPTIONS 1

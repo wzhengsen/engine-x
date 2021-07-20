@@ -95,7 +95,8 @@ static void RegisterLuaCoreZipManual(extension::Lua& lua) {
     };
 
     sol::table rZip = lua["cc"]["RZip"];
-    rZip["__pairs__"] = [](RZip* rZip) {
+    const std::string __pairs__ = lua.OOPConfig["Meta"]["__pairs"];
+    rZip[__pairs__] = [](RZip* rZip) {
         auto begin = rZip->begin();
         return [=]() mutable {
             const RZip::ZipItem* item = nullptr;
@@ -387,6 +388,151 @@ static void RegisterLuaBridgeManual(extension::Lua& lua) {
 #endif
 }
 
+template<typename T,typename G>
+static void VariadicCreate(extension::Lua& lua,const std::string& name) {
+    sol::table cls = lua["cc"][name];
+    const std::string __new__ = lua.OOPConfig["__new__"];
+    cls[__new__] = [](const sol::variadic_args& var) {
+        auto size = var.size();
+        const auto isTable = size == 1 && var[0].get_type() == sol::type::table;
+        if (isTable) {
+            sol::table table = var[0];
+            size = table.size();
+        }
+        auto vec = cocos2d::Vector<G>(static_cast<ssize_t>(size));
+        if (isTable) {
+            sol::table table = var[0];
+            table.for_each([&vec](const sol::object& _, const sol::object& val) {
+                vec.pushBack(val.as<G>());
+            });
+        }
+        else {
+            for (size_t i = 0; i < size; i++) {
+                vec.pushBack(var[i].as<G>());
+            }
+        }
+        return T::create(vec);
+    };
+}
+
+static void RegisterLuaCoreSpawnManual(extension::Lua& lua) {
+    VariadicCreate<cocos2d::Spawn, FiniteTimeAction*>(lua, "Spawn");
+}
+
+static void RegisterLuaCoreSequenceManual(extension::Lua& lua) {
+    VariadicCreate<cocos2d::Sequence, FiniteTimeAction*>(lua, "Sequence");
+}
+
+static void RegisterLuaCoreMenuManual(extension::Lua& lua) {
+    sol::table menu = lua["cc"]["Menu"];
+    const std::string __new__ = lua.OOPConfig["__new__"];
+    menu[__new__] = [](const sol::variadic_args& var) {
+        const auto size = var.size();
+        if (size == 0) {
+            return cocos2d::Menu::create();
+        }
+        else if (size == 1) {
+            sol::object obj = var[0];
+            if (sol::type::table == obj.get_type()) {
+                sol::table table = var[0];
+                auto vec = cocos2d::Vector<cocos2d::MenuItem*>(static_cast<ssize_t>(table.size()));
+                table.for_each([&vec](const sol::object& _, const sol::object& val) {
+                    vec.pushBack(val.as<cocos2d::MenuItem*>());
+                });
+                return cocos2d::Menu::createWithArray(vec);
+            }
+            else {
+                return cocos2d::Menu::createWithItem(obj.as<cocos2d::MenuItem*>());
+            }
+        }
+        auto vec = cocos2d::Vector<cocos2d::MenuItem*>(static_cast<ssize_t>(size));
+        for (size_t i = 0; i < size; i++) {
+            vec.pushBack(var[i].as<cocos2d::MenuItem*>());
+        }
+        return cocos2d::Menu::createWithArray(vec);
+    };
+    menu["AlignItemsInRows"] = static_cast<void(cocos2d::Menu::*)(int, va_list)>(&cocos2d::Menu::alignItemsInRows);
+    menu["AlignItemsInColumns"] = static_cast<void(cocos2d::Menu::*)(int, va_list)>(&cocos2d::Menu::alignItemsInColumns);
+}
+
+static void RegisterLuaCoreLayerMultiplexManual(extension::Lua& lua) {
+    sol::table multiplex = lua["cc"]["LayerMultiplex"];
+    const std::string __new__ = lua.OOPConfig["__new__"];
+    multiplex[__new__] = [](const sol::variadic_args& var) {
+        const auto size = var.size();
+        if (size == 0) {
+            return cocos2d::LayerMultiplex::create();
+        }
+        else if (size == 1) {
+            sol::object obj = var[0];
+            if (sol::type::table == obj.get_type()) {
+                sol::table table = var[0];
+                auto vec = cocos2d::Vector<cocos2d::Layer*>(static_cast<ssize_t>(table.size()));
+                table.for_each([&vec](const sol::object& _, const sol::object& val) {
+                    vec.pushBack(val.as<cocos2d::Layer*>());
+                });
+                return cocos2d::LayerMultiplex::createWithArray(vec);
+            }
+            else {
+                return cocos2d::LayerMultiplex::createWithLayer(obj.as<cocos2d::Layer*>());
+            }
+        }
+        auto vec = cocos2d::Vector<cocos2d::Layer*>(static_cast<ssize_t>(size));
+        for (size_t i = 0; i < size; i++) {
+            vec.pushBack(var[i].as<cocos2d::Layer*>());
+        }
+        return cocos2d::LayerMultiplex::createWithArray(vec);
+    };
+}
+
+static void RegisterLuaCoreMenuItemToggleManual(extension::Lua& lua) {
+    sol::table toggle = lua["cc"]["MenuItemToggle"];
+    const std::string __new__ = lua.OOPConfig["__new__"];
+    toggle[__new__] = [](const sol::variadic_args& var) {
+        auto size = var.size();
+        if (size == 0) {
+            return cocos2d::MenuItemToggle::create();
+        }
+        sol::object pOne = var[0];
+        if (size == 1) {
+            if (sol::type::function != pOne.get_type()) {
+                return cocos2d::MenuItemToggle::create(var[0].as<cocos2d::MenuItem*>());
+            }
+            sol::function callback = pOne;
+            return cocos2d::MenuItemToggle::createWithCallback([callback](cocos2d::MenuItem* mi) {
+                callback(mi);
+            },cocos2d::Vector<cocos2d::MenuItem*>());
+        }
+
+        sol::function callback = pOne;
+        sol::object pTwo = var[1];
+        const auto isTable = sol::type::table == pTwo.get_type();
+        if (isTable) {
+            sol::table table = pTwo;
+            size = table.size();
+        }
+        else {
+            // Skip the first parameter.
+            size--;
+        }
+        auto vec = cocos2d::Vector<cocos2d::MenuItem*>(static_cast<ssize_t>(size));
+        if (isTable) {
+            sol::table table = pTwo;
+            table.for_each([&vec](const sol::object& _, const sol::object& val) {
+                vec.pushBack(val.as<cocos2d::MenuItem*>());
+            });
+        }
+        else {
+            for (size_t i = 0; i < size; i++) {
+                vec.pushBack(var[i + 1].as<cocos2d::MenuItem*>());
+            }
+        }
+        return cocos2d::MenuItemToggle::createWithCallback([callback](cocos2d::MenuItem* mi) {
+            callback(mi);
+        }, vec);
+    };
+}
+
 
 void RegisterLuaManual(extension::Lua& lua) {
     RegisterCJsonManual(lua);
@@ -410,5 +556,10 @@ void RegisterLuaManual(extension::Lua& lua) {
     extension::LuaHttpRequest::RegisterLuaHttpRequestManual(lua);
     RegisterLuaCoreZipManual(lua);
     RegisterLuaCoreUtilsManual(lua);
+    RegisterLuaCoreSpawnManual(lua);
+    RegisterLuaCoreSequenceManual(lua);
+    RegisterLuaCoreMenuManual(lua);
+    RegisterLuaCoreLayerMultiplexManual(lua);
+    RegisterLuaCoreMenuItemToggleManual(lua);
     RegisterLuaBridgeManual(lua);
 }
